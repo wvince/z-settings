@@ -27,6 +27,9 @@ def fake_install(tmp_path, exports):
     """exports: {account: text or None}, oldest first."""
     addons = tmp_path / "Interface" / "AddOns"
     (addons / "Z-Settings").mkdir(parents=True)
+    (addons / "GTFO").mkdir()
+    (addons / "GTFO" / "GTFO.toc").write_bytes(b"## Title: GTFO\r\n## SavedVariables: GTFOData, GTFOOther\r\n## SavedVariablesPerCharacter: GTFOChar\r\ncore.lua\r\n")
+    (addons / "GTFO" / "GTFO_Mainline.toc").write_text("## SavedVariables: GTFOData\n")
     subprocess.run(["git", "init", "-q"], cwd=addons, check=True)
     for i, (account, text) in enumerate(exports.items()):
         sv = tmp_path / "WTF" / "Account" / account / "SavedVariables"
@@ -44,9 +47,17 @@ def run_hook(addons):
 
 def test_hook_bundles_newest_export(tmp_path):
     addons = fake_install(tmp_path, {"1#1": "ZS1:old", "2#3": "ZS1:new+/="})
+    # first commit: the game never loaded these names, so the export can't hold their settings
+    r = run_hook(addons)
+    assert r.returncode != 0 and "/z export" in r.stderr
+    # after /reload, /z export, /reload the same names are loaded and the commit goes through
     r = run_hook(addons)
     assert r.returncode == 0, r.stderr
-    assert (addons / "Z-Settings" / "ZBundle.lua").read_text() == 'Z_BUNDLE = "ZS1:new+/="\n'
+    bundle = (addons / "Z-Settings" / "ZBundle.lua").read_text()
+    assert 'Z_BUNDLE = "ZS1:new+/="\n' in bundle
+    # every flavor's toc merged, per-character tables left out
+    assert '["GTFO"] = { "GTFOData","GTFOOther" },' in bundle
+    assert "GTFOChar" not in bundle
     staged = subprocess.run(["git", "diff", "--cached", "--name-only"], cwd=addons, capture_output=True, text=True).stdout
     assert "Z-Settings/ZBundle.lua" in staged
 

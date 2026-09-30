@@ -227,6 +227,8 @@ C_EncodingUtil = {
   EncodeBase64 = function(s) return "B" .. s:gsub(".", function(c) return string.format("%02x", c:byte()) end) end,
   DecodeBase64 = function(s) assert(s:sub(1, 1) == "B", "not base64"); return (s:sub(2):gsub("%x%x", function(h) return string.char(tonumber(h, 16)) end)) end,
 }
+reloads = 0
+function ReloadUI() reloads = reloads + 1 end
 -- frames: any method works; scripts and text are kept so the test can click and type
 local frames = {}
 function CreateFrame(kind, name)
@@ -244,7 +246,13 @@ function CreateFrame(kind, name)
 end
 UIParent, ChatFontNormal = {}, {}
 local SVS = {}   -- addon -> "Var1, Var2"
-C_AddOns.GetAddOnMetadata = function(name, key) if key == "SavedVariables" then return SVS[name] end end
+-- what the commit hook writes from the tocs, read from SVS at call time
+Z_VARS = setmetatable({}, { __index = function(_, name)
+  local out = {}
+  for v in (SVS[name] or ""):gmatch("[^,%s]+") do out[#out + 1] = v end
+  return out
+end })
+C_AddOns.GetAddOnMetadata = function() return nil end   -- like the client: no SavedVariables field
 
 -- sessions -----------------------------------------------------------------------------------
 local function runTimers()
@@ -325,20 +333,32 @@ local function useChar(c, globals)
 end
 
 -- 1. export on my character
+local function pressKeys(...)
+  local keys = { ... }
+  for _, o in ipairs(frames) do
+    if o.scripts.OnKeyDown then for _, k in ipairs(keys) do if o.scripts.OnKeyDown then o.scripts.OnKeyDown(o, k) end end end
+  end
+end
+local function said(pattern)
+  for _, p in ipairs(printed) do if p:find(pattern) then return true end end
+  return false
+end
+local function fire(event)
+  for _, o in ipairs(frames) do if o.events[event] then o.scripts.OnEvent(o, event) end end
+end
 useChar(me, { DBM_AllSavedOptions = { warnings = true, bars = { size = 2 } }, BetterBlizzFramesDB = { castbar = 1 },
   BigDataDB = { blob = string.rep("x", 400000) }, WeirdDB = { f = function() end }, BarSyncDB = { secret = 1 } })
-printed = {}
+ZSettingsDB = nil
+printed, reloads = {}, 0
 SlashCmdList.ZSETTINGS("export")
-for _, o in ipairs(frames) do if o.scripts.OnKeyDown then o.scripts.OnKeyDown(o, "Q") end end
-local box
-for _, o in ipairs(frames) do if o.kind == "EditBox" then box = o end end
-local text = box and box.text or ""
-check("1 export string made", text:sub(1, 4) == "ZS1:")
-local layoutSaid = false
-for _, p in ipairs(printed) do if p:find("QWERTY") then layoutSaid = true end end
-check("1 my keyboard detected as QWERTY", layoutSaid)
+check("1 export waits for the keyboard", reloads == 0 and ZSettingsDB == nil)
+pressKeys("Q")
+local text = ZSettingsDB and ZSettingsDB.export or ""
+check("1 export saved for the commit hook", text:sub(1, 4) == "ZS1:" and ZSettingsDB.exportMade ~= nil)
+check("1 export reloads the UI", reloads == 1)
+check("1 my keyboard detected as QWERTY", said("QWERTY"))
 local data = C_EncodingUtil.DeserializeCBOR(C_EncodingUtil.DecompressString(C_EncodingUtil.DecodeBase64(text:sub(5))))
-check("1 keyboard stored in the string", data.layout == "qwerty")
+check("1 keyboard stored in the export", data.layout == "qwerty")
 check("1 class-free macros shared", data.macros.Focus ~= nil and data.macros.Mana ~= nil)
 check("1 spell-casting macros left out", data.macros.Healthstone == nil and data.macros["Warlock nuke"] == nil)
 check("1 character macros left out", data.macros["Tap safe"] == nil)
@@ -350,25 +370,27 @@ check("1 DBM settings shared", data.settings.DBM_AllSavedOptions ~= nil)
 check("1 BarSync never shared", data.settings.BarSyncDB == nil)
 check("1 oversized table left out", data.settings.BigDataDB == nil)
 check("1 unshareable table left out", data.settings.WeirdDB == nil)
-local told = false
-for _, p in ipairs(printed) do if p:find("BigData") and p:find("Weird") then told = true end end
-check("1 left-out tables listed", told)
+check("1 left-out tables listed", said("BigData") and said("Weird"))
+-- the reload wiped the chat: the messages come back once the UI is up
+printed = {}
+fire("PLAYER_LOGIN")
+check("1 messages repeated after the reload", said("commit and push") and said("QWERTY"))
+check("1 messages shown once", ZSettingsDB.notice == nil)
 
--- 2. the friend imports
+-- 2. the friend pulls the repo and imports the setup that ships with the addon
 BetterBlizzFramesDB, BigDataDB, WeirdDB, BarSyncDB = nil, nil, nil, nil   -- the friend's PC has none of these
+Z_BUNDLE = text
 useChar(friend, { DBM_AllSavedOptions = { warnings = false } })
 friend.ZSettingsDB = nil
 printed = {}
+SlashCmdList.ZSETTINGS("")
+check("2 /z names the bundled setup", said("Zeroshin's setup"))
+printed, reloads = {}, 0
 SlashCmdList.ZSETTINGS("import")
-local win, importButton
-for _, o in ipairs(frames) do
-  if o.kind == "EditBox" then win = o end
-  if o.kind == "Button" and o.scripts.OnClick then importButton = o end
-end
-win.text = text
-importButton.scripts.OnClick()
-for _, o in ipairs(frames) do if o.scripts.OnKeyDown then o.hint = o.hint or CreateFrame("FontString"); o.scripts.OnKeyDown(o, "A"); o.scripts.OnKeyDown(o, "§") end end
+check("2 import waits for the keyboard", reloads == 0 and friend.cvars.nameplateShowEnemies == "1")
+pressKeys("A", "§")
 friend.ZSettingsDB = ZSettingsDB
+check("2 import reloads the UI", reloads == 1)
 check("2 settings applied", friend.cvars.nameplateShowEnemies == "0" and friend.cvars.enableMultiActionBars == "31")
 check("2 graphics untouched", friend.cvars.graphicsQuality == "9")
 check("2 keybinds applied", keyOf(accB, "MOVEFORWARD") == "UP")
@@ -399,41 +421,45 @@ check("2 friend's bars untouched", next(friend.bars) == nil)
 check("2 Z-Settings stays on", friend.addons["Z-Settings"] == true)
 check("2 BarSync not switched on", friend.addons.BarSync == false)
 check("2 undo saved", friend.ZSettingsDB and friend.ZSettingsDB.undo ~= nil)
-local skipNote = false
-for _, p in ipairs(printed) do if p:find("BetterBlizzFrames") then skipNote = true end end
-check("2 missing addon reported", skipNote)
+check("2 missing addon reported", said("BetterBlizzFrames"))
 -- an addon that rewrites its table at logout doesn't undo the import
 DBM_AllSavedOptions = { warnings = false }
-for _, o in ipairs(frames) do if o.events.PLAYER_LOGOUT then o.scripts.OnEvent() end end
+fire("PLAYER_LOGOUT")
 check("2 import survives the save at logout", DBM_AllSavedOptions.warnings == true)
+printed = {}
+fire("PLAYER_LOGIN")
+check("2 import summary repeated after the reload", said("imported Zeroshin's setup"))
 
--- 3. damaged strings and combat are refused
+-- 3. a damaged or missing setup and combat are refused
 useChar(friend, {})
 ZSettingsDB = friend.ZSettingsDB
+Z_BUNDLE = "ZS1:garbage"
+printed, reloads = {}, 0
 SlashCmdList.ZSETTINGS("import")
-for _, o in ipairs(frames) do
-  if o.kind == "EditBox" then win = o end
-  if o.kind == "Button" and o.scripts.OnClick then importButton = o end
-end
+check("3 damaged setup refused", said("damaged") and reloads == 0)
+Z_BUNDLE = nil
 printed = {}
-win.text = "ZS1:garbage"
-importButton.scripts.OnClick()
-local refused = false
-for _, p in ipairs(printed) do if p:find("damaged") then refused = true end end
-check("3 damaged string refused", refused)
+SlashCmdList.ZSETTINGS("import")
+check("3 missing setup explained", said("git pull"))
+Z_BUNDLE = text
 combat = true; printed = {}
-win.text = text; importButton.scripts.OnClick(); combat = false
+SlashCmdList.ZSETTINGS("import"); combat = false
 local prompted = false
 for _, o in ipairs(frames) do if o.scripts.OnKeyDown then prompted = true end end
 check("3 no key prompt in combat", not prompted)
-local blocked = false
-for _, p in ipairs(printed) do if p:find("not in combat") then blocked = true end end
-check("3 no import in combat", blocked)
+check("3 no import in combat", said("not in combat"))
+-- closing the prompt cancels the import
+SlashCmdList.ZSETTINGS("import")
+for _, o in ipairs(frames) do if o.scripts.OnHide then o.scripts.OnHide(o) end end
+pressKeys("A", "§")
+check("3 closed prompt imports nothing", reloads == 0)
 
 -- 4. undo puts the friend's setup back exactly
 useChar(friend, {})
 ZSettingsDB = friend.ZSettingsDB
+reloads = 0
 SlashCmdList.ZSETTINGS("undo")
+check("4 undo reloads the UI", reloads == 1)
 check("4 setting back", friend.cvars.nameplateShowEnemies == "1")
 check("4 keybind back", keyOf(accB, "MOVEFORWARD") == "W")
 check("4 imported macros removed", GetMacroIndexByName("Focus") == 0 and GetMacroIndexByName("Mana") == 0)
@@ -441,44 +467,9 @@ check("4 own macro still there", GetMacroIndexByName("Buddy macro") > 0)
 check("4 target click back", (function() for _, b in ipairs(friend.clicks) do if b.type == 3 and b.actionID == 2 then return true end end end)() == true)
 check("4 DBM settings back", DBM_AllSavedOptions.warnings == false)
 check("4 undo used up", ZSettingsDB.undo == nil)
-printed = {}
+printed, reloads = {}, 0
 SlashCmdList.ZSETTINGS("undo")
-local nothing = false
-for _, p in ipairs(printed) do if p:find("nothing to undo") then nothing = true end end
-check("4 second undo does nothing", nothing)
-
--- 5. the bundled setup: a friend updates the addon and types /z import, nothing to paste
-local friend2 = newChar("Mate", "Classic Beta PvP", newAccount(), { "Fireball" })
-friend2.cvars.nameplateShowEnemies = "1"
-Z_BUNDLE = text
-useChar(friend2, {})
-ZSettingsDB = nil
-printed = {}
-SlashCmdList.ZSETTINGS("")
-local offered = false
-for _, p in ipairs(printed) do if p:find("Zeroshin's") then offered = true end end
-check("5 /z names the bundled setup", offered)
-SlashCmdList.ZSETTINGS("import")
-local prompt
-for _, o in ipairs(frames) do if o.scripts.OnKeyDown then prompt = o end end
-check("5 bundled import asks for the keyboard", prompt ~= nil)
-prompt.scripts.OnKeyDown(prompt, "A"); prompt.scripts.OnKeyDown(prompt, "§")
-check("5 bundled setup applied", friend2.cvars.nameplateShowEnemies == "0")
-check("5 bundled keybinds converted", keyOf(friend2.account, "MULTIACTIONBAR2BUTTON1") == "A")
-check("5 bundled import saved an undo", ZSettingsDB and ZSettingsDB.undo ~= nil)
--- 6. a damaged bundle falls back to the paste window instead of applying anything
-Z_BUNDLE = "ZS1:broken"
-useChar(friend2, {})
-SlashCmdList.ZSETTINGS("import")
-local pasteShown = false
-for _, o in ipairs(frames) do if o.kind == "Button" and o.scripts.OnClick then pasteShown = true end end
-check("6 damaged bundle opens the paste window", pasteShown)
+check("4 second undo does nothing", said("nothing to undo") and reloads == 0)
 Z_BUNDLE = nil
--- 7. export keeps the string for publish.py
-useChar(me, {})
-ZSettingsDB = {}
-SlashCmdList.ZSETTINGS("export")
-for _, o in ipairs(frames) do if o.scripts.OnKeyDown then o.scripts.OnKeyDown(o, "Q") end end
-check("7 export saved for publishing", type(ZSettingsDB.export) == "string" and ZSettingsDB.export:sub(1, 4) == "ZS1:" and ZSettingsDB.exportMade ~= nil)
 
 io.write(("%d passed, %d failed\n"):format(passed, failed))

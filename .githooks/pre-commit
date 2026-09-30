@@ -1,6 +1,8 @@
 #!/bin/sh
-# Copies your latest /z export (WoW writes it to WTF\...\SavedVariables at /reload) into
-# Z-Settings/ZBundle.lua, so every commit ships the settings friends get with /z import.
+# Writes Z-Settings/ZBundle.lua on every commit:
+#   Z_VARS   each addon's SavedVariables names, read from the tocs (the client won't return them)
+#   Z_BUNDLE the latest /z export, which WoW writes to WTF\...\SavedVariables at /reload
+# and refuses the commit when Z_VARS changed since the game last loaded it: the export predates it.
 set -e
 root=$(git rev-parse --show-toplevel)
 sv=$(ls -t "$root"/../../WTF/Account/*/SavedVariables/Z-Settings.lua 2>/dev/null | head -n 1)
@@ -9,5 +11,25 @@ if [ -z "$text" ]; then
   echo "No Z-Settings export found. In game: /z export, then /reload, then commit again." >&2
   exit 1
 fi
-printf 'Z_BUNDLE = "%s"\n' "$text" > "$root/Z-Settings/ZBundle.lua"
-git add "$root/Z-Settings/ZBundle.lua"
+out="$root/Z-Settings/ZBundle.lua"
+vars() { sed -n '/^Z_VARS = {/,/^}/p' "$1" 2>/dev/null || true; }
+loaded=$(vars "$out")
+{
+  echo "-- Written by the commit hook. Edits here are overwritten."
+  echo "Z_VARS = {"
+  for dir in "$root"/*/; do
+    addon=$(basename "$dir")
+    names=$(cat "$dir"*.toc 2>/dev/null | tr -d '\r' | sed -n 's/^## *SavedVariables *: *//p' |
+      tr ',' '\n' | sed 's/^[[:space:]]*//; s/[[:space:]]*$//' | grep -v '^$' | sort -u |
+      sed 's/.*/"&"/' | paste -sd, - || true)
+    [ -n "$names" ] && echo "  [\"$addon\"] = { $names },"
+  done
+  echo "}"
+  printf 'Z_BUNDLE = "%s"\n' "$text"
+} > "$out"
+if [ "$(vars "$out")" != "$loaded" ]; then
+  echo "The addon list changed, so the export misses the new addons' settings." >&2
+  echo "In game: /reload, /z export, /reload, then commit again." >&2
+  exit 1
+fi
+git add "$out"

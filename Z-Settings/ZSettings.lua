@@ -1,6 +1,6 @@
 -- Z-Settings: share your whole interface with friends.
--- /z import applies the setup that ships with this addon (ZBundle.lua, written by the git commit hook),
--- /z import paste takes a pasted string, /z undo puts back what you had, /z export makes a string.
+-- /z export saves your setup for the git commit hook, /z import applies the setup that ships with this
+-- addon (ZBundle.lua, written by that hook), /z undo puts back what you had. Each reloads the UI itself.
 -- Shared: interface settings, keybinds (converted between QWERTY and AZERTY), Edit Mode, chat windows,
 -- enabled addons, every addon's account-wide settings, target/menu click casting and General macros that
 -- cast no spell. Left out: action bars, Cooldown Manager, character macros and spell macros (class-specific),
@@ -26,6 +26,13 @@ local CVAR_SKIP = { "^CACHE", "^last", "Tutorial", "closedInfoFrames", "hardTrac
   "^GamepadCameraSaved" }
 
 local function say(...) print("|cff8788eeZ-Settings|r:", ...) end
+-- a reload clears the chat, so these lines are kept and printed again once the UI is back
+local function note(line)
+  say(line)
+  ZSettingsDB = ZSettingsDB or {}
+  ZSettingsDB.notice = ZSettingsDB.notice or {}
+  table.insert(ZSettingsDB.notice, line)
+end
 
 local cvarNames
 local function readBinds()
@@ -236,14 +243,14 @@ local function applyClicks(wanted, exact)
   C_ClickBindings.SetProfileByInfo(profile)
 end
 
--- every installed addon's account-wide settings tables (SavedVariables, not the per-character ones)
+-- every installed addon's account-wide settings tables (SavedVariables, not the per-character ones).
+-- The client won't return a toc's SavedVariables line, so the commit hook reads the tocs into Z_VARS.
 local function addonTables()
   local out = {}
   for i = 1, C_AddOns.GetNumAddOns() do
     local addon = C_AddOns.GetAddOnInfo(i)
     if addon and not KEEP_ADDONS[addon] then
-      local list = C_AddOns.GetAddOnMetadata(addon, "SavedVariables")
-      for var in (list or ""):gmatch("[^,%s]+") do out[#out + 1] = { addon = addon, var = var } end
+      for _, var in ipairs(type(Z_VARS) == "table" and Z_VARS[addon] or {}) do out[#out + 1] = { addon = addon, var = var } end
     end
   end
   return out
@@ -349,7 +356,6 @@ end
 -- AZERTY means WoW names that row by its digits.
 local function askLayout(done)
   if InCombatLockdown() then say("not in combat") return end
-  window.box:ClearFocus()
   window:EnableKeyboard(true)
   window:SetPropagateKeyboardInput(false)
   local family
@@ -417,11 +423,11 @@ end
 
 local function decode(text)
   text = (text or ""):gsub("%s+", "")
-  if text:sub(1, #FORMAT) ~= FORMAT then return nil, "that's not a Z-Settings string" end
+  if text:sub(1, #FORMAT) ~= FORMAT then return nil, "that's not a Z-Settings setup" end
   local ok, data = pcall(function()
     return C_EncodingUtil.DeserializeCBOR(C_EncodingUtil.DecompressString(C_EncodingUtil.DecodeBase64(text:sub(#FORMAT + 1))))
   end)
-  if not ok or type(data) ~= "table" or data.format ~= 1 then return nil, "the string is damaged or incomplete" end
+  if not ok or type(data) ~= "table" or data.format ~= 1 then return nil, "the setup is damaged or incomplete" end
   return data
 end
 
@@ -432,137 +438,100 @@ local function doImport(text, layout)
   local from = data.layout or "qwerty"
   if layout ~= "unknown" and from ~= "unknown" and from ~= layout then
     data.binds = convertBinds(data.binds or {}, from, layout)
-    say(("keybinds converted from %s to %s"):format(LAYOUT_NAMES[from] or from, LAYOUT_NAMES[layout] or layout))
+    note(("keybinds converted from %s to %s"):format(LAYOUT_NAMES[from] or from, LAYOUT_NAMES[layout] or layout))
   end
   ZSettingsDB = ZSettingsDB or {}
   ZSettingsDB.undo = encode((capture(false)))
   local macros, tables, missing, addons = applyAll(data, false)
-  say(("imported %s's setup (%s): %d macros, %d addon settings, %d addons switched."):format(
+  note(("imported %s's setup (%s): %d macros, %d addon settings, %d addons switched."):format(
     data.by or "?", data.made or "?", macros, tables, addons))
-  if #missing > 0 then say("settings for addons you don't have were skipped: " .. table.concat(missing, ", ")) end
-  say("type /reload now to finish. /z undo puts back what you had.")
+  if #missing > 0 then note("settings for addons you don't have were skipped: " .. table.concat(missing, ", ")) end
+  note("/z undo puts back what you had")
   return true
 end
 
--- the window ----------------------------------------------------------------------------------
+-- the key prompt ------------------------------------------------------------------------------
 
-local function showWindow(mode, text)
+local function showPrompt(title)
   if not window then
     window = CreateFrame("Frame", "ZSettingsWindow", UIParent, "BackdropTemplate")
-    window:SetSize(620, 420)
+    window:SetSize(460, 100)
     window:SetPoint("CENTER")
     window:SetFrameStrata("DIALOG")
-    window:SetMovable(true)
-    window:EnableMouse(true)
-    window:RegisterForDrag("LeftButton")
-    window:SetScript("OnDragStart", window.StartMoving)
-    window:SetScript("OnDragStop", window.StopMovingOrSizing)
     window:SetBackdrop({ bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
       edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", tile = true, tileSize = 32, edgeSize = 32,
       insets = { left = 8, right = 8, top = 8, bottom = 8 } })
     window.title = window:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    window.title:SetPoint("TOP", 0, -16)
-    window.hint = window:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-    window.hint:SetPoint("TOP", window.title, "BOTTOM", 0, -6)
+    window.title:SetPoint("TOP", 0, -20)
+    window.hint = window:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    window.hint:SetPoint("TOP", window.title, "BOTTOM", 0, -14)
     local close = CreateFrame("Button", nil, window, "UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", -6, -6)
-    local scroll = CreateFrame("ScrollFrame", nil, window, "UIPanelScrollFrameTemplate")
-    scroll:SetPoint("TOPLEFT", 20, -60)
-    scroll:SetPoint("BOTTOMRIGHT", -40, 50)
-    local box = CreateFrame("EditBox", nil, scroll)
-    box:SetMultiLine(true)
-    box:SetMaxLetters(0)
-    box:SetFontObject(ChatFontNormal)
-    box:SetWidth(540)
-    box:SetAutoFocus(false)
-    box:SetScript("OnEscapePressed", function() window:Hide() end)
-    scroll:SetScrollChild(box)
-    window.box = box
-    window.action = CreateFrame("Button", nil, window, "UIPanelButtonTemplate")
-    window.action:SetSize(140, 24)
-    window.action:SetPoint("BOTTOM", 0, 16)
-    window.action:SetText("Import")
-    window.action:SetScript("OnClick", function()
-      local text = window.box:GetText()
-      local ok, err = decode(text)
-      if not ok then say(err) return end
-      askLayout(function(layout)
-        if doImport(text, layout) then window:Hide() end
-      end)
-    end)
+    -- closing cancels: no key press is waited for any more
+    window:SetScript("OnHide", function(self) self:SetScript("OnKeyDown", nil); self:EnableKeyboard(false) end)
   end
-  window.box:SetText(text or "")
-  if mode == "export" then
-    window.title:SetText("Z-Settings: your setup")
-    window.hint:SetText("Ctrl+C to copy, then send it to your friend")
-    window.action:Hide()
-    window:Show()
-    window.box:SetFocus()
-    window.box:HighlightText()
-  else
-    window.title:SetText("Z-Settings: import a setup")
-    window.hint:SetText("Paste the string with Ctrl+V, then click Import")
-    window.action:Show()
-    window:Show()
-    window.box:SetFocus()
-  end
+  window.title:SetText(title)
+  window.hint:SetText("")
+  window:Show()
 end
 
 -- commands ------------------------------------------------------------------------------------
 
 -- Z_BUNDLE is written into ZBundle.lua by the git commit hook: the setup that ships with the addon
 local function bundle()
-  local text = type(Z_BUNDLE) == "string" and Z_BUNDLE or nil
-  return text and decode(text) and text or nil
+  if type(Z_BUNDLE) ~= "string" then return nil, "no setup in this addon yet: git pull in the AddOns folder, then restart WoW" end
+  local data, err = decode(Z_BUNDLE)
+  if not data then return nil, err .. ": git pull in the AddOns folder again" end
+  return Z_BUNDLE, data
 end
 
 SLASH_ZSETTINGS1 = "/z"
 SlashCmdList.ZSETTINGS = function(msg)
   msg = (msg or ""):lower():gsub("^%s+", ""):gsub("%s+$", "")
+  if InCombatLockdown() and msg ~= "" then say("not in combat") return end
   if msg == "export" then
-    if InCombatLockdown() then say("not in combat") return end
     local data, skipped = capture(true)
-    showWindow("export", "")
+    showPrompt("Z-Settings: export your setup")
     askLayout(function(layout)
       data.layout = layout
-      local text = encode(data)
       ZSettingsDB = ZSettingsDB or {}
-      ZSettingsDB.export, ZSettingsDB.exportMade = text, data.made   -- copied into ZBundle.lua by the commit hook
-      showWindow("export", text)
-      say(("your keyboard: %s. Friends on another layout get their keybinds converted."):format(LAYOUT_NAMES[layout] or "unknown"))
-      if #skipped > 0 then say("not included (too large or not shareable): " .. table.concat(skipped, ", ")) end
-      say("saved for publishing: /reload, then commit and push the AddOns folder")
+      ZSettingsDB.export, ZSettingsDB.exportMade = encode(data), data.made   -- copied into ZBundle.lua by the commit hook
+      note(("your keyboard: %s. Friends on another layout get their keybinds converted."):format(LAYOUT_NAMES[layout] or "unknown"))
+      if #skipped > 0 then note("not included (too large or not shareable): " .. table.concat(skipped, ", ")) end
+      note("export saved: commit and push the AddOns folder")
+      window:Hide()
+      ReloadUI()
     end)
   elseif msg == "import" then
-    local text = bundle()
-    if not text then showWindow("import") return end
-    if InCombatLockdown() then say("not in combat") return end
-    local data = decode(text)
-    showWindow("import", "")
-    window.title:SetText(("Z-Settings: importing %s's setup (%s)"):format(data.by or "?", data.made or "?"))
-    window.action:Hide()
+    local text, data = bundle()
+    if not text then say(data) return end
+    showPrompt(("Z-Settings: import %s's setup (%s)"):format(data.by or "?", data.made or "?"))
     askLayout(function(layout)
-      if doImport(text, layout) then window:Hide() end
+      window:Hide()
+      if doImport(text, layout) then ReloadUI() end
     end)
-  elseif msg == "import paste" then
-    showWindow("import")
   elseif msg == "undo" then
-    if InCombatLockdown() then say("not in combat") return end
     local data = ZSettingsDB and ZSettingsDB.undo and decode(ZSettingsDB.undo)
     if not data then say("nothing to undo") return end
     applyAll(data, true)
     ZSettingsDB.undo = nil
-    say("your setup from before the import is back. Type /reload now to finish.")
+    note("your setup from before the import is back")
+    ReloadUI()
   else
-    local b = bundle() and decode(bundle())
-    say("/z import: apply " .. (b and ("the setup in this addon: %s's, %s"):format(b.by or "?", b.made or "?") or "a pasted setup string"))
-    say("/z import paste: paste a string instead")
+    local text, data = bundle()
+    say("/z import: apply " .. (text and ("%s's setup from %s"):format(data.by or "?", data.made or "?") or "the setup in this addon (none yet)"))
     say("/z undo: put back what you had before the last import")
-    say("/z export: make a string of your own setup")
+    say("/z export: save your own setup for publishing")
   end
 end
 
--- keeps imported addon settings assigned while the game saves them at /reload or logout
+-- keeps imported addon settings assigned while the game saves them at /reload or logout,
+-- and prints what the last command said before it reloaded the UI
 local saver = CreateFrame("Frame")
+saver:RegisterEvent("PLAYER_LOGIN")
 saver:RegisterEvent("PLAYER_LOGOUT")
-saver:SetScript("OnEvent", assignPending)
+saver:SetScript("OnEvent", function(_, event)
+  if event == "PLAYER_LOGOUT" then assignPending() return end
+  for _, line in ipairs(ZSettingsDB and ZSettingsDB.notice or {}) do say(line) end
+  if ZSettingsDB then ZSettingsDB.notice = nil end
+end)

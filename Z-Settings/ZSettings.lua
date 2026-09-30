@@ -8,6 +8,17 @@
 
 local FORMAT = "ZS1:"
 local MAX_ACCOUNT_MACROS = (Constants and Constants.MacroConsts and Constants.MacroConsts.MAX_ACCOUNT_MACROS) or 120
+-- addon tables that hold your data or state, not settings: copying them would replace the friend's own
+local DATA_TABLES = { Attune_DB = true, RXPData = true, AUCTIONATOR_POSTING_HISTORY = true,
+  AUCTIONATOR_SHOPPING_LISTS = true, AUCTIONATOR_SELLING_GROUPS = true, AUCTIONATOR_RECENT_SEARCHES = true,
+  AUCTIONATOR_VENDOR_PRICE_CACHE = true, AUCTIONATOR_PRICE_DATABASE = true, AUCTIONATOR_SAVEDVARS = true,
+  DBM_ModsToLoadWithFullTestSupport = true, DBM_TestResults_Export = true, DBM_Test_DefaultTimeWarp = true,
+  DBM_Test_PersistentImports = true, DBM_Test_Settings = true }
+-- Tables with per-character profiles (AceDB's profileKeys) can't be shared either: the friend's
+-- characters aren't in them, so they'd start on defaults and lose their own profiles.
+local function shareable(var, value)
+  return not DATA_TABLES[var] and not (type(value) == "table" and value.profileKeys ~= nil)
+end
 local MAX_ADDON_TABLE = 300000   -- bytes of one addon's settings before compression; larger ones are listed, not shared
 -- never shared or switched: this addon and the personal setup addons
 local KEEP_ADDONS = { ["Z-Settings"] = true, BarSync = true, ZeroshinSetup = true }
@@ -309,7 +320,7 @@ local function readAddonSettings()
   local out, skipped = {}, {}
   for _, t in ipairs(addonTables()) do
     local value = _G[t.var]
-    if value ~= nil then
+    if value ~= nil and shareable(t.var, value) then
       local ok, packed = pcall(C_EncodingUtil.SerializeCBOR, value)
       if ok and packed and #packed <= MAX_ADDON_TABLE then out[t.var] = { addon = t.addon, data = packed }
       else skipped[#skipped + 1] = t.addon .. " (" .. t.var .. (ok and ", too large" or ", not shareable") .. ")" end
@@ -324,7 +335,8 @@ local function assignPending()
   for var, value in pairs(pending) do _G[var] = value end
 end
 
-local function applyAddonSettings(settings)
+-- exact (undo) restores every table it saved, the ones import leaves alone included
+local function applyAddonSettings(settings, exact)
   local installed, done, missing = {}, 0, {}
   for i = 1, C_AddOns.GetNumAddOns() do
     local name = C_AddOns.GetAddOnInfo(i)
@@ -333,7 +345,7 @@ local function applyAddonSettings(settings)
   for var, entry in pairs(settings) do
     if installed[entry.addon] and not KEEP_ADDONS[entry.addon] then
       local ok, value = pcall(C_EncodingUtil.DeserializeCBOR, entry.data)
-      if ok then pending[var] = value; done = done + 1 end
+      if ok and (exact or shareable(var, value)) then pending[var] = value; done = done + 1 end
     else
       missing[entry.addon] = true
     end
@@ -414,7 +426,7 @@ local function applyAll(data, exact)
   local addonsChanged = data.addons and applyAddons(data.addons) or 0
   local macros = applyGeneralMacros(data.macros or {}, exact)
   applyClicks(data.clicks or {}, exact)
-  local tables, missing = applyAddonSettings(data.settings or {})
+  local tables, missing = applyAddonSettings(data.settings or {}, exact)
   return macros, tables, missing, addonsChanged
 end
 

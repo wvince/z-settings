@@ -314,17 +314,17 @@ me.clicks = { { type = 3, actionID = 1, button = "LeftButton", modifiers = 0 }, 
 me.cvars.nameplateShowEnemies = "0"; me.cvars.NamePlateHorizontalScale = "1.4"; me.cvars.nameplateMaxDistance = "60"; me.cvars.graphicsQuality = "3"; me.cvars.enableMultiActionBars = "31"
 accA.editmode.layouts.layouts[1].systems[1].x = 77
 me.chat[3] = { "Guild", 18, 0, 0, 0, 0.6, true, true, 3, false, nil, nil, nil, nil, nil, { "GUILD" }, {} }
-me.addons = { DBM = true, BetterBlizzFrames = true, BigData = true, Weird = true, BarSync = true, ["Z-Settings"] = true }
+me.addons = { Attune = true, Guide = true, DBM = true, BetterBlizzFrames = true, BigData = true, Weird = true, BarSync = true, ["Z-Settings"] = true }
 me.cdm = "my-warlock-cdm"
 SVS = { DBM = "DBM_AllSavedOptions", BetterBlizzFrames = "BetterBlizzFramesDB", BigData = "BigDataDB", Weird = "WeirdDB",
-        BarSync = "BarSyncDB", ["Z-Settings"] = "ZSettingsDB" }
+        BarSync = "BarSyncDB", ["Z-Settings"] = "ZSettingsDB", Attune = "Attune_DB", Guide = "GuideDB" }
 
 -- the friend's own setup
 accB.general = { { "Buddy macro", 9, "/wave" } }
 accB.binds[1][2] = "W"
 friend.clicks = { { type = 3, actionID = 2, button = "LeftButton", modifiers = 0 }, { type = 1, actionID = 133, button = "RightButton", modifiers = 1 } }
 friend.cvars.nameplateShowEnemies = "1"
-friend.addons = { DBM = true, BetterBlizzFrames = nil, BigData = false, Weird = false, BarSync = false, ["Z-Settings"] = true, Details = true }
+friend.addons = { Attune = true, Guide = true, DBM = true, BetterBlizzFrames = nil, BigData = false, Weird = false, BarSync = false, ["Z-Settings"] = true, Details = true }
 friend.addons.BetterBlizzFrames = nil  -- not installed
 friend.cdm = "friend-mage-cdm"
 
@@ -352,7 +352,8 @@ local function fire(event)
   for _, o in ipairs(frames) do if o.events[event] then o.scripts.OnEvent(o, event) end end
 end
 useChar(me, { DBM_AllSavedOptions = { warnings = true, bars = { size = 2 } }, BetterBlizzFramesDB = { castbar = 1 },
-  BigDataDB = { blob = string.rep("x", 400000) }, WeirdDB = { f = function() end }, BarSyncDB = { secret = 1 } })
+  BigDataDB = { blob = string.rep("x", 400000) }, Attune_DB = { toons = { Zeroshin = 1 } },
+  GuideDB = { profileKeys = { ["Zeroshin - PvP"] = "Zeroshin - PvP" }, profiles = { ["Zeroshin - PvP"] = { size = 2 } } }, WeirdDB = { f = function() end }, BarSyncDB = { secret = 1 } })
 ZSettingsDB = nil
 printed, reloads = {}, 0
 SlashCmdList.ZSETTINGS("export")
@@ -376,6 +377,9 @@ check("1 DBM settings shared", data.settings.DBM_AllSavedOptions ~= nil)
 check("1 BarSync never shared", data.settings.BarSyncDB == nil)
 check("1 oversized table left out", data.settings.BigDataDB == nil)
 check("1 unshareable table left out", data.settings.WeirdDB == nil)
+check("1 character data left out", data.settings.Attune_DB == nil)
+check("1 per-character profiles left out", data.settings.GuideDB == nil)
+check("1 deliberate leave-outs not reported", not said("Attune") and not said("GuideDB"))
 check("1 left-out tables listed", said("BigData") and said("Weird"))
 -- the reload wiped the chat: the messages come back once the UI is up
 printed = {}
@@ -463,6 +467,21 @@ local fem = full.account.editmode.layouts
 check("2 full slots fall back to my layouts", #fem.layouts == 1 and fem.layouts[1].layoutName == "Main" and fem.layouts[1].systems[1].x == 77)
 check("2 full slots fallback explained", said("no free layout slot"))
 
+-- an older bundle that still carries data tables can't overwrite the friend's own
+do
+  local old = C_EncodingUtil.DeserializeCBOR(C_EncodingUtil.DecompressString(C_EncodingUtil.DecodeBase64(text:sub(5))))
+  old.settings.Attune_DB = { addon = "Attune", data = C_EncodingUtil.SerializeCBOR({ toons = { Zeroshin = 1 } }) }
+  old.settings.GuideDB = { addon = "Guide", data = C_EncodingUtil.SerializeCBOR({ profileKeys = {}, profiles = {} }) }
+  Z_BUNDLE = "ZS1:" .. C_EncodingUtil.EncodeBase64(C_EncodingUtil.CompressString(C_EncodingUtil.SerializeCBOR(old)))
+  useChar(friend, { Attune_DB = { toons = { Buddy = 1 } }, GuideDB = { profileKeys = { ["Buddy - PvP"] = "Buddy - PvP" } } })
+  ZSettingsDB = friend.ZSettingsDB
+  SlashCmdList.ZSETTINGS("import"); pressKeys("A")
+  check("2 friend's character data kept", Attune_DB.toons.Buddy == 1 and Attune_DB.toons.Zeroshin == nil)
+  check("2 friend's profiles kept", GuideDB.profileKeys["Buddy - PvP"] ~= nil)
+  friend.ZSettingsDB.undo = undoBefore
+  Z_BUNDLE = text
+end
+
 -- 3. a damaged or missing setup and combat are refused
 useChar(friend, {})
 ZSettingsDB = friend.ZSettingsDB
@@ -504,6 +523,12 @@ check("4 undo used up", ZSettingsDB.undo == nil)
 printed, reloads = {}, 0
 SlashCmdList.ZSETTINGS("undo")
 check("4 second undo does nothing", said("nothing to undo") and reloads == 0)
+-- an undo saved by an older version holds the friend's data tables too, and puts them back
+useChar(friend, { Attune_DB = { toons = { Zeroshin = 1 } } })
+ZSettingsDB = { undo = "ZS1:" .. C_EncodingUtil.EncodeBase64(C_EncodingUtil.CompressString(C_EncodingUtil.SerializeCBOR({
+  format = 1, settings = { Attune_DB = { addon = "Attune", data = C_EncodingUtil.SerializeCBOR({ toons = { Buddy = 1 } }) } } }))) }
+SlashCmdList.ZSETTINGS("undo")
+check("4 undo restores the friend's own data tables", Attune_DB.toons.Buddy == 1 and Attune_DB.toons.Zeroshin == nil)
 Z_BUNDLE = nil
 
 io.write(("%d passed, %d failed\n"):format(passed, failed))

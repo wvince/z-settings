@@ -305,6 +305,11 @@ accA.binds[#accA.binds + 1] = { "MULTIACTIONBAR2BUTTON2", "SHIFT-1" }
 accA.binds[#accA.binds + 1] = { "MULTIACTIONBAR2BUTTON3", "ALT-Z" }
 accA.binds[#accA.binds + 1] = { "MULTIACTIONBAR2BUTTON4", "SHIFT--" }
 accA.binds[#accA.binds + 1] = { "MULTIACTIONBAR2BUTTON5", "M" }
+accA.binds[#accA.binds + 1] = { "MULTIACTIONBAR3BUTTON1", "ALT-Q" }
+accA.binds[#accA.binds + 1] = { "STRAFELEFT", "A" }
+accA.binds[#accA.binds + 1] = { "MULTIACTIONBAR3BUTTON4", "SHIFT-W" }
+accA.binds[#accA.binds + 1] = { "MULTIACTIONBAR3BUTTON2", "F5" }
+accA.binds[#accA.binds + 1] = { "MULTIACTIONBAR3BUTTON3", "BUTTON3" }
 me.clicks = { { type = 3, actionID = 1, button = "LeftButton", modifiers = 0 }, { type = 2, actionID = 121, button = "LeftButton", modifiers = 1 } }
 me.cvars.nameplateShowEnemies = "0"; me.cvars.NamePlateHorizontalScale = "1.4"; me.cvars.nameplateMaxDistance = "60"; me.cvars.graphicsQuality = "3"; me.cvars.enableMultiActionBars = "31"
 accA.editmode.layouts.layouts[1].systems[1].x = 77
@@ -397,13 +402,16 @@ check("2 graphics untouched", friend.cvars.graphicsQuality == "9")
 check("2 nameplate size and distance applied", friend.cvars.NamePlateHorizontalScale == "1.4" and friend.cvars.nameplateMaxDistance == "60")
 check("2 keybinds applied", keyOf(accB, "MOVEFORWARD") == "UP")
 check("2 Q becomes A on AZERTY", keyOf(accB, "MULTIACTIONBAR2BUTTON1") == "A")
-check("2 Shift+1 becomes Shift+& on AZERTY", keyOf(accB, "MULTIACTIONBAR2BUTTON2") == "SHIFT-&")
+check("2 Alt+Q becomes Alt+A on AZERTY", keyOf(accB, "MULTIACTIONBAR3BUTTON1") == "ALT-A")
+check("2 A becomes Q on AZERTY", keyOf(accB, "STRAFELEFT") == "Q")
 check("2 Alt+Z becomes Alt+W on AZERTY", keyOf(accB, "MULTIACTIONBAR2BUTTON3") == "ALT-W")
-check("2 Shift+minus becomes Shift+) on Belgian AZERTY", keyOf(accB, "MULTIACTIONBAR2BUTTON4") == "SHIFT-)")
+check("2 number row stays (WoW maps it)", keyOf(accB, "ACTIONBUTTON2") == "1" and keyOf(accB, "MULTIACTIONBAR2BUTTON2") == "SHIFT-1")
+check("2 Shift+minus stays", keyOf(accB, "MULTIACTIONBAR2BUTTON4") == "SHIFT--")
 check("2 M becomes , on AZERTY", keyOf(accB, "MULTIACTIONBAR2BUTTON5") == ",")
+check("2 F-keys and mouse buttons stay", keyOf(accB, "MULTIACTIONBAR3BUTTON2") == "F5" and keyOf(accB, "MULTIACTIONBAR3BUTTON3") == "BUTTON3")
 check("2 arrow key untouched", keyOf(accB, "MOVEFORWARD") == "UP")
 check("2 E stays E", keyOf(accB, "ACTIONBUTTON1") == "E")
-check("2 1 becomes & on AZERTY", keyOf(accB, "ACTIONBUTTON2") == "&")
+check("2 Shift+W becomes Shift+Z on AZERTY", keyOf(accB, "MULTIACTIONBAR3BUTTON4") == "SHIFT-Z")
 local em = accB.editmode.layouts
 check("2 friend's own layout kept", em.layouts[1].layoutName == "Main" and em.layouts[1].systems[1].x == 1)
 check("2 my layout added as Zeroshin", #em.layouts == 2 and em.layouts[2].layoutName == "Zeroshin" and em.layouts[2].systems[1].x == 77)

@@ -348,45 +348,30 @@ end
 local window
 
 -- keyboard layouts ------------------------------------------------------------------------------
--- The same physical keys, row by row, on each layout (WoW names a key by what it types).
--- Converting a keybind: find the key's position on the sender's layout, take the receiver's
--- key at that position. Modifiers, F-keys, numpad and mouse buttons stay as they are.
-local LAYOUTS = {
-  qwerty = { "`","1","2","3","4","5","6","7","8","9","0","-","=", "Q","W","E","R","T","Y","U","I","O","P","[","]","\\",
-             "A","S","D","F","G","H","J","K","L",";","'", "Z","X","C","V","B","N","M",",",".","/" },
-  ["azerty-be"] = { "²","&","é","\"","'","(","§","è","!","ç","à",")","-", "A","Z","E","R","T","Y","U","I","O","P","^","$","µ",
-             "Q","S","D","F","G","H","J","K","L","M","ù", "W","X","C","V","B","N",",",";",":","=" },
+-- Letter keys move to the letter at the same physical spot; WoW maps every other key itself.
+-- Modifiers are kept, and a moved key wins over whatever was bound to the key it lands on.
+local KEY_MOVES = {
+  ["qwerty>azerty-be"] = { Q = "A", A = "Q", W = "Z", Z = "W", M = "," },
+  ["azerty-be>qwerty"] = { A = "Q", Q = "A", Z = "W", W = "Z", M = ";" },
 }
 local LAYOUT_NAMES = { qwerty = "QWERTY", ["azerty-be"] = "Belgian AZERTY" }
 
-local function position(layout, key)
-  for i, k in ipairs(LAYOUTS[layout] or {}) do
-    if k == key or k:upper() == key:upper() then return i end
-  end
-end
-
-local function convertKey(key, from, to)
-  if from == to or not LAYOUTS[from] or not LAYOUTS[to] then return key end
-  -- peel off modifiers: "ALT-SHIFT-Q" is ALT-, SHIFT- and the key Q; "SHIFT--" is Shift+minus
-  local mods, base = "", key
-  while true do
-    local m = base:match("^(%u+)%-.")
-    if m == "ALT" or m == "CTRL" or m == "SHIFT" or m == "META" then
-      mods, base = mods .. m .. "-", base:sub(#m + 2)
-    else
-      break
-    end
-  end
-  if base == "" then return key end
-  local i = position(from, base)
-  if not i then return key end
-  return mods .. LAYOUTS[to][i]
+local function convertKey(key, moves)
+  local mods, base = key:match("^(.-)(.)$")   -- "ALT-SHIFT-Q" is "ALT-SHIFT-" and "Q"
+  if mods ~= "" and mods:sub(-1) ~= "-" then return key end   -- a named key like F5 or BUTTON3
+  local to = moves[base]
+  return to and mods .. to or key
 end
 
 local function convertBinds(binds, from, to)
-  if from == to then return binds end
-  local out = {}
-  for key, command in pairs(binds) do out[convertKey(key, from, to)] = command end
+  local moves = KEY_MOVES[from .. ">" .. to]
+  if not moves then return binds end
+  local out, moved = {}, {}
+  for key, command in pairs(binds) do
+    local new = convertKey(key, moves)
+    if new ~= key then out[new], moved[new] = command, true
+    elseif not moved[key] then out[key] = command end
+  end
   return out
 end
 

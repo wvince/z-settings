@@ -20,7 +20,7 @@ Requires [Git for Windows](https://git-scm.com/download/win) and collaborator ac
 2. In `World of Warcraft\_classic_beta_\Interface`, rename `AddOns` to `AddOns-old`.
 3. From `Interface`, run `git clone https://github.com/wvince/z-settings.git AddOns`.
 4. Optional: copy personal addons from `AddOns-old` into `AddOns`.
-5. Start WoW, run `/z import` and press the two keys requested.
+5. Start WoW, run `/z import` and press the key right of Tab (QWERTY or Belgian AZERTY).
 
 ## Update
 
@@ -35,10 +35,12 @@ discards them.
 
 | Shared | Not shared |
 |---|---|
-| Interface settings, keybinds, Edit Mode layouts, chat windows | Action bars, Cooldown Manager |
+| Interface settings, nameplates, keybinds, chat windows | Action bar contents, Cooldown Manager |
 | Enabled addons and their settings | Class macros and spell macros |
 | Target and menu click casting, General macros without spells | Graphics, sound |
 
+The exporter's active Edit Mode layout arrives as a layout named `Zeroshin`, overwriting an earlier
+one; other layouts stay. With every layout slot taken, the exporter's layouts replace them all.
 `/z undo` restores the settings from before the last import.
 
 ## Publishing

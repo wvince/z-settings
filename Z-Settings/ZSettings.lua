@@ -15,8 +15,15 @@ local KEEP_ADDONS = { ["Z-Settings"] = true, BarSync = true, ZeroshinSetup = tru
 -- Settings: every one Blizzard stores server-side per account or character (the interface
 -- options), except these categories and the per-character state below
 local CVAR_EXCLUDED_CATEGORIES = { [0] = true, [1] = true, [6] = true, [7] = true, [8] = true, [9] = true } -- Debug, Graphics, Net, Sound, Gm, Reveal
--- Always copied, whatever the game's flags say
-local CVAR_ALWAYS = { enableMultiActionBars = true } -- which action bars are switched on
+-- Always copied, whatever category or storage the game gives them: which action bars are on, and
+-- every nameplate setting (size, scale, distance and stacking are stored locally, not server-side)
+local CVAR_ALWAYS = { enableMultiActionBars = true }
+local CVAR_ALWAYS_PATTERNS = { "^[Nn]ame[Pp]late" }
+local function alwaysCopied(name)
+  if CVAR_ALWAYS[name] then return true end
+  for _, pattern in ipairs(CVAR_ALWAYS_PATTERNS) do if name:find(pattern) then return true end end
+  return false
+end
 local CVAR_SKIP = { "^CACHE", "^last", "Tutorial", "closedInfoFrames", "hardTracked", "trackedQuest",
   "^cameraSaved", "perksActivities", "petJournal", "^lfgSelected", "^agentUILocale", "^textLocale",
   "^audioLocale", "^portal", "^realm", "^account", "gameTip", "^engineSurvey", "^videoOptions",
@@ -49,12 +56,12 @@ local function syncableCVars()
   if cvarNames then return cvarNames end
   cvarNames = {}
   for _, c in ipairs(ConsoleGetAllCommands()) do
-    if c.commandType == 0 and (CVAR_ALWAYS[c.command] or not CVAR_EXCLUDED_CATEGORIES[c.category]) then
+    if c.commandType == 0 and (alwaysCopied(c.command) or not CVAR_EXCLUDED_CATEGORIES[c.category]) then
       local skip = false
       for _, pattern in ipairs(CVAR_SKIP) do if c.command:find(pattern) then skip = true; break end end
       if not skip then
         local _, _, account, character, locked, secure, readOnly = C_CVar.GetCVarInfo(c.command)
-        if (account or character or CVAR_ALWAYS[c.command]) and not locked and not secure and not readOnly then
+        if (account or character or alwaysCopied(c.command)) and not locked and not secure and not readOnly then
           cvarNames[#cvarNames + 1] = c.command
         end
       end
@@ -77,6 +84,48 @@ local function readEditMode()
   local ok2, settings = pcall(C_EditMode.GetAccountSettings)
   if not ok or not ok2 then return nil end
   return { layouts = layouts, settings = settings }
+end
+
+-- Import adds your active layout to the friend's layouts under this name, or overwrites the one
+-- already there; their own layouts stay. With every layout slot taken, all of yours replace theirs.
+local LAYOUT_NAME = "Zeroshin"
+local function applyEditMode(em, exact)
+  local mine = em.layouts
+  if not mine then return end
+  local presets = (Enum.EditModePresetLayoutsMeta and Enum.EditModePresetLayoutsMeta.NumValues) or 2
+  local account = (Enum.EditModeLayoutType and Enum.EditModeLayoutType.Account) or 1
+  local max = (Constants and Constants.EditModeConsts and Constants.EditModeConsts.EditModeMaxLayoutsPerType) or 5
+  local shared = mine.layouts and mine.layouts[(mine.activeLayout or 0) - presets]
+  local ok, theirs = pcall(C_EditMode.GetLayouts)
+  if exact or not shared or not ok or type(theirs) ~= "table" or type(theirs.layouts) ~= "table" then
+    pcall(C_EditMode.SaveLayouts, mine)
+    if mine.activeLayout then pcall(C_EditMode.SetActiveLayout, mine.activeLayout) end
+    return
+  end
+  local layout = {}
+  for k, v in pairs(shared) do layout[k] = v end
+  layout.layoutName, layout.layoutType = LAYOUT_NAME, account
+  local at, accounts, lastAccount = nil, 0, 0
+  for i, l in ipairs(theirs.layouts) do
+    if l.layoutName == LAYOUT_NAME then at = i end
+    if l.layoutType == account then accounts, lastAccount = accounts + 1, i end
+  end
+  if at then
+    theirs.layouts[at] = layout
+    note(("Edit Mode: layout %s updated and active"):format(LAYOUT_NAME))
+  elseif accounts < max then
+    at = lastAccount + 1   -- account layouts come before character ones
+    table.insert(theirs.layouts, at, layout)
+    note(("Edit Mode: layout %s added and active"):format(LAYOUT_NAME))
+  else
+    pcall(C_EditMode.SaveLayouts, mine)
+    if mine.activeLayout then pcall(C_EditMode.SetActiveLayout, mine.activeLayout) end
+    note(("Edit Mode: no free layout slot for %s, so all your layouts were replaced"):format(LAYOUT_NAME))
+    return
+  end
+  theirs.activeLayout = at + presets
+  pcall(C_EditMode.SaveLayouts, theirs)
+  pcall(C_EditMode.SetActiveLayout, theirs.activeLayout)
 end
 
 local function values(t)
@@ -305,20 +354,10 @@ local window
 local LAYOUTS = {
   qwerty = { "`","1","2","3","4","5","6","7","8","9","0","-","=", "Q","W","E","R","T","Y","U","I","O","P","[","]","\\",
              "A","S","D","F","G","H","J","K","L",";","'", "Z","X","C","V","B","N","M",",",".","/" },
-  ["azerty-fr"] = { "²","&","é","\"","'","(","-","è","_","ç","à",")","=", "A","Z","E","R","T","Y","U","I","O","P","^","$","*",
-             "Q","S","D","F","G","H","J","K","L","M","ù", "W","X","C","V","B","N",",",";",":","!" },
   ["azerty-be"] = { "²","&","é","\"","'","(","§","è","!","ç","à",")","-", "A","Z","E","R","T","Y","U","I","O","P","^","$","µ",
              "Q","S","D","F","G","H","J","K","L","M","ù", "W","X","C","V","B","N",",",";",":","=" },
 }
--- AZERTY with a number row WoW names 1-0 instead of & é " (in case the client does that)
-for _, name in ipairs({ "azerty-fr", "azerty-be" }) do
-  local digits = {}
-  for i, k in ipairs(LAYOUTS[name]) do digits[i] = k end
-  for i = 2, 11 do digits[i] = LAYOUTS.qwerty[i] end
-  LAYOUTS[name .. "-digits"] = digits
-end
-local LAYOUT_NAMES = { qwerty = "QWERTY", ["azerty-fr"] = "French AZERTY", ["azerty-be"] = "Belgian AZERTY",
-  ["azerty-fr-digits"] = "French AZERTY", ["azerty-be-digits"] = "Belgian AZERTY" }
+local LAYOUT_NAMES = { qwerty = "QWERTY", ["azerty-be"] = "Belgian AZERTY" }
 
 local function position(layout, key)
   for i, k in ipairs(LAYOUTS[layout] or {}) do
@@ -351,37 +390,17 @@ local function convertBinds(binds, from, to)
   return out
 end
 
--- Two key presses. The key right of Tab: letters are always named by what they type, so Q means
--- QWERTY and A means AZERTY. Then the 6 key: French AZERTY types -, Belgian types §, and a 6 on
--- AZERTY means WoW names that row by its digits.
+-- One key press: the key right of Tab types Q on QWERTY and A on Belgian AZERTY.
 local function askLayout(done)
   if InCombatLockdown() then say("not in combat") return end
   window:EnableKeyboard(true)
   window:SetPropagateKeyboardInput(false)
-  local family
   window.hint:SetText("Press the key right of Tab (the one below 1 and 2)")
   window:SetScript("OnKeyDown", function(self, key)
     key = (key or ""):upper()
-    if not family then
-      if key == "Q" then
-        family = "qwerty"
-      elseif key == "A" then
-        family = "azerty"
-        self.hint:SetText("Now press the 6 key on the top row (not the numpad)")
-        return
-      else
-        family = "unknown"
-      end
-    end
-    local layout = family
-    if family == "azerty" then
-      if key == "-" then layout = "azerty-fr"
-      elseif key == "§" then layout = "azerty-be"
-      elseif key == "6" then layout = "azerty-be-digits"
-      else layout = "azerty-be" end
-    end
     self:SetScript("OnKeyDown", nil)
     self:EnableKeyboard(false)
+    local layout = (key == "Q" and "qwerty") or (key == "A" and "azerty-be") or "unknown"
     if layout == "unknown" then say(("key '%s' isn't a layout I know: keybinds stay as they are"):format(key)) end
     done(layout)
   end)
@@ -403,10 +422,7 @@ local function applyAll(data, exact)
   applyCVars(data.cvars or {})
   applyBinds(data.binds or {})
   if data.editmode then
-    pcall(C_EditMode.SaveLayouts, data.editmode.layouts)
-    if data.editmode.layouts and data.editmode.layouts.activeLayout then
-      pcall(C_EditMode.SetActiveLayout, data.editmode.layouts.activeLayout)
-    end
+    applyEditMode(data.editmode, exact)
     for _, s in ipairs(data.editmode.settings or {}) do pcall(C_EditMode.SetAccountSetting, s.setting, s.value) end
   end
   if data.chat then applyChat(data.chat) end

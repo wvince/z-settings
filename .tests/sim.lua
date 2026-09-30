@@ -30,7 +30,7 @@ local function newChar(name, realm, account, known)
   for _, n in ipairs(known) do k[n] = true end
   return { name = name, realm = realm, account = account, known = k, bars = {}, charMacros = {},
     clicks = { { type = 3, actionID = 1, button = "LeftButton", modifiers = 0 } },
-    cvars = { nameplateShowEnemies = "1", enableMouseoverCast = "0", graphicsQuality = "9",
+    cvars = { nameplateShowEnemies = "1", enableMouseoverCast = "0", graphicsQuality = "9", NamePlateHorizontalScale = "1", nameplateMaxDistance = "41",
               SoftTargetEnemy = "1", enableMultiActionBars = "15", Sound_MasterVolume = "1.0",
               hardTrackedQuests = name .. "-quests", autoLootDefault = "1" },
     cdm = name .. "-cdm",
@@ -152,7 +152,7 @@ C_ClickBindings = {
 
 local CVAR_META = {
   nameplateShowEnemies = { 4, true }, enableMouseoverCast = { 3, true }, autoLootDefault = { 4, true },
-  graphicsQuality = { 1, false }, hardTrackedQuests = { 4, true },
+  graphicsQuality = { 1, false }, NamePlateHorizontalScale = { 1, false }, nameplateMaxDistance = { 0, false }, hardTrackedQuests = { 4, true },
   SoftTargetEnemy = { 10, true }, enableMultiActionBars = { 10, false }, Sound_MasterVolume = { 7, true },
 }
 function ConsoleGetAllCommands()
@@ -306,7 +306,7 @@ accA.binds[#accA.binds + 1] = { "MULTIACTIONBAR2BUTTON3", "ALT-Z" }
 accA.binds[#accA.binds + 1] = { "MULTIACTIONBAR2BUTTON4", "SHIFT--" }
 accA.binds[#accA.binds + 1] = { "MULTIACTIONBAR2BUTTON5", "M" }
 me.clicks = { { type = 3, actionID = 1, button = "LeftButton", modifiers = 0 }, { type = 2, actionID = 121, button = "LeftButton", modifiers = 1 } }
-me.cvars.nameplateShowEnemies = "0"; me.cvars.graphicsQuality = "3"; me.cvars.enableMultiActionBars = "31"
+me.cvars.nameplateShowEnemies = "0"; me.cvars.NamePlateHorizontalScale = "1.4"; me.cvars.nameplateMaxDistance = "60"; me.cvars.graphicsQuality = "3"; me.cvars.enableMultiActionBars = "31"
 accA.editmode.layouts.layouts[1].systems[1].x = 77
 me.chat[3] = { "Guild", 18, 0, 0, 0, 0.6, true, true, 3, false, nil, nil, nil, nil, nil, { "GUILD" }, {} }
 me.addons = { DBM = true, BetterBlizzFrames = true, BigData = true, Weird = true, BarSync = true, ["Z-Settings"] = true }
@@ -366,6 +366,7 @@ check("1 action bars left out", data.bars == nil)
 check("1 cooldown manager left out", data.cdm == nil)
 check("1 only target/menu clicks shared", #data.clicks == 1 and data.clicks[1].type == 3)
 check("1 graphics not shared", data.cvars.graphicsQuality == nil)
+check("1 local nameplate settings shared", data.cvars.NamePlateHorizontalScale == "1.4" and data.cvars.nameplateMaxDistance == "60")
 check("1 DBM settings shared", data.settings.DBM_AllSavedOptions ~= nil)
 check("1 BarSync never shared", data.settings.BarSyncDB == nil)
 check("1 oversized table left out", data.settings.BigDataDB == nil)
@@ -388,11 +389,12 @@ check("2 /z names the bundled setup", said("Zeroshin's setup"))
 printed, reloads = {}, 0
 SlashCmdList.ZSETTINGS("import")
 check("2 import waits for the keyboard", reloads == 0 and friend.cvars.nameplateShowEnemies == "1")
-pressKeys("A", "§")
+pressKeys("A")
 friend.ZSettingsDB = ZSettingsDB
 check("2 import reloads the UI", reloads == 1)
 check("2 settings applied", friend.cvars.nameplateShowEnemies == "0" and friend.cvars.enableMultiActionBars == "31")
 check("2 graphics untouched", friend.cvars.graphicsQuality == "9")
+check("2 nameplate size and distance applied", friend.cvars.NamePlateHorizontalScale == "1.4" and friend.cvars.nameplateMaxDistance == "60")
 check("2 keybinds applied", keyOf(accB, "MOVEFORWARD") == "UP")
 check("2 Q becomes A on AZERTY", keyOf(accB, "MULTIACTIONBAR2BUTTON1") == "A")
 check("2 Shift+1 becomes Shift+& on AZERTY", keyOf(accB, "MULTIACTIONBAR2BUTTON2") == "SHIFT-&")
@@ -402,7 +404,10 @@ check("2 M becomes , on AZERTY", keyOf(accB, "MULTIACTIONBAR2BUTTON5") == ",")
 check("2 arrow key untouched", keyOf(accB, "MOVEFORWARD") == "UP")
 check("2 E stays E", keyOf(accB, "ACTIONBUTTON1") == "E")
 check("2 1 becomes & on AZERTY", keyOf(accB, "ACTIONBUTTON2") == "&")
-check("2 edit mode applied", accB.editmode.layouts.layouts[1].systems[1].x == 77)
+local em = accB.editmode.layouts
+check("2 friend's own layout kept", em.layouts[1].layoutName == "Main" and em.layouts[1].systems[1].x == 1)
+check("2 my layout added as Zeroshin", #em.layouts == 2 and em.layouts[2].layoutName == "Zeroshin" and em.layouts[2].systems[1].x == 77)
+check("2 Zeroshin layout active", em.activeLayout == 4 and friend.activeLayout == 4)
 check("2 chat applied", friend.chat[3][1] == "Guild")
 check("2 shared macros added", GetMacroIndexByName("Focus") > 0 and GetMacroIndexByName("Mana") > 0)
 check("2 friend's own macro kept", GetMacroIndexByName("Buddy macro") > 0)
@@ -428,7 +433,27 @@ fire("PLAYER_LOGOUT")
 check("2 import survives the save at logout", DBM_AllSavedOptions.warnings == true)
 printed = {}
 fire("PLAYER_LOGIN")
-check("2 import summary repeated after the reload", said("imported Zeroshin's setup"))
+check("2 import summary repeated after the reload", said("imported Zeroshin's setup") and said("Zeroshin added"))
+-- importing again overwrites the Zeroshin layout instead of adding a second one
+local undoBefore = friend.ZSettingsDB.undo
+accB.editmode.layouts.layouts[2].systems[1].x = 5
+printed = {}
+SlashCmdList.ZSETTINGS("import"); pressKeys("A")
+check("2 second import overwrites Zeroshin", #accB.editmode.layouts.layouts == 2 and accB.editmode.layouts.layouts[2].systems[1].x == 77)
+check("2 second import says updated", said("Zeroshin updated"))
+friend.ZSettingsDB.undo = undoBefore   -- undo below goes back to before the first import
+
+-- every layout slot taken: all my layouts replace theirs
+local full = newChar("Full", "Classic Beta PvP", newAccount(), { "Fireball" })
+full.account.editmode.layouts.layouts = {}
+for i = 1, 5 do full.account.editmode.layouts.layouts[i] = { layoutName = "L" .. i, layoutType = 1, systems = { { system = 0, x = i } } } end
+useChar(full, {})
+ZSettingsDB = nil
+printed = {}
+SlashCmdList.ZSETTINGS("import"); pressKeys("A")
+local fem = full.account.editmode.layouts
+check("2 full slots fall back to my layouts", #fem.layouts == 1 and fem.layouts[1].layoutName == "Main" and fem.layouts[1].systems[1].x == 77)
+check("2 full slots fallback explained", said("no free layout slot"))
 
 -- 3. a damaged or missing setup and combat are refused
 useChar(friend, {})
@@ -451,7 +476,7 @@ check("3 no import in combat", said("not in combat"))
 -- closing the prompt cancels the import
 SlashCmdList.ZSETTINGS("import")
 for _, o in ipairs(frames) do if o.scripts.OnHide then o.scripts.OnHide(o) end end
-pressKeys("A", "§")
+pressKeys("A")
 check("3 closed prompt imports nothing", reloads == 0)
 
 -- 4. undo puts the friend's setup back exactly
@@ -461,6 +486,7 @@ reloads = 0
 SlashCmdList.ZSETTINGS("undo")
 check("4 undo reloads the UI", reloads == 1)
 check("4 setting back", friend.cvars.nameplateShowEnemies == "1")
+check("4 layouts back exactly", #accB.editmode.layouts.layouts == 1 and accB.editmode.layouts.layouts[1].layoutName == "Main" and friend.activeLayout == 3)
 check("4 keybind back", keyOf(accB, "MOVEFORWARD") == "W")
 check("4 imported macros removed", GetMacroIndexByName("Focus") == 0 and GetMacroIndexByName("Mana") == 0)
 check("4 own macro still there", GetMacroIndexByName("Buddy macro") > 0)

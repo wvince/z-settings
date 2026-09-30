@@ -1,0 +1,26 @@
+﻿1.60.08 - 30th September 2026
+- Replaced points of interest data provider.
+- Updated points of interest.
+- Fixed a taint issue when using Blizzard's new game controller feature.
+
+1.60.07 - 28th September 2026
+- Updated points of interest.
+
+1.60.06 - 27th September 2026
+- Updates for Forever Beta.
+
+1.60.05 - 24th September 2026
+- Updates for Forever Beta.  Zone crossing arrows are no longer clickable.
+
+1.60.04 - 24th September 2026
+- Updates for Forever Beta.
+
+1.60.03 - 23rd September 2026
+- Updated map reveal data for Forever.  A few zones don't have icons yet.
+
+1.60.02 - 23rd September 2026
+- Added 'Show points of interest' option and removed 'Show additional icons' option.
+- Added 'Show zone levels'.
+
+1.60.01 - 17th September 2026
+- Welcome to Forever Beta!

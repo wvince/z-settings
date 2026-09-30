@@ -1,0 +1,6 @@
+## Interface: 16001
+## Title: Z-Settings
+## Notes: Zeroshin's setup for friends: /z import applies it. /z
+## SavedVariables: ZSettingsDB
+ZBundle.lua
+ZSettings.lua

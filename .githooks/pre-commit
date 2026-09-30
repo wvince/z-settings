@@ -1,0 +1,13 @@
+#!/bin/sh
+# Copies your latest /z export (WoW writes it to WTF\...\SavedVariables at /reload) into
+# Z-Settings/ZBundle.lua, so every commit ships the settings friends get with /z import.
+set -e
+root=$(git rev-parse --show-toplevel)
+sv=$(ls -t "$root"/../../WTF/Account/*/SavedVariables/Z-Settings.lua 2>/dev/null | head -n 1)
+text=$( [ -n "$sv" ] && grep -o '\["export"\] = "ZS1:[A-Za-z0-9+/=]*"' "$sv" | sed 's/.*= "//; s/"$//' || true)
+if [ -z "$text" ]; then
+  echo "No Z-Settings export found. In game: /z export, then /reload, then commit again." >&2
+  exit 1
+fi
+printf 'Z_BUNDLE = "%s"\n' "$text" > "$root/Z-Settings/ZBundle.lua"
+git add "$root/Z-Settings/ZBundle.lua"

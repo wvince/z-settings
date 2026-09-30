@@ -1,0 +1,15 @@
+## Interface: 11601
+## X-Min-Interface-Classic: 11601
+## Title: |TInterface\AddOns\AtlasLootClassic\atlas_tga:16|t AtlasLoot Forever |cFF0099FF[BiS ToolTip]|r
+## OptionalDeps: LibExtraTip
+## Version: 1.0.1
+## SavedVariables: slcDB
+## Category-enUS: Loot
+## Group: AtlasLootClassic
+## Dependencies: AtlasLootClassic
+## IconTexture: Interface\Icons\INV_Box_01
+Libraries\Libraries.xml
+TooltipST.lua
+libs\LibExtraTip\Load.xml
+AtlasBIStooltips.lua
+ClassDataBase\Main.xml

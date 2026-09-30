@@ -1,0 +1,135 @@
+local _, W = ...
+
+function W.IsWritView()
+  return W.db and W.db.enableWrits and W.db.orderKind == "writs"
+end
+function W.GetCatalog()
+  return W.IsWritView() and WaylaidCostWrits or WaylaidCostCrates
+end
+function W.OrderName(order)
+  return order.name:gsub("^Waylaid Crate: ", ""):gsub("^Craftsman's Writ: ", "")
+end
+function W.Reputation(order)
+  local faction = UnitFactionGroup and UnitFactionGroup("player")
+  local id = faction == "Horde" and 2587 or (faction == "Alliance" and 2586)
+  if not id then return nil, "Trade faction" end
+  for _, reward in ipairs(order.reputation or {}) do
+    if reward[1] == id then return reward[2], id == 2587 and "Durotar Supply and Logistics" or "Azeroth Commerce Authority" end
+  end
+end
+function W.GetSnapshot(kind)
+  local saved = W.db and W.db.snapshots and W.db.snapshots[kind]
+  if not saved and W.db and W.db.lastSnapshot and (W.db.lastSnapshot.kind or "waylaid") == kind then saved = W.db.lastSnapshot end
+  if type(saved) == "table" and (saved.schema == 1 or saved.schema == 2) and saved.key == W.scanKey
+    and type(saved.books) == "table" and type(saved.scannedAt) == "number" then return saved end
+end
+function W.LoadSnapshot()
+  local saved = W.GetSnapshot(W.IsWritView() and "writs" or "waylaid")
+  if saved then
+    W.db.snapshots = W.db.snapshots or {}
+    W.db.snapshots[saved.kind or "waylaid"] = saved
+  end
+  W.books = saved and saved.books or {}
+  W.scannedAt = saved and saved.scannedAt or nil
+  W.incomplete = saved and saved.incomplete or false
+  W.scanTimeUnknown = saved and saved.timeUnknown or false
+  W.targeted = saved and saved.targeted or false
+  W.scanMode = saved and saved.mode == "fast" and "fast" or "full"
+  W.message = nil
+end
+function W.SetOrderKind(kind)
+  if not W.db then return end
+  if kind == "writs" and not W.db.enableWrits then return end
+  W.CancelScan("Scan stopped: changed order type")
+  W.db.orderKind = kind == "writs" and "writs" or "waylaid"
+  W.LoadSnapshot()
+  if W.panel then W.panel.expanded = {}; W.panel.scroll:SetVerticalScroll(0) end
+  W.Refresh()
+end
+
+function W.InitRewardDefaults()
+  W.db.rewards = W.db.rewards or {}
+  if W.db.rewardDataVersion == 2 then return end
+  local defaults = {Apprentice = {[1]=5,[2]=10}, Journeyman = {[1]=10,[2]=20}, Expert = {}, Artisan = {}}
+  for family, values in pairs(defaults) do
+    local old = W.db.rewards[family]
+    -- Replace the old shipped 5/20 assumption; preserve other user-entered values.
+    if not old or (old[1] == 5 and old[2] == 20) then W.db.rewards[family] = values end
+  end
+  W.db.rewardDefaultsInitialized = true
+  W.db.rewardDataVersion = 2
+end
+
+function W.WritIsActive(order)
+  return order.questID and C_QuestLog and C_QuestLog.IsOnQuest and C_QuestLog.IsOnQuest(order.questID)
+end
+function W.OpenWritQuest(order)
+  if not W.WritIsActive(order) then return end
+  if QuestMapFrame_OpenToQuestDetails then QuestMapFrame_OpenToQuestDetails(order.questID)
+  elseif ShowQuestLog then ShowQuestLog() end
+end
+function W.WritDestination(order)
+  local first = order.turnIns and order.turnIns[1]
+  if first then return first.npc .. " · " .. first.zone end
+  return W.WritIsActive(order) and "See delivery marker in quest log" or "Destination: check the writ's quest"
+end
+function W.AddWritDetails(tooltip, order, includeWrit, explanations)
+  local reputation, faction = W.Reputation(order)
+  tooltip:AddLine(" ")
+  tooltip:AddDoubleLine("Base reputation", reputation and (reputation .. " · " .. faction) or "Unknown", 1, 0.82, 0.45, 0.8, 0.88, 1)
+  if order.turnIns and #order.turnIns > 0 then
+    tooltip:AddLine("Delivery (beta data)", 1, 0.82, 0.45)
+    for _, place in ipairs(order.turnIns) do
+      local coord = place.coord and string.format(" (%.1f, %.1f)", place.coord[1], place.coord[2]) or ""
+      tooltip:AddLine(place.npc .. " · " .. place.zone .. coord, 0.85, 0.88, 0.94, true)
+    end
+  else
+    tooltip:AddLine(W.WritDestination(order), 0.85, 0.88, 0.94, true)
+  end
+  local observed = W.db.writRewards and W.db.writRewards[order.questID]
+  if observed and observed.key ~= W.scanKey then observed = nil end
+  if observed then
+    tooltip:AddLine("Rewards last shown by your quest", 1, 0.82, 0.45)
+    if observed.money and observed.money > 0 then tooltip:AddDoubleLine("Money", W.Money(observed.money), 0.85, 0.88, 0.94, 1, 1, 1) end
+    for _, reward in ipairs(observed.items or {}) do tooltip:AddLine(reward, 0.85, 0.88, 0.94, true) end
+    if not observed.money or observed.money == 0 then
+      if #(observed.items or {}) == 0 then tooltip:AddLine("Payment not shown; check the quest reward screen.", 0.7, 0.75, 0.82, true) end
+    end
+    tooltip:AddLine("Observed: " .. date("%Y-%m-%d %H:%M", observed.at), 0.55, 0.61, 0.7)
+  else
+    tooltip:AddLine("Payment: check the quest reward screen; not yet recorded.", 0.7, 0.75, 0.82, true)
+  end
+  if explanations ~= false then
+    tooltip:AddLine(includeWrit == false and "Requested goods only; writ purchase is excluded. Payment is not deducted."
+      or "Totals include the writ and requested goods. Payment is not deducted.", 0.65, 0.74, 0.84, true)
+    tooltip:AddLine("Base beta reputation; faction bonuses are not included. Check the quest for its deadline.", 0.65, 0.74, 0.84, true)
+  end
+end
+
+local byQuest = {}
+for _, order in ipairs(WaylaidCostWrits) do byQuest[order.questID] = order end
+local quests = CreateFrame("Frame")
+quests:RegisterEvent("QUEST_DETAIL")
+quests:RegisterEvent("QUEST_COMPLETE")
+quests:RegisterEvent("QUEST_LOG_UPDATE")
+quests:SetScript("OnEvent", function(_, event)
+  if not W.db or not W.db.enableWrits then return end
+  if event == "QUEST_LOG_UPDATE" then
+    if W.panel and W.panel:IsShown() and W.IsWritView() then W.Draw() end
+    return
+  end
+  local id = GetQuestID and GetQuestID()
+  if not byQuest[id] then return end
+  local items = {}
+  if GetQuestItemInfo then
+    for _, kind in ipairs({{"reward", GetNumQuestRewards}, {"choice", GetNumQuestChoices}}) do
+      for i = 1, (kind[2] and kind[2]() or 0) do
+        local name, _, quantity = GetQuestItemInfo(kind[1], i)
+        if not name then return end
+        items[#items + 1] = (kind[1] == "choice" and "Choice: " or "") .. (quantity or 1) .. "× " .. name
+      end
+    end
+  end
+  W.db.writRewards = W.db.writRewards or {}
+  W.db.writRewards[id] = {money = GetRewardMoney and GetRewardMoney() or nil, items = items, at = time(), key = W.scanKey}
+end)

@@ -360,11 +360,12 @@ end
 local window
 
 -- keyboard layouts ------------------------------------------------------------------------------
--- Letter keys move to the letter at the same physical spot; WoW maps every other key itself.
--- Modifiers are kept, and a moved key wins over whatever was bound to the key it lands on.
+-- Q/A and W/Z swap places between the layouts, so binds on them move to keep the same physical key
+-- (WASD becomes ZQSD). M stays M: it is bound by name (the map), as Blizzard's AZERTY defaults do.
+-- WoW maps every other key itself. Modifiers are kept, and a moved key wins over a bind already there.
 local KEY_MOVES = {
-  ["qwerty>azerty-be"] = { Q = "A", A = "Q", W = "Z", Z = "W", M = "," },
-  ["azerty-be>qwerty"] = { A = "Q", Q = "A", Z = "W", W = "Z", M = ";" },
+  ["qwerty>azerty-be"] = { Q = "A", A = "Q", W = "Z", Z = "W" },
+  ["azerty-be>qwerty"] = { A = "Q", Q = "A", Z = "W", W = "Z" },
 }
 local LAYOUT_NAMES = { qwerty = "QWERTY", ["azerty-be"] = "Belgian AZERTY" }
 

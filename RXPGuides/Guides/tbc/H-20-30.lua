@@ -263,7 +263,6 @@ step
     #optional
     .goto The Barrens,62.37,37.62
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mebok|r
-    .accept 865 >>Accept Raptor Horns
     .accept 1069 >>Accept Deepmoss Spider Eggs
     .accept 1491 >>Accept Smart Drinks
     .target Mebok Mizzyrix
@@ -275,7 +274,6 @@ step
     .accept 865 >>Accept Raptor Horns
     .accept 1069 >>Accept Deepmoss Spider Eggs
     .target Mebok Mizzyrix
-    .isQuestTurnedIn 865
 step << !Tauren
     #xprate >1.49
     #completewith next
@@ -1153,7 +1151,7 @@ step
     #completewith ZamahTurnin
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Clarice|r
     >>|cRXP_WARN_She patrols around|r
-    .accept 264 >>Until Death Do Us Part
+    .accept 264 >> Accept Until Death Do Us Part
     .target Clarice Foster
 step
     #xprate <1.5
@@ -1190,7 +1188,7 @@ step
     #completewith ZamahTurnin
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Clarice|r
     >>|cRXP_WARN_She patrols around|r
-    .accept 264 >>Until Death Do Us Part
+    .accept 264 >> Accept Until Death Do Us Part
     .target Clarice Foster
     .dungeon WC
 step
@@ -1251,7 +1249,7 @@ step
     .goto Thunder Bluff,28.55,25.64
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Clarice|r
     >>|cRXP_WARN_She patrols around|r
-    .accept 264 >>Until Death Do Us Part
+    .accept 264 >> Accept Until Death Do Us Part
     .target Clarice Foster
 step << Shaman
     #optional
@@ -2272,8 +2270,8 @@ step
 step
     #xprate <1.5
     #completewith next
-    >>Kill |cRXP_ENEMY_Wraithtail Nagas|r. Loot them for their |cRXP_LOOT_Heads|r
-    .complete 6442,1 --Wraithtail Head (20)
+    >>Kill |cRXP_ENEMY_Wrathtail Nagas|r. Loot them for their |cRXP_LOOT_Heads|r
+    .complete 6442,1 --Wrathtail Head (20)
     .mob Wrathtail Razortail
     .mob Wrathtail Wave Rider
     .mob Wrathtail Sorceress
@@ -2336,8 +2334,8 @@ step
     .goto Ashenvale,11.22,31.04,50,0
     .goto Ashenvale,10.38,29.60,50,0
     .goto Ashenvale,11.01,28.57,50,0
-    >>Kill |cRXP_ENEMY_Wraithtail Nagas|r. Loot them for their |cRXP_LOOT_Heads|r
-    .complete 6442,1 --Wraithtail Head (20)
+    >>Kill |cRXP_ENEMY_Wrathtail Nagas|r. Loot them for their |cRXP_LOOT_Heads|r
+    .complete 6442,1 --Wrathtail Head (20)
     .mob Wrathtail Razortail
     .mob Wrathtail Wave Rider
     .mob Wrathtail Sorceress
@@ -2551,9 +2549,9 @@ step
     .target Argent Guard Thaelrid
     .dungeon BFD
 step
-    >>Kill |cRXP_ENEMY_Lorguss Jett |r
-    .complete 6565,1 --Lorguss Jett slain (1)
-    .mob Lorguss Jett
+    >>Kill |cRXP_ENEMY_Lorgus Jett|r
+    .complete 6565,1 --Lorgus Jett slain (1)
+    .mob Lorgus Jett
     .isOnQuest 6565
     .dungeon BFD
 step

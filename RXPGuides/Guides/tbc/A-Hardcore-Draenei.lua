@@ -1375,7 +1375,7 @@ step
     #completewith next
     >>Kill |cRXP_ENEMY_Crazed Wildkins|r << !Shaman
     >>Kill |cRXP_ENEMY_Crazed Wildkins|r. Loot them for their |cRXP_LOOT_Ritual Torch|r << Shaman
-    >>|cRXP_WARN_You will finish this shortly if you havn't yet|r
+    >>|cRXP_WARN_You will finish this shortly if you haven't yet|r
     .complete 9573,2 --Kill Crazed Wildkin (x9)
     .complete 9465,1 << Shaman --Collect Ritual Torch (x1)
     .mob Crazed Wildkin

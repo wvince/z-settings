@@ -368,7 +368,7 @@ step
 step
     .use 205940
     .itemcount 205940,1
-    .train 425216 >>|cRXP_WARN_Use the|r |T136222:0|t[|cRXP_FRIENDLY_Memory of a Dark Purpose|r] |cRXP_WARN_to train|r |T237514:0|t[Void Plague]
+    .train 425216 >>|cRXP_WARN_Use the|r |T136222:0|t[|cRXP_FRIENDLY_Memory of Dark Purpose|r] |cRXP_WARN_to train|r |T237514:0|t[Void Plague]
 ]])
 
 RXPGuides.RegisterGuide([[
@@ -384,7 +384,7 @@ step
     .zone Tirisfal Glades >>Travel to Tirisfal Glades
 step
     .train 425216,1
-    >>Kill |cRXP_ENEMY_Gillgar|r. Loot him for the |T136222:0|t[|cRXP_FRIENDLY_Memory of a Dark Purpose|r]
+    >>Kill |cRXP_ENEMY_Gillgar|r. Loot him for the |T136222:0|t[|cRXP_FRIENDLY_Memory of Dark Purpose|r]
     .goto Tirisfal Glades,25.6,48.2
     .collect 205940,1
     .mob Gillgar
@@ -404,7 +404,7 @@ step << Troll
 step
     .use 205940
     .itemcount 205940,1
-    .train 425216 >>|cRXP_WARN_Use the|r |T136222:0|t[|cRXP_FRIENDLY_Memory of a Dark Purpose|r] |cRXP_WARN_to train|r |T237514:0|t[Void Plague]
+    .train 425216 >>|cRXP_WARN_Use the|r |T136222:0|t[|cRXP_FRIENDLY_Memory of Dark Purpose|r] |cRXP_WARN_to train|r |T237514:0|t[Void Plague]
 ]])
 
 RXPGuides.RegisterGuide([[
@@ -851,8 +851,8 @@ RXPGuides.RegisterGuide([[
 << Horde Priest SoD
 #group RestedXP Rune & Books Guide
 #subgroup Chest
-#name Twisted Faith - 10 (Silverpine Forest)
-#title Twisted Faith
+#name Twisted Fate - 10 (Silverpine Forest)
+#title Twisted Fate
 
 step
     #completewith next
@@ -879,8 +879,8 @@ RXPGuides.RegisterGuide([[
 << Horde Priest SoD
 #group RestedXP Rune & Books Guide
 #subgroup Chest
-#name Twisted Faith - 10 (The Barrens)
-#title Twisted Faith
+#name Twisted Fate - 10 (The Barrens)
+#title Twisted Fate
 
 step
     #completewith next
@@ -896,7 +896,7 @@ step
     .mob Razormane Defender
 step
     .train 425215,1
-    >>|cRXP_WARN_Find a dead player or pet that you can resurrect (with |T135955:0|t[Resurrection]) to get the|r |T136222:0|t[|cRXP_FRIENDLY_Memory of a Devout Champion]
+    >>|cRXP_WARN_Find a dead player or pet that you can ressurect (with |T135955:0|t[Resurrection]) to get the|r |T136222:0|t[|cRXP_FRIENDLY_Memory of a Devout Champion]
     .collect 205905,1
 step
     .train 425215 >> |cRXP_WARN_Use the|r |T136222:0|t[|cRXP_FRIENDLY_Memory of a Devout Champion] |cRXP_WARN_to train|r |T237566:0|t[Twisted Faith]
@@ -1038,7 +1038,7 @@ RXPGuides.RegisterGuide([[
 step
     #optional
     .train 425310,1
-    .train 605 >> |cRXP_WARN_You must have|r |T136206:0|t[Mind Control] |cRXP_WARN_trained in order to aquire the|r |T135923:0|t[Renewed Hope] |cRXP_WARN_rune|r
+    .train 605 >> |cRXP_WARN_You must have|r |T136206:0|t[Mind Control] |cRXP_WARN_trained in order to acquire the|r |T135923:0|t[Renewed Hope] |cRXP_WARN_rune|r
 step
     #optional
     .train 425310,1

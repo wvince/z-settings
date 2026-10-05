@@ -1,4 +1,4 @@
-## Interface: 11601
+## Interface: 16001
 
 ## Title: |TInterface\AddOns\AtlasLootClassic\atlas_tga:16|t AtlasLoot Forever |cFF22B14C[Options]|r
 ## Title-deDE: |TInterface\AddOns\AtlasLootClassic\atlas_tga:16|t AtlasLoot Forever |cFF22B14C[Optionen]|r

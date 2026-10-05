@@ -26,6 +26,8 @@ local GetContainerItemInfo
 
 local SSHARD = 6265
 
+local hookedElements = {}
+
 if C_Container and C_Container.GetContainerItemInfo then
     GetContainerItemInfo = function(...)
         local itemTable = C_Container.GetContainerItemInfo(...)
@@ -446,14 +448,29 @@ if f.SetPassThroughButtons then
 end
 
 --You can only delete items on a hardware input, so we hook every keyboard input and mouse click to our item deletion function
+local function HookBagToggle()
+    local c = _G.ToggleAllBags
+    if not hookedElements[c] then
+        hooksecurefunc("ToggleAllBags",inventoryManager.InitializeBags)
+        hookedElements[c] = "defaultUI"
+    end
+
+    c = _G.ToggleBag
+    if not hookedElements[c] then
+        hooksecurefunc("ToggleBag",inventoryManager.InitializeBags)
+        hookedElements[c] = "defaultUI"
+    end
+end
 
 f:SetScript("OnEvent",function(self)
     inventoryManager.bagUpdated = true
     self:RegisterEvent(bagEvent)
     self:RegisterEvent("LOOT_READY")
     self:RegisterEvent("UI_ERROR_MESSAGE")
+    --self:RegisterEvent("ITEM_DATA_LOAD_RESULT")
 
     self:SetScript("OnEvent",function(self,event,flag,msg)
+        --print(self,event,flag,msg)
         if clickFrame then
             if inventoryManager.IsBagAutomationEnabled() then
                 if event == "UI_ERROR_MESSAGE" and flag == 3 and msg == INVENTORY_FULL and LootFrame:IsShown() then
@@ -495,9 +512,15 @@ f:SetScript("OnEvent",function(self)
         end)
     end
 
-    hooksecurefunc('ToggleAllBags', inventoryManager.InitializeBags)
-    hooksecurefunc('ToggleBag', inventoryManager.InitializeBags)
+    HookBagToggle()
     _G.MainMenuBarBackpackButton:HookScript("OnClick",inventoryManager.InitializeBags)
+
+    if inventoryManager.HookElvUIBags then
+        inventoryManager.HookElvUIBags()
+    end
+    if inventoryManager.HookEUIBags then
+        inventoryManager.HookEUIBags()
+    end
 
 end)
 
@@ -545,6 +568,34 @@ for i = BACKPACK_CONTAINER, NUM_BAG_FRAMES do
 end
 
 
+local GetBagSlotID = function(self)
+    local bag = self.GetBagID and self:GetBagID()
+    if not bag then
+        local parent = self:GetParent()
+        bag = parent and parent:GetID()
+    end
+    return bag,self.GetID and self:GetID()
+end
+
+local OnClickHook = function(self,button,...)
+    local bag,slot = GetBagSlotID(self)
+    local mod = inventoryManager.GetModKey()
+    --print(1,bag,slot,self.RXPJunkIcon)
+    if not inventoryManager.IsRightClickEnabled() or not mod or button ~= inventoryManager.GetMouseButton() then
+        return
+    end
+    if bag and slot then
+        local id = GetContainerItemID(bag,slot)
+        ToggleJunk(id,bag,slot)
+        if self.JunkIcon and hookedElements[self] == "Baganator" then
+            self.JunkIcon:SetShown(inventoryManager.IsJunkIconEnabled() and id and IsJunk(id) and self:IsShown())
+        end
+    end
+    if Baganator then
+        Baganator.API.RequestItemButtonsRefresh()
+    end
+end
+
 
 local function UpdateBag(frame,name,pattern)
     if not inventoryManager.IsJunkIconEnabled() then
@@ -558,10 +609,14 @@ local function UpdateBag(frame,name,pattern)
     local button = _G[ref]
 
     while button and lastFrame ~= ref do
-        local parent = button:GetParent()
-        local bag = parent and parent:GetID()
+
+        local bag,slot = GetBagSlotID(button)
+        --print("UpdateBag",bag,slot,ref)
         if bag and bag >= BACKPACK_CONTAINER and bag <= NUM_BAG_FRAMES then
-            local slot = button:GetID()
+            if not hookedElements[button] and button:GetScript("OnClick") then
+                button:HookScript("OnClick", OnClickHook)
+                hookedElements[button] = inventoryManager.containerName or ""
+            end
             bagFrame[bag][slot] = ref
             --print(ref)
             UpdateBagButton(button,bag,slot)
@@ -604,6 +659,8 @@ local function DetectBagMods()
         inventoryManager.containerName = "BGRLiveItemButton%d"
         inventoryManager.containerPattern = "%s"
         inventoryManager.alignment = "TOPRIGHT"
+    elseif _G.EUI_MainBagFrame then
+        inventoryManager.alignment = "TOPRIGHT"
     elseif _G.ContainerFrame_UpdateAll then
         _G.ContainerFrame_UpdateAll()
         return true
@@ -619,6 +676,10 @@ local function UpdateAllBags(self,name,i)
         return
     end
     if DetectBagMods() then return end
+    if inventoryManager.updateBagCallback then
+        inventoryManager.updateBagCallback()
+        return
+    end
     i = i or inventoryManager.containerIndex
     name = name or inventoryManager.containerName
     --print(name,inventoryManager.containerPattern)
@@ -711,35 +772,15 @@ function inventoryManager.InitializeBags()
     invUpdate:SetScript("OnUpdate",inventoryManager.BagHandler)
     --UpdateAllBags()
 end
+HookBagToggle()
 
 if _G['ContainerFrame_Update'] then
     hooksecurefunc('ContainerFrame_Update', function(self)
         UpdateBag(self,nil,"%sItem%d")
     end)
 end
-local hookedFrames = {}
 
 if _G['ContainerFrame_UpdateAll'] then
-    local OnClickHook = function(self,button,...)
-        local bag = self.GetBagID and self:GetBagID()
-        if not bag then
-            local parent = self:GetParent()
-            bag = parent and parent:GetID()
-        end
-        local slot = self:GetID()
-        local mod = inventoryManager.GetModKey()
-        AA = self
-        if not inventoryManager.IsRightClickEnabled() or not mod or button ~= inventoryManager.GetMouseButton() then
-            return
-        end
-        if bag and slot then
-            local id = GetContainerItemID(bag,slot)
-            ToggleJunk(id,bag,slot)
-            if self.JunkIcon then
-                self.JunkIcon:SetShown(inventoryManager.IsJunkIconEnabled() and id and IsJunk(id) and self:IsShown())
-            end
-        end
-    end
 
     if Baganator and Baganator.API then
         Baganator.API.RegisterJunkPlugin(addonName, "RXPGuides", function(bagID, slotID, id)
@@ -762,9 +803,9 @@ if _G['ContainerFrame_UpdateAll'] then
                 if mframe then
                     for _,container in pairs(mframe.Container.Layouts) do
                         for i,button in pairs(container.buttons) do
-                            if button.BGR and not hookedFrames[button] then
+                            if button.BGR and not hookedElements[button] then
                                 button:HookScript("OnClick", OnClickHook)
-                                hookedFrames[button] = true
+                                hookedElements[button] = "Baganator"
                             end
                         end
                     end
@@ -772,10 +813,86 @@ if _G['ContainerFrame_UpdateAll'] then
             end
         end
         C_Timer.After(1,LoadBaganator)
-        Baganator.CallbackRegistry:RegisterCallback("SettingChanged", LoadBaganator)
+        Baganator.CallbackRegistry:RegisterCallback("SettingChanged", function() C_Timer.After(0.1,LoadBaganator) end)
         --Baganator.API.RequestItemButtonsRefresh()
     end
 
+
+    function inventoryManager.HookElvUIBags()
+        local frame = _G.ElvUI_ContainerFrame
+        if not (frame and frame.Bags) or hookedElements[frame] then return end
+
+        local function HookSlots()
+            for _, bag in pairs(frame.Bags) do
+                for _, slot in ipairs(bag) do
+                    if not hookedElements[slot] then
+                        slot:HookScript("OnClick", OnClickHook)
+                        hookedElements[slot] = "ElvUI"
+                    end
+                end
+            end
+        end
+        hookedElements[frame] = true
+
+        frame:HookScript("OnShow", HookSlots)
+        HookSlots()
+    end
+
+    local lastEUIUpdate = 0
+
+    local function HookEUIButtons()
+        local mainFrame = _G["EUI_MainBagFrame"]
+        if not mainFrame._scrollFrame then return end
+        for _,t0 in  pairs({mainFrame._scrollFrame:GetChildren()}) do
+        for _,t1 in pairs({t0:GetChildren()}) do
+            for _,button in pairs({t1:GetChildren()}) do
+                if not hookedElements[button] then
+                    local onClick = button:GetScript("OnClick")
+                    if onClick then
+                        button:HookScript("OnClick",OnClickHook)
+                        hookedElements[button] = "EUI"
+                    end
+                end
+
+                local bag, slot = GetBagSlotID(button)
+                if bag and slot then
+                    local id = GetContainerItemID(bag, slot)
+                    local isJunk = IsJunk(id,bag,slot)
+                    --print(id,bag,slot,isJunk)
+                    --print(bag,slot,isJunk)
+                    if isJunk then
+                        ShowJunkIcon(button)
+                    else
+                        HideJunkIcon(button)
+                    end
+                end
+
+            end
+        end
+        end
+    end
+
+
+    function inventoryManager.HookEUIBags(time)
+        local mainFrame = _G["EUI_MainBagFrame"]
+        if not mainFrame or time == lastEUIUpdate then return end
+        lastEUIUpdate = time
+
+        if not hookedElements[mainFrame] then
+            inventoryManager.updateBagCallback = function()
+                inventoryManager.HookEUIBags(GetTime())
+            end
+            mainFrame:HookScript("OnShow", function(self)
+                inventoryManager.HookEUIBags(GetTime())
+            end)
+            hookedElements[mainFrame] = true
+        end
+
+
+        --print("Hooking EUI bags")
+        C_Timer.After(0,HookEUIButtons)
+
+    end
 
     for n = 0, NUM_CONTAINER_FRAMES do
         local bagframe
@@ -789,12 +906,11 @@ if _G['ContainerFrame_UpdateAll'] then
             local frames = {bagframe:GetChildren()}
             for _,frame in pairs(frames) do
                 if frame.GetID and frame.OnClick then
-                    if not hookedFrames[frame] then
+                    if not hookedElements[frame] then
                         frame:HookScript("OnClick", OnClickHook)
-                        hookedFrames[frame] = true
+                        hookedElements[frame] = true
                     end
-                    local bag = frame:GetBagID()
-                    local slot = frame:GetID()
+                    local bag, slot = GetBagSlotID(frame)
                     if slot < 0 then return end
                     local id = GetContainerItemID(bag, slot)
                     frame.JunkIcon:SetShown(inventoryManager.IsJunkIconEnabled() and id and IsJunk(id))

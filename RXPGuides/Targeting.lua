@@ -118,11 +118,37 @@ function addon.targeting:Setup()
         end
 
         self.ticker = C_Timer.NewTicker(proxmityPolling.frequency, self.CheckTargetProximity)
+
         if StaticPopupDialogs["ADDON_ACTION_FORBIDDEN"] then
+            -- Disables and mutes the annoying dialog that shows up
+            local actionForbiddenText = fmt(ADDON_ACTION_FORBIDDEN, addonName)
+
+            local ForbiddenTextBoxHook = function(this)
+                local text = this.text or this.Text
+                if text and text:GetText() == actionForbiddenText then
+                    if this:IsShown() then this:Hide() end
+
+                    local _, channel = PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE)
+
+                    if channel then
+                        StopSound(channel)
+                        StopSound(channel - 1)
+                    end
+
+                    StaticPopupDialogs["ADDON_ACTION_FORBIDDEN"] = nil
+                end
+            end
+
+            _G.StaticPopup1:HookScript("OnShow", ForbiddenTextBoxHook)
+            _G.StaticPopup1:HookScript("OnHide", ForbiddenTextBoxHook)
+            _G.StaticPopup2:HookScript("OnShow", ForbiddenTextBoxHook)
+            _G.StaticPopup2:HookScript("OnHide", ForbiddenTextBoxHook)
+
             self:RegisterEvent("ADDON_ACTION_FORBIDDEN")
+
+            -- Prevent default forbidden UI popup
+            UIParent:UnregisterEvent("ADDON_ACTION_FORBIDDEN")
         end
-        -- Prevent default forbidden UI popup
-        UIParent:UnregisterEvent("ADDON_ACTION_FORBIDDEN")
     end
 
     if addon.rares then
@@ -561,28 +587,6 @@ function addon.targeting.CheckTargetProximity()
     end
 end
 
-if StaticPopupDialogs["ADDON_ACTION_FORBIDDEN"] then
--- Disables and mutes the annoying dialog that shows up
-local actionForbiddenText = fmt(ADDON_ACTION_FORBIDDEN, addonName)
-
-local TextBoxHook = function(self)
-    local text = self.text or self.Text
-    if text and text:GetText() == actionForbiddenText then
-        if self:IsShown() then self:Hide() end
-        local _, channel = PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE)
-        if channel then
-            StopSound(channel)
-            StopSound(channel - 1)
-        end
-        StaticPopupDialogs["ADDON_ACTION_FORBIDDEN"] = nil
-    end
-end
-
-_G.StaticPopup1:HookScript("OnShow", TextBoxHook)
-_G.StaticPopup1:HookScript("OnHide", TextBoxHook)
-_G.StaticPopup2:HookScript("OnShow", TextBoxHook)
-_G.StaticPopup2:HookScript("OnHide", TextBoxHook)
-
 function addon.targeting:ADDON_ACTION_FORBIDDEN(_, forbiddenAddon, func)
     if func ~= "TargetUnit()" or forbiddenAddon ~= addonName then return end
 
@@ -614,8 +618,6 @@ function addon.targeting:ADDON_ACTION_FORBIDDEN(_, forbiddenAddon, func)
     end
 end
 
-end
-
 function addon.targeting:UpdateUnitList()
     local stepUnitscan = {}
     local stepMobs = {}
@@ -640,10 +642,13 @@ function addon.targeting:UpdateUnitList()
     local unitscanGenerated = {}
     local mobsGenerated = {}
     local targetsGenerated = {}
-    for _, context in pairs(addon.generatedSteps) do
-        for _, step in ipairs(context) do
-            for _, element in ipairs(step.elements or {}) do
-                AddUnits(element, unitscanGenerated, mobsGenerated, targetsGenerated)
+    for generatedKind, context in pairs(addon.generatedSteps) do
+        -- Only include dangerousMobs in targeting if showTargetingOnProximity
+        if generatedKind ~= "dangerousMobs" or addon.settings.profile.showTargetingOnProximity then
+            for _, step in ipairs(context) do
+                for _, element in ipairs(step.elements or {}) do
+                    AddUnits(element, unitscanGenerated, mobsGenerated, targetsGenerated)
+                end
             end
         end
     end

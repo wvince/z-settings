@@ -40,6 +40,19 @@ local function Print(msg)
     DEFAULT_CHAT_FRAME:AddMessage(PREFIX .. msg)
 end
 
+-- Auto-decline notices: at most one line per player per minute, so someone
+-- spamming duels or invites can't flood your chat through the addon.
+local PrintThrottled
+do
+    local lastNotice = {}
+    PrintThrottled = function(id, msg)
+        local now = GetTime()
+        if lastNotice[id] and now - lastNotice[id] < 60 then return end
+        lastNotice[id] = now
+        Print(msg)
+    end
+end
+
 local IsSecret = issecretvalue or function() return false end
 
 -- True if the guild name contains any keyword on the list.
@@ -229,7 +242,7 @@ local function DeclinePartyInvite(name, guild)
     pendingInvite = nil
     DeclineGroup()
     if StaticPopup_Hide then StaticPopup_Hide("PARTY_INVITE") end
-    Print(("declined a group invite from %s <%s>."):format(tostring(name), tostring(guild)))
+    PrintThrottled("group:" .. tostring(name), ("declined a group invite from %s <%s>."):format(tostring(name), tostring(guild)))
 end
 
 -- Highest level seen on an Olympus member; the Scan rotation stops there.
@@ -526,9 +539,7 @@ local function HandleGuildInvite(inviter, guildName)
     if type(inviter) == "string" and not IsSecret(inviter) then
         Block(nil, inviter, guildName)
     end
-    if GetTime() - lastGuildDecline > 2 then
-        Print(("declined a guild invite from <%s>."):format(guildName))
-    end
+    PrintThrottled("guild:" .. tostring(guildName), ("declined a guild invite from <%s>."):format(guildName))
     lastGuildDecline = GetTime()
 end
 
@@ -793,6 +804,21 @@ local function WordBlocked(msg, key, guid, flag)
     return false
 end
 
+-- Name keywords: hide chat from any player whose character name contains one.
+local function NameWordBlocked(author, key, guid)
+    local list = db.nameWords
+    if #list == 0 or type(author) ~= "string" or IsSecret(author) then return false end
+    if guid and guid == playerGUID then return false end
+    if key and (key == playerKey or db.allow[key]) then return false end
+    local n = author:match("^[^%-]+")
+    if not n then return false end
+    n = n:lower()
+    for i = 1, #list do
+        if n:find(list[i], 1, true) then return true end
+    end
+    return false
+end
+
 -- Full decision. Returns hit, reliable (false if any step errored, so the
 -- result isn't cached and the next delivery tries again).
 local function Evaluate(msg, author, guid, flag)
@@ -802,9 +828,11 @@ local function Evaluate(msg, author, guid, flag)
     if not okK then key = nil end
     local ok2, hit2 = pcall(NameBlocked, key)
     if ok2 and hit2 then return true, true end
+    local okN, hitN = pcall(NameWordBlocked, author, key, guid)
+    if okN and hitN then return true, true end
     local ok3, hit3 = pcall(WordBlocked, msg, key, guid, flag)
     if ok3 and hit3 then return true, true end
-    return false, (ok1 and okK and ok2 and ok3)
+    return false, (ok1 and okK and ok2 and okN and ok3)
 end
 
 -- The game runs this filter once per chat window that shows a message. Remember
@@ -861,7 +889,7 @@ local function HandleDuel(challenger)
     if not guild then return end
     CancelDuel()
     if StaticPopup_Hide then StaticPopup_Hide("DUEL_REQUESTED") end
-    Print(("declined a duel from %s <%s>."):format(challenger, tostring(guild)))
+    PrintThrottled("duel:" .. challenger, ("declined a duel from %s <%s>."):format(challenger, tostring(guild)))
 end
 
 local function HandleTrade(name)
@@ -874,7 +902,7 @@ local function HandleTrade(name)
     if not guild then return end
     CancelTrade()
     if StaticPopup_Hide then StaticPopup_Hide("TRADE") end
-    Print(("declined a trade from %s <%s>."):format(name, tostring(guild)))
+    PrintThrottled("trade:" .. name, ("declined a trade from %s <%s>."):format(name, tostring(guild)))
 end
 
 local function OnTooltipUnit(tooltip)
@@ -930,15 +958,43 @@ end
 
 -- Invites: WoW sends the invite right away, so this warns just after, before they join.
 local warnedInvite = {}
+-- The game sends an invite the moment you click, so this can't come first:
+-- it pops up right after, with a button that withdraws the invite.
+local function Uninvite(name)
+    if C_PartyInfo and C_PartyInfo.UninviteUnit then C_PartyInfo.UninviteUnit(name)
+    elseif UninviteUnit then UninviteUnit(name) end
+end
+
+StaticPopupDialogs["OLYMPUSMUTE_INVITE"] = {
+    text = "%s is on your OlympusMute list <%s>.\n\nIf they join, you won't see their party chat.",
+    button1 = "Cancel invite", button2 = "Keep invite",
+    OnAccept = function(self, data)
+        if not data then return end
+        pcall(Uninvite, data)
+        -- While the invite is still pending, the game holds you in a group of one.
+        -- If nobody else has joined, leaving it cancels the invite for certain.
+        local members = GetNumGroupMembers and GetNumGroupMembers() or 0
+        if members <= 1 and IsInGroup and IsInGroup() then
+            if C_PartyInfo and C_PartyInfo.LeaveParty then pcall(C_PartyInfo.LeaveParty)
+            elseif LeaveParty then pcall(LeaveParty) end
+        end
+        Print(("cancelled the invite to %s."):format(data))
+    end,
+    timeout = 0, whileDead = true, hideOnEscape = true, preferredIndex = 3,
+}
+
 local function WarnInvite(target)
     if not db or not db.whisperWarn then return end
     if type(target) ~= "string" or target == "" or IsSecret(target) then return end
     local guild = MutedGuildForName(target)
     if not guild then return end
-    local key = Normalize(target)
-    if not key or warnedInvite[key] then return end
-    warnedInvite[key] = true
-    Print(("invited %s, who's |cffff5555muted|r <%s>. You won't see their party chat."):format(target, tostring(guild)))
+    local popup = StaticPopup_Show and StaticPopup_Show("OLYMPUSMUTE_INVITE", target, tostring(guild), target)
+    if not popup then   -- no popup available: one chat line per player instead
+        local key = Normalize(target)
+        if not key or warnedInvite[key] then return end
+        warnedInvite[key] = true
+        Print(("invited %s, who's |cffff5555muted|r <%s>. You won't see their party chat."):format(target, tostring(guild)))
+    end
 end
 
 local hookedBoxes = {}
@@ -1002,7 +1058,7 @@ f:SetScript("OnEvent", function(self, event, arg1, ...)
         if type(db.declineGuild) ~= "boolean" then db.declineGuild = old end
         if type(db.declineGroup) ~= "boolean" then db.declineGroup = old end
         db.declineInvites = nil
-        for _, k in ipairs({ "guids", "names", "manual", "allow", "guildAllow", "words" }) do
+        for _, k in ipairs({ "guids", "names", "manual", "allow", "guildAllow", "words", "nameWords" }) do
             if type(db[k]) ~= "table" then db[k] = {} end
         end
         if type(db.keywords) ~= "table" then
@@ -1011,7 +1067,7 @@ f:SetScript("OnEvent", function(self, event, arg1, ...)
         end
         if type(db.hiddenTotal) ~= "number" then db.hiddenTotal = 0 end
         for k, v in pairs({ enabled = true, declineDuel = true, declineTrade = true,
-                            groupWarn = true, whisperWarn = true, hideBubbles = true }) do
+                            groupWarn = true, whisperWarn = true, hideBubbles = true, acceptShares = true }) do
             if type(db[k]) ~= "boolean" then db[k] = v end
         end
         -- Entries: drop anything that isn't the right kind of value.
@@ -1039,6 +1095,9 @@ f:SetScript("OnEvent", function(self, event, arg1, ...)
         local kws = {}
         for _, k in pairs(db.keywords) do if type(k) == "string" then kws[#kws + 1] = k end end
         db.keywords = kws
+        local nws = {}
+        for _, k in pairs(db.nameWords) do if type(k) == "string" and k ~= "" then nws[#nws + 1] = k end end
+        db.nameWords = nws
         DataChanged(false)
         self:UnregisterEvent("ADDON_LOADED")
     elseif event == "PLAYER_LOGIN" then
@@ -1500,6 +1559,274 @@ AddKeyword, RemoveKeyword, ExemptGuild = EachEntry(AddKeyword), EachEntry(Remove
 AddWord, RemoveWord = EachEntry(AddWord), EachEntry(RemoveWord, HasWord)
 AddPlayer, AllowPlayer, RemovePlayer = EachEntry(AddPlayer), EachEntry(AllowPlayer, HasAllowed), EachEntry(RemovePlayer, HasMuted)
 
+---------------------------------------------------------------------------
+-- Name keywords: mute any player whose character name contains the text.
+---------------------------------------------------------------------------
+local function NameWordList()
+    return #db.nameWords > 0 and table.concat(db.nameWords, ", ") or "(none)"
+end
+
+local function CleanNameWord(text)
+    return (strtrim(text or ""):lower():gsub('[%*%%"]', ""))
+end
+
+local function AddNameWord(text)
+    local w = CleanNameWord(text)
+    if #w < MIN_KEYWORD_LEN then
+        Print(("name keywords need at least %d letters."):format(MIN_KEYWORD_LEN)) return
+    end
+    for _, x in ipairs(db.nameWords) do
+        if x == w then Print('"' .. w .. '" is already on the name list.') return end
+    end
+    db.nameWords[#db.nameWords + 1] = w
+    DataChanged(true)
+    Print(('hiding chat from players whose name contains "%s". Name list: %s'):format(w, NameWordList()))
+    if panel and panel:IsShown() then panel:Refresh() end
+end
+
+local function RemoveNameWord(text)
+    local w = CleanNameWord(text)
+    for i, x in ipairs(db.nameWords) do
+        if x == w then
+            table.remove(db.nameWords, i)
+            DataChanged(true)
+            Print(('removed "%s". Name list: %s'):format(w, NameWordList()))
+            if panel and panel:IsShown() then panel:Refresh() end
+            return
+        end
+    end
+    Print('"' .. w .. '" isn\'t on the name list. Name list: ' .. NameWordList())
+end
+
+-- Panel button: adds the text, or removes it if it's already listed.
+local function ToggleNameWord(text)
+    local w = CleanNameWord(text)
+    for _, x in ipairs(db.nameWords) do
+        if x == w then RemoveNameWord(w) return end
+    end
+    AddNameWord(w)
+end
+AddNameWord, RemoveNameWord, ToggleNameWord = EachEntry(AddNameWord), EachEntry(RemoveNameWord), EachEntry(ToggleNameWord)
+
+---------------------------------------------------------------------------
+-- List sharing (idea from delro_ed): send your guild names and filtered words
+-- to another OlympusMute user. Never players. Nothing changes on their side
+-- until they accept.
+---------------------------------------------------------------------------
+local SHARE_PREFIX = "OMuteShare"
+local SHARE_MAX_ITEMS = 100          -- per list
+local SHARE_CHUNK = 220              -- characters of payload per addon message
+local shareSendable = C_ChatInfo and C_ChatInfo.SendAddonMessage and true or false
+if C_ChatInfo and C_ChatInfo.RegisterAddonMessagePrefix then
+    pcall(C_ChatInfo.RegisterAddonMessagePrefix, SHARE_PREFIX)
+end
+
+local function Esc(v) return (v:gsub("[%%;|]", function(c) return ("%%%02X"):format(c:byte()) end)) end
+local function Unesc(v) return (v:gsub("%%(%x%x)", function(h) return string.char(tonumber(h, 16)) end)) end
+
+local function BuildSharePayload()
+    local items = { "v1" }
+    for i, k in ipairs(db.keywords) do if i <= SHARE_MAX_ITEMS then items[#items + 1] = "g:" .. Esc(k) end end
+    for i, w in ipairs(db.words) do if i <= SHARE_MAX_ITEMS then items[#items + 1] = "w:" .. Esc(w) end end
+    return table.concat(items, ";"), #db.keywords, #db.words
+end
+
+local function ParseSharePayload(payload)
+    local guilds, words = {}, {}
+    local first = true
+    for item in (payload .. ";"):gmatch("([^;]*);") do
+        if first then
+            if item ~= "v1" then return nil end
+            first = false
+        else
+            local kind, v = item:match("^([gw]):(.+)$")
+            if kind == "g" and #guilds < SHARE_MAX_ITEMS then guilds[#guilds + 1] = Unesc(v)
+            elseif kind == "w" and #words < SHARE_MAX_ITEMS then words[#words + 1] = Unesc(v) end
+        end
+    end
+    return guilds, words
+end
+
+local function SendShare(target)
+    if not shareSendable then Print("sharing isn't available on this game version.") return end
+    local channel
+    target = strtrim(target or "")
+    if target == "" then
+        if IsInRaid() then channel = "RAID" elseif IsInGroup() then channel = "PARTY"
+        else Print("join a group to share with it, or type a name: /omute share Name") return end
+    elseif target:lower() == "guild" then
+        if not (IsInGuild and IsInGuild()) then Print("you're not in a guild.") return end
+        channel, target = "GUILD", nil
+    else
+        channel = "WHISPER"
+    end
+    local payload, ng, nw = BuildSharePayload()
+    if ng + nw == 0 then Print("your guild list and word filter are both empty, nothing to share.") return end
+    local id = tostring(math.random(10000, 99999))
+    local total = math.ceil(#payload / SHARE_CHUNK)
+    for i = 1, total do
+        local part = payload:sub((i - 1) * SHARE_CHUNK + 1, i * SHARE_CHUNK)
+        C_ChatInfo.SendAddonMessage(SHARE_PREFIX, ("%s:%d/%d:%s"):format(id, i, total, part), channel, target)
+    end
+    local who = channel == "WHISPER" and target or (channel == "GUILD" and "your guild" or "your group")
+    Print(("shared %d guild names and %d filtered words with %s. They'll be asked before anything changes."):format(ng, nw, who))
+    if channel == "WHISPER" then
+        Print("(shares sent by whisper only arrive if you're on their friends list or in their group.)")
+    end
+end
+
+-- Adding shared entries quietly (one summary line instead of one per entry).
+local function MergeShared(guilds, words)
+    local ng, nw = 0, 0
+    local haveK = {}
+    for _, k in ipairs(db.keywords) do haveK[k] = true end
+    for _, g in ipairs(guilds) do
+        local kw = CleanKeyword(g)
+        if #kw >= MIN_KEYWORD_LEN and not haveK[kw] and not CoveredBy(kw, db.keywords) then
+            db.keywords[#db.keywords + 1] = kw; haveK[kw] = true; ng = ng + 1
+        end
+    end
+    TidyKeywords()
+    scanQueries = nil
+    local haveW = {}
+    for _, w in ipairs(db.words) do haveW[w] = true end
+    for _, raw in ipairs(words) do
+        local w = CleanWordEntry(raw)
+        local exact = w:match('^"(.+)"$')
+        local ok = #(exact or w) >= 3
+        if ok and not exact then
+            for part in w:gmatch("%S+") do if #part < 2 then ok = false end end
+        end
+        if ok and not haveW[w] then db.words[#db.words + 1] = w; haveW[w] = true; nw = nw + 1 end
+    end
+    DataChanged(true)
+    return ng, nw
+end
+
+local function ReplaceWithShared(guilds, words)
+    db.keywords, db.words = {}, {}
+    wipe(wordParts)
+    local ng, nw = MergeShared(guilds, words)
+    -- Unmute players who were only muted because of a guild name that's gone now.
+    local drop = {}
+    for name, guild in pairs(db.names) do
+        if not db.manual[name] and not IsOlympus(guild) then drop[name] = true end
+    end
+    UnblockMany(drop)
+    return ng, nw
+end
+
+local function ShareSummary(list)
+    if #list == 0 then return "(none)" end
+    local shown = {}
+    for i = 1, math.min(5, #list) do shown[i] = list[i] end
+    local s = table.concat(shown, ", ")
+    if #list > 5 then s = s .. (" and %d more"):format(#list - 5) end
+    return s
+end
+
+StaticPopupDialogs["OLYMPUSMUTE_SHARE"] = {
+    text = "%s wants to share their OlympusMute lists with you.\n\n%s\n\nNothing changes unless you choose below.",
+    button1 = "Add to mine", button2 = "Cancel", button3 = "Replace mine",
+    OnAccept = function(self, data)
+        local ng, nw = MergeShared(data.guilds, data.words)
+        Print(("added %d guild names and %d filtered words from %s."):format(ng, nw, data.from))
+        if panel and panel:IsShown() then panel:Refresh() end
+    end,
+    OnAlt = function(self, data)
+        local ng, nw = ReplaceWithShared(data.guilds, data.words)
+        Print(("replaced your lists with %s's: %d guild names, %d filtered words."):format(data.from, ng, nw))
+        if panel and panel:IsShown() then panel:Refresh() end
+    end,
+    timeout = 0, whileDead = true, hideOnEscape = true, preferredIndex = 3,
+}
+
+StaticPopupDialogs["OLYMPUSMUTE_SHARE_SEND"] = {
+    text = "Share your guild names and filtered words with:\n(a player's name, or leave empty to share with your group)",
+    button1 = "Share", button2 = CANCEL or "Cancel",
+    hasEditBox = 1,
+    OnAccept = function(self)
+        local eb = self.editBox or self.EditBox
+        SendShare(eb and eb:GetText() or "")
+    end,
+    EditBoxOnEnterPressed = function(self)
+        local parent = self:GetParent()
+        SendShare(self:GetText() or "")
+        if parent then parent:Hide() end
+    end,
+    timeout = 0, whileDead = true, hideOnEscape = true, preferredIndex = 3,
+}
+
+local incoming = {}       -- sender|id -> { parts, total, got, t }
+local lastOfferFrom = {}  -- sender -> time of their last offer shown
+-- Shares are only accepted from people you already know: your group, your
+-- guild, or your friends list. Strangers can't send you popups.
+local function TrustedSender(sender, channel)
+    if channel == "PARTY" or channel == "RAID" or channel == "INSTANCE_CHAT" or channel == "GUILD" then return true end
+    if channel ~= "WHISPER" then return false end
+    local short = sender:match("^[^%-]+") or sender
+    local ok, inGroup = pcall(function()
+        return (UnitInParty and (UnitInParty(sender) or UnitInParty(short)))
+            or (UnitInRaid and (UnitInRaid(sender) or UnitInRaid(short)))
+    end)
+    if ok and inGroup then return true end
+    local okF, friend = pcall(function()
+        return C_FriendList and C_FriendList.GetFriendInfo
+            and (C_FriendList.GetFriendInfo(sender) or C_FriendList.GetFriendInfo(short))
+    end)
+    return okF and friend and true or false
+end
+
+local SHARE_MAX_PENDING = 5      -- unfinished shares kept at once
+local SHARE_GLOBAL_GAP = 60      -- seconds between any two share popups
+local lastOfferAny = -SHARE_GLOBAL_GAP
+local function OnShareMessage(text, channel, sender)
+    if not db.acceptShares or type(text) ~= "string" or type(sender) ~= "string" then return end
+    if IsSecret(text) or IsSecret(sender) then return end
+    local key = Normalize(sender)
+    if key == playerKey then return end                 -- our own group/guild broadcast
+    if MutedGuildForName(sender) then return end        -- never from muted players
+    if not TrustedSender(sender, channel) then return end
+    local id, i, total, part = text:match("^(%d+):(%d+)/(%d+):(.*)$")
+    i, total = tonumber(i), tonumber(total)
+    if not id or not i or not total or total < 1 or total > 20 or i > total then return end
+    local slot = sender .. "|" .. id
+    local entry = incoming[slot]
+    if not entry then
+        local n = 0
+        for k, v in pairs(incoming) do
+            if GetTime() - v.t > 30 then incoming[k] = nil else n = n + 1 end
+        end
+        if n >= SHARE_MAX_PENDING then return end         -- flood: drop new ones
+        entry = { parts = {}, total = total, got = 0, t = GetTime() }
+        incoming[slot] = entry
+    end
+    if entry.parts[i] then return end
+    entry.parts[i] = part; entry.got = entry.got + 1
+    if entry.got < entry.total then return end
+    incoming[slot] = nil
+    local guilds, words = ParseSharePayload(table.concat(entry.parts))
+    if not guilds or (#guilds + #words == 0) then return end
+    if lastOfferFrom[key] and GetTime() - lastOfferFrom[key] < 300 then return end   -- one per sender per 5 min
+    if GetTime() - lastOfferAny < SHARE_GLOBAL_GAP then return end                     -- one per minute overall
+    if StaticPopup_Visible and StaticPopup_Visible("OLYMPUSMUTE_SHARE") then return end
+    lastOfferFrom[key] = GetTime(); lastOfferAny = GetTime()
+    local preview = ("Guild names (%d): %s\nFiltered words (%d): %s"):format(
+        #guilds, ShareSummary(guilds), #words, ShareSummary(words))
+    StaticPopup_Show("OLYMPUSMUTE_SHARE", sender, preview, { from = sender, guilds = guilds, words = words })
+end
+
+local shareFrame = CreateFrame("Frame")
+shareFrame:RegisterEvent("CHAT_MSG_ADDON")
+shareFrame:SetScript("OnEvent", function(_, _, prefix, text, channel, sender)
+    if prefix == SHARE_PREFIX and db then pcall(OnShareMessage, text, channel, sender) end
+end)
+
+local function SetAcceptShares(on)
+    db.acceptShares = on and true or false
+    Print("accepting shared lists from other players " .. OnOff(db.acceptShares))
+end
+
 -- /who only returns the first 50 matches, so one search can't cover every
 -- member. Each click runs the next search in a rotation: every guild name on
 -- the list, split into level ranges, reaching members a plain search cuts off.
@@ -1866,6 +2193,10 @@ CreatePanel = function()
     kwText:SetJustifyH("LEFT")
 
     local whoBtn = MakeButton("Scan /who", 200, WhoScan, kwText, nil, -6)
+    local shareBtn = MakeButton("Share lists...", 120, function() StaticPopup_Show("OLYMPUSMUTE_SHARE_SEND") end, whoBtn, 12, 0)
+    Tip(shareBtn, "Share lists", "Send your guild names and filtered words to another OlympusMute user, or to your whole group.",
+        "They see what's in it and choose to add it to theirs, replace theirs, or cancel. Players are never shared.",
+        "Shares are only accepted from your group, your guild, or your friends list.")
     function panel:UpdateScanButton()
         local total = #GetScanQueries()
         if total == 0 then whoBtn:SetText("Scan /who (no guilds)") return end
@@ -1915,11 +2246,19 @@ CreatePanel = function()
         "Several at once with commas: Name1, Name2-Realm")
     local neverBtn = MakeButton("Never mute", 100, BoxAction(box, AllowPlayer), muteBtn, 6, 0)
     Tip(neverBtn, "Never mute", "This player is never muted, even in a muted guild. Click again with the same name to undo.")
-    MakeButton("Unmute", 80, BoxAction(box, RemovePlayer), neverBtn, 6, 0)
+    local unmuteBtn = MakeButton("Unmute", 80, BoxAction(box, RemovePlayer), neverBtn, 6, 0)
+    local nameBtn = MakeButton("Name contains", 110, BoxAction(box, ToggleNameWord), unmuteBtn, 6, 0)
+    Tip(nameBtn, "Name contains", "Hides chat from any player whose character name contains this text (at least 3 letters). "
+        .. "Click again with the same text to remove it.")
+
+    local nText = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+    nText:SetPoint("TOPLEFT", box, "BOTTOMLEFT", -6, -5)
+    nText:SetPoint("RIGHT", panel, "RIGHT", -16, 0)
+    nText:SetJustifyH("LEFT")
 
     -- Muted list row: count, then its two buttons right next to it
     local countText = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-    countText:SetPoint("TOPLEFT", box, "BOTTOMLEFT", -6, -14)
+    countText:SetPoint("TOPLEFT", nText, "BOTTOMLEFT", 0, -10)
 
     local viewBtn = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
     viewBtn:SetSize(90, 22)
@@ -1948,6 +2287,7 @@ CreatePanel = function()
         kwText:SetText("Current list: |cffffffff" .. KeywordList() .. "|r"
             .. (next(db.guildAllow) and ("   Whitelist: |cff66ff66" .. ExemptList() .. "|r") or ""))
         wText:SetText("Filtered words: |cffffffff" .. WordList() .. "|r")
+        nText:SetText("Names containing: |cffffffff" .. NameWordList() .. "|r")
         self:UpdateScanButton()
         declineGuild:SetChecked(db.declineGuild)
         declineGroup:SetChecked(db.declineGroup)
@@ -2008,8 +2348,9 @@ SlashCmdList.OLYMPUSMUTE = function(input)
         SetWhisperWarn(onoff)
     elseif cmd == "groupwarn" and onoff ~= nil then
         SetGroupWarn(onoff)
-    elseif cmd == "stats" then
-        Print(("hidden %s messages this session, %s total."):format(FormatNum(sessionHidden), FormatNum(db.hiddenTotal or 0)))
+    elseif cmd == "tally" or cmd == "stats" then   -- "stats" kept for anyone used to it
+        Print(("hidden %s messages (%s this session) from %s muted players."):format(
+            FormatNum(db.hiddenTotal or 0), FormatNum(sessionHidden), FormatNum(CountMuted())))
     elseif cmd == "word" then
         local sub, arg = rest:match("^(%S*)%s*(.-)$")
         sub = (sub or ""):lower()
@@ -2030,6 +2371,16 @@ SlashCmdList.OLYMPUSMUTE = function(input)
         SetDeclineGuild(onoff)
     elseif cmd == "groupinvites" and onoff ~= nil then
         SetDeclineGroup(onoff)
+    elseif cmd == "name" then
+        local sub, a = rest:match("^(%S*)%s*(.-)$")
+        sub = (sub or ""):lower()
+        if sub == "add" and a ~= "" then AddNameWord(a)
+        elseif sub == "remove" and a ~= "" then RemoveNameWord(a)
+        else Print("name list: " .. NameWordList() .. "  (/omute name add|remove text)") end
+    elseif cmd == "share" then
+        SendShare(rest)
+    elseif cmd == "shares" and onoff ~= nil then
+        SetAcceptShares(onoff)
     elseif cmd == "scan" then
         WhoScan()
     elseif cmd == "" or cmd == "config" or cmd == "options" then
@@ -2037,7 +2388,7 @@ SlashCmdList.OLYMPUSMUTE = function(input)
     else
         Print(("filtering %s, %d players muted."):format(
             db.enabled and "|cff00ff00ON|r" or "|cffff0000OFF|r", CountMuted()))
-        Print("/omute (opens options) | config | on | off | invites on|off | guildinvites on|off | groupinvites on|off | guild add|remove|whitelist Name | word add|remove text | duels on|off | trades on|off | groupwarn on|off | whisperwarn on|off | bubbles on|off | allow Name | stats | list | scan | check Name | add Name | remove Name | clear | debug")
+        Print("/omute (opens options) | config | on | off | invites on|off | guildinvites on|off | groupinvites on|off | guild add|remove|whitelist Name | word add|remove text | duels on|off | trades on|off | groupwarn on|off | whisperwarn on|off | bubbles on|off | allow Name | name add|remove text | share [Name|guild] | shares on|off | tally | list | scan | check Name | add Name | remove Name | clear | debug")
         Print("Separate several names or words with commas: /omute add Name1, Name2")
     end
 end

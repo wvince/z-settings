@@ -303,7 +303,7 @@ step
     .complete 81747,1
     .maxlevel 53
 step
-    .goto Duskwood,46.63,47.90,5 >> Return to the portal you ussed to phase into the emerald dream and |cRXP_WARN_click it to phase back into the normal world|r
+    .goto Duskwood,46.63,47.90,5 >> Return to the portal you used to phase into the emerald dream and |cRXP_WARN_click it to phase back into the normal world|r
     .maxlevel 53
 step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Field Captain Palandar|r
@@ -887,7 +887,7 @@ step
     .accept 81826 >> Accept Hinterlands Mission VII: Recover Star-Touched Dragonegg
     .accept 81830 >> Accept Hinterlands Mission VIII: Recover Elunar Relic
     .accept 81832 >> Accept Hinterlands Mission IX: Recover Dreampearl
-    .accept 81850 >> Accept Hinterlands Mission XVI: Rescue Elinar Shadowdrinker
+    .accept 81850 >> Accept Hinterlands Mission XVI: Rescue Elianar Shadowdrinker
     .accept 81851 >> Accept Hinterlands Mission XVII: Rescue Serlina Starbright
     .accept 81852 >> Accept Hinterlands Mission XVII: Rescue Veanna Cloudsleeper
     .target Field Captain Korlian
@@ -895,7 +895,7 @@ step
 step
     #optional
     .group 3
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|ttalk to |cRXP_FRIENDLY_Field Captain Korlian|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Field Captain Korlian|r
     >>|cRXP_WARN_If you're in a group consider taking the elite kill quests as well. The bosses you will need to kill for these quests have massive amounts of HP and might be challenging depending on your group|r
     .accept 81837 >> Accept Hinterlands Mission XIII: Defeat Florius
     .accept 81838 >> Accept Hinterlands Mission XIV: Defeat Doomkin
@@ -1089,14 +1089,14 @@ step
     .turnin 81826 >> Turn in Hinterlands Mission VII: Recover Star-Touched Dragonegg
     .turnin 81830 >> Turn in Hinterlands Mission VIII: Recover Elunar Relic
     .turnin 81832 >> Turn in Hinterlands Mission IX: Recover Dreampearl
-    .turnin 81850 >> Turn in Hinterlands Mission XVI: Rescue Elinar Shadowdrinker
+    .turnin 81850 >> Turn in Hinterlands Mission XVI: Rescue Elianar Shadowdrinker
     .turnin 81851 >> Turn in Hinterlands Mission XVII: Rescue Serlina Starbright
     .turnin 81852 >> Turn in Hinterlands Mission XVII: Rescue Veanna Cloudsleeper
     .target Field Captain Korlian
     .maxlevel 53
 step
     #optional
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|ttalk to |cRXP_FRIENDLY_Field Captain Korlian|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Field Captain Korlian|r
     .turnin -81837 >> Turn in Hinterlands Mission XIII: Defeat Florius
     .turnin -81838 >> Turn in Hinterlands Mission XIV: Defeat Doomkin
     .turnin -81839 >> Turn in Hinterlands Mission XV: Defeat Ghamoo-Raja

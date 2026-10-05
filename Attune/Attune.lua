@@ -7,23 +7,31 @@
 --	but WITHOUT ANY WARRANTY. Use at your own risk.
 --
 -------------------------------------------------------------------------
-
--- 1.6.19
---  Updated dungeons up to Maraudon
-
--- 1.6.20
---   - Added quest giver in tooltip and map display
---   - Changed default to not announce completion in guild chat
-
--- 1.6.21
---   - Click a quest to list its reward items and map of the quest giver. Click it again to go back to the treeview
---   - Attune now uses the Forever frame
-
+--
+-- 1.6.23
+--   - Added Placeholders for upcoming dungeons
+--   - Changed step colors for quests and items: yellow if you have the quest or some of the required items, green is you have all the required items or have completed the quest, grey otherwise
+--   - Added Zul'Farrak quests
+--   - Added The Temple of Atal'Hakkar quests
+--   - if you are not at the minimum level for a quest, the quest level text will show in red
+--
 -- 1.6.22
 --   - Added option to use full map in quest details
 --   - Added missing Wailing Caverns quests for Alliance
 --   - Added dungeon art as background
 --   - Added level range for dungeons
+--
+-- 1.6.21
+--   - Click a quest to list its reward items and map of the quest giver. Click it again to go back to the treeview
+--   - Attune now uses the Forever frame
+--
+-- 1.6.20
+--   - Added quest giver in tooltip and map display
+--   - Changed default to not announce completion in guild chat
+--
+-- 1.6.19
+--  Updated dungeons up to Maraudon
+--
 
 
 
@@ -175,6 +183,7 @@ local attunelocal_graphDragging = false		-- true while click-dragging the chain
 local attunelocal_graphDragLastX = 0
 local attunelocal_graphDragLastY = 0
 local attunelocal_graphPanHooked = false	-- Shift+wheel hook installed on scrollframe
+local attunelocal_wipFrame					-- centered "work in progress" overlay for empty trees
 
 --local attunelocal_repWidget					-- Reputation Widget frame
 --local attunelocal_repWidget_frames = {} 	-- list of non-Ace frames for the rep widget (to reuse them later)
@@ -759,7 +768,11 @@ function Attune:OnEnable()
 	if t.attuned == nil then t.attuned = {} end
 	for i, a in pairs(Attune_Data.attunes) do
 		if attuneDone[a.ID] == nil then attuneDone[a.ID] = 0 end
-		t.attuned[a.ID] = math.floor(100*(attuneDone[a.ID]/attuneSteps[a.ID]))
+		if (attuneSteps[a.ID] or 0) > 0 then
+			t.attuned[a.ID] = math.floor(100*(attuneDone[a.ID]/attuneSteps[a.ID]))
+		else
+			t.attuned[a.ID] = 0
+		end
 
 	end
 	-- End step done means fully attuned (Kill/Interact may lag behind in the done map)
@@ -1625,15 +1638,22 @@ function Attune_CheckProgress()
 						end
 
 						--get QUEST completion
+						-- A quest still in the log is not turned in, even if an older
+						-- completion flag exists for the same quest id.
 						if s.TYPE == "Quest" or s.TYPE == "Turn In" then
 							local eitherCompleted = false
+							local onQuest = false
 							local qIDs = Attune_split(s.ID_WOWHEAD, "|")
-							for i=1, #qIDs do 
-								if IsQuestFlaggedCompleted(qIDs[i]) then
+							for i=1, #qIDs do
+								if C_QuestLog.IsOnQuest(qIDs[i]) then
+									onQuest = true
+								elseif IsQuestFlaggedCompleted(qIDs[i]) then
 									eitherCompleted = true
 								end
 							end
-							if eitherCompleted then
+							if onQuest then
+								att.done[a.ID .. "-" .. s.ID] = nil
+							elseif eitherCompleted then
 								att.done[a.ID .. "-" .. s.ID] = 1
 							end
 						end
@@ -1941,6 +1961,12 @@ function Attune_LoadTree()
 	local expacNode = {}
 	local groupNode = {}
 	local groupAllDone = true
+	local attunesWithSteps = {}
+	for _, s in pairs(Attune_Data.steps) do
+		if showPatchStep(s) then
+			attunesWithSteps[s.ID_ATTUNE] = true
+		end
+	end
 
 	for i, a in pairs(Attune_Data.attunes) do
 		if (a.DEPRECATED == nil or Attune_DB.showDeprecatedAttunes) then 
@@ -1983,7 +2009,10 @@ function Attune_LoadTree()
 
 				local text = Attune_DisplayName(a)
 				local icon = a.ICON
-				if Attune_DB.toons[attunelocal_charKey].attuned ~= nil then
+				if not attunesWithSteps[a.ID] then
+					text = "|cff808080"..text.."|r"
+					groupAllDone = false
+				elseif Attune_DB.toons[attunelocal_charKey].attuned ~= nil then
 					if Attune_DB.toons[attunelocal_charKey].attuned[a.ID] >= 100 then
 						text = "|cff00ff00"..text.."|r"
 						icon = "Interface\\AddOns\\Attune\\Images\\success"
@@ -2510,6 +2539,7 @@ local ATTUNE_DUNGEON_ART = {
 	["330"] = 131876,
 	["340"] = 131835, -- Dire Maul
 	["350"] = 131885, -- Zul'Farrak
+	["351"] = 131885,
 	["360"] = 131871, -- Stratholme
 	["370"] = 131872, -- Temple of Atal'Hakkar
 	["380"] = 131872,
@@ -2567,6 +2597,43 @@ local function Attune_ShowDungeonArt(attuneId)
 	attunelocal_dungeonArt:SetAlpha(ATTUNE_DUNGEON_ART_ALPHA)
 	attunelocal_dungeonArt:Show()
 	Attune_LayoutDungeonArt()
+end
+
+local function Attune_ShowWorkInProgress(show)
+	if not show then
+		if attunelocal_wipFrame then
+			attunelocal_wipFrame:Hide()
+			attunelocal_wipFrame:SetParent(nil)
+		end
+		return
+	end
+	local parent = attunelocal_scroll and attunelocal_scroll.frame
+	if not parent then return end
+	if not attunelocal_wipFrame then
+		local holder = CreateFrame("Frame", nil, parent)
+		holder:SetAllPoints(parent)
+		holder:EnableMouse(false)
+		local fs = holder:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+		fs:SetPoint("CENTER", holder, "CENTER", 0, 0)
+		fs:SetJustifyH("CENTER")
+		fs:SetFont(GameFontNormal:GetFont(), 22, "")
+		fs:SetTextColor(1, 0.82, 0)
+		fs:SetShadowColor(0, 0, 0, 1)
+		fs:SetShadowOffset(1, -1)
+		holder.text = fs
+		attunelocal_wipFrame = holder
+	end
+	if attunelocal_wipFrame:GetParent() ~= parent then
+		attunelocal_wipFrame:SetParent(parent)
+		attunelocal_wipFrame:SetAllPoints(parent)
+	end
+	attunelocal_wipFrame:SetFrameLevel((parent:GetFrameLevel() or 0) + 30)
+	attunelocal_wipFrame.text:SetText(AttuneLang["Work in progress"] or "Work in progress")
+	if show then
+		attunelocal_wipFrame:Show()
+	else
+		attunelocal_wipFrame:Hide()
+	end
 end
 
 function Attune_Select(attuneId)
@@ -2695,6 +2762,14 @@ function Attune_Select(attuneId)
 		local half = rowW / 2
 		if half > attunelocal_graphMaxExtent then attunelocal_graphMaxExtent = half end
 	end
+
+	if next(stageSteps) == nil then
+		attunelocal_graphRoot:Hide()
+		Attune_ShowWorkInProgress(true)
+		attunelocal_scroll.frame:SetScript("OnUpdate", nil)
+		return
+	end
+	Attune_ShowWorkInProgress(false)
 
 	-- Create/position main-chain steps (defer End until SIDE nodes exist for line anchors)
 	-- First stage stays at yy=0: top margin is the unscaled header offset outside the zoomed graph.
@@ -3238,6 +3313,300 @@ local function Attune_ShowQuestGiverTip(step, anchor)
 	GameTooltip:SetPoint("TOPLEFT", tip, "BOTTOMLEFT", 0, -attunelocal_giverTipGap)
 end
 
+-- Quest and item cells do not use the "you are on this step" highlight.
+-- Quests: grey until accepted. Pick Up and Quest cells are yellow while in the log. Turn In stays grey until the required items are in hand (then yellow) or the quest is complete (then green). When those items are in hand, Pick Up turns green too. A completed quest is green on Pick Up, Quest, and Turn In.
+-- Items: grey at 0, yellow for a partial stack, green at the full count or when the quest they feed is complete.
+local attuneFollowerCache
+
+local function Attune_FollowIDs(follows)
+	if follows == nil or follows == "" or follows == "0" then return {} end
+	local sep = "&"
+	if string.find(follows, "|", 1, true) then sep = "|" end
+	return Attune_split(follows, sep)
+end
+
+local function Attune_FollowersOf(attuneId, stepId)
+	if attuneFollowerCache == nil then
+		attuneFollowerCache = {}
+		for _, s in pairs(Attune_Data.steps) do
+			if showPatchStep(s) then
+				local byAttune = attuneFollowerCache[s.ID_ATTUNE]
+				if byAttune == nil then
+					byAttune = {}
+					attuneFollowerCache[s.ID_ATTUNE] = byAttune
+				end
+				for _, flw in ipairs(Attune_FollowIDs(s.FOLLOWS)) do
+					local list = byAttune[flw]
+					if list == nil then
+						list = {}
+						byAttune[flw] = list
+					end
+					table.insert(list, s)
+				end
+			end
+		end
+	end
+	local byAttune = attuneFollowerCache[attuneId]
+	if byAttune == nil then return nil end
+	return byAttune[tostring(stepId)]
+end
+
+local function Attune_SameQuestId(step, qid)
+	if step.ID_WOWHEAD == nil then return false end
+	local wanted = tostring(qid)
+	if step.ID_WOWHEAD == wanted then return true end
+	if string.find(step.ID_WOWHEAD, "|", 1, true) then
+		for _, part in ipairs(Attune_split(step.ID_WOWHEAD, "|")) do
+			if part == wanted then return true end
+		end
+	end
+	return false
+end
+
+local function Attune_IsQuestFlaggedCompleted(qid)
+	if C_QuestLog and C_QuestLog.IsQuestFlaggedCompleted then
+		local ok, done = pcall(C_QuestLog.IsQuestFlaggedCompleted, qid)
+		if ok and done then return true end
+	end
+	if IsQuestFlaggedCompleted then
+		local ok, done = pcall(IsQuestFlaggedCompleted, qid)
+		if ok and done then return true end
+	end
+	return false
+end
+
+-- A saved Quest or Turn In step counts as completion for every cell of that quest.
+-- Pick Up is saved as done on accept, so its own flag is not completion.
+local function Attune_QuestRecordedComplete(attuneId, qid, doneMap)
+	if not doneMap or not attuneId then return false end
+	for _, s in pairs(Attune_Data.steps) do
+		if s.ID_ATTUNE == attuneId and (s.TYPE == "Quest" or s.TYPE == "Turn In") and doneMap[s.ID_ATTUNE .. "-" .. s.ID] and Attune_SameQuestId(s, qid) then
+			return true
+		end
+	end
+	return false
+end
+
+-- completed, active (in the quest log, not turned in)
+local function Attune_QuestState(idWowhead, attuneId)
+	local completed, active = false, false
+	local qIDs = Attune_split(tostring(idWowhead or ""), "|")
+	local doneMap = Attune_DB.toons[attunelocal_charKey] and Attune_DB.toons[attunelocal_charKey].done
+	for _, q in ipairs(qIDs) do
+		local qid = tonumber(q)
+		if qid then
+			local onQuest = C_QuestLog and C_QuestLog.IsOnQuest and C_QuestLog.IsOnQuest(qid)
+			if onQuest then
+				-- Still in the log, so this step is not turned in.
+				active = true
+			elseif Attune_IsQuestFlaggedCompleted(qid) or Attune_QuestRecordedComplete(attuneId, qid, doneMap) then
+				completed = true
+			end
+		end
+	end
+	if active then completed = false end
+	return completed, active
+end
+
+local function Attune_OwnedItemCount(itemId)
+	local count = 0
+	if GetItemCount then
+		count = GetItemCount(itemId, true) or 0
+		if count == 0 then
+			local alias
+			if itemId == "185686" then alias = "30637" -- Thrallmar
+			elseif itemId == "185687" then alias = "30622" -- Honor Hold
+			elseif itemId == "185690" then alias = "30623" -- Cenarion
+			elseif itemId == "185691" then alias = "30633" -- Lower City
+			elseif itemId == "185692" then alias = "30634" -- Shatar
+			elseif itemId == "185693" then alias = "30635" -- KoT
+			end
+			if alias then count = GetItemCount(alias, true) or 0 end
+		end
+	end
+	return count
+end
+
+local function Attune_StepsShareQuest(a, b)
+	if a.ID_WOWHEAD == nil or b.ID_WOWHEAD == nil then return false end
+	if a.ID_WOWHEAD == b.ID_WOWHEAD then return true end
+	local ids = {}
+	for _, q in ipairs(Attune_split(tostring(a.ID_WOWHEAD), "|")) do
+		ids[q] = true
+	end
+	for _, q in ipairs(Attune_split(tostring(b.ID_WOWHEAD), "|")) do
+		if ids[q] then return true end
+	end
+	return false
+end
+
+-- Pick Up and Turn In of the same quest, with every item between them fully collected.
+local function Attune_SplitItemsReady(step)
+	if step.TYPE ~= "Pick Up" and step.TYPE ~= "Turn In" then return false end
+
+	local turnIns, pickUpIds = {}, {}
+	local hasPickUp = false
+	for _, s in pairs(Attune_Data.steps) do
+		if showPatchStep(s) and s.ID_ATTUNE == step.ID_ATTUNE and Attune_StepsShareQuest(s, step) then
+			if s.TYPE == "Turn In" then
+				turnIns[#turnIns + 1] = s
+			elseif s.TYPE == "Pick Up" then
+				pickUpIds[s.ID] = true
+				hasPickUp = true
+			end
+		end
+	end
+	if not hasPickUp or #turnIns == 0 then return false end
+
+	local items, seen = {}, {}
+	local function walk(id)
+		if id == nil or id == "" or id == "0" or seen[id] or pickUpIds[id] then return end
+		seen[id] = true
+		local s = Attune_FindStep(step.ID_ATTUNE, id)
+		if not s then return end
+		if s.TYPE == "Item" then items[#items + 1] = s end
+		for _, flw in ipairs(Attune_FollowIDs(s.FOLLOWS)) do
+			walk(flw)
+		end
+	end
+	for _, turnIn in ipairs(turnIns) do
+		for _, flw in ipairs(Attune_FollowIDs(turnIn.FOLLOWS)) do
+			walk(flw)
+		end
+	end
+	if #items == 0 then return false end
+
+	for _, item in ipairs(items) do
+		local need = 1
+		if item.COUNT ~= nil then need = item.COUNT end
+		if Attune_OwnedItemCount(item.ID_WOWHEAD) < need then return false end
+	end
+	return true
+end
+
+local function Attune_QuestCellTone(step)
+	local completed, active = Attune_QuestState(step.ID_WOWHEAD, step.ID_ATTUNE)
+	if not completed and not active and step.TYPE ~= "Pick Up" then
+		local doneMap = Attune_DB.toons[attunelocal_charKey] and Attune_DB.toons[attunelocal_charKey].done
+		if doneMap and doneMap[step.ID_ATTUNE .. "-" .. step.ID] then
+			completed = true
+		end
+	end
+	-- Completed quests are green on Pick Up, Quest, and Turn In alike.
+	if completed then return "green" end
+	-- Required items are in hand: Pick Up is done, Turn In is ready.
+	if Attune_SplitItemsReady(step) then
+		if step.TYPE == "Turn In" then return "yellow" end
+		return "green"
+	end
+	-- Turn In stays grey until the items are in hand or the quest is complete.
+	if active and step.TYPE ~= "Turn In" then return "yellow" end
+	return "grey"
+end
+
+-- True when a quest this item leads into (skipping kills, clicks, other items) is complete.
+local function Attune_ItemQuestCompleted(step)
+	local seen = {}
+	local queue = { step.ID }
+	local i = 1
+	while queue[i] do
+		local id = queue[i]
+		i = i + 1
+		if not seen[id] then
+			seen[id] = true
+			local followers = Attune_FollowersOf(step.ID_ATTUNE, id)
+			if followers then
+				for _, s in ipairs(followers) do
+					if s.TYPE == "Quest" or s.TYPE == "Pick Up" or s.TYPE == "Turn In" then
+						local completed = Attune_QuestState(s.ID_WOWHEAD, s.ID_ATTUNE)
+						if completed then return true end
+					elseif s.TYPE ~= "End" and s.TYPE ~= "Attune" then
+						queue[#queue + 1] = s.ID
+					end
+				end
+			end
+		end
+	end
+	return false
+end
+
+local function Attune_ItemCellTone(step, countNeeded)
+	if Attune_ItemQuestCompleted(step) then return "green" end
+	local owned = Attune_OwnedItemCount(step.ID_WOWHEAD)
+	if owned >= countNeeded then return "green" end
+	if owned > 0 then return "yellow" end
+	return "grey"
+end
+
+local function Attune_CellTone(step)
+	if step.TYPE == "Quest" or step.TYPE == "Pick Up" or step.TYPE == "Turn In" then
+		return Attune_QuestCellTone(step)
+	elseif step.TYPE == "Item" then
+		local countNeeded = 1
+		if step.COUNT ~= nil then countNeeded = step.COUNT end
+		return Attune_ItemCellTone(step, countNeeded)
+	end
+	return nil
+end
+
+-- complete, ready: ready includes a yellow in-progress step (items in hand, quest not turned in)
+local function Attune_StepLineState(step, seen)
+	if step == nil then return false, false end
+	seen = seen or {}
+	if seen[step.ID] then return false, false end
+	seen[step.ID] = true
+
+	local doneMap = Attune_DB.toons[attunelocal_charKey] and Attune_DB.toons[attunelocal_charKey].done
+	local key = step.ID_ATTUNE .. "-" .. step.ID
+
+	if step.TYPE == "Spacer" then
+		local anyReady = false
+		for _, flw in ipairs(Attune_FollowIDs(step.FOLLOWS)) do
+			local prev = Attune_FindStep(step.ID_ATTUNE, flw)
+			if prev then
+				local prevComplete, prevReady = Attune_StepLineState(prev, seen)
+				if prevComplete or prevReady then anyReady = true end
+			elseif doneMap and doneMap[step.ID_ATTUNE .. "-" .. flw] then
+				anyReady = true
+			end
+		end
+		if doneMap and doneMap[key] then return true, true end
+		return false, anyReady
+	end
+
+	local tone = Attune_CellTone(step)
+	if tone == "green" then return true, true end
+	if tone == "yellow" then return false, true end
+	if tone == nil and doneMap and doneMap[key] then return true, true end
+	return false, false
+end
+
+local function Attune_ApplyLineColor(line, curComplete, srcComplete, srcReady)
+	if curComplete and srcComplete then
+		line:SetColorTexture(0.388, 0.686, 0.388, 1) -- green
+		line:SetDrawLayer("ARTWORK", 2)
+	elseif srcComplete or srcReady then
+		line:SetColorTexture(0.851, 0.608, 0.0, 1) -- yellow
+		line:SetDrawLayer("ARTWORK", 1)
+	else
+		line:SetColorTexture(0.45, 0.45, 0.45, 1)
+		line:SetDrawLayer("ARTWORK", 0)
+	end
+end
+
+local function Attune_SetNodeTone(fnode, tone)
+	if tone == "green" then
+		fnode:SetBackdropColor(0.373, 0.729, 0.275, 0.3)
+		fnode:SetBackdropBorderColor(0.373, 0.729, 0.275)
+	elseif tone == "yellow" then
+		fnode:SetBackdropColor(0.851, 0.608, 0.0, 0.3)
+		fnode:SetBackdropBorderColor(0.851, 0.608, 0.0, 1)
+	else
+		fnode:SetBackdropColor(0.1, 0.1, 0.1, 0.5)
+		fnode:SetBackdropBorderColor(0.4, 0.4, 0.4)
+	end
+end
+
 function Attune_CreateNode(step, parent, posX, posY)
 	-- Generic look and feel for the node
 	local PaneBackdrop  = {
@@ -3355,7 +3724,7 @@ function Attune_CreateNode(step, parent, posX, posY)
 			if countNeeded == 1 then
 				attunelocal_frame:SetStatusText(AttuneLang["I_"..step.ID_WOWHEAD])
 			else
-				attunelocal_frame:SetStatusText(AttuneLang["I_"..step.ID_WOWHEAD] .. " (" .. Attune_DB.toons[attunelocal_charKey].items[step.ID_WOWHEAD] .. "/" .. countNeeded .. ")")
+				attunelocal_frame:SetStatusText(AttuneLang["I_"..step.ID_WOWHEAD] .. " (" .. Attune_OwnedItemCount(step.ID_WOWHEAD) .. "/" .. countNeeded .. ")")
 			end
 			GameTooltip:SetOwner(fnode,"ANCHOR_NONE")
 			GameTooltip:SetPoint("TOPLEFT", fnode,"TOPRIGHT", 10, 0)
@@ -3411,7 +3780,10 @@ function Attune_CreateNode(step, parent, posX, posY)
 			else
 				-- build tooltip
 				GameTooltip:SetText(AttuneLang["Q1_"..step.ID_WOWHEAD])
-				GameTooltip:AddLine(AttuneLang["Requires level"].." "..quest[1].."\n\n", 0.5, 0.5, 0.5, 1)
+				local reqLevel = tonumber(quest[1]) or 0
+				local lr, lg, lb = 0.5, 0.5, 0.5
+				if UnitLevel("player") < reqLevel then lr, lg, lb = 1, 0.055, 0.075 end
+				GameTooltip:AddLine(AttuneLang["Requires level"].." "..quest[1].."\n\n", lr, lg, lb, 1)
 				if quest[2] == 1 then
 					GameTooltip:AddLine(AttuneLang["Solo quest"].."\n\n", 0.373, 0.729, 0.275, 1)
 				elseif quest[2] <= 5 then
@@ -3541,7 +3913,15 @@ function Attune_CreateNode(step, parent, posX, posY)
 
 		-- format node color
 		fnode:SetBackdrop(PaneBackdrop)
-		if done then
+		local tone = nil
+		if step.TYPE == "Quest" or step.TYPE == "Pick Up" or step.TYPE == "Turn In" then
+			tone = Attune_QuestCellTone(step)
+		elseif step.TYPE == "Item" then
+			tone = Attune_ItemCellTone(step, countNeeded)
+		end
+		if tone then
+			Attune_SetNodeTone(fnode, tone)
+		elseif done then
 			if step.TYPE == "Attune" or step.TYPE == "End" then
 				fnode:SetBackdropColor(0.055, 0.306, 0.576, 0.7) -- blue, attune
 				fnode:SetBackdropBorderColor(1, 1, 1)
@@ -3637,7 +4017,7 @@ function Attune_CreateNode(step, parent, posX, posY)
 					--ftitle:SetText(step.STEP)
 					ftitle:SetText(AttuneLang["I_"..step.ID_WOWHEAD])
 				else
-					ftitle:SetText(AttuneLang["I_"..step.ID_WOWHEAD] .. " (" .. Attune_DB.toons[attunelocal_charKey].items[step.ID_WOWHEAD] .. "/" .. countNeeded .. ")")
+					ftitle:SetText(AttuneLang["I_"..step.ID_WOWHEAD] .. " (" .. Attune_OwnedItemCount(step.ID_WOWHEAD) .. "/" .. countNeeded .. ")")
 				end
 			elseif step.TYPE == "Kill" or step.TYPE == "Interact" then
 				ftitle:SetText(AttuneLang["N1_"..step.ID_WOWHEAD])
@@ -3737,29 +4117,16 @@ function Attune_CreateNode(step, parent, posX, posY)
 			table.insert(attunelocal_frames, fillName)
 		end
 		if step.FOLLOWS ~= nil and step.FOLLOWS ~= "0" then
-			local linedone = false
-			local fIDs = Attune_split(step.FOLLOWS, "&")
-			if string.find(step.FOLLOWS, "|") then fIDs = Attune_split(step.FOLLOWS, "|") end
-			for _, flw in pairs(fIDs) do
-				if Attune_DB.toons[attunelocal_charKey].done[step.ID_ATTUNE .. "-" .. flw] then linedone = true; break end
-			end
-			if done then
-				if linedone then
-					fill:SetColorTexture(0.388, 0.686, 0.388, 1) -- green
-					fill:SetDrawLayer("ARTWORK", 2)
-				else
-					fill:SetColorTexture(0.45, 0.45, 0.45, 1)
-					fill:SetDrawLayer("ARTWORK", 0)
-				end
-			else
-				if linedone then
-					fill:SetColorTexture(0.851, 0.608, 0.0, 1) -- yellow
-					fill:SetDrawLayer("ARTWORK", 1)
-				else
-					fill:SetColorTexture(0.45, 0.45, 0.45, 1)
-					fill:SetDrawLayer("ARTWORK", 0)
+			local upstreamComplete, upstreamReady = false, false
+			for _, flw in ipairs(Attune_FollowIDs(step.FOLLOWS)) do
+				local prev = Attune_FindStep(step.ID_ATTUNE, flw)
+				if prev then
+					local prevComplete, prevReady = Attune_StepLineState(prev)
+					if prevComplete then upstreamComplete = true end
+					if prevComplete or prevReady then upstreamReady = true end
 				end
 			end
+			Attune_ApplyLineColor(fill, upstreamComplete, upstreamComplete, upstreamReady)
 			fill:SetThickness(attunelocal_Line_Thickness)
 			fill:SetStartPoint("TOP", 0, 0)
 			fill:SetEndPoint("TOP", 0, -attunelocal_Node_Height)
@@ -3788,7 +4155,16 @@ function Attune_CreateNode(step, parent, posX, posY)
 				end
 			else
 
-			local linedone = Attune_DB.toons[attunelocal_charKey].done[step.ID_ATTUNE .. "-" .. flw]
+			local prevStep = Attune_FindStep(step.ID_ATTUNE, flw)
+			local srcComplete, srcReady = false, false
+			if prevStep then
+				srcComplete, srcReady = Attune_StepLineState(prevStep)
+			else
+				local doneMap = Attune_DB.toons[attunelocal_charKey] and Attune_DB.toons[attunelocal_charKey].done
+				srcComplete = doneMap and doneMap[step.ID_ATTUNE .. "-" .. flw] and true or false
+				srcReady = srcComplete
+			end
+			local curComplete = Attune_StepLineState(step)
 
 
 			-- VERTICAL Line from prev to just under prev
@@ -3804,23 +4180,7 @@ function Attune_CreateNode(step, parent, posX, posY)
 			else			line = fnode:CreateLine("Attune_Line1_"..step.ID.."_"..flw)
 							table.insert(attunelocal_frames, "Attune_Line1_"..step.ID.."_"..flw) -- recording, to reuse
 			end
-			if done then
-				if linedone then
-					line:SetColorTexture(0.388, 0.686, 0.388, 1) -- green
-					line:SetDrawLayer("ARTWORK",2)
-				else
-					line:SetColorTexture(0.45, 0.45, 0.45, 1)
-					line:SetDrawLayer("ARTWORK",0)
-				end
-			else
-				if linedone then
-					line:SetColorTexture(0.851, 0.608, 0.0, 1) -- yellow
-					line:SetDrawLayer("ARTWORK",1)
-				else
-					line:SetColorTexture(0.45, 0.45, 0.45, 1)
-					line:SetDrawLayer("ARTWORK",0)
-				end
-			end
+			Attune_ApplyLineColor(line, curComplete, srcComplete, srcReady)
 			line:SetThickness(attunelocal_Line_Thickness)
 			line:SetStartPoint("TOP", prevX - curX, prevY - curY - attunelocal_Node_Height)
 			line:SetEndPoint("TOP", prevX - curX, prevY - curY - (attunelocal_Node_Height + (attunelocal_Node_VGap/2)) - offset)
@@ -3836,23 +4196,7 @@ function Attune_CreateNode(step, parent, posX, posY)
 			else			line = fnode:CreateLine("Attune_Line3_"..step.ID.."_"..flw)
 							table.insert(attunelocal_frames, "Attune_Line3_"..step.ID.."_"..flw) -- recording, to reuse
 			end
-			if done then
-				if linedone then
-					line:SetColorTexture(0.388, 0.686, 0.388, 1) -- green
-					line:SetDrawLayer("ARTWORK",2)
-				else
-					line:SetColorTexture(0.45, 0.45, 0.45, 1)
-					line:SetDrawLayer("ARTWORK",0)
-				end
-			else
-				if linedone then
-					line:SetColorTexture(0.851, 0.608, 0.0, 1) -- yellow
-					line:SetDrawLayer("ARTWORK",1)
-				else
-					line:SetColorTexture(0.45, 0.45, 0.45, 1)
-					line:SetDrawLayer("ARTWORK",0)
-				end
-			end
+			Attune_ApplyLineColor(line, curComplete, srcComplete, srcReady)
 			line:SetThickness(attunelocal_Line_Thickness)
 			line:SetStartPoint("TOP", 0, prevY - curY - (attunelocal_Node_Height + (attunelocal_Node_VGap/2)) + offset)
 			line:SetEndPoint("TOP", 0, -2)
@@ -3869,23 +4213,7 @@ function Attune_CreateNode(step, parent, posX, posY)
 			else			line = fnode:CreateLine("Attune_Line2_"..step.ID.."_"..flw)
 							table.insert(attunelocal_frames, "Attune_Line2_"..step.ID.."_"..flw) -- recording, to reuse
 			end
-			if done then
-				if linedone then
-					line:SetColorTexture(0.388, 0.686, 0.388, 1) -- green
-					line:SetDrawLayer("ARTWORK",2)
-				else
-					line:SetColorTexture(0.45, 0.45, 0.45, 1)
-					line:SetDrawLayer("ARTWORK",0)
-				end
-			else
-				if linedone then
-					line:SetColorTexture(0.851, 0.608, 0.0, 1) -- yellow
-					line:SetDrawLayer("ARTWORK",1)
-				else
-					line:SetColorTexture(0.45, 0.45, 0.45, 1)
-					line:SetDrawLayer("ARTWORK",0)
-				end
-			end
+			Attune_ApplyLineColor(line, curComplete, srcComplete, srcReady)
 			line:SetThickness(attunelocal_Line_Thickness)
 
 			if prevX < 0 or curX < 0 then offset = -offset 	end -- need for the line thickness in corners
@@ -3926,6 +4254,7 @@ function Attune_ToggleView(noToggle)
 
 	Attune_ReleaseZoomSlider()
 	Attune_HideDungeonArt()
+	Attune_ShowWorkInProgress(false)
 	attunelocal_frame:ReleaseChildren()
 	--Hiding all frames
 	for i, f in pairs(attunelocal_frames) do _G[f]:Hide() end
@@ -4494,7 +4823,11 @@ function Attune_ShowResultList(title)
 			for i, a in pairs(Attune_Data.attunes) do
 				if (a.DEPRECATED == nil or Attune_DB.showDeprecatedAttunes) then 
 					if attuneDone[a.ID] == nil then attuneDone[a.ID] = 0 end
-					t.attuned[a.ID] = math.floor(100*(attuneDone[a.ID]/attuneSteps[a.ID]))
+					if (attuneSteps[a.ID] or 0) > 0 then
+						t.attuned[a.ID] = math.floor(100*(attuneDone[a.ID]/attuneSteps[a.ID]))
+					else
+						t.attuned[a.ID] = 0
+					end
 				end
 			end
 			Attune_ApplyCompletedEndSteps(t)

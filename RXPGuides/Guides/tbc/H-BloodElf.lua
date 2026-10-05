@@ -654,15 +654,14 @@ step
     #completewith FalconHS
     .goto Eversong Woods,47.79,47.35,8,0
     .goto Eversong Woods,47.86,47.76,8 >> Go inside the Inn
-step << BloodElf
-    #label FalconHS
+step << BloodElf Warlock
     .goto Eversong Woods,48.16,47.76
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Delaniel|r
     .turnin 8350 >> Turn in Completing the Delivery
     .home >> Set your Hearthstone to Falconwing Square
     .target Innkeeper Delaniel
     .bindlocation 3665
-step << !BloodElf !Warlock/Orc !Warrior
+step << !Warlock !Warrior
     .goto Eversong Woods,48.16,47.76
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Delaniel|r
     .home >> Set your Hearthstone to Falconwing Square
@@ -703,7 +702,7 @@ step << Mage/Warlock/Priest
 step
     #optional
     #label FalconHS
-step
+step << !Warlock !Warrior
     #completewith next
     .goto Eversong Woods,47.86,47.76,8,0
     .goto Eversong Woods,47.79,47.35,8 >> Go outside
@@ -1327,6 +1326,18 @@ step << Warrior/Warlock/Hunter/Rogue
     >>Kill |cRXP_ENEMY_Prospector Anvilward|r. Loot him for his |cRXP_LOOT_Head|r
     .complete 8483,1 --Collect Prospector Anvilward's Head (x1)
     .mob Prospector Anvilward
+step << Warrior
+    #xprate <1.5
+    .goto Eversong Woods,48.17,46.00
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Aeldon|r
+    .turnin 8483 >> Turn in The Dwarven Spy
+    .target Aeldon Sunbrand
+step << Undead Warlock
+    #xprate <1.5
+    .goto Eversong Woods,48.17,46.00
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Aeldon|r
+    .turnin 8483 >> Turn in The Dwarven Spy
+    .target Aeldon Sunbrand
 step << Warrior/Warlock/Hunter/Rogue
     #xprate <1.5
     .goto Eversong Woods,45.19,56.43
@@ -1350,7 +1361,6 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Degolien|r
     .accept 8892 >> Accept Situation at Sunsail Anchorage
     .target Ranger Degolien
-    --TODO: Beta check if 9256 is a needed prereq for this quest
 step
     #xprate <1.5
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Marniel|r and |cRXP_FRIENDLY_Ardeyn|r
@@ -1389,6 +1399,7 @@ step
     >>Kill |cRXP_ENEMY_Springpaw Stalkers|r. Loot them for their |cRXP_LOOT_Pelts|r
     .complete 8491,1 --Collect Springpaw Pelt (x6)
     .mob Springpaw Stalker
+    .isOnQuest 8491
 step
     #xprate <1.5
     .goto Eversong Woods,38.14,73.56
@@ -1484,6 +1495,7 @@ step
     >>Kill |cRXP_ENEMY_Springpaw Stalkers|r. Loot them for their |cRXP_LOOT_Pelts|r
     .complete 8491,1 --Collect Springpaw Pelt (x6)
     .mob Springpaw Stalker
+    .isOnQuest 8491
 step
     #completewith next
     .goto Eversong Woods,24.32,74.07,40,0
@@ -1545,6 +1557,7 @@ step
     >>Kill |cRXP_ENEMY_Springpaw Stalkers|r. Loot them for their |cRXP_LOOT_Pelts|r
     .complete 8491,1 --Collect Springpaw Pelt (x6)
     .mob Springpaw Stalker
+    .isOnQuest 8491
 step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kelisendra|r and |cRXP_FRIENDLY_Velendris|r
     .turnin 8886 >> Turn in Grimscale Pirates!
@@ -1711,7 +1724,7 @@ step << Warrior/Undead Warlock/Orc Warlock
 step << Warrior
     #completewith WarriorClassQ
     .hs >> Hearth to Brill
-    .bindlocation 159,1
+    .bindlocation 2119,1
     .zoneskip Tirisfal Glades
 step << Warrior
     #optional
@@ -1910,12 +1923,12 @@ step << Warrior/Undead Warlock
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Antheol|r
     .turnin 9066 >> Turn in Swift Discipline
     .target Instructor Antheol
-step << !Warrior !Warlock
+step << !Warrior !Warlock !Hunter
     #completewith ExitFalcon
     .hs >> Hearth to Falconwing Square
     .bindlocation 3665,1
     .subzoneskip 3665
-step << Orc Warlock/BloodElf Warlock
+step << BloodElf Warlock/BloodElf Hunter
     #completewith ExitFalcon
     .hs >> Hearth to Falconwing Square
     .bindlocation 3665,1
@@ -1932,6 +1945,7 @@ step
     .money <0.0476 << !Priest !Mage !Warlock !Druid !Paladin
     .money <0.0714 << Paladin
     .target Innkeeper Delaniel
+    .subzoneskip 3665,1
 step
     #label Buyfood1
     .goto Eversong Woods,48.16,47.76
@@ -1945,6 +1959,7 @@ step
     .money <0.0238 << !Priest !Mage !Warlock !Druid !Paladin
     .money <0.0357 << Paladin
     .target Innkeeper Delaniel
+    .subzoneskip 3665,1
 step << Paladin/Priest/Mage
     #xprate <1.5
     .goto Eversong Woods,48.17,46.00
@@ -1987,63 +2002,6 @@ step
     #optional
     .goto Eversong Woods,45.02,37.68
     .xp 10 >> Grind to level 10
-step << Rogue/Warrior
-    .goto Eversong Woods,48.34,45.95
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Larenis|r
-    .train 201 >>Train 1h Swords << Rogue
-    .train 202 >>Train 2h Swords << Warrior
-    .target Duelist Larenis
-    .money <0.11
-step << Undead Warrior/Paladin/Rogue
-    .goto Eversong Woods,48.49,45.91
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Geron|r
-    .vendor >> Vendor trash. Sell your weapon if it gives you enough money for a |T135321:0|t[Gladius] (5s 9c). You'll come back later if you don't have enough yet
-    .target Geron
-    .itemStat 16,QUALITY,<7
-    .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<3.8
-step << Undead Warrior/Paladin/Rogue
-    .goto Eversong Woods,48.49,45.91
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Geron|r
-    >>|cRXP_BUY_Buy a|r |T135321:0|t[Gladius] |cRXP_BUY_from him|r
-    .collect 2488,1,8476,1 --Gladius (1)
-    .target Geron
-    .money <0.0509
-    .itemStat 16,QUALITY,<7
-    .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<3.8
-step << Rogue
-    .goto Eversong Woods,48.49,45.91
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Geron|r
-    .vendor >> Vendor trash. Sell your weapon if it gives you enough money for a |T135641:0|t[Stiletto] (3s 82c). You'll come back later if you don't have enough yet
-    .target Geron
-    .itemStat 16,QUALITY,<7
-    .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<3.3
-    .train 201,1
-step << Rogue
-    .goto Eversong Woods,48.49,45.91
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Geron|r
-    >>|cRXP_BUY_Buy a|r |T135641:0|t[Stiletto] |cRXP_BUY_from him|r
-    .collect 2494,1,8476,1 --Collect Stiletto
-    .target Geron
-    .money <0.0382
-    .itemStat 16,QUALITY,<7
-    .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<3.3
-    .train 201,1
-step << Undead Warrior/Paladin/Rogue
-    #optional
-    #completewith Antheol2
-    +|cRXP_WARN_Equip the|r |T135321:0|t[Gladius]
-    .use 2488
-    .itemcount 2488,1
-    .itemStat 16,QUALITY,<7
-    .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<3.8
-step << Rogue
-    #optional
-    #completewith Antheol2
-    +|cRXP_WARN_Equip the|r |T135641:0|t[Stiletto]
-    .use 2494
-    .itemcount 2494,1
-    .itemStat 16,QUALITY,<7
-    .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<3.3
 step << Paladin
     #optional
     .goto Eversong Woods,48.39,46.47
@@ -2140,6 +2098,7 @@ step
     #label ExitFalcon
     #completewith Antheol2
     .goto Eversong Woods,46.65,49.13,40 >>Exit Falconwing Square
+    .subzoneskip 3665,1
 step << BloodElf Warlock
     #completewith next
     .goto Eversong Woods,56.51,49.61,25,0
@@ -2294,9 +2253,17 @@ step << Mage/Priest/Warlock
     .collect 1179,20,8476,1 --Ice Cold Milk (20)
     .target Zalene Firstlight
 step
+    #optional
     .goto Eversong Woods,60.32,62.76
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Dawnrunner|r
     .turnin 9359 >>Turn in Farstrider Retreat << !Tauren !Hunter/BloodElf
+    .accept 8476 >>Accept Amani Encroachment
+    .accept 9484 >>Accept Taming the Beast << BloodElf Hunter
+    .target Lieutenant Dawnrunner
+    .isOnQuest 9359
+step
+    .goto Eversong Woods,60.32,62.76
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Dawnrunner|r
     .accept 8476 >>Accept Amani Encroachment
     .accept 9484 >>Accept Taming the Beast << BloodElf Hunter
     .target Lieutenant Dawnrunner
@@ -3915,6 +3882,35 @@ step
     .isOnQuest 9158
     .xp <15,1
     .xp >30,1
+step << Hunter
+    #completewith next
+    .goto Ghostlands,48.48,31.36,0
+    +|cRXP_WARN_Abandon your current pet. Alternatively you talk to|r |cRXP_FRIENDLY_Paniar|r |cRXP_WARN_in Tranquillien to stable your current pet|r
+    .target Paniar
+step << Hunter
+    #loop
+    .goto Ghostlands,72.68,41.63,0
+    .goto Ghostlands,69.61,31.21,40,0
+    .goto Ghostlands,66.93,35.04,40,0
+    .goto Ghostlands,69.21,36.19,40,0
+    .goto Ghostlands,68.34,39.28,40,0
+    .goto Ghostlands,66.16,42.71,40,0
+    .goto Ghostlands,68.48,46.50,40,0
+    .goto Ghostlands,71.08,44.62,40,0
+    .goto Ghostlands,72.68,41.63,40,0
+    .goto Ghostlands,73.06,39.68,40,0
+    .goto Ghostlands,74.79,39.15,40,0
+    .goto Ghostlands,73.82,36.71,40,0
+    .goto Ghostlands,76.03,36.52,40,0
+    .goto Ghostlands,76.39,34.86,40,0
+    .goto Ghostlands,74.79,39.15,40,0
+    .goto Ghostlands,77.29,31.89,40,0
+    .goto Ghostlands,77.16,27.58,40,0
+    .goto Ghostlands,76.07,25.13,40,0
+    .goto Ghostlands,74.82,29.77,40,0
+    .train 16830 >>|cRXP_WARN_Cast|r |T132164:0|t[Tame Beast] |cRXP_WARN_on an |cRXP_ENEMY_Ghostclaw Lynx|r. Attack mobs with it to learn|r |T132140:0|t[Claw (Rank 2)]
+    .link https://www.wow-petopia.com/classic/training.php >> |cRXP_WARN_Click here for more info about pet training|r
+    .mob Ghostclaw Lynx
 step
     #loop
     .goto Ghostlands,72.68,41.63,0
@@ -4469,7 +4465,7 @@ step << Rogue
 step << Warrior
     #completewith BrillTrain2
     .hs >> Hearth to Brill
-    .bindlocation 159,1
+    .bindlocation 2119,1
     .zoneskip Tirisfal Glades
 step << Warrior
     .goto Tirisfal Glades,61.85,52.55

@@ -1815,6 +1815,48 @@ step
 ]])
 
 ---Allied Choice
+RXPGuides.RegisterGuide([[
+#retail
+#version 1
+#group RestedXP Miscellaneous
+#name a) Allied Choice
+#displayname |cFF00CCFF1|r - Void Elf
+#next a) Allied Choice
+#internal
+
+-- step
+--     #completewith HighmountainStartQuestline
+--     .zone 85 >>Get to Orgrimmar
+-- step
+--     .isOnQuest 49930
+--     .isQuestAvailable 49930
+--     .goto 85,53.23,90.47,10,0
+--     .goto 85,37.76,81.18
+--     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ji Firepaw|r.
+--     .turnin 49930 >>Turn in The Call for Allies
+--     .target Ji Firepaw
+-- step
+--     .isQuestAvailable 50242
+--     .goto 85,37.76,81.18
+--     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ji Firepaw|r.
+--     .accept 50242 >>Accept A Choice of Allies
+--     .target Ji Firepaw
+-- step
+--     .isOnQuest 50242
+--     >>Interact with the banners in any order
+--     .goto 85,37.65,81.43
+--     .complete 50242,1 -- Learn more about the Highmountain Tauren
+--     .complete 50242,2 -- Learn more about the nightborne
+--     .complete 50242,3 -- Learn more about the Maghar Orcs
+--     .complete 50242,4 -- Learn more about the Zandalari trolls
+--     .complete 50242,5 -- Learn more about the Vulpera
+-- step
+--     .isQuestComplete 50242
+--     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ji Firepaw|r.
+--     .goto 85,37.65,81.44
+--     .turnin 50242 >>Turn in A Choice of Allies
+--     .target Ji Firepaw
+]])
 --Nightborne
 RXPGuides.RegisterGuide([[
 #retail

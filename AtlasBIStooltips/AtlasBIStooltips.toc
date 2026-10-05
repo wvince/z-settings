@@ -1,5 +1,5 @@
-## Interface: 11601
-## X-Min-Interface-Classic: 11601
+## Interface: 16001
+## X-Min-Interface-Classic: 16001
 ## Title: |TInterface\AddOns\AtlasLootClassic\atlas_tga:16|t AtlasLoot Forever |cFF0099FF[BiS ToolTip]|r
 ## OptionalDeps: LibExtraTip
 ## Version: 1.0.1

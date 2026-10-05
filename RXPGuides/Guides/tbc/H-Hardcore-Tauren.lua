@@ -569,7 +569,7 @@ step
     .target Ahab Wheathoof
 step
     .goto Mulgore,48.71,59.32
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to cRXP_FRIENDLY_Harken|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Harken|r
     .accept 761 >>Accept Swoop Hunting
     .target Harken Windtotem
 step << Tauren
@@ -1526,8 +1526,8 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Morin|r
     >>|cRXP_WARN_He patrols along the eastern road|r
     .turnin 751 >> Turn in The Ravaged Caravan
-    .accept 764 >> The Venture Co
-    .accept 765 >> Supervisor Fizsprocket
+    .accept 764 >> Accept The Venture Co
+    .accept 765 >> Accept Supervisor Fizsprocket
 	.unitscan Morin Cloudstalker
     .group
 step
@@ -1609,7 +1609,7 @@ step << Hunter
     .goto Mulgore,67.62,59.06,50,0
     .goto Mulgore,66.34,67.01,50,0
     .cast 1515 >>Tame a |cRXP_ENEMY_Prairie Wolf Alpha|r
-    >>|cRXP_WARN_This will allow you to train|r |T132140:0|t[Claw Rank 2]
+    >>|cRXP_WARN_This will allow you to train|r |T132278:0|t[Bite Rank 2]
     .mob Prairie Wolf Alpha
 step
     #completewith next

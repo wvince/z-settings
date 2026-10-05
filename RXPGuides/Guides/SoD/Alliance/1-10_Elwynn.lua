@@ -9,6 +9,7 @@ RXPGuides.RegisterGuide([[
 #displayname 1-6 Northshire
 #version 1
 #group RestedXP Alliance 1-20
+#groupid RXP-SRGCE-A1
 #defaultfor Human
 #next 6-12 Elwynn Forest SoD
 #season 2
@@ -373,7 +374,7 @@ step << !Priest !Paladin
 	.mob Timber Wolf
 step << Paladin
     .goto Elwynn Forest,47.70,41.46
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Godric Rothgar|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_ Rothgar|r
     >>|cRXP_WARN_Leveling with a shield and one-hander early is much faster due to the power of the shield runes early on|r
     >>|cRXP_BUY_Vendor trash and buy the|r |T134955:0|t[Small Shield]
     .collect 17184,1 --Small Shield (1)
@@ -883,6 +884,7 @@ RXPGuides.RegisterGuide([[
 #version 1
 << Alliance
 #group RestedXP Alliance 1-20
+#groupid RXP-SRGCE-A1
 #name 6-12 Elwynn Forest SoD
 #displayname 6-12 Elwynn Forest
 #next 12-13 Dun Morogh SoD

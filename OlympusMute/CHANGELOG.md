@@ -1,5 +1,16 @@
 # OlympusMute Changelog
 
+## 1.2.1
+- Fixed: shared lists are now only accepted from your group, your guild, or your friends list, with at most one share window per minute. Strangers can no longer send you share popups.
+- Fixed: a flood of incomplete share messages can no longer build up in the background.
+- Fixed: auto-decline messages (duels, trades, group and guild invites) are shown at most once per player per minute, so someone spamming requests can't flood your chat.
+
+## 1.2.0
+- New: share your lists. Send your guild names and filtered words to a friend (`/omute share Name`), your group (`/omute share`) or your guild (`/omute share guild`), or use the "Share lists..." button in the options. They see what's in it and choose Add to mine, Replace mine, or Cancel. Players are never shared. Turn off incoming shares with `/omute shares off`. Thanks to delro_ed for the idea.
+- New: mute by name. Hide chat from any player whose character name contains a word, with the "Name contains" button in the options or `/omute name add|remove text`. Thanks to ENDrain for the suggestion.
+- New: inviting someone on your mute list now opens a window with a "Cancel invite" button, instead of only a chat warning.
+- New: `/omute tally` shows your total hidden messages, this session's count, and how many players are muted, in one line in your chat. (`/omute stats` still works too.)
+
 ## 1.1.2
 - Fixed: a player whose name hadn't loaded yet (shown as "Unknown") could overwrite or remove someone's entry on your mute list. Any "Unknown" entries this created are cleaned up automatically. If a player you muted by hand has gone missing from your list, mute them again.
 - Fixed: players from other realms are no longer renamed by the 1.1.1 name repair. Name repair now happens when a player is next seen or their name is typed, instead of all at once at login. Entries 1.1.1 changed by mistake are corrected once you see that player again.

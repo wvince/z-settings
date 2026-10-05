@@ -28,6 +28,9 @@ local defaultSettings = {
     darkModeCastbars = true,
     darkModeColor = 0.20,
     darkModeNameplateResource = true,
+    classicFramesBronzeTintUnitFrames = true,
+    classicFramesBronzeTintCastbars = true,
+    classicFramesBronzeTintMinimap = true,
     hideGroupIndicator = false,
     hideFocusCombatGlow = false,
     bigPlayerHealthbar = false,
@@ -67,6 +70,8 @@ local defaultSettings = {
     smoothManabars = true,
     foreverMinimapScale = 1,
     foreverMinimapTitleScale = 1,
+    foreverMinimapHideTitle = false,
+    hideThreatKeepTank = true,
     foreverMinimapXPos = 0,
     foreverMinimapYPos = 12,
     prdResourceXPos = 0,
@@ -2125,7 +2130,7 @@ end
 function BBF.GetPlayerEliteMode(mode)
     local db = BetterBlizzFramesDB
     mode = mode or db.playerEliteFrameMode or 1
-    if db.classicFrames and db.classicFramesHDElite and mode <= 3 then
+    if db.classicFrames and (db.classicFramesHDElite or db.classicFramesHDTextures) and mode <= 3 then
         return mode + 3
     end
     return mode
@@ -2192,10 +2197,18 @@ function BBF.SyncSelfEliteClassicArt(frame)
             texture.bbfSelfEliteDesat = texture:IsDesaturated()
             texture.bbfSelfElite = true
         end
-        texture:SetDesaturated(playerTexture:IsDesaturated() or (BBF.ClassicBronzeTintActive and BBF.ClassicBronzeTintActive()) or false)
+        if texture.bbfClassicHD then
+            BBF.ApplyClassicHDColor(texture)
+        else
+            texture:SetDesaturated(playerTexture:IsDesaturated() or (BBF.ClassicBronzeTintActive and BBF.ClassicBronzeTintActive()) or false)
+        end
     elseif texture.bbfSelfElite then
         texture.bbfSelfElite = nil
-        texture:SetDesaturated(texture.bbfSelfEliteDesat)
+        if texture.bbfClassicHD then
+            BBF.ApplyClassicHDColor(texture)
+        else
+            texture:SetDesaturated(texture.bbfSelfEliteDesat)
+        end
     end
 end
 
@@ -2314,11 +2327,11 @@ function BBF.PlayerElite(mode)
             else
                 -- For mode <= 3, check hideLvl conditions for texture choice
                 if alwaysHideLvl then
-                    frameTexture:SetTexture("Interface\\TargetingFrame\\UI-FocusFrame-Large")
+                    BBF.SetClassicTexture(frameTexture, "Interface\\TargetingFrame\\UI-FocusFrame-Large")
                 elseif hideLvl and UnitLevel("player") == GetMaxLevelForPlayerExpansion() then
-                    frameTexture:SetTexture("Interface\\TargetingFrame\\UI-FocusFrame-Large")
+                    BBF.SetClassicTexture(frameTexture, "Interface\\TargetingFrame\\UI-FocusFrame-Large")
                 else
-                    frameTexture:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame")
+                    BBF.SetClassicTexture(frameTexture, "Interface\\TargetingFrame\\UI-TargetingFrame")
                 end
                 if playerElite then
                     playerElite:SetAlpha(0)
@@ -2330,13 +2343,13 @@ function BBF.PlayerElite(mode)
                 playerElite:SetDesaturated(false)
             end
             if mode == 1 then -- Rare (Silver)
-                frameTexture:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Rare")
+                BBF.SetClassicTexture(frameTexture, "Interface\\TargetingFrame\\UI-TargetingFrame-Rare")
                 frameTexture:SetDesaturated(true)
             elseif mode == 2 then -- Boss (Silver Winged)
-                frameTexture:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Rare-Elite")
+                BBF.SetClassicTexture(frameTexture, "Interface\\TargetingFrame\\UI-TargetingFrame-Rare-Elite")
                 frameTexture:SetDesaturated(true)
             elseif mode == 3 then -- Boss (Gold Winged)
-                frameTexture:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Elite")
+                BBF.SetClassicTexture(frameTexture, "Interface\\TargetingFrame\\UI-TargetingFrame-Elite")
                 frameTexture:SetDesaturated(false)
             elseif mode == 4 then -- Rare (Silver)
                 playerElite:SetAtlas("UI-HUD-UnitFrame-Target-PortraitOn-Boss-Rare-Silver")
@@ -2377,11 +2390,11 @@ function BBF.PlayerElite(mode)
 
             frameTexture:SetDesaturated(false)
             if alwaysHideLvl then
-                frameTexture:SetTexture("Interface\\TargetingFrame\\UI-FocusFrame-Large")
+                BBF.SetClassicTexture(frameTexture, "Interface\\TargetingFrame\\UI-FocusFrame-Large")
             elseif hideLvl and UnitLevel("player") == GetMaxLevelForPlayerExpansion() then
-                frameTexture:SetTexture("Interface\\TargetingFrame\\UI-FocusFrame-Large")
+                BBF.SetClassicTexture(frameTexture, "Interface\\TargetingFrame\\UI-FocusFrame-Large")
             else
-                frameTexture:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame")
+                BBF.SetClassicTexture(frameTexture, "Interface\\TargetingFrame\\UI-TargetingFrame")
             end
             if playerElite then
                 playerElite:SetAlpha(0)
@@ -2992,10 +3005,11 @@ end
 function BBF.AlwaysShowLegacyComboPoints()
     if not BetterBlizzFramesDB.alwaysShowLegacyComboPoints then return end
     if BetterBlizzFramesDB.instantComboPoints then return end
-    if BBF.AlwaysShowLegacyComboPoints then return end
+    if BBF.alwaysShowLegacyComboHooked then return end
     local class = UnitClassBase("player")
     if class ~= "ROGUE" and class ~= "DRUID" then return end
     local function UpdateLegacyComboFrame()
+        if not BetterBlizzFramesDB.alwaysShowLegacyComboPoints then return end
         local frame = ComboFrame
         local comboPoints = GetComboPoints("player", "target")
         local maxComboPoints = UnitPowerMax("player", Enum.PowerType.ComboPoints)
@@ -3016,8 +3030,38 @@ function BBF.AlwaysShowLegacyComboPoints()
     if C_CVar.GetCVar("comboPointLocation") == "1" and ComboFrame then
         hooksecurefunc("ComboFrame_Update", UpdateLegacyComboFrame)
         UpdateLegacyComboFrame()
+        BBF.alwaysShowLegacyComboHooked = true
     end
-    BBF.AlwaysShowLegacyComboPoints = true
+end
+
+local function UpdateLegacyComboActiveOnly(frame)
+    if not frame or not frame.ComboPoints or not frame.maxComboPoints then return end
+    local db = BetterBlizzFramesDB
+    local comboPoints = GetComboPoints("player", "target")
+    local comboIndex = frame.startComboPointIndex or 2
+    for i = 1, frame.maxComboPoints do
+        local point = frame.ComboPoints[comboIndex]
+        if point then
+            point:SetShown(BBF.LegacyComboPointShown(i, comboPoints, frame.maxComboPoints, db.alwaysShowLegacyComboPoints, frame.extraComboPoints))
+        end
+        comboIndex = comboIndex + 1
+    end
+end
+
+function BBF.LegacyComboActiveOnly()
+    if not ComboFrame or C_CVar.GetCVar("comboPointLocation") ~= "1" then return end
+    local class = UnitClassBase("player")
+    if class ~= "ROGUE" and class ~= "DRUID" then return end
+    if not BBF.legacyComboActiveOnlyHooked then
+        if not BetterBlizzFramesDB.legacyComboActiveOnly then return end
+        BBF.legacyComboActiveOnlyHooked = true
+        hooksecurefunc("ComboFrame_Update", function(frame)
+            if BetterBlizzFramesDB.legacyComboActiveOnly then
+                UpdateLegacyComboActiveOnly(frame)
+            end
+        end)
+    end
+    UpdateLegacyComboActiveOnly(ComboFrame)
 end
 
 function BBF.ApplyLegacyBlueCombos(isEnabled)
@@ -4310,10 +4354,8 @@ function BBF.SymmetricPlayerFrame()
     portraitMask:SetSize(56, 56)
     portraitMask:SetPoint("TOPLEFT", 27, -20)
 
-    PlayerLevelText:SetPoint("TOPRIGHT", PlayerFrame.PlayerFrameContent.PlayerFrameContentMain, "TOPRIGHT", -24, -27.7)
-
-    local tMain = TargetFrame.TargetFrameContent.TargetFrameContentMain
-    tMain.LevelText:SetPoint("TOPLEFT", tMain.ReputationColor, "TOPRIGHT", -132, -2)
+    BBF.symmetricPlayerFrameActive = true
+    BBF.UpdateSmallerLevelCircle()
 
     hooksecurefunc(portraitMask, "SetSize", function(self)
         if not self.changing then
@@ -5319,6 +5361,7 @@ local function TurnTestModesOff()
     BetterBlizzFramesDB.partyCastBarTestMode = nil
     BetterBlizzFramesDB.petCastBarTestMode = nil
     BetterBlizzFramesDB.kickPopupTestMode = nil
+    BetterBlizzFramesDB.questIndicatorTestMode = nil
 end
 
 local function executeCustomCode()
@@ -5729,8 +5772,12 @@ First:SetScript("OnEvent", function(_, event, addonName)
         FetchAndSaveValuesOnFirstLogin()
         TurnTestModesOff()
         BBF.ChatFilterCaller()
+        if not BetterBlizzFramesDB.hideThreatOnFrame then
+            C_CVar.SetCVar("threatShowNumeric", "1")
+        end
         BBF.FixLegacyComboPointsLocation()
         BBF.AlwaysShowLegacyComboPoints()
+        BBF.LegacyComboActiveOnly()
         BBF.GenericLegacyComboSupport()
         BBF.RaiseTargetFrameLevel()
         BBF.RaiseTargetCastbarStratas()

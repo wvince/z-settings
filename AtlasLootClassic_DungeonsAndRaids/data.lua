@@ -25,7 +25,7 @@ local NORMAL_DIFF = data:AddDifficulty("NORMAL", nil, nil, nil, true)
 local RAID20_DIFF = data:AddDifficulty("20RAID")
 local RAID40_DIFF = data:AddDifficulty("40RAID")
 local FOREVER_DUNGEON_CONTENT = data:AddContentType("Forever Dungeons", { 0.30, 0.50, 0.70, 1 })
-local LTNX = "|TInterface\\AddOns\\AtlasLootClassic\\ltn.tga:19:76:2:0|t"
+local LTNX = "|TInterface\\AddOns\\AtlasLootClassic\\ltn2.tga:15:56:2:0|t"
 
 local ALLIANCE_DIFF, HORDE_DIFF, LOAD_DIFF
 if UnitFactionGroup("player") == "Horde" then
@@ -271,6 +271,7 @@ local DM_BOOKS = { -- DMBooks
 }
 
 data["Ragefire"] = {
+	name = C_Map.GetAreaInfo(2437) .. LTNX,
 	MapID = 2437,
 	InstanceID = 389,
 	AtlasModule = ATLAS_MODULE_NAME,
@@ -304,10 +305,37 @@ data["Ragefire"] = {
 				{ 3, 14151 }, -- Chanting Blade
 			},
 		},
+		{ -- RFCOggleflint
+			name = AL["Oggleflint"],
+			npcID = 11517,
+			Level = 16,
+			DisplayIDs = { { 11429 } },
+			AtlasMapBossID = 4,
+			[NORMAL_DIFF] = {
+				{ 1,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 2, 272996 }, -- {FOREVER} Trogg Scepter
+				{ 3, 272998 }, -- {FOREVER} Bone Knuckles
+				{ 4, 272999 }, -- {FOREVER} Barbaric Crossbow
+			},
+		},
+		{ -- RFCBazzalan
+			name = AL["Bazzalan"],
+			npcID = 11519,
+			Level = 16,
+			DisplayIDs = { { 11429 } },
+			AtlasMapBossID = 5,
+			[NORMAL_DIFF] = {
+				{ 1,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 2, 273003 }, -- {FOREVER} Searing Dagger
+				{ 3, 273005 }, -- {FOREVER} Satyrskin Cloak
+				{ 4, 273007 }, -- {FOREVER} Chasm Walkers
+			},
+		},
 	},
 }
 
 data["WailingCaverns"] = {
+	name = C_Map.GetAreaInfo(718) .. LTNX,
 	MapID = 718,
 	InstanceID = 43,
 	SubAreaIDs = { 15285, 15301, 15294, 15300, 15292, 17731 },
@@ -330,6 +358,8 @@ data["WailingCaverns"] = {
 				{ 1, 6460 }, -- Cobrahn's Grasp
 				{ 2, 10410 }, -- Leggings of the Fang
 				{ 4, 6465 }, -- Robe of the Moccasin
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 273088 }, -- {FOREVER} Snake Eye Kaleidoscope
 			},
 		},
 		{ -- WCLadyAnacondra
@@ -353,6 +383,8 @@ data["WailingCaverns"] = {
 			[NORMAL_DIFF] = {
 				{ 1, 13245 }, -- Kresh's Back
 				{ 3, 6447 }, -- Worn Turtle Shell Shield
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 273084 }, -- {FOREVER} Cloak of Hermitic Bliss
 			},
 		},
 		{ -- WCLordPythas
@@ -365,6 +397,8 @@ data["WailingCaverns"] = {
 			[NORMAL_DIFF] = {
 				{ 1, 6472 }, -- Stinging Viper
 				{ 3, 6473 }, -- Armor of the Fang
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 273089 }, -- {FOREVER} Slither Cord
 			},
 		},
 		{ -- WCSkum
@@ -376,6 +410,8 @@ data["WailingCaverns"] = {
 			[NORMAL_DIFF] = {
 				{ 1, 6449 }, -- Glowing Lizardscale Cloak
 				{ 3, 6448 }, -- Tail Spike
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 273137 }, -- {FOREVER} Skum's Bucket
 			},
 		},
 		{ -- WCLordSerpentis
@@ -440,7 +476,7 @@ data["WailingCaverns"] = {
 }
 
 data["TheDeadmines"] = {
-	--name = C_Map.GetAreaInfo(1581) .. LTNX,
+	name = C_Map.GetAreaInfo(1581) .. LTNX,
 	MapID = 1581,
 	InstanceID = 36,
 	SubAreaIDs = { 19444, 19529, 19502, 26104 },
@@ -460,8 +496,9 @@ data["TheDeadmines"] = {
 			AtlasMapBossID = 1,
 			[NORMAL_DIFF] = {
 				{ 1, 872 }, -- Rockslicer
-				{ 2, 273289 }, -- Ogre Loincloth (legs, cloth)
 				{ 3, 5187 }, -- Rhahk'Zor's Hammer
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 273289 }, -- {FOREVER} Ogre Loincloth
 			},
 		},
 		{ --DMMinerJohnson
@@ -485,9 +522,10 @@ data["TheDeadmines"] = {
 			AtlasMapBossID = 3,
 			[NORMAL_DIFF] = {
 				{ 1, 5194 }, -- Taskmaster Axe
-				{ 2, 285292 }, -- Dull Sawblade
 				{ 3, 5195 }, -- Gold-flecked Gloves
-				{ 4, 273293 }, -- Bandsaw Wristbands (wrist, mail)
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 18, 273293 }, -- {FOREVER} Bandsaw Wristbands
+				{ 17, 285292 }, -- {FOREVER} Dull Sawblade
 			},
 		},
 		{ --DMSneedsShredder
@@ -510,8 +548,9 @@ data["TheDeadmines"] = {
 			AtlasMapBossID = 4,
 			[NORMAL_DIFF] = {
 				{ 1, 1156 }, -- Lavishly Jeweled Ring
-				{ 2, 273297 }, -- Goblin Hammer (main hand, mace)
 				{ 3, 5199 }, -- Smelting Pants
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 273297 }, -- {FOREVER} Goblin Hammer
 			},
 		},
 		{ --DMMrSmite
@@ -523,9 +562,10 @@ data["TheDeadmines"] = {
 			AtlasMapBossID = 6,
 			[NORMAL_DIFF] = {
 				{ 1, 7230 }, -- Smite's Mighty Hammer
-				{ 2, 284715 }, -- First Mate Band (finger)
 				{ 3, 5192 }, -- Thief's Blade
 				{ 4, 5196 }, -- Smite's Reaver
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 284715 }, -- {FOREVER} First Mate Band
 			},
 		},
 		{ --DMCaptainGreenskin
@@ -563,9 +603,10 @@ data["TheDeadmines"] = {
 			AtlasMapBossID = 6,
 			[NORMAL_DIFF] = {
 				{ 1, 5198 }, -- Cookie's Stirring Rod
-				{ 2, 273298 }, -- Lookie's Spyglass (trinket)
 				{ 3, 5197 }, -- Cookie's Tenderizer
 				{ 4, 8490 }, -- Cat Carrier (Siamese)
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 273298 }, -- {FOREVER} Lookie's Spyglass
 			},
 		},
 		{ --DMDefiasGunpowder
@@ -588,6 +629,7 @@ data["TheDeadmines"] = {
 }
 
 data["ShadowfangKeep"] = {
+	name = C_Map.GetAreaInfo(209) .. LTNX,
 	MapID = 209,
 	InstanceID = 33,
 	AtlasModule = ATLAS_MODULE_NAME,
@@ -606,6 +648,9 @@ data["ShadowfangKeep"] = {
 			AtlasMapBossID = 1,
 			[NORMAL_DIFF] = {
 				{ 1, 5254 }, -- Rugged Spaulders
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 273456 }, -- {FOREVER} Cell Keeper's Claws
+				{ 18, 273457 }, -- {FOREVER} Sorcerer Collar
 			},
 		},
 		{ -- SFKFelSteed
@@ -640,6 +685,11 @@ data["ShadowfangKeep"] = {
 			[NORMAL_DIFF] = {
 				{ 1, 6321 }, -- Silverlaine's Family Seal
 				{ 3, 6323 }, -- Baron's Scepter
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 273637 }, -- {FOREVER} Blade of Silverlaine
+				{ 19,  "INV_Box_01", nil, AL["Use Scroll on Blade"],  nil },
+				{ 20, 277490 }, -- {FOREVER} Scroll of the Saber
+				{ 21, 276631 }, -- {FOREVER} Coldflame Saber
 			},
 		},
 		{ -- SFKSpringvale
@@ -651,6 +701,8 @@ data["ShadowfangKeep"] = {
 			[NORMAL_DIFF] = {
 				{ 1, 6320 }, -- Commander's Crest
 				{ 3, 3191 }, -- Arced War Axe
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 273643 }, -- {FOREVER} Worgenbane Talisman
 			},
 		},
 		{ -- SFKOdotheBlindwatcher
@@ -662,6 +714,8 @@ data["ShadowfangKeep"] = {
 			[NORMAL_DIFF] = {
 				{ 1, 6318 }, -- Odo's Ley Staff
 				{ 3, 6319 }, -- Girdle of the Blindwatcher
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 273645 }, -- {FOREVER} Blindwatcher's Sight
 			},
 		},
 		{ -- SFKDeathswornCaptain
@@ -695,6 +749,8 @@ data["ShadowfangKeep"] = {
 			[NORMAL_DIFF] = {
 				{ 1, 6340 }, -- Fenrus' Hide
 				{ 2, 3230 }, -- Black Wolf Bracers
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 273646 }, -- {FOREVER} Half-Eaten Boots
 			},
 		},
 		{ -- SFKWolfMasterNandos
@@ -706,6 +762,8 @@ data["ShadowfangKeep"] = {
 			[NORMAL_DIFF] = {
 				{ 1, 3748 }, -- Feline Mantle
 				{ 3, 6314 }, -- Wolfmaster Cape
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 273647 }, -- {FOREVER} Worgpelt Leggings
 			},
 		},
 		{ -- SFKArchmageArugal
@@ -791,6 +849,7 @@ data["ShadowfangKeep"] = {
 }
 
 data["BlackfathomDeeps"] = {
+	name = C_Map.GetAreaInfo(719) .. LTNX,
 	MapID = 719,
 	InstanceID = 48,
 	AtlasModule = ATLAS_MODULE_NAME,
@@ -834,6 +893,8 @@ data["BlackfathomDeeps"] = {
 				{ 1, 6906 }, -- Algae Fists
 				{ 3, 6905 }, -- Reef Axe
 				{ 5, 1470 }, -- Murloc Skin Bag
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 273840 }, -- {FOREVER} Cursed Murloc Eye
 			},
 		},
 		{ -- BFDBaronAquanis
@@ -857,6 +918,8 @@ data["BlackfathomDeeps"] = {
 			[NORMAL_DIFF] = {
 				{ 1, 1155 }, -- Rod of the Sleepwalker
 				{ 3, 6903 }, -- Gaze Dreamer Pants
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 273846 }, -- {FOREVER} Twilight Lord Girdle
 			},
 		},
 		{ -- BFDOldSerrakis
@@ -885,6 +948,20 @@ data["BlackfathomDeeps"] = {
 				{ 3, 6909 }, -- Strike of the Hydra
 			},
 		},
+		{ -- BFDAkumai
+			name = AL["Lorgus Jett"],
+			npcID = 12902,
+			Level = GetForVersion(26, 24),
+			DisplayIDs = { { 2837 } },
+			AtlasMapBossID = 11,
+			AtlasMapFile = { "CL_BlackfathomDeepsB", "CL_BlackfathomDeepsEnt" },
+			[NORMAL_DIFF] = {
+				{ 1,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 2, 273841 }, -- {FOREVER} Twilight Maul
+				{ 3, 273842 }, -- {FOREVER} Treacherous Treads
+				{ 4, 273843 }, -- {FOREVER} Fallenroot Longbow
+			},
+		},
 		{ -- BFDTrash
 			name = AL["Trash"],
 			ExtraList = true,
@@ -906,6 +983,7 @@ data["BlackfathomDeeps"] = {
 }
 
 data["TheStockade"] = {
+	name = C_Map.GetAreaInfo(717) .. LTNX,
 	MapID = 717,
 	InstanceID = 34,
 	AtlasModule = ATLAS_MODULE_NAME,
@@ -924,6 +1002,8 @@ data["TheStockade"] = {
 			AtlasMapBossID = 2,
 			[NORMAL_DIFF] = {
 				{ 1, 2280 }, -- Kam's Walking Stick
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 273808 }, -- {FOREVER} Bridgebreaker Bindings
 			},
 		},
 		{ -- SWStBruegalIronknuckle
@@ -939,11 +1019,55 @@ data["TheStockade"] = {
 				{ 3, 2942 }, -- Iron Knuckles
 			},
 		},
+		{ -- SWStTargorrtheDread
+			name = AL["Targorr the Dread"],
+			npcID = 1696,
+			Level = GetForVersion(26, 25),
+			DisplayIDs = { { 2142 } },
+			AtlasMapBossID = 6,
+			specialType = "rare",
+			[NORMAL_DIFF] = {
+				{ 1,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 2, 273804 }, -- {FOREVER} Executioner Mantle
+				{ 3, 273805 }, -- {FOREVER} Blackrock Harness
+				{ 4, 273806 }, -- {FOREVER} Dark Horde Band
+			},
+		},
+		{ -- SWStTargorrtheDread
+			name = AL["Hamhock"],
+			npcID = 1717,
+			Level = GetForVersion(26, 25),
+			DisplayIDs = { { 2142 } },
+			AtlasMapBossID = 6,
+			specialType = "rare",
+			[NORMAL_DIFF] = {
+				{ 1,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 2, 273809 }, -- {FOREVER} Hamhock's Cleaver
+				{ 3, 273810 }, -- {FOREVER} Ogre Grips
+			},
+		},
+		{ -- SWStTargorrtheDread
+			name = AL["Bazil Thredd"],
+			npcID = 1716,
+			Level = GetForVersion(26, 25),
+			DisplayIDs = { { 2142 } },
+			AtlasMapBossID = 6,
+			specialType = "rare",
+			[NORMAL_DIFF] = {
+				{ 1,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 2, 273824 }, -- {FOREVER} Defias Jailbreakers
+				{ 3, 273825 }, -- {FOREVER} Red Wool Cloak
+				{ 4, 273827 }, -- {FOREVER} Debt Collector
+				{ 4, 273829 }, -- {FOREVER} Concealed Hand Crossbow
+			},
+		},
 		{ -- SWStTrash
 			name = AL["Trash"],
 			ExtraList = true,
 			[NORMAL_DIFF] = {
 				{ 1, 1076 }, -- Defias Renegade Ring
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 274092 }, -- {FOREVER} Sharpened Cutlery
 			},
 		},
 	},
@@ -1145,6 +1269,8 @@ data["RazorfenKraul"] = {
 			[NORMAL_DIFF] = {
 				{ 1, 6691 }, -- Swinetusk Shank
 				{ 3, 6690 }, -- Ferine Leggings
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 274158 }, -- {FOREVER} Death Prophet Spine
 			},
 		},
 		{ -- RFKBlindHunter
@@ -1183,6 +1309,18 @@ data["RazorfenKraul"] = {
 			[NORMAL_DIFF] = {
 				{ 1, 6689 }, -- Wind Spirit Staff
 				{ 3, 6688 }, -- Whisperwind Headdress
+			},
+		},
+		{ -- RFKRoogug
+			name = AL["Roogug"],
+			npcID = 6168,
+			Level = GetForVersion(32, 27),
+			DisplayIDs = { { 6102 } },
+			AtlasMapBossID = 9,
+			specialType = "rare",
+			[NORMAL_DIFF] = {
+				{ 1,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 2, 274152 }, -- Roogug's Severed Head
 			},
 		},
 		{ -- RFKTrash
@@ -7229,7 +7367,14 @@ data["TheRuinsOfLordaeron"] = {
 				{ 3, 271215 }, -- Coldspire Staff (two-hand, staff)
 			},
 		},
-		{ -- Boss 6: Viktor the Vile
+		{ -- Boss 6: Lordaeron Captain
+			name = "Lordaeron Captain",
+			[NORMAL_DIFF] = {
+				{ 1, 6642 }, -- Phantom Armor
+				{ 2, 6641 }, -- Haunting Blade
+			},
+		},
+		{ -- Boss 7: Viktor the Vile
 			name = "Viktor the Vile",
 			[NORMAL_DIFF] = {
 				{ 1, 271211 }, -- Vilewalkers (feet, mail)

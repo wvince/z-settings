@@ -3,7 +3,7 @@
 -- ================================================ -
 
 ---Tips & Tricks
-if GetLocale() == "zhCN" and RXP.gameVersion > 20000 then return end
+local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #retail
 #version 1
@@ -109,6 +109,34 @@ RXPGuides.RegisterGuide([[
 #subgroup |cFFFCDC00(10-80)|r Speedrun Route
 #next aa) Skyriding
 
+step
+    #completewith Fixed Point in Time
+    #hidewindow
+    +test
+    .use 245925 -- Artifactium Sand
+    .use 249891 -- Mound of Artifactium Sand
+    .use 246937 -- Perfected Epoch Memento
+    .use 242516 -- Memento of Epoch Legends
+    .use 238726 -- Drake Treat
+    .use 217956 -- Timeless Scroll of Summoning
+    .use 217730 -- Timeless Scroll of Chaos
+    .use 217606 -- Timeless Scroll of Fortitude
+    .use 217731 -- Timeless Scroll of Mystic Power
+    .use 217608 -- Timeless Scroll of Battle Shout
+    .use 217901 -- Timeless Drums
+    .use 217607 -- Timeless Scroll of the Wild
+    .use 217929 -- Timeless Scroll of Cleansing
+    .use 246936 -- Resonant Epoch Memento
+    .use 249786 -- Dreamweaver Champion's Insignia
+    .use 249787 -- Court of Farondis Champion's Insignia
+    .use 249785 -- Highmountain Tribe Champion's Insignia
+    .use 249783 -- Nightfallen Champion's Insignia
+    .use 249781 -- Wardens Champion's Insignia
+    .use 249780 -- Army of the Light Champion's Insignia
+    .use 249782 -- Valarjar Champion's Insignia
+    .use 249784 -- Legionfall Champion's Insignia
+    .use 249788 -- Argussian Reach Champion's Insignia
+    .usespell 1241425 -- Temporal Retreat
 step
     .goto 627,72.46,45.90
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Moratari|r
@@ -935,6 +963,34 @@ step
     *Manually skip this step if you prefer to play through that content.
     .clicknext RestedXP Legion Remix\ae) First Zone 2 >>CLICK HERE FOR GUIDE
 step
+    #completewith The Dawning Light
+    #hidewindow
+    +test
+    .use 245925 -- Artifactium Sand
+    .use 249891 -- Mound of Artifactium Sand
+    .use 246937 -- Perfected Epoch Memento
+    .use 242516 -- Memento of Epoch Legends
+    .use 238726 -- Drake Treat
+    .use 217956 -- Timeless Scroll of Summoning
+    .use 217730 -- Timeless Scroll of Chaos
+    .use 217606 -- Timeless Scroll of Fortitude
+    .use 217731 -- Timeless Scroll of Mystic Power
+    .use 217608 -- Timeless Scroll of Battle Shout
+    .use 217901 -- Timeless Drums
+    .use 217607 -- Timeless Scroll of the Wild
+    .use 217929 -- Timeless Scroll of Cleansing
+    .use 246936 -- Resonant Epoch Memento
+    .use 249786 -- Dreamweaver Champion's Insignia
+    .use 249787 -- Court of Farondis Champion's Insignia
+    .use 249785 -- Highmountain Tribe Champion's Insignia
+    .use 249783 -- Nightfallen Champion's Insignia
+    .use 249781 -- Wardens Champion's Insignia
+    .use 249780 -- Army of the Light Champion's Insignia
+    .use 249782 -- Valarjar Champion's Insignia
+    .use 249784 -- Legionfall Champion's Insignia
+    .use 249788 -- Argussian Reach Champion's Insignia
+    .usespell 1241425 -- Temporal Retreat
+step
     #label MonkStart1
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Initiate Da-Nel|r |cRXP_WARN_next to you when in dalaran|r.
     .accept 12103 >>Accept Before the Storm
@@ -1144,6 +1200,34 @@ RXPGuides.RegisterGuide([[
 
 << Monk
 
+step
+    #completewith Dalaran
+    #hidewindow
+    +test
+    .use 245925 -- Artifactium Sand
+    .use 249891 -- Mound of Artifactium Sand
+    .use 246937 -- Perfected Epoch Memento
+    .use 242516 -- Memento of Epoch Legends
+    .use 238726 -- Drake Treat
+    .use 217956 -- Timeless Scroll of Summoning
+    .use 217730 -- Timeless Scroll of Chaos
+    .use 217606 -- Timeless Scroll of Fortitude
+    .use 217731 -- Timeless Scroll of Mystic Power
+    .use 217608 -- Timeless Scroll of Battle Shout
+    .use 217901 -- Timeless Drums
+    .use 217607 -- Timeless Scroll of the Wild
+    .use 217929 -- Timeless Scroll of Cleansing
+    .use 246936 -- Resonant Epoch Memento
+    .use 249786 -- Dreamweaver Champion's Insignia
+    .use 249787 -- Court of Farondis Champion's Insignia
+    .use 249785 -- Highmountain Tribe Champion's Insignia
+    .use 249783 -- Nightfallen Champion's Insignia
+    .use 249781 -- Wardens Champion's Insignia
+    .use 249780 -- Army of the Light Champion's Insignia
+    .use 249782 -- Valarjar Champion's Insignia
+    .use 249784 -- Legionfall Champion's Insignia
+    .use 249788 -- Argussian Reach Champion's Insignia
+    .usespell 1241425 -- Temporal Retreat
 step
     #optional
     .isQuestAvailable 40636
@@ -1419,6 +1503,34 @@ step
     *Manually skip this step if you prefer to play through that content.
     .clicknext RestedXP Legion Remix\ae) First Zone 2 >>CLICK HERE FOR GUIDE
 step
+    #completewith Call of the Illidari
+    #hidewindow
+    +test
+    .use 245925 -- Artifactium Sand
+    .use 249891 -- Mound of Artifactium Sand
+    .use 246937 -- Perfected Epoch Memento
+    .use 242516 -- Memento of Epoch Legends
+    .use 238726 -- Drake Treat
+    .use 217956 -- Timeless Scroll of Summoning
+    .use 217730 -- Timeless Scroll of Chaos
+    .use 217606 -- Timeless Scroll of Fortitude
+    .use 217731 -- Timeless Scroll of Mystic Power
+    .use 217608 -- Timeless Scroll of Battle Shout
+    .use 217901 -- Timeless Drums
+    .use 217607 -- Timeless Scroll of the Wild
+    .use 217929 -- Timeless Scroll of Cleansing
+    .use 246936 -- Resonant Epoch Memento
+    .use 249786 -- Dreamweaver Champion's Insignia
+    .use 249787 -- Court of Farondis Champion's Insignia
+    .use 249785 -- Highmountain Tribe Champion's Insignia
+    .use 249783 -- Nightfallen Champion's Insignia
+    .use 249781 -- Wardens Champion's Insignia
+    .use 249780 -- Army of the Light Champion's Insignia
+    .use 249782 -- Valarjar Champion's Insignia
+    .use 249784 -- Legionfall Champion's Insignia
+    .use 249788 -- Argussian Reach Champion's Insignia
+    .usespell 1241425 -- Temporal Retreat
+step
     #optional
     .convertquest 39261,39047
     .convertquest 40814,40816
@@ -1492,6 +1604,34 @@ step
     .convertquest 44383,44379
     .convertquest 42677,44161
     .convertquest 42671,42670
+step
+    #completewith Asha Ravensong
+    #hidewindow
+    +test
+    .use 245925 -- Artifactium Sand
+    .use 249891 -- Mound of Artifactium Sand
+    .use 246937 -- Perfected Epoch Memento
+    .use 242516 -- Memento of Epoch Legends
+    .use 238726 -- Drake Treat
+    .use 217956 -- Timeless Scroll of Summoning
+    .use 217730 -- Timeless Scroll of Chaos
+    .use 217606 -- Timeless Scroll of Fortitude
+    .use 217731 -- Timeless Scroll of Mystic Power
+    .use 217608 -- Timeless Scroll of Battle Shout
+    .use 217901 -- Timeless Drums
+    .use 217607 -- Timeless Scroll of the Wild
+    .use 217929 -- Timeless Scroll of Cleansing
+    .use 246936 -- Resonant Epoch Memento
+    .use 249786 -- Dreamweaver Champion's Insignia
+    .use 249787 -- Court of Farondis Champion's Insignia
+    .use 249785 -- Highmountain Tribe Champion's Insignia
+    .use 249783 -- Nightfallen Champion's Insignia
+    .use 249781 -- Wardens Champion's Insignia
+    .use 249780 -- Army of the Light Champion's Insignia
+    .use 249782 -- Valarjar Champion's Insignia
+    .use 249784 -- Legionfall Champion's Insignia
+    .use 249788 -- Argussian Reach Champion's Insignia
+    .usespell 1241425 -- Temporal Retreat
 step
     #optional
     .isQuestAvailable 40814
@@ -2251,6 +2391,34 @@ step
     *Manually skip this step if you prefer to play through that content.
     .clicknext RestedXP Legion Remix\ae) First Zone 2 >>CLICK HERE FOR GUIDE
 step
+    #completewith Dreadlord's Prize
+    #hidewindow
+    +test
+    .use 245925 -- Artifactium Sand
+    .use 249891 -- Mound of Artifactium Sand
+    .use 246937 -- Perfected Epoch Memento
+    .use 242516 -- Memento of Epoch Legends
+    .use 238726 -- Drake Treat
+    .use 217956 -- Timeless Scroll of Summoning
+    .use 217730 -- Timeless Scroll of Chaos
+    .use 217606 -- Timeless Scroll of Fortitude
+    .use 217731 -- Timeless Scroll of Mystic Power
+    .use 217608 -- Timeless Scroll of Battle Shout
+    .use 217901 -- Timeless Drums
+    .use 217607 -- Timeless Scroll of the Wild
+    .use 217929 -- Timeless Scroll of Cleansing
+    .use 246936 -- Resonant Epoch Memento
+    .use 249786 -- Dreamweaver Champion's Insignia
+    .use 249787 -- Court of Farondis Champion's Insignia
+    .use 249785 -- Highmountain Tribe Champion's Insignia
+    .use 249783 -- Nightfallen Champion's Insignia
+    .use 249781 -- Wardens Champion's Insignia
+    .use 249780 -- Army of the Light Champion's Insignia
+    .use 249782 -- Valarjar Champion's Insignia
+    .use 249784 -- Legionfall Champion's Insignia
+    .use 249788 -- Argussian Reach Champion's Insignia
+    .usespell 1241425 -- Temporal Retreat
+step
     #label OrderHallMage1
     .goto 627,56.99,46.76
     >>Enter Legion Dalaran
@@ -2375,6 +2543,34 @@ RXPGuides.RegisterGuide([[
 
 << Mage
 
+step
+    #completewith Champion: Archmage Modera
+    #hidewindow
+    +test
+    .use 245925 -- Artifactium Sand
+    .use 249891 -- Mound of Artifactium Sand
+    .use 246937 -- Perfected Epoch Memento
+    .use 242516 -- Memento of Epoch Legends
+    .use 238726 -- Drake Treat
+    .use 217956 -- Timeless Scroll of Summoning
+    .use 217730 -- Timeless Scroll of Chaos
+    .use 217606 -- Timeless Scroll of Fortitude
+    .use 217731 -- Timeless Scroll of Mystic Power
+    .use 217608 -- Timeless Scroll of Battle Shout
+    .use 217901 -- Timeless Drums
+    .use 217607 -- Timeless Scroll of the Wild
+    .use 217929 -- Timeless Scroll of Cleansing
+    .use 246936 -- Resonant Epoch Memento
+    .use 249786 -- Dreamweaver Champion's Insignia
+    .use 249787 -- Court of Farondis Champion's Insignia
+    .use 249785 -- Highmountain Tribe Champion's Insignia
+    .use 249783 -- Nightfallen Champion's Insignia
+    .use 249781 -- Wardens Champion's Insignia
+    .use 249780 -- Army of the Light Champion's Insignia
+    .use 249782 -- Valarjar Champion's Insignia
+    .use 249784 -- Legionfall Champion's Insignia
+    .use 249788 -- Argussian Reach Champion's Insignia
+    .usespell 1241425 -- Temporal Retreat
 step
     #optional
     .isQuestAvailable 41085
@@ -2563,6 +2759,34 @@ step
     *Manually skip this step if you prefer to play through that content.
     .clicknext RestedXP Legion Remix\ae) First Zone 2 >>CLICK HERE FOR GUIDE
 step
+    #completewith Order Hall Paladin Part 1
+    #hidewindow
+    +test
+    .use 245925 -- Artifactium Sand
+    .use 249891 -- Mound of Artifactium Sand
+    .use 246937 -- Perfected Epoch Memento
+    .use 242516 -- Memento of Epoch Legends
+    .use 238726 -- Drake Treat
+    .use 217956 -- Timeless Scroll of Summoning
+    .use 217730 -- Timeless Scroll of Chaos
+    .use 217606 -- Timeless Scroll of Fortitude
+    .use 217731 -- Timeless Scroll of Mystic Power
+    .use 217608 -- Timeless Scroll of Battle Shout
+    .use 217901 -- Timeless Drums
+    .use 217607 -- Timeless Scroll of the Wild
+    .use 217929 -- Timeless Scroll of Cleansing
+    .use 246936 -- Resonant Epoch Memento
+    .use 249786 -- Dreamweaver Champion's Insignia
+    .use 249787 -- Court of Farondis Champion's Insignia
+    .use 249785 -- Highmountain Tribe Champion's Insignia
+    .use 249783 -- Nightfallen Champion's Insignia
+    .use 249781 -- Wardens Champion's Insignia
+    .use 249780 -- Army of the Light Champion's Insignia
+    .use 249782 -- Valarjar Champion's Insignia
+    .use 249784 -- Legionfall Champion's Insignia
+    .use 249788 -- Argussian Reach Champion's Insignia
+    .usespell 1241425 -- Temporal Retreat
+step
     #label An Urgent Gathering
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lord Maxwell Tyrosus|r |cRXP_WARN_next to you|r.
     .accept 38710 >>Accept An Urgent Gathering
@@ -2615,6 +2839,39 @@ RXPGuides.RegisterGuide([[
 
 << Paladin
 
+step
+    #completewith Order Hall Paladin Part 2
+    #hidewindow
+    +test
+    .use 245925 -- Artifactium Sand
+    .use 249891 -- Mound of Artifactium Sand
+    .use 246937 -- Perfected Epoch Memento
+    .use 242516 -- Memento of Epoch Legends
+    .use 238726 -- Drake Treat
+    .use 217956 -- Timeless Scroll of Summoning
+    .use 217730 -- Timeless Scroll of Chaos
+    .use 217606 -- Timeless Scroll of Fortitude
+    .use 217731 -- Timeless Scroll of Mystic Power
+    .use 217608 -- Timeless Scroll of Battle Shout
+    .use 217901 -- Timeless Drums
+    .use 217607 -- Timeless Scroll of the Wild
+    .use 217929 -- Timeless Scroll of Cleansing
+    .use 246936 -- Resonant Epoch Memento
+    .use 249786 -- Dreamweaver Champion's Insignia
+    .use 249787 -- Court of Farondis Champion's Insignia
+    .use 249785 -- Highmountain Tribe Champion's Insignia
+    .use 249783 -- Nightfallen Champion's Insignia
+    .use 249781 -- Wardens Champion's Insignia
+    .use 249780 -- Army of the Light Champion's Insignia
+    .use 249782 -- Valarjar Champion's Insignia
+    .use 249784 -- Legionfall Champion's Insignia
+    .use 249788 -- Argussian Reach Champion's Insignia
+    .usespell 1241425 -- Temporal Retreat
+-- step
+--     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Eadric the Pure|r
+--     .accept 44250 >>Accept Champion of the Light
+--     .turnin 44250 >>Turn in Champion of the Light
+--     .target Eadric the Pure
 step
     #optional
     .isQuestAvailable 40408
@@ -2883,6 +3140,34 @@ step
     *Manually skip this step if you prefer to play through that content.
     .clicknext RestedXP Legion Remix\ae) First Zone 2 >>CLICK HERE FOR GUIDE
 step
+    #completewith Order Hall Rogue Part 1
+    #hidewindow
+    +test
+    .use 245925 -- Artifactium Sand
+    .use 249891 -- Mound of Artifactium Sand
+    .use 246937 -- Perfected Epoch Memento
+    .use 242516 -- Memento of Epoch Legends
+    .use 238726 -- Drake Treat
+    .use 217956 -- Timeless Scroll of Summoning
+    .use 217730 -- Timeless Scroll of Chaos
+    .use 217606 -- Timeless Scroll of Fortitude
+    .use 217731 -- Timeless Scroll of Mystic Power
+    .use 217608 -- Timeless Scroll of Battle Shout
+    .use 217901 -- Timeless Drums
+    .use 217607 -- Timeless Scroll of the Wild
+    .use 217929 -- Timeless Scroll of Cleansing
+    .use 246936 -- Resonant Epoch Memento
+    .use 249786 -- Dreamweaver Champion's Insignia
+    .use 249787 -- Court of Farondis Champion's Insignia
+    .use 249785 -- Highmountain Tribe Champion's Insignia
+    .use 249783 -- Nightfallen Champion's Insignia
+    .use 249781 -- Wardens Champion's Insignia
+    .use 249780 -- Army of the Light Champion's Insignia
+    .use 249782 -- Valarjar Champion's Insignia
+    .use 249784 -- Legionfall Champion's Insignia
+    .use 249788 -- Argussian Reach Champion's Insignia
+    .usespell 1241425 -- Temporal Retreat
+step
     #label Call of The Uncrowned
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ravenholdt Courier|r |cRXP_WARN_next to you|r.
     .accept 40832 >>Accept Call of The Uncrowned
@@ -3020,6 +3305,34 @@ RXPGuides.RegisterGuide([[
 
 << Rogue
 
+step
+    #completewith Order Hall Rogue Part 2
+    #hidewindow
+    +test
+    .use 245925 -- Artifactium Sand
+    .use 249891 -- Mound of Artifactium Sand
+    .use 246937 -- Perfected Epoch Memento
+    .use 242516 -- Memento of Epoch Legends
+    .use 238726 -- Drake Treat
+    .use 217956 -- Timeless Scroll of Summoning
+    .use 217730 -- Timeless Scroll of Chaos
+    .use 217606 -- Timeless Scroll of Fortitude
+    .use 217731 -- Timeless Scroll of Mystic Power
+    .use 217608 -- Timeless Scroll of Battle Shout
+    .use 217901 -- Timeless Drums
+    .use 217607 -- Timeless Scroll of the Wild
+    .use 217929 -- Timeless Scroll of Cleansing
+    .use 246936 -- Resonant Epoch Memento
+    .use 249786 -- Dreamweaver Champion's Insignia
+    .use 249787 -- Court of Farondis Champion's Insignia
+    .use 249785 -- Highmountain Tribe Champion's Insignia
+    .use 249783 -- Nightfallen Champion's Insignia
+    .use 249781 -- Wardens Champion's Insignia
+    .use 249780 -- Army of the Light Champion's Insignia
+    .use 249782 -- Valarjar Champion's Insignia
+    .use 249784 -- Legionfall Champion's Insignia
+    .use 249788 -- Argussian Reach Champion's Insignia
+    .usespell 1241425 -- Temporal Retreat
 step
     #optional
     .isQuestAvailable 40840
@@ -3546,6 +3859,34 @@ step
     +|cRXP_WARN_You’ve already got the 10% XP bonus from the artifact questline. By clicking the text below, you’ll skip the Order Hall intro and parts of Azsuna for faster leveling|r.
     *Manually skip this step if you prefer to play through that content.
     .clicknext RestedXP Legion Remix\ae) First Zone 2 >>CLICK HERE FOR GUIDE
+step
+    #completewith Order Hall Warrior Part 1
+    #hidewindow
+    +test
+    .use 245925 -- Artifactium Sand
+    .use 249891 -- Mound of Artifactium Sand
+    .use 246937 -- Perfected Epoch Memento
+    .use 242516 -- Memento of Epoch Legends
+    .use 238726 -- Drake Treat
+    .use 217956 -- Timeless Scroll of Summoning
+    .use 217730 -- Timeless Scroll of Chaos
+    .use 217606 -- Timeless Scroll of Fortitude
+    .use 217731 -- Timeless Scroll of Mystic Power
+    .use 217608 -- Timeless Scroll of Battle Shout
+    .use 217901 -- Timeless Drums
+    .use 217607 -- Timeless Scroll of the Wild
+    .use 217929 -- Timeless Scroll of Cleansing
+    .use 246936 -- Resonant Epoch Memento
+    .use 249786 -- Dreamweaver Champion's Insignia
+    .use 249787 -- Court of Farondis Champion's Insignia
+    .use 249785 -- Highmountain Tribe Champion's Insignia
+    .use 249783 -- Nightfallen Champion's Insignia
+    .use 249781 -- Wardens Champion's Insignia
+    .use 249780 -- Army of the Light Champion's Insignia
+    .use 249782 -- Valarjar Champion's Insignia
+    .use 249784 -- Legionfall Champion's Insignia
+    .use 249788 -- Argussian Reach Champion's Insignia
+    .usespell 1241425 -- Temporal Retreat
 step << Alliance
     #label OrderHallWarriorA1Start
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Sergeant Dalton|r |cRXP_WARN_next to you|r.
@@ -3713,6 +4054,34 @@ RXPGuides.RegisterGuide([[
 << Warrior
 
 step
+    #completewith Accept The Eye of Odyn
+    #hidewindow
+    +test
+    .use 245925 -- Artifactium Sand
+    .use 249891 -- Mound of Artifactium Sand
+    .use 246937 -- Perfected Epoch Memento
+    .use 242516 -- Memento of Epoch Legends
+    .use 238726 -- Drake Treat
+    .use 217956 -- Timeless Scroll of Summoning
+    .use 217730 -- Timeless Scroll of Chaos
+    .use 217606 -- Timeless Scroll of Fortitude
+    .use 217731 -- Timeless Scroll of Mystic Power
+    .use 217608 -- Timeless Scroll of Battle Shout
+    .use 217901 -- Timeless Drums
+    .use 217607 -- Timeless Scroll of the Wild
+    .use 217929 -- Timeless Scroll of Cleansing
+    .use 246936 -- Resonant Epoch Memento
+    .use 249786 -- Dreamweaver Champion's Insignia
+    .use 249787 -- Court of Farondis Champion's Insignia
+    .use 249785 -- Highmountain Tribe Champion's Insignia
+    .use 249783 -- Nightfallen Champion's Insignia
+    .use 249781 -- Wardens Champion's Insignia
+    .use 249780 -- Army of the Light Champion's Insignia
+    .use 249782 -- Valarjar Champion's Insignia
+    .use 249784 -- Legionfall Champion's Insignia
+    .use 249788 -- Argussian Reach Champion's Insignia
+    .usespell 1241425 -- Temporal Retreat
+step
     #optional
     .isQuestAvailable 40579
     +|cRXP_WARN_You have to do the previous chapter first|r
@@ -3809,6 +4178,36 @@ RXPGuides.RegisterGuide([[
 
 
 
+step
+    #completewith Heroic World Tier
+    #hidewindow
+    +test
+    .use 245925 -- Artifactium Sand
+    .use 249891 -- Mound of Artifactium Sand
+    .use 246937 -- Perfected Epoch Memento
+    .use 242516 -- Memento of Epoch Legends
+    .use 238726 -- Drake Treat
+    .use 217956 -- Timeless Scroll of Summoning
+    .use 217730 -- Timeless Scroll of Chaos
+    .use 217606 -- Timeless Scroll of Fortitude
+    .use 217731 -- Timeless Scroll of Mystic Power
+    .use 217608 -- Timeless Scroll of Battle Shout
+    .use 217901 -- Timeless Drums
+    .use 217607 -- Timeless Scroll of the Wild
+    .use 217929 -- Timeless Scroll of Cleansing
+    .use 246936 -- Resonant Epoch Memento
+    .use 249786 -- Dreamweaver Champion's Insignia
+    .use 249787 -- Court of Farondis Champion's Insignia
+    .use 249785 -- Highmountain Tribe Champion's Insignia
+    .use 249783 -- Nightfallen Champion's Insignia
+    .use 249781 -- Wardens Champion's Insignia
+    .use 249780 -- Army of the Light Champion's Insignia
+    .use 249782 -- Valarjar Champion's Insignia
+    .use 249784 -- Legionfall Champion's Insignia
+    .use 249788 -- Argussian Reach Champion's Insignia
+    .usespell 1241425 -- Temporal Retreat
+    .use 242617
+-- step << Warrior/Mage/Horde Paladin/Rogue/Monk/Shaman/Hunter/Horde Priest
 step
     .subzoneskip 4564,1
     .goto 627,73.91,41.62
@@ -3948,6 +4347,34 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF006|r - Azsuna|r
 #next cb) Val'sharah Speedrun 2
 
+step
+    #completewith AzsunaSpeedrunY
+    #hidewindow
+    +test
+    .use 245925 -- Artifactium Sand
+    .use 249891 -- Mound of Artifactium Sand
+    .use 246937 -- Perfected Epoch Memento
+    .use 242516 -- Memento of Epoch Legends
+    .use 238726 -- Drake Treat
+    .use 217956 -- Timeless Scroll of Summoning
+    .use 217730 -- Timeless Scroll of Chaos
+    .use 217606 -- Timeless Scroll of Fortitude
+    .use 217731 -- Timeless Scroll of Mystic Power
+    .use 217608 -- Timeless Scroll of Battle Shout
+    .use 217901 -- Timeless Drums
+    .use 217607 -- Timeless Scroll of the Wild
+    .use 217929 -- Timeless Scroll of Cleansing
+    .use 246936 -- Resonant Epoch Memento
+    .use 249786 -- Dreamweaver Champion's Insignia
+    .use 249787 -- Court of Farondis Champion's Insignia
+    .use 249785 -- Highmountain Tribe Champion's Insignia
+    .use 249783 -- Nightfallen Champion's Insignia
+    .use 249781 -- Wardens Champion's Insignia
+    .use 249780 -- Army of the Light Champion's Insignia
+    .use 249782 -- Valarjar Champion's Insignia
+    .use 249784 -- Legionfall Champion's Insignia
+    .use 249788 -- Argussian Reach Champion's Insignia
+    .usespell 1241425 -- Temporal Retreat
 step
     .zoneskip 619,1
     .goto 619,45.71,67.46
@@ -4349,6 +4776,34 @@ RXPGuides.RegisterGuide([[
 #next cb) Val'sharah Speedrun 2
 
 step
+    #completewith Let's Make A DealZ
+    #hidewindow
+    +test
+    .use 245925 -- Artifactium Sand
+    .use 249891 -- Mound of Artifactium Sand
+    .use 246937 -- Perfected Epoch Memento
+    .use 242516 -- Memento of Epoch Legends
+    .use 238726 -- Drake Treat
+    .use 217956 -- Timeless Scroll of Summoning
+    .use 217730 -- Timeless Scroll of Chaos
+    .use 217606 -- Timeless Scroll of Fortitude
+    .use 217731 -- Timeless Scroll of Mystic Power
+    .use 217608 -- Timeless Scroll of Battle Shout
+    .use 217901 -- Timeless Drums
+    .use 217607 -- Timeless Scroll of the Wild
+    .use 217929 -- Timeless Scroll of Cleansing
+    .use 246936 -- Resonant Epoch Memento
+    .use 249786 -- Dreamweaver Champion's Insignia
+    .use 249787 -- Court of Farondis Champion's Insignia
+    .use 249785 -- Highmountain Tribe Champion's Insignia
+    .use 249783 -- Nightfallen Champion's Insignia
+    .use 249781 -- Wardens Champion's Insignia
+    .use 249780 -- Army of the Light Champion's Insignia
+    .use 249782 -- Valarjar Champion's Insignia
+    .use 249784 -- Legionfall Champion's Insignia
+    .use 249788 -- Argussian Reach Champion's Insignia
+    .usespell 1241425 -- Temporal Retreat
+step
     #include RestedXP Legion Remix\ad) Infinite Bazaar
 step
     #include b) Felblaze Ingress
@@ -4565,6 +5020,34 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF1|r - Behind Legion Lines
 #internal
 
+step
+    #completewith BehindLegionLinesZ
+    #hidewindow
+    +test
+    .use 245925 -- Artifactium Sand
+    .use 249891 -- Mound of Artifactium Sand
+    .use 246937 -- Perfected Epoch Memento
+    .use 242516 -- Memento of Epoch Legends
+    .use 238726 -- Drake Treat
+    .use 217956 -- Timeless Scroll of Summoning
+    .use 217730 -- Timeless Scroll of Chaos
+    .use 217606 -- Timeless Scroll of Fortitude
+    .use 217731 -- Timeless Scroll of Mystic Power
+    .use 217608 -- Timeless Scroll of Battle Shout
+    .use 217901 -- Timeless Drums
+    .use 217607 -- Timeless Scroll of the Wild
+    .use 217929 -- Timeless Scroll of Cleansing
+    .use 246936 -- Resonant Epoch Memento
+    .use 249786 -- Dreamweaver Champion's Insignia
+    .use 249787 -- Court of Farondis Champion's Insignia
+    .use 249785 -- Highmountain Tribe Champion's Insignia
+    .use 249783 -- Nightfallen Champion's Insignia
+    .use 249781 -- Wardens Champion's Insignia
+    .use 249780 -- Army of the Light Champion's Insignia
+    .use 249782 -- Valarjar Champion's Insignia
+    .use 249784 -- Legionfall Champion's Insignia
+    .use 249788 -- Argussian Reach Champion's Insignia
+    .usespell 1241425 -- Temporal Retreat
 step
     .goto 627,72.47,45.70
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Archmage Khadgar|r.
@@ -4794,6 +5277,34 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF2|r - Defending Azurewing Repose
 #internal
 
+step
+    #completewith DefendingAzurewingReposeZ
+    #hidewindow
+    +test
+    .use 245925 -- Artifactium Sand
+    .use 249891 -- Mound of Artifactium Sand
+    .use 246937 -- Perfected Epoch Memento
+    .use 242516 -- Memento of Epoch Legends
+    .use 238726 -- Drake Treat
+    .use 217956 -- Timeless Scroll of Summoning
+    .use 217730 -- Timeless Scroll of Chaos
+    .use 217606 -- Timeless Scroll of Fortitude
+    .use 217731 -- Timeless Scroll of Mystic Power
+    .use 217608 -- Timeless Scroll of Battle Shout
+    .use 217901 -- Timeless Drums
+    .use 217607 -- Timeless Scroll of the Wild
+    .use 217929 -- Timeless Scroll of Cleansing
+    .use 246936 -- Resonant Epoch Memento
+    .use 249786 -- Dreamweaver Champion's Insignia
+    .use 249787 -- Court of Farondis Champion's Insignia
+    .use 249785 -- Highmountain Tribe Champion's Insignia
+    .use 249783 -- Nightfallen Champion's Insignia
+    .use 249781 -- Wardens Champion's Insignia
+    .use 249780 -- Army of the Light Champion's Insignia
+    .use 249782 -- Valarjar Champion's Insignia
+    .use 249784 -- Legionfall Champion's Insignia
+    .use 249788 -- Argussian Reach Champion's Insignia
+    .usespell 1241425 -- Temporal Retreat
 step
     #label DefendingAzurewingReposeA
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Khadgar|r.
@@ -5185,6 +5696,34 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF3|r - Azsuna versus Azshara
 #internal
 
+step
+    #completewith AzsunaVersusAzsharaZ
+    #hidewindow
+    +test
+    .use 245925 -- Artifactium Sand
+    .use 249891 -- Mound of Artifactium Sand
+    .use 246937 -- Perfected Epoch Memento
+    .use 242516 -- Memento of Epoch Legends
+    .use 238726 -- Drake Treat
+    .use 217956 -- Timeless Scroll of Summoning
+    .use 217730 -- Timeless Scroll of Chaos
+    .use 217606 -- Timeless Scroll of Fortitude
+    .use 217731 -- Timeless Scroll of Mystic Power
+    .use 217608 -- Timeless Scroll of Battle Shout
+    .use 217901 -- Timeless Drums
+    .use 217607 -- Timeless Scroll of the Wild
+    .use 217929 -- Timeless Scroll of Cleansing
+    .use 246936 -- Resonant Epoch Memento
+    .use 249786 -- Dreamweaver Champion's Insignia
+    .use 249787 -- Court of Farondis Champion's Insignia
+    .use 249785 -- Highmountain Tribe Champion's Insignia
+    .use 249783 -- Nightfallen Champion's Insignia
+    .use 249781 -- Wardens Champion's Insignia
+    .use 249780 -- Army of the Light Champion's Insignia
+    .use 249782 -- Valarjar Champion's Insignia
+    .use 249784 -- Legionfall Champion's Insignia
+    .use 249788 -- Argussian Reach Champion's Insignia
+    .usespell 1241425 -- Temporal Retreat
 step
     #label AzsunaVersusAzsharaA
     .goto 630,47.92,26.94
@@ -5614,6 +6153,34 @@ RXPGuides.RegisterGuide([[
 #internal
 
 step
+    #completewith AgainstGiantsZ
+    #hidewindow
+    +test
+    .use 245925 -- Artifactium Sand
+    .use 249891 -- Mound of Artifactium Sand
+    .use 246937 -- Perfected Epoch Memento
+    .use 242516 -- Memento of Epoch Legends
+    .use 238726 -- Drake Treat
+    .use 217956 -- Timeless Scroll of Summoning
+    .use 217730 -- Timeless Scroll of Chaos
+    .use 217606 -- Timeless Scroll of Fortitude
+    .use 217731 -- Timeless Scroll of Mystic Power
+    .use 217608 -- Timeless Scroll of Battle Shout
+    .use 217901 -- Timeless Drums
+    .use 217607 -- Timeless Scroll of the Wild
+    .use 217929 -- Timeless Scroll of Cleansing
+    .use 246936 -- Resonant Epoch Memento
+    .use 249786 -- Dreamweaver Champion's Insignia
+    .use 249787 -- Court of Farondis Champion's Insignia
+    .use 249785 -- Highmountain Tribe Champion's Insignia
+    .use 249783 -- Nightfallen Champion's Insignia
+    .use 249781 -- Wardens Champion's Insignia
+    .use 249780 -- Army of the Light Champion's Insignia
+    .use 249782 -- Valarjar Champion's Insignia
+    .use 249784 -- Legionfall Champion's Insignia
+    .use 249788 -- Argussian Reach Champion's Insignia
+    .usespell 1241425 -- Temporal Retreat
+step
     #label AgainstGiantsA
     #loop
     .goto 630,50.17,39.68,30,0
@@ -5787,6 +6354,34 @@ RXPGuides.RegisterGuide([[
 #internal
 
 step
+    #completewith MakranaFateQueenReprisalZ
+    #hidewindow
+    +test
+    .use 245925 -- Artifactium Sand
+    .use 249891 -- Mound of Artifactium Sand
+    .use 246937 -- Perfected Epoch Memento
+    .use 242516 -- Memento of Epoch Legends
+    .use 238726 -- Drake Treat
+    .use 217956 -- Timeless Scroll of Summoning
+    .use 217730 -- Timeless Scroll of Chaos
+    .use 217606 -- Timeless Scroll of Fortitude
+    .use 217731 -- Timeless Scroll of Mystic Power
+    .use 217608 -- Timeless Scroll of Battle Shout
+    .use 217901 -- Timeless Drums
+    .use 217607 -- Timeless Scroll of the Wild
+    .use 217929 -- Timeless Scroll of Cleansing
+    .use 246936 -- Resonant Epoch Memento
+    .use 249786 -- Dreamweaver Champion's Insignia
+    .use 249787 -- Court of Farondis Champion's Insignia
+    .use 249785 -- Highmountain Tribe Champion's Insignia
+    .use 249783 -- Nightfallen Champion's Insignia
+    .use 249781 -- Wardens Champion's Insignia
+    .use 249780 -- Army of the Light Champion's Insignia
+    .use 249782 -- Valarjar Champion's Insignia
+    .use 249784 -- Legionfall Champion's Insignia
+    .use 249788 -- Argussian Reach Champion's Insignia
+    .usespell 1241425 -- Temporal Retreat
+step
     #label MakranaFateQueenReprisalA
     .goto 630,56.60,59.59
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mr. Shackle|r.
@@ -5942,6 +6537,34 @@ RXPGuides.RegisterGuide([[
 #internal
 
 step
+    #completewith ChallianeVineyardsZ
+    #hidewindow
+    +test
+    .use 245925 -- Artifactium Sand
+    .use 249891 -- Mound of Artifactium Sand
+    .use 246937 -- Perfected Epoch Memento
+    .use 242516 -- Memento of Epoch Legends
+    .use 238726 -- Drake Treat
+    .use 217956 -- Timeless Scroll of Summoning
+    .use 217730 -- Timeless Scroll of Chaos
+    .use 217606 -- Timeless Scroll of Fortitude
+    .use 217731 -- Timeless Scroll of Mystic Power
+    .use 217608 -- Timeless Scroll of Battle Shout
+    .use 217901 -- Timeless Drums
+    .use 217607 -- Timeless Scroll of the Wild
+    .use 217929 -- Timeless Scroll of Cleansing
+    .use 246936 -- Resonant Epoch Memento
+    .use 249786 -- Dreamweaver Champion's Insignia
+    .use 249787 -- Court of Farondis Champion's Insignia
+    .use 249785 -- Highmountain Tribe Champion's Insignia
+    .use 249783 -- Nightfallen Champion's Insignia
+    .use 249781 -- Wardens Champion's Insignia
+    .use 249780 -- Army of the Light Champion's Insignia
+    .use 249782 -- Valarjar Champion's Insignia
+    .use 249784 -- Legionfall Champion's Insignia
+    .use 249788 -- Argussian Reach Champion's Insignia
+    .usespell 1241425 -- Temporal Retreat
+step
     #label ChallianeVineyardsA
     .goto 630,40.78,9.32
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Cellarman Voodani|r
@@ -5981,6 +6604,34 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF1|r - Kirin Tor Reconnaissance
 #internal
 
+step
+    #completewith KirinTorReconnaissanceZ
+    #hidewindow
+    +test
+    .use 245925 -- Artifactium Sand
+    .use 249891 -- Mound of Artifactium Sand
+    .use 246937 -- Perfected Epoch Memento
+    .use 242516 -- Memento of Epoch Legends
+    .use 238726 -- Drake Treat
+    .use 217956 -- Timeless Scroll of Summoning
+    .use 217730 -- Timeless Scroll of Chaos
+    .use 217606 -- Timeless Scroll of Fortitude
+    .use 217731 -- Timeless Scroll of Mystic Power
+    .use 217608 -- Timeless Scroll of Battle Shout
+    .use 217901 -- Timeless Drums
+    .use 217607 -- Timeless Scroll of the Wild
+    .use 217929 -- Timeless Scroll of Cleansing
+    .use 246936 -- Resonant Epoch Memento
+    .use 249786 -- Dreamweaver Champion's Insignia
+    .use 249787 -- Court of Farondis Champion's Insignia
+    .use 249785 -- Highmountain Tribe Champion's Insignia
+    .use 249783 -- Nightfallen Champion's Insignia
+    .use 249781 -- Wardens Champion's Insignia
+    .use 249780 -- Army of the Light Champion's Insignia
+    .use 249782 -- Valarjar Champion's Insignia
+    .use 249784 -- Legionfall Champion's Insignia
+    .use 249788 -- Argussian Reach Champion's Insignia
+    .usespell 1241425 -- Temporal Retreat
 step
     #label KirinTorReconnaissanceA
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kallistia Starlance|r and |cRXP_FRIENDLY_Olothil Starlance|r
@@ -6086,6 +6737,34 @@ RXPGuides.RegisterGuide([[
 #internal
 
 step
+    #completewith A Rather Long Walk
+    #hidewindow
+    +test
+    .use 245925 -- Artifactium Sand
+    .use 249891 -- Mound of Artifactium Sand
+    .use 246937 -- Perfected Epoch Memento
+    .use 242516 -- Memento of Epoch Legends
+    .use 238726 -- Drake Treat
+    .use 217956 -- Timeless Scroll of Summoning
+    .use 217730 -- Timeless Scroll of Chaos
+    .use 217606 -- Timeless Scroll of Fortitude
+    .use 217731 -- Timeless Scroll of Mystic Power
+    .use 217608 -- Timeless Scroll of Battle Shout
+    .use 217901 -- Timeless Drums
+    .use 217607 -- Timeless Scroll of the Wild
+    .use 217929 -- Timeless Scroll of Cleansing
+    .use 246936 -- Resonant Epoch Memento
+    .use 249786 -- Dreamweaver Champion's Insignia
+    .use 249787 -- Court of Farondis Champion's Insignia
+    .use 249785 -- Highmountain Tribe Champion's Insignia
+    .use 249783 -- Nightfallen Champion's Insignia
+    .use 249781 -- Wardens Champion's Insignia
+    .use 249780 -- Army of the Light Champion's Insignia
+    .use 249782 -- Valarjar Champion's Insignia
+    .use 249784 -- Legionfall Champion's Insignia
+    .use 249788 -- Argussian Reach Champion's Insignia
+    .usespell 1241425 -- Temporal Retreat
+step
     .goto 630,47.05,41.48
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lady Irisse|r
     .accept 37492 >>Accept A Rather Long Walk
@@ -6112,6 +6791,34 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF1|r - Crumbled Palace Cocktails
 #internal
 
+step
+    #completewith Crumbled Palace Cocktails
+    #hidewindow
+    +test
+    .use 245925 -- Artifactium Sand
+    .use 249891 -- Mound of Artifactium Sand
+    .use 246937 -- Perfected Epoch Memento
+    .use 242516 -- Memento of Epoch Legends
+    .use 238726 -- Drake Treat
+    .use 217956 -- Timeless Scroll of Summoning
+    .use 217730 -- Timeless Scroll of Chaos
+    .use 217606 -- Timeless Scroll of Fortitude
+    .use 217731 -- Timeless Scroll of Mystic Power
+    .use 217608 -- Timeless Scroll of Battle Shout
+    .use 217901 -- Timeless Drums
+    .use 217607 -- Timeless Scroll of the Wild
+    .use 217929 -- Timeless Scroll of Cleansing
+    .use 246936 -- Resonant Epoch Memento
+    .use 249786 -- Dreamweaver Champion's Insignia
+    .use 249787 -- Court of Farondis Champion's Insignia
+    .use 249785 -- Highmountain Tribe Champion's Insignia
+    .use 249783 -- Nightfallen Champion's Insignia
+    .use 249781 -- Wardens Champion's Insignia
+    .use 249780 -- Army of the Light Champion's Insignia
+    .use 249782 -- Valarjar Champion's Insignia
+    .use 249784 -- Legionfall Champion's Insignia
+    .use 249788 -- Argussian Reach Champion's Insignia
+    .usespell 1241425 -- Temporal Retreat
 step
     #label CrumbledPalaceCocktailsA
     .goto 630,47.10,41.41

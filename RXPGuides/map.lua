@@ -3,7 +3,20 @@ local L = addon.locale.Get
 local _G = _G
 
 local HBD = LibStub("HereBeDragons-2.0")
-local HBDPins = LibStub("HereBeDragons-Pins-2.0")
+local HBDPins_Lib = LibStub("HereBeDragons-Pins-2.0")
+local HBDPins = {}
+setmetatable(HBDPins, {
+    __index = function(t, k)
+        if addon.settings.profile.disableMapPins then
+            return addon.functions.noop
+        else
+            return HBDPins_Lib[k]
+        end
+    end
+})
+
+
+
 addon.activeWaypoints = {}
 addon.linePoints = {}
 
@@ -675,7 +688,7 @@ local function generatePins(steps, numPins, startingIndex, isMiniMap)
                         })
                     end
                 end
-                if not isMiniMap then
+                if not isMiniMap and not step.dangerousMob then
                     table.insert(addon.activeWaypoints, element)
                 end
                 if not element.hidePin then
@@ -844,7 +857,7 @@ local function generateLines(steps, numPins, startingIndex, isMiniMap)
                             nEdges = nEdges + 1
                             InsertLine(element, sX, sY, fX, fY, element.lineAlpha or 1)
                         end
-                        if element.showArrow and step.active then
+                        if element.showArrow and step.active and not step.dangerousMob then
                             AddPoint(sX,sY,element,flags,addon.linePoints,addon.activeWaypoints)
                         end
                     end

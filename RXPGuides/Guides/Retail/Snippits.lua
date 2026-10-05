@@ -39,49 +39,6 @@ step
     .target Thurman Schneider
 
 ]])
---Exile's Reach Housing Skip: capital portal hand-off
-RXPGuides.RegisterGuide([[
-#retail
-#version 2
-#group RestedXP Speed Leveling
-#name a) Exile's Reach Housing Skip Alliance
-#displayname Exile's Reach Housing Skip
-
-<< Alliance
-
-step
-    #title |cFFFCDC00Finish the Current Task First|r
-    >>Wait for |cRXP_WARN_A House For You|r to finish automatically before leaving the neighborhood.
-    .complete 93057,1
-    .isQuestAvailable account,93057
-step
-    .goto 2352,57.43,26.65,8
-    #title |cFFFCDC00Turn Around: Stormwind Portal|r
-    >>|cRXP_WARN_Turn around from where Blizzard placed you.|r Walk into the |cRXP_PICK_Portal to Stormwind|r directly behind you.
-    .zone 84 >>Take the |cRXP_PICK_Portal to Stormwind|r.
-    .zoneskip 2352,1
-]])
-RXPGuides.RegisterGuide([[
-#retail
-#version 2
-#group RestedXP Speed Leveling
-#name a) Exile's Reach Housing Skip Horde
-#displayname Exile's Reach Housing Skip
-
-<< Horde
-
-step
-    #title |cFFFCDC00Finish the Current Task First|r
-    >>Wait for |cRXP_WARN_A House For You|r to finish automatically before leaving the neighborhood.
-    .complete 93057,1
-    .isQuestAvailable account,93057
-step
-    .goto 2351,54.00,49.40,8
-    #title |cFFFCDC00Turn Around: Orgrimmar Portal|r
-    >>|cRXP_WARN_Turn around from where Blizzard placed you.|r Walk into the |cRXP_PICK_Portal to Orgrimmar|r directly behind you.
-    .zone 85 >>Take the |cRXP_PICK_Portal to Orgrimmar|r.
-    .zoneskip 2351,1
-]])
 --Housing Alliance
 RXPGuides.RegisterGuide([[
 #retail
@@ -89,8 +46,6 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Speed Leveling
 #name a) Housing Tutorial Alliance
 #internal
-
-<< Alliance
 
 step
     >>Press the macro "In the Active Items Frame" to start the housing tutorial
@@ -261,7 +216,7 @@ RXPGuides.RegisterGuide([[
 step << Alliance
     #completewith next
     #label ProfessionsDmf1
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lien Farmer|r.
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lien Farner|r.
     .train 2259 >>Train |T4620669:0|t[Alchemy]
     .dmf
 step << Alliance
@@ -275,9 +230,9 @@ step << Alliance
 step << Alliance
     #requires ProfessionsDmf1
     .goto 37,41.95,67.16
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lien Farmer|r.
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lien Farner|r.
     .train 2259 >>Train |T4620669:0|t[Alchemy]
-    .target Lien Farmer
+    .target Lien Farner
     .skipgossipid 38859
     .skipgossipid 38886
     .skipgossipid 39726
@@ -287,7 +242,7 @@ step << Alliance
 step << Alliance
     #completewith next
     #label ProfessionsDmf2
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lien Farmer|r.
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lien Farner|r.
     .train 45357 >>Train |T4620676:0|t[Inscription]
     .dmf
 step << Alliance
@@ -301,12 +256,12 @@ step << Alliance
 step << Alliance
     #requires ProfessionsDmf2
     .goto 37,41.95,67.16
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lien Farmer|r.
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lien Farner|r.
     .train 45357 >>Train |T4620676:0|t[Inscription]
     .skipgossipid 38859
     .skipgossipid 38890
     .skipgossipid 39321
-    .target Lien Farmer
+    .target Lien Farner
     .subzoneskip 37,1
     .isOnQuest 7905
     .dmf

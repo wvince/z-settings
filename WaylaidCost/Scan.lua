@@ -20,6 +20,7 @@ end
 local function finish(s, errorText)
   if active ~= s then return end
   active = nil; W.scanning = false; W.runningMode = nil
+  W.scanError = errorText ~= nil
   if errorText then
     W.message = errorText .. (W.scannedAt and " · Previous snapshot kept." or " · No new snapshot saved.")
   else
@@ -27,7 +28,7 @@ local function finish(s, errorText)
     W.scanMode = s.scanMode
     W.incomplete, W.scanTimeUnknown = false, false
     W.message = string.format("%d orders · %d goods · %d requests · %.1f s", s.crateCount, #s.materials, s.requests, GetTime() - s.started)
-    W.db.lastSnapshot = {schema = 2, key = W.scanKey, books = W.books, scannedAt = W.scannedAt, targeted = true, mode = W.scanMode, kind = s.kind}
+    W.db.lastSnapshot = {schema = 2, key = W.scanKey, locale = W.Locale(), books = W.books, scannedAt = W.scannedAt, targeted = true, mode = W.scanMode, kind = s.kind}
     W.db.snapshots = W.db.snapshots or {}
     W.db.snapshots[s.kind] = W.db.lastSnapshot
   end
@@ -91,12 +92,16 @@ local function browse(s, text, wanted, done, classID)
       if active ~= s or s.operation ~= op then return end
       local matches = {}
       for _, entry in ipairs(s.browseEntries) do
-        local info = C_AuctionHouse.GetItemKeyInfo(entry.itemKey)
-        if not info or not info.itemName or type(info.isCommodity) ~= "boolean" or not info.quality then
-          C_Timer.After(0.2, resolve); return
+        -- In localized clients only verified IDs can match. Unrelated auction
+        -- metadata must not stall a scan that browses without an English prefix.
+        if W.Locale() == "enUS" or wanted[entry.itemKey.itemID] then
+          local info = C_AuctionHouse.GetItemKeyInfo(entry.itemKey)
+          if not info or not info.itemName or type(info.isCommodity) ~= "boolean" or not info.quality then
+            C_Timer.After(0.2, resolve); return
+          end
+          local name = wanted[entry.itemKey.itemID] or (W.Locale() == "enUS" and wanted[normalize(info.itemName)])
+          if name then matches[#matches + 1] = {key = entry.itemKey, info = info, name = name, summary = entry} end
         end
-        local name = wanted[normalize(info.itemName)]
-        if name then matches[#matches + 1] = {key = entry.itemKey, info = info, name = name, summary = entry} end
       end
       s.mode = nil
       done(matches)
@@ -201,7 +206,10 @@ end
 local function fullMaterials(s)
   if #s.materials == 0 then finish(s); return end
   local names = {}
-  for _, name in ipairs(s.materials) do names[normalize(name)] = name end
+  for _, name in ipairs(s.materials) do
+    names[normalize(name)] = name
+    if W.itemIDs[name] then names[W.itemIDs[name]] = name end
+  end
   browse(s, "", names, function(matches)
     local keysByName = {}
     for _, match in ipairs(matches) do
@@ -220,7 +228,9 @@ local function fullMaterials(s)
         verify(keysByName[name])
       else
         -- Category absence is not global absence: check other categories too.
-        browse(s, name, {[normalize(name)] = name}, verify)
+        local wanted = {[normalize(name)] = name}
+        if W.itemIDs[name] then wanted[W.itemIDs[name]] = name end
+        browse(s, s.localizedNames[name] or name, wanted, verify)
         status(s, "Materials " .. (s.completed + 1) .. "/" .. s.total .. " · " .. name)
       end
     end
@@ -231,7 +241,10 @@ end
 local function fastMaterials(s)
   if #s.materials == 0 then finish(s); return end
   local names, found = {}, {}
-  for _, name in ipairs(s.materials) do names[normalize(name)] = name end
+  for _, name in ipairs(s.materials) do
+    names[normalize(name)] = name
+    if W.itemIDs[name] then names[W.itemIDs[name]] = name end
+  end
   -- One category summary instead of a separate detailed search per material.
   -- Items outside Trade Goods (and missing items) get an exact-name fallback.
   browse(s, "", names, function(matches)
@@ -244,7 +257,9 @@ local function fastMaterials(s)
       while s.materials[index] and found[s.materials[index]] do index = index + 1 end
       local name = s.materials[index]
       if not name then finish(s); return end
-      browse(s, name, {[normalize(name)] = name}, function(keys)
+      local wanted = {[normalize(name)] = name}
+      if W.itemIDs[name] then wanted[W.itemIDs[name]] = name end
+      browse(s, s.localizedNames[name] or name, wanted, function(keys)
         if addEstimates(s, keys) then missing() end
       end)
       status(s, "Fast Scan · summary: " .. name)
@@ -260,11 +275,9 @@ function W.StartTargetedScan(mode)
     "SendSearchQuery", "HasSearchResults", "HasFullCommoditySearchResults", "HasFullItemSearchResults", "RequestMoreCommoditySearchResults",
     "RequestMoreItemSearchResults", "GetNumCommoditySearchResults", "GetNumItemSearchResults", "GetCommoditySearchResultInfo",
     "GetItemSearchResultInfo", "IsThrottledMessageSystemReady"}) do
-    if not api or not api[name] then W.message = "Targeted scans unavailable on this client: " .. name; W.Draw(); return end
+    if not api or not api[name] then W.scanError = true; W.message = "Targeted scans unavailable on this client: " .. name; W.Draw(); return end
   end
-  if GetLocale() ~= "enUS" and GetLocale() ~= "enGB" then
-    W.message = "This catalog requires English item names. Use an English game client."; W.Draw(); return
-  end
+  local localizedNames = {}
   if not hooked then
     hooked = true
     -- Search buffers are shared with Blizzard and other addons. Yield ownership
@@ -283,11 +296,17 @@ function W.StartTargetedScan(mode)
   local kind = W.IsWritView() and "writs" or "waylaid"
   local catalog = W.GetCatalog()
   local s = {books = {}, materials = {}, completed = 0, total = 0, phase = "Orders", crateCount = 0,
-    scanMode = mode, requests = 0, started = GetTime(), kind = kind}
+    scanMode = mode, requests = 0, started = GetTime(), kind = kind, localizedNames = localizedNames}
   local names = {}
-  for _, crate in ipairs(catalog) do names[normalize(crate.name)] = crate.name; s.books[crate.name] = {estimated = mode == "fast"} end
-  active = s; W.scanning = true; W.runningMode = mode
-  browse(s, kind == "writs" and "Craftsman's Writ" or "Waylaid Crate", names, function(matches)
+  for _, crate in ipairs(catalog) do
+    names[normalize(crate.name)] = crate.name
+    if crate.itemID then names[crate.itemID] = crate.name end
+    s.books[crate.name] = {estimated = mode == "fast"}
+  end
+  active = s; W.scanning = true; W.runningMode = mode; W.scanError = false
+  local function startBrowse()
+  -- Both catalogs have known IDs; do not assume translated common prefixes.
+  browse(s, W.Locale() ~= "enUS" and "" or (kind == "writs" and "Craftsman's Writ" or "Waylaid Crate"), names, function(matches)
     s.total = #matches
     local function cratesReady()
       local seen = {}
@@ -310,4 +329,39 @@ function W.StartTargetedScan(mode)
     else searchKeys(s, matches, cratesReady) end
   end)
   status(s, (mode == "fast" and "Fast Scan · " or "Full Scan · ") .. (kind == "writs" and "Craftsman's Writs" or "Waylaid Crates"))
+  end
+  if W.Locale() == "enUS" then startBrowse(); return end
+  -- A cold client needs item data before name-search fallback can be safe.
+  -- Keep the user's scan active while it loads instead of requiring a second click.
+  local op = operation(s, "Loading localized item data…")
+  local requested, lastMissing = {}, nil
+  local function prepare()
+    if active ~= s or s.operation ~= op then return end
+    local missing, seen = 0, {}
+    for _, order in ipairs(catalog) do
+      local names = {order.name}
+      for _, bundle in ipairs(order.bundles) do names[#names + 1] = bundle[2] end
+      for _, name in ipairs(names) do
+        if not seen[name] then
+          seen[name] = true
+          localizedNames[name] = W.LocalItemName(name)
+          if not localizedNames[name] then
+            local id = W.itemIDs[name]
+            if not id then finish(s, "Missing catalog item ID: " .. name); return end
+            missing = missing + 1
+            if not requested[id] and C_Item and C_Item.RequestLoadItemDataByID then
+              requested[id] = true; C_Item.RequestLoadItemDataByID(id)
+            end
+          end
+        end
+      end
+    end
+    if missing == 0 then startBrowse(); return end
+    if lastMissing ~= missing then
+      lastMissing = missing
+      status(s, string.format("Loading localized item data: %d remaining", missing))
+    end
+    C_Timer.After(0.2, prepare)
+  end
+  prepare()
 end

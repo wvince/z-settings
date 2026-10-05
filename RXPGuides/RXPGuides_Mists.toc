@@ -3,7 +3,7 @@
 ## Title-zhCN: RestedXP 指南
 ## Notes: In-game leveling guides
 ## Author: RestedXP
-## Version: v4.11.11
+## Version: v4.11.15
 ## Category: Quests
 ## Category-deDE: Quests
 ## Category-esES: Misiones
@@ -22,7 +22,7 @@
 ## X-Wago-ID: ZKbebq61
 
 libs\embeds_Mainline.xml [AllowLoadGameType standard,camelot]
-libs\embeds.xml [AllowLoadGameType classic]
+libs\embeds.xml [AllowLoadGameType vanilla,tbc,wrath,cata,mists]
 locale\locales.xml
 UI\includes.xml
 
@@ -39,7 +39,8 @@ DB/mop.xml [AllowLoadGameType mists]
 DB/cata.xml [AllowLoadGameType cata]
 DB/wotlk.xml [AllowLoadGameType wrath]
 DB/tbc.xml [AllowLoadGameType tbc]
-DB/classic.xml [AllowLoadGameType vanilla,camelot]
+DB/classic.xml [AllowLoadGameType vanilla]
+DB/forever.xml [AllowLoadGameType camelot]
 
 HSBatching.lua
 QuestLog.lua
@@ -59,6 +60,7 @@ Guides/GuideList-Mainline.xml [AllowLoadGameType standard]
 Guides/GuideList-cata.xml [AllowLoadGameType cata]
 Guides/GuideList-mop.xml [AllowLoadGameType mists]
 Guides/GuideList-classic.xml [AllowLoadGameType vanilla]
+Guides/GuideList-forever.xml [AllowLoadGameType camelot]
 
 Guides/GuideList-tbc.xml [AllowLoadGameType tbc]
 

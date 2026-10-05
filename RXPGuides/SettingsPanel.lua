@@ -113,6 +113,7 @@ end
 
 local settingsDBDefaults = {
     profile = {
+        enableBetaFeatures = true,
         enableTracker = true,
         enableLevelUpAnnounceSolo = true,
         enableLevelUpAnnounceGroup = true,
@@ -133,7 +134,7 @@ local settingsDBDefaults = {
         enableFPAutomation = true,
         enableBindAutomation = true,
         enableGossipAutomation = true,
-        showUnusedGuides = true,
+        showUnusedGuides = false,
         anchorOrientation = "top",
         chromieTime = "auto",
         enableXpStepSkipping = true,
@@ -257,6 +258,15 @@ function addon.settings:InitializeDatabase()
     settingsDB.RegisterCallback(self, "OnProfileCopied", "CopyProfile")
     settingsDB.RegisterCallback(self, "OnProfileReset", "ResetProfile")
     self.profile = settingsDB.profile
+    -- Apply the website default when a restored profile has no beta setting.
+    if self.profile.enableBetaFeatures == nil then
+        self.profile.enableBetaFeatures = true
+    end
+    -- Apply the Forever dungeon default once to profiles saved before it was enabled.
+    if addon.game == "FOREVER" and not self.profile.guideVaultForeverDungeonsDefault then
+        self.profile.enableBetaFeatures = true
+        self.profile.guideVaultForeverDungeonsDefault = true
+    end
     loadedProfileKey = settingsDB.keys.profile
     if addon.GetQuestDBDefaults then
         addon.GetQuestDBDefaults()
@@ -606,6 +616,18 @@ function addon.settings:CreateAceOptionsPanel()
                 end,
                 hidden = not (addon.ui and addon.ui.v2 and
                     addon.ui.v2.LaunchConfigurator)
+            },
+            resetGuideProgressTop = {
+                name = L("Reset Guide Progress"),
+                desc = L("Clear guide progress for current character"),
+                type = "execute",
+                width = optionsWidth,
+                order = 1.3,
+                func = addon.ResetGuideProgress,
+                confirm = function()
+                    return L("Clear guide progress for current character")
+                end,
+                hidden = addon.player.level > 1,
             },
             generalSettings = {
                 type = "group",
@@ -1248,7 +1270,7 @@ function addon.settings:CreateAceOptionsPanel()
                         sorting = {"auto", "enabled", "disabled"},
                         width = optionsWidth,
                         order = 2.2,
-                        hidden = WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE
+                        hidden = WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE or addon.game == "FOREVER"
                     },
                     phase = {
                         name = L("Content phase"),
@@ -1336,7 +1358,7 @@ function addon.settings:CreateAceOptionsPanel()
                         width = "full",
                         order = 3.0,
                         hidden = function()
-                            return not next(addon.settings.dungeons:GetDungeons())
+                            return addon.game == "FOREVER" or not next(addon.settings.dungeons:GetDungeons())
                         end
                     },
                     dungeonsSetRecommended = {
@@ -1349,7 +1371,7 @@ function addon.settings:CreateAceOptionsPanel()
                             self.dungeons:SetRecommended()
                         end,
                         hidden = function()
-                            return not next(addon.settings.dungeons:GetDungeons()) or not addon.dungeonStats
+                            return addon.game == "FOREVER" or not next(addon.settings.dungeons:GetDungeons()) or not addon.dungeonStats
                         end
                     },
                     dungeonsSetAll = {
@@ -1362,7 +1384,7 @@ function addon.settings:CreateAceOptionsPanel()
                             addon.ReloadGuide()
                         end,
                         hidden = function()
-                            return not next(addon.settings.dungeons:GetDungeons())
+                            return addon.game == "FOREVER" or not next(addon.settings.dungeons:GetDungeons())
                         end
                     },
                     dungeons = {
@@ -1390,7 +1412,7 @@ function addon.settings:CreateAceOptionsPanel()
                             addon.ReloadGuide()
                         end,
                         hidden = function()
-                            return not next(addon.settings.dungeons:GetDungeons())
+                            return addon.game == "FOREVER" or not next(addon.settings.dungeons:GetDungeons())
                         end
                     },
                     professions = {
@@ -2301,7 +2323,7 @@ function addon.settings:CreateAceOptionsPanel()
                         set = function(info, value)
                             -- addon.settings.profile.showDangerousMobsMap = value
                             SetProfileOption(info, value)
-                            addon.tips:LoadDangerousMobs(true)
+                            addon.UpdateMap()
                         end,
                         disabled = function()
                             return not self.profile.enableTips
@@ -2338,7 +2360,7 @@ function addon.settings:CreateAceOptionsPanel()
                         set = function(info, value)
                             -- addon.settings.profile.showDangerousMobsMap = value
                             SetProfileOption(info, value)
-                            addon.tips:LoadDangerousMobs(true)
+                            addon.UpdateMap()
                         end,
                         disabled = function()
                             return not self.profile.enableTips
@@ -2375,7 +2397,7 @@ function addon.settings:CreateAceOptionsPanel()
                         set = function(info, value)
                             -- addon.settings.profile.showDangerousMobsMap = value
                             SetProfileOption(info, value)
-                            addon.tips:LoadDangerousMobs(true)
+                            addon.UpdateMap()
                         end,
                         disabled = function()
                             return not self.profile.enableTips
@@ -3245,6 +3267,18 @@ function addon.settings:CreateAceOptionsPanel()
                         end,
                         order = 10.25,
                     },
+                    disableMapPins = {
+                        --Gamepad is causing weird taint issues on beta
+                        name = L("Disable Map Pins"),
+                        type = "toggle",
+                        width = optionsWidth,
+                        set = function(info, value)
+                            SetProfileOption(info, value)
+                            _G.ReloadUI()
+                        end,
+                        confirm = requiresReload,
+                        order = 10.26,
+                    },
                     debugQuestImport = {
                         order = 10.3,
                         name = L("Import Completed Quests"),
@@ -3460,6 +3494,17 @@ function addon.settings:CreateAceOptionsPanel()
         func = function() _G.ReloadUI() end,
         disabled = function()
             return loadedProfileKey == settingsDB.keys.profile and not settingsDB.isResetting
+        end
+    }
+    optionsTable.args.profiles.args["resetGuideProgress"] = {
+        order = 0.1,
+        name = L("Reset Guide Progress"),
+        desc = L("Clear guide progress for current character"),
+        type = "execute",
+        width = optionsWidth,
+        func = addon.ResetGuideProgress,
+        confirm = function()
+            return L("Clear guide progress for current character")
         end
     }
 

@@ -1,4 +1,4 @@
-if GetLocale() == "zhCN" and RXP.gameVersion > 20000 then return end
+local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #retail
 #version 1
@@ -297,7 +297,7 @@ RXPGuides.RegisterGuide([[
 #version 1
 #name a) Chapter 3 - Outland Bonfires
 #displayname |cFF00CCFF3|r - Outland Bonfires
-#next a) Chapter 4 - Northrend Bonfires
+#next a) Chapter 4 - Northend Bonfires
 #internal
 
 step
@@ -382,8 +382,8 @@ step
 RXPGuides.RegisterGuide([[
 #retail
 #version 1
-#name a) Chapter 4 - Northrend Bonfires
-#displayname |cFF00CCFF4|r - Northrend Bonfires
+#name a) Chapter 4 - Northend Bonfires
+#displayname |cFF00CCFF4|r - Northend Bonfires
 #next a) Chapter 5 - Cataclysm Bonfires
 #internal
 

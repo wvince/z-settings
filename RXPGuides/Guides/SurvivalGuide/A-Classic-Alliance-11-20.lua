@@ -448,7 +448,7 @@ step << Druid
     .goto Darnassus,35.375,8.405
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mathrengyl Bearwalker|r
     .accept 6121 >> Accept Lessons Anew
-    .accept 26 >> A Lesson to Learn
+    .accept 26 >> Accept A Lesson to Learn
     .trainer >> Train your class spells
     .target Mathrengyl Bearwalker
 step << Druid
@@ -1600,7 +1600,7 @@ step << Druid
     .goto Moonglade,56.2,30.4
     >>Go to Moonglade
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Dendrite Starblaze|r
-    .turnin 6124 >> Curing the Sick
+    .turnin 6124 >> Turn in Curing the Sick
     .accept 6125 >> Accept Power over Poison
     .target Dendrite Starblaze
 step << Druid
@@ -1883,13 +1883,13 @@ step
     >>This will start an escort
     .accept 731,1 >> Accept The Absent Minded Prospector
     >>|cRXP_WARN_This quest is VERY difficult. Skip this step if you're unable to find a group or solo it|r
-    .link https://youtu.be/3d-htESNztE >> |cRXP_WARN_Click here for a video guide|r
+    .link https://www.youtube.com/watch?v=crQAvyRIceU >> |cRXP_WARN_Click here for a video guide|r
     .target Prospector Remtravel
 step
     #requires prospector
     >>|cRXP_WARN_Escort |cRXP_FRIENDLY_Prospector Remtravel|r through the Excavation|r
     >>|cRXP_WARN_This quest is VERY difficult. Skip this step if you're unable to find a group or solo it|r
-    .link https://youtu.be/3d-htESNztE >> |cRXP_WARN_Click here for a video guide|r
+    .link https://www.youtube.com/watch?v=crQAvyRIceU >> |cRXP_WARN_Click here for a video guide|r
     .complete 731,1
     .isOnQuest 731
 step
@@ -1999,7 +1999,7 @@ step
     .complete 5321,2
     .isOnQuest 5321
 step
-	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Liadris Moonriver|r
+	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Liladris Moonriver|r
 	.target Liladris Moonriver
     .goto Ashenvale,27.26,35.58
     .turnin 5321 >> Turn in The Sleeper Has Awakened

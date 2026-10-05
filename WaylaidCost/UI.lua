@@ -17,8 +17,8 @@ function W.Reason(q)
   if q.estimated and q.cost then return string.format("Estimate · %d total listed · stock at this price not verified", q.available) end
   if q.reason == "summaryShort" then return string.format("Summary: %d/%d total units · at least %d missing", q.available, q.required, q.missing) end
   if q.reason == "estimateUnknown" then return "No estimate: run Full Scan to check buyout availability and unit prices" end
-  if q.cost and q.isCommodity then return string.format("%d available · %d needed · purchased per unit", q.available, q.required) end
-  if q.cost then return string.format("%d available · %d purchased · %d extra", q.available, q.purchased, q.extra) end
+  if q.cost and q.isCommodity then return string.format("%d available · %d needed", q.available, q.required) end
+  if q.cost then return string.format("%d available · %d required · %d purchased · %d surplus", q.available, q.required, q.purchased, q.extra) end
   if q.reason == "unscanned" then return "Unknown price: run a scan" end
   if q.reason == "skipped" then return "Not scanned: no matching order available to buy" end
   if q.reason == "mode" then return "Price pending: auction sale type has not loaded" end
@@ -41,12 +41,12 @@ local function rarity(q)
 end
 local function label(parent, text, x, y, font)
   local f = parent:CreateFontString(nil, "OVERLAY", font or "GameFontHighlightSmall")
-  f:SetPoint("TOPLEFT", x, y); f:SetJustifyH("LEFT"); f:SetText(text)
+  f:SetPoint("TOPLEFT", x, y); f:SetJustifyH("LEFT"); f:SetText(W.Text(W.L(text)))
   return f
 end
 local function button(parent, text, width, x, y, callback)
   local b = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
-  b:SetSize(width, 23); b:SetPoint("TOPRIGHT", x, y); b:SetText(text); b:SetScript("OnClick", callback)
+  b:SetSize(width, 23); b:SetPoint("TOPRIGHT", x, y); b:SetText(W.Text(W.L(text))); b:SetScript("OnClick", callback)
   return b
 end
 local function backdrop(frame)
@@ -58,16 +58,16 @@ local function backdrop(frame)
 end
 local function planTooltip(owner, name, q)
   GameTooltip:SetOwner(owner, "ANCHOR_RIGHT")
-  GameTooltip:AddLine(name, 1, 0.82, 0.45)
-  GameTooltip:AddLine(W.Reason(q), 0.85, 0.88, 0.94, true)
+  GameTooltip:AddLine(W.Text(name), 1, 0.82, 0.45)
+  GameTooltip:AddLine(W.Text(W.Reason(q)), 0.85, 0.88, 0.94, true)
   if q.estimated then
     if q.estimateUnitPrice then
-      GameTooltip:AddDoubleLine("Lowest listed price", W.Money(q.estimateUnitPrice), 0.8, 0.85, 0.9, 1, 1, 1)
-      GameTooltip:AddDoubleLine("Estimate for " .. q.required, "≈ " .. W.Money(q.cost), 1, 0.82, 0.45, 1, 1, 1)
+      GameTooltip:AddDoubleLine(W.Text("Lowest listed price"),W.Text(W.Money(q.estimateUnitPrice)), 0.8, 0.85, 0.9, 1, 1, 1)
+      GameTooltip:AddDoubleLine(W.Text("Estimate for " .. q.required),W.Text("≈ " .. W.Money(q.cost)), 1, 0.82, 0.45, 1, 1, 1)
     end
-    GameTooltip:AddLine("Fast Scan assumes the lowest price for the required quantity. Price tiers, stacks, sellers and buyout availability are not verified.", 1, 0.68, 0.47, true)
-    if q.mayIncludeOwn then GameTooltip:AddLine("This summary includes your auctions. Their share of the stock and purchasable prices have not been checked.", 1, 0.68, 0.47, true) end
-    GameTooltip:AddLine("Run Full Scan to verify prices and quantities before choosing.", 0.7, 0.8, 0.9, true)
+    GameTooltip:AddLine(W.Text("Fast Scan assumes the lowest price for the required quantity. Price tiers, stacks, sellers and buyout availability are not verified."), 1, 0.68, 0.47, true)
+    if q.mayIncludeOwn then GameTooltip:AddLine(W.Text("This summary includes your auctions. Their share of the stock and purchasable prices have not been checked."), 1, 0.68, 0.47, true) end
+    GameTooltip:AddLine(W.Text("Run Full Scan to verify prices and quantities before choosing."), 0.7, 0.8, 0.9, true)
     GameTooltip:Show(); return
   end
   local groups, order = {}, {}
@@ -79,18 +79,31 @@ local function planTooltip(owner, name, q)
   for _, group in ipairs(order) do
     local offer = group.offer
     if q.isCommodity then
-      GameTooltip:AddDoubleLine(offer.count .. " × " .. W.Money(offer.unitPrice) .. " / unit",
-        W.Money(offer.buyout), 1, 1, 1, 1, 1, 1)
+      GameTooltip:AddDoubleLine(W.Text(offer.count .. " × " .. W.Money(offer.unitPrice) .. " / unit"),W.Text(W.Money(offer.buyout)), 1, 1, 1, 1, 1, 1)
     else
-      GameTooltip:AddDoubleLine(group.n .. " stack(s) of " .. offer.count,
-        W.Money(offer.buyout) .. " / stack", 1, 1, 1, 1, 1, 1)
-      GameTooltip:AddLine("  " .. W.Money(offer.buyout / offer.count) .. " / unit (rounded)", 0.65, 0.7, 0.78)
+      GameTooltip:AddDoubleLine(W.Text(group.n .. " stack(s) of " .. offer.count),W.Text(W.Money(offer.buyout) .. " / stack"), 1, 1, 1, 1, 1, 1)
+      GameTooltip:AddLine(W.Text("  " .. W.Money(offer.buyout / offer.count) .. " / unit (rounded)"), 0.65, 0.7, 0.78)
     end
   end
-  if q.cost then GameTooltip:AddDoubleLine(q.isCommodity and "Cost for the required quantity" or "Total for whole stacks", W.Money(q.cost), 1, 0.82, 0.45, 1, 1, 1) end
-  if q.bidOnly > 0 then GameTooltip:AddLine(q.bidOnly .. " bid-only units excluded", 0.7, 0.7, 0.7) end
-  if q.own > 0 then GameTooltip:AddLine(q.own .. " units from your own auctions excluded", 0.7, 0.7, 0.7) end
-  GameTooltip:AddLine("Snapshot prices: check the auctions before buying.", 0.6, 0.65, 0.7, true)
+  if q.cost then GameTooltip:AddDoubleLine(W.Text(q.isCommodity and "Cost for the required quantity" or "Total for whole stacks"),W.Text(W.Money(q.cost)), 1, 0.82, 0.45, 1, 1, 1) end
+  if q.cost then GameTooltip:AddDoubleLine(W.Text("Average price per purchased unit"),W.Text(W.Money(q.cost / (q.purchased or q.required))), 0.8, 0.85, 0.9, 1, 1, 1) end
+  if q.cost and q.extra and q.extra > 0 then
+    GameTooltip:AddLine(W.Text("This price includes the full auction stack. Surplus items are not needed for this turn-in."), 0.8, 0.85, 0.9, true)
+  end
+  if q.bidOnly > 0 then GameTooltip:AddLine(W.Text(q.bidOnly .. " bid-only units excluded"), 0.7, 0.7, 0.7) end
+  if q.own > 0 then GameTooltip:AddLine(W.Text(q.own .. " units from your own auctions excluded"), 0.7, 0.7, 0.7) end
+  GameTooltip:AddLine(W.Text("Snapshot prices: check the auctions before buying."), 0.6, 0.65, 0.7, true)
+  GameTooltip:Show()
+end
+
+local function searchTooltip(owner, name)
+  name = W.ItemLabel(name)
+  -- Anchor the action hint to the name button, not the moving cursor.
+  -- Detailed row prices keep the separate ANCHOR_RIGHT placement.
+  GameTooltip:SetOwner(owner, "ANCHOR_TOPLEFT")
+  GameTooltip:AddLine(W.Text("Click to search in the Buy tab"), 1, 0.82, 0.45)
+  GameTooltip:AddLine(W.Text(name), 0.85, 0.88, 0.94, true)
+  if W.scanning then GameTooltip:AddLine(W.Text("Stops this scan and keeps the previous snapshot."), 1, 0.68, 0.47, true) end
   GameTooltip:Show()
 end
 
@@ -108,7 +121,7 @@ local function buildSettings()
   drag:SetScript("OnDragStart", function() settings:StartMoving() end)
   drag:SetScript("OnDragStop", function() settings:StopMovingOrSizing() end)
   if UISpecialFrames then table.insert(UISpecialFrames, "WaylaidCostSettings") end
-  label(settings, "WaylaidCost — Settings", 15, -14, "GameFontNormalLarge")
+  label(settings, "WaylaidCost — " .. W.L("Settings"), 15, -14, "GameFontNormalLarge")
   local options = CreateFrame("Frame", nil, settings)
   options:SetSize(445, 420); options:SetPoint("TOPLEFT", 0, -32)
   local tooltips = CreateFrame("Frame", nil, settings)
@@ -175,8 +188,8 @@ local function buildSettings()
   local function help(control, title, text)
     control:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-      GameTooltip:AddLine(title, 1, 0.82, 0.45)
-      GameTooltip:AddLine(text, 0.85, 0.88, 0.94, true)
+      GameTooltip:AddLine(W.Text(title), 1, 0.82, 0.45)
+      GameTooltip:AddLine(W.Text(text), 0.85, 0.88, 0.94, true)
       GameTooltip:Show()
     end)
     control:SetScript("OnLeave", function() GameTooltip:Hide() end)
@@ -200,22 +213,22 @@ local function buildSettings()
     return b
   end
   check("details", "Show details for all orders", 12, -84)
-  check("showUnavailable", "Only show orders available to buy", 12, -110, true)
-  check("levelOnly", "My level only", 12, -136)
-  check("common", color("Common crates", WHITE), 12, -162):SetHitRectInsets(0, -180, 0, 0)
-  check("uncommon", color("Uncommon crates", GREEN), 237, -162):SetHitRectInsets(0, -170, 0, 0)
-  check("showMinimap", "Show the minimap icon", 12, -188, false, options,
+  check("levelOnly", "Hide orders above my level", 12, -110, false, options,
+    "Uses the catalog's listed level only. This does not check writ quest eligibility, profession skill or reputation requirements.")
+  check("common", color("Common crates", WHITE), 12, -136):SetHitRectInsets(0, -180, 0, 0)
+  check("uncommon", color("Uncommon crates", GREEN), 237, -136):SetHitRectInsets(0, -170, 0, 0)
+  check("showMinimap", "Show the minimap icon", 12, -162, false, options,
     "Left-click opens Waylaid at the auction house. Right-click opens settings. If hidden, use /wcrate config.")
-  check("enableWrits", "Enable Craftsman's Writs", 12, -230, false, options,
-    "Adds a Writs view in the AH and item tooltips. Prices cover the writ and the requested finished goods, not the raw crafting recipe. Writs rank by cost per reputation, separately from Merchant Favor. Enable, then choose Writs in the AH header and scan.")
+  check("enableWrits", "Enable Craftsman's Writs", 12, -204, false, options,
+    "Enabled by default for new settings. Adds the Craftsman's Writs tab and item tooltips. Prices cover the writ and requested finished goods. Writs rank by cost per base reputation. Each tab is scanned separately.")
   label(options, "Using the results", 15, -284, "GameFontNormal")
-  local tips = label(options, "Click an order or material to search in Buy.\nUse + / - to expand its required goods.\nSwitch Crates / Writs using the AH header button.\nEach view keeps its own scan and reward ranking.", 15, -310)
+  local tips = label(options, "Click an item name to search in the Buy tab.\nClick the row or arrow to show or hide required items.\nChoose Waylaid Crates or Craftsman's Writs in the AH.\nUse Available to buy beside the tabs to hide unlisted orders.", 15, -310)
   tips:SetWidth(405)
   label(tooltips, "Item tooltips", 15, -48, "GameFontNormalLarge")
   check("itemTooltips", "Show prices on crate / writ item tooltips", 12, -80, false, tooltips,
     "Adds cached goods prices when hovering a crate or enabled writ in your bags, the auction house, or an item link. Disabling this only hides WaylaidCost's section.")
   label(tooltips, "Explanations", 15, -132, "GameFontNormal")
-  local explanation = "Explains the cheapest option, rounded unit averages and Fast/Full Scan data. Prices, missing stock and the scan date stay visible. Hold Shift while hovering a crate to reveal explanations in Shift mode."
+  local explanation = "Explains the cheapest option, rounded unit averages and Fast/Full Scan data. Prices, missing stock and the scan date stay visible. Hold Shift and hover the item again to reveal explanations in Shift mode."
   settings.tooltipModes = {}
   for i, choice in ipairs({{"shift", "Only while holding Shift (recommended)"}, {"always", "Always show explanations"}, {"never", "Hide explanations"}}) do
     local mode = choice[1]
@@ -270,7 +283,7 @@ local function buildSettings()
       if b.inverted then value = not value end
       b:SetChecked(value)
     end
-    for _, edit in ipairs(settings.edits) do edit:SetText(tostring((W.db.rewards[edit.family] or {})[edit.quality] or "")) end
+    for _, edit in ipairs(settings.edits) do edit:SetText(W.Text(tostring((W.db.rewards[edit.family] or {})[edit.quality] or ""))) end
     for _, radio in ipairs(settings.tooltipModes) do radio:SetChecked(W.db.tooltipExplanations == radio.mode) end
   end)
   settings:Hide()
@@ -288,6 +301,26 @@ function W.ToggleSettings()
   W.settings:SetShown(not W.settings:IsShown())
 end
 
+local function releaseRow(row)
+  row:Hide()
+  row:SetScript("OnClick", nil); row:SetScript("OnEnter", nil)
+  row.search:SetScript("OnClick", nil); row.search:SetScript("OnEnter", nil)
+  row.expand:SetScript("OnClick", nil); row.quest:SetScript("OnClick", nil)
+  row.name:SetText(W.Text("")); row.sub:SetText(W.Text("")); row.icon:SetTexture(nil)
+  row.costLabel:SetText(W.Text("")); row.goodsLabel:SetText(W.Text("")); row.goodsCost:SetText(W.Text(""))
+  for _, field in ipairs(row.cols) do field:SetText(W.Text("")) end
+end
+
+function W.ReleaseResults()
+  W.results = nil
+  W.goalCache = nil
+  -- Keep the reusable frames, but release closures that retain old quotes and
+  -- purchase plans (including rows left over from a larger previous view).
+  if W.panel then
+    for _, row in ipairs(W.panel.rows) do releaseRow(row) end
+  end
+end
+
 function W.BuildUI(parent)
   local panel = CreateFrame("Frame", "WaylaidCostFrame", parent, "BackdropTemplate")
   W.panel = panel
@@ -303,47 +336,78 @@ function W.BuildUI(parent)
   -- Keep the header beyond that portrait and center the title on its icon.
   icon:SetSize(24, 24); icon:SetPoint("TOPLEFT", 58, -10); icon:SetTexture(W.icon)
   icon:SetTexCoord(0, 1, 0, 1)
-  local title = label(panel, "WaylaidCost", 0, 0, "GameFontNormalLarge")
+  local title = label(panel, W.title, 0, 0, "GameFontNormalLarge")
   title:ClearAllPoints(); title:SetPoint("LEFT", icon, "RIGHT", 8, 0)
-  title:SetSize(250, 24)
-  panel.category = button(panel, "Waylaid Crates", 140, -235, -11, function()
-    W.SetOrderKind(W.IsWritView() and "waylaid" or "writs")
+  title:SetPoint("TOPRIGHT", panel, "TOPRIGHT", W.Locale() == "enUS" and -240 or -320, -10); title:SetHeight(24)
+  panel.title = title
+  panel.viewTabs = {}
+  for i, entry in ipairs({{"waylaid", "Waylaid Crates", 145}, {"writs", "Craftsman's Writs", 175}}) do
+    local kind = entry[1]
+    local tab = CreateFrame("Button", nil, panel)
+    tab:SetSize(W.Locale() == "enUS" and entry[3] or (i == 1 and 170 or 180), 28)
+    tab:SetPoint("TOPLEFT", i == 1 and 15 or (W.Locale() == "enUS" and 164 or 189), -44)
+    tab.bg = tab:CreateTexture(nil, "BACKGROUND"); tab.bg:SetAllPoints()
+    tab.selectedLine = tab:CreateTexture(nil, "ARTWORK")
+    tab.selectedLine:SetPoint("BOTTOMLEFT", 0, 0); tab.selectedLine:SetPoint("BOTTOMRIGHT", 0, 0); tab.selectedLine:SetHeight(2)
+    tab.selectedLine:SetColorTexture(0.95, 0.77, 0.35, 1)
+    tab.label = label(tab, entry[2], 0, 0, "GameFontNormal")
+    tab.label:ClearAllPoints(); tab.label:SetPoint("CENTER")
+    tab:SetHighlightTexture("Interface/QuestFrame/UI-QuestTitleHighlight", "ADD")
+    tab:SetScript("OnClick", function() GameTooltip:Hide(); W.SetOrderKind(kind) end)
+    tab:SetScript("OnEnter", function(self)
+      GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
+      GameTooltip:AddLine(W.Text(entry[2]), 1, 0.82, 0.45)
+      GameTooltip:AddLine(W.Text("Each tab keeps its own scan. Switching tabs stops an active scan."), 0.8, 0.85, 0.9, true)
+      GameTooltip:Show()
+    end)
+    tab:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    panel.viewTabs[kind] = tab
+  end
+  panel.available = CreateFrame("CheckButton", nil, panel, "UICheckButtonTemplate")
+  panel.available:SetSize(24, 24); panel.available:SetPoint("TOPRIGHT", -162, -46)
+  panel.available:SetHitRectInsets(0, -145, 0, 0)
+  label(panel.available, "Available to buy", 25, -6)
+  panel.available:SetScript("OnClick", function(self)
+    W.db.showUnavailable = not self:GetChecked()
+    panel.scroll:SetVerticalScroll(0); W.Refresh()
   end)
-  panel.category:SetScript("OnEnter", function(self)
+  panel.available:SetScript("OnEnter", function(self)
     GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
-    GameTooltip:AddLine("Click to switch Crates / Writs", 1, 0.82, 0.45)
-    GameTooltip:AddLine("Each view keeps its own scan. Switching stops an active scan.", 0.8, 0.85, 0.9, true)
+    GameTooltip:AddLine(W.Text("Available to buy"), 1, 0.82, 0.45)
+    GameTooltip:AddLine(W.Text("Show orders with a buyout price in the saved scan. Goods may still be missing. Fast Scan availability is estimated."), 0.8, 0.85, 0.9, true)
     GameTooltip:Show()
   end)
-  panel.category:SetScript("OnLeave", function() GameTooltip:Hide() end)
-  panel.summary = label(panel, "", 15, -40)
-  panel.summary:SetPoint("TOPRIGHT", -20, -40)
-  panel.fast = button(panel, "Fast Scan", 100, -124, -11, function() W.Scan("fast") end)
+  panel.available:SetScript("OnLeave", function() GameTooltip:Hide() end)
+  W.BuildProgress(panel)
+  panel.summary = label(panel, "", 15, -84)
+  panel.summary:SetPoint("TOPRIGHT", -365, -84)
+  panel.summary:SetHeight(32)
+  panel.fast = button(panel, "Fast Scan", W.Locale() == "enUS" and 100 or 140, W.Locale() == "enUS" and -124 or -164, -11, function() W.Scan("fast") end)
   panel.fast:SetScript("OnEnter", function(self)
     GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
-    GameTooltip:AddLine("Fast Scan — estimate", 1, 0.82, 0.45)
-    GameTooltip:AddLine("Reads summaries for this view's orders and required goods. Lowest price × required quantity, without checking price tiers or sellers.", 1, 1, 1, true)
-    GameTooltip:AddLine("Estimated prices are marked ≈. Scan time depends on auction house responses and result pages.", 0.7, 0.8, 0.9, true)
+    GameTooltip:AddLine(W.Text("Fast Scan — estimate"), 1, 0.82, 0.45)
+    GameTooltip:AddLine(W.Text("Reads summaries for this view's orders and required goods. Lowest price × required quantity, without checking price tiers or sellers."), 1, 1, 1, true)
+    GameTooltip:AddLine(W.Text("Estimated prices are marked ≈. Scan time depends on auction house responses and result pages."), 0.7, 0.8, 0.9, true)
     GameTooltip:Show()
   end)
   panel.fast:SetScript("OnLeave", function() GameTooltip:Hide() end)
   panel.scan = button(panel, "Full Scan", 100, -14, -11, function() W.Scan("full") end)
   panel.scan:SetScript("OnEnter", function(self)
     GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
-    GameTooltip:AddLine("Full Scan — verified prices and quantities", 1, 0.82, 0.45)
-    GameTooltip:AddLine("Checks this view's orders, then their required goods or filling options. Requests respect the server limits.", 1, 1, 1, true)
-    GameTooltip:AddLine("Stay in this tab while scanning. Click the button again to stop. The last successful snapshot is saved.", 0.7, 0.8, 0.9, true)
+    GameTooltip:AddLine(W.Text("Full Scan — verified prices and quantities"), 1, 0.82, 0.45)
+    GameTooltip:AddLine(W.Text("Checks this view's orders, then their required goods or filling options. Requests respect the server limits."), 1, 1, 1, true)
+    GameTooltip:AddLine(W.Text("Stay in this tab while scanning. Click the button again to stop. The last successful snapshot is saved."), 0.7, 0.8, 0.9, true)
     GameTooltip:Show()
   end)
   panel.scan:SetScript("OnLeave", function() GameTooltip:Hide() end)
-  panel.orderHeader = label(panel, "Crate / recommended fill", 17, -68, "GameFontNormalSmall")
+  panel.orderHeader = label(panel, "Crate / recommended fill", 17, -128, "GameFontNormalSmall")
   panel.headers = {}
-  for i, text in ipairs({ "Crate", "Materials", "Total cost" }) do
-    panel.headers[i] = label(panel, text, 0, -68, "GameFontNormalSmall")
+  for i, text in ipairs({ "Crate / Materials", "Cost / Favor", "Total cost" }) do
+    panel.headers[i] = label(panel, text, 0, -128, "GameFontNormalSmall")
   end
   local scroll = CreateFrame("ScrollFrame", "WaylaidCostScrollFrame", panel, "UIPanelScrollFrameTemplate")
   panel.scroll = scroll
-  scroll:SetPoint("TOPLEFT", 12, -89); scroll:SetPoint("BOTTOMRIGHT", -31, 57)
+  scroll:SetPoint("TOPLEFT", 12, -149); scroll:SetPoint("BOTTOMRIGHT", -31, 57)
   local content = CreateFrame("Frame", nil, scroll); content:SetSize(1, 1); scroll:SetScrollChild(content)
   panel.content = content
   scroll:EnableMouseWheel(true)
@@ -353,23 +417,43 @@ function W.BuildUI(parent)
   panel.status = label(panel, "", 15, 0); panel.status:ClearAllPoints()
   panel.status:SetPoint("BOTTOMLEFT", 15, 32); panel.status:SetPoint("BOTTOMRIGHT", -15, 32)
   panel.status:SetJustifyH("LEFT")
-  panel.note = label(panel, "Click an item: search in Buy · + / -: details · Right-click minimap: settings", 15, 0)
+  panel.note = label(panel, "", 15, 0)
   panel.note:ClearAllPoints(); panel.note:SetPoint("BOTTOMLEFT", 15, 13); panel.note:SetTextColor(0.55, 0.61, 0.7)
+  panel.note:SetPoint("BOTTOMRIGHT", -15, 13)
+  panel.scanInfo = CreateFrame("Frame", nil, panel)
+  panel.scanInfo:SetPoint("BOTTOMLEFT", 15, 28); panel.scanInfo:SetPoint("BOTTOMRIGHT", -15, 28); panel.scanInfo:SetHeight(20)
+  panel.scanInfo:EnableMouse(true)
+  panel.scanInfo:SetScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_TOP")
+    GameTooltip:AddLine(W.Text("Scan details"), 1, 0.82, 0.45)
+    if W.scannedAt then
+      GameTooltip:AddLine(W.Text(W.scanTimeUnknown and "Snapshot date unknown" or ("Last scan: " .. date("%Y-%m-%d %H:%M", W.scannedAt) .. " (local time)")), 0.8, 0.85, 0.9)
+      GameTooltip:AddLine(W.Text(W.scanMode == "fast" and "Estimates; stock at the lowest price is not verified." or "Recorded prices and quantities; auctions may have changed."), 0.8, 0.85, 0.9, true)
+    end
+    if W.message then GameTooltip:AddLine(W.Text(W.message), 0.8, 0.85, 0.9, true) end
+    GameTooltip:Show()
+  end)
+  panel.scanInfo:SetScript("OnLeave", function() GameTooltip:Hide() end)
   panel.empty = label(content, "", 10, -20); panel.empty:SetWidth(600)
 
   panel:SetScript("OnSizeChanged", function() if W.results then W.Draw() end end)
   panel:SetScript("OnShow", function() W.Refresh() end)
-  panel:SetScript("OnHide", function() W.CancelScan("Scan cancelled: left the tab"); GameTooltip:Hide() end)
+  panel:SetScript("OnHide", function()
+    panel.progress.editor:Hide()
+    W.CancelScan("Scan cancelled: left the tab")
+    W.ReleaseResults()
+    GameTooltip:Hide()
+  end)
   panel:Hide()
 end
 
 local function valueTooltip(item, total)
-  GameTooltip:AddLine(" ")
-  GameTooltip:AddDoubleLine(W.scanMode == "fast" and "Estimated total (not verified)" or "Total cost", W.Price(total), 1, 0.82, 0.45, 1, 1, 1)
-  GameTooltip:AddDoubleLine(item.crate.kind == "writ" and "Base reputation" or "Merchant Favor", item.rewardValue and tostring(item.rewardValue) or "Unknown / not set", 0.8, 0.85, 0.9, 1, 1, 1)
+  GameTooltip:AddLine(W.Text(" "))
+  GameTooltip:AddDoubleLine(W.Text(W.scanMode == "fast" and "Estimated total (not verified)" or "Total cost"),W.Text(W.Price(total)), 1, 0.82, 0.45, 1, 1, 1)
+  GameTooltip:AddDoubleLine(W.Text(item.crate.kind == "writ" and "Base reputation" or "Merchant Favor"),W.Text(item.rewardValue and tostring(item.rewardValue) or "Unknown / not set"), 0.8, 0.85, 0.9, 1, 1, 1)
   if total and item.rewardValue then
-    GameTooltip:AddDoubleLine("Cost / " .. item.rewardLabel, W.Price(total / item.rewardValue) .. " / " .. item.rewardLabel, 0.8, 0.85, 0.9, 1, 1, 1)
-    GameTooltip:AddLine("Sorted by the unrounded ratio; displayed amounts are rounded up to the next copper.", 0.6, 0.65, 0.7, true)
+    GameTooltip:AddDoubleLine(W.Text("Cost / " .. item.rewardLabel),W.Text(W.Price(total / item.rewardValue) .. " / " .. item.rewardLabel), 0.8, 0.85, 0.9, 1, 1, 1)
+    GameTooltip:AddLine(W.Text("Sorted by the unrounded ratio; displayed amounts are rounded up to the next copper."), 0.6, 0.65, 0.7, true)
   end
 end
 
@@ -378,25 +462,39 @@ function W.Price(value)
 end
 function W.Draw()
   local p = W.panel
-  if not p then return end
+  if not p or not p:IsShown() then return end
   local writs = W.IsWritView()
-  p.category:SetShown(W.db.enableWrits)
-  p.category:SetText(writs and "Craftsman's Writs" or "Waylaid Crates")
-  p.headers[1]:SetText(writs and "Writ" or "Crate")
-  p.headers[2]:SetText(writs and "Required goods" or "Materials")
-  p.orderHeader:SetText(writs and "Writ / required goods" or "Crate / recommended fill")
-  p.scan:SetText(W.scanning and W.runningMode == "full" and "Stop" or "Full Scan")
-  p.fast:SetText(W.scanning and W.runningMode == "fast" and "Stop" or "Fast Scan")
+  W.UpdateProgress()
+  p.viewTabs.writs:SetShown(W.db.enableWrits)
+  for kind, tab in pairs(p.viewTabs) do
+    local selected = kind == (writs and "writs" or "waylaid")
+    tab.selected = selected
+    tab.selectedLine:SetShown(selected)
+    tab.bg:SetColorTexture(selected and 0.13 or 0.055, selected and 0.16 or 0.075, selected and 0.20 or 0.095, 1)
+    tab.label:SetTextColor(selected and 1 or 0.65, selected and 0.87 or 0.71, selected and 0.55 or 0.79)
+  end
+  p.available:SetChecked(not W.db.showUnavailable)
+  p.available:SetEnabled(W.scannedAt ~= nil)
+  p.headers[1]:SetText(W.Text(writs and "Writ / Goods" or "Crate / Materials"))
+  p.headers[2]:SetText(W.Text(writs and "Cost / Rep" or "Cost / Favor"))
+  p.orderHeader:SetText(W.Text(writs and "Writ / required goods" or "Crate / recommended fill"))
+  p.scan:SetText(W.Text(W.L(W.scanning and W.runningMode == "full" and "Stop" or "Full Scan")))
+  p.fast:SetText(W.Text(W.L(W.scanning and W.runningMode == "fast" and "Stop" or "Fast Scan")))
+  p.scan:SetWidth(W.Locale() == "enUS" and 110 or 150)
   if W.scanning and W.runningMode ~= "full" then p.scan:Disable() else p.scan:Enable() end
   if W.scanning and W.runningMode ~= "fast" then p.fast:Disable() else p.fast:Enable() end
-  p.headers[3]:SetText(W.scanMode == "fast" and "Estimated total" or "Total cost")
+  p.headers[3]:SetText(W.Text(W.L(W.scanMode == "fast" and "Estimated total" or "Total cost")))
   local width = math.max(1, p.scroll:GetWidth())
   p.content:SetWidth(width)
-  local nameWidth = math.floor(width * 0.46)
-  local cell = (width - nameWidth) / 3
+  local nameWidth = math.floor(width * (writs and 0.40 or 0.43))
+  local costWidth = math.floor(width * (writs and 0.32 or 0.28))
+  local costLabelWidth = writs and math.max(112, costWidth - 112) or 86
+  local cell = (width - nameWidth - costWidth) / 2
+  local columnX = {nameWidth, nameWidth + costWidth, nameWidth + costWidth + cell}
+  local columnWidth = {costWidth, cell, cell}
   for i, h in ipairs(p.headers) do
-    h:ClearAllPoints(); h:SetPoint("TOPLEFT", 12 + nameWidth + cell * (i - 1), -68)
-    h:SetWidth(cell - 9); h:SetJustifyH("RIGHT")
+    h:ClearAllPoints(); h:SetPoint("TOPLEFT", 12 + columnX[i], -128)
+    h:SetWidth(columnWidth[i] - 9); h:SetJustifyH("RIGHT")
   end
   local used, y, priced, unavailable = 0, 0, 0, false
   local function acquire(height, isOption)
@@ -421,24 +519,44 @@ function W.Draw()
         scroll:SetVerticalScroll(math.max(0, math.min(scroll:GetVerticalScrollRange(), scroll:GetVerticalScroll() - delta * 48)))
       end)
       row.name = label(row, "", 53, -8)
+      row.search = CreateFrame("Button", nil, row)
+      row.search:SetHighlightTexture("Interface/QuestFrame/UI-QuestTitleHighlight", "ADD")
+      row.search:SetScript("OnLeave", function() GameTooltip:Hide() end)
       row.sub = label(row, "", 53, -29)
       row.cols = {}
       for i = 1, 3 do row.cols[i] = label(row, "", 0, -10, i == 3 and "GameFontHighlight" or "GameFontHighlightSmall") end
+      row.costLabel = label(row, "", 0, -10)
+      row.goodsLabel = label(row, "", 0, -29)
+      row.goodsCost = label(row, "", 0, -29)
       row:SetScript("OnLeave", function() GameTooltip:Hide() end)
       p.rows[used] = row
     end
     row:ClearAllPoints(); row:SetPoint("TOPLEFT", 0, -y); row:SetSize(width, height)
     row.name:ClearAllPoints(); row.name:SetPoint("TOPLEFT", isOption and 29 or 63, -8)
     row.name:SetWidth(nameWidth - (isOption and 38 or 70))
+    row.name:SetHeight(16)
+    row.search:ClearAllPoints(); row.search:SetPoint("TOPLEFT", isOption and 29 or 63, -4)
+    row.search:SetSize(nameWidth - (isOption and 38 or 70), 22)
+    row.search:SetScript("OnClick", nil); row.search:SetScript("OnEnter", nil)
+    row.search:Show()
     row.sub:ClearAllPoints(); row.sub:SetPoint("TOPLEFT", isOption and 29 or 63, -29)
-    row.sub:SetWidth(width - (isOption and 38 or 70))
+    row.sub:SetWidth(nameWidth - (isOption and 38 or 70)); row.sub:SetHeight(16)
     row.icon:SetShown(not isOption); row.expand:SetShown(not isOption)
     row.expand:SetScript("OnClick", nil); row.marker:Hide(); row.accent:SetColorTexture(0, 0, 0, 0)
     row.quest:Hide(); row.quest:SetScript("OnClick", nil)
     for i, field in ipairs(row.cols) do
-      field:ClearAllPoints(); field:SetPoint("TOPLEFT", nameWidth + cell * (i - 1), -10)
-      field:SetWidth(cell - 9); field:SetJustifyH("RIGHT"); field:SetText("")
+      local inset = i == 1 and not isOption and costLabelWidth or 0
+      field:ClearAllPoints(); field:SetPoint("TOPLEFT", columnX[i] + inset, -10)
+      field:SetWidth(columnWidth[i] - inset - 9); field:SetJustifyH("RIGHT"); field:SetText(W.Text(""))
     end
+    for i, field in ipairs({row.costLabel, row.goodsLabel}) do
+      field:ClearAllPoints(); field:SetPoint("TOPLEFT", nameWidth, i == 1 and -10 or -29)
+      field:SetWidth(costLabelWidth - 4); field:SetHeight(writs and not isOption and i == 2 and 28 or 16)
+      field:SetJustifyV("TOP")
+      field:SetText(W.Text("")); field:SetTextColor(0.65, 0.71, 0.79)
+    end
+    row.goodsCost:ClearAllPoints(); row.goodsCost:SetPoint("TOPLEFT", nameWidth + costLabelWidth, -29)
+    row.goodsCost:SetWidth(costWidth - costLabelWidth - 9); row.goodsCost:SetJustifyH("RIGHT"); row.goodsCost:SetText(W.Text(""))
     row:SetScript("OnClick", nil); row:SetScript("OnEnter", nil); row:Show()
     y = y + height + 3
     return row
@@ -450,9 +568,10 @@ function W.Draw()
       local divider = acquire(27, true)
       divider.bg:SetColorTexture(0.04, 0.05, 0.065, 1)
       divider.name:SetWidth(width - 40)
-      divider.name:SetText(color(W.scanMode == "fast" and "ORDERS WITHOUT AN ESTIMATE" or "ORDERS UNAVAILABLE TO BUY", MUTED)); divider.sub:SetText("")
+      divider.search:Hide()
+      divider.name:SetText(W.Text(color(W.scanMode == "fast" and "ORDERS WITHOUT AN ESTIMATE" or "ORDERS UNAVAILABLE TO BUY", MUTED))); divider.sub:SetText(W.Text(""))
     end
-    local r = acquire(53)
+    local r = acquire(writs and 65 or 53)
     local code, qualityText = rarity(item.quality)
     local expanded = p.expanded[item.key]
     if expanded == nil then expanded = W.db.details end
@@ -460,44 +579,56 @@ function W.Draw()
     r.bg:SetColorTexture(recommended and 0.085 or 0.055, recommended and 0.16 or 0.075, recommended and 0.10 or 0.095, 1)
     if recommended then r.accent:SetColorTexture(0.35, 0.8, 0.3, 1) end
     r.icon:SetTexture((W.books[item.crate.name] and W.books[item.crate.name][1] and W.books[item.crate.name][1].icon) or (writs and "Interface\\Icons\\INV_Misc_Note_01" or W.icon))
-    r.expand:SetText(expanded and "-" or "+")
-    r.name:SetText(color((writs and (item.crate.bundles[1][1] .. "× ") or "") .. W.OrderName(item.crate), code))
-    r.cols[1]:SetText(W.Price(item.crateQuote.cost))
-    r.cols[2]:SetText(W.Price(item.best and item.best.quote.cost))
-    r.cols[3]:SetText(color(W.Price(item.total), item.total and GOLD or MUTED))
-    local description = "Lvl. " .. item.crate.tier
-    if item.rewardValue then description = description .. " · +" .. item.rewardValue .. " " .. item.rewardLabel
-    else description = description .. " · Reward unknown" end
+    r.expand:SetText(W.Text(expanded and "v" or ">"))
+    r.name:SetText(W.Text(color((writs and (item.crate.bundles[1][1] .. "× ") or "") .. W.OrderName(item.crate), code)))
+    local purchased = item.crateQuote.purchased or 1
+    if writs then
+      local required = item.crate.bundles[1]
+      r.costLabel:SetText(W.Text("Craftsman's Writ:"))
+      r.goodsLabel:SetText(W.Text(required[1] == 1 and string.format("%s:", W.ItemLabel(required[2])) or string.format("%d × %s:", required[1], W.ItemLabel(required[2]))))
+    else
+      r.costLabel:SetText(W.Text(purchased == 1 and "%d crate" or "%d crates", purchased))
+      r.goodsLabel:SetText(W.Text("Materials total"))
+    end
+    r.cols[1]:SetText(W.Text(W.Price(item.crateQuote.cost)))
+    r.goodsCost:SetText(W.Text(W.Price(item.best and item.best.quote.cost)))
+    r.cols[2]:SetText(W.Text(color(W.Price(item.ratio), recommended and GREEN or (item.ratio and GOLD or MUTED))))
+    r.cols[3]:SetText(W.Text(color(W.Price(item.total), item.total and GOLD or MUTED)))
+    local description = item.rewardValue and ("+" .. item.rewardValue .. " " .. item.rewardLabel) or "Reward unknown"
     if not W.scannedAt then description = description .. " · Run a scan to get prices"
     elseif not item.crateQuote.cost then description = description .. " · " .. W.CrateStatus(item.crateQuote)
-    elseif not item.total then description = description .. (W.scanMode == "fast" and " · Incomplete estimate: run Full Scan to verify" or " · Missing materials: use + for details")
-    elseif item.best then description = description .. " · " .. item.best.quantity .. "× " .. item.best.name end
-    r.sub:SetText(color(description, (not W.scannedAt or item.total) and MUTED or "|cffffac79"))
+    elseif not item.total then description = description .. (W.scanMode == "fast" and " · Incomplete estimate" or " · Missing materials")
+    elseif item.best then description = description .. " · " .. item.best.quantity .. "× " .. W.ItemLabel(item.best.name) end
+    r.sub:SetText(W.Text(color(description, (not W.scannedAt or item.total) and MUTED or "|cffffac79")))
     if writs then
-      r.sub:SetText(color((item.reputation and ("+" .. item.reputation .. " rep · ") or "") .. W.WritDestination(item.crate), MUTED))
-      r.sub:SetWidth(width - 140)
+      r.sub:SetText(W.Text(color((item.reputation and ("+" .. item.reputation .. " rep · ") or "") .. W.WritDestination(item.crate), MUTED)))
       if W.WritIsActive(item.crate) then
         r.quest:Show(); r.quest:SetScript("OnClick", function() W.OpenWritQuest(item.crate) end)
       end
     end
-    r.expand:SetScript("OnClick", function() GameTooltip:Hide(); p.expanded[item.key] = not expanded; W.Draw() end)
-    r:SetScript("OnClick", function() W.SearchInBuy(item.crate.name) end)
-    r:SetScript("OnEnter", function(self)
-      planTooltip(self, item.crate.name .. " · " .. qualityText, item.crateQuote)
-      GameTooltip:AddDoubleLine(writs and "Writ" or "Crate", W.Price(item.crateQuote.cost), 0.8, 0.85, 0.9, 1, 1, 1)
-      GameTooltip:AddDoubleLine(writs and "Required goods" or "Recommended materials", W.Price(item.best and item.best.quote.cost), 0.8, 0.85, 0.9, 1, 1, 1)
+    local function toggleDetails()
+      GameTooltip:Hide(); p.expanded[item.key] = not expanded; W.Draw()
+    end
+    r.expand:SetScript("OnClick", toggleDetails)
+    r:SetScript("OnClick", toggleDetails)
+    r.search:SetScript("OnClick", function() W.SearchInBuy(item.crate.name) end)
+    local function showOrder(self)
+      planTooltip(self, W.ItemLabel(item.crate.name) .. " · " .. qualityText, item.crateQuote)
+      GameTooltip:AddDoubleLine(W.Text(writs and "Writ" or "Crate"),W.Text(W.Price(item.crateQuote.cost)), 0.8, 0.85, 0.9, 1, 1, 1)
+      GameTooltip:AddDoubleLine(W.Text(writs and "Required goods" or "Recommended materials"),W.Text(W.Price(item.best and item.best.quote.cost)), 0.8, 0.85, 0.9, 1, 1, 1)
       valueTooltip(item, item.total)
       if writs then W.AddWritDetails(GameTooltip, item.crate) end
-      if recommended then GameTooltip:AddLine(writs and "Best cost per reputation among the displayed writs." or "Best Favor efficiency among the displayed crates.", 0.35, 1, 0.3) end
+      if recommended then GameTooltip:AddLine(W.Text(writs and "Best cost per reputation among the displayed writs." or "Best Favor efficiency among the displayed crates."), 0.35, 1, 0.3) end
       if not item.total then
         for _, bundle in ipairs(item.bundles) do
-          if not bundle.quote.cost then GameTooltip:AddLine(bundle.quantity .. "× " .. bundle.name .. " : " .. W.Reason(bundle.quote), 1, 0.68, 0.47, true) end
+          if not bundle.quote.cost then GameTooltip:AddLine(W.Text(bundle.quantity .. "× " .. W.ItemLabel(bundle.name) .. " : " .. W.Reason(bundle.quote)), 1, 0.68, 0.47, true) end
         end
       end
-      GameTooltip:AddLine("Click to search for this order in Buy. Use + / - for required goods.", 0.65, 0.7, 0.78, true)
-      if W.scanning then GameTooltip:AddLine("Opening Buy stops this scan and keeps the previous snapshot.", 1, 0.68, 0.47, true) end
+      GameTooltip:AddLine(W.Text(expanded and "Click this row to collapse required goods." or "Click this row to expand required goods."), 0.65, 0.7, 0.78, true)
       GameTooltip:Show()
-    end)
+    end
+    r:SetScript("OnEnter", showOrder)
+    r.search:SetScript("OnEnter", function(self) searchTooltip(self, item.crate.name) end)
     if expanded then
       for _, bundle in ipairs(item.bundles) do
         local option = acquire(49, true)
@@ -505,42 +636,57 @@ function W.Draw()
         option.bg:SetColorTexture(bestOption and 0.065 or 0.03, bestOption and 0.13 or 0.04, bestOption and 0.08 or 0.055, 1)
         option.marker:SetShown(bestOption)
         if bestOption then option.accent:SetColorTexture(0.35, 0.8, 0.3, 1) end
-        local optionName = bundle.quantity .. "× " .. bundle.name
-        option.name:SetText(bestOption and color(optionName, GREEN) or optionName)
-        option.cols[2]:SetText(W.Price(bundle.quote.cost))
+        local optionName = bundle.quantity .. "× " .. W.ItemLabel(bundle.name)
+        option.name:SetText(W.Text(bestOption and color(optionName, GREEN) or optionName))
+        option.cols[1]:SetText(W.Text(W.Price(bundle.quote.cost)))
         local total = bundle.quote.cost and item.crateQuote.cost and bundle.quote.cost + item.crateQuote.cost
-        option.cols[3]:SetText(W.Price(total))
-        local detail = W.Reason(bundle.quote)
+        option.cols[2]:SetText(W.Text(W.Price(total and item.rewardValue and total / item.rewardValue)))
+        option.cols[3]:SetText(W.Text(W.Price(total)))
+        local q = bundle.quote
+        local detail = W.Reason(q)
+        if q.cost then
+          detail = string.format(q.estimated and "%d listed · %d needed" or "%d available · %d needed", q.available, q.required)
+          option.goodsCost:ClearAllPoints(); option.goodsCost:SetPoint("TOPLEFT", nameWidth, -29)
+          option.goodsCost:SetWidth(costWidth - 9)
+          option.goodsCost:SetText(W.Text(W.Price(q.cost / (q.purchased or q.required)) .. " / unit"))
+        end
         if bestOption then detail = color(writs and "Required goods" or "Best option", GREEN) .. " · " .. detail end
-        option.sub:SetText(color(detail, (bundle.quote.cost or bundle.quote.reason == "skipped") and MUTED or "|cffffac79"))
-        option:SetScript("OnEnter", function(self)
-          planTooltip(self, bundle.quantity .. "× " .. bundle.name, bundle.quote)
+        option.sub:SetText(W.Text(color(detail, (bundle.quote.cost or bundle.quote.reason == "skipped") and MUTED or "|cffffac79")))
+        local function showGoods(self)
+          planTooltip(self, bundle.quantity .. "× " .. W.ItemLabel(bundle.name), bundle.quote)
           valueTooltip(item, total)
-          GameTooltip:AddLine("Click to search for this material in Buy.", 0.65, 0.7, 0.78)
-          if W.scanning then GameTooltip:AddLine("Opening Buy stops this scan and keeps the previous snapshot.", 1, 0.68, 0.47, true) end
+          GameTooltip:AddLine(W.Text("Click this row to collapse required goods."), 0.65, 0.7, 0.78)
           GameTooltip:Show()
-        end)
-        option:SetScript("OnClick", function() W.SearchInBuy(bundle.name) end)
+        end
+        option:SetScript("OnEnter", showGoods)
+        option:SetScript("OnClick", toggleDetails)
+        option.search:SetScript("OnEnter", function(self) searchTooltip(self, bundle.name) end)
+        option.search:SetScript("OnClick", function() W.SearchInBuy(bundle.name) end)
       end
     end
   end
-  for i = used + 1, #p.rows do p.rows[i]:Hide() end
+  for i = used + 1, #p.rows do releaseRow(p.rows[i]) end
   local empty = #(W.results or {}) == 0
-  p.empty:SetText(empty and "No orders match these filters. Right-click the minimap icon for settings." or "")
+  p.empty:SetText(W.Text(empty and (not W.scannedAt and "Run a scan to compare orders in this tab." or
+    "No matching orders. Try clearing Available to buy or check Display settings.") or ""))
   p.content:SetHeight(math.max(y, p.scroll:GetHeight(), 70))
   p.scroll:UpdateScrollChildRect()
   p.scroll:SetVerticalScroll(math.min(p.scroll:GetVerticalScroll(), math.max(0, p.content:GetHeight() - p.scroll:GetHeight())))
   local best = W.results and W.results[1]
   if best and best.ratio then
-    p.summary:SetText(color(W.scanMode == "fast" and "Best estimated value: " or "Best value: ", GREEN) .. W.OrderName(best.crate) .. " · " .. W.Price(best.total) .. " total · +" .. best.rewardValue .. " " .. best.rewardLabel)
-  else p.summary:SetText(W.scannedAt and "No reward ratio available. Unranked orders use total cost; check prices and reward settings." or "Scan this view to compare prices and rewards.") end
+    p.summary:SetText(W.Text("Lowest cost / " .. (writs and "base reputation" or "Favor") .. " first · " .. color("Best value highlighted", GREEN)))
+  else p.summary:SetText(W.Text(W.scannedAt and "No cost / reward comparison available. Check prices and rewards." or "Choose Fast Scan for estimates or Full Scan for detailed prices.")) end
+  p.note:SetText(W.Text(W.scanError and ((W.scannedAt and "Previous snapshot kept" or "No new snapshot saved") .. " · Hover the scan status for the error or cancellation details.")
+    or "Item name: search in the Buy tab · Row or arrow: show/hide items · Hover row: price breakdown"))
+  p.note:SetTextColor(W.scanError and 1 or 0.55, W.scanError and 0.68 or 0.61, W.scanError and 0.47 or 0.7)
   if W.scanning then
-    p.status:SetText(W.message or "Scanning…"); p.status:SetTextColor(1, 0.82, 0.45)
+    p.status:SetText(W.Text(W.message or "Scanning…")); p.status:SetTextColor(1, 0.82, 0.45)
   elseif W.scannedAt then
     local age = math.max(0, math.floor((time() - W.scannedAt) / 60))
-    local stamp = W.scanTimeUnknown and "Snapshot date unknown" or ("Snapshot " .. date("%d/%m %H:%M", W.scannedAt) .. " · " .. age .. " min")
-    p.status:SetText((W.scanMode == "fast" and "FAST · Estimates · " or "FULL · ") .. stamp .. " · " .. (W.message or (priced .. " priced options")) .. (W.incomplete and " · INCOMPLETE" or ""))
+    local elapsed = age < 1 and "Just now" or (age < 60 and (age .. " min ago") or (math.floor(age / 60) .. " h " .. age % 60 .. " min ago"))
+    local stamp = W.scanTimeUnknown and "Snapshot date unknown" or elapsed
+    p.status:SetText(W.Text((W.scanMode == "fast" and "Fast scan · Estimates · " or "Full scan · ") .. stamp .. " · " .. priced .. " ranked" .. (W.incomplete and " · INCOMPLETE" or "")))
     p.status:SetTextColor(age >= 15 and 1 or 0.7, age >= 15 and 0.65 or 0.78, age >= 15 and 0.35 or 0.86)
-  else p.status:SetText(W.message or "Choose Fast Scan for estimates or Full Scan to verify prices.") end
+  else p.status:SetText(W.Text("No saved scan for this tab")); p.status:SetTextColor(0.7, 0.78, 0.86) end
 end
 

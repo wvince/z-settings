@@ -1,6 +1,11 @@
-﻿1.60.08 - 30th September 2026
-- Replaced points of interest data provider.
-- Updated points of interest.
+﻿1.60.09 - 30th September 2026
+- The 'Show coordinates' setting now uses and modifies Blizzard's built-in coordinates.
+- For 'Show points of interest', dungeon levels will now be shown regardless of the 'Show zone levels' setting.
+- The 'Use default map' setting has been removed as it's not needed in Forever.
+- The 'Disable reading emote' setting has been removed as it's not needed in Forever.
+
+1.60.08 - 30th September 2026
+- For 'Show points of interest', replaced Blizzards's map data provider.  Also updated points of interest.
 - Fixed a taint issue when using Blizzard's new game controller feature.
 
 1.60.07 - 28th September 2026

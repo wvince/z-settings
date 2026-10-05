@@ -1609,7 +1609,7 @@ step
     .collect 213447,1
 step
     .train 426175,1
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Brother Atticus|r inside Stromgarde Keep to receive the |T134419:0|t[|cRXP_FRIENDLY_Rune of Piety|r]
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Brother Atticus|r inside Stromgrade Keep to receive the |T134419:0|t[|cRXP_FRIENDLY_Rune of Piety|r]
     .goto Arathi Highlands,26.06,55.75,20,0
     .goto Arathi Highlands,25.71,59.92,20,0
     .goto Arathi Highlands,23.69,60.52,20,0
@@ -1784,7 +1784,7 @@ step
 step
     .train 416035,1
     #completewith FriendRequired
-    +|cRXP_WARN_Ensure to bring a |cFFFFFFFFPriest|r, |cFFF58CBAPaladin|r or |cFFFF7D0ADruid|r friend for the following steps! This next part cannot be completed solo as someone must resurrect you!|r
+    +|cRXP_WARN_Ensure to bring a |cFFFFFFFFPriest|r, |cFFF58CBAPaladin|r or |cFFFF7D0ADruid|r friend for the following steps! This next part cannot be completed solo as someone must ressurect you!|r
     .subzoneskip 281
 step
     .train 416035,1
@@ -1803,7 +1803,7 @@ step
     .usespell 19752
 step
     .train 416035,1
-    >>|cRXP_WARN_Have you friend remove the|r |T136106:0|t[Divine Intervention] |cRXP_WARN_buff and resurrect you|r
+    >>|cRXP_WARN_Have you friend remove the|r |T136106:0|t[Divine Intervention] |cRXP_WARN_buff and ressurect you|r
     >>|cRXP_WARN_You will receive the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of the Guardian|r]
     .collect 213132,1
 step
@@ -1965,7 +1965,7 @@ RXPGuides.RegisterGuide([[
 
 step
     #optional
-    .train 5599 >>|cRXP_WARN_You must have|r |T135964:0|t[Blessing of Protection] |cRXP_WARN_trained in order to aquire the|r |T135931:0|t[Light's Grace] |cRXP_WARN_rune|r
+    .train 5599 >>|cRXP_WARN_You must have|r |T135964:0|t[Blessing of Protection] |cRXP_WARN_trained in order to acquire the|r |T135931:0|t[Light's Grace] |cRXP_WARN_rune|r
 step
     #optional
     #completewith TeleporterTaken
@@ -2026,7 +2026,7 @@ RXPGuides.RegisterGuide([[
 
 step
     #optional
-    .train 5502 >>|cRXP_WARN_You must have|r |T135974:0|t[Sense Undead] |cRXP_WARN_trained in order to aquire the|r |T236260:0|t[Wrath] |cRXP_WARN_rune|r
+    .train 5502 >>|cRXP_WARN_You must have|r |T135974:0|t[Sense Undead] |cRXP_WARN_trained in order to acquire the|r |T236260:0|t[Wrath] |cRXP_WARN_rune|r
     .train 429249,1
 step
     #completewith RuneLearned
@@ -2236,7 +2236,7 @@ step
     >>Accept the followup quest from the corpse. It's an instant turnin that will teach you how to engrave |T236265:0|t[|cRXP_FRIENDLY_Shield of Righteousness|r]
     .goto Eastern Plaguelands,22.7,86.1
     .accept 84332 >> Accept A Thane's Gratitude
-    .turnin 84332 >> Turn in A Thane's Gratitude
+    .turnin 84332 >> Turnin A Thane's Gratitude
 
 ]])
 

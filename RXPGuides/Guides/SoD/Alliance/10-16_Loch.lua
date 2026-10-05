@@ -6,6 +6,7 @@ RXPGuides.RegisterGuide([[
 #season 2
 << Alliance
 #group RestedXP Alliance 1-20
+#groupid RXP-SRGCE-A1
 #name 12-13 Dun Morogh SoD
 #displayname 12-13 Dun Morogh
 #next 13-16 Loch Modan SoD
@@ -574,8 +575,8 @@ step << Dwarf/Gnome
 step << !Human Rogue
     .goto Ironforge,62.375,88.679
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Brenwyn Wintersteel|r down stairs
-    >>|cRXP_BUY_Buy a|r |135640:0|t[Jambyia] |cRXP_BUY_from her|r
-    .collect 2207,1 --Jambyia
+    >>|cRXP_BUY_Buy a|r |135640:0|t[Jambiya] |cRXP_BUY_from her|r
+    .collect 2207,1 --Jambiya
     .target Brenwyn Wintersteel
     .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<7.0
 step << Dwarf/Gnome
@@ -962,7 +963,7 @@ step << Warlock !Human
     .isOnQuest 1688
 step << Warlock !Human
     .goto Elwynn Forest,42.105,65.927
-    .zone Elwynn Forest >> Heat to Elwynn Forest
+    .zone Elwynn Forest >> Travel to Elwynn Forest
     .isOnQuest 1688
 step << Warlock !Human
     #label SChoker
@@ -1035,6 +1036,7 @@ RXPGuides.RegisterGuide([[
 #season 2
 << Alliance
 #group RestedXP Alliance 1-20
+#groupid RXP-SRGCE-A1
 #name 13-16 Loch Modan SoD
 #displayname 13-16 Loch Modan
 #next 16-17 Westfall SoD

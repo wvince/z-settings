@@ -270,6 +270,11 @@ addon.professionID = {
 -- Unused functionality, prevent invalid function parsing errors
 function addon.functions.xpto60(...) end
 
+-- Classic guide exports also use the hardcore alias of the TBC compatibility handler.
+function addon.functions.xpto60hc(...)
+    return addon.functions.xpto60(...)
+end
+
 C_Spell.RequestLoadSpellData(2575) -- mining
 C_Spell.RequestLoadSpellData(9134) -- herbalism
 C_Spell.RequestLoadSpellData(33388) -- riding

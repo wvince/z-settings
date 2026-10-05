@@ -3,7 +3,7 @@
 -- ============================
 
 --Nesting
-if GetLocale() == "zhCN" and RXP.gameVersion > 20000 then return end
+local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #retail
 #version 1
@@ -1312,7 +1312,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Skyriding Glyphs
 #name a) AMidnight Glyphs
 #displayname Midnight Glyphs
-#chapters a) Eversong Woods Glyphs;a) Zul'aman Glyphs;a) Harandar Glyphs;a) Voidstorm Glyphs;a) Coiled Isle Glyphs
+#chapters a) Eversong Woods Glyphs;a) Zul'aman Glyphs;a) Harandar Glyphs;a) Voidstorm Glyphs
 
 
 step
@@ -1576,7 +1576,6 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Miscellaneous
 #name a) Voidstorm Glyphs
 #displayname |cFF1EFF004|r - Voidstorm
-#next a) Coiled Isle Glyphs
 #chapter
 
 step
@@ -1656,88 +1655,4 @@ step
     *Use |T4640489:0|t[Second Wind] to renew vigor charges.
     *Use |T4640477:0|t[Whirling Surge] on cooldown.
     .achievement 61583,7
-]])
-
---Coiled Isle
-RXPGuides.RegisterGuide([[
-#version 1
-#retail
-#group RestedXP Miscellaneous
-#name a) Coiled Isle Glyphs
-#displayname |cFF1EFF005|r - Coiled Isle
-#chapter
-
-step
-    #title Skyriding Glyph: The Forum
-    .goto 2512,26.63,63.14
-    >>Fly through the |cRXP_PICK_Skyriding Glyph: The Forum|r beneath the Forum arch.
-    *Use |T4640490:0|t[Surge Forward] for a speed boost.
-    *Use |T4640498:0|t[Skyward Ascent] for an uplift.
-    .achievement 63395,2
-step
-    #title Skyriding Glyph: The Wreck of Sethralis's Scales
-    .goto 2512,28.82,75.23
-    >>Fly through the |cRXP_PICK_Skyriding Glyph: The Wreck of Sethralis's Scales|r above the mountain peak.
-    *Use |T4640490:0|t[Surge Forward] for a speed boost.
-    *Use |T4640489:0|t[Second Wind] to renew vigor charges.
-    .achievement 63395,3
-step
-    #title Skyriding Glyph: Southern Island
-    .goto 2512,40.55,90.49
-    >>Fly through the |cRXP_PICK_Skyriding Glyph: Southern Island|r near the top of the island's eastern cliff.
-    *Use |T4640490:0|t[Surge Forward] for a speed boost.
-    *Use |T4640498:0|t[Skyward Ascent] for an uplift.
-    .achievement 63395,4
-step
-    #title Skyriding Glyph: Gate of the Eastern Fang
-    .goto 2512,45.84,64.93
-    >>Fly through the |cRXP_PICK_Skyriding Glyph: Gate of the Eastern Fang|r above the gate.
-    *Use |T4640490:0|t[Surge Forward] for a speed boost.
-    *Use |T4640477:0|t[Whirling Surge] on cooldown.
-    .achievement 63395,5
-step
-    #title Skyriding Glyph: The Fangs
-    .goto 2512,37.41,60.53
-    >>Fly through the |cRXP_PICK_Skyriding Glyph: The Fangs|r above the island's tallest peak.
-    *Use |T4640498:0|t[Skyward Ascent] for an uplift.
-    *Use |T4640489:0|t[Second Wind] to renew vigor charges.
-    .achievement 63395,1
-step
-    #title Skyriding Glyph: Gate of the Serpent's Eye
-    .goto 2512,43.82,44.19
-    >>Fly through the |cRXP_PICK_Skyriding Glyph: Gate of the Serpent's Eye|r inside the stone serpent's mouth, beneath its lower jaw.
-    *Descend toward the serpent head; the glyph is not above the structure.
-    .achievement 63395,11
-step
-    #title Skyriding Glyph: Blistering Terrace
-    .goto 2512,42.88,30.59
-    >>Fly through the |cRXP_PICK_Skyriding Glyph: Blistering Terrace|r above the large rock.
-    *Use |T4640490:0|t[Surge Forward] for a speed boost.
-    *Use |T4640498:0|t[Skyward Ascent] for an uplift.
-    .achievement 63395,10
-step
-    #title Skyriding Glyph: The Serpent's Tail
-    .goto 2512,52.01,38.41
-    >>Fly through the |cRXP_PICK_Skyriding Glyph: The Serpent's Tail|r beneath the large stone arch.
-    *Use |T4640490:0|t[Surge Forward] for a speed boost.
-    .achievement 63395,9
-step
-    #title Skyriding Glyph: Tokka's Landing
-    .goto 2512,58.94,48.91
-    >>Fly through the |cRXP_PICK_Skyriding Glyph: Tokka's Landing|r above the hub entrance.
-    *Use |T4640498:0|t[Skyward Ascent] for an uplift.
-    .achievement 63395,6
-step
-    #title Skyriding Glyph: The Wreck of Paku's Talon
-    .goto 2512,70.28,48.16
-    >>Fly through the |cRXP_PICK_Skyriding Glyph: The Wreck of Paku's Talon|r by the broken tree and stone arch.
-    *Use |T4640490:0|t[Surge Forward] for a speed boost.
-    *Use |T4640477:0|t[Whirling Surge] on cooldown.
-    .achievement 63395,8
-step
-    #title Skyriding Glyph: The Whispering Marsh
-    .goto 2512,64.12,60.65
-    >>Fly through the |cRXP_PICK_Skyriding Glyph: The Whispering Marsh|r above the broken tree.
-    *Collecting this final glyph completes |cRXP_WARN_The Coiled Isles Glyph Hunter|r.
-    .achievement 63395,7
 ]])

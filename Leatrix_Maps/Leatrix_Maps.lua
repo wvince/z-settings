@@ -1,6 +1,6 @@
 ﻿
 	----------------------------------------------------------------------
-	-- 	Leatrix Maps 1.60.08 (30th September 2026)
+	-- 	Leatrix Maps 1.60.09 (30th September 2026)
 	----------------------------------------------------------------------
 
 	-- 10:Func, 20:Comm, 30:Evnt, 40:Panl
@@ -12,7 +12,7 @@
 	local LeaMapsLC, LeaMapsCB, LeaConfigList = {}, {}, {}
 
 	-- Version
-	LeaMapsLC["AddonVer"] = "1.60.08"
+	LeaMapsLC["AddonVer"] = "1.60.09"
 
 	-- Get locale table
 	local void, Leatrix_Maps = ...
@@ -93,10 +93,8 @@
 		local playerFaction = UnitFactionGroup("player")
 
 		-- Remove blackout frame
-		if LeaMapsLC["UseDefaultMap"] == "Off" then
-			WorldMapFrame.BlackoutFrame:SetAlpha(0)
-			WorldMapFrame.BlackoutFrame:EnableMouse(false)
-		end
+		WorldMapFrame.BlackoutFrame:SetAlpha(0)
+		WorldMapFrame.BlackoutFrame:EnableMouse(false)
 
 		-- Hide the world map tutorial button
 		WorldMapFrame.BorderFrame.Tutorial:HookScript("OnShow", WorldMapFrame.BorderFrame.Tutorial.Hide)
@@ -126,7 +124,7 @@
 		-- Scale the map
 		----------------------------------------------------------------------
 
-		if LeaMapsLC["ScaleWorldMap"] == "On" and LeaMapsLC["UseDefaultMap"] == "Off" then
+		if LeaMapsLC["ScaleWorldMap"] == "On" then
 
 			-- Create configuration panel
 			local scalePanel = LeaMapsLC:CreatePanel("Scale the map", "scalePanel")
@@ -143,11 +141,7 @@
 				if not WorldMapFrame:IsMaximized() then
 					WorldMapFrame:SetScale(LeaMapsLC["MapScale"])
 				else
-					if LeaMapsLC["UseDefaultMap"] == "Off" then
-						WorldMapFrame:SetScale(LeaMapsLC["MaxMapScale"])
-					else
-						WorldMapFrame:SetScale(1)
-					end
+					WorldMapFrame:SetScale(LeaMapsLC["MaxMapScale"])
 				end
 			end
 
@@ -508,9 +502,38 @@
 
 		if LeaMapsLC["ShowCoords"] == "On" then
 
-			-- Disable built-in coordinates
-			SetCVar("worldMapShowPlayerCoords", "0")
-			SetCVar("worldMapShowCursorCoords", "0")
+			-- Enable built-in coordinates
+			SetCVar("worldMapShowPlayerCoords", "1")
+			SetCVar("worldMapShowCursorCoords", "1")
+
+			local function FindCoordsPanel()
+				for void, frame in ipairs(WorldMapFrame.overlayFrames) do
+					if frame.PlayerCoords and frame.CursorCoords then
+						return frame
+					end
+				end
+			end
+
+			local coords = FindCoordsPanel()
+			local canvas = WorldMapFrame:GetCanvasContainer()
+
+			coords.PlayerCoords:SetParent(canvas)
+			coords.PlayerCoords:ClearAllPoints()
+			coords.PlayerCoords:SetPoint("BOTTOMLEFT", canvas, "BOTTOMLEFT", 40, 2)
+			coords.PlayerCoords.Label:SetFont(coords.PlayerCoords.Label:GetFont(), 14, "OUTLINE")
+			coords.PlayerCoords:SetFrameLevel(10)
+
+			coords.CursorCoords:SetParent(canvas)
+			coords.CursorCoords:ClearAllPoints()
+			coords.CursorCoords:SetPoint("BOTTOMRIGHT", canvas, "BOTTOMRIGHT", -80, 2)
+			coords.CursorCoords.Label:SetFont(coords.CursorCoords.Label:GetFont(), 14, "OUTLINE")
+			coords.CursorCoords:SetFrameLevel(10)
+
+			coords.CrosshairCoords:SetParent(canvas)
+			coords.CrosshairCoords:ClearAllPoints()
+			coords.CrosshairCoords:SetPoint("BOTTOM", canvas, "BOTTOM", -32, 2)
+			coords.CrosshairCoords.Label:SetFont(coords.CrosshairCoords.Label:GetFont(), 14, "OUTLINE")
+			coords.CrosshairCoords:SetFrameLevel(10)
 
 			-- Create background frame
 			local cFrame = CreateFrame("FRAME", nil, WorldMapFrame.ScrollContainer)
@@ -523,63 +546,13 @@
 			cFrame.t:SetTexture("Interface\\ChatFrame\\ChatFrameBackground")
 			cFrame.t:SetVertexColor(0, 0, 0, 0.5)
 
-			-- Create cursor coordinates frame
-			local cCursor = CreateFrame("Frame", nil, WorldMapFrame.ScrollContainer)
-			cCursor:SetSize(200, 16)
-			cCursor:SetParent(cFrame)
-			cCursor:ClearAllPoints()
-			cCursor:SetPoint("BOTTOMLEFT", 152, 1)
-			cCursor.x = cCursor:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-			cCursor.x:SetJustifyH"LEFT"
-			cCursor.x:SetAllPoints()
-			cCursor.x:SetText(L["Cursor"] .. ": 88.8, 88.8")
-			cCursor:SetWidth(cCursor.x:GetStringWidth() + 50)
-
-			-- Create player coordinates frame
-			local cPlayer = CreateFrame("Frame", nil, WorldMapFrame.ScrollContainer)
-			cPlayer:SetSize(200, 16)
-			cPlayer:SetParent(cFrame)
-			cPlayer:ClearAllPoints()
-			cPlayer:SetPoint("BOTTOMRIGHT", -132, 1)
-			cPlayer.x = cPlayer:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-			cPlayer.x:SetJustifyH"LEFT"
-			cPlayer.x:SetAllPoints()
-			cPlayer.x:SetText(L["Player"] .. ": 88.8, 88.8")
-			cPlayer:SetWidth(cPlayer.x:GetStringWidth() + 50)
-
-			-- Update timer
-			local cPlayerTime = -1
-
-			-- Update function
-			cPlayer:SetScript("OnUpdate", function(self, elapsed)
-				if cPlayerTime > 0.1 or cPlayerTime == -1 then
-					-- Cursor coordinates
-					local x, y = WorldMapFrame.ScrollContainer:GetNormalizedCursorPosition()
-					if x and y then
-						x, y = floor(x * 1000 + 0.5) / 10, floor(y * 1000 + 0.5) / 10
-						if x > 0 and y > 0 and x < 100 and y < 100 then
-							cCursor.x:SetFormattedText("%s: %.1f, %.1f", L["Cursor"], x, y)
-						else
-							cCursor.x:SetFormattedText("%s:", L["Cursor"])
-						end
-					end
+			-- Disable coordinates if option is turned off
+			cFrame:RegisterEvent("PLAYER_LOGOUT")
+			cFrame:SetScript("OnEvent", function()
+				if LeaMapsLC["ShowCoords"] == "Off" then
+					SetCVar("worldMapShowPlayerCoords", "0")
+					SetCVar("worldMapShowCursorCoords", "0")
 				end
-				if cPlayerTime > 0.2 or cPlayerTime == -1 then
-					-- Player coordinates
-					local mapID = C_Map.GetBestMapForUnit("player")
-					if not mapID then
-						cPlayer.x:SetFormattedText("%s:", L["Player"])
-						return
-					end
-					local position = C_Map.GetPlayerMapPosition(mapID,"player")
-					if position and position.x ~= 0 and position.y ~= 0 then
-						cPlayer.x:SetFormattedText("%s: %.1f, %.1f", L["Player"], position.x * 100, position.y * 100)
-					else
-						cPlayer.x:SetFormattedText("%s: %.1f, %.1f", L["Player"], 0, 0)
-					end
-					cPlayerTime = 0
-				end
-				cPlayerTime = cPlayerTime + elapsed
 			end)
 
 			-- Create configuration panel
@@ -587,18 +560,10 @@
 
 			-- Add controls
 			LeaMapsLC:MakeTx(cPanel, "Settings", 16, -72)
-			LeaMapsLC:MakeCB(cPanel, "CoordsLargeFont", "Use large font", 16, -92, false, "If checked, coordinates will use a large font.")
-			LeaMapsLC:MakeCB(cPanel, "CoordsBackground", "Show background", 16, -112, false, "If checked, coordinates will have a dark background texture.")
+			LeaMapsLC:MakeCB(cPanel, "CoordsBackground", "Show background", 16, -92, false, "If checked, coordinates will have a dark background texture.")
 
 			-- Function to apply settings
 			local function SetCoordFunc()
-				if LeaMapsLC["CoordsLargeFont"] == "On" then
-					cCursor.x:SetFont(cCursor.x:GetFont(), 16)
-					cPlayer.x:SetFont(cPlayer.x:GetFont(), 16)
-				else
-					cCursor.x:SetFont(cCursor.x:GetFont(), 12)
-					cPlayer.x:SetFont(cPlayer.x:GetFont(), 12)
-				end
 				if LeaMapsLC["CoordsBackground"] == "On" then
 					cFrame.t:Show()
 				else
@@ -607,7 +572,6 @@
 			end
 
 			-- Set coordinates settings when options are clicked and on startup
-			LeaMapsCB["CoordsLargeFont"]:HookScript("OnClick", SetCoordFunc)
 			LeaMapsCB["CoordsBackground"]:HookScript("OnClick", SetCoordFunc)
 			SetCoordFunc()
 
@@ -619,7 +583,6 @@
 
 			-- Reset button click
 			cPanel.r:HookScript("OnClick", function()
-				LeaMapsLC["CoordsLargeFont"] = "Off"
 				LeaMapsLC["CoordsBackground"] = "On"
 				SetCoordFunc()
 				cPanel:Hide(); cPanel:Show()
@@ -629,7 +592,6 @@
 			LeaMapsCB["ShowCoordsBtn"]:HookScript("OnClick", function()
 				if IsShiftKeyDown() and IsControlKeyDown() then
 					-- Preset profile
-					LeaMapsLC["CoordsLargeFont"] = "On"
 					LeaMapsLC["CoordsBackground"] = "On"
 					SetCoordFunc()
 					if cPanel:IsShown() then cPanel:Hide(); cPanel:Show(); end
@@ -642,10 +604,10 @@
 		end
 
 		----------------------------------------------------------------------
-		-- Unlock map frame (must be before Remove map border)
+		-- Unlock map frame
 		----------------------------------------------------------------------
 
-		if LeaMapsLC["UnlockMap"] == "On" and LeaMapsLC["UseDefaultMap"] == "Off" then
+		if LeaMapsLC["UnlockMap"] == "On" then
 
 			-- Create configuration panel
 			local scaleFrame = LeaMapsLC:CreatePanel("Unlock map frame", "scaleFrame")
@@ -764,19 +726,7 @@
 		SetMapFade()
 
 		----------------------------------------------------------------------
-		-- Disable map emote when opening the map
-		----------------------------------------------------------------------
-
-		hooksecurefunc(C_ChatInfo, "PerformEmote", function(emote)
-			if emote == "READ" and WorldMapFrame:IsShown() then
-				if LeaMapsLC["NoMapEmote"] == "On" then
-					C_ChatInfo.CancelEmote()
-				end
-			end
-		end)
-
-		----------------------------------------------------------------------
-		-- Show zone levels (must be before show dungeons and raids)
+		-- Show zone levels
 		----------------------------------------------------------------------
 
 		do
@@ -952,7 +902,7 @@
 		end
 
 		----------------------------------------------------------------------
-		-- Show points of interest (must be after zone levels)
+		-- Show points of interest
 		----------------------------------------------------------------------
 
 		if LeaMapsLC["ShowPointsOfInterest"] == "On" then
@@ -970,6 +920,7 @@
 				pin:SetFrameStrata("HIGH")
 				pin:SetFrameLevel(100)
 				pin:EnableMouse(true)
+				pin.owningMap = WorldMapFrame -- Needed for Blizzard coordinates to work on the pin
 				pin.Texture = pin:CreateTexture(nil, "ARTWORK")
 				pin.Texture:SetAllPoints()
 				pin.HighlightTexture = pin:CreateTexture(nil, "HIGHLIGHT")
@@ -1067,7 +1018,7 @@
 
 				-- Tooltip
 				local name = pinInfo[4]
-				if LeaMapsLC["ShowZoneLevels"] == "On" and pinInfo[7] and pinInfo[8] then
+				if pinInfo[7] and pinInfo[8] then
 
 					local playerLevel = UnitLevel("player")
 					local color
@@ -1684,19 +1635,6 @@
 
 			-- ShowMemoryUsage(LeaMapsLC["PageF"], "TOPLEFT", 16, -282)
 
-			----------------------------------------------------------------------
-			-- Use default map
-			----------------------------------------------------------------------
-
-			if LeaMapsLC["UseDefaultMap"] == "On" then
-				-- Lock some incompatible options
-				LeaMapsLC:LockItem(LeaMapsCB["UnlockMap"], true)
-				LeaMapsCB["UnlockMap"].tiptext = LeaMapsCB["UnlockMap"].tiptext .. "|n|n|cff00AAFF" .. L["Cannot be used with Use default map."]
-
-				LeaMapsLC:LockItem(LeaMapsCB["ScaleWorldMap"], true)
-				LeaMapsCB["ScaleWorldMap"].tiptext = LeaMapsCB["ScaleWorldMap"].tiptext .. "|n|n|cff00AAFF" .. L["Cannot be used with Use default map."]
-			end
-
 		end
 
 		----------------------------------------------------------------------
@@ -2024,18 +1962,13 @@
 
 	-- Set lock state for configuration buttons
 	function LeaMapsLC:SetDim()
-		LeaMapsLC:LockOption("ScaleWorldMap", "ScaleWorldMapBtn", true) 		-- Scale the map
-		LeaMapsLC:LockOption("RevealMap", "RevTintBtn", true)					-- Shiw unexplored areas
-		LeaMapsLC:LockOption("UnlockMap", "UnlockMapBtn", true)					-- Unlock map frame
-		LeaMapsLC:LockOption("ShowCoords", "ShowCoordsBtn", true)				-- Show coordinates
-		LeaMapsLC:LockOption("EnhanceBattleMap", "EnhanceBattleMapBtn", true) 	-- Enhance battlefield map
-		LeaMapsLC:LockOption("ShowPointsOfInterest", "ShowPointsOfInterestBtn", true) -- Show points of interest
-		LeaMapsLC:LockOption("ShowZoneLevels", "ShowZoneLevelsBtn", false) -- Show zone levels
-		-- Ensure locked but enabled options remain locked
-		if LeaMapsLC["UseDefaultMap"] == "On" then
-			LeaMapsCB["UnlockMapBtn"]:Disable()
-			LeaMapsCB["ScaleWorldMapBtn"]:Disable()
-		end
+		LeaMapsLC:LockOption("ScaleWorldMap", "ScaleWorldMapBtn", true) 				-- Scale the map
+		LeaMapsLC:LockOption("RevealMap", "RevTintBtn", true)							-- Shiw unexplored areas
+		LeaMapsLC:LockOption("UnlockMap", "UnlockMapBtn", true)							-- Unlock map frame
+		LeaMapsLC:LockOption("ShowCoords", "ShowCoordsBtn", true)						-- Show coordinates
+		LeaMapsLC:LockOption("EnhanceBattleMap", "EnhanceBattleMapBtn", true) 			-- Enhance battlefield map
+		LeaMapsLC:LockOption("ShowPointsOfInterest", "ShowPointsOfInterestBtn", true) 	-- Show points of interest
+		LeaMapsLC:LockOption("ShowZoneLevels", "ShowZoneLevelsBtn", false) 				-- Show zone levels
 	end
 
 	-- Create a standard button
@@ -2078,7 +2011,6 @@
 	-- Set reload button status
 	function LeaMapsLC:ReloadCheck()
 		if	(LeaMapsLC["UnlockMap"] ~= LeaMapsDB["UnlockMap"])						-- Unlock map
-		or	(LeaMapsLC["UseDefaultMap"] ~= LeaMapsDB["UseDefaultMap"])				-- Use default map
 		or	(LeaMapsLC["ScaleWorldMap"] ~= LeaMapsDB["ScaleWorldMap"])				-- Scale the map
 		or	(LeaMapsLC["RevealMap"] ~= LeaMapsDB["RevealMap"])						-- Show unexplored areas
 		or	(LeaMapsLC["ShowPointsOfInterest"] ~= LeaMapsDB["ShowPointsOfInterest"])	-- Show unexplored areas
@@ -2359,12 +2291,10 @@
 				-- Mechanics
 				LeaMapsDB["UnlockMap"] = "On"
 				LeaMapsDB["EnableMovement"] = "On"
-				LeaMapsDB["UseDefaultMap"] = "Off"
 				LeaMapsDB["ScaleWorldMap"] = "Off"
 				LeaMapsDB["MapScale"] = 1.0
 				LeaMapsDB["MaxMapScale"] = 0.9
 				LeaMapsDB["NoMapFade"] = "On"
-				LeaMapsDB["NoMapEmote"] = "On"
 				LeaMapsDB["NoFilterResetBtn"] = "On"
 
 				LeaMapsDB["MapPosA"] = "TOPLEFT"
@@ -2392,7 +2322,6 @@
 				LeaMapsDB["ShowZoneLevels"] = "On"
 				LeaMapsDB["ShowFishingLevels"] = "On"
 				LeaMapsDB["ShowCoords"] = "On"
-				LeaMapsDB["CoordsLargeFont"] = "On"
 				LeaMapsDB["CoordsBackground"] = "On"
 				LeaMapsDB["HideTownCity"] = "On"
 
@@ -2466,12 +2395,10 @@
 			-- Load settings or set defaults
 			LeaMapsLC:LoadVarChk("UnlockMap", "Off")					-- Unlock map frame
 			LeaMapsLC:LoadVarChk("EnableMovement", "On")				-- Enable frame movement
-			LeaMapsLC:LoadVarChk("UseDefaultMap", "Off")				-- Use default map
 			LeaMapsLC:LoadVarChk("ScaleWorldMap", "Off")				-- Scale the map
 			LeaMapsLC:LoadVarNum("MapScale", 1.0, 0.5, 2)				-- Map scale
 			LeaMapsLC:LoadVarNum("MaxMapScale", 1.0, 0.5, 2)			-- Maximised map scale
 			LeaMapsLC:LoadVarChk("NoMapFade", "On")						-- Disable map fade
-			LeaMapsLC:LoadVarChk("NoMapEmote", "On")					-- Disable map emote
 			LeaMapsLC:LoadVarChk("NoFilterResetBtn", "On")				-- Hide filter reset button
 
 			LeaMapsLC:LoadVarAnc("MapPosA", "TOPLEFT")					-- Windowed map anchor
@@ -2500,7 +2427,6 @@
 			LeaMapsLC:LoadVarChk("ShowFishingLevels", "On")				-- Show fishing levels
 
 			LeaMapsLC:LoadVarChk("ShowCoords", "On")					-- Show coordinates
-			LeaMapsLC:LoadVarChk("CoordsLargeFont", "Off")				-- Coordinates large font
 			LeaMapsLC:LoadVarChk("CoordsBackground", "On")				-- Coordinates background
 			LeaMapsLC:LoadVarChk("HideTownCity", "On")					-- Hide town and city icons
 
@@ -2540,12 +2466,10 @@
 			-- Mechanics
 			LeaMapsDB["UnlockMap"] = LeaMapsLC["UnlockMap"]
 			LeaMapsDB["EnableMovement"] = LeaMapsLC["EnableMovement"]
-			LeaMapsDB["UseDefaultMap"] = LeaMapsLC["UseDefaultMap"]
 			LeaMapsDB["ScaleWorldMap"] = LeaMapsLC["ScaleWorldMap"]
 			LeaMapsDB["MapScale"] = LeaMapsLC["MapScale"]
 			LeaMapsDB["MaxMapScale"] = LeaMapsLC["MaxMapScale"]
 			LeaMapsDB["NoMapFade"] = LeaMapsLC["NoMapFade"]
-			LeaMapsDB["NoMapEmote"] = LeaMapsLC["NoMapEmote"]
 			LeaMapsDB["NoFilterResetBtn"] = LeaMapsLC["NoFilterResetBtn"]
 
 			LeaMapsDB["MapPosA"] = LeaMapsLC["MapPosA"]
@@ -2574,7 +2498,6 @@
 			LeaMapsDB["ShowFishingLevels"] = LeaMapsLC["ShowFishingLevels"]
 
 			LeaMapsDB["ShowCoords"] = LeaMapsLC["ShowCoords"]
-			LeaMapsDB["CoordsLargeFont"] = LeaMapsLC["CoordsLargeFont"]
 			LeaMapsDB["CoordsBackground"] = LeaMapsLC["CoordsBackground"]
 			LeaMapsDB["HideTownCity"] = LeaMapsLC["HideTownCity"]
 
@@ -2687,23 +2610,21 @@
 	-- Add content
 	LeaMapsLC:MakeTx(PageF, "System", 16, -72)
 	LeaMapsLC:MakeCB(PageF, "UnlockMap", "Unlock map frame", 16, -92, true, "If checked, you will be able to move the map.|n|nThe map position will be saved separately for the maximised and windowed maps.")
-	LeaMapsLC:MakeCB(PageF, "UseDefaultMap", "Use default map", 16, -112, true, "If checked, the default fullscreen map will be used for the maximised map.|n|nNote that enabling this option will lock out some of the other options.")
-	LeaMapsLC:MakeCB(PageF, "ScaleWorldMap", "Scale the map", 16, -132, true, "If checked, you will be able to scale the map.")
+	LeaMapsLC:MakeCB(PageF, "ScaleWorldMap", "Scale the map", 16, -112, true, "If checked, you will be able to scale the map.")
 
 	LeaMapsLC:MakeTx(PageF, "Elements", 225, -72)
 	LeaMapsLC:MakeCB(PageF, "RevealMap", "Show unexplored areas", 225, -92, true, "If checked, unexplored areas of the map will be shown on the world map and the battlefield map.")
 	LeaMapsLC:MakeCB(PageF, "ShowPointsOfInterest", "Show points of interest", 225, -112, true, "If checked, points of interest will be shown.")
-	LeaMapsLC:MakeCB(PageF, "ShowZoneLevels", "Show zone levels", 225, -132, false, "If checked, zone, dungeon and fishing skill levels will be shown.")
+	LeaMapsLC:MakeCB(PageF, "ShowZoneLevels", "Show zone levels", 225, -132, false, "If checked, zone levels will be shown on the continent maps.")
 	LeaMapsLC:MakeCB(PageF, "ShowCoords", "Show coordinates", 225, -152, true, "If checked, coordinates will be shown.")
 	LeaMapsLC:MakeCB(PageF, "HideTownCity", "Hide town and city icons", 225, -172, true, "If checked, town and city icons will not be shown on the continent maps.")
 
 	LeaMapsLC:MakeTx(PageF, "More", 225, -212)
 	LeaMapsLC:MakeCB(PageF, "EnhanceBattleMap", "Enhance battlefield map", 225, -232, true, "If checked, you will be able to customise the battlefield map.")
 	LeaMapsLC:MakeCB(PageF, "NoMapFade", "Disable map fade", 225, -252, false, "If checked, the map will not fade while your character is moving.")
-	LeaMapsLC:MakeCB(PageF, "NoMapEmote", "Disable reading emote", 225, -272, false, "If checked, your character will not perform the reading emote when you open the map.")
-	LeaMapsLC:MakeCB(PageF, "NoFilterResetBtn", "Hide filter reset button", 225, -292, true, "If checked, the world map filter reset button will be hidden.")
-	LeaMapsLC:MakeCB(PageF, "ShowMinimapIcon", "Show minimap button", 225, -312, false, "If checked, the minimap button will be shown.")
-	LeaMapsLC:MakeCB(PageF, "UseEnglishLanguage", "Use English language", 225, -332, true, "If checked, text used throughout the addon will be shown in English regardless of your game locale.")
+	LeaMapsLC:MakeCB(PageF, "NoFilterResetBtn", "Hide filter reset button", 225, -272, true, "If checked, the world map filter reset button will be hidden.")
+	LeaMapsLC:MakeCB(PageF, "ShowMinimapIcon", "Show minimap button", 225, -292, false, "If checked, the minimap button will be shown.")
+	LeaMapsLC:MakeCB(PageF, "UseEnglishLanguage", "Use English language", 225, -312, true, "If checked, text used throughout the addon will be shown in English regardless of your game locale.")
 
 	LeaMapsLC:CfgBtn("ScaleWorldMapBtn", LeaMapsCB["ScaleWorldMap"])
 	LeaMapsLC:CfgBtn("RevTintBtn", LeaMapsCB["RevealMap"])

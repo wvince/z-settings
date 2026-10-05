@@ -770,7 +770,7 @@ step
     .goto The Barrens,49.271,57.239
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Raszel Ander|r
     >>|cRXP_WARN_You must be in|r |T237558:0|t[Metamorphosis] |cRXP_WARN_to see|r |cRXP_FRIENDLY_Raszel Ander|r
-    .turnin 78994 >> Turn in A Solid Foundation
+    .turnin 78994 >> Turnin A Solid Foundation
     .accept 78914 >> Accept Soul Vessel
     .target Raszel Ander
 step
@@ -1260,7 +1260,7 @@ step
 step
     #completewith next
     .train 426443,1
-    .goto Arathi Highlands,29.292,62.283,10 >> |cRXP_WARN_Enter the large house on the lower level of Stromgade Keep, and head up to the 2nd floor|r
+    .goto Arathi Highlands,29.292,62.283,10 >> |cRXP_WARN_Enter the large house on the lower level of Stromgarde Keep, and head up to the 2nd floor|r
 step
     #completewith next
     .train 426443,1

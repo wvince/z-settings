@@ -1367,7 +1367,7 @@ step
     .turnin 26329 >>Turn in One More Thing
     .accept 26331 >>Accept Crushcog's Minions
     .goto 469,38.802,32.715
-	.target +High Tinker Mekkatorque
+	.target +High Tinker Mekkatorgue
     .accept 26333 >>Accept No Tanks!
     .goto 469,38.204,33.662
 	.target +Hinkles Fastblast
@@ -1438,7 +1438,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_High Tinker Mekkatorque|r, |cRXP_FRIENDLY_Hinkles Fastblast|r, and |cRXP_FRIENDLY_Kelsey Steelspark|r
     .turnin 26331 >>Turn in Crushcog's Minions
     .goto 469,38.802,32.715
-	.target +High Tinker Mekkatorque
+	.target +High Tinker Mekkatorgue
     .turnin 26333 >>Turn in No Tanks!
     .goto 469,38.204,33.662
 	.target +Hinkles Fastblast

@@ -2,7 +2,7 @@
 ## Title: WaylaidCost
 ## Notes: Compare Waylaid Crate and optional Craftsman's Writ costs and rewards. WoW Forever 1.60 beta.
 ## Author: Shakam
-## Version: 0.0.3
+## Version: 0.1.0
 ## IconTexture: Interface\AddOns\WaylaidCost\Assets\Icon
 ## Category-enUS: Auctions
 ## X-Category: Auction/Economy
@@ -14,9 +14,20 @@
 ## OptionalDeps: Auctionator
 Data.lua
 WritData.lua
+Locale.lua
+Locales/deDE.lua
+Locales/esES.lua
+Locales/frFR.lua
+Locales/ruRU.lua
+Locales/itIT.lua
+Locales/ptBR.lua
+Locales/koKR.lua
+Locales/zhCN.lua
+Locales/zhTW.lua
 Orders.lua
 Pricing.lua
 Scan.lua
+Progress.lua
 UI.lua
 Tooltip.lua
 Launcher.lua

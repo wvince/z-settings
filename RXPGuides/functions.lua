@@ -13,11 +13,20 @@ local IsCurrentSpell = C_Spell and C_Spell.IsCurrentSpell or _G.IsCurrentSpell
 local IsSpellKnown = C_SpellBook and C_SpellBook.IsSpellKnown or _G.IsSpellKnown
 local IsPlayerSpell = C_Spell and C_Spell.IsPlayerSpell or _G.IsPlayerSpell
 local GetSpellInfo = C_Spell and C_Spell.GetSpellInfo and addon.GetSpellInfo or _G.GetSpellInfo
-local GetMerchantItemInfo = C_MerchantFrame and C_MerchantFrame.GetItemInfo or _G.GetMerchantItemInfo
 local GetSpellCooldown = addon.GetSpellCooldown
 local UnitName = addon.GetUnitName
-local BANK_CONTAINER = _G.BANK_CONTAINER or Enum.BagIndex.Bank
+local BANK_CONTAINER = _G.BANK_CONTAINER or Enum.BagIndex.CharacterBankTab_1
 
+local GetMerchantItemInfo = function(...)
+    local GMII = C_MerchantFrame and C_MerchantFrame.GetItemInfo or _G.GetMerchantItemInfo
+    local out = GMII(...)
+    if type(out) == "table" then
+        return out.name,out.texture,out.price,out.stackCount,out.numAvailable,out.isPurchasable,out.isUsable,out.hasExtendedCost
+    else
+        return out
+    end
+end
+addon.GetMerchantItemInfo = GetMerchantItemInfo
 
 addon.GetFactionInfoByID = _G.GetFactionInfoByID or function(factionID)
     local name, description, standingID, barMin, barMax, barValue
@@ -115,7 +124,14 @@ events.hs = "UNIT_SPELLCAST_SUCCEEDED"
 events.home = {"HEARTHSTONE_BOUND","CONFIRM_BINDER","GOSSIP_SHOW"}
 events.bindlocation = events.home
 events.fly = {"PLAYER_CONTROL_LOST", "TAXIMAP_OPENED", "ZONE_CHANGED", "GOSSIP_SHOW"}
-events.deathskip = {"CONFIRM_XP_LOSS","GOSSIP_SHOW"}
+
+if C_EventUtils and C_EventUtils.IsEventValid("PLAYER_INTERACTION_MANAGER_FRAME_SHOW") then
+    events.deathskip = "PLAYER_INTERACTION_MANAGER_FRAME_SHOW"
+else
+    events.deathskip = {"CONFIRM_XP_LOSS","GOSSIP_SHOW"}
+end
+
+
 events.xp = {"PLAYER_XP_UPDATE", "PLAYER_LEVEL_UP"}
 events.reputation = "UPDATE_FACTION"
 events.vendor = {"MERCHANT_SHOW", "MERCHANT_CLOSED"}
@@ -236,7 +252,7 @@ addon.icons = {
     clicknext = "|TInterface/Tooltips/ReforgeGreenArrow:0|t",
 }
 
-if addon.gameVersion > 50000 or WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+if addon.gameVersion > 50000 or WOW_PROJECT_ID == WOW_PROJECT_CAMELOT then
     addon.icons["goto"] = "|TInterface/MINIMAP/POIICONS:0:0:0:0:128:128:63:72:0:4|t"
     addon.icons["home"] = "|TInterface/MINIMAP/POIICONS:0:0:0:0:128:128:45:54:0:4|t"
     addon.icons["deathskip"] = "|TInterface/MINIMAP/POIICONS:0:0:0:0:128:128:72:81:0:4|t"
@@ -2872,12 +2888,13 @@ function addon.functions.deathskip(self, ...)
         end
         element.tooltipText = addon.icons.deathskip .. element.text
         addon.step.softcore = true
-        element.targets = {L"Spirit Healer","Alithea","Anara","Koiter"}
+        element.targets = {L"Spirit Healer"}
         return element
     end
     if not self.element.step.active then return end
-    local event = ...
-    if event == "CONFIRM_XP_LOSS" then
+    local event,arg1 = ...
+    -- spell=418460 (chill of the grave) is cast every time a player resurrect (forever) through the UNIT_SPELLCAST_FAILED_QUIET event
+    if event == "CONFIRM_XP_LOSS" or event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" and arg1 == Enum.PlayerInteractionType.SpiritHealer then
         addon.SetElementComplete(self)
         if C_PlayerInteractionManager then
             self:SetScript("OnUpdate", function()
@@ -2890,7 +2907,7 @@ function addon.functions.deathskip(self, ...)
             _G.StaticPopup1:Hide()
             _G.StaticPopup2:Hide()
         end
-    elseif event == "GOSSIP_SHOW" then
+    elseif event == "GOSSIP_SHOW" or event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" and arg1 == Enum.PlayerInteractionType.Gossip then
         addon.SelectGossipType("healer")
     end
 end
@@ -3222,7 +3239,6 @@ function addon.functions.destroy(self, ...)
         element.id = id
 
         element.itemName = addon.GetItemName(id)
-
         if text and text ~= "" then
             element.rawtext = text
             element.tooltipText = addon.icons.collect .. element.rawtext
@@ -3236,6 +3252,7 @@ function addon.functions.destroy(self, ...)
     local element = self.element
     local step = element and element.step
     if step and step.active then
+        RXPCData.discardPile[element.id] = true
         local name = addon.GetItemName(element.id)
 
         if name then
@@ -5157,8 +5174,18 @@ function addon.PutItemInBank(bagContents)
     local _, isBankOpened = GetContainerNumFreeSlots(BANK_CONTAINER);
     if CursorHasItem() and isBankOpened then
         local bank = {BANK_CONTAINER}
-        for i = _G.NUM_BAG_SLOTS + 1, _G.NUM_BAG_SLOTS + _G.NUM_BANKBAGSLOTS do
-            tinsert(bank, i)
+        local tab = Enum.BagIndex["CharacterBankTab_1"]
+        if tab then
+            local i = 1
+            while tab do
+                tinsert(bank, tab)
+                i = i + 1
+                tab = Enum.BagIndex["CharacterBankTab_" .. i]
+            end
+        else
+            for i = _G.NUM_BAG_SLOTS + 1, _G.NUM_BAG_SLOTS + _G.NUM_BANKBAGSLOTS do
+                tinsert(bank, i)
+            end
         end
 
         if not bagContents then bagContents = {} end
@@ -5295,9 +5322,19 @@ end
 function addon.GoThroughBank(itemList, func)
 
     local bank = {BANK_CONTAINER}
-    for i = _G.NUM_BAG_SLOTS + 1, _G.NUM_BAG_SLOTS + _G.NUM_BANKBAGSLOTS do
-        tinsert(bank, i)
-    end
+        if Enum.BagIndex.CharacterBankTab_1 then
+            local i = 1
+            local tab = Enum.BagIndex["CharacterBankTab_" .. i]
+            while tab do
+                tinsert(bank, tab)
+                i = i + 1
+                tab = Enum.BagIndex["CharacterBankTab_" .. i]
+            end
+        else
+            for i = _G.NUM_BAG_SLOTS + 1, _G.NUM_BAG_SLOTS + _G.NUM_BANKBAGSLOTS do
+                tinsert(bank, i)
+            end
+        end
 
     local bagContents = {}
 
@@ -8472,5 +8509,18 @@ function addon.functions.dualspec(self, text, skipstep)
         else
             addon.SetElementComplete(self, true)
         end
+    end
+end
+
+events.showwhiledead = {"PLAYER_ALIVE", "PLAYER_UNGHOST"}
+function addon.functions.showwhiledead(self)
+    if type(self) == "string" then -- on parse
+        return {textOnly = true}
+    end
+
+    local step = self.element.step
+    if step.active and not addon.isHidden and not UnitIsDeadOrGhost("player") then
+        step.completed = true
+        addon.updateSteps = true
     end
 end

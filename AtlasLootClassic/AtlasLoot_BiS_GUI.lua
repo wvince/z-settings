@@ -1133,7 +1133,7 @@ local function CreatePSAFooter()
     text:SetJustifyH("LEFT")
     text:SetJustifyV("MIDDLE")
     text:SetWordWrap(true)
-    text:SetText("PSA: Addons can save settings now! Atlas will be updated daily to adress any issue coming up and to add all new Items to its database as soon as possible. Thanks to everyone who has been submitting bugs so far!")
+    text:SetText("PSA: Addons can save settings now! Atlas will be updated daily to adress any issue coming up and to add all new Items to its database asap. Special thanks to sadpandaren for many WoW Forever related updates!")
 
     footer.text = text
 

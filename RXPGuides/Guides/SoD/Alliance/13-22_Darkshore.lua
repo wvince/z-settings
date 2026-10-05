@@ -8,6 +8,7 @@ RXPGuides.RegisterGuide([[
 #season 2
 << NightElf
 #group RestedXP Alliance 1-20
+#groupid RXP-SRGCE-A1
 #name 13-20 Darkshore SoD
 #displayname 13-20 Darkshore << NightElf SoD !Priest
 #displayname 13-22 Darkshore << NightElf SoD Priest
@@ -555,7 +556,7 @@ step << Druid
     #completewith DruidEarlyNessa
     #season 0
     >>Kill |cRXP_ENEMY_Moonkin|r. Loot them for their |T132832:0|t|cRXP_LOOT_[Small Eggs]|r
-    >>|cRXP_WARN_This will be used to level your|r |T133971:0|t[Cooking] |cRXP_WARN_later|r  |cRXP_WARN_to 10 later|r
+    >>|cRXP_WARN_This will be used to level your|r |T133971:0|t[Cooking] |cRXP_WARN_to 10 later|r
     .collect 6889,10,2178,1,0x20,cooking --Small Egg (1-10)
     .mob Young Moonkin
     .mob Raging Moonkin
@@ -1199,7 +1200,7 @@ step
     #completewith LateTurtleStart << era
     #completewith RedCrystal << sod
     >>Kill |cRXP_ENEMY_Moonkin|r. Loot them for their |T132832:0|t|cRXP_LOOT_[Small Eggs]|r
-    >>|cRXP_WARN_This will be used to level your|r |T133971:0|t[Cooking] |cRXP_WARN_later|r  |cRXP_WARN_to 10 later|r
+    >>|cRXP_WARN_This will be used to level your|r |T133971:0|t[Cooking] |cRXP_WARN_to 10 later|r
     .collect 6889,10,2178,1,0x20,cooking --Small Egg (1-9)
     .mob Young Moonkin
     .mob Raging Moonkin
@@ -1324,7 +1325,7 @@ step << NightElf/Hunter/Druid/Warrior/Rogue
     #season 2 << Warrior/Rogue
     #season 0 << Hunter/Druid/Rogue/Priest
     >>Kill |cRXP_ENEMY_Moonkin|r. Loot them for their |T132832:0|t|cRXP_LOOT_[Small Eggs]|r
-    >>|cRXP_WARN_This will be used to level your|r |T133971:0|t[Cooking] |cRXP_WARN_later|r  |cRXP_WARN_to 10 later|r
+    >>|cRXP_WARN_This will be used to level your|r |T133971:0|t[Cooking] |cRXP_WARN_to 10 later|r
     .collect 6889,10,2178,1,0x20,cooking --Small Egg (1-9)
     .mob Young Moonkin
     .mob Raging Moonkin
@@ -1613,7 +1614,7 @@ step
     .goto 1439,43.101,44.400,60,0
     .goto 1439,45.322,44.756,60,0
     >>Kill |cRXP_ENEMY_Moonkin|r. Loot them for their |T132832:0|t|cRXP_LOOT_[Small Eggs]|r
-    >>|cRXP_WARN_This will be used to level your|r |T133971:0|t[Cooking] |cRXP_WARN_later|r  |cRXP_WARN_to 10 later|r
+    >>|cRXP_WARN_This will be used to level your|r |T133971:0|t[Cooking] |cRXP_WARN_to 10 later|r
     .collect 6889,10,2178,1,0x20,cooking --Small Egg (1-9)
     .mob Young Moonkin
     .mob Raging Moonkin
@@ -1774,7 +1775,7 @@ step << Priest
     .goto Darkshore,38.7,68.0,0
     .goto Darkshore,38.7,66.3,0
     .goto Darkshore,38.7,64.5,0
-    >>Fisnish off killing |cRXP_ENEMY_Rabid Thistle Bears|r
+    >>Finish off killing |cRXP_ENEMY_Rabid Thistle Bears|r
     >>|cRXP_WARN_Be careful as they cast|r |T135914:0|t[Rabies] |cRXP_WARN_if you dont kill them fast enough (Instant Melee: Reduces ALL health regen by 50% for 10 Minutes)|r
     .complete 2138,1 -- Rabid Thistle Bear slain (20)
     .mob Rabid Thistle Bear
@@ -2843,7 +2844,7 @@ step
     >>|cRXP_WARN_This quest is VERY difficult. Skip this step if you fail it|r << !Warrior
     >>|cRXP_WARN_You will most likely not be able to solo this quest!|r I'd recommend not even attempting it unless you can find another player to group with << Warrior
     >>Skip this step if you fail or there's no one to group with << Warrior
-    .link https://youtu.be/3d-htESNztE >> |cRXP_WARN_Click here for a video guide|r << Hunter
+    .link https://www.youtube.com/watch?v=crQAvyRIceU >> |cRXP_WARN_Click here for a video guide|r << Hunter
     .link https://youtu.be/md926sh3L6U >> |cRXP_WARN_Click here for a video walkthrough|r << !Hunter
     .target Prospector Remtravel
 step
@@ -2851,7 +2852,7 @@ step
     #season 2
     >>|cRXP_WARN_Escort |cRXP_FRIENDLY_Prospector Remtravel|r through the Excavation|r
     >>|cRXP_WARN_This quest is VERY difficult. Skip this step if you fail it|r
-    .link https://youtu.be/3d-htESNztE >> |cRXP_WARN_Click here for a video guide|r << Hunter
+    .link https://www.youtube.com/watch?v=crQAvyRIceU >> |cRXP_WARN_Click here for a video guide|r << Hunter
     .complete 731,1
     .isOnQuest 731
 step << Druid/Hunter/Warrior
@@ -2978,7 +2979,7 @@ step << Priest
     .isOnQuest 5321
 step << Priest
     #season 2
-	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Liadris Moonriver|r
+	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Liladris Moonriver|r
 	.target Liladris Moonriver
     .goto Ashenvale,27.26,35.58
     >>Skip this step if you haven't completed the quest
@@ -3020,7 +3021,7 @@ step << Priest
     .goto Ashenvale,33.01,21.41,50,0
     .goto Ashenvale,29.53,24.33,40,0
     .goto Ashenvale,31.89,22.53
-    >>Fisnish off killing |cRXP_ENEMY_Forsaken Herbalists|r and |cRXP_ENEMY_Forsaken Seekers|r
+    >>Finish off killing |cRXP_ENEMY_Forsaken Herbalists|r and |cRXP_ENEMY_Forsaken Seekers|r
     .complete 78192,1 --Forsaken Herbalist (7)
     .complete 78192,2 --Forsaken Seeker (9)
     .mob Forsaken Herbalist
@@ -3516,6 +3517,7 @@ RXPGuides.RegisterGuide([[
 << Alliance
 << !sod/Warrior/Rogue/Hunter/Druid
 #group RestedXP Alliance 1-20
+#groupid RXP-SRGCE-A1
 #name 20-22 Darkshore SoD
 #displayname 20-22 Darkshore << sod !Warrior
 #displayname 20-22 Darkshore/Ashenvale << sod Warrior
@@ -4151,7 +4153,7 @@ step << Warrior
     .target Sentinel Onaeya
 step << Warrior
     #season 2
-	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Liadris Moonriver|r
+	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Liladris Moonriver|r
 	.target Liladris Moonriver
     .goto Ashenvale,27.26,35.58
     >>Skip this step if you haven't completed the quest
@@ -4249,7 +4251,7 @@ step << Druid
     .isOnQuest 5321
 step << Druid
 #season 2
-	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Liadris Moonriver|r
+	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Liladris Moonriver|r
 	.target Liladris Moonriver
     .goto Ashenvale,27.26,35.58
     .turnin 5321 >> Turn in The Sleeper Has Awakened
@@ -7219,7 +7221,7 @@ step << NightElf Warrior
     #completewith NEIFFP
     .goto 1455,62.378,88.671
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Brenwyn Wintersteel|r downstairs
-    >>|cRXP_BUY_Buy the|r |T135427:0|t[Heavy Throwing Knives] |cRXP_BUY_from her|r
+    >>|cRXP_BUY_Buy the|r |T135427:0|t[Heavy Throwing Dagger] |cRXP_BUY_from her|r
     .collect 3108,200 --Collect Heavy Throwing Knife (200)
     .target Brenwyn Wintersteel
     .itemStat 18,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<11.7
@@ -7229,7 +7231,7 @@ step << NightElf Warrior
     #requires DeeprunDMNoFP4
     #label DeeprunDMNoFP5
     #completewith NEIFFP
-    +|cRXP_WARN_Equip the|r |T135427:0|t[Heavy Throwing Knives]
+    +|cRXP_WARN_Equip the|r |T135427:0|t[Heavy Throwing Dagger]
     .use 3108
     .itemcount 3108,1
     .itemStat 18,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<11.7

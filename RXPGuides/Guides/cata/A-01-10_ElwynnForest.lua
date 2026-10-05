@@ -733,7 +733,7 @@ step << skip
     #optional
     #completewith RemyTT
     .goto 37,41.95,67.16,0
-    +|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lien Farmer|r next to |cRXP_FRIENDLY_Remy "Two Times"|r if you wish to train Professions
+    +|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lien Farner|r next to |cRXP_FRIENDLY_Remy "Two Times"|r if you wish to train Professions
     .target Lien Farner
 step
     #optional

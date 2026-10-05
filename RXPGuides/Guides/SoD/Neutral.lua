@@ -582,7 +582,7 @@ step << Priest
     .goto Ashenvale,37.938,27.958,30,0
     .goto Ashenvale,38.819,27.160,30,0
     .goto Ashenvale,38.804,26.558
-    >>|cRXP_WARN_Run up the giant tree next to the cave enterance. Follow the arrow carefully|r
+    >>|cRXP_WARN_Run up the giant tree next to the cave entrance. Follow the arrow carefully|r
     .use 211534 >>|cRXP_WARN_Use the|r |T135736:0|t[Primal Insight] |cRXP_WARN_when you are next to the two dreamcatchers on the tree to create the|r |T135975:0|t[|cRXP_FRIENDLY_Prophecy of Seven Visitors]|r
     .collect 211531,1 -- Prophecy of Seven Visitors (1)
     .train 415997,1
@@ -1797,7 +1797,7 @@ step
     >>Click the |cRXP_PICK_Hastily Rolled-Up Satchel|r on the ground
     .turnin 79976 >> Turn in This Must Be The Place
 step
-    +|cRXP_WARN_It is strongly adivsed you save your|r |T134057:0|t[|cRXP_LOOT_Student Fodder|r] |cRXP_WARN_for higher levels before consuming them. Each use of|r |T134057:0|t[|cRXP_LOOT_Student Fodder|r] |cRXP_WARN_adds 20% rested experience to your character, therefore it is more efficient to use at higher levels|r
+    +|cRXP_WARN_It is strongly advised you save your|r |T134057:0|t[|cRXP_LOOT_Student Fodder|r] |cRXP_WARN_for higher levels before consuming them. Each use of|r |T134057:0|t[|cRXP_LOOT_Student Fodder|r] |cRXP_WARN_adds 20% rested experience to your character, therefore it is more efficient to use at higher levels|r
 ]])
 
 RXPGuides.RegisterGuide([[

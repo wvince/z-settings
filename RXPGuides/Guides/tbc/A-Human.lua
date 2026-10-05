@@ -592,7 +592,7 @@ step << Priest
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Priestess Josetta|r
 	.target Priestess Josetta
     .goto Elwynn Forest,43.283,65.721
-    .turnin 5623 >> Turn in In Favor of the Light
+    .turnin -5623 >> Turn in In Favor of the Light
     .accept 5624 >> Accept Garments of the Light
     .trainer >> Train your class spells
 step << Rogue
@@ -2390,7 +2390,7 @@ step
     .isQuestAvailable 314
 step
 #xprate <1.5
-    #completewith next
+    #completewith VagashEnd
     #requires Dirt
     .goto 1426,62.778,54.591,0
     .goto 1426,62.538,46.195,0

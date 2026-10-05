@@ -96,7 +96,7 @@ step
     .accept 14461 >>Accept Feed of Evil
     .goto 7,46.18,82.61
     .accept 31165 >>Accept Calligraphed Note << Monk
-    .accept 3092 >>Accept Accept Etched Note << Hunter
+    .accept 3092 >>Accept Etched Note << Hunter
     .accept 3091 >>Accept Simple Note << Warrior
     .accept 27015 >>Accept Consecrated Note << Paladin
     .accept 3094 >>Accept Verdant Note << Druid

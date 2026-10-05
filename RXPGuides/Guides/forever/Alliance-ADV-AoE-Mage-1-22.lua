@@ -7,7 +7,8 @@ RXPGuides.RegisterGuide([[
 << Human Mage
 #name 1-10 ADV Elwynn Forest Human Mage AoE
 #version 2
-#group RestedXP ADV AoE Alliance Mage
+#group RestedXP Forever Guide (A)
+#subgroup Advanced Mage AoE
 #defaultfor Human Mage
 #next 10-11 ADV Dun Morogh Human Mage AoE
 
@@ -480,7 +481,7 @@ step
     .target +"Auntie" Bernice Stonefield
     .goto 1429/0,338.47,-9889.69
     .accept 88 >> Accept Princess Must Die!
-	.goto Elwynn Forest,34.660,84.482
+	.goto 1429/0,332.43,-9894.99--c:Elwynn Forest,34.660,84.482
     .target +Ma Stonefield
 step
     #completewith next
@@ -512,7 +513,7 @@ step
     .collect 769,4,86,1 --Collect Chunk of Boar Meat (x4)
     .mob Stonetusk Boar
 step
-    .goto Elwynn Forest,29.840,85.997
+    .goto 1429/0,499.72,-9930.05--c:Elwynn Forest,29.840,85.997
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tommy|r
     .turnin 106 >> Turn in Young Lovers
     .accept 111 >> Accept Speak with Gramma
@@ -883,7 +884,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ma|r and |cRXP_FRIENDLY_Bernice|r
     .turnin 88,3 >> Turn in Princess Must Die!
     .target +Ma Stonefield
-    .goto Elwynn Forest,34.660,84.482
+    .goto 1429/0,332.43,-9894.99--c:Elwynn Forest,34.660,84.482
     .turnin 87 >> Turn in Goldtooth
     .goto 1429/0,338.47,-9889.69
     .target +"Auntie" Bernice Stonefield
@@ -1147,7 +1148,8 @@ RXPGuides.RegisterGuide([[
 << Human Mage
 #name 10-11 ADV Dun Morogh Human Mage AoE
 #version 2
-#group RestedXP ADV AoE Alliance Mage
+#group RestedXP Forever Guide (A)
+#subgroup Advanced Mage AoE
 #defaultfor Human Mage
 #next 10-12 ADV Darkshore 1 Mage AoE
 
@@ -1438,7 +1440,8 @@ RXPGuides.RegisterGuide([[
 << Gnome Mage
 #name 1-10 ADV Dun Morogh Gnome Mage AoE
 #version 2
-#group RestedXP ADV AoE Alliance Mage
+#group RestedXP Forever Guide (A)
+#subgroup Advanced Mage AoE
 #defaultfor Gnome Mage
 #next 10-12 ADV Darkshore 1 Mage AoE
 
@@ -2997,7 +3000,8 @@ RXPGuides.RegisterGuide([[
 << Alliance Mage
 #name 10-12 ADV Darkshore 1 Mage AoE
 #version 2
-#group RestedXP ADV AoE Alliance Mage
+#group RestedXP Forever Guide (A)
+#subgroup Advanced Mage AoE
 #defaultfor Human Mage/Gnome Mage
 #next 12-14 ADV Loch Modan Mage AoE
 
@@ -3553,7 +3557,8 @@ RXPGuides.RegisterGuide([[
 << Alliance Mage
 #name 10-12 LAUNCH ADV Darkshore 1 Mage AoE
 #version 2
-#group RestedXP ADV AoE Alliance Mage
+#group RestedXP Forever Guide (A)
+#subgroup Advanced Mage AoE
 #defaultfor none
 #next 12-14 ADV Loch Modan Mage AoE
 
@@ -4120,7 +4125,8 @@ RXPGuides.RegisterGuide([[
 << Alliance Mage
 #name 12-14 ADV Loch Modan Mage AoE
 #version 2
-#group RestedXP ADV AoE Alliance Mage
+#group RestedXP Forever Guide (A)
+#subgroup Advanced Mage AoE
 #defaultfor Human Mage/Gnome Mage
 #next 14-16 ADV Darkshore 2 Mage AoE
 step
@@ -4900,7 +4906,8 @@ RXPGuides.RegisterGuide([[
 << Alliance Mage
 #name 14-16 ADV Darkshore 2 Mage AoE
 #version 2
-#group RestedXP ADV AoE Alliance Mage
+#group RestedXP Forever Guide (A)
+#subgroup Advanced Mage AoE
 #defaultfor Human Mage/Gnome Mage
 #next 16-18 ADV Westfall Mage AoE
 
@@ -5548,7 +5555,8 @@ RXPGuides.RegisterGuide([[
 << Alliance Mage
 #name 16-18 ADV Westfall Mage AoE
 #version 2
-#group RestedXP ADV AoE Alliance Mage
+#group RestedXP Forever Guide (A)
+#subgroup Advanced Mage AoE
 #defaultfor Human Mage/Gnome Mage
 #next 18-20 ADV Darkshore 3 Mage AoE
 
@@ -6278,7 +6286,8 @@ RXPGuides.RegisterGuide([[
 << Alliance Mage
 #name 18-20 ADV Darkshore 3 Mage AoE
 #version 2
-#group RestedXP ADV AoE Alliance Mage
+#group RestedXP Forever Guide (A)
+#subgroup Advanced Mage AoE
 #defaultfor Human Mage/Gnome Mage
 #next 20-22 ADV Redridge 1 Mage AoE
 
@@ -7056,7 +7065,8 @@ RXPGuides.RegisterGuide([[
 << Alliance Mage
 #name 20-22 ADV Redridge 1 Mage AoE
 #version 2
-#group RestedXP ADV AoE Alliance Mage
+#group RestedXP Forever Guide (A)
+#subgroup Advanced Mage AoE
 #defaultfor Human Mage/Gnome Mage
 #next 22-26 ADV Wetlands 1 Mage AoE
 

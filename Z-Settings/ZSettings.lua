@@ -1,10 +1,11 @@
 -- Z-Settings: share your whole interface with friends.
--- /z export saves your setup for the git commit hook, /z import applies the setup that ships with this
--- addon (ZBundle.lua, written by that hook), /z undo puts back what you had. Each reloads the UI itself.
+-- /z export saves your setup for the git commit hook. A friend logging in with a newer setup (ZBundle.lua,
+-- written by that hook) gets a popup listing the parts that differ from their UI; /z update opens it,
+-- /z import applies everything, /z undo puts back what the last apply changed. Each reloads the UI itself.
 -- Shared: interface settings, keybinds (converted between QWERTY and AZERTY), Edit Mode, chat windows,
 -- enabled addons, every addon's account-wide settings, target/menu click casting and General macros that
 -- cast no spell. Left out: action bars, Cooldown Manager, character macros and spell macros (class-specific),
--- per-character addon data, and the personal setup addons. On command only. Never in combat.
+-- per-character addon data, BarSync and WoWCompanion. On command only. Never in combat.
 
 local FORMAT = "ZS1:"
 local MAX_ACCOUNT_MACROS = (Constants and Constants.MacroConsts and Constants.MacroConsts.MAX_ACCOUNT_MACROS) or 120
@@ -20,8 +21,9 @@ local function shareable(var, value)
   return not DATA_TABLES[var] and not (type(value) == "table" and value.profileKeys ~= nil)
 end
 local MAX_ADDON_TABLE = 300000   -- bytes of one addon's settings before compression; larger ones are listed, not shared
--- never shared or switched: this addon and the personal setup addons
-local KEEP_ADDONS = { ["Z-Settings"] = true, BarSync = true, ZeroshinSetup = true }
+-- never shared or switched: this addon, BarSync (the exporter's own character sync) and WoWCompanion
+-- (the exporter's link to the WoW Companion app, installed by its PC task)
+local KEEP_ADDONS = { ["Z-Settings"] = true, BarSync = true, WoWCompanion = true }
 
 -- Settings: every one Blizzard stores server-side per account or character (the interface
 -- options), except these categories and the per-character state below
@@ -90,53 +92,79 @@ local function readCVars()
   return out
 end
 
-local function readEditMode()
+local PRESETS = (Enum and Enum.EditModePresetLayoutsMeta and Enum.EditModePresetLayoutsMeta.NumValues) or 2
+
+-- Undo keeps every layout. Sharing keeps only the active one, as the string Edit Mode's own
+-- "Copy to clipboard" makes, so Blizzard checks and upgrades it on import like a pasted layout.
+local function readEditMode(forSharing)
   local ok, layouts = pcall(C_EditMode.GetLayouts)
   local ok2, settings = pcall(C_EditMode.GetAccountSettings)
-  if not ok or not ok2 then return nil end
-  return { layouts = layouts, settings = settings }
+  if not ok or not ok2 or type(layouts) ~= "table" then return nil end
+  if not forSharing then return { layouts = layouts, settings = settings } end
+  local active = layouts.layouts and layouts.layouts[(layouts.activeLayout or 0) - PRESETS]
+  if not active then return { preset = layouts.activeLayout, settings = settings } end
+  local okS, text = pcall(C_EditMode.ConvertLayoutInfoToString, active)
+  return { layout = okS and text or nil, settings = settings }
 end
 
--- Import adds your active layout to the friend's layouts under this name, or overwrites the one
--- already there; their own layouts stay. With every layout slot taken, all of yours replace theirs.
-local LAYOUT_NAME = "Zeroshin"
-local function applyEditMode(em, exact)
+local function sharedLayout(em)
+  if em.layout then
+    local ok, info = pcall(C_EditMode.ConvertStringToLayoutInfo, em.layout)
+    return ok and type(info) == "table" and info or nil
+  end
+  -- older bundles carried every layout as a table
   local mine = em.layouts
-  if not mine then return end
-  local presets = (Enum.EditModePresetLayoutsMeta and Enum.EditModePresetLayoutsMeta.NumValues) or 2
-  local account = (Enum.EditModeLayoutType and Enum.EditModeLayoutType.Account) or 1
-  local max = (Constants and Constants.EditModeConsts and Constants.EditModeConsts.EditModeMaxLayoutsPerType) or 5
-  local shared = mine.layouts and mine.layouts[(mine.activeLayout or 0) - presets]
+  local shared = mine and mine.layouts and mine.layouts[(mine.activeLayout or 0) - PRESETS]
+  if not shared then return nil end
+  local copy = {}
+  for k, v in pairs(shared) do copy[k] = v end
+  return copy
+end
+
+-- Import adds the shared layout as its own layout and selects it; the friend's layouts stay.
+-- A second import overwrites it (an older import's "Zeroshin" is renamed). No free account slot
+-- means a character slot; with every slot taken, Edit Mode is left alone.
+local LAYOUT_NAME, OLD_LAYOUT_NAME = "Zeroshin UI", "Zeroshin"
+local function applyEditMode(em)
+  for _, s in ipairs(em.settings or {}) do pcall(C_EditMode.SetAccountSetting, s.setting, s.value) end
+  if em.preset then pcall(C_EditMode.SetActiveLayout, em.preset) return true end
+  local layout = sharedLayout(em)
   local ok, theirs = pcall(C_EditMode.GetLayouts)
-  if exact or not shared or not ok or type(theirs) ~= "table" or type(theirs.layouts) ~= "table" then
-    pcall(C_EditMode.SaveLayouts, mine)
-    if mine.activeLayout then pcall(C_EditMode.SetActiveLayout, mine.activeLayout) end
-    return
+  if not layout or not ok or type(theirs) ~= "table" or type(theirs.layouts) ~= "table" then
+    note("Edit Mode: the shared layout couldn't be read, your layouts stay as they are")
+    return false
   end
-  local layout = {}
-  for k, v in pairs(shared) do layout[k] = v end
-  layout.layoutName, layout.layoutType = LAYOUT_NAME, account
-  local at, accounts, lastAccount = nil, 0, 0
+  local account = (Enum.EditModeLayoutType and Enum.EditModeLayoutType.Account) or 1
+  local character = (Enum.EditModeLayoutType and Enum.EditModeLayoutType.Character) or 2
+  local max = (Constants and Constants.EditModeConsts and Constants.EditModeConsts.EditModeMaxLayoutsPerType) or 5
+  local at, old, accounts, chars, lastAccount = nil, nil, 0, 0, 0
   for i, l in ipairs(theirs.layouts) do
-    if l.layoutName == LAYOUT_NAME then at = i end
-    if l.layoutType == account then accounts, lastAccount = accounts + 1, i end
+    if l.layoutName == LAYOUT_NAME then at = i elseif l.layoutName == OLD_LAYOUT_NAME then old = i end
+    if l.layoutType == account then accounts, lastAccount = accounts + 1, i
+    elseif l.layoutType == character then chars = chars + 1 end
   end
+  at = at or old
+  layout.layoutName = LAYOUT_NAME
   if at then
+    layout.layoutType = theirs.layouts[at].layoutType
     theirs.layouts[at] = layout
-    note(("Edit Mode: layout %s updated and active"):format(LAYOUT_NAME))
+    note(("Edit Mode: layout %s updated and selected"):format(LAYOUT_NAME))
   elseif accounts < max then
-    at = lastAccount + 1   -- account layouts come before character ones
+    layout.layoutType, at = account, lastAccount + 1   -- account layouts come before character ones
     table.insert(theirs.layouts, at, layout)
-    note(("Edit Mode: layout %s added and active"):format(LAYOUT_NAME))
+    note(("Edit Mode: layout %s added and selected"):format(LAYOUT_NAME))
+  elseif chars < max then
+    layout.layoutType, at = character, #theirs.layouts + 1
+    theirs.layouts[at] = layout
+    note(("Edit Mode: layout %s added for this character (every account slot is taken)"):format(LAYOUT_NAME))
   else
-    pcall(C_EditMode.SaveLayouts, mine)
-    if mine.activeLayout then pcall(C_EditMode.SetActiveLayout, mine.activeLayout) end
-    note(("Edit Mode: no free layout slot for %s, so all your layouts were replaced"):format(LAYOUT_NAME))
-    return
+    note(("Edit Mode: every layout slot is taken, so %s wasn't added. Delete a layout in Edit Mode, then /z update"):format(LAYOUT_NAME))
+    return false
   end
-  theirs.activeLayout = at + presets
+  theirs.activeLayout = at + PRESETS
   pcall(C_EditMode.SaveLayouts, theirs)
   pcall(C_EditMode.SetActiveLayout, theirs.activeLayout)
+  return true
 end
 
 local function values(t)
@@ -163,8 +191,10 @@ local function readChat()
   return out
 end
 
+local function playerKey() return UnitGUID and UnitGUID("player") or UnitName("player") end
+
 local function readAddons()
-  local out, who = {}, UnitName("player")
+  local out, who = {}, playerKey()
   for i = 1, C_AddOns.GetNumAddOns() do
     local name = C_AddOns.GetAddOnInfo(i)
     if name then out[name] = C_AddOns.GetAddOnEnableState(name, who) > 0 end
@@ -224,16 +254,19 @@ local function applyChat(chat)
   end
 end
 
-local function applyAddons(wanted)
-  local who, changed = UnitName("player"), 0
+-- Per character, like the AddOn list in game: undo then puts back exactly what was switched, and each
+-- alt gets its own popup.
+local function applyAddons(wanted, character)
+  local changed, called = 0, false
   local have = readAddons()
   for name, on in pairs(wanted) do
-    if not KEEP_ADDONS[name] and have[name] ~= nil and have[name] ~= on then
-      if on then C_AddOns.EnableAddOn(name, who) else C_AddOns.DisableAddOn(name, who) end
-      changed = changed + 1
+    if not KEEP_ADDONS[name] and have[name] ~= nil then
+      if on then C_AddOns.EnableAddOn(name, character) else C_AddOns.DisableAddOn(name, character) end
+      called = true
+      if have[name] ~= on then changed = changed + 1 end
     end
   end
-  if changed > 0 then C_AddOns.SaveAddOns() end
+  if called then C_AddOns.SaveAddOns() end
   return changed
 end
 
@@ -246,12 +279,13 @@ local function findMacro(name, perChar)
   end
 end
 
--- General macros that cast nothing: /cast, /castsequence and /castrandom make a macro class-specific
+-- General macros that cast nothing: /cast (or /spell), /castsequence and /castrandom (or /userandom) make a macro
+-- class-specific. /use stays allowed: a name can't tell an item from a spell (potions share recipe names).
 local function isShareableMacro(body)
   for line in (body or ""):gmatch("[^\n]+") do
     local cmd = line:match("^%s*/(%a+)")
     cmd = cmd and cmd:lower()
-    if cmd == "cast" or cmd == "castsequence" or cmd == "castrandom" then return false end
+    if cmd == "cast" or cmd == "spell" or cmd == "castsequence" or cmd == "castrandom" or cmd == "userandom" then return false end
   end
   return true
 end
@@ -265,22 +299,29 @@ local function readGeneralMacros(shareOnly)
   return out
 end
 
-local function applyGeneralMacros(wanted, exact)
-  local changed = 0
-  if exact then  -- undo: the General tab goes back exactly as it was
-    for i = (GetNumMacros()), 1, -1 do
-      local name = GetMacroInfo(i)
-      if name and not wanted[name] then DeleteMacro(i); changed = changed + 1 end
+-- Import adds and updates. Only a macro an import created counts as brought (ZSettingsDB.owned); one
+-- the friend already had under that name is updated but stays theirs. A brought macro the setup no
+-- longer has is deleted. A macro the friend made themselves is never deleted.
+local function applyGeneralMacros(wanted)
+  ZSettingsDB = ZSettingsDB or {}
+  local owned, changed = ZSettingsDB.owned or {}, 0
+  for name in pairs(owned) do
+    if not wanted[name] then
+      local i = findMacro(name, false)
+      if i then DeleteMacro(i); changed = changed + 1 end
+      owned[name] = nil
     end
   end
   for name, m in pairs(wanted) do
     local i = findMacro(name, false)
-    if not i then CreateMacro(name, m[1], m[2], false); changed = changed + 1
+    if not i then
+      CreateMacro(name, m[1], m[2], false); owned[name] = true; changed = changed + 1
     else
       local _, icon, body = GetMacroInfo(i)
       if tostring(icon) ~= tostring(m[1]) or body ~= m[2] then EditMacro(i, name, m[1], m[2]); changed = changed + 1 end
     end
   end
+  ZSettingsDB.owned = owned
   return changed
 end
 
@@ -292,12 +333,11 @@ local function readClicks(interactionOnly)
   return out
 end
 
-local function applyClicks(wanted, exact)
+-- replaces target/menu clicks and keeps the friend's own spell and macro clicks
+local function applyClicks(wanted)
   local profile = {}
-  if not exact then  -- import keeps your own spell and macro clicks and replaces target/menu clicks
-    for _, b in ipairs(C_ClickBindings.GetProfileInfo()) do
-      if b.type ~= Enum.ClickBindingType.Interaction then profile[#profile + 1] = b end
-    end
+  for _, b in ipairs(C_ClickBindings.GetProfileInfo()) do
+    if b.type ~= Enum.ClickBindingType.Interaction then profile[#profile + 1] = b end
   end
   for _, b in ipairs(wanted) do profile[#profile + 1] = b end
   C_ClickBindings.SetProfileByInfo(profile)
@@ -329,32 +369,42 @@ local function readAddonSettings()
   return out, skipped
 end
 
--- imported addon tables stay assigned until the game saves them at /reload or logout
-local pending = {}
+-- imported addon tables stay assigned until the game saves them at /reload or logout; CLEAR puts
+-- back a table that didn't exist before
+local pending, CLEAR = {}, {}
 local function assignPending()
-  for var, value in pairs(pending) do _G[var] = value end
+  for var, value in pairs(pending) do
+    if value == CLEAR then _G[var] = nil else _G[var] = value end
+  end
 end
 
--- exact (undo) restores every table it saved, the ones import leaves alone included
-local function applyAddonSettings(settings, exact)
-  local installed, done, missing = {}, 0, {}
+-- The tables an import really applies here: loaded addons only (WoW saves no table for an addon that
+-- isn't running), shareable tables only, never the personal addons. Missing lists the rest by addon.
+local function settingsToApply(settings)
+  local loaded, out, missing = {}, {}, {}
   for i = 1, C_AddOns.GetNumAddOns() do
     local name = C_AddOns.GetAddOnInfo(i)
-    if name then installed[name] = true end
+    if name and C_AddOns.IsAddOnLoaded(name) then loaded[name] = true end
   end
-  for var, entry in pairs(settings) do
-    if installed[entry.addon] and not KEEP_ADDONS[entry.addon] then
-      local ok, value = pcall(C_EncodingUtil.DeserializeCBOR, entry.data)
-      if ok and (exact or shareable(var, value)) then pending[var] = value; done = done + 1 end
-    else
-      missing[entry.addon] = true
+  for var, e in pairs(settings) do
+    if not KEEP_ADDONS[e.addon] then
+      if loaded[e.addon] then
+        local ok, value = pcall(C_EncodingUtil.DeserializeCBOR, e.data)
+        if ok and shareable(var, value) then out[var] = { addon = e.addon, value = value } end
+      else
+        missing[e.addon] = true
+      end
     end
   end
+  return out, missing
+end
+
+-- applies the given tables (see settingsDiff); they stay assigned through the save at reload or logout
+local function applyAddonSettings(tables)
+  local done = 0
+  for var, t in pairs(tables) do pending[var] = t.value; done = done + 1 end
   assignPending()
-  local list = {}
-  for a in pairs(missing) do list[#list + 1] = a end
-  table.sort(list)
-  return done, list
+  return done
 end
 
 local window
@@ -388,18 +438,27 @@ local function convertBinds(binds, from, to)
   return out
 end
 
--- One key press: the key right of Tab types Q on QWERTY and A on Belgian AZERTY.
+-- One key press: the key right of Tab types Q on QWERTY and A on Belgian AZERTY. Any other key keeps
+-- waiting (Shift first, a stray key); Escape cancels and nothing changes.
 local function askLayout(done)
   if InCombatLockdown() then say("not in combat") return end
   window:EnableKeyboard(true)
   window:SetPropagateKeyboardInput(false)
-  window.hint:SetText("Press the key right of Tab (the one below 1 and 2)")
+  window.hint:SetText("Press the key right of Tab (the one below 1 and 2), or Escape to cancel")
   window:SetScript("OnKeyDown", function(self, key)
     key = (key or ""):upper()
+    local layout = (key == "Q" and "qwerty") or (key == "A" and "azerty-be") or nil
+    if not layout and key ~= "ESCAPE" then
+      self.hint:SetText("Not that one: the key right of Tab (Q or A on your keyboard), or Escape to cancel")
+      return
+    end
     self:SetScript("OnKeyDown", nil)
     self:EnableKeyboard(false)
-    local layout = (key == "Q" and "qwerty") or (key == "A" and "azerty-be") or "unknown"
-    if layout == "unknown" then say(("key '%s' isn't a layout I know: keybinds stay as they are"):format(key)) end
+    if not layout then
+      self:Hide()
+      say("cancelled, nothing changed")
+      return
+    end
     done(layout)
   end)
 end
@@ -410,25 +469,331 @@ local function capture(forSharing)
   local settings, skipped = readAddonSettings()
   return {
     format = 1, made = date("%Y-%m-%d %H:%M"), by = UnitName("player"),
-    cvars = readCVars(), binds = readBinds(), editmode = readEditMode(), chat = readChat(),
+    cvars = readCVars(), binds = readBinds(), editmode = readEditMode(forSharing), chat = readChat(),
     addons = readAddons(), macros = readGeneralMacros(forSharing), clicks = readClicks(forSharing),
     settings = settings,
   }, skipped
 end
 
-local function applyAll(data, exact)
-  applyCVars(data.cvars or {})
-  applyBinds(data.binds or {})
-  if data.editmode then
-    applyEditMode(data.editmode, exact)
-    for _, s in ipairs(data.editmode.settings or {}) do pcall(C_EditMode.SetAccountSetting, s.setting, s.value) end
+-- the setup in parts ----------------------------------------------------------------------------
+-- Each part applies on its own. Account parts are stored once for every character, character parts
+-- per character: that decides where the popup remembers what was applied.
+-- live: compared with the friend's UI as it is now. applied: compared with what was last applied,
+-- because addons, Blizzard's layout save and rounded chat positions change those on their own.
+local PARTS = {
+  { key = "cvars", label = "Interface and nameplate settings", compare = "live" },
+  { key = "binds", label = "Keybinds", compare = "live" },
+  { key = "editmode", label = "Edit Mode layout", compare = "applied", scope = "character" },
+  { key = "chat", label = "Chat windows", compare = "applied", scope = "character" },
+  { key = "addons", label = "Addons on or off", compare = "live" },
+  { key = "settings", label = "Addon settings", compare = "applied", scope = "account" },
+  { key = "macros", label = "General macros", compare = "live" },
+  { key = "clicks", label = "Click casting", compare = "live" },
+}
+
+-- addon settings apply through settingsDiff in applySetup, table by table
+local function applyPart(key, data)
+  if data[key] == nil then return end   -- a part the setup doesn't carry is left alone
+  if key == "cvars" then applyCVars(data.cvars)
+  elseif key == "binds" then applyBinds(data.binds)
+  elseif key == "editmode" then return applyEditMode(data.editmode)
+  elseif key == "chat" then applyChat(data.chat)
+  elseif key == "addons" then return applyAddons(data.addons, playerKey())
+  elseif key == "macros" then return applyGeneralMacros(data.macros)
+  elseif key == "clicks" then applyClicks(data.clicks) end
+end
+
+-- A part counts as updated when its content differs from what was last applied. Keys are sorted, so
+-- table order can't fake a change; addon tables and the layout are compared decoded, not as bytes.
+local function canon(v, out)
+  local t = type(v)
+  if t == "table" then
+    local keys = {}
+    for k in pairs(v) do keys[#keys + 1] = k end
+    table.sort(keys, function(a, b) return type(a) .. tostring(a) < type(b) .. tostring(b) end)
+    out[#out + 1] = "{"
+    for _, k in ipairs(keys) do canon(k, out); out[#out + 1] = "="; canon(v[k], out); out[#out + 1] = ";" end
+    out[#out + 1] = "}"
+  elseif t == "string" then
+    out[#out + 1] = #v .. ":" .. v
+  else
+    out[#out + 1] = t:sub(1, 1) .. tostring(v)
   end
-  if data.chat then applyChat(data.chat) end
-  local addonsChanged = data.addons and applyAddons(data.addons) or 0
-  local macros = applyGeneralMacros(data.macros or {}, exact)
-  applyClicks(data.clicks or {}, exact)
-  local tables, missing = applyAddonSettings(data.settings or {}, exact)
-  return macros, tables, missing, addonsChanged
+end
+
+local function hash(v)
+  local out = {}
+  canon(v, out)
+  local s, h = table.concat(out), 5381
+  for i = 1, #s, 4096 do
+    for _, b in ipairs({ s:byte(i, math.min(i + 4095, #s)) }) do h = (h * 33 + b) % 4294967296 end
+  end
+  return h
+end
+
+local function partHashes(data)
+  local out = {}
+  for _, p in ipairs(PARTS) do
+    local v = data[p.key]
+    if v ~= nil then
+      if p.key == "editmode" and v.layout then
+        v = { layout = sharedLayout(v) or v.layout, settings = v.settings }
+      end
+      out[p.key] = hash(v)
+    end
+  end
+  return out
+end
+
+local function charKey() return (UnitName("player") or "?") .. "-" .. (GetRealmName() or "?") end
+
+local function appliedFor(scope)
+  ZSettingsDB = ZSettingsDB or {}
+  ZSettingsDB.applied = ZSettingsDB.applied or {}
+  local key = scope == "account" and "account" or charKey()
+  ZSettingsDB.applied[key] = ZSettingsDB.applied[key] or {}
+  return ZSettingsDB.applied[key]
+end
+
+-- Addon settings are remembered per table, so a main and an alt with different addons running each
+-- compare only their own. A table counts as changed when its content differs from what was applied.
+local function seenSettings()
+  local applied = appliedFor("account")
+  if type(applied.settings) ~= "table" then applied.settings = {} end
+  return applied.settings
+end
+
+local function settingsDiff(settings)
+  local apply, missing = settingsToApply(settings)
+  local seen, out = seenSettings(), {}
+  for var, t in pairs(apply) do
+    t.hash = hash(t.value)
+    if seen[var] ~= t.hash then out[var] = t end
+  end
+  return out, missing
+end
+
+local function laterFor()
+  ZSettingsDB = ZSettingsDB or {}
+  if type(ZSettingsDB.later) ~= "table" then ZSettingsDB.later = {} end
+  return ZSettingsDB.later
+end
+
+local function allowedCVars()
+  local allowed = {}
+  for _, name in ipairs(syncableCVars()) do allowed[name] = true end
+  return allowed
+end
+
+local function listHash(list)
+  local items = {}
+  for _, v in ipairs(list or {}) do local out = {}; canon(v, out); items[#items + 1] = table.concat(out) end
+  table.sort(items)
+  return hash(items)
+end
+
+-- does this live part of the setup differ from the friend's UI right now
+local function differsLive(key, data)
+  local v = data[key]
+  if key == "cvars" then
+    local allowed = allowedCVars()
+    for name, value in pairs(v) do
+      if allowed[name] and C_CVar.GetCVar(name) ~= value then return true end
+    end
+  elseif key == "binds" then
+    local layout, from = ZSettingsDB and ZSettingsDB.layout, data.layout or "qwerty"
+    local wanted = (layout and from ~= "unknown" and from ~= layout) and convertBinds(v, from, layout) or v
+    return hash(wanted) ~= hash(readBinds())
+  elseif key == "macros" then
+    for name, m in pairs(v) do
+      local i = findMacro(name, false)
+      if not i then return true end
+      local _, icon, body = GetMacroInfo(i)
+      if tostring(icon) ~= tostring(m[1]) or body ~= m[2] then return true end
+    end
+    for name in pairs(ZSettingsDB and ZSettingsDB.owned or {}) do
+      if not v[name] and findMacro(name, false) then return true end
+    end
+  elseif key == "addons" then
+    local have = readAddons()
+    for name, on in pairs(v) do
+      if not KEEP_ADDONS[name] and have[name] ~= nil and have[name] ~= on then return true end
+    end
+  elseif key == "clicks" then
+    return listHash(v) ~= listHash(readClicks(true))
+  end
+  return false
+end
+
+-- the parts this setup would change here; force lists every part it carries
+local function partsToOffer(data, force)
+  local hashes, offer, updated = partHashes(data), {}, {}
+  for _, p in ipairs(PARTS) do
+    if data[p.key] ~= nil then
+      local differs
+      if p.compare == "live" then differs = differsLive(p.key, data)
+      elseif p.key == "settings" then differs = next((settingsDiff(data.settings))) ~= nil
+      else differs = hashes[p.key] ~= appliedFor(p.scope)[p.key] end
+      if differs or force then offer[p.key] = true end
+      if differs then updated[p.key] = true end
+    end
+  end
+  return offer, updated
+end
+
+-- what /z undo needs to put back: for each part about to be applied, only what it will change, so a
+-- later change of the friend's own is never undone and another character's apply is never repeated
+local function snapshot(data, chosen)
+  local snap = { format = 1, applied = {} }
+  for _, p in ipairs(PARTS) do   -- what was last applied goes back too, so undo leaves no false "differs"
+    if chosen[p.key] and data[p.key] ~= nil and p.compare == "applied" and p.key ~= "settings" then
+      snap.applied[p.key] = appliedFor(p.scope)[p.key] or false
+    end
+  end
+  if chosen.cvars and data.cvars then
+    snap.cvars = {}
+    local allowed = allowedCVars()
+    for name, value in pairs(data.cvars) do
+      local now = C_CVar.GetCVar(name)
+      if allowed[name] and now ~= value then snap.cvars[name] = now end
+    end
+  end
+  if chosen.binds and data.binds then   -- data.binds is already converted to this keyboard
+    snap.binds = {}
+    local now = readBinds()
+    for key, command in pairs(now) do if data.binds[key] ~= command then snap.binds[key] = command end end
+    for key, command in pairs(data.binds) do if now[key] ~= command then snap.binds[key] = now[key] or false end end
+  end
+  if chosen.editmode and data.editmode then
+    local ok, theirs = pcall(C_EditMode.GetLayouts)
+    local ok2, settings = pcall(C_EditMode.GetAccountSettings)
+    if ok and type(theirs) == "table" then
+      local slot, old
+      for _, l in ipairs(theirs.layouts or {}) do
+        if l.layoutName == LAYOUT_NAME then slot = l elseif l.layoutName == OLD_LAYOUT_NAME then old = l end
+      end
+      local active = theirs.layouts and theirs.layouts[(theirs.activeLayout or 0) - PRESETS]
+      snap.editmode = { slot = slot or old or false, activeName = active and active.layoutName or nil,
+        activePreset = not active and theirs.activeLayout or nil, settings = ok2 and settings or nil }
+    end
+  end
+  if chosen.chat and data.chat then snap.chat = readChat() end
+  if chosen.addons and data.addons then
+    snap.addons = {}
+    local have = readAddons()
+    for name, on in pairs(data.addons) do
+      if not KEEP_ADDONS[name] and have[name] ~= nil and have[name] ~= on then snap.addons[name] = have[name] end
+    end
+  end
+  if chosen.settings and data.settings then
+    snap.settings, snap.applied.settings = {}, {}
+    local seen = seenSettings()
+    for var, t in pairs((settingsDiff(data.settings))) do   -- the tables that will change, whatever their size
+      snap.applied.settings[var] = seen[var] or false
+      local value = _G[var]
+      if value == nil then snap.settings[var] = { addon = t.addon, clear = true }
+      else
+        local ok, packed = pcall(C_EncodingUtil.SerializeCBOR, value)
+        if ok then snap.settings[var] = { addon = t.addon, data = packed } end
+      end
+    end
+  end
+  if chosen.macros and data.macros then
+    local before, owned = {}, {}
+    for name in pairs(ZSettingsDB and ZSettingsDB.owned or {}) do owned[name] = true end
+    for name, m in pairs(data.macros) do
+      local i = findMacro(name, false)
+      if not i then before[name] = false
+      else
+        local _, icon, body = GetMacroInfo(i)
+        if tostring(icon) ~= tostring(m[1]) or body ~= m[2] then before[name] = { icon, body } end
+      end
+    end
+    for name in pairs(owned) do
+      local i = not data.macros[name] and findMacro(name, false)
+      if i then local _, icon, body = GetMacroInfo(i); before[name] = { icon, body } end
+    end
+    snap.macros = { before = before, owned = owned }
+  end
+  if chosen.clicks and data.clicks then snap.clicks = readClicks(true) end   -- target and menu clicks only
+  return snap
+end
+
+-- puts back exactly what a snapshot holds; parts it doesn't hold stay as they are
+local function restore(snap)
+  if snap.cvars then for name, value in pairs(snap.cvars) do pcall(C_CVar.SetCVar, name, value) end end
+  if snap.binds then
+    local now = readBinds()
+    for key, command in pairs(snap.binds) do
+      if command then SetBinding(key, command, context(command))
+      elseif now[key] then SetBinding(key, nil, context(now[key])) end
+    end
+    SaveBindings(GetCurrentBindingSet())
+  end
+  local em = snap.editmode
+  if em then
+    for _, x in ipairs(em.settings or {}) do pcall(C_EditMode.SetAccountSetting, x.setting, x.value) end
+    local ok, theirs = pcall(C_EditMode.GetLayouts)
+    if ok and type(theirs) == "table" and type(theirs.layouts) == "table" then
+      -- only the shared layout's slot goes back; layouts made since stay. An account layout this apply
+      -- added stays while another character still has it applied.
+      local account = (Enum.EditModeLayoutType and Enum.EditModeLayoutType.Account) or 1
+      local others = false
+      for key, applied in pairs(ZSettingsDB.applied or {}) do
+        if key ~= "account" and key ~= charKey() and applied.editmode then others = true end
+      end
+      local current = theirs.layouts[(theirs.activeLayout or 0) - PRESETS]
+      local currentName = current and current.layoutName
+      for i, l in ipairs(theirs.layouts) do
+        if l.layoutName == LAYOUT_NAME then
+          if em.slot then theirs.layouts[i] = em.slot
+          elseif l.layoutType ~= account or not others then table.remove(theirs.layouts, i) end
+          break
+        end
+      end
+      -- the layout selected before; if it's gone, the one selected now; else Blizzard's first preset
+      local function indexOf(name)
+        for i, l in ipairs(theirs.layouts) do if name and l.layoutName == name then return i + PRESETS end end
+      end
+      local active = em.activePreset or indexOf(em.activeName)
+        or (currentName ~= LAYOUT_NAME and indexOf(currentName))
+        or (not current and (theirs.activeLayout or 0) <= PRESETS and theirs.activeLayout) or 1
+      theirs.activeLayout = active
+      pcall(C_EditMode.SaveLayouts, theirs)
+      pcall(C_EditMode.SetActiveLayout, active)
+    end
+  end
+  if snap.chat then applyChat(snap.chat) end
+  if snap.addons then applyAddons(snap.addons, playerKey()) end
+  if snap.settings then
+    local seen = seenSettings()
+    for var, before in pairs(snap.applied and snap.applied.settings or {}) do seen[var] = before or nil end
+    for var, e in pairs(snap.settings) do
+      if e.clear then pending[var] = CLEAR
+      else
+        local ok, value = pcall(C_EncodingUtil.DeserializeCBOR, e.data)
+        if ok then pending[var] = value end
+      end
+    end
+    assignPending()
+  end
+  if snap.macros then
+    -- the brought-macros list changes only for the macros this apply created or deleted, so another
+    -- character's apply since then keeps its own
+    local owned = ZSettingsDB.owned or {}
+    for name, m in pairs(snap.macros.before) do
+      local i = findMacro(name, false)
+      if m == false then
+        if i then DeleteMacro(i) end
+        owned[name] = nil
+      else
+        if i then EditMacro(i, name, m[1], m[2]) else CreateMacro(name, m[1], m[2], false) end
+        if snap.macros.owned[name] then owned[name] = true end
+      end
+    end
+    ZSettingsDB.owned = owned
+  end
+  if snap.clicks then applyClicks(snap.clicks) end   -- spell and macro clicks stay as they are now
 end
 
 local function encode(data)
@@ -445,22 +810,85 @@ local function decode(text)
   return data
 end
 
-local function doImport(text, layout)
+-- applies the chosen parts (all when chosen is nil); the state they replace is kept per character
+-- for /z undo, and the parts compared by what was applied remember it
+local function applySetup(text, layout, chosen)
   if InCombatLockdown() then say("not in combat") return false end
   local data, err = decode(text)
   if not data then say(err) return false end
+  if not chosen then
+    chosen = {}
+    for _, p in ipairs(PARTS) do chosen[p.key] = true end
+  end
+  local hashes = partHashes(data)
   local from = data.layout or "qwerty"
-  if layout ~= "unknown" and from ~= "unknown" and from ~= layout then
+  if chosen.binds and layout ~= "unknown" and from ~= "unknown" and from ~= layout then
     data.binds = convertBinds(data.binds or {}, from, layout)
     note(("keybinds converted from %s to %s"):format(LAYOUT_NAMES[from] or from, LAYOUT_NAMES[layout] or layout))
   end
   ZSettingsDB = ZSettingsDB or {}
-  ZSettingsDB.undo = encode((capture(false)))
-  local macros, tables, missing, addons = applyAll(data, false)
-  note(("imported %s's setup (%s): %d macros, %d addon settings, %d addons switched."):format(
-    data.by or "?", data.made or "?", macros, tables, addons))
-  if #missing > 0 then note("settings for addons you don't have were skipped: " .. table.concat(missing, ", ")) end
-  note("/z undo puts back what you had")
+  -- an older version's single undo is two steps back once this apply lands: it goes
+  if type(ZSettingsDB.undo) ~= "table" then ZSettingsDB.undo = {} end
+  local snap = snapshot(data, chosen)
+  snap.setup = hash(text)
+  -- A second apply of the same setup (the settings of an addon switched on by the first, after the
+  -- reload) joins the first step: one undo reverts the whole update. The earliest state wins.
+  local prev = decode(ZSettingsDB.undo[charKey()])
+  if prev and prev.setup == snap.setup then
+    for _, key in ipairs({ "cvars", "binds", "addons", "settings" }) do
+      if prev[key] then
+        snap[key] = snap[key] or {}
+        for k, v in pairs(prev[key]) do snap[key][k] = v end
+      end
+    end
+    if prev.macros then
+      snap.macros = snap.macros or { before = {}, owned = prev.macros.owned }
+      for k, v in pairs(prev.macros.before) do snap.macros.before[k] = v end
+      snap.macros.owned = prev.macros.owned
+    end
+    for _, key in ipairs({ "editmode", "chat", "clicks" }) do snap[key] = prev[key] or snap[key] end
+    for k, v in pairs(prev.applied or {}) do
+      if k == "settings" then
+        snap.applied.settings = snap.applied.settings or {}
+        for var, h in pairs(v) do snap.applied.settings[var] = h end
+      else
+        snap.applied[k] = v
+      end
+    end
+  end
+  ZSettingsDB.undo[charKey()] = encode(snap)
+  local tables, missing = {}, {}
+  if chosen.settings and data.settings then tables, missing = settingsDiff(data.settings) end
+  local done, macros, settingsDone, addons = {}, 0, 0, 0
+  for _, p in ipairs(PARTS) do
+    if chosen[p.key] and data[p.key] ~= nil then
+      local a
+      if p.key == "settings" then
+        a = applyAddonSettings(tables)
+        local seen = seenSettings()
+        for var, t in pairs(tables) do seen[var] = t.hash end
+      else
+        a = applyPart(p.key, data)
+      end
+      if p.key == "macros" then macros = a or 0
+      elseif p.key == "settings" then settingsDone = a or 0
+      elseif p.key == "addons" then addons = a or 0 end
+      if p.compare == "applied" and p.key ~= "settings" and (p.key ~= "editmode" or a) then
+        appliedFor(p.scope)[p.key] = hashes[p.key]
+      end
+      done[#done + 1] = p.label:lower()
+    end
+  end
+  laterFor()[charKey()] = nil
+  note(("applied %s's setup (%s): %s"):format(data.by or "?", data.made or "?", table.concat(done, ", ")))
+  note(("%d macros, %d addon settings, %d addons switched"):format(macros, settingsDone, addons))
+  local skipped = {}
+  for addon in pairs(missing) do skipped[#skipped + 1] = addon end
+  table.sort(skipped)
+  if #skipped > 0 then
+    note("settings wait for addons that aren't running (off, or loading on demand): " .. table.concat(skipped, ", "))
+  end
+  note("/z undo puts back what this apply changed")
   return true
 end
 
@@ -499,12 +927,216 @@ local function bundle()
   return Z_BUNDLE, data
 end
 
+-- the key is asked once and remembered; /z import asks again to correct a wrong press
+local function withLayout(ask, title, done)
+  ZSettingsDB = ZSettingsDB or {}
+  if ZSettingsDB.layout and not ask then done(ZSettingsDB.layout) return end
+  showPrompt(title)
+  askLayout(function(layout)
+    window:Hide()
+    ZSettingsDB.layout = layout
+    done(layout)
+  end)
+end
+
+-- the update popup ------------------------------------------------------------------------------
+
+local popup
+local function showUpdate(text, data, offer, updated)
+  if not popup then
+    popup = CreateFrame("Frame", "ZSettingsUpdate", UIParent, "BackdropTemplate")
+    popup:SetSize(400, 150 + #PARTS * 24)
+    popup:SetPoint("CENTER")
+    popup:SetFrameStrata("DIALOG")
+    popup:SetBackdrop({ bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+      edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", tile = true, tileSize = 32, edgeSize = 32,
+      insets = { left = 8, right = 8, top = 8, bottom = 8 } })
+    popup.title = popup:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    popup.title:SetPoint("TOP", 0, -20)
+    popup.note = popup:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    popup.note:SetPoint("TOP", popup.title, "BOTTOM", 0, -8)
+    popup.boxes = {}
+    for i, p in ipairs(PARTS) do
+      local box = CreateFrame("CheckButton", nil, popup, "UICheckButtonTemplate")
+      box:SetPoint("TOPLEFT", 28, -60 - (i - 1) * 24)
+      box.label = popup:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+      box.label:SetPoint("LEFT", box, "RIGHT", 4, 0)
+      box.key = p.key
+      popup.boxes[i] = box
+    end
+    popup.apply = CreateFrame("Button", nil, popup, "UIPanelButtonTemplate")
+    popup.apply:SetSize(120, 24)
+    popup.apply:SetPoint("BOTTOMRIGHT", popup, "BOTTOM", -6, 18)
+    popup.apply:SetText("Apply")
+    popup.later = CreateFrame("Button", nil, popup, "UIPanelButtonTemplate")
+    popup.later:SetSize(120, 24)
+    popup.later:SetPoint("BOTTOMLEFT", popup, "BOTTOM", 6, 18)
+    popup.later:SetText("Later")
+  end
+  popup.title:SetText(("%s's setup, %s"):format(data.by or "?", data.made or "?"))
+  popup.note:SetText(data.note or "Ticked parts are applied, then the UI reloads")
+  local row = 0
+  for i, p in ipairs(PARTS) do
+    local box = popup.boxes[i]
+    if offer[p.key] then
+      box:ClearAllPoints()
+      box:SetPoint("TOPLEFT", 28, -60 - row * 24)
+      row = row + 1
+      box:SetChecked(true)
+      box.label:SetText(p.label .. (updated[p.key] and " (updated)" or ""))
+      box:Show(); box.label:Show()
+    else
+      box:SetChecked(false)
+      box:Hide(); box.label:Hide()
+    end
+  end
+  popup:SetHeight(150 + row * 24)
+  popup.apply:SetScript("OnClick", function()
+    local chosen, any = {}, false
+    for _, box in ipairs(popup.boxes) do
+      if offer[box.key] and box:GetChecked() then chosen[box.key], any = true, true end
+    end
+    if not any then say("nothing ticked") return end
+    popup:Hide()
+    withLayout(false, "Z-Settings: your keyboard", function(layout)
+      if applySetup(text, layout, chosen) then ReloadUI() end
+    end)
+  end)
+  popup.later:SetScript("OnClick", function()
+    laterFor()[charKey()] = hash(text)   -- the exact setup, so a re-export in the same minute still shows
+    popup:Hide()
+    say("/z update opens this again")
+  end)
+  popup:Show()
+end
+
+local waitingForCombat
+-- force: /z update lists every part, also after Later and on a PC that exports
+local function checkForUpdate(force)
+  local text, data = bundle()
+  if not text then if force then say(data) end return end
+  ZSettingsDB = ZSettingsDB or {}
+  -- a PC that exports is the source: ZBundle.lua there trails the newest export until the next commit
+  if not force and (ZSettingsDB.export or laterFor()[charKey()] == hash(text)) then return end
+  local offer, updated = partsToOffer(data, force)
+  if not next(offer) then
+    if force then say("this setup carries nothing to apply") end
+    return
+  end
+  if InCombatLockdown() then waitingForCombat = { force = force } return end
+  showUpdate(text, data, offer, updated)
+end
+
+-- An older version's undo: a full capture from before its import, made on one character. Put back
+-- without touching what the friend made since: only the macros the setup brings, only the shared layout
+-- (or the whole list, when that version replaced it for lack of a free slot), only target/menu clicks,
+-- only the addon tables that version wrote.
+local function legacyRestore(data)
+  local _, current = bundle()
+  current = type(current) == "table" and current or {}
+  applyCVars(data.cvars or {})
+  if data.binds then applyBinds(data.binds) end
+  local em = data.editmode
+  if em and em.layouts then
+    for _, x in ipairs(em.settings or {}) do pcall(C_EditMode.SetAccountSetting, x.setting, x.value) end
+    local had, missing = false, false
+    local ok, theirs = pcall(C_EditMode.GetLayouts)
+    if ok and type(theirs) == "table" and type(theirs.layouts) == "table" then
+      local now = {}
+      for _, l in ipairs(theirs.layouts) do now[l.layoutName] = true end
+      for _, l in ipairs(em.layouts.layouts or {}) do
+        if l.layoutName == LAYOUT_NAME or l.layoutName == OLD_LAYOUT_NAME then had = true end
+        if not now[l.layoutName] then missing = true end
+      end
+      local active = em.layouts.layouts and em.layouts.layouts[(em.layouts.activeLayout or 0) - PRESETS]
+      if missing then
+        theirs = em.layouts   -- their own layouts were replaced wholesale: the whole list comes back
+      else
+        for i = #theirs.layouts, 1, -1 do
+          local name = theirs.layouts[i].layoutName
+          if not had and (name == LAYOUT_NAME or name == OLD_LAYOUT_NAME) then table.remove(theirs.layouts, i) end
+        end
+      end
+      local index = not active and em.layouts.activeLayout or nil
+      for i, l in ipairs(theirs.layouts) do if not index and active and l.layoutName == active.layoutName then index = i + PRESETS end end
+      index = index or 1
+      theirs.activeLayout = index
+      pcall(C_EditMode.SaveLayouts, theirs)
+      pcall(C_EditMode.SetActiveLayout, index)
+    end
+  end
+  if data.chat then applyChat(data.chat) end
+  if data.addons then applyAddons(data.addons, playerKey()) end
+  if data.macros then
+    for name in pairs(current.macros or {}) do
+      local i, m = findMacro(name, false), data.macros[name]
+      if m and i then EditMacro(i, name, m[1], m[2])
+      elseif not m and i then DeleteMacro(i) end
+    end
+    ZSettingsDB.owned = nil
+  end
+  if data.clicks then
+    local targetMenu = {}
+    for _, b in ipairs(data.clicks) do
+      if b.type == Enum.ClickBindingType.Interaction then targetMenu[#targetMenu + 1] = b end
+    end
+    applyClicks(targetMenu)
+  end
+  if data.settings then
+    -- a settings table the setup carries goes back; a data table only while it still holds exactly the
+    -- setup's copy (builds before the data-table filter wrote those; later ones never touched them)
+    for var, e in pairs(data.settings) do
+      local ok, value = pcall(C_EncodingUtil.DeserializeCBOR, e.data)
+      local carried = current.settings and current.settings[var]
+      if ok and carried and not KEEP_ADDONS[e.addon] then
+        local okB, theirs = pcall(C_EncodingUtil.DeserializeCBOR, carried.data)
+        if shareable(var, value) or (okB and hash(theirs) == hash(_G[var])) then pending[var] = value end
+      end
+    end
+    assignPending()
+  end
+end
+
+local function undo()
+  ZSettingsDB = ZSettingsDB or {}
+  local key = charKey()
+  local mine = type(ZSettingsDB.undo) == "table" and ZSettingsDB.undo[key]
+  local legacy = type(ZSettingsDB.undo) == "string" and ZSettingsDB.undo   -- an older version's single undo
+  local data = mine and decode(mine)
+  if data then
+    restore(data)
+    ZSettingsDB.undo[key] = nil
+    for _, p in ipairs(PARTS) do
+      local before = data.applied and data.applied[p.key]
+      if before ~= nil and p.key ~= "settings" then appliedFor(p.scope)[p.key] = before or nil end
+    end
+  else
+    data = legacy and decode(legacy)
+    if not data then say("nothing to undo") return end
+    if data.by and data.by ~= UnitName("player") then
+      say(("the undo from the older version belongs to %s: log in there and type /z undo"):format(data.by))
+      return
+    end
+    legacyRestore(data)
+    ZSettingsDB.undo = nil
+    if ZSettingsDB.applied then
+      ZSettingsDB.applied[key] = nil
+      if ZSettingsDB.applied.account then ZSettingsDB.applied.account.settings = nil end
+    end
+  end
+  if type(Z_BUNDLE) == "string" then laterFor()[key] = hash(Z_BUNDLE) end   -- quiet here until the next setup
+  note("what the last apply changed is back as it was")
+  ReloadUI()
+end
+
 SLASH_ZSETTINGS1 = "/z"
 SlashCmdList.ZSETTINGS = function(msg)
-  msg = (msg or ""):lower():gsub("^%s+", ""):gsub("%s+$", "")
-  if InCombatLockdown() and msg ~= "" then say("not in combat") return end
-  if msg == "export" then
+  local cmd, rest = (msg or ""):match("^%s*(%S*)%s*(.-)%s*$")
+  cmd = cmd:lower()
+  if InCombatLockdown() and cmd ~= "" then say("not in combat") return end
+  if cmd == "export" then
     local data, skipped = capture(true)
+    data.note = rest ~= "" and rest or nil
     showPrompt("Z-Settings: export your setup")
     askLayout(function(layout)
       data.layout = layout
@@ -516,36 +1148,42 @@ SlashCmdList.ZSETTINGS = function(msg)
       window:Hide()
       ReloadUI()
     end)
-  elseif msg == "import" then
+  elseif cmd == "import" then
     local text, data = bundle()
     if not text then say(data) return end
-    showPrompt(("Z-Settings: import %s's setup (%s)"):format(data.by or "?", data.made or "?"))
-    askLayout(function(layout)
-      window:Hide()
-      if doImport(text, layout) then ReloadUI() end
+    withLayout(true, ("Z-Settings: import %s's setup (%s)"):format(data.by or "?", data.made or "?"), function(layout)
+      if applySetup(text, layout) then ReloadUI() end
     end)
-  elseif msg == "undo" then
-    local data = ZSettingsDB and ZSettingsDB.undo and decode(ZSettingsDB.undo)
-    if not data then say("nothing to undo") return end
-    applyAll(data, true)
-    ZSettingsDB.undo = nil
-    note("your setup from before the import is back")
-    ReloadUI()
+  elseif cmd == "update" then
+    checkForUpdate(true)
+  elseif cmd == "undo" then
+    undo()
   else
     local text, data = bundle()
-    say("/z import: apply " .. (text and ("%s's setup from %s"):format(data.by or "?", data.made or "?") or "the setup in this addon (none yet)"))
-    say("/z undo: put back what you had before the last import")
-    say("/z export: save your own setup for publishing")
+    say("/z update: choose what to apply from " .. (text and ("%s's setup of %s"):format(data.by or "?", data.made or "?") or "the setup in this addon (none yet)"))
+    say("/z import: apply all of it")
+    say("/z undo: put back what the last apply changed")
+    say("/z export [note]: save your own setup for publishing, with an optional note for friends")
   end
 end
 
--- keeps imported addon settings assigned while the game saves them at /reload or logout,
--- and prints what the last command said before it reloaded the UI
+-- keeps imported addon settings assigned while the game saves them at /reload or logout, prints
+-- what the last command said before it reloaded the UI, and offers a newer setup
 local saver = CreateFrame("Frame")
 saver:RegisterEvent("PLAYER_LOGIN")
 saver:RegisterEvent("PLAYER_LOGOUT")
+saver:RegisterEvent("PLAYER_REGEN_ENABLED")
 saver:SetScript("OnEvent", function(_, event)
   if event == "PLAYER_LOGOUT" then assignPending() return end
+  if event == "PLAYER_REGEN_ENABLED" then
+    if waitingForCombat then
+      local force = waitingForCombat.force
+      waitingForCombat = nil
+      checkForUpdate(force)
+    end
+    return
+  end
   for _, line in ipairs(ZSettingsDB and ZSettingsDB.notice or {}) do say(line) end
   if ZSettingsDB then ZSettingsDB.notice = nil end
+  checkForUpdate(false)
 end)

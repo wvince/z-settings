@@ -1,6 +1,6 @@
 ## Interface: 16001
 ## Title: Z-Settings
-## Notes: Zeroshin's setup for friends: /z import applies it, /z undo reverts it.
+## Notes: Zeroshin's setup for friends: a popup at login applies it, /z undo reverts it.
 ## SavedVariables: ZSettingsDB
 ZBundle.lua
 ZSettings.lua

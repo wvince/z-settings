@@ -48,6 +48,10 @@ local RSCommandLine = private.ImportLib("RareScannerCommandLine")
 local RSRecentlySeenTracker = private.ImportLib("RareScannerRecentlySeenTracker")
 local RSWaypoints = private.ImportLib("RareScannerWaypoints")
 
+if (RSConstants.DEBUG_MODE) then
+	RareScanner.private = private
+end
+
 -- Main button
 local scanner_button = CreateFrame("Button", RSConstants.RS_BUTTON_NAME, UIParent, "SecureActionButtonTemplate, BackdropTemplate")
 scanner_button:Hide();

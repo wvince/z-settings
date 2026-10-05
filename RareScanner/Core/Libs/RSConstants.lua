@@ -303,7 +303,11 @@ RSConstants.PROFILE_DEFAULTS = {
 			animationEventsType = RSConstants.MAP_ANIMATIONS_ON_CLICK,
 			animationVignettes = true,
 			highlightReputation = true,
-			autoGuidanceIcons = true
+			autoGuidanceIcons = true,
+			displayMinimapRoute = true,
+			displayRouteArrows = true,
+			routeColour = { 0.2, 0.8, 1.0 },
+			routeLineThickness = 2
 		},
 		loot = {
 			filteredLootCategories = {},
@@ -410,6 +414,8 @@ RSConstants.CMD_OPEN_EXPLORER = "explorer"
 RSConstants.CMD_RECENTLY_SEEN = "rseen"
 RSConstants.CMD_IMPORT = "import"
 RSConstants.CMD_MIDNIGHT_PRE_PATCH = "midnight"
+RSConstants.CMD_ROUTE = "route"
+RSConstants.CMD_ROUTE_CANCEL = "croute"
 
 ---============================================================================
 -- AtlasNames
@@ -660,6 +666,7 @@ RSConstants.EXPLORER_SCAN_NOT_DONE = "RARESCANNER_EXPLORER_SCAN_NOT_DONE"
 RSConstants.ITEM_LIST_VALIDATION_ERROR = "RARESCANNER_INFO_DIALOG"
 RSConstants.ITEM_LIST_WRONG_IDS_ERROR = "RARESCANNER_ITEM_LIST_WRONG_IDS_ERROR"
 RSConstants.DELETE_GROUP_CONFIRMATION = "RARESCANNER_DELETE_GROUP_CONFIRMATION"
+RSConstants.RESET_ROUTE_CONFIRMATION = "RARESCANNER_RESET_ROUTE_CONFIRMATION"
 
 ---============================================================================
 -- Explorer filters

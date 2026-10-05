@@ -1,4 +1,14 @@
-﻿1.60.09 - 30th September 2026
+﻿1.60.12 - 5th October 2026
+- Updated 'Show points of interest'.
+
+1.60.11 - 3rd October 2026
+- The 'Show points of interest' setting now works with Blizzard's native game controller feature.  Also updated points of interest.
+- Keep in mind that Blizzard's game controller feature is currently in an alpha stage of development so you may experience issues with it whether you use addons or not.
+
+1.60.10 - 2nd October 2026
+- The 'Show zone levels' setting now works with Blizzard's native game controller feature.  Toggling the 'Show zone levels' setting now requires a UI reload.
+
+1.60.09 - 30th September 2026
 - The 'Show coordinates' setting now uses and modifies Blizzard's built-in coordinates.
 - For 'Show points of interest', dungeon levels will now be shown regardless of the 'Show zone levels' setting.
 - The 'Use default map' setting has been removed as it's not needed in Forever.

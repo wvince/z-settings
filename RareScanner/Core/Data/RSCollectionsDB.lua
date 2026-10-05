@@ -1897,9 +1897,9 @@ local function LoadNotCollectedItems(callback, routineTextOutput, manualScan)
 	
 	-- Prepare not collected queries routines
 	local routines = {}
-	--UpdateNotCollectedToys(routines, routineTextOutput)
-	--UpdateNotCollectedPetIDs(routines, routineTextOutput)
-	--UpdateNotCollectedMountIDs(routines, routineTextOutput)
+	UpdateNotCollectedToys(routines, routineTextOutput)
+	UpdateNotCollectedPetIDs(routines, routineTextOutput)
+	UpdateNotCollectedMountIDs(routines, routineTextOutput)
 	UpdateNotCollectedAppearanceItemIDs(routines, routineTextOutput)
 	--UpdateNotCollectedDrakewatchers(routines, routineTextOutput)
 	

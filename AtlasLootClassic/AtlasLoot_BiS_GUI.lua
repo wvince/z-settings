@@ -1133,7 +1133,7 @@ local function CreatePSAFooter()
     text:SetJustifyH("LEFT")
     text:SetJustifyV("MIDDLE")
     text:SetWordWrap(true)
-    text:SetText("PSA: Addons can save settings now! Atlas will be updated daily to adress any issue coming up and to add all new Items to its database asap. Special thanks to sadpandaren for many WoW Forever related updates!")
+    text:SetText("PSA: Dungeons, in wich new Forever related Items have been added are now marked with the '|TInterface\\AddOns\\AtlasLootClassic\\ltn4.tga:18:18:2:0|t' Icon. Updates will occur daily, to adress any reported bugs or missing items asap. Special thanks to sadpanda!")
 
     footer.text = text
 

@@ -59,15 +59,22 @@ end
 
 function W.InitRewardDefaults()
   W.db.rewards = W.db.rewards or {}
-  if W.db.rewardDataVersion == 2 then return end
+  if (W.db.rewardDataVersion or 0) >= 3 then return end
+  if W.db.rewardDataVersion ~= 2 then
   local defaults = {Apprentice = {[1]=5,[2]=10}, Journeyman = {[1]=10,[2]=20}, Expert = {}, Artisan = {}}
   for family, values in pairs(defaults) do
     local old = W.db.rewards[family]
     -- Replace the old shipped 5/20 assumption; preserve other user-entered values.
     if not old or (old[1] == 5 and old[2] == 20) then W.db.rewards[family] = values end
   end
+  end
+  -- Owner-tested on 4 Oct 2026. Fill previously unknown Expert rewards only.
+  local expert = W.db.rewards.Expert or {}
+  W.db.rewards.Expert = expert
+  if expert[1] == nil then expert[1] = 15 end
+  if expert[2] == nil then expert[2] = 30 end
   W.db.rewardDefaultsInitialized = true
-  W.db.rewardDataVersion = 2
+  W.db.rewardDataVersion = 3
 end
 
 function W.WritIsActive(order)

@@ -25,7 +25,8 @@ local NORMAL_DIFF = data:AddDifficulty("NORMAL", nil, nil, nil, true)
 local RAID20_DIFF = data:AddDifficulty("20RAID")
 local RAID40_DIFF = data:AddDifficulty("40RAID")
 local FOREVER_DUNGEON_CONTENT = data:AddContentType("Forever Dungeons", { 0.30, 0.50, 0.70, 1 })
-local LTNX = "|TInterface\\AddOns\\AtlasLootClassic\\ltn2.tga:15:56:2:0|t"
+--local LTNX = "|TInterface\\AddOns\\AtlasLootClassic\\ltn4.tga:18:18:2:0|t"
+local LTNX = "|cffffffff|TInterface\\AddOns\\AtlasLootClassic\\ltn4.tga:18:18:2:0|t|r"
 
 local ALLIANCE_DIFF, HORDE_DIFF, LOAD_DIFF
 if UnitFactionGroup("player") == "Horde" then
@@ -7386,14 +7387,34 @@ data["TheRuinsOfLordaeron"] = {
 }
 
 data["ExcavationSiteWetlands"] = {
-	name = "Excavation Site: Wetlands",
+	name = "Excavation Site: Wetlands" .. LTNX,
 	ContentType = FOREVER_DUNGEON_CONTENT,
 	LoadDifficulty = NORMAL_DIFF,
 	LevelRange = { 20, 24, 29 },
 	items = {
-		{
-			name = "Loot will be updated asap! Data mining is not yet fully possible!",
-			[NORMAL_DIFF] = {},
+		{ -- Boss 1: Saltspine
+			name = "Saltspine",
+			[NORMAL_DIFF] = {
+				{ 1, 273022 }, -- Supple Bellyskin Leggings (legs, leather)
+				{ 2, 273023 }, -- Saltscale Girdle (waist, mail)
+				{ 3, 273024 }, -- Glinteye Slippers (feet, cloth)
+			},
+		},
+		{ -- Boss 2: Shadetooth
+			name = "Shadetooth",
+			[NORMAL_DIFF] = {
+				{ 1, 273025 }, -- Raptorclaw Greaves (feet, mail)
+				{ 2, 273026 }, -- Garb of Florid Feathers (chest, leather)
+				{ 3, 273027 }, -- Raptor's Gaze (held in off-hand)
+			},
+		},
+		{ -- Boss 3: Relic Guardian
+			name = "Relic Guardian",
+			[NORMAL_DIFF] = {
+				{ 1, 273028 }, -- Reliquary Mantle (shoulder, mail)
+				{ 2, 273030 }, -- Ring of Power Regulation (finger)
+				{ 3, 273029 }, -- Golemsight Long Gun
+			},
 		},
 	},
 }
@@ -7484,7 +7505,7 @@ data["MountHyjal"] = {
 	name = "Mount Hyjal",
 	ContentType = FOREVER_RAID_CONTENT,
 	LoadDifficulty = NORMAL_DIFF,
-	LevelRange = { 60, 60, 60 },
+	--LevelRange = { 60, 60, 60 },
 	items = {
 		{
 			name = "Loot will be updated asap! Data mining is not yet fully possible!",
@@ -7494,10 +7515,10 @@ data["MountHyjal"] = {
 }
 
 data["BarrowDeepsRaid"] = {
-	name = "Barrow Deeps Raid",
+	name = "Barrow Deeps",
 	ContentType = FOREVER_RAID_CONTENT,
 	LoadDifficulty = NORMAL_DIFF,
-	LevelRange = { 60, 60, 60 },
+	--LevelRange = { 60, 60, 60 },
 	items = {
 		{
 			name = "Loot will be updated asap! Data mining is not yet fully possible!",
@@ -7510,7 +7531,7 @@ data["OnyxiasLairNew"] = {
 	name = "Onyxias Lair",
 	ContentType = FOREVER_RAID_CONTENT,
 	LoadDifficulty = NORMAL_DIFF,
-	LevelRange = { 60, 60, 60 },
+	--LevelRange = { 60, 60, 60 },
 	items = {
 		{
 			name = "Loot will be updated asap! Data mining is not yet fully possible!",
@@ -7518,3 +7539,80 @@ data["OnyxiasLairNew"] = {
 		},
 	},
 }
+
+local activeIcons = {}
+local timer = 0
+
+local pulseEngine = CreateFrame("Frame")
+pulseEngine:SetScript("OnUpdate", function(self, elapsed)
+    timer = (timer + elapsed) % 3
+    local alpha = 0.575 + 0.425 * math.sin((timer / 3) * (math.pi * 2) - (math.pi / 2))
+
+    for icon in pairs(activeIcons) do
+        if icon:IsShown() then
+            icon:SetAlpha(alpha)
+        end
+    end
+end)
+
+local function HookEntry(btn, label)
+    if not btn or btn.ltnPulseHooked then return end
+    label = label or _G[btn:GetName() .. "-label"] or btn.label or (btn.GetFontString and btn:GetFontString())
+    if not label then return end
+    btn.ltnPulseHooked = true
+
+    local icon = btn:CreateTexture(nil, "OVERLAY", nil, 7)
+    icon:SetSize(18, 18)
+    icon:SetTexture("Interface\\AddOns\\AtlasLootClassic\\ltn4.tga")
+    icon:Hide()
+    btn.ltnPulseIcon = icon
+    activeIcons[icon] = true
+
+    local updating = false
+    local function RefreshIcon(text)
+        if updating then return end
+        if type(text) == "string" and text:find("ltn4") then
+            icon:Show()
+            updating = true
+            local cleanText = text:gsub("|T.-ltn4.-|t", "")
+            label:SetText(cleanText)
+            icon:ClearAllPoints()
+            icon:SetPoint("LEFT", label, "LEFT", label:GetStringWidth() + 4, 0)
+            updating = false
+        else
+            icon:Hide()
+        end
+    end
+
+    hooksecurefunc(label, "SetText", function(self, text)
+        RefreshIcon(text)
+    end)
+
+    RefreshIcon(label:GetText())
+end
+
+local watcher = CreateFrame("Frame")
+local elapsedCheck = 0
+watcher:SetScript("OnUpdate", function(self, delta)
+    elapsedCheck = elapsedCheck + delta
+    if elapsedCheck < 0.25 then return end
+    elapsedCheck = 0
+
+    for i = 1, 60 do
+        local btn = _G["AtlasLoot-DropDown-Button" .. i]
+        if btn then
+            if not btn.ltnPulseHooked then
+                HookEntry(btn)
+            end
+        else
+            break
+        end
+    end
+
+    if AtlasLoot and AtlasLoot.GUI and AtlasLoot.GUI.frame then
+        local comp = AtlasLoot.GUI.frame.subCatSelect or AtlasLoot.GUI.frame.categorySelect
+        if comp and comp.button and not comp.button.ltnPulseHooked then
+            HookEntry(comp.button)
+        end
+    end
+end)

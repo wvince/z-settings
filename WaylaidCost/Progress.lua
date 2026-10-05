@@ -270,7 +270,9 @@ function W.UpdateProgress()
   local state = W.ProgressState()
   if strip.editor:IsShown() and strip.editor.base ~= state.base then strip.editor:Hide() end
   local icon = state.icon or (writs and "Interface/Icons/INV_Misc_Note_01" or "Interface/Icons/INV_Misc_Coin_01")
-  strip.title:SetText(W.Text("|T" .. icon .. ":16:16|t " .. state.text))
+  -- The currency icon identifies Favor here; the full client name stays in the tooltip.
+  local progressText = not writs and state.text:gsub(" Favor$", "") or state.text
+  strip.title:SetText(W.Text("|T" .. icon .. ":16:16|t " .. progressText))
   local plan = goalPlan(state)
   local text = ""
   if state.missing == 0 then text = "Target reached"

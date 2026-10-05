@@ -1915,18 +1915,18 @@ function RSExplorerMixin:OnLoad()
 	self.RareInfo.Toys.Texture:SetTexture("Interface\\AddOns\\RareScanner\\Media\\Textures\\ToysCorner.blp")
 	self.RareInfo.Toys.Texture:SetVertexColor(1,1,1,0.5)
 	self.RareInfo.Toys.Texture.tooltip = AL["EXPLORER_TOYS"]
-	self.RareInfo.Drakewatcher.Texture:SetTexture("Interface\\AddOns\\RareScanner\\Media\\Textures\\DrakewatcherCorner.blp")
-	self.RareInfo.Drakewatcher.Texture:SetVertexColor(1,1,1,0.5)
-	self.RareInfo.Drakewatcher.Texture.tooltip = AL["EXPLORER_DRAKEWATCHER"]
+	--self.RareInfo.Drakewatcher.Texture:SetTexture("Interface\\AddOns\\RareScanner\\Media\\Textures\\DrakewatcherCorner.blp")
+	--self.RareInfo.Drakewatcher.Texture:SetVertexColor(1,1,1,0.5)
+	--self.RareInfo.Drakewatcher.Texture.tooltip = AL["EXPLORER_DRAKEWATCHER"]
 	self.RareInfo.Appearances.Texture:SetTexture("Interface\\AddOns\\RareScanner\\Media\\Textures\\AppearancesCorner.blp")
 	self.RareInfo.Appearances.Texture:SetVertexColor(1,1,1,0.5)
 	self.RareInfo.Appearances.Texture.tooltip = AL["EXPLORER_APPEARANCES"]
 	self.RareInfo.Custom.Texture:SetTexture("Interface\\AddOns\\RareScanner\\Media\\Textures\\CustomCorner.blp")
 	self.RareInfo.Custom.Texture:SetVertexColor(1,1,1,0.5)
 	self.RareInfo.Custom.Texture.tooltip = AL["EXPLORER_CUSTOM"]
-	self.RareInfo.Decor.Texture:SetTexture("Interface\\AddOns\\RareScanner\\Media\\Textures\\DecorCorner.blp")
-	self.RareInfo.Decor.Texture:SetVertexColor(1,1,1,0.5)
-	self.RareInfo.Decor.Texture.tooltip = AL["EXPLORER_DECOR"]
+	--self.RareInfo.Decor.Texture:SetTexture("Interface\\AddOns\\RareScanner\\Media\\Textures\\DecorCorner.blp")
+	--self.RareInfo.Decor.Texture:SetVertexColor(1,1,1,0.5)
+	--self.RareInfo.Decor.Texture.tooltip = AL["EXPLORER_DECOR"]
 	self:RegisterForDrag("LeftButton");
 	tinsert(UISpecialFrames, self:GetName());
 end

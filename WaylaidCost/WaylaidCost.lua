@@ -1,7 +1,7 @@
 local addonName, W = ...
 local addon = CreateFrame("Frame")
 local metadata = C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata
-W.version = metadata and metadata(addonName, "Version") or "0.1.0-dev"
+W.version = metadata and metadata(addonName, "Version") or "0.1.1-dev"
 W.author = metadata and metadata(addonName, "Author") or "Shakam"
 W.target = metadata and metadata(addonName, "X-Game-Version") or "WoW Forever 1.60 beta (1.60.1)"
 W.icon = "Interface\\AddOns\\" .. addonName .. "\\Assets\\Icon"
@@ -144,6 +144,7 @@ addon:SetScript("OnEvent", function(_, event)
     W.scanKey = GetRealmName() .. ":" .. UnitName("player")
     W.LoadSnapshot()
     W.BuildMinimap()
+    W.RegisterOptions()
     W.InitItemTooltips()
     SLASH_WAYLAIDCOST1 = "/wcrate"
     SlashCmdList.WAYLAIDCOST = function(args)

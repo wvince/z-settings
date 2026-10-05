@@ -1,6 +1,6 @@
 ﻿
 	----------------------------------------------------------------------
-	-- 	Leatrix Maps 1.60.09 (30th September 2026)
+	-- 	Leatrix Maps 1.60.12 (5th October 2026)
 	----------------------------------------------------------------------
 
 	-- 10:Func, 20:Comm, 30:Evnt, 40:Panl
@@ -12,7 +12,7 @@
 	local LeaMapsLC, LeaMapsCB, LeaConfigList = {}, {}, {}
 
 	-- Version
-	LeaMapsLC["AddonVer"] = "1.60.09"
+	LeaMapsLC["AddonVer"] = "1.60.12"
 
 	-- Get locale table
 	local void, Leatrix_Maps = ...
@@ -699,13 +699,6 @@
 				end
 			end)
 
-			-- Fix for World Quest Tracker to set map window centralised to disabled
-			EventUtil.ContinueOnAddOnLoaded("WorldQuestTracker", function()
-				if WQTrackerDB and WQTrackerDB.profiles and WQTrackerDB.profiles.Default and WQTrackerDB.profiles.Default.map_frame_anchor and WQTrackerDB.profiles.Default.map_frame_anchor == "center" then
-					WQTrackerDB.profiles.Default.map_frame_anchor = "left"
-				end
-			end)
-
 		end
 
 		----------------------------------------------------------------------
@@ -729,7 +722,7 @@
 		-- Show zone levels
 		----------------------------------------------------------------------
 
-		do
+		if LeaMapsLC["ShowZoneLevels"] == "On" then
 
 			-- Create level range table
 			local mapTable = {
@@ -792,14 +785,43 @@
 
 			}
 
+			local lastCursorInput = "MOUSE"
+			local lastMouseX, lastMouseY
+
+			local function UpdateLastCursorInput(map)
+				-- Gamepad is in use
+				if SoftCursor and SoftCursor:IsShown() and SoftCursor:IsMoving() then
+					lastCursorInput = "GAMEPAD"
+					return
+				end
+
+				-- Mouse is in use
+				local mouseX, mouseY = map:GetNormalizedCursorPosition()
+				if lastMouseX and lastMouseY then
+					if mouseX ~= lastMouseX or mouseY ~= lastMouseY then
+						lastCursorInput = "MOUSE"
+					end
+				end
+
+				lastMouseX = mouseX
+				lastMouseY = mouseY
+			end
+
 			-- Replace AreaLabelFrameMixin.OnUpdate
 			local function AreaLabelOnUpdate(self)
 				self:ClearLabel(MAP_AREA_LABEL_TYPE.AREA_NAME)
 				local map = self.dataProvider:GetMap()
-				if map:IsCanvasMouseFocus() then
+				UpdateLastCursorInput(map)
+				local gamepadCursorActive = lastCursorInput == "GAMEPAD"
+				if map:IsCanvasMouseFocus() or gamepadCursorActive then
 					local name, description
 					local mapID = map:GetMapID()
-					local normalizedCursorX, normalizedCursorY = map:GetNormalizedCursorPosition()
+					local normalizedCursorX, normalizedCursorY
+					if gamepadCursorActive then
+						normalizedCursorX, normalizedCursorY = map.ScrollContainer:GetNormalizedGamepadCursorPosition()
+					else
+						normalizedCursorX, normalizedCursorY = map:GetNormalizedCursorPosition()
+					end
 					local positionMapInfo = C_Map.GetMapInfoAtPosition(mapID, normalizedCursorX, normalizedCursorY)
 					if positionMapInfo and positionMapInfo.mapID ~= mapID then
 						-- print(positionMapInfo.mapID)
@@ -843,30 +865,11 @@
 				self:EvaluateLabels()
 			end
 
-			-- Get original script name
-			local origScript
 			for provider in next, WorldMapFrame.dataProviders do
 				if provider.Label then
-					origScript = provider.Label:GetScript("OnUpdate")
+					provider.Label:SetScript("OnUpdate", AreaLabelOnUpdate)
 				end
 			end
-
-			-- Toggle zone levels
-			local function SetZoneLevelScript()
-				for provider in next, WorldMapFrame.dataProviders do
-					if provider.Label then
-						if LeaMapsLC["ShowZoneLevels"] == "On" then
-							provider.Label:SetScript("OnUpdate", AreaLabelOnUpdate)
-						else
-							provider.Label:SetScript("OnUpdate", origScript)
-						end
-					end
-				end
-			end
-
-			-- Set zone levels when option is clicked and on startup
-			LeaMapsCB["ShowZoneLevels"]:HookScript("OnClick", SetZoneLevelScript)
-			SetZoneLevelScript()
 
 			-- Create configuraton panel
 			local levelFrame = LeaMapsLC:CreatePanel("Show zone levels", "levelFrame")
@@ -920,12 +923,20 @@
 				pin:SetFrameStrata("HIGH")
 				pin:SetFrameLevel(100)
 				pin:EnableMouse(true)
-				pin.owningMap = WorldMapFrame -- Needed for Blizzard coordinates to work on the pin
+				pin:SetPropagateMouseMotion(true) -- Needed for coordinates
+				pin:SetPropagateMouseClicks(true) -- Needed for right-click
 				pin.Texture = pin:CreateTexture(nil, "ARTWORK")
 				pin.Texture:SetAllPoints()
 				pin.HighlightTexture = pin:CreateTexture(nil, "HIGHLIGHT")
 				pin.HighlightTexture:SetAllPoints()
 				pin.HighlightTexture:SetBlendMode("ADD")
+
+				-- Separate highlight used only by the gamepad cursor
+				pin.GamepadHighlight = pin:CreateTexture(nil, "OVERLAY")
+				pin.GamepadHighlight:SetAllPoints()
+				pin.GamepadHighlight:SetBlendMode("ADD")
+				pin.GamepadHighlight:Hide()
+
 				return pin
 			end
 
@@ -973,20 +984,83 @@
 				if atlas then
 					pin.Texture:SetAtlas(atlas)
 					pin.HighlightTexture:SetAtlas(atlas)
+					pin.GamepadHighlight:SetAtlas(atlas)
+
 				elseif texture then
 					pin.Texture:SetTexture(texture)
 					pin.HighlightTexture:SetTexture(texture)
+					pin.GamepadHighlight:SetTexture(texture)
+
 					if left then
 						pin.Texture:SetTexCoord(left, right, top, bottom)
 						pin.HighlightTexture:SetTexCoord(left, right, top, bottom)
+						pin.GamepadHighlight:SetTexCoord(left, right, top, bottom)
 					end
 				end
+
 				pin:SetSize(w, h)
 				pin.Texture:SetSize(w, h)
 				pin.HighlightTexture:SetSize(w, h)
+				pin.GamepadHighlight:SetSize(w, h)
+
 				if rotation then
 					pin.Texture:SetRotation(rotation)
 					pin.HighlightTexture:SetRotation(rotation)
+					pin.GamepadHighlight:SetRotation(rotation)
+				end
+			end
+
+
+			-- Build the tooltip
+			local function BuildPOITooltip(pin)
+				local pinInfo = pin.data
+				if not pinInfo then return end
+				local name = pinInfo[4]
+				if not name then name = "" end
+				if pinInfo[7] and pinInfo[8] then
+
+					local playerLevel = UnitLevel("player")
+
+					local dungeonMinLevel = pinInfo[7]
+					local dungeonMaxLevel = pinInfo[8]
+
+					local color
+					if playerLevel < dungeonMinLevel then
+						color = GetQuestDifficultyColor(dungeonMinLevel)
+					elseif playerLevel > dungeonMaxLevel then
+						color = GetQuestDifficultyColor(dungeonMaxLevel - 2)
+					else
+						color = QuestDifficultyColors["difficult"]
+					end
+
+					color = ConvertRGBtoColorString(color)
+					if dungeonMinLevel ~= dungeonMaxLevel then
+						name = name .. color .. " (" .. dungeonMinLevel .. "-" .. dungeonMaxLevel .. ")" .. FONT_COLOR_CODE_CLOSE
+					else
+						name = name .. color .. " (" .. dungeonMaxLevel .. ")" .. FONT_COLOR_CODE_CLOSE
+					end
+
+				end
+
+				GameTooltip:SetOwner(pin, "ANCHOR_RIGHT")
+				GameTooltip:SetText(name)
+
+				if pinInfo[5] and pinInfo[5] ~= "" then
+					GameTooltip:AddLine(pinInfo[5], 1, 1, 1, true)
+				end
+
+				GameTooltip:Show()
+
+			end
+
+			local function POI_OnEnter(pin)
+				BuildPOITooltip(pin)
+			end
+
+			local function POI_OnLeave(pin)
+				-- Don't hide a tooltip belonging to another POI
+				if LeaMapsPOI.gamepadHoveredPin ~= pin then
+					GameTooltip:Hide()
 				end
 			end
 
@@ -1000,14 +1074,26 @@
 				-- Reset reusable state
 				pin:SetScale(1)
 				pin:SetSize(1, 1)
+
 				pin.Texture:SetRotation(0)
 				pin.HighlightTexture:SetRotation(0)
+				pin.GamepadHighlight:SetRotation(0)
+
 				pin.Texture:SetTexCoord(0, 1, 0, 1)
 				pin.HighlightTexture:SetTexCoord(0, 1, 0, 1)
+				pin.GamepadHighlight:SetTexCoord(0, 1, 0, 1)
+
 				pin.Texture:SetTexture(nil)
 				pin.HighlightTexture:SetTexture(nil)
+				pin.GamepadHighlight:SetTexture(nil)
+
 				pin.Texture:SetAtlas(nil)
 				pin.HighlightTexture:SetAtlas(nil)
+				pin.GamepadHighlight:SetAtlas(nil)
+
+				-- Always start pooled POIs with gamepad highlight off
+				pin.GamepadHighlight:Hide()
+
 
 				pin.data = pinInfo
 
@@ -1016,42 +1102,8 @@
 					SetupIcon(pin, icon.atlas, icon.texture, icon.width or icon.size, icon.height or icon.size, icon.left, icon.right, icon.top, icon.bottom, pinInfo[12])
 				end
 
-				-- Tooltip
-				local name = pinInfo[4]
-				if pinInfo[7] and pinInfo[8] then
-
-					local playerLevel = UnitLevel("player")
-					local color
-					local dungeonMinLevel = pinInfo[7]
-					local dungeonMaxLevel = pinInfo[8]
-
-					if playerLevel < dungeonMinLevel then
-						color = GetQuestDifficultyColor(dungeonMinLevel)
-					elseif playerLevel > dungeonMaxLevel then
-						color = GetQuestDifficultyColor(dungeonMaxLevel - 2)
-					else
-						color = QuestDifficultyColors["difficult"]
-					end
-					color = ConvertRGBtoColorString(color)
-
-					if dungeonMinLevel ~= dungeonMaxLevel then
-						name = name .. color .. " (" .. dungeonMinLevel .. "-" .. dungeonMaxLevel .. ")" .. FONT_COLOR_CODE_CLOSE
-					else
-						name = name .. color .. " (" .. dungeonMaxLevel .. ")" .. FONT_COLOR_CODE_CLOSE
-					end
-
-				end
-
-				pin:SetScript("OnEnter", function(self)
-					GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-					GameTooltip:SetText(name)
-					if pinInfo[5] and pinInfo[5] ~= "" then
-						GameTooltip:AddLine(pinInfo[5], 1, 1, 1, true)
-					end
-					GameTooltip:Show()
-				end)
-
-				pin:SetScript("OnLeave", function()	GameTooltip:Hide() end)
+				pin:SetScript("OnEnter", POI_OnEnter)
+				pin:SetScript("OnLeave", POI_OnLeave)
 
 				--[[pin:SetScript("OnClick", function(self, button)
 					if button == "LeftButton" and pinInfo[13] then
@@ -1070,6 +1122,12 @@
 
 				for i = #LeaMapsPOI, 1, -1 do
 					local pin = LeaMapsPOI[i]
+
+					-- Make sure a pooled POI cannot retain gamepad highlight
+					if pin.GamepadHighlight then
+						pin.GamepadHighlight:Hide()
+					end
+
 					-- Release the POI
 					pin:Hide()
 					pin:ClearAllPoints()
@@ -1079,6 +1137,12 @@
 					pin.data = nil
 					LeaMapsPOIPool[#LeaMapsPOIPool + 1] = pin
 					LeaMapsPOI[i] = nil
+				end
+
+				-- Reset gamepad hover state
+				if self.gamepadHoveredPin then
+					GameTooltip:Hide()
+					self.gamepadHoveredPin = nil
 				end
 
 				local pMapID = WorldMapFrame.mapID; if not pMapID then return end
@@ -1102,6 +1166,97 @@
 				end
 
 			end
+
+			-- Gamepad tooltips
+			local GamePadPOIDistance = 0.02
+			local DistanceSquared = GamePadPOIDistance * GamePadPOIDistance
+
+			local function HighlightCustomPOI(pin)
+				if pin and pin.GamepadHighlight then
+					pin.GamepadHighlight:Show()
+				end
+			end
+
+			local function UnhighlightCustomPOI(pin)
+				if pin and pin.GamepadHighlight then
+					pin.GamepadHighlight:Hide()
+				end
+			end
+
+			local function HideCustomPOIGamepadTooltip()
+				if LeaMapsPOI.gamepadHoveredPin then
+					GameTooltip:Hide()
+					LeaMapsPOI.gamepadHoveredPin = nil
+				end
+			end
+
+			local function UpdateCustomPOIGamepadTooltip()
+				if not SoftCursor:IsMoving() then return end
+				if not WorldMapFrame:IsShown() then
+					HideCustomPOIGamepadTooltip()
+					return
+				end
+				if not InputUtil.IsGamepadUIEnabled() then
+					HideCustomPOIGamepadTooltip()
+					return
+				end
+				local cursorX, cursorY = WorldMapFrame:GetNormalizedGamepadCursorPosition()
+				if not cursorX or not cursorY then return end
+				local closestPin = nil
+				local closestDistanceSquared = nil
+				for i = 1, #LeaMapsPOI do
+					local pin = LeaMapsPOI[i]
+					if pin:IsShown() and pin:IsVisible() and pin.data then
+						local pinInfo = pin.data
+						local pinX = pinInfo[2] / 100
+						local pinY = pinInfo[3] / 100
+						local dx = cursorX - pinX
+						local dy = cursorY - pinY
+						local distanceSquared =	dx * dx + dy * dy
+						if distanceSquared <= DistanceSquared then
+							if not closestDistanceSquared
+								or distanceSquared < closestDistanceSquared
+							then
+								closestPin = pin
+								closestDistanceSquared = distanceSquared
+							end
+						end
+					end
+				end
+
+				if closestPin then
+					if LeaMapsPOI.gamepadHoveredPin ~= closestPin then
+
+						-- Remove gamepad highlight from previous POI
+						if LeaMapsPOI.gamepadHoveredPin then
+							UnhighlightCustomPOI(LeaMapsPOI.gamepadHoveredPin)
+							GameTooltip:Hide()
+						end
+
+						-- Set new gamepad POI
+						LeaMapsPOI.gamepadHoveredPin = closestPin
+
+						-- Add gamepad highlight
+						HighlightCustomPOI(closestPin)
+
+						-- Show tooltip
+						BuildPOITooltip(closestPin)
+
+					end
+				else
+					-- No POI under the crosshair
+					if LeaMapsPOI.gamepadHoveredPin then
+						UnhighlightCustomPOI(LeaMapsPOI.gamepadHoveredPin)
+					end
+
+					HideCustomPOIGamepadTooltip()
+				end
+
+			end
+
+			-- Update tooltip with gamepad cursor update
+			hooksecurefunc(WorldMapFrame, "UpdateGamepadCursor", UpdateCustomPOIGamepadTooltip)
+			WorldMapFrame:HookScript("OnHide", function() HideCustomPOIGamepadTooltip()	end)
 
 			-- Function to refresh POIs after map changes
 			hooksecurefunc(WorldMapFrame, "OnMapChanged", function()
@@ -1131,13 +1286,12 @@
 				UpdatePOIScale()
 			end
 
-			-- Set points of interest when options are clicked (including show zone levels)
+			-- Set points of interest when options are clicked
 			LeaMapsCB["ShowDungeonIcons"]:HookScript("OnClick", SetPointsOfInterest)
 			LeaMapsCB["ShowTravelPoints"]:HookScript("OnClick", SetPointsOfInterest)
 			LeaMapsCB["ShowTravelOpposing"]:HookScript("OnClick", SetPointsOfInterest)
 			LeaMapsCB["ShowSpiritHealers"]:HookScript("OnClick", SetPointsOfInterest)
 			LeaMapsCB["ShowZoneCrossings"]:HookScript("OnClick", SetPointsOfInterest)
-			LeaMapsCB["ShowZoneLevels"]:HookScript("OnClick", SetPointsOfInterest)
 
 			-- Back to Main Menu button click
 			poiFrame.b:HookScript("OnClick", function()
@@ -1968,7 +2122,7 @@
 		LeaMapsLC:LockOption("ShowCoords", "ShowCoordsBtn", true)						-- Show coordinates
 		LeaMapsLC:LockOption("EnhanceBattleMap", "EnhanceBattleMapBtn", true) 			-- Enhance battlefield map
 		LeaMapsLC:LockOption("ShowPointsOfInterest", "ShowPointsOfInterestBtn", true) 	-- Show points of interest
-		LeaMapsLC:LockOption("ShowZoneLevels", "ShowZoneLevelsBtn", false) 				-- Show zone levels
+		LeaMapsLC:LockOption("ShowZoneLevels", "ShowZoneLevelsBtn", true) 				-- Show zone levels
 	end
 
 	-- Create a standard button
@@ -2010,15 +2164,16 @@
 
 	-- Set reload button status
 	function LeaMapsLC:ReloadCheck()
-		if	(LeaMapsLC["UnlockMap"] ~= LeaMapsDB["UnlockMap"])						-- Unlock map
-		or	(LeaMapsLC["ScaleWorldMap"] ~= LeaMapsDB["ScaleWorldMap"])				-- Scale the map
-		or	(LeaMapsLC["RevealMap"] ~= LeaMapsDB["RevealMap"])						-- Show unexplored areas
+		if	(LeaMapsLC["UnlockMap"] ~= LeaMapsDB["UnlockMap"])							-- Unlock map
+		or	(LeaMapsLC["ScaleWorldMap"] ~= LeaMapsDB["ScaleWorldMap"])					-- Scale the map
+		or	(LeaMapsLC["RevealMap"] ~= LeaMapsDB["RevealMap"])							-- Show unexplored areas
 		or	(LeaMapsLC["ShowPointsOfInterest"] ~= LeaMapsDB["ShowPointsOfInterest"])	-- Show unexplored areas
-		or	(LeaMapsLC["ShowCoords"] ~= LeaMapsDB["ShowCoords"])					-- Show coordinates
-		or	(LeaMapsLC["HideTownCity"] ~= LeaMapsDB["HideTownCity"])				-- Hide town and city icons
-		or	(LeaMapsLC["EnhanceBattleMap"] ~= LeaMapsDB["EnhanceBattleMap"])		-- Enhance battlefield map
-		or	(LeaMapsLC["NoFilterResetBtn"] ~= LeaMapsDB["NoFilterResetBtn"])		-- Hide filte reset button
-		or	(LeaMapsLC["UseEnglishLanguage"] ~= LeaMapsDB["UseEnglishLanguage"])	-- Use English language
+		or	(LeaMapsLC["ShowZoneLevels"] ~= LeaMapsDB["ShowZoneLevels"])				-- Show zone levels
+		or	(LeaMapsLC["ShowCoords"] ~= LeaMapsDB["ShowCoords"])						-- Show coordinates
+		or	(LeaMapsLC["HideTownCity"] ~= LeaMapsDB["HideTownCity"])					-- Hide town and city icons
+		or	(LeaMapsLC["EnhanceBattleMap"] ~= LeaMapsDB["EnhanceBattleMap"])			-- Enhance battlefield map
+		or	(LeaMapsLC["NoFilterResetBtn"] ~= LeaMapsDB["NoFilterResetBtn"])			-- Hide filte reset button
+		or	(LeaMapsLC["UseEnglishLanguage"] ~= LeaMapsDB["UseEnglishLanguage"])		-- Use English language
 		then
 			-- Enable the reload button
 			LeaMapsLC:LockItem(LeaMapsCB["ReloadUIButton"], false)
@@ -2615,7 +2770,7 @@
 	LeaMapsLC:MakeTx(PageF, "Elements", 225, -72)
 	LeaMapsLC:MakeCB(PageF, "RevealMap", "Show unexplored areas", 225, -92, true, "If checked, unexplored areas of the map will be shown on the world map and the battlefield map.")
 	LeaMapsLC:MakeCB(PageF, "ShowPointsOfInterest", "Show points of interest", 225, -112, true, "If checked, points of interest will be shown.")
-	LeaMapsLC:MakeCB(PageF, "ShowZoneLevels", "Show zone levels", 225, -132, false, "If checked, zone levels will be shown on the continent maps.")
+	LeaMapsLC:MakeCB(PageF, "ShowZoneLevels", "Show zone levels", 225, -132, true, "If checked, zone levels will be shown on the continent maps.")
 	LeaMapsLC:MakeCB(PageF, "ShowCoords", "Show coordinates", 225, -152, true, "If checked, coordinates will be shown.")
 	LeaMapsLC:MakeCB(PageF, "HideTownCity", "Hide town and city icons", 225, -172, true, "If checked, town and city icons will not be shown on the continent maps.")
 

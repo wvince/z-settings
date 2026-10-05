@@ -1,6 +1,6 @@
 -- Static item rewards from wowhead.com/forever.
--- Live quest data replaces a quest's rows when the game returns rewards.
--- Blank Wowhead reward slots are omitted.
+-- Merged with live quest data (duplicates skipped). Fills gaps when the client
+-- returns incomplete rewards. Blank Wowhead reward slots are omitted.
 Attune_Data.questRewards = {
 	[12] = {},
 	[13] = {},
@@ -225,6 +225,7 @@ Attune_Data.questRewards = {
 	[6564] = {},
 	[6565] = { choice = {{17694, 1}, {17695, 1}} },
 	[6566] = {},
+	[95697] = { fixed = {{250185, 1}, {250077, 5}}, choice = {{280766, 1}, {280805, 1}} },
 	[96395] = { choice = {{279899, 1}, {279900, 1}} },
 	[96403] = { choice = {{279898, 1}, {280096, 1}} },
 }
@@ -366,8 +367,12 @@ Attune_Data.rewardItems = {
 	[270032] = {"Cultist's Armguards", "inv_bracer_12", 3},
 	[270042] = {"Technician's Bracers", "inv_bracer_02", 3},
 	[270045] = {"Operator's Gloves", "inv_gauntlets_22", 3},
+	[250077] = {"Twice-Spiced Raptor Slice", "inv_misc_food_legion_saltpeppershank", 1},
+	[250185] = {"Recipe: Twice-Spiced Raptor Slice", "inv_scroll_03", 1},
 	[279898] = {"Dwarven Tome", "inv_misc_book_07", 3},
 	[279899] = {"Catacomb Cloak", "inv_misc_cape_11", 3},
 	[279900] = {"Deepgrave Trousers", "inv_pants_01", 3},
 	[280096] = {"Tomb Robber's Gloves", "inv_gauntlets_18", 3},
+	[280766] = {"Satchel of Potions", "inv_misc_bag_08", 3},
+	[280805] = {"Serrated Raptor Claw", "inv_weapon_shortblade_16", 3},
 }

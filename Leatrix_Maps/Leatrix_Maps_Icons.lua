@@ -41,6 +41,7 @@
 			{"Arrow", 51.8, 68.8, L["Hillsbrad Foothills"], nil, arTex, nil, nil, nil, nil, nil, 3, 1424},
 			{"Arrow", 81.7, 77.5, L["Hillsbrad Foothills"], L["Ravenholdt Manor"], arTex, nil, nil, nil, nil, nil, 2.2, 1424},
 			{"TravelA", 12.0, 56.2, L["Portal to"] .. " " .. L["Stormwind"], nil, fATex, nil, nil, nil, nil, nil, 0, 1453},
+			{"Dungeon", 8.5, 59.3, L["City of Dalaran"], L["Dungeon"], dnTex, 28, 33},
 		},
 		--[[Arathi Highlands]] [1417] = {
 			{"FlightA", 45.8, 46.1, L["Refuge Pointe"] .. ", " .. L["Arathi Highlands"], nil, tATex, nil, nil},
@@ -80,7 +81,6 @@
 			{"Dungeon", 44.8, 67.8, L["Shadowfang Keep"], L["Dungeon"], dnTex, 22, 30},
 			{"FlightH", 45.6, 42.6, L["The Sepulcher"] .. ", " .. L["Silverpine Forest"], nil, tHTex, nil, nil},
 			{"Spirit", 44.1, 42.5, L["Spirit Healer"], nil, spTex, nil, nil},
-			{"Spirit", 55.6, 73.2, L["Spirit Healer"], nil, spTex, nil, nil},
 			{"Arrow", 66.3, 79.8, L["Hillsbrad Foothills"], nil, arTex, nil, nil, nil, nil, nil, 4.3, 1424},
 			{"Arrow", 67.7, 5.0, L["Tirisfal Glades"], nil, arTex, nil, nil, nil, nil, nil, 5.7, 1420},
 		},
@@ -115,6 +115,7 @@
 			{"Arrow", 13.7, 46.2, L["Silverpine Forest"], nil, arTex, nil, nil, nil, nil, nil, 1.5, 1421},
 			{"Arrow", 81.0, 56.1, L["Arathi Highlands"], nil, arTex, nil, nil, nil, nil, nil, 4.1, 1417},
 			{"Arrow", 75.5, 24.6, L["Alterac Mountains"], L["Ravenholdt Manor"], arTex, nil, nil, nil, nil, nil, 0.0, 1416},
+			{"TravelA", 50.6, 69.7, L["Boat to"] .. " " .. L["Auberdine"] .. ", " .. L["Darkshore"], nil, fATex, nil, nil, nil, nil, nil, 0, 1439},
 		},
 		--[[The Hinterlands]] [1425] = {
 			{"FlightA", 11.1, 46.2, L["Aerie Peak"] .. ", " .. L["The Hinterlands"], nil, tATex, nil, nil},
@@ -203,6 +204,8 @@
 			{"Spirit", 38.4, 9.0, L["Spirit Healer"], nil, spTex, nil, nil},
 			{"Spirit", 30.4, 73.3, L["Spirit Healer"], nil, spTex, nil, nil},
 			{"Arrow", 39.2, 6.5, L["Duskwood"], nil, arTex, nil, nil, nil, nil, nil, 0, 1431},
+			{"Dungeon", 21.3, 27.8, L["The Drowned City"], L["Dungeon"], dnTex, 35, 40},
+
 		},
 		--[[Swamp of Sorrows]] [1435] = {
 			{"Dungeon", 69.9, 53.6, L["Temple of Atal'Hakkar"], L["Dungeon"], dnTex, 50, 60},
@@ -221,11 +224,12 @@
 		--[[Wetlands]] [1437] = {
 			{"FlightA", 9.5, 59.7, L["Menethil Harbor"] .. ", " .. L["Wetlands"], nil, tATex, nil, nil},
 			{"TravelA", 5.0, 63.5, L["Boat to"] .. " " .. L["Theramore Isle"] .. ", " .. L["Dustwallow Marsh"], nil, fATex, nil, nil, nil, nil, nil, 0, 1445},
-			{"TravelA", 4.6, 57.1, L["Boat to"] .. " " .. L["Auberdine"] .. ", " .. L["Darkshore"], nil, fATex, nil, nil, nil, nil, nil, 0, 1439},
 			{"Spirit", 11.0, 43.8, L["Spirit Healer"], nil, spTex, nil, nil},
 			{"Spirit", 49.3, 41.8, L["Spirit Healer"], nil, spTex, nil, nil},
 			{"Arrow", 51.3, 10.3, L["Arathi Highlands"], L["Thandol Span"], arTex, nil, nil, nil, nil, nil, 0, 1417},
 			{"Arrow", 56.0, 70.3, L["Loch Modan"], L["Dun Algaz"], arTex, nil, nil, nil, nil, nil, 1.8, 1432},
+			{"Dungeon", 47.8, 56.2, L["Excavation Site: Wetlands"], L["Dungeon"], dnTex, 24, 29},
+			{"TravelA", 4.6, 57.2, L["Boat to"] .. " " .. L["Southshore"] .. ", " .. L["Hillsbrad Foothills"], nil, fATex, nil, nil, nil, nil, nil, 0, 1424},
 		},
 		--[[Stormwind City]] [1453] = {
 			{"Dungeon", 52.4, 70.0, L["The Stockade"], L["Dungeon"], dnTex, 22, 30},
@@ -238,11 +242,14 @@
 			{"FlightA", 55.5, 47.8, L["The Great Forge"] .. ", " .. L["Ironforge"], nil, tATex, nil, nil},
 			{"TravelA", 73.0, 50.2, L["Tram to"] .. " " .. L["Dwarven District"] .. ", " .. L["Stormwind"], nil, fATex, nil, nil, nil, nil, nil, 0, 1453},
 			{"Arrow", 21.9, 77.5, L["Dun Morogh"], nil, arTex, nil, nil, nil, nil, nil, 2.2, 1426},
+			{"Dungeon", 27.7, 47.9, L["The Hall of Thanes"], L["Dungeon"], dnTex, 13, 18},
 		},
 		--[[Undercity]] [1458] = {
 			{"FlightH", 63.3, 48.5, L["Trade Quarter"] .. ", " .. L["Undercity"], nil, tHTex, nil, nil},
 			{"Spirit", 67.9, 14.0, L["Spirit Healer"], nil, spTex, nil, nil},
 			{"Arrow", 66.2, 5.2, L["Tirisfal Glades"], nil, arTex, nil, nil, nil, nil, nil, 0, 1420},
+			{"Dungeon", 72.5, 11.4, L["The Ruins of Lordaeron"], L["Dungeon"], dnTex, 15, 20},
+
 		},
 
 		----------------------------------------------------------------------
@@ -302,6 +309,8 @@
 			{"Arrow", 43.3, 94.0, L["Ashenvale"], nil, arTex, nil, nil, nil, nil, nil, 4, 1440},
 			{"Arrow", 37.5, 94.8, L["Ashenvale"], nil, arTex, nil, nil, nil, nil, nil, 3.1, 1440},
 			{"Arrow", 27.7, 92.9, L["Ashenvale"], L["The Zoram Strand"], arTex, nil, nil, nil, nil, nil, 2.5, 1440},
+			{"TravelA", 30.7, 41.0, L["Boat to"] .. " " .. L["Stormwind"] .. ", " .. L["Elwynn Forest"], nil, fATex, nil, nil, nil, nil, nil, 0, 1453},
+
 		},
 		--[[Ashenvale]] [1440] = {
 			{"Dungeon", 14.5, 14.2, L["Blackfathom Deeps"], L["Dungeon"], dnTex, 24, 32},
@@ -470,6 +479,7 @@
 		--[[Riverglades]] [2548] = {
 			{"FlightA", 60.6, 81.4, L["Gretchen Mayberry"], nil, tATex, nil, nil},
 			{"FlightH", 59.6, 45.2, L["Grakna"], nil, tHTex, nil, nil},
+			{"TravelN", 80.2, 54.0, L["Boat to"] .. " " .. L["Tanaris"], nil, fNTex, nil, nil, nil, nil, nil, 0, 1446},
 		},
 
 		--[[Shen'dralas]] [2652] = {
@@ -478,12 +488,7 @@
 	}
 
 	-- More Forever
-	-- Hall of Thanes (Alliance, under the City of Ironforge) (13-18)
-	-- Ruins of Lordaeron (Horde, 15-20)
-	-- Excavation Site (Welands, 24-29)
-	-- City of Dalaran (28-33)
 	-- Blackmaw Hold (North Azshara, 55-60)
-	-- The Drowned City (35-40)
 	-- Krol'dok Stronghold (Riverglades, 40-45)
 	-- Alcaz Prison (Alcaz Island, Dustwallow Marsh, 48-53)
 	-- The Shapers Terrace (Un'goro, 58-60)

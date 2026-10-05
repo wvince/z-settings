@@ -20,7 +20,8 @@ Attune_Data.attunes = 	{
 	{ID="177",NAME=AttuneLang["Wailing Caverns"],EXPAC=AttuneLang["World of Warcraft"], GROUP=AttuneLang['DUNGEONS'], FACTION="Alliance",ICON="Interface\\Icons\\ability_druid_aquaticform", DESC=AttuneLang["DungeonQuest_Desc"], GROUPSIZE=5, LEVELS="19-22"},
     {ID="180",NAME=AttuneLang["Wailing Caverns"],EXPAC=AttuneLang["World of Warcraft"], GROUP=AttuneLang['DUNGEONS'], FACTION="Horde",ICON="Interface\\Icons\\ability_druid_aquaticform", DESC=AttuneLang["DungeonQuest_Desc"], GROUPSIZE=5, LEVELS="19-22"},
 	{ID="190",NAME=AttuneLang["Shadowfang Keep"],EXPAC=AttuneLang["World of Warcraft"], GROUP=AttuneLang['DUNGEONS'], FACTION="Horde",ICON="Interface\\Icons\\inv_misc_monsterfang_01", DESC=AttuneLang["DungeonQuest_Desc"], GROUPSIZE=5, LEVELS="23-26"},
-    {ID="195",NAME=AttuneLang["Excavation Site"],EXPAC=AttuneLang["World of Warcraft"], GROUP=AttuneLang['DUNGEONS'], FACTION="Both",ICON="Interface\\Icons\\inv_pick_02", DESC=AttuneLang["DungeonQuest_Desc"], GROUPSIZE=5, LEVELS="24-26"},
+    {ID="195",NAME=AttuneLang["Excavation Site"],EXPAC=AttuneLang["World of Warcraft"], GROUP=AttuneLang['DUNGEONS'], FACTION="Alliance",ICON="Interface\\Icons\\inv_pick_02", DESC=AttuneLang["DungeonQuest_Desc"], GROUPSIZE=5, LEVELS="24-29"},
+	{ID="196",NAME=AttuneLang["Excavation Site"],EXPAC=AttuneLang["World of Warcraft"], GROUP=AttuneLang['DUNGEONS'], FACTION="Horde",ICON="Interface\\Icons\\inv_pick_02", DESC=AttuneLang["DungeonQuest_Desc"], GROUPSIZE=5, LEVELS="24-29"},
     {ID="200",NAME=AttuneLang["Blackfathom Deeps"],EXPAC=AttuneLang["World of Warcraft"], GROUP=AttuneLang['DUNGEONS'], FACTION="Alliance",ICON="Interface\\Icons\\spell_frost_summonwaterelemental", DESC=AttuneLang["DungeonQuest_Desc"], GROUPSIZE=5, LEVELS="25-28"},
 	{ID="210",NAME=AttuneLang["Blackfathom Deeps"],EXPAC=AttuneLang["World of Warcraft"], GROUP=AttuneLang['DUNGEONS'], FACTION="Horde",ICON="Interface\\Icons\\spell_frost_summonwaterelemental", DESC=AttuneLang["DungeonQuest_Desc"], GROUPSIZE=5, LEVELS="25-28"},
 	{ID="220",NAME=AttuneLang["The Stockade"],EXPAC=AttuneLang["World of Warcraft"], GROUP=AttuneLang['DUNGEONS'], FACTION="Alliance",ICON="Interface\\Icons\\inv_misc_key_03", DESC=AttuneLang["DungeonQuest_Desc"], GROUPSIZE=5, LEVELS="26-29"},
@@ -1223,48 +1224,52 @@ Attune_Data.steps = 	{
 	{ID_ATTUNE="320",ID="690",TYPE="End",STEP="Attuned",LOCATION="",ID_WOWHEAD="0",ICON="Interface\\Icons\\inv_misc_book_09",FOLLOWS="680&540&430&330&260&150&720",STAGE="90"},
 
 --vForever dungeon attune 330
-	-- Columns L→R: 2283 Necklace (longest) | 2202 Fungus | 2342 Treasures | 2418 Stones | 709 Tablet
+	-- Columns L→R: 2283 Necklace (longest) | 2202 Fungus | 2418 Stones | 2342 Treasures | 709 Tablet
+	-- Row 30 is only Dentrium ‖ An'Alleum. Other chains skip that row. Power Stones turn-in is row 40.
 	-- SIDE (beside End): 2278 The Platinum Discs (Inside)
 	{ID_ATTUNE="330",ID="10",TYPE="Level",STEP=AttuneLang["Reach level"].." 30",LOCATION="",ID_WOWHEAD="30",ICON="Interface\\Icons\\spell_holy_innerfire",FOLLOWS="0",STAGE="10"},
 	-- STAGE 20
 	{ID_ATTUNE="330",ID="520",TYPE="Pick Up",STEP="",LOCATION=AttuneLang["Orgrimmar"],ID_WOWHEAD="2283",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="10",STAGE="20"}, -- quest: Necklace Recovery
 	{ID_ATTUNE="330",ID="420",TYPE="Pick Up",STEP="",LOCATION=AttuneLang["Badlands"],ID_WOWHEAD="2202",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="10",STAGE="20"}, -- quest: Uldaman Reagent Run
-	{ID_ATTUNE="330",ID="320",TYPE="Pick Up",STEP="",LOCATION=AttuneLang["Undercity"],ID_WOWHEAD="2342",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="10",STAGE="20"}, -- quest: Reclaimed Treasures
-	{ID_ATTUNE="330",ID="220",TYPE="Pick Up",STEP="",LOCATION=AttuneLang["Badlands"],ID_WOWHEAD="2418",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="10",STAGE="20"}, -- quest: Power Stones
+	{ID_ATTUNE="330",ID="320",TYPE="Pick Up",STEP="",LOCATION=AttuneLang["Badlands"],ID_WOWHEAD="2418",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="10",STAGE="20"}, -- quest: Power Stones
+	{ID_ATTUNE="330",ID="220",TYPE="Pick Up",STEP="",LOCATION=AttuneLang["Undercity"],ID_WOWHEAD="2342",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="10",STAGE="20"}, -- quest: Reclaimed Treasures
 	{ID_ATTUNE="330",ID="120",TYPE="Pick Up",STEP="",LOCATION=AttuneLang["Badlands"],ID_WOWHEAD="709",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="10",STAGE="20"}, -- quest: Solution to Doom
-	-- STAGE 30
-	{ID_ATTUNE="330",ID="530",TYPE="Quest",STEP="",LOCATION=AttuneLang["Uldaman"],ID_WOWHEAD="2284",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="520",STAGE="30"}, -- quest: Necklace Recovery, Take 2
-	{ID_ATTUNE="330",ID="430",TYPE="Item",STEP="",LOCATION=AttuneLang["Uldaman"],ID_WOWHEAD="8047",ICON="Interface\\Icons\\inv_mushroom_01",FOLLOWS="420",STAGE="30",COUNT=12}, -- item: Magenta Fungus Cap
-	{ID_ATTUNE="330",ID="330",TYPE="Turn In",STEP="",LOCATION=AttuneLang["Undercity"],ID_WOWHEAD="2342",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="320",STAGE="30"}, -- quest: Reclaimed Treasures
-	{ID_ATTUNE="330",ID="230",TYPE="Item",STEP="",LOCATION=AttuneLang["Uldaman"],ID_WOWHEAD="8009",ICON="Interface\\Icons\\inv_misc_gem_diamond_01",FOLLOWS="220",STAGE="30",COUNT=8}, -- item: Dentrium Power Stone
-	{ID_ATTUNE="330",ID="130",TYPE="Item",STEP="",LOCATION=AttuneLang["Uldaman"],ID_WOWHEAD="5826",ICON="Interface\\Icons\\inv_misc_rune_02",FOLLOWS="120",STAGE="30"}, -- item: Tablet of Ryun'eh
+	-- STAGE 30 (Power Stones only — other chains skip this row)
+	{ID_ATTUNE="330",ID="340",TYPE="Item",STEP="",LOCATION=AttuneLang["Uldaman"],ID_WOWHEAD="8052",ICON="Interface\\Icons\\inv_battery_01",FOLLOWS="320",STAGE="30",COUNT=8}, -- item: An'Alleum Power Stone
+	{ID_ATTUNE="330",ID="330",TYPE="Item",STEP="",LOCATION=AttuneLang["Uldaman"],ID_WOWHEAD="8009",ICON="Interface\\Icons\\inv_battery_02",FOLLOWS="320",STAGE="30",COUNT=8}, -- item: Dentrium Power Stone
 	-- STAGE 40
-	{ID_ATTUNE="330",ID="540",TYPE="Pick Up",STEP="",LOCATION=AttuneLang["Uldaman"],ID_WOWHEAD="2339",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="530",STAGE="40"}, -- quest: Find the Gems and Power Source
-	{ID_ATTUNE="330",ID="440",TYPE="Turn In",STEP="",LOCATION=AttuneLang["Badlands"],ID_WOWHEAD="2202",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="430",STAGE="40"}, -- quest: Uldaman Reagent Run
-	{ID_ATTUNE="330",ID="340",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="330",STAGE="40"},
-	{ID_ATTUNE="330",ID="240",TYPE="Item",STEP="",LOCATION=AttuneLang["Uldaman"],ID_WOWHEAD="8052",ICON="Interface\\Icons\\inv_misc_gem_sapphire_02",FOLLOWS="230",STAGE="40",COUNT=8}, -- item: An'Alleum Power Stone
-	{ID_ATTUNE="330",ID="140",TYPE="Turn In",STEP="",LOCATION=AttuneLang["Badlands"],ID_WOWHEAD="709",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="130",STAGE="40"}, -- quest: Solution to Doom
+	{ID_ATTUNE="330",ID="530",TYPE="Quest",STEP="",LOCATION=AttuneLang["Uldaman"],ID_WOWHEAD="2284",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="520",STAGE="40"}, -- quest: Necklace Recovery, Take 2
+	{ID_ATTUNE="330",ID="430",TYPE="Item",STEP="",LOCATION=AttuneLang["Uldaman"],ID_WOWHEAD="8047",ICON="Interface\\Icons\\inv_mushroom_01",FOLLOWS="420",STAGE="40",COUNT=12}, -- item: Magenta Fungus Cap
+	{ID_ATTUNE="330",ID="350",TYPE="Turn In",STEP="",LOCATION=AttuneLang["Badlands"],ID_WOWHEAD="2418",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="340&330",STAGE="40"}, -- quest: Power Stones
+	{ID_ATTUNE="330",ID="230",TYPE="Turn In",STEP="",LOCATION=AttuneLang["Undercity"],ID_WOWHEAD="2342",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="220",STAGE="40"}, -- quest: Reclaimed Treasures
+	{ID_ATTUNE="330",ID="130",TYPE="Item",STEP="",LOCATION=AttuneLang["Uldaman"],ID_WOWHEAD="4631",ICON="Interface\\Icons\\inv_misc_rune_02",FOLLOWS="120",STAGE="40"}, -- item: Tablet of Ryun'eh
 	-- STAGE 50
-	{ID_ATTUNE="330",ID="550",TYPE="Kill",STEP="",LOCATION=AttuneLang["Uldaman"],ID_WOWHEAD="2748",ICON="Interface\\Icons\\inv_misc_head_stone_01",FOLLOWS="540",STAGE="50"}, -- npc: Archaedas
-	{ID_ATTUNE="330",ID="450",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="440",STAGE="50"},
-	{ID_ATTUNE="330",ID="350",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="340",STAGE="50"},
-	{ID_ATTUNE="330",ID="250",TYPE="Turn In",STEP="",LOCATION=AttuneLang["Badlands"],ID_WOWHEAD="2418",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="240",STAGE="50"}, -- quest: Power Stones
-	{ID_ATTUNE="330",ID="150",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="140",STAGE="50"},
+	{ID_ATTUNE="330",ID="540",TYPE="Pick Up",STEP="",LOCATION=AttuneLang["Uldaman"],ID_WOWHEAD="2339",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="530",STAGE="50"}, -- quest: Find the Gems and Power Source
+	{ID_ATTUNE="330",ID="440",TYPE="Turn In",STEP="",LOCATION=AttuneLang["Badlands"],ID_WOWHEAD="2202",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="430",STAGE="50"}, -- quest: Uldaman Reagent Run
+	{ID_ATTUNE="330",ID="360",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="350",STAGE="50"},
+	{ID_ATTUNE="330",ID="240",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="230",STAGE="50"},
+	{ID_ATTUNE="330",ID="140",TYPE="Turn In",STEP="",LOCATION=AttuneLang["Badlands"],ID_WOWHEAD="709",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="130",STAGE="50"}, -- quest: Solution to Doom
 	-- STAGE 60
-	{ID_ATTUNE="330",ID="560",TYPE="Item",STEP="",LOCATION=AttuneLang["Uldaman"],ID_WOWHEAD="7672",ICON="Interface\\Icons\\inv_misc_orb_03",FOLLOWS="550",STAGE="60"}, -- item: Obsidian Power Source
-	{ID_ATTUNE="330",ID="460",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="450",STAGE="60"},
-	{ID_ATTUNE="330",ID="360",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="350",STAGE="60"},
-	{ID_ATTUNE="330",ID="260",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="250",STAGE="60"},
-	{ID_ATTUNE="330",ID="160",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="150",STAGE="60"},
+	{ID_ATTUNE="330",ID="550",TYPE="Kill",STEP="",LOCATION=AttuneLang["Uldaman"],ID_WOWHEAD="2748",ICON="Interface\\Icons\\inv_misc_head_stone_01",FOLLOWS="540",STAGE="60"}, -- npc: Archaedas
+	{ID_ATTUNE="330",ID="450",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="440",STAGE="60"},
+	{ID_ATTUNE="330",ID="370",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="360",STAGE="60"},
+	{ID_ATTUNE="330",ID="250",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="240",STAGE="60"},
+	{ID_ATTUNE="330",ID="150",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="140",STAGE="60"},
 	-- STAGE 70
-	{ID_ATTUNE="330",ID="570",TYPE="Turn In",STEP="",LOCATION=AttuneLang["Badlands"],ID_WOWHEAD="2339",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="560",STAGE="70"}, -- quest: Find the Gems and Power Source
-	{ID_ATTUNE="330",ID="470",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="460",STAGE="70"},
-	{ID_ATTUNE="330",ID="370",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="360",STAGE="70"},
-	{ID_ATTUNE="330",ID="270",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="260",STAGE="70"},
-	{ID_ATTUNE="330",ID="170",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="160",STAGE="70"},
+	{ID_ATTUNE="330",ID="560",TYPE="Item",STEP="",LOCATION=AttuneLang["Uldaman"],ID_WOWHEAD="7672",ICON="Interface\\Icons\\inv_misc_orb_03",FOLLOWS="550",STAGE="70"}, -- item: Obsidian Power Source
+	{ID_ATTUNE="330",ID="460",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="450",STAGE="70"},
+	{ID_ATTUNE="330",ID="380",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="370",STAGE="70"},
+	{ID_ATTUNE="330",ID="260",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="250",STAGE="70"},
+	{ID_ATTUNE="330",ID="160",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="150",STAGE="70"},
+	-- STAGE 80
+	{ID_ATTUNE="330",ID="570",TYPE="Turn In",STEP="",LOCATION=AttuneLang["Badlands"],ID_WOWHEAD="2339",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="560",STAGE="80"}, -- quest: Find the Gems and Power Source
+	{ID_ATTUNE="330",ID="470",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="460",STAGE="80"},
+	{ID_ATTUNE="330",ID="390",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="380",STAGE="80"},
+	{ID_ATTUNE="330",ID="270",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="260",STAGE="80"},
+	{ID_ATTUNE="330",ID="170",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="160",STAGE="80"},
 	-- SIDE reminder (inside dungeon) — left of End
-	{ID_ATTUNE="330",ID="620",TYPE="Quest",STEP="",LOCATION=AttuneLang["Uldaman"],ID_WOWHEAD="2278",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="0",STAGE="70",SIDE=true}, -- quest: The Platinum Discs (Inside)
-	{ID_ATTUNE="330",ID="580",TYPE="End",STEP="Attuned",LOCATION="",ID_WOWHEAD="0",ICON="Interface\\Icons\\inv_misc_book_09",FOLLOWS="570&440&330&250&140&620",STAGE="80"},
+	{ID_ATTUNE="330",ID="620",TYPE="Quest",STEP="",LOCATION=AttuneLang["Uldaman"],ID_WOWHEAD="2278",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="0",STAGE="80",SIDE=true}, -- quest: The Platinum Discs (Inside)
+	{ID_ATTUNE="330",ID="580",TYPE="End",STEP="Attuned",LOCATION="",ID_WOWHEAD="0",ICON="Interface\\Icons\\inv_misc_book_09",FOLLOWS="570&470&390&270&170&620",STAGE="90"},
 
 --vForever dungeon attune 340
 	-- Columns L→R: 7461→7462 Madness (longest) | 7481 Elven (H) | 7482 Elven (A) | 5526 Felvine | 7441 Pusillin | 7489 Web (H) | 7488 Web (A)
@@ -1874,14 +1879,68 @@ Attune_Data.steps = 	{
 
 
 
---vForever: Excavation Site (195)
-	-- Wowhead zone 16732 has the four bosses and no dungeon quests yet.
-	-- {ID_ATTUNE="195",ID="10",TYPE="Level",STEP=AttuneLang["Reach level"].." 24",LOCATION="",ID_WOWHEAD="24",ICON="Interface\\Icons\\spell_holy_innerfire",FOLLOWS="0",STAGE="10"},
-	-- {ID_ATTUNE="195",ID="20",TYPE="Kill",STEP="",LOCATION=AttuneLang["Excavation Site"],ID_WOWHEAD="260322",ICON="Interface\\Icons\\inv_misc_monsterhead_02",FOLLOWS="10",STAGE="20"}, -- npc: Saltspine
-	-- {ID_ATTUNE="195",ID="30",TYPE="Kill",STEP="",LOCATION=AttuneLang["Excavation Site"],ID_WOWHEAD="260325",ICON="Interface\\Icons\\ability_hunter_pet_raptor",FOLLOWS="10",STAGE="20"}, -- npc: Shadetooth
-	-- {ID_ATTUNE="195",ID="40",TYPE="Kill",STEP="",LOCATION=AttuneLang["Excavation Site"],ID_WOWHEAD="260808",ICON="Interface\\Icons\\spell_nature_protectionformnature",FOLLOWS="10",STAGE="20"}, -- npc: Highland Horror
-	-- {ID_ATTUNE="195",ID="50",TYPE="Kill",STEP="",LOCATION=AttuneLang["Excavation Site"],ID_WOWHEAD="260326",ICON="Interface\\Icons\\inv_misc_stonetablet_05",FOLLOWS="10",STAGE="20"}, -- npc: Relic Guardian
-	-- {ID_ATTUNE="195",ID="60",TYPE="End",STEP="Attuned",LOCATION="",ID_WOWHEAD="0",ICON="Interface\\Icons\\inv_pick_02",FOLLOWS="20&30&40&50",STAGE="30"},
+--vForever dungeon attune 195 (Alliance Excavation Site: Wetlands)
+	-- Columns L→R: 95647→95809 Thicket | 469→98815 Hides | Greenwarden→95646 Horrors (longest) | 95772→95795 Songblade
+	-- SIDE (beside End): 95810 Lost Relic Carry (Inside — Titan Relic from Relic Guardian; Prehistoric Prism follows in-game)
+	{ID_ATTUNE="195",ID="10",TYPE="Level",STEP=AttuneLang["Reach level"].." 24",LOCATION="",ID_WOWHEAD="24",ICON="Interface\\Icons\\spell_holy_innerfire",FOLLOWS="0",STAGE="10"},
+	-- STAGE 20
+	{ID_ATTUNE="195",ID="720",TYPE="Quest",STEP="",LOCATION=AttuneLang["Wetlands"],ID_WOWHEAD="95647",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="10",STAGE="20"}, -- quest: Lost in the Thicket Things
+	{ID_ATTUNE="195",ID="620",TYPE="Quest",STEP="",LOCATION=AttuneLang["Wetlands"],ID_WOWHEAD="469",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="10",STAGE="20"}, -- quest: Daily Delivery
+	{ID_ATTUNE="195",ID="420",TYPE="Quest",STEP="",LOCATION=AttuneLang["Wetlands"],ID_WOWHEAD="463",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="10",STAGE="20"}, -- quest: The Greenwarden
+	{ID_ATTUNE="195",ID="320",TYPE="Quest",STEP="",LOCATION=AttuneLang["Redridge Mountains"],ID_WOWHEAD="95772",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="10",STAGE="20"}, -- quest: Songblade Search
+	-- STAGE 30
+	{ID_ATTUNE="195",ID="730",TYPE="Quest",STEP="",LOCATION=AttuneLang["Wetlands"],ID_WOWHEAD="95809",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="720",STAGE="30"}, -- quest: Heartwoven
+	{ID_ATTUNE="195",ID="630",TYPE="Pick Up",STEP="",LOCATION=AttuneLang["Wetlands"],ID_WOWHEAD="98815",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="620",STAGE="30"}, -- quest: Highland Hides
+	{ID_ATTUNE="195",ID="430",TYPE="Quest",STEP="",LOCATION=AttuneLang["Wetlands"],ID_WOWHEAD="276",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="420",STAGE="30"}, -- quest: Tramping Paws
+	{ID_ATTUNE="195",ID="330",TYPE="Quest",STEP="",LOCATION=AttuneLang["Redridge Mountains"],ID_WOWHEAD="95795",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="320",STAGE="30"}, -- quest: Fallen in the Fen
+	-- STAGE 40
+	{ID_ATTUNE="195",ID="740",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="730",STAGE="40"},
+	{ID_ATTUNE="195",ID="640",TYPE="Item",STEP="",LOCATION=AttuneLang["Excavation Site"],ID_WOWHEAD="284845",ICON="Interface\\Icons\\inv_misc_pelt_bear_ruin_05",FOLLOWS="630",STAGE="40",COUNT=4}, -- item: Thicket Raptor Hide
+	{ID_ATTUNE="195",ID="440",TYPE="Quest",STEP="",LOCATION=AttuneLang["Wetlands"],ID_WOWHEAD="277",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="430",STAGE="40"}, -- quest: Fire Taboo
+	{ID_ATTUNE="195",ID="340",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="330",STAGE="40"},
+	-- STAGE 50
+	{ID_ATTUNE="195",ID="750",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="740",STAGE="50"},
+	{ID_ATTUNE="195",ID="650",TYPE="Turn In",STEP="",LOCATION=AttuneLang["Wetlands"],ID_WOWHEAD="98815",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="640",STAGE="50"}, -- quest: Highland Hides
+	{ID_ATTUNE="195",ID="450",TYPE="Quest",STEP="",LOCATION=AttuneLang["Wetlands"],ID_WOWHEAD="275",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="440",STAGE="50"}, -- quest: Blisters on The Land
+	{ID_ATTUNE="195",ID="350",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="340",STAGE="50"},
+	-- STAGE 60
+	{ID_ATTUNE="195",ID="760",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="750",STAGE="60"},
+	{ID_ATTUNE="195",ID="660",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="650",STAGE="60"},
+	{ID_ATTUNE="195",ID="460",TYPE="Pick Up",STEP="",LOCATION=AttuneLang["Wetlands"],ID_WOWHEAD="95646",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="450",STAGE="60"}, -- quest: Horrors in the Highland
+	{ID_ATTUNE="195",ID="360",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="350",STAGE="60"},
+	-- STAGE 70
+	{ID_ATTUNE="195",ID="770",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="760",STAGE="70"},
+	{ID_ATTUNE="195",ID="670",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="660",STAGE="70"},
+	{ID_ATTUNE="195",ID="470",TYPE="Item",STEP="",LOCATION=AttuneLang["Excavation Site"],ID_WOWHEAD="270180",ICON="Interface\\Icons\\inv_misc_herb_07",FOLLOWS="460",STAGE="70"}, -- item: Horrible Rootcore (Highland Horror)
+	{ID_ATTUNE="195",ID="370",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="360",STAGE="70"},
+	-- STAGE 80
+	{ID_ATTUNE="195",ID="780",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="770",STAGE="80"},
+	{ID_ATTUNE="195",ID="680",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="670",STAGE="80"},
+	{ID_ATTUNE="195",ID="480",TYPE="Turn In",STEP="",LOCATION=AttuneLang["Wetlands"],ID_WOWHEAD="95646",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="470",STAGE="80"}, -- quest: Horrors in the Highland
+	{ID_ATTUNE="195",ID="380",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="370",STAGE="80"},
+	-- SIDE reminder (inside dungeon) — left of End
+	{ID_ATTUNE="195",ID="520",TYPE="Quest",STEP="",LOCATION=AttuneLang["Excavation Site"],ID_WOWHEAD="95810",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="0",STAGE="80",SIDE=true}, -- quest: Lost Relic Carry (Inside — Titan Relic from Relic Guardian)
+	{ID_ATTUNE="195",ID="790",TYPE="End",STEP="Attuned",LOCATION="",ID_WOWHEAD="0",ICON="Interface\\Icons\\inv_misc_book_09",FOLLOWS="780&680&480&380&520",STAGE="90"},
+
+--vForever dungeon attune 196 (Horde Excavation Site: Wetlands)
+	-- Columns L→R: 95663→95682 Maw | 95697 Tastes
+	-- SIDE (beside End): 95664 Elder Knowledge (Inside — Titan Relic from Relic Guardian; Earthen Echo follows in-game)
+	{ID_ATTUNE="196",ID="10",TYPE="Level",STEP=AttuneLang["Reach level"].." 24",LOCATION="",ID_WOWHEAD="24",ICON="Interface\\Icons\\spell_holy_innerfire",FOLLOWS="0",STAGE="10"},
+	-- STAGE 20
+	{ID_ATTUNE="196",ID="220",TYPE="Quest",STEP="",LOCATION=AttuneLang["Arathi Highlands"],ID_WOWHEAD="95663",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="10",STAGE="20"}, -- quest: Dragonmaw Rumors
+	{ID_ATTUNE="196",ID="120",TYPE="Pick Up",STEP="",LOCATION=AttuneLang["Orgrimmar"],ID_WOWHEAD="95697",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="10",STAGE="20"}, -- quest: Changing Tastes
+	-- STAGE 30
+	{ID_ATTUNE="196",ID="230",TYPE="Pick Up",STEP="",LOCATION=AttuneLang["Wetlands"],ID_WOWHEAD="95682",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="220",STAGE="30"}, -- quest: Open the Maw
+	{ID_ATTUNE="196",ID="130",TYPE="Item",STEP="",LOCATION=AttuneLang["Excavation Site"],ID_WOWHEAD="271100",ICON="Interface\\Icons\\inv_misc_food_71",FOLLOWS="120",STAGE="30",COUNT=4}, -- item: Thicket Raptor Meat
+	-- STAGE 40
+	{ID_ATTUNE="196",ID="240",TYPE="Item",STEP="",LOCATION=AttuneLang["Excavation Site"],ID_WOWHEAD="284844",ICON="Interface\\Icons\\inv_misc_note_06",FOLLOWS="230",STAGE="40"}, -- item: Dragonmaw Dispatch
+	{ID_ATTUNE="196",ID="140",TYPE="Turn In",STEP="",LOCATION=AttuneLang["Orgrimmar"],ID_WOWHEAD="95697",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="130",STAGE="40"}, -- quest: Changing Tastes
+	-- STAGE 50
+	{ID_ATTUNE="196",ID="250",TYPE="Turn In",STEP="",LOCATION=AttuneLang["Wetlands"],ID_WOWHEAD="95682",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="240",STAGE="50"}, -- quest: Open the Maw
+	{ID_ATTUNE="196",ID="150",TYPE="Spacer",STEP="Spacer",LOCATION="",ID_WOWHEAD="",ICON="",FOLLOWS="140",STAGE="50"},
+	-- SIDE reminder (inside dungeon) — left of End
+	{ID_ATTUNE="196",ID="320",TYPE="Quest",STEP="",LOCATION=AttuneLang["Excavation Site"],ID_WOWHEAD="95664",ICON="Interface\\Icons\\inv_scroll_03",FOLLOWS="0",STAGE="50",SIDE=true}, -- quest: Elder Knowledge (Inside — Titan Relic from Relic Guardian)
+	{ID_ATTUNE="196",ID="260",TYPE="End",STEP="Attuned",LOCATION="",ID_WOWHEAD="0",ICON="Interface\\Icons\\inv_misc_book_09",FOLLOWS="250&150&320",STAGE="60"},
 
 
 --vForever: Lower Blackrock Spire (Alliance 345)
@@ -2272,6 +2331,11 @@ Attune_Data.quests = {
 	[4769]={57,1},			[4788]={40,5},			[4862]={55,5},			[4866]={55,5},			[4867]={55,5},
 	[4981]={55,1},			[4982]={55,5},			[4983]={55,1},			[5001]={55,5},			[5002]={55,1},
 	[5047]={57,1},			[5081]={55,5},			[5089]={55,1},			[5102]={55,5},			[5160]={57,1},
+	-- Excavation Site: Wetlands (Forever)
+	[275]={20,1},			[276]={20,1},			[277]={20,1},			[463]={20,1},			[469]={18,1},
+	[95646]={24,5},			[95647]={24,5},			[95663]={24,1},			[95664]={24,5},
+	[95682]={24,5},			[95697]={24,5},			[95772]={24,5},			[95795]={24,1},
+	[95809]={24,1},			[95810]={24,5},			[98815]={24,5},
 }
 
 

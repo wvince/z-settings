@@ -1,5 +1,5 @@
 ## Interface: 16001
-## Version: 1.0.11
+## Version: 1.0.12
 ## Title: SpecBisTooltip |T136031:16:16:0:0|t by |cff55d2ffD4KiR |T132115:16:16:0:0|t
 ## Notes: Shows a list of the best specializations for specific dungeons/raids.
 ## Notes-deDE: Zeigt eine Liste der besten Spezialisierungen für bestimmte Dungeons/Raids anzeigt.

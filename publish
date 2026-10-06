@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Publishes the setup: commits everything plus the latest /z export, then pushes.
+# --allow-empty lets a new export alone reach the pre-commit hook that bundles it.
+set -e
+cd "$(dirname "$0")"
+git config core.hooksPath .githooks
+git add -A
+git commit --allow-empty -q -m "chore: update setup"
+git push -q
+git log -1 --format='Published %h: %s'

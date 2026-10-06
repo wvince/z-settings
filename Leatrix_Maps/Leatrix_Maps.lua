@@ -1,6 +1,6 @@
 ﻿
 	----------------------------------------------------------------------
-	-- 	Leatrix Maps 1.60.12 (5th October 2026)
+	-- 	Leatrix Maps 1.60.14 (6th October 2026)
 	----------------------------------------------------------------------
 
 	-- 10:Func, 20:Comm, 30:Evnt, 40:Panl
@@ -12,7 +12,7 @@
 	local LeaMapsLC, LeaMapsCB, LeaConfigList = {}, {}, {}
 
 	-- Version
-	LeaMapsLC["AddonVer"] = "1.60.12"
+	LeaMapsLC["AddonVer"] = "1.60.14"
 
 	-- Get locale table
 	local void, Leatrix_Maps = ...
@@ -910,59 +910,17 @@
 
 		if LeaMapsLC["ShowPointsOfInterest"] == "On" then
 
-			-- POI scale
-			local poiScale = 0.7
+			local poiScale = 0.7	-- POI scale
+			local hitScale = 0.8	-- Fraction of the icon that counts as a hit (icons have transparent padding)
 
 			local PinData = Leatrix_Maps["Icons"]
 			local LeaMapsPOI = {}
 			local LeaMapsPOIPool = {}
+			local hoveredPin = nil
 
-			-- Function to create a POI
-			local function CreatePOIFrame()
-				local pin = CreateFrame("Button", nil, WorldMapFrame:GetCanvas())
-				pin:SetFrameStrata("HIGH")
-				pin:SetFrameLevel(100)
-				pin:EnableMouse(true)
-				pin:SetPropagateMouseMotion(true) -- Needed for coordinates
-				pin:SetPropagateMouseClicks(true) -- Needed for right-click
-				pin.Texture = pin:CreateTexture(nil, "ARTWORK")
-				pin.Texture:SetAllPoints()
-				pin.HighlightTexture = pin:CreateTexture(nil, "HIGHLIGHT")
-				pin.HighlightTexture:SetAllPoints()
-				pin.HighlightTexture:SetBlendMode("ADD")
-
-				-- Separate highlight used only by the gamepad cursor
-				pin.GamepadHighlight = pin:CreateTexture(nil, "OVERLAY")
-				pin.GamepadHighlight:SetAllPoints()
-				pin.GamepadHighlight:SetBlendMode("ADD")
-				pin.GamepadHighlight:Hide()
-
-				return pin
-			end
-
-			-- Function to position the POI
-			local function PositionPOI(pin, x, y)
-				local canvas = WorldMapFrame:GetCanvas()
-				local scale = pin:GetScale()
-				pin:ClearAllPoints()
-				pin:SetPoint("CENTER", canvas, "TOPLEFT", (canvas:GetWidth() * x) / scale, -(canvas:GetHeight() * y) / scale)
-			end
-
-			-- Function to update the POI scale
-			local function UpdatePOIScale()
-				local scale = poiScale / WorldMapFrame:GetCanvasScale()
-				for i = 1, #LeaMapsPOI do
-					local pin = LeaMapsPOI[i]
-					pin:SetScale(scale)
-					local data = pin.data
-					if data then
-						PositionPOI(pin, data[2] / 100, data[3] / 100)
-					end
-				end
-			end
-
-			WorldMapFrame:HookScript("OnSizeChanged", UpdatePOIScale)
-			hooksecurefunc(WorldMapFrame, "OnCanvasScaleChanged", UpdatePOIScale)
+			-- Private tooltip so we never write to the shared GameTooltip (avoids taint)
+			local tip = CreateFrame("GameTooltip", "LeaMapsPOITooltip", UIParent, "GameTooltipTemplate")
+			tip:SetFrameStrata("TOOLTIP")
 
 			-- Icon definitions
 			local POIIcons = {
@@ -972,293 +930,277 @@
 				FlightH = {atlas = "TaxiNode_Horde", size = 30},
 				FlightN = {atlas = "TaxiNode_Neutral", size = 30},
 				Spirit = {atlas = "Vehicle-TempleofKotmogu-GreenBall", size = 28},
-				TravelA = {texture = "Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps.blp", size = 46, left = 0, right = 0.25, top = 0.75, bottom = 1,},
-				TravelH = {texture = "Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps.blp", size = 46, left = 0.25, right = 0.5, top = 0.75, bottom = 1,},
-				TravelN = {texture = "Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps.blp", size = 46, left = 0.5, right = 0.75, top = 0.75, bottom = 1,},
-				Dunraid = {texture = "Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps.blp", size = 46, left = 0.75, right = 1, top = 0.75, bottom = 1,},
-				Arrow = {atlas = "Garr_LevelUpgradeArrow", width = 48, height = 54,},
+				TravelA = {texture = "Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps.blp", size = 46, left = 0, right = 0.25, top = 0.75, bottom = 1},
+				TravelH = {texture = "Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps.blp", size = 46, left = 0.25, right = 0.5, top = 0.75, bottom = 1},
+				TravelN = {texture = "Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps.blp", size = 46, left = 0.5, right = 0.75, top = 0.75, bottom = 1},
+				Dunraid = {texture = "Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps.blp", size = 46, left = 0.75, right = 1, top = 0.75, bottom = 1},
+				Arrow = {atlas = "Garr_LevelUpgradeArrow", width = 48, height = 54},
 			}
 
-			-- Function to setup POI icons
-			local function SetupIcon(pin, atlas, texture, w, h, left, right, top, bottom, rotation)
-				if atlas then
-					pin.Texture:SetAtlas(atlas)
-					pin.HighlightTexture:SetAtlas(atlas)
-					pin.GamepadHighlight:SetAtlas(atlas)
+			----------------------------------------------------------------------
+			-- Pin creation and layout
+			----------------------------------------------------------------------
 
-				elseif texture then
-					pin.Texture:SetTexture(texture)
-					pin.HighlightTexture:SetTexture(texture)
-					pin.GamepadHighlight:SetTexture(texture)
+			-- Pins are display-only: no mouse input, so they can never block the map or each other
+			local function CreatePOIFrame()
+				local pin = CreateFrame("Frame", nil, WorldMapFrame:GetCanvas())
+				pin.isLeaMapsPin = true
+				pin:SetFrameStrata("HIGH")
+				pin:SetFrameLevel(100)
+				pin.Texture = pin:CreateTexture(nil, "ARTWORK")
+				pin.Texture:SetAllPoints()
+				pin.Highlight = pin:CreateTexture(nil, "OVERLAY")
+				pin.Highlight:SetAllPoints()
+				pin.Highlight:SetBlendMode("ADD")
+				pin.Highlight:Hide()
+				pin.textures = {pin.Texture, pin.Highlight}
+				return pin
+			end
 
-					if left then
-						pin.Texture:SetTexCoord(left, right, top, bottom)
-						pin.HighlightTexture:SetTexCoord(left, right, top, bottom)
-						pin.GamepadHighlight:SetTexCoord(left, right, top, bottom)
-					end
-				end
+			local function PositionPOI(pin)
+				local canvas = WorldMapFrame:GetCanvas()
+				local scale = pin:GetScale()
+				local x, y = pin.data[2] / 100, pin.data[3] / 100
+				pin:ClearAllPoints()
+				pin:SetPoint("CENTER", canvas, "TOPLEFT", (canvas:GetWidth() * x) / scale, -(canvas:GetHeight() * y) / scale)
+			end
 
-				pin:SetSize(w, h)
-				pin.Texture:SetSize(w, h)
-				pin.HighlightTexture:SetSize(w, h)
-				pin.GamepadHighlight:SetSize(w, h)
-
-				if rotation then
-					pin.Texture:SetRotation(rotation)
-					pin.HighlightTexture:SetRotation(rotation)
-					pin.GamepadHighlight:SetRotation(rotation)
+			local function UpdatePOIScale()
+				local scale = poiScale / WorldMapFrame:GetCanvasScale()
+				for i = 1, #LeaMapsPOI do
+					local pin = LeaMapsPOI[i]
+					pin:SetScale(scale)
+					PositionPOI(pin)
 				end
 			end
 
+			WorldMapFrame:HookScript("OnSizeChanged", UpdatePOIScale)
+			hooksecurefunc(WorldMapFrame, "OnCanvasScaleChanged", UpdatePOIScale)
 
-			-- Build the tooltip
+			local function SetupIcon(pin, icon, rotation)
+				local w, h = icon.width or icon.size, icon.height or icon.size
+				pin:SetSize(w, h)
+				for _, tex in ipairs(pin.textures) do
+					tex:SetTexture(nil)
+					tex:SetTexCoord(0, 1, 0, 1)
+					if icon.atlas then
+						tex:SetAtlas(icon.atlas)
+					else
+						tex:SetTexture(icon.texture)
+						if icon.left then tex:SetTexCoord(icon.left, icon.right, icon.top, icon.bottom) end
+					end
+					tex:SetRotation(rotation or 0)
+				end
+			end
+
+			----------------------------------------------------------------------
+			-- Tooltip
+			----------------------------------------------------------------------
+
 			local function BuildPOITooltip(pin)
 				local pinInfo = pin.data
 				if not pinInfo then return end
-				local name = pinInfo[4]
-				if not name then name = "" end
+				local name = pinInfo[4] or ""
+
 				if pinInfo[7] and pinInfo[8] then
-
 					local playerLevel = UnitLevel("player")
-
-					local dungeonMinLevel = pinInfo[7]
-					local dungeonMaxLevel = pinInfo[8]
-
+					local minLevel, maxLevel = pinInfo[7], pinInfo[8]
 					local color
-					if playerLevel < dungeonMinLevel then
-						color = GetQuestDifficultyColor(dungeonMinLevel)
-					elseif playerLevel > dungeonMaxLevel then
-						color = GetQuestDifficultyColor(dungeonMaxLevel - 2)
+					if playerLevel < minLevel then
+						color = GetQuestDifficultyColor(minLevel)
+					elseif playerLevel > maxLevel then
+						color = GetQuestDifficultyColor(maxLevel - 2)
 					else
 						color = QuestDifficultyColors["difficult"]
 					end
-
 					color = ConvertRGBtoColorString(color)
-					if dungeonMinLevel ~= dungeonMaxLevel then
-						name = name .. color .. " (" .. dungeonMinLevel .. "-" .. dungeonMaxLevel .. ")" .. FONT_COLOR_CODE_CLOSE
+					if minLevel ~= maxLevel then
+						name = name .. color .. " (" .. minLevel .. "-" .. maxLevel .. ")" .. FONT_COLOR_CODE_CLOSE
 					else
-						name = name .. color .. " (" .. dungeonMaxLevel .. ")" .. FONT_COLOR_CODE_CLOSE
+						name = name .. color .. " (" .. maxLevel .. ")" .. FONT_COLOR_CODE_CLOSE
 					end
-
 				end
 
-				GameTooltip:SetOwner(pin, "ANCHOR_RIGHT")
-				GameTooltip:SetText(name)
-
+				tip:SetScale(GameTooltip:GetScale())
+				tip:SetOwner(pin, "ANCHOR_RIGHT")
+				tip:SetText(name)
 				if pinInfo[5] and pinInfo[5] ~= "" then
-					GameTooltip:AddLine(pinInfo[5], 1, 1, 1, true)
+					tip:AddLine(pinInfo[5], 1, 1, 1, true)
 				end
-
-				GameTooltip:Show()
-
+				tip:Show()
 			end
 
-			local function POI_OnEnter(pin)
-				BuildPOITooltip(pin)
-			end
+			----------------------------------------------------------------------
+			-- Hover (shared by mouse and gamepad)
+			----------------------------------------------------------------------
 
-			local function POI_OnLeave(pin)
-				-- Don't hide a tooltip belonging to another POI
-				if LeaMapsPOI.gamepadHoveredPin ~= pin then
-					GameTooltip:Hide()
+			local function SetHoveredPin(pin)
+				if pin == hoveredPin then return end
+				if hoveredPin then
+					hoveredPin.Highlight:Hide()
+					tip:Hide()
 				end
-			end
-
-			-- Function to add a POI
-			function LeaMapsPOI:Add(pinInfo)
-
-				local pin = table.remove(LeaMapsPOIPool)
-				if not pin then	pin = CreatePOIFrame() end
-				pin:Show()
-
-				-- Reset reusable state
-				pin:SetScale(1)
-				pin:SetSize(1, 1)
-
-				pin.Texture:SetRotation(0)
-				pin.HighlightTexture:SetRotation(0)
-				pin.GamepadHighlight:SetRotation(0)
-
-				pin.Texture:SetTexCoord(0, 1, 0, 1)
-				pin.HighlightTexture:SetTexCoord(0, 1, 0, 1)
-				pin.GamepadHighlight:SetTexCoord(0, 1, 0, 1)
-
-				pin.Texture:SetTexture(nil)
-				pin.HighlightTexture:SetTexture(nil)
-				pin.GamepadHighlight:SetTexture(nil)
-
-				pin.Texture:SetAtlas(nil)
-				pin.HighlightTexture:SetAtlas(nil)
-				pin.GamepadHighlight:SetAtlas(nil)
-
-				-- Always start pooled POIs with gamepad highlight off
-				pin.GamepadHighlight:Hide()
-
-
-				pin.data = pinInfo
-
-				local icon = POIIcons[pinInfo[1]]
-				if icon then
-					SetupIcon(pin, icon.atlas, icon.texture, icon.width or icon.size, icon.height or icon.size, icon.left, icon.right, icon.top, icon.bottom, pinInfo[12])
-				end
-
-				pin:SetScript("OnEnter", POI_OnEnter)
-				pin:SetScript("OnLeave", POI_OnLeave)
-
-				--[[pin:SetScript("OnClick", function(self, button)
-					if button == "LeftButton" and pinInfo[13] then
-						WorldMapFrame:SetMapID(pinInfo[13])
-					end
-				end)]]
-
-				-- Active list
-				self[#self + 1] = pin
-				PositionPOI(pin, pinInfo[2] / 100, pinInfo[3] / 100)
-
-			end
-
-			-- Function to refresh all POIs
-			function LeaMapsPOI:RefreshAllData()
-
-				for i = #LeaMapsPOI, 1, -1 do
-					local pin = LeaMapsPOI[i]
-
-					-- Make sure a pooled POI cannot retain gamepad highlight
-					if pin.GamepadHighlight then
-						pin.GamepadHighlight:Hide()
-					end
-
-					-- Release the POI
-					pin:Hide()
-					pin:ClearAllPoints()
-					pin:SetScript("OnEnter", nil)
-					pin:SetScript("OnLeave", nil)
-					pin:SetScript("OnClick", nil)
-					pin.data = nil
-					LeaMapsPOIPool[#LeaMapsPOIPool + 1] = pin
-					LeaMapsPOI[i] = nil
-				end
-
-				-- Reset gamepad hover state
-				if self.gamepadHoveredPin then
-					GameTooltip:Hide()
-					self.gamepadHoveredPin = nil
-				end
-
-				local pMapID = WorldMapFrame.mapID; if not pMapID then return end
-				local mapPins = PinData[pMapID]; if not mapPins then return end
-
-				for i = 1, #mapPins do
-					local pinInfo = mapPins[i]
-					if pinInfo then
-						if (LeaMapsLC["ShowDungeonIcons"] == "On" and (pinInfo[1] == "Dungeon" or pinInfo[1] == "Raid" or pinInfo[1] == "Dunraid"))
-						or (LeaMapsLC["ShowTravelPoints"] == "On" and playerFaction == "Alliance" and (pinInfo[1] == "FlightA" or pinInfo[1] == "FlightN" or pinInfo[1] == "TravelA" or pinInfo[1] == "TravelN"))
-						or (LeaMapsLC["ShowTravelPoints"] == "On" and playerFaction == "Horde" and (pinInfo[1] == "FlightH" or pinInfo[1] == "FlightN" or pinInfo[1] == "TravelH" or pinInfo[1] == "TravelN"))
-						or (LeaMapsLC["ShowTravelOpposing"] == "On" and playerFaction == "Alliance" and (pinInfo[1] == "FlightH" or pinInfo[1] == "FlightN" or pinInfo[1] == "TravelH" or pinInfo[1] == "TravelN"))
-						or (LeaMapsLC["ShowTravelOpposing"] == "On" and playerFaction == "Horde" and (pinInfo[1] == "FlightA" or pinInfo[1] == "FlightN" or pinInfo[1] == "TravelA" or pinInfo[1] == "TravelN"))
-						or (LeaMapsLC["ShowSpiritHealers"] == "On" and pinInfo[1] == "Spirit")
-						or (LeaMapsLC["ShowZoneCrossings"] == "On" and pinInfo[1] == "Arrow")
-						then
-							self:Add(pinInfo)
-						end
-					end
-
-				end
-
-			end
-
-			-- Gamepad tooltips
-			local GamePadPOIDistance = 0.02
-			local DistanceSquared = GamePadPOIDistance * GamePadPOIDistance
-
-			local function HighlightCustomPOI(pin)
-				if pin and pin.GamepadHighlight then
-					pin.GamepadHighlight:Show()
+				hoveredPin = pin
+				if pin then
+					pin.Highlight:Show()
+					BuildPOITooltip(pin)
 				end
 			end
 
-			local function UnhighlightCustomPOI(pin)
-				if pin and pin.GamepadHighlight then
-					pin.GamepadHighlight:Hide()
+			-- Follow whichever input was used most recently
+			local activeInput = "mouse"
+			local lastMouseX, lastMouseY
+
+			local function UpdateActiveInput()
+				local gamepadUI = InputUtil.IsGamepadUIEnabled()
+				local mx, my = GetCursorPosition()
+				local mouseMoved = mx ~= lastMouseX or my ~= lastMouseY
+				local buttonDown = IsMouseButtonDown("LeftButton") or IsMouseButtonDown("RightButton")
+				lastMouseX, lastMouseY = mx, my
+
+				if gamepadUI and (SoftCursor:IsMoving() or (mouseMoved and buttonDown)) then
+					-- Stick movement, or panning the map with the mouse: use the crosshair
+					activeInput = "gamepad"
+				elseif mouseMoved and not buttonDown then
+					-- Plain mouse movement: use the pointer
+					activeInput = "mouse"
 				end
+
+				return gamepadUI
 			end
 
-			local function HideCustomPOIGamepadTooltip()
-				if LeaMapsPOI.gamepadHoveredPin then
-					GameTooltip:Hide()
-					LeaMapsPOI.gamepadHoveredPin = nil
-				end
-			end
-
-			local function UpdateCustomPOIGamepadTooltip()
-				if not SoftCursor:IsMoving() then return end
-				if not WorldMapFrame:IsShown() then
-					HideCustomPOIGamepadTooltip()
-					return
-				end
-				if not InputUtil.IsGamepadUIEnabled() then
-					HideCustomPOIGamepadTooltip()
-					return
-				end
-				local cursorX, cursorY = WorldMapFrame:GetNormalizedGamepadCursorPosition()
-				if not cursorX or not cursorY then return end
-				local closestPin = nil
-				local closestDistanceSquared = nil
+			-- Closest pin whose on-map footprint contains the point
+			local function FindPinAt(nx, ny)
+				local canvas = WorldMapFrame:GetCanvas()
+				local cw, ch = canvas:GetWidth(), canvas:GetHeight()
+				local best, bestDist
 				for i = 1, #LeaMapsPOI do
 					local pin = LeaMapsPOI[i]
-					if pin:IsShown() and pin:IsVisible() and pin.data then
-						local pinInfo = pin.data
-						local pinX = pinInfo[2] / 100
-						local pinY = pinInfo[3] / 100
-						local dx = cursorX - pinX
-						local dy = cursorY - pinY
-						local distanceSquared =	dx * dx + dy * dy
-						if distanceSquared <= DistanceSquared then
-							if not closestDistanceSquared
-								or distanceSquared < closestDistanceSquared
-							then
-								closestPin = pin
-								closestDistanceSquared = distanceSquared
+					if pin:IsShown() then
+						-- Distance in canvas units (pins are children of the canvas)
+						local dx = (nx - pin.data[2] / 100) * cw
+						local dy = (ny - pin.data[3] / 100) * ch
+						local s = pin:GetScale() * hitScale * 0.5
+						if math.abs(dx) <= pin:GetWidth() * s and math.abs(dy) <= pin:GetHeight() * s then
+							local d = dx * dx + dy * dy
+							if not bestDist or d < bestDist then
+								best, bestDist = pin, d
 							end
 						end
 					end
 				end
-
-				if closestPin then
-					if LeaMapsPOI.gamepadHoveredPin ~= closestPin then
-
-						-- Remove gamepad highlight from previous POI
-						if LeaMapsPOI.gamepadHoveredPin then
-							UnhighlightCustomPOI(LeaMapsPOI.gamepadHoveredPin)
-							GameTooltip:Hide()
-						end
-
-						-- Set new gamepad POI
-						LeaMapsPOI.gamepadHoveredPin = closestPin
-
-						-- Add gamepad highlight
-						HighlightCustomPOI(closestPin)
-
-						-- Show tooltip
-						BuildPOITooltip(closestPin)
-
-					end
-				else
-					-- No POI under the crosshair
-					if LeaMapsPOI.gamepadHoveredPin then
-						UnhighlightCustomPOI(LeaMapsPOI.gamepadHoveredPin)
-					end
-
-					HideCustomPOIGamepadTooltip()
-				end
-
+				return best
 			end
 
-			-- Update tooltip with gamepad cursor update
-			hooksecurefunc(WorldMapFrame, "UpdateGamepadCursor", UpdateCustomPOIGamepadTooltip)
-			WorldMapFrame:HookScript("OnHide", function() HideCustomPOIGamepadTooltip()	end)
+			-- True if the frame is part of the world map (used to detect Blizzard map pins)
+			local function IsOnWorldMap(frame)
+				local depth = 0
+				while frame and depth < 20 do
+					if frame == WorldMapFrame then return true end
+					frame = frame:GetParent()
+					depth = depth + 1
+				end
+				return false
+			end
 
-			-- Function to refresh POIs after map changes
+			-- Parented to the map, so it only runs while the map is open
+			local hoverDriver = CreateFrame("Frame", nil, WorldMapFrame)
+			hoverDriver:SetScript("OnUpdate", function()
+				local gamepadUI = UpdateActiveInput()
+
+				-- Pin under the gamepad crosshair
+				local gamepadPin
+				if gamepadUI then
+					local gx, gy = WorldMapFrame:GetNormalizedGamepadCursorPosition()
+					if gx and gy then gamepadPin = FindPinAt(gx, gy) end
+				end
+
+				-- Pin under the mouse pointer
+				local mousePin
+				if WorldMapFrame.ScrollContainer:IsMouseOver() then
+					local mx, my = WorldMapFrame:GetNormalizedCursorPosition()
+					if mx and my then mousePin = FindPinAt(mx, my) end
+				end
+
+				-- Gamepad mode: crosshair only. Mouse mode: pointer first, but keep the
+				-- crosshair's pin if the pointer isn't on one (matches Blizzard's pins)
+				local pin
+				if activeInput == "gamepad" and gamepadUI then
+					pin = gamepadPin
+				else
+					pin = mousePin or gamepadPin
+				end
+
+				-- Read-only check: if a Blizzard map pin is showing its tooltip, step aside
+				if pin and GameTooltip:IsShown() then
+					local owner = GameTooltip:GetOwner()
+					if owner and IsOnWorldMap(owner) then
+						pin = nil
+					end
+				end
+
+				SetHoveredPin(pin)
+			end)
+			hoverDriver:SetScript("OnHide", function() SetHoveredPin(nil) end)
+
+			----------------------------------------------------------------------
+			-- Adding and refreshing pins
+			----------------------------------------------------------------------
+
+			function LeaMapsPOI:Add(pinInfo)
+				local icon = POIIcons[pinInfo[1]]
+				if not icon then return end
+
+				local pin = table.remove(LeaMapsPOIPool) or CreatePOIFrame()
+				pin.data = pinInfo
+				pin.Highlight:Hide()
+				pin:SetScale(poiScale / WorldMapFrame:GetCanvasScale())
+				SetupIcon(pin, icon, pinInfo[12])
+				PositionPOI(pin)
+				pin:Show()
+
+				self[#self + 1] = pin
+			end
+
+			local function ShouldShow(kind)
+				local dungeons = LeaMapsLC["ShowDungeonIcons"] == "On"
+				local travel = LeaMapsLC["ShowTravelPoints"] == "On"
+				local opposing = LeaMapsLC["ShowTravelOpposing"] == "On"
+				local own, other = "A", "H"
+				if playerFaction == "Horde" then own, other = "H", "A" end
+
+				if kind == "Dungeon" or kind == "Raid" or kind == "Dunraid" then return dungeons end
+				if kind == "Spirit" then return LeaMapsLC["ShowSpiritHealers"] == "On" end
+				if kind == "Arrow" then return LeaMapsLC["ShowZoneCrossings"] == "On" end
+				if kind == "FlightN" or kind == "TravelN" then return travel or opposing end
+				if kind == "Flight" .. own or kind == "Travel" .. own then return travel end
+				if kind == "Flight" .. other or kind == "Travel" .. other then return opposing end
+				return false
+			end
+
+			function LeaMapsPOI:RefreshAllData()
+				SetHoveredPin(nil)
+
+				for i = #self, 1, -1 do
+					local pin = self[i]
+					pin:Hide()
+					pin:ClearAllPoints()
+					pin.data = nil
+					LeaMapsPOIPool[#LeaMapsPOIPool + 1] = pin
+					self[i] = nil
+				end
+
+				local mapPins = WorldMapFrame.mapID and PinData[WorldMapFrame.mapID]
+				if not mapPins then return end
+
+				for i = 1, #mapPins do
+					local pinInfo = mapPins[i]
+					if pinInfo and ShouldShow(pinInfo[1]) then
+						self:Add(pinInfo)
+					end
+				end
+			end
+
 			hooksecurefunc(WorldMapFrame, "OnMapChanged", function()
 				if WorldMapFrame:IsShown() then
 					LeaMapsPOI:RefreshAllData()

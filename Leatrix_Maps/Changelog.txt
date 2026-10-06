@@ -1,4 +1,10 @@
-﻿1.60.12 - 5th October 2026
+﻿1.60.14 - 6th October 2026
+- Updated 'Show points of interest'.
+
+1.60.13 - 6th October 2026
+- Updated 'Show points of interest'.
+
+1.60.12 - 5th October 2026
 - Updated 'Show points of interest'.
 
 1.60.11 - 3rd October 2026

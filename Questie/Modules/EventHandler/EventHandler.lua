@@ -110,7 +110,19 @@ function EventHandler:RegisterLateEvents()
     end)
 
     -- Events to update a players professions and reputations
-    Questie:RegisterBucketEvent("CHAT_MSG_SKILL", 2, _EventHandler.ChatMsgSkill)
+    -- Skill chat can be secret; batch refreshes without retaining the chat arguments.
+    local skillUpdatePending = false
+    Questie:RegisterEvent("CHAT_MSG_SKILL", function()
+        if skillUpdatePending then
+            return
+        end
+
+        skillUpdatePending = true
+        Questie:ScheduleTimer(function()
+            skillUpdatePending = false
+            _EventHandler.ChatMsgSkill()
+        end, 2)
+    end)
     if not GetSkillLineInfo then
         -- Modern unlearning need not print CHAT_MSG_SKILL and has no legacy AbandonSkill hook.
         Questie:RegisterBucketEvent("SKILL_LINES_CHANGED", 2, _EventHandler.ChatMsgSkill)
@@ -181,6 +193,7 @@ function EventHandler:RegisterLateEvents()
     Questie:RegisterEvent("QUEST_LOG_UPDATE", function()
         QuestEventHandler.QuestLogUpdate()
         QuestgiverFrame.RecheckGreeting()
+        QuestgiverFrame.RecheckGossip()
     end)
     Questie:RegisterEvent("QUEST_WATCH_UPDATE", function(_, questId) QuestEventHandler.QuestWatchUpdate(questId) end)
     Questie:RegisterEvent("QUEST_AUTOCOMPLETE", function(_, questId) QuestEventHandler.QuestAutoComplete(questId) end)

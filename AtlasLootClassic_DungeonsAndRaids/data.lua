@@ -7507,9 +7507,83 @@ data["MountHyjal"] = {
 	LoadDifficulty = NORMAL_DIFF,
 	--LevelRange = { 60, 60, 60 },
 	items = {
-		{
-			name = "Loot will be updated asap! Data mining is not yet fully possible!",
-			[NORMAL_DIFF] = {},
+		{ -- Boss 1: Bandalar
+			name = "Bandalar",
+			[NORMAL_DIFF] = {
+				{ 1, 0, "INV_Misc_QuestionMark", "Loot will be updated asap!", "" },
+			},
+		},
+		{ -- Boss 2: Ancient of Decay
+			name = "Ancient of Decay",
+			[NORMAL_DIFF] = {
+				{ 1, 0, "INV_Misc_QuestionMark", "Loot will be updated asap!", "" },
+			},
+		},
+		{ -- Boss 3: Time-Lost Battalion
+			name = "Time-Lost Battalion",
+			[NORMAL_DIFF] = {
+				{ 1, 0, "INV_Misc_QuestionMark", "Loot will be updated asap!", "" },
+			},
+		},
+		{ -- Boss 4: Sylvestris Dusksong
+			name = "Sylvestris Dusksong",
+			[NORMAL_DIFF] = {
+				{ 1, 0, "INV_Misc_QuestionMark", "Loot will be updated asap!", "" },
+			},
+		},
+		{ -- Boss 5: Old Gloomlurker
+			name = "Old Gloomlurker",
+			[NORMAL_DIFF] = {
+				{ 1, 0, "INV_Misc_QuestionMark", "Loot will be updated asap!", "" },
+			},
+		},
+		{ -- Boss 6: Gharalis the Abyssal
+			name = "Gharalis the Abyssal",
+			[NORMAL_DIFF] = {
+				{ 1, 0, "INV_Misc_QuestionMark", "Loot will be updated asap!", "" },
+			},
+		},
+		{ -- Boss 7: Kathris the Haunted
+			name = "Kathris the Haunted",
+			[NORMAL_DIFF] = {
+				{ 1, 0, "INV_Misc_QuestionMark", "Loot will be updated asap!", "" },
+			},
+		},
+		{ -- Boss 8: Elder Minderel
+			name = "Elder Minderel",
+			[NORMAL_DIFF] = {
+				{ 1, 0, "INV_Misc_QuestionMark", "Loot will be updated asap!", "" },
+			},
+		},
+		{ -- Boss 9: Anara Chillwind
+			name = "Anara Chillwind",
+			[NORMAL_DIFF] = {
+				{ 1, 0, "INV_Misc_QuestionMark", "Loot will be updated asap!", "" },
+			},
+		},
+		{ -- Boss 10: Tracker Stillwind
+			name = "Tracker Stillwind",
+			[NORMAL_DIFF] = {
+				{ 1, 0, "INV_Misc_QuestionMark", "Loot will be updated asap!", "" },
+			},
+		},
+		{ -- Boss 11: Council of Thorns
+			name = "Council of Thorns",
+			[NORMAL_DIFF] = {
+				{ 1, 0, "INV_Misc_QuestionMark", "Loot will be updated asap!", "" },
+			},
+		},
+		{ -- Boss 12: The Wild King
+			name = "The Wild King",
+			[NORMAL_DIFF] = {
+				{ 1, 0, "INV_Misc_QuestionMark", "Loot will be updated asap!", "" },
+			},
+		},
+		{ -- Boss 13: Nythus the Dreambound
+			name = "Nythus the Dreambound",
+			[NORMAL_DIFF] = {
+				{ 1, 0, "INV_Misc_QuestionMark", "Loot will be updated asap!", "" },
+			},
 		},
 	},
 }
@@ -7520,9 +7594,53 @@ data["BarrowDeepsRaid"] = {
 	LoadDifficulty = NORMAL_DIFF,
 	--LevelRange = { 60, 60, 60 },
 	items = {
-		{
-			name = "Loot will be updated asap! Data mining is not yet fully possible!",
-			[NORMAL_DIFF] = {},
+		{ -- Boss 1: Deepscar Matriarch
+			name = "Deepscar Matriarch",
+			[NORMAL_DIFF] = {
+				{ 1, 0, "INV_Misc_QuestionMark", "Loot will be updated asap!", "" },
+			},
+		},
+		{ -- Boss 2: Khalith the Dreadspinner
+			name = "Khalith the Dreadspinner",
+			[NORMAL_DIFF] = {
+				{ 1, 0, "INV_Misc_QuestionMark", "Loot will be updated asap!", "" },
+			},
+		},
+		{ -- Boss 3: Elder Tangleclaw
+			name = "Elder Tangleclaw",
+			[NORMAL_DIFF] = {
+				{ 1, 0, "INV_Misc_QuestionMark", "Loot will be updated asap!", "" },
+			},
+		},
+		{ -- Boss 4: Well of Sorrow
+			name = "Well of Sorrow",
+			[NORMAL_DIFF] = {
+				{ 1, 0, "INV_Misc_QuestionMark", "Loot will be updated asap!", "" },
+			},
+		},
+		{ -- Boss 5: Amethrax
+			name = "Amethrax",
+			[NORMAL_DIFF] = {
+				{ 1, 0, "INV_Misc_QuestionMark", "Loot will be updated asap!", "" },
+			},
+		},
+		{ -- Boss 6: Del'lynar Songwood
+			name = "Del'lynar Songwood",
+			[NORMAL_DIFF] = {
+				{ 1, 0, "INV_Misc_QuestionMark", "Loot will be updated asap!", "" },
+			},
+		},
+		{ -- Boss 7: Ravus and Darlissa
+			name = "Ravus and Darlissa",
+			[NORMAL_DIFF] = {
+				{ 1, 0, "INV_Misc_QuestionMark", "Loot will be updated asap!", "" },
+			},
+		},
+		{ -- Boss 8: Sonya Darkhallow
+			name = "Sonya Darkhallow",
+			[NORMAL_DIFF] = {
+				{ 1, 0, "INV_Misc_QuestionMark", "Loot will be updated asap!", "" },
+			},
 		},
 	},
 }
@@ -7533,9 +7651,11 @@ data["OnyxiasLairNew"] = {
 	LoadDifficulty = NORMAL_DIFF,
 	--LevelRange = { 60, 60, 60 },
 	items = {
-		{
-			name = "Loot will be updated asap! Data mining is not yet fully possible!",
-			[NORMAL_DIFF] = {},
+		{ -- Boss 1: Onyxia
+			name = "Onyxia",
+			[NORMAL_DIFF] = {
+				{ 1, 0, "INV_Misc_QuestionMark", "Loot will be updated asap!", "" },
+			},
 		},
 	},
 }

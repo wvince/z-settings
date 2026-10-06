@@ -1,0 +1,8 @@
+## Interface: 16001
+## Title: HDR Tuner
+## Notes: HDR Tuner exposes the client's HDR console variables as sliders and checkboxes in the Interface options panel, with a button to restart the graphics engine so changes take effect.
+## IconTexture: Interface\Icons\INV_Misc_Gem_Diamond_02
+## OptionalDeps: InterfacePanelLib
+
+Libs\InterfacePanelLib-1.0.lua
+HDRTuner.lua

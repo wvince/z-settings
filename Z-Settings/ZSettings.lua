@@ -20,6 +20,9 @@ local DATA_TABLES = { Attune_DB = true, RXPData = true, AUCTIONATOR_POSTING_HIST
 local function shareable(var, value)
   return not DATA_TABLES[var] and not (type(value) == "table" and value.profileKeys ~= nil)
 end
+-- macros an addon owns and rewrites as you play (RareScanner's last rare, RXPGuides' guide target): addon
+-- state, not setup. Never shared, applied or compared, so the addon rewriting them can't bring the popup back.
+local ADDON_MACROS = { RS_MACRO = true, RXPTargeting = true }
 local MAX_ADDON_TABLE = 300000   -- bytes of one addon's settings before compression; larger ones are listed, not shared
 -- never shared or switched: this addon, BarSync (the exporter's own character sync) and WoWCompanion
 -- (the exporter's link to the WoW Companion app, installed by its PC task)
@@ -294,7 +297,7 @@ local function readGeneralMacros(shareOnly)
   local out = {}
   for i = 1, (GetNumMacros()) do
     local name, icon, body = GetMacroInfo(i)
-    if name and (not shareOnly or isShareableMacro(body)) then out[name] = { icon, body } end
+    if name and (not shareOnly or (not ADDON_MACROS[name] and isShareableMacro(body))) then out[name] = { icon, body } end
   end
   return out
 end
@@ -306,7 +309,7 @@ local function applyGeneralMacros(wanted)
   ZSettingsDB = ZSettingsDB or {}
   local owned, changed = ZSettingsDB.owned or {}, 0
   for name in pairs(owned) do
-    if not wanted[name] then
+    if not wanted[name] and not ADDON_MACROS[name] then
       local i = findMacro(name, false)
       if i then DeleteMacro(i); changed = changed + 1 end
       owned[name] = nil
@@ -612,7 +615,7 @@ local function differsLive(key, data)
       if tostring(icon) ~= tostring(m[1]) or body ~= m[2] then return true end
     end
     for name in pairs(ZSettingsDB and ZSettingsDB.owned or {}) do
-      if not v[name] and findMacro(name, false) then return true end
+      if not v[name] and not ADDON_MACROS[name] and findMacro(name, false) then return true end
     end
   elseif key == "addons" then
     local have = readAddons()
@@ -810,11 +813,20 @@ local function decode(text)
   return data
 end
 
+-- a published setup; one exported before ADDON_MACROS still carries them
+local function decodeSetup(text)
+  local data, err = decode(text)
+  if data and type(data.macros) == "table" then
+    for name in pairs(ADDON_MACROS) do data.macros[name] = nil end
+  end
+  return data, err
+end
+
 -- applies the chosen parts (all when chosen is nil); the state they replace is kept per character
 -- for /z undo, and the parts compared by what was applied remember it
 local function applySetup(text, layout, chosen)
   if InCombatLockdown() then say("not in combat") return false end
-  local data, err = decode(text)
+  local data, err = decodeSetup(text)
   if not data then say(err) return false end
   if not chosen then
     chosen = {}
@@ -922,7 +934,7 @@ end
 -- Z_BUNDLE is written into ZBundle.lua by the git commit hook: the setup that ships with the addon
 local function bundle()
   if type(Z_BUNDLE) ~= "string" then return nil, "no setup in this addon yet: git pull in the AddOns folder, then restart WoW" end
-  local data, err = decode(Z_BUNDLE)
+  local data, err = decodeSetup(Z_BUNDLE)
   if not data then return nil, err .. ": git pull in the AddOns folder again" end
   return Z_BUNDLE, data
 end

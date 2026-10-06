@@ -2,7 +2,8 @@
 # Writes Z-Settings/ZBundle.lua on every commit:
 #   Z_VARS   each addon's SavedVariables names, read from the tocs (the client won't return them)
 #   Z_BUNDLE the latest /z export, which WoW writes to WTF\...\SavedVariables at /reload
-# and refuses the commit when Z_VARS changed since the game last loaded it: the export predates it.
+# and refuses the commit when Z_VARS changed since the game last loaded it (the export predates it)
+# or when nothing at all changed.
 set -e
 root=$(git rev-parse --show-toplevel)
 sv=$(ls -t "$root"/../../WTF/Account/*/SavedVariables/Z-Settings.lua 2>/dev/null | head -n 1)
@@ -33,3 +34,8 @@ if [ "$(vars "$out")" != "$loaded" ]; then
   exit 1
 fi
 git add "$out"
+# publishing runs with --allow-empty so the hook always gets to bundle the export; nothing new is no commit
+if git diff --cached --quiet; then
+  echo "Nothing new to publish: the setup and the addons are what's already committed." >&2
+  exit 1
+fi

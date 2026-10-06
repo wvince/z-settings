@@ -1,7 +1,11 @@
-# QuestieDB 1.0.4
+# QuestieDB 1.0.5
 
-### General fixes
+### New features
 
-- Mists does not load toc files with comments at the top, fix this in the toc and generated artifacts for all versions. ([Logonz](https://github.com/Questie/QuestieDB/commit/365537a340473291f5af3b7a53a5eca94e2a5f1a))
+- Add Forever base data ([Logonz](https://github.com/Questie/QuestieDB/commit/f521c36eb72a57d7f205a61ee212ad0ca9f51ed9))
 
-[All changes since v1.0.3](https://github.com/Questie/QuestieDB/compare/v1.0.3..365537a340473291f5af3b7a53a5eca94e2a5f1a)
+### Quest fixes
+
+- Quest fixes for Zephras Isle ([Cheeq](https://github.com/Questie/QuestieDB/commit/a40148644581f35e714217728c0a3469bdf22c13))
+
+[All changes since v1.0.4](https://github.com/Questie/QuestieDB/compare/v1.0.4..e0a6eaa86f181ac99262e34126bcd2ed1a1712d6)

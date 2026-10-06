@@ -15,7 +15,7 @@ config.addonName = "QuestieDB"
 
 --- Bumped when the shape of the public API or the storage format changes in a way a consumer
 --- can observe. Questie checks this at init and fails with a specific message on mismatch.
-config.contractVersion = 2
+config.contractVersion = 3
 
 --- The oldest consumer contract this release still honors. `RequireContract` passes any
 --- required version in [minSupportedContract, contractVersion]; raise this floor only when a
@@ -47,10 +47,15 @@ config.maxValueLength = 1000
 --
 -- `expansion` is the directory under data/ holding this flavor's raw entity data.
 -- `dataPrefix` is the filename prefix inside that directory.
--- `rules` selects shared schema/constants, not authored input ownership.
+-- `rules` selects legacy ordering and fallback constants, not authored input ownership.
+-- Flavor-specific constant tables take precedence over that fallback.
 -- `gameType` is the default native persona; `gameTypeAliases` adds names for the same flavor.
 -- `aliases` names byte-identical Baked TOCs, independently of native file-condition tokens.
 -- `interface` records the supported client Interface values.
+
+---Legacy rules ordering, not flavor ownership. Forever selects Classic through `rules`.
+---@type table<string, integer>
+config.expansionOrder = { Classic = 1, TBC = 2, Wotlk = 3, Cata = 4, MoP = 5 }
 
 config.flavors = {
   { name = "Vanilla", suffix = "_Vanilla", expansion = "Classic", dataPrefix = "classic", rules = "Classic", gameType = "vanilla", interface = "11508, 11509" },
@@ -127,6 +132,7 @@ config.runtimeFiles = {
     "src/meta/npcMeta.lua",
     "src/meta/itemMeta.lua",
     "src/meta/objectMeta.lua",
+    "src/corrections/tablePatch.lua",
   },
   bakedReader = "src/read/baked.lua",
   sourceReader = "src/read/source.lua",
@@ -142,7 +148,6 @@ config.runtimeFiles = {
 -- The initializer must precede the subject files in both TOCs and offline loaders.
 config.enumFiles = {
   "src/corrections/enum/constants.lua",
-  "src/corrections/enum/fieldKeys.lua",
   "src/corrections/enum/items.lua",
   "src/corrections/enum/quests.lua",
   "src/corrections/enum/professions.lua",
@@ -163,7 +168,18 @@ config.ownedCorrections = {
   { owned = 'Forever', file = 'Forever/legacy/classicObjectFixes.lua', module = 'QuestieObjectFixes', datatype = 'Object', static = {'Load'}, dynamic = {'LoadFactionFixes'}, sourceExpansionOrder = 1, window = 'Era' },
   { owned = 'Forever', file = 'Forever/legacy/classicQuestReputationFixes.lua', module = 'QuestieClassicQuestReputationFixes', datatype = 'Quest', static = {'Load'}, expansions = {['Forever']=true}, generated = true, window = 'Era' },
   { owned = 'Forever', file = 'Forever/legacy/itemStartFixes.lua', module = 'QuestieItemStartFixes', datatype = 'Item', static = {'LoadAutomaticQuestStarts'}, options = {['noNewEntries']=true,['noOverwrites']=true}, generated = true, window = 'Era' },
-  -- Authored Forever corrections follow the baseline within each Static/Dynamic category.
+  -- Generated delta-base follows all inherited Static Corrections, before traces and authored fixes.
+  { owned = 'Forever', file = 'Forever/generated/foreverBaseNpc.lua', module = 'ForeverBaseNpc', datatype = 'Npc', static = {'Load'}, generated = true, window = 'ForeverDeltaBase' },
+  { owned = 'Forever', file = 'Forever/generated/foreverBaseObject.lua', module = 'ForeverBaseObject', datatype = 'Object', static = {'Load'}, generated = true, window = 'ForeverDeltaBase' },
+  { owned = 'Forever', file = 'Forever/generated/foreverBaseQuest.lua', module = 'ForeverBaseQuest', datatype = 'Quest', static = {'Load'}, generated = true, window = 'ForeverDeltaBase' },
+  { owned = 'Forever', file = 'Forever/generated/foreverBaseItem.lua', module = 'ForeverBaseItem', datatype = 'Item', static = {'Load'}, generated = true, window = 'ForeverDeltaBase' },
+  -- Machine-generated from player traces (tools/trace-analyzer); never hand-edited. Applies
+  -- after the generated delta-base and before authored forever*Fixes.lua, which may override it.
+  { owned = 'Forever', file = 'Forever/traces/foreverQuestTraces.lua', module = 'ForeverQuestTraces', datatype = 'Quest', static = {'Load'}, generated = true, window = 'Forever' },
+  { owned = 'Forever', file = 'Forever/traces/foreverNpcTraces.lua', module = 'ForeverNpcTraces', datatype = 'Npc', static = {'Load'}, generated = true, window = 'Forever' },
+  { owned = 'Forever', file = 'Forever/traces/foreverItemTraces.lua', module = 'ForeverItemTraces', datatype = 'Item', static = {'Load'}, generated = true, window = 'Forever' },
+  { owned = 'Forever', file = 'Forever/traces/foreverObjectTraces.lua', module = 'ForeverObjectTraces', datatype = 'Object', static = {'Load'}, generated = true, window = 'Forever' },
+  -- Authored Forever corrections follow legacy, generated base and trace data; Dynamic precedence is unchanged.
   { owned = 'Forever', file = 'Forever/foreverQuestFixes.lua', module = 'ForeverQuestFixes', datatype = 'Quest', static = {'Load'}, dynamic = {'LoadDynamic'}, window = 'Forever' },
   { owned = 'Forever', file = 'Forever/foreverNPCFixes.lua', module = 'ForeverNpcFixes', datatype = 'Npc', static = {'Load'}, dynamic = {'LoadDynamic'}, window = 'Forever' },
   { owned = 'Forever', file = 'Forever/foreverItemFixes.lua', module = 'ForeverItemFixes', datatype = 'Item', static = {'Load'}, dynamic = {'LoadDynamic'}, window = 'Forever' },
@@ -178,9 +194,8 @@ function config.correctionApplies(spec, flavor)
   if not flavor then return false end
   if spec.owned then return spec.owned == flavor.name end
   if flavor.name == "Forever" then return false end
-  local order = { Classic = 1, TBC = 2, Wotlk = 3, Cata = 4, MoP = 5 }
   return (not spec.expansions or spec.expansions[flavor.expansion] == true) and
-    (not spec.minExpansionOrder or (order[flavor.expansion] or 0) >= spec.minExpansionOrder)
+    (not spec.minExpansionOrder or (config.expansionOrder[flavor.expansion] or 0) >= spec.minExpansionOrder)
 end
 
 ---Resolved correction block for one flavor; native selection uses this same applicability.
@@ -236,7 +251,6 @@ config.supportData = {
   shared = {
     "support/Zones/dungeons.lua",
     "support/Zones/subZoneToParentZone.lua",
-    "support/Zones/zoneIds.lua",
     "support/Zones/instanceIdToAreaId.lua",
     "support/DropTables/itemDropCorrections.lua",
   },
@@ -274,7 +288,7 @@ config.supportData = {
 -- These paths are explicit: future Era additions must not silently become Forever inputs.
 config.supportData.perFlavor.Forever = {
   "support/Forever/Zones/dungeons.lua", "support/Forever/Zones/subZoneToParentZone.lua",
-  "support/Forever/Zones/zoneIds.lua", "support/Forever/Zones/instanceIdToAreaId.lua",
+  "support/Forever/Zones/instanceIdToAreaId.lua",
   "support/Forever/DropTables/itemDropCorrections.lua",
   "support/Forever/Zones/areaIdToUiMapId.lua", "support/Forever/Zones/uiMapIdToAreaId.lua",
   "support/Forever/QuestXP/xpDB-classic.lua", "support/Forever/FactionTemplates/factionTemplateClassic.lua",
@@ -295,15 +309,6 @@ function config.supportFiles(flavor)
   for _, file in ipairs(config.supportData.perFlavor[flavor.name]) do files[#files + 1] = file end
   files[#files + 1] = "src/support/_end.lua"
   return files
-end
-
----@param flavor table
----@return string
-function config.zoneIdsPath(flavor)
-  for _, path in ipairs(config.supportFiles(flavor)) do
-    if path:match("/Zones/zoneIds%.lua$") then return path end
-  end
-  error("No zoneIds input for " .. flavor.name)
 end
 
 --- Append `source` to `target`, skipping anything already listed.

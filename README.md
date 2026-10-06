@@ -47,7 +47,7 @@ block `git pull`. If `git pull` reports local changes, `git reset --hard origin/
 | Shared | Not shared |
 |---|---|
 | Interface settings, nameplates, keybinds, chat windows | Anything on action bars, Cooldown Manager |
-| Enabled addons and their settings | Class macros and macros that cast a spell |
+| Enabled addons and their settings | Class macros, macros that cast a spell, RareScanner and RXP macros |
 | Target and menu click casting, General macros without spells | Graphics, sound, addon data and per-character profiles |
 
 The exporter's active Edit Mode layout arrives as a layout named `Zeroshin UI`, imported through Edit
@@ -58,11 +58,13 @@ the setup no longer has is deleted; your own macros never are, even one sharing 
 ## Publishing
 
 ```
-git add -A && git commit -m "update setup" && git push
+./publish
 ```
 
-Run after `/z export`. The hook also writes each addon's settings-table names from the
-tocs, and rejects the commit when no export exists or the addon list changed since the export. It
-requires `git config core.hooksPath .githooks` once per clone. `BarSync` and `WoWCompanion` are ignored.
+Run after `/z export`. It commits everything with `--allow-empty` and pushes: without that flag, a new
+export alone looks like nothing to git, which then never runs the hook that bundles it. The hook also
+writes each addon's settings-table names from the tocs, and rejects the commit when no export exists,
+the addon list changed since the export, or nothing changed at all. `BarSync` and `WoWCompanion` are
+ignored.
 
 Tests: `uv run --with lupa --with pytest pytest .tests/test_zsettings.py -q`.

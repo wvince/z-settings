@@ -62,6 +62,17 @@ def test_hook_bundles_newest_export(tmp_path):
     assert "Z-Settings/ZBundle.lua" in staged
 
 
+def test_hook_refuses_an_empty_publish(tmp_path):
+    addons = fake_install(tmp_path, {"2#3": "ZS1:same"})
+    run_hook(addons)   # the first run writes the settings names and asks for a re-export
+    assert run_hook(addons).returncode == 0
+    git = ["git", "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "--no-verify", "-m", "setup"]
+    subprocess.run(git, cwd=addons, check=True)
+    # publishing again with the same export and no other change: nothing to commit
+    r = run_hook(addons)
+    assert r.returncode != 0 and "Nothing new to publish" in r.stderr
+
+
 def test_hook_blocks_commit_without_export(tmp_path):
     addons = fake_install(tmp_path, {"1#1": None})
     r = run_hook(addons)

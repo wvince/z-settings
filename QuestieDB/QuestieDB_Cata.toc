@@ -4,7 +4,7 @@
 ## Title: QuestieDB
 ## Notes: The database Questie consumes.
 ## Author: Code: Logonz Data: Muehe/TheCrux(BreakBB)/Drejjmit/Dyaxler/Cheeq/TechnoHunter/Yttrium/Everyone else
-## Version: 1.0.4
+## Version: 1.0.5
 ## Category: Quests
 ## Category-deDE: Quests
 ## Category-esES: Misiones
@@ -17,10 +17,10 @@
 ## Category-zhCN: 任务
 ## Category-zhTW: 任務
 ## IconTexture: Interface\AddOns\QuestieDB\icons\QuestieTDB_64x64.png
-## X-Contract-Version: 2
+## X-Contract-Version: 3
 ## X-Flavor: Cata
 ## X-Mode: baked
-## X-BUILD-COMMIT: 365537a340473291f5af3b7a53a5eca94e2a5f1a
+## X-BUILD-COMMIT: e0a6eaa86f181ac99262e34126bcd2ed1a1712d6
 ## X-BUILD-TIME: 2023-11-14T22:13:20Z
 
 src\config.lua
@@ -30,9 +30,9 @@ src\meta\questMeta.lua
 src\meta\npcMeta.lua
 src\meta\itemMeta.lua
 src\meta\objectMeta.lua
+src\corrections\tablePatch.lua
 src\read\baked.lua
 src\corrections\enum\constants.lua
-src\corrections\enum\fieldKeys.lua
 src\corrections\enum\items.lua
 src\corrections\enum\quests.lua
 src\corrections\enum\professions.lua
@@ -46,7 +46,6 @@ src\support\data.lua
 src\support\_begin.lua
 support\Zones\dungeons.lua
 support\Zones\subZoneToParentZone.lua
-support\Zones\zoneIds.lua
 support\Zones\instanceIdToAreaId.lua
 support\DropTables\itemDropCorrections.lua
 support\Zones\areaIdToUiMapId.lua

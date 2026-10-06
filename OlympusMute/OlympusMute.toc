@@ -2,7 +2,7 @@
 ## Title: OlympusMute
 ## Notes: Hides chat and invites from guilds on your list ("Olympus" by default). Client-side only; does not use the ignore list.
 ## Author: Sol
-## Version: 1.2.1
+## Version: 1.3.1
 ## IconTexture: Interface\AddOns\OlympusMute\Icon
 ## SavedVariables: OlympusMuteDB
 

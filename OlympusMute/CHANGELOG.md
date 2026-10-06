@@ -1,13 +1,69 @@
 # OlympusMute Changelog
 
+## 1.3.1
+
+### New
+- **Ask before trading.** When a muted player opens a trade with you, a window asks: Allow trade or Decline. Handy for enchants or mats bought in the world. Allowing covers trades with that player for the next 10 minutes, and they stay muted. If the trade ends on its own, the window closes. Replaces the automatic trade decline; turn it off with "Ask before trades" in the options or `/omute trades off`.
+
+### Fixed
+- Group invites from muted players are now really declined after the short pause. In 1.3.0, hiding the invite window could decline it right away.
+- A pause that was still running can no longer decline a different player's invite that arrives right after.
+- Turning off auto-decline, or unmuting someone, during the pause now gives you the invite or duel back. Turning on "Decline group invites and duels instantly" sends any waiting decline right away.
+- "Unmute forever" in the group window now uses the full two-part name (like "Tiny Yackle"), and the window shows full names.
+- Clicking "Unmute forever" or the log's "Never mute" a second time no longer undoes it.
+- "Unmute while grouped" now ends on time even when nothing changes in the group, and after a /reload. Choosing it after the player has already left does nothing.
+- An open message in the muted messages log no longer changes to a newer message.
+- Removing a newly muted player's old messages no longer removes whispers you sent to them, and now also clears their older community channel messages.
+- When a muted and an unmuted player say the same thing at the same time, the chat bubble stays visible.
+- The whisper warning no longer appears for a player you've unmuted while grouped.
+
+### Improved
+- The Scan button also searches above the highest level it has seen so far, so higher-level members can't stay hidden behind a full first search.
+- `/omute` help now says that `/omute allow Name` works as a toggle (type it again to undo).
+
+## 1.3.0
+
+### New
+- **Unmute while grouped.** When a muted player is in your group (you join theirs, or they join yours), a window lets you choose: Unmute while grouped, Keep muted, or Unmute forever.
+- When you invite a muted player, the window offers Unmute while grouped, Keep muted, or Cancel invite.
+- "Unmute while grouped" shows their chat only while you're in the same group. They're muted again automatically when they leave, when the group ends, or if they never join. It lasts through a /reload.
+- **Muted messages log.** Click "Muted messages..." in the options or type `/omute log` to see what OlympusMute hid in the last 15 minutes (up to 50 messages). It's kept in memory only: never saved, and cleared on /reload or logout.
+- **Report from the log.** Click a message to open Blizzard's report window for that exact message. You can also choose Never mute for the sender from there.
+- **Import your ignore list.** Click "Import ignore list..." or type `/omute import` to add everyone on your WoW ignore list to your mute list. They stay muted whatever guild they join, and you can choose to clear them from the ignore list to free up slots.
+
+### Improved
+- **Human-speed declines.** Group invites and duels from muted players are now declined after a short random pause (2 to 8 seconds), like a person clicking Decline, instead of instantly. You never see the request: its window is hidden right away. The pause is short enough that other players' invites still reach you. If you prefer the old behavior, tick "Decline group invites and duels instantly" in the options or type `/omute instant on`.
+- Smoother performance in busy areas. When several muted players are spotted at once, their old chat lines are removed in one batch, one chat window per frame, instead of all at once. New messages from them are still hidden immediately; older lines may take a moment to disappear.
+- Chat bubbles are checked less often, and turning bubble hiding off stops the checks right away.
+- The muted players window has a "Sort: Name / Sort: Guild" button. Sorting by guild groups each guild's members together.
+- The guild list and filtered words are shown in alphabetical order.
+- Also hides muted players in community channels, and declines hardcore death-duel requests from them.
+- Messages from GMs and Blizzard staff are never hidden by name keywords.
+
+### Fixed
+- Typing a two-part name with a dash (like "Tiny-Yackle") now mutes the right player. The player box now says "Player (First Last)".
+- Targeting a muted player whose guild info hadn't loaded yet could unmute them.
+- Running /who on a player no longer makes the result disappear when it reveals a new muted player.
+- List sharing sends large lists reliably, tells you if part of your list didn't fit, and rejects malformed or formatted entries.
+- Turning filtering off now brings back any hidden chat bubbles, and a bubble with the same text from someone else is no longer hidden.
+- Role-check group invites from muted players are closed properly, and an old invite can't be declined minutes after it ended.
+
+### Thanks
+- @Dawnbard (Twitter) for the group idea
+- JakeyCakey1124 (CurseForge) for temporary unmute of party members
+- Mr_Zoner (forums) for the sorting and ignore list ideas
+- Laurendor (CurseForge) for the idea of a place to see muted chat
+- jstelzer (CurseForge) for tracking down the slowdown in busy areas and suggesting the batching approach
+- user_pzoguhlc9va2le884725 (CurseForge) for comma-separated entry and the scan counter fix
+
 ## 1.2.1
 - Fixed: shared lists are now only accepted from your group, your guild, or your friends list, with at most one share window per minute. Strangers can no longer send you share popups.
 - Fixed: a flood of incomplete share messages can no longer build up in the background.
 - Fixed: auto-decline messages (duels, trades, group and guild invites) are shown at most once per player per minute, so someone spamming requests can't flood your chat.
 
 ## 1.2.0
-- New: share your lists. Send your guild names and filtered words to a friend (`/omute share Name`), your group (`/omute share`) or your guild (`/omute share guild`), or use the "Share lists..." button in the options. They see what's in it and choose Add to mine, Replace mine, or Cancel. Players are never shared. Turn off incoming shares with `/omute shares off`. Thanks to delro_ed for the idea.
-- New: mute by name. Hide chat from any player whose character name contains a word, with the "Name contains" button in the options or `/omute name add|remove text`. Thanks to ENDrain for the suggestion.
+- New: share your lists. Send your guild names and filtered words to a friend (`/omute share Name`), your group (`/omute share`) or your guild (`/omute share guild`), or use the "Share lists..." button in the options. They see what's in it and choose Add to mine, Replace mine, or Cancel. Players are never shared. Turn off incoming shares with `/omute shares off`. Thanks to delro_ed (Twitch chat) for the idea.
+- New: mute by name. Hide chat from any player whose character name contains a word, with the "Name contains" button in the options or `/omute name add|remove text`. Thanks to ENDrain (CurseForge) for the suggestion.
 - New: inviting someone on your mute list now opens a window with a "Cancel invite" button, instead of only a chat warning.
 - New: `/omute tally` shows your total hidden messages, this session's count, and how many players are muted, in one line in your chat. (`/omute stats` still works too.)
 

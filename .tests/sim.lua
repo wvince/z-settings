@@ -307,7 +307,8 @@ local friend = newChar("Buddy", "Classic Beta PvP", accB, { "Fireball" })
 -- my setup
 accA.general = { { "Focus", 1, "/focus [@mouseover,harm] mouseover; target" }, { "Mana", 2, "#showtooltip\n/use Major Mana Potion" },
   { "Random nuke", 6, "/userandom Shadow Bolt, Immolate" }, { "Spell nuke", 6, "/spell Shadow Bolt" },
-  { "Healthstone", 3, "#showtooltip\n/cast Create Healthstone" }, { "Warlock nuke", 4, "/cast Shadow Bolt" } }
+  { "Healthstone", 3, "#showtooltip\n/cast Create Healthstone" }, { "Warlock nuke", 4, "/cast Shadow Bolt" },
+  { "RS_MACRO", 8, "/targetexact Soboz" } }
 me.charMacros = { { "Tap safe", 5, "/cast [nochanneling] Life Tap" } }
 me.bars = { [1] = { kind = "spell", id = 1 } }
 accA.binds[1][2] = "UP"
@@ -384,6 +385,7 @@ check("1 spell-casting macros left out", data.macros.Healthstone == nil and data
 check("1 /userandom macro left out", data.macros["Random nuke"] == nil)
 check("1 /spell macro left out", data.macros["Spell nuke"] == nil)
 check("1 character macros left out", data.macros["Tap safe"] == nil)
+check("1 an addon's own macro left out", data.macros.RS_MACRO == nil)
 check("1 action bars left out", data.bars == nil)
 check("1 cooldown manager left out", data.cdm == nil)
 check("1 only target/menu clicks shared", #data.clicks == 1 and data.clicks[1].type == 3)
@@ -832,6 +834,25 @@ combat = true; fire("PLAYER_LOGIN"); combat = false
 check("5 no popup in combat", #popupBoxes() == 0)
 fire("PLAYER_REGEN_ENABLED")
 check("5 popup once combat ends", #popupBoxes() > 0)
+
+-- an older setup carrying an addon's own macro: never applied, never offered, never deleted as brought
+do
+  local old = decodeSetup(text)
+  old.macros.RS_MACRO = { 8, "/targetexact Soboz" }
+  Z_BUNDLE = encodeSetup(old)
+  local rsAcc = newAccount()
+  rsAcc.general = { { "RS_MACRO", 8, "/targetexact Other rare" } }
+  local rs = newChar("Rarehunter", "Classic Beta PvP", rsAcc, { "Fireball" })
+  useChar(rs, {}); ZSettingsDB = { layout = "qwerty", owned = { RS_MACRO = true } }
+  SlashCmdList.ZSETTINGS("import"); pressKeys("Q")
+  rs.ZSettingsDB = ZSettingsDB
+  check("5 an addon's own macro is left to the addon", macroBody("RS_MACRO") == "/targetexact Other rare")
+  rsAcc.general[1][3] = "/targetexact Yet another rare"   -- the addon rewrites it as you play
+  useChar(rs, {}); ZSettingsDB = rs.ZSettingsDB
+  fire("PLAYER_LOGIN")
+  check("5 an addon rewriting its macro brings no popup", #popupBoxes() == 0)
+  Z_BUNDLE = text
+end
 
 -- 6. the next iteration: I change one keybind and drop a macro, then export with a note
 useChar(me, { DBM_AllSavedOptions = { warnings = true, bars = { size = 2 } }, BetterBlizzFramesDB = { castbar = 1 } })

@@ -802,7 +802,7 @@ function NIT:getLogExample()
 	--Simulate a log entry.
 	local classLocalized, classEnglish = UnitClass("player");
 	local v = {
-		playerName = UnitName("player"),
+		playerName = NIT.UnitName("player"),
 		classEnglish = classEnglish,
 		instanceName = L["Test Instance"],
 		enteredTime = GetServerTime() - 600,
@@ -935,17 +935,17 @@ function NIT:buildDatabase()
 	if (not self.db.global[NIT.realm].myChars) then
 		self.db.global[NIT.realm].myChars = {};
 	end
-	if (not self.db.global[NIT.realm].myChars[UnitName("player")]) then
-		self.db.global[NIT.realm].myChars[UnitName("player")] = {};
+	if (not self.db.global[NIT.realm].myChars[NIT.UnitName("player")]) then
+		self.db.global[NIT.realm].myChars[NIT.UnitName("player")] = {};
 	end
-	if (not self.db.global[NIT.realm].myChars[UnitName("player")].bossKills) then
-		self.db.global[NIT.realm].myChars[UnitName("player")].bossKills = {};
+	if (not self.db.global[NIT.realm].myChars[NIT.UnitName("player")].bossKills) then
+		self.db.global[NIT.realm].myChars[NIT.UnitName("player")].bossKills = {};
 	end
-	if (not self.db.global[NIT.realm].myChars[UnitName("player")].trackedItems) then
-		self.db.global[NIT.realm].myChars[UnitName("player")].trackedItems = {};
+	if (not self.db.global[NIT.realm].myChars[NIT.UnitName("player")].trackedItems) then
+		self.db.global[NIT.realm].myChars[NIT.UnitName("player")].trackedItems = {};
 	end
-	--if (not self.db.global[NIT.realm].myChars[UnitName("player")].levelLog) then
-	--	self.db.global[NIT.realm].myChars[UnitName("player")].levelLog = {};
+	--if (not self.db.global[NIT.realm].myChars[NIT.UnitName("player")].levelLog) then
+	--	self.db.global[NIT.realm].myChars[NIT.UnitName("player")].levelLog = {};
 	--end
 	if (not self.db.global[NIT.realm].gammaBuffSettings) then
 		self.db.global[NIT.realm].gammaBuffSettings = {};
@@ -1590,15 +1590,15 @@ end
 --Which gamma dung buff to get.
 function NIT:setAutoGammaBuffType(info, value)
 	if (NIT.data.gammaBuffSettings) then
-		NIT.data.gammaBuffSettings[UnitName("player")] = value;
+		NIT.data.gammaBuffSettings[NIT.UnitName("player")] = value;
 	else
 		self.db.global.autoGammaBuffType = value;
 	end
 end
 
 function NIT:getAutoGammaBuffType(info)
-	if (NIT.data.gammaBuffSettings and NIT.data.gammaBuffSettings[UnitName("player")]) then
-		return NIT.data.gammaBuffSettings[UnitName("player")];
+	if (NIT.data.gammaBuffSettings and NIT.data.gammaBuffSettings[NIT.UnitName("player")]) then
+		return NIT.data.gammaBuffSettings[NIT.UnitName("player")];
 	else
 		return self.db.global.autoGammaBuffType;
 	end

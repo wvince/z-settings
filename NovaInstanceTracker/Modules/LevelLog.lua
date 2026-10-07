@@ -29,7 +29,7 @@ local function getPlayedCache()
 end
 
 function NIT:addLevelLogDing(level, isFirstTime)
-	local char = UnitName("player");
+	local char = NIT.UnitName("player");
 	if (isFirstTime) then
 		level = UnitLevel("player");
 	end
@@ -75,7 +75,7 @@ function NIT:addLevelLogDing(level, isFirstTime)
 end
 
 function NIT:recalcLevelLogZoneText()
-	local char = UnitName("player");
+	local char = NIT.UnitName("player");
 	local level = levelCache;
 	if (not level or not tonumber(level)) then
 		return;
@@ -114,7 +114,7 @@ function NIT:addLevelLogPlayed(timestamp)
 			backupPlayedTimer:Cancel();
 			backupPlayedTimer = nil;
 		end
-		local char = UnitName("player");
+		local char = NIT.UnitName("player");
 		local level = levelCache;
 		--Add played if it doesn't exist already in this level table.
 		if (not NIT.data.myChars[char].levelLog[level].played) then
@@ -137,7 +137,7 @@ end
 function NIT:backupPlayedTimer()
 	if (waitingForPlayed) then
 		local level = levelCache;
-		local char = UnitName("player");
+		local char = NIT.UnitName("player");
 		if (not NIT.data.myChars[char].levelLog[level].played) then
 			local timeSinceLastDing = getTimeSinceLastDing();
 			--Only works if last ding was since being online, need a better system to track played cache reliably later.
@@ -157,7 +157,7 @@ function NIT:backupPlayedTimer()
 end
 
 function NIT:addLevelLogQuestCount()
-	local char = UnitName("player");
+	local char = NIT.UnitName("player");
 	local level = levelCache;
 	if (not NIT.data.myChars[char].levelLog or not NIT.data.myChars[char].levelLog[level]) then
 		NIT:addLevelLogDing(level);
@@ -227,7 +227,7 @@ function NIT:addLevelLogMobCount(text)
 			end
 		end
 		if (found) then
-			local char = UnitName("player");
+			local char = NIT.UnitName("player");
 			local level = levelCache;
 			if (not NIT.data.myChars[char].levelLog or not NIT.data.myChars[char].levelLog[level]) then
 				NIT:addLevelLogDing(level);
@@ -268,7 +268,7 @@ f:SetScript('OnEvent', function(self, event, ...)
 			--First logon.
 			levelCache = UnitLevel("player");
 			logonTime = GetServerTime();
-			local char = UnitName("player");
+			local char = NIT.UnitName("player");
 			--NIT.data.myChars[char].levelLog = nil;
 			if (not char) then
 				--Temp fix for unit name being nil at load time on beta.
@@ -514,7 +514,7 @@ function NIT:recalcLevelLogFrame(char, realm)
 			break;
 		end
 	end
-	local me = UnitName("player");
+	local me = NIT.UnitName("player");
 	local firstColor, secondColor, thirdColor = "|cFF9CD6DE", "|cFF00FF00", "|cFFFFFF00";
 	--local _, _, _, classColorHex = GetClassColor(data.class);
 	--local charString = "|c" .. classColorHex .. char .. "-" .. realm .. "|r";

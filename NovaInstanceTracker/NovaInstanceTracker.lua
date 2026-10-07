@@ -227,6 +227,29 @@ function NIT:print(msg, channel, prefix, nonClickable, tradeLog)
 	end
 end
 
+function NIT.UnitName(unit)
+	if (NIT.isForever) then
+		local name, lastName = UnitName(unit);
+		local realm;
+		if (lastName) then
+			name = name .. " " .. lastName;
+		end
+		if (C_GameRules.IsGameRuleActive(Enum.GameRule.HardcoreRuleset)) then
+			realm = "Hardcore";
+		elseif (C_GameRules.IsGameRuleActive(Enum.GameRule.RPRuleset)) then
+			realm = "RP";
+		elseif (C_GameRules.IsGameRuleActive(Enum.GameRule.PvPRuleset)) then
+			realm = "PvP";
+		else
+			realm = "PvE";
+		end
+		return name, realm;
+	else
+		local name, realm = UnitName(unit);
+		return name, realm;
+	end
+end
+
 function NIT:SendChatMessage(message , chatType, languageID, target)
 	if (message) then
 		if (string.len(message) > 255) then
@@ -1003,7 +1026,7 @@ function NIT:createBroker()
 			if (button == "LeftButton" and IsShiftKeyDown()) then
 				NIT:openTradeLogFrame();
 			elseif (button == "LeftButton" and IsControlKeyDown()) then
-				local char = UnitName("player");
+				local char = NIT.UnitName("player");
 				NIT:loadLevelLogFrame(char, NIT.realm);
 			elseif (button == "LeftButton") then
 				NIT:openInstanceLogFrame();
@@ -1260,7 +1283,7 @@ function NIT:updateMinimapButton(tooltip, frame)
 		else
 			tooltip:AddLine(L["Dailies Completed (Including Alts)"] .. ":");
 		end
-		local me = UnitName("player");
+		local me = NIT.UnitName("player");
 		local found, altsFound;
 		for k, v in pairs(NIT.data) do
 			if (type(v) == "table") then
@@ -1359,7 +1382,7 @@ end
 
 function NIT:getMinimapButtonNextExpires(char)
 	if (not char) then
-		char = UnitName("player");
+		char = NIT.UnitName("player");
 	end
 	--local msg = "Current Hour Lockouts:";
 	local msg = "";
@@ -1462,7 +1485,7 @@ local function GetDungeonNameWithDifficulty(name, difficultyName)
 end
 
 function NIT:recalcLockoutsFrame()
-	local me = UnitName("player");
+	local me = NIT.UnitName("player");
 	local found;
 	local text = "";
 	local data = {};
@@ -1923,7 +1946,7 @@ function NIT:createInstanceFrameSelectAltMenu()
 	NIT.instanceFrameSelectAltMenu.tooltip:Hide();
 	NIT.instanceFrameSelectAltMenu.initialize = function(dropdown)
 		local chars = {
-			[UnitName("player")] = true,
+			[NIT.UnitName("player")] = true,
 		};
 		for k, v in pairs(NIT.data.instances) do
 			chars[v.playerName] = true;
@@ -1941,7 +1964,7 @@ function NIT:createInstanceFrameSelectAltMenu()
 		end
 		if (not NIT.DDM:UIDropDownMenu_GetSelectedValue(NIT.instanceFrameSelectAltMenu)) then
 			--If no value set then it's first load, set current char.
-			NIT.DDM:UIDropDownMenu_SetSelectedValue(NIT.instanceFrameSelectAltMenu, UnitName("player"));
+			NIT.DDM:UIDropDownMenu_SetSelectedValue(NIT.instanceFrameSelectAltMenu, NIT.UnitName("player"));
 		end
 	end
 	NIT.instanceFrameSelectAltMenu:HookScript("OnShow", NIT.instanceFrameSelectAltMenu.initialize);
@@ -2289,7 +2312,7 @@ function NIT:recalcInstanceLineFrames()
 		--Frame hasn't been opened since logon, no need to recalc.
 		return;
 	end
-	local nameMatch = UnitName("player");
+	local nameMatch = NIT.UnitName("player");
 	if (UIDropDownMenu_GetSelectedValue(NIT.instanceFrameSelectAltMenu)) then
 		nameMatch = UIDropDownMenu_GetSelectedValue(NIT.instanceFrameSelectAltMenu);
 	end
@@ -2426,7 +2449,7 @@ function NIT:buildInstanceLineFrameString(v, count, logID)
 		timeAgo = GetServerTime() - v.leftTime;
 		time = NIT:getTimeFormat(v.leftTime, true, true);
 	end
-	local nameMatch = UnitName("player");
+	local nameMatch = NIT.UnitName("player");
 	if (NIT.instanceFrameSelectAltMenu and UIDropDownMenu_GetSelectedValue(NIT.instanceFrameSelectAltMenu)) then
 		nameMatch = UIDropDownMenu_GetSelectedValue(NIT.instanceFrameSelectAltMenu);
 	end
@@ -2435,7 +2458,7 @@ function NIT:buildInstanceLineFrameString(v, count, logID)
 	local lockoutTimeString, altString = "", "";
 	if (v.mythicPlus) then
 		lockoutTimeString = instance;
-	elseif (NIT.perCharOnly and UnitName("player") ~= v.playerName) then
+	elseif (NIT.perCharOnly and NIT.UnitName("player") ~= v.playerName) then
 		if (NIT.isRetail) then
 			lockoutTimeString = instance .. " (" .. L["entered"] .. " " .. NIT:getTimeString(timeAgo, true, "short") .. " " .. L["ago"] .. ")";
 		else
@@ -2713,7 +2736,7 @@ function NIT:recalcInstanceLineFramesTooltip(obj)
 				 text = text .. timeColor .. " (" .. L["noLockout"] .. ")|r";
 			end
 		end
-		if (UnitName("player") ~= data.playerName) then
+		if (NIT.UnitName("player") ~= data.playerName) then
 			timeColor = "|cFFA1A1A1";
 			text = timeColor .. L["Instance"] .. " " .. obj.count .. " (" .. data.instanceName .. ") (Alt)|r";
 		end
@@ -2982,7 +3005,7 @@ function NIT:recalcInstanceLineFramesTooltip(obj)
 				end
 			end
 		end
-		if (not data.isPvp and data.playerName ~= UnitName("player")) then
+		if (not data.isPvp and data.playerName ~= NIT.UnitName("player")) then
 			--Show lockout timers for alts if you hover them.
 			--Use the minimap lockout string for this, it's small and neat.
 			--text = text .. "\n\n|cFF9CD6DEThis alts current lockouts:|r\n";
@@ -3105,7 +3128,7 @@ function NIT:recalcInstanceLineFramesTooltip(obj)
 				local time = NIT:getTimeFormat(v.time, true, true);
 				local timeAgo = GetServerTime() - v.time;
 				local tradeName = v.tradeWho;
-				if (v.tradeWhoRealm and v.tradeWhoRealm ~= GetRealmName()) then
+				if (not NIT.isForever and v.tradeWhoRealm and v.tradeWhoRealm ~= GetRealmName()) then
 					tradeName = v.tradeWho .. "-" .. v.tradeWhoRealm;
 				end
 				if (v.playerMoney > 0) then
@@ -3443,7 +3466,7 @@ function NIT:recalcTradeLogFrame()
 		local time = NIT:getTimeFormat(v.time, true, true);
 		local timeAgo = GetServerTime() - v.time;
 		local tradeName = v.tradeWho;
-		if (v.tradeWhoRealm and v.tradeWhoRealm ~= GetRealmName()) then
+		if (not NIT.isForever and v.tradeWhoRealm and v.tradeWhoRealm ~= GetRealmName()) then
 			tradeName = v.tradeWho .. "-" .. v.tradeWhoRealm;
 		end
 		if (v.playerMoney > 0) then
@@ -3779,7 +3802,7 @@ function NIT:recalcTradeCopyFrame()
 		local time = NIT:getTimeFormat(v.time, true, true);
 		local timeAgo = GetServerTime() - v.time;
 		local tradeName = v.tradeWho;
-		if (v.tradeWhoRealm and v.tradeWhoRealm ~= GetRealmName()) then
+		if (not NIT.isForever and v.tradeWhoRealm and v.tradeWhoRealm ~= GetRealmName()) then
 			tradeName = v.tradeWho .. "-" .. v.tradeWhoRealm;
 		end
 		if (v.playerMoney > 0) then
@@ -4368,7 +4391,7 @@ function NIT:recalcAltsLineFrames()
 					local online;
 					local stateString = "";
 					local onlineString = "";
-					if (k == UnitName("player") and realmName == NIT.realm) then
+					if (k == NIT.UnitName("player") and realmName == NIT.realm) then
 						online = true;
 						onlineString = " |cFF00C800(" .. L["online"] .. ")|r";
 					end
@@ -4534,7 +4557,7 @@ function NIT:recalcAltsLineFramesTooltip(obj)
 				classColorHex = "ffffffff";
 			end
 			local online;
-			if (player == UnitName("player")) then
+			if (player == NIT.UnitName("player")) then
 				online = true;
 			end
 			local timeOffline;
@@ -5413,16 +5436,16 @@ f:SetScript('OnEvent', function(self, event, ...)
 					return;
 				elseif (npcID == "247440") then
 					NIT:selectGossipOption(1);
-					NIT:print("Auto getting |cFF50C878" .. HEALER .. "|r buff from " .. UnitName("npc") .. ".");
+					NIT:print("Auto getting |cFF50C878" .. HEALER .. "|r buff from " .. NIT.UnitName("npc") .. ".");
 				elseif (npcID == "247730") then
 					NIT:selectGossipOption(1);
-					NIT:print("Auto getting |cFFEB0000" .. STRING_SCHOOL_PHYSICAL .. "|r buff from " .. UnitName("npc") .. ".");
+					NIT:print("Auto getting |cFFEB0000" .. STRING_SCHOOL_PHYSICAL .. "|r buff from " .. NIT.UnitName("npc") .. ".");
 				elseif (npcID == "247731") then
 					NIT:selectGossipOption(1);
-					NIT:print("Auto getting |cFFEFBF04" .. TANK .. "|r buff from " .. UnitName("npc") .. ".");
+					NIT:print("Auto getting |cFFEFBF04" .. TANK .. "|r buff from " .. NIT.UnitName("npc") .. ".");
 				elseif (npcID == "247732") then
 					NIT:selectGossipOption(1);
-					NIT:print("Auto getting |cFF0096FF" .. gsub(SPELL_SCHOOLMAGICAL, "^%l", strupper) .. "|r buff from " .. UnitName("npc") .. ".");
+					NIT:print("Auto getting |cFF0096FF" .. gsub(SPELL_SCHOOLMAGICAL, "^%l", strupper) .. "|r buff from " .. NIT.UnitName("npc") .. ".");
 				elseif (npcID == "248115") then
 					--MoP celestial dungeons.
 					if (IsShiftKeyDown()) then
@@ -6462,3 +6485,16 @@ function NIT:wipeUpgradeData()
 		NIT.db.global.wipeUpgradeData = false;
 	end
 end
+
+--[[function NIT.splitItemLink(itemLink)
+	local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9;
+	if (strmatch(itemLink, "|cnIQ%w:")) then
+		--Forever, ignore first arg (new way of doing color);
+		local _, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9 = strsplit(":", itemLink);
+		return arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9;
+	else
+		--Era.
+		local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9 = strsplit(":", itemLink);
+		return arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9;
+	end
+end]]

@@ -42,6 +42,7 @@ local GetItemCount = GetItemCount or C_Item.GetItemCount;
 local InviteUnit = InviteUnit or C_PartyInfo.InviteUnit;
 local LeaveParty = LeaveParty or C_PartyInfo.LeaveParty;
 local issecretvalue = issecretvalue;
+local isForever = NIT.isForever;
 NIT.currentInstanceID = 0;
 --This is for a system that records before and after honor for bgs honor gained calced.
 --Didn't have to end up using it becaus another way was worked out that didn't work at the start of expansion.
@@ -58,9 +59,16 @@ function NIT:OnCommReceived(commPrefix, string, distribution, sender)
 	--end
 	--AceComm doesn't supply realm name if it's on the same realm as player.
 	--For now we'll check all 3 name types just to be sure until tested.
-	local me = UnitName("player") .. "-" .. GetRealmName();
-	local meNormalized = UnitName("player") .. "-" .. GetNormalizedRealmName();
-	if (sender == UnitName("player") or sender == me or sender == meNormalized) then
+	local me, meNormalized;
+	--Hacky fix for last names being added.
+	if (NIT.isForever) then
+		me = NIT.UnitName("player");
+		meNormalized = NIT.UnitName("player");
+	else
+		me = UnitName("player") .. "-" .. GetRealmName();
+		meNormalized = UnitName("player") .. "-" .. GetNormalizedRealmName();
+	end
+	if (sender == NIT.UnitName("player") or sender == me or sender == meNormalized) then
 		NIT.hasAddon[meNormalized] = tostring(version);
 		return;
 	end
@@ -133,7 +141,7 @@ function NIT:sendComm(distribution, string, target)
 	--	return;
 	--end
 	--NIT:debug("Comms:", distribution, string);
-	if (target == UnitName("player")) then
+	if (target == NIT.UnitName("player")) then
 		return;
 	end
 	if (distribution == "GUILD" and not IsInGuild()) then
@@ -620,7 +628,7 @@ function NIT:chatMsgLoot(...)
     --Check multiple msgs first so you dont end up with item links with x2 on the end.
     --Self receive multiple loot "You receive loot: [Item]x2"
     local amount;
-    local name = UnitName("Player");
+    local name = NIT.UnitName("player");
     
     ---This was changed to use an old liv LebDeformat to fix issues with korean strings.
     ---The SELF loot strings were triggering for other people, so item counts would count everyone in the party.
@@ -1126,7 +1134,7 @@ function NIT:recordBgStats()
 	--local mapID = C_Map.GetBestMapForUnit("player");
 	local issecretvalue = issecretvalue;
 	if (NIT.data.instances[1].type == "bg") then
-		local me = UnitName("player");
+		local me = NIT.UnitName("player");
 		for i = 1, totalPlayers do
 			local name, kb, hk, deaths, honor, faction, rank, race, class, classEnglish, damage, healing = GetBattlefieldScore(i);
 			--local rankName, rankNumber = GetPVPRankInfo(rank, faction);
@@ -1180,7 +1188,7 @@ function NIT:recordBgStats()
 			instance.winningFaction = 1;
 		end
 	elseif (NIT.data.instances[1].type == "arena") then
-		local me = UnitName("player");
+		local me = NIT.UnitName("player");
 		local purpleTeam, goldTeam = {}, {};
 		for i = 1, totalPlayers do
 			local name, kb, hk, deaths, honor, faction, rank, race, class, classEnglish, damage, healing, ratingStart, ratingChange = GetBattlefieldScore(i);
@@ -1576,7 +1584,7 @@ function NIT:enteredInstance(isReload, isLogon, checkAgain, checkDelve)
 			if (not isReload or not NIT.data.instances[1]) then
 				local class, classEnglish = UnitClass("player");
 				local t = {
-					playerName = UnitName("player"),
+					playerName = NIT.UnitName("player"),
 					class = class,
 					classEnglish = classEnglish,
 					instanceName = instanceName,
@@ -1827,7 +1835,7 @@ function NIT:showInstanceStats(id, output, showAll, customPrefix, showDate)
 	local timeSpent = "";
 	local timeSpentRaw = 0;
 	local nonClickable;
-	local isMe = data.playerName == UnitName("player");
+	local isMe = data.playerName == NIT.UnitName("player");
 	if (data.enteredTime and data.leftTime and data.enteredTime > 0 and data.leftTime > 0) then
 		timeSpentRaw = data.leftTime - data.enteredTime;
 	elseif (data.enteredTime and data.leftTime and data.enteredTime > 0 and (GetServerTime() - data.enteredTime) < 21600
@@ -2082,7 +2090,7 @@ function NIT:showInstanceStats(id, output, showAll, customPrefix, showDate)
 end
 
 function NIT:addInstanceCount(instanceID)
-	local char = UnitName("player");
+	local char = NIT.UnitName("player");
 	if (not NIT.data.myChars[char]) then
 		NIT.data.myChars[char] = {};
 	end
@@ -2096,7 +2104,7 @@ function NIT:addInstanceCount(instanceID)
 end
 
 function NIT:removeInstanceCount(instanceID)
-	local char = UnitName("player");
+	local char = NIT.UnitName("player");
 	if (NIT.data.myChars[char] and NIT.data.myChars[char].instances and NIT.data.myChars[char].instances[instanceID]
 			and NIT.data.myChars[char].instances[instanceID] > 0) then
 		NIT.data.myChars[char].instances[instanceID] = NIT.data.myChars[char].instances[instanceID] - 1;
@@ -2186,7 +2194,7 @@ function NIT:mergeLastInstances(GUID, source)
 		table.insert(NIT.data.instancesDebug, 1, NIT.data.instances[1]);
 	end]]
 	local class, classEnglish = UnitClass("player");
-	NIT.data.instances[2].playerName = UnitName("player");
+	NIT.data.instances[2].playerName = NIT.UnitName("player");
 	NIT.data.instances[2].class = class;
 	NIT.data.instances[2].classEnglish = classEnglish;
 	if (UnitLevel("player") < NIT.maxLevel) then
@@ -2223,7 +2231,7 @@ end
 local function addToGroupData(unit)
 	local level = UnitLevel(unit);
 	local name, realm = UnitName(unit);
-	if (realm and realm ~= "" and realm ~= GetRealmName()) then
+	if (not isForever and realm and realm ~= "" and realm ~= GetRealmName()) then
 	--if (NIT.data.instances[1] and NIT.data.instances[1].isPvp) then
 		--if (realm) then
 			name = name .. "-" .. realm;
@@ -2343,7 +2351,7 @@ end
 function NIT:deleteCharacter(realm, char)
 	local data = NIT.db.global[realm].myChars[char];
 	if (data) then
-		if (char == UnitName("player")) then
+		if (char == NIT.UnitName("player")) then
 			NIT.db.global[realm].myChars[char] = nil;
 			NIT:print(string.format(L["deletedCharOnRealmNewInfo"], char, realm));
 			NIT:recalcAltsLineFrames();
@@ -2384,7 +2392,7 @@ function NIT:getInstanceLockoutInfo(char)
 	local hourCount, hourCount24, hourTimestamp, hourTimestamp24 = 0, 0, 0, 0;
 	local count = 0;
 	local instances, lastInstance, lastInstance24 = 0, 0, 0;
-	local target = UnitName("player");
+	local target = NIT.UnitName("player");
 	local maxCount = NIT.dailyLimit + 50;
 	if (char) then
 		target = char;
@@ -2426,7 +2434,7 @@ end
 --/dump LFGRewardsFrame_EstimateRemainingCompletions(301) random heroic
 --https://warcraft.wiki.gg/wiki/LfgDungeonID
 function NIT:recordCharacterData()
-	local char = UnitName("player");
+	local char = NIT.UnitName("player");
 	if (not NIT.data.myChars[char]) then
 		NIT.data.myChars[char] = {};
 	end
@@ -2536,7 +2544,7 @@ function NIT:recordCharacterData()
 end
 
 function NIT:recordGuildInfo()
-	local char = UnitName("player");
+	local char = NIT.UnitName("player");
 	if (not NIT.data.myChars[char]) then
 		NIT.data.myChars[char] = {};
 	end
@@ -2729,7 +2737,7 @@ function NIT:recordQuests()
 	if (not C_DateAndTime or not C_DateAndTime.GetSecondsUntilWeeklyReset) then
 		return;
 	end
-	local char = UnitName("player");
+	local char = NIT.UnitName("player");
 	if (not NIT.data.myChars[char]) then
 		NIT.data.myChars[char] = {};
 	end
@@ -2872,7 +2880,7 @@ function NIT:recordAttunementKeys()
 	if (not KeyRingButtonIDToInvSlotID) then
 		return; --This was patched out a month after cata release instead of during beta?
 	end
-	local char = UnitName("player");
+	local char = NIT.UnitName("player");
 	if (not NIT.data.myChars[char]) then
 		NIT.data.myChars[char] = {};
 	end
@@ -2920,7 +2928,7 @@ function NIT:recordPvpData()
 	if (NIT.isRetail or not UnitPVPRank) then
 		return;
 	end
-	local char = UnitName("player");
+	local char = NIT.UnitName("player");
 	if (not NIT.data.myChars[char]) then
 		NIT.data.myChars[char] = {};
 	end
@@ -2946,7 +2954,7 @@ function NIT:recordHonorData()
 		return;
 	end
 	local honor = C_CurrencyInfo.GetCurrencyInfo(1901);
-	local char = UnitName("player");
+	local char = NIT.UnitName("player");
 	if (not NIT.data.myChars[char]) then
 		NIT.data.myChars[char] = {};
 	end
@@ -2963,7 +2971,7 @@ function NIT:recordArenaPoints()
 		return;
 	end
 	local data = C_CurrencyInfo.GetCurrencyInfo(1900);
-	local char = UnitName("player");
+	local char = NIT.UnitName("player");
 	if (not NIT.data.myChars[char]) then
 		NIT.data.myChars[char] = {};
 	end
@@ -3010,7 +3018,7 @@ if (NIT.isWrath) then
 end
 
 function NIT:recordMarksData()
-	local char = UnitName("player");
+	local char = NIT.UnitName("player");
 	if (not NIT.data.myChars[char]) then
 		NIT.data.myChars[char] = {};
 	end
@@ -3158,7 +3166,7 @@ local lockoutBossQuests = {
 };
 
 function NIT:recordLockoutData(isLogout)
-	local char = UnitName("player");
+	local char = NIT.UnitName("player");
 	if (not NIT.data.myChars[char]) then
 		NIT.data.myChars[char] = {};
 	end
@@ -3249,7 +3257,7 @@ function NIT:recordKeystoneData(lootedKeystone)
 end
 
 function NIT:challengeModeMapsUpdate()
-	local char = UnitName("player");
+	local char = NIT.UnitName("player");
 	if (not NIT.data.myChars[char]) then
 		NIT.data.myChars[char] = {};
 	end
@@ -3312,7 +3320,7 @@ function NIT:checkRewards()
 	if (not C_WeeklyRewards) then
 		return;
 	end
-	local char = UnitName("player");
+	local char = NIT.UnitName("player");
 	if (not NIT.data.myChars[char]) then
 		NIT.data.myChars[char] = {};
 	end
@@ -3595,7 +3603,7 @@ end]]
 
 --Sometimes we only need to update inventory data.
 function NIT:recordInventoryData()
-	local char = UnitName("player");
+	local char = NIT.UnitName("player");
 	if (not NIT.data.myChars[char]) then
 		NIT.data.myChars[char] = {};
 	end
@@ -3687,7 +3695,7 @@ function NIT:recordCurrency()
 	if (NIT.isClassic or NIT.isTBC or NIT.isRetail) then
 		return;
 	end
-	local char = UnitName("player");
+	local char = NIT.UnitName("player");
 	if (not NIT.data.myChars[char]) then
 		NIT.data.myChars[char] = {};
 	end
@@ -3715,7 +3723,7 @@ function NIT:recordCurrency()
 end
 
 function NIT:recordPlayerLevelData()
-	local char = UnitName("player");
+	local char = NIT.UnitName("player");
 	if (not NIT.data.myChars[char]) then
 		NIT.data.myChars[char] = {};
 	end
@@ -3833,7 +3841,7 @@ local function getProfessionSpecClassic(profName)
 end
 
 function NIT:recordProfessions()
-	local char = UnitName("player");
+	local char = NIT.UnitName("player");
 	if (not NIT.data.myChars[char]) then
 		NIT.data.myChars[char] = {};
 	end
@@ -3987,7 +3995,7 @@ end
 
 --Update certain data like XP etc when combat ends instead of every mob.
 function NIT:recordCombatEndedData()
-	local char = UnitName("player");
+	local char = NIT.UnitName("player");
 	if (not NIT.data.myChars[char]) then
 		NIT.data.myChars[char] = {};
 	end
@@ -4014,7 +4022,7 @@ end
 
 local durabilityFirstRun = true;
 function NIT:recordDurabilityData()
-	local char = UnitName("player");
+	local char = NIT.UnitName("player");
 	if (not NIT.data.myChars[char]) then
 		NIT.data.myChars[char] = {};
 	end
@@ -4059,7 +4067,7 @@ function NIT:recordCooldowns()
 	if (NIT.isRetail or not GetNumTradeSkills) then
 		return;
 	end
-	local char = UnitName("player");
+	local char = NIT.UnitName("player");
 	if (not NIT.data.myChars[char]) then
 		NIT.data.myChars[char] = {};
 	end
@@ -4175,7 +4183,7 @@ function NIT:recordHunterData()
 	if (class ~= "HUNTER") then
 		return;
 	end
-	local char = UnitName("player");
+	local char = NIT.UnitName("player");
 	if (not NIT.data.myChars[char]) then
 		NIT.data.myChars[char] = {};
 	end
@@ -4187,7 +4195,7 @@ function NIT:recordHunterData()
 		petHappiness, _, petLoyaltyRate = GetPetHappiness();
 		petCurrentXP, petMaxXP = GetPetExperience();
 		petLevel = UnitLevel("pet");
-		petName = UnitName("pet");
+		petName = NIT.UnitName("pet");
 		petFamily = UnitCreatureFamily("pet");
 		loyaltyString = GetPetLoyalty();
 		totalPetPoints, spentPetPoints = GetPetTrainingPoints();
@@ -4374,7 +4382,7 @@ local playerMoney, targetMoney, tradeWho, tradeWhoClass, tradeWhoRealm = 0, 0, "
 local doTrade;
 f:SetScript("OnEvent", function(self, event, ...)
 	if (event == "TRADE_SHOW") then
-		tradeWho, tradeWhoRealm = UnitName("npc");
+		tradeWho, tradeWhoRealm = NIT.UnitName("npc");
 		--Don't really need this since whole region is name unique.
 		--if (tradeWhoRealm == GetRealmName()) then
 		--	tradeWhoRealm = NIT.realm; --For forever custom realm names.
@@ -4411,7 +4419,7 @@ function NIT:doTrade()
 	if (playerMoney > 0) then
 		if (NIT.db.global.showMoneyTradedChat) then
 			local name = tradeWho;
-			if (tradeWhoRealm and tradeWhoRealm ~= GetRealmName()) then
+			if (not isForever and tradeWhoRealm and tradeWhoRealm ~= GetRealmName()) then
 				name = tradeWho .. "-" .. tradeWhoRealm;
 			end
 			NIT:print("|HNITCustomLink:tradelog|h|cFF9CD6DE" .. L["gave"] .. "|r|h |r" .. NIT:getCoinString(playerMoney)
@@ -4423,7 +4431,7 @@ function NIT:doTrade()
 	if (targetMoney > 0) then
 		if (NIT.db.global.showMoneyTradedChat) then
 			local name = tradeWho;
-			if (tradeWhoRealm and tradeWhoRealm ~= GetRealmName()) then
+			if (not isForever and tradeWhoRealm and tradeWhoRealm ~= GetRealmName()) then
 				name = tradeWho .. "-" .. tradeWhoRealm;
 			end
 			NIT:print("|HNITCustomLink:tradelog|h|cFF9CD6DE" .. L["received"] .. "|r|h |r" .. NIT:getCoinString(targetMoney)

@@ -609,7 +609,7 @@ end
 
 local function getLootedStatus(npcOrEncounterID, itemID, isEncounterID) --/dump getLootedStatus(2733, 226404)
 	local looted, killed;
-	local data = NIT.data.myChars[UnitName("player")].bossKills[npcOrEncounterID];
+	local data = NIT.data.myChars[NIT.UnitName("player")].bossKills[npcOrEncounterID];
 	if (isEncounterID) then
 		local data;
 		local bossData;
@@ -633,8 +633,8 @@ local function getLootedStatus(npcOrEncounterID, itemID, isEncounterID) --/dump 
 				end
 			end
 			for k, v in pairs(bosses) do
-				if (NIT.data.myChars[UnitName("player")].bossKills[v.encounterID]) then
-					data = NIT.data.myChars[UnitName("player")].bossKills[v.encounterID];
+				if (NIT.data.myChars[NIT.UnitName("player")].bossKills[v.encounterID]) then
+					data = NIT.data.myChars[NIT.UnitName("player")].bossKills[v.encounterID];
 					if (data and data.looted and data.looted[itemID] and data.resetTime and data.resetTime > GetServerTime()) then
 						looted = true;
 					elseif (data and data.resetTime and data.resetTime > GetServerTime()) then
@@ -817,7 +817,7 @@ local function itemLooted(itemID, name)
 			item:ContinueOnItemLoad(function()
 				local itemName = item:GetItemName();
 				local itemLink = item:GetItemLink();
-				local me = UnitName("player");
+				local me = NIT.UnitName("player");
 				if (name == me) then
 					name = "me";
 				end
@@ -842,7 +842,7 @@ local function relicLooted(itemID, name, class)
 			item:ContinueOnItemLoad(function()
 				local itemName = item:GetItemName();
 				local itemLink = item:GetItemLink();
-				local me = UnitName("player");
+				local me = NIT.UnitName("player");
 				if (name == me) then
 					NIT:print(itemLink .. " (" .. type .. ") looted by you!");
 					addMsg(itemName .. " (" .. type .. ") looted by you!", 5);
@@ -875,24 +875,24 @@ end
 
 local function addLootedReal(npcOrEncounterID, itemID)
 	local resetTime = GetServerTime() + C_DateAndTime.GetSecondsUntilDailyReset();
-	if (not NIT.data.myChars[UnitName("player")].bossKills[npcOrEncounterID]) then
-		NIT.data.myChars[UnitName("player")].bossKills[npcOrEncounterID] = {};
+	if (not NIT.data.myChars[NIT.UnitName("player")].bossKills[npcOrEncounterID]) then
+		NIT.data.myChars[NIT.UnitName("player")].bossKills[npcOrEncounterID] = {};
 	end
-	if (not NIT.data.myChars[UnitName("player")].bossKills[npcOrEncounterID].looted) then
-		NIT.data.myChars[UnitName("player")].bossKills[npcOrEncounterID].looted = {};
+	if (not NIT.data.myChars[NIT.UnitName("player")].bossKills[npcOrEncounterID].looted) then
+		NIT.data.myChars[NIT.UnitName("player")].bossKills[npcOrEncounterID].looted = {};
 	end
-	if (not NIT.data.myChars[UnitName("player")].bossKills[npcOrEncounterID].resetTime or
-			(NIT.data.myChars[UnitName("player")].bossKills[npcOrEncounterID].resetTime < GetServerTime() - 300)) then
-		NIT.data.myChars[UnitName("player")].bossKills[npcOrEncounterID].resetTime = resetTime;
+	if (not NIT.data.myChars[NIT.UnitName("player")].bossKills[npcOrEncounterID].resetTime or
+			(NIT.data.myChars[NIT.UnitName("player")].bossKills[npcOrEncounterID].resetTime < GetServerTime() - 300)) then
+		NIT.data.myChars[NIT.UnitName("player")].bossKills[npcOrEncounterID].resetTime = resetTime;
 		NIT:debug("Missing boss kill reset time", npcOrEncounterID); --Possiblly if a boss not on the list drops a token?
 	end
-	NIT.data.myChars[UnitName("player")].bossKills[npcOrEncounterID].looted[itemID] = true;
+	NIT.data.myChars[NIT.UnitName("player")].bossKills[npcOrEncounterID].looted[itemID] = true;
 end
 
 local function chatMsgLoot(...)
 	local msg = ...;
     local amount;
-    local name = UnitName("Player");
+    local name = NIT.UnitName("player");
     
     ---This was changed to use an old liv LebDeformat to fix issues with korean strings.
     ---The SELF loot strings were triggering for other people, so item counts would count everyone in the party.
@@ -945,7 +945,7 @@ local function chatMsgLoot(...)
 	    			if (otherPlayer) then
 		    			itemLooted(itemID,  name);
 	    			else
-	    				local me = UnitName("player");
+	    				local me = NIT.UnitName("player");
 		    			itemLooted(itemID,  me);
 	    			end
 	    		end
@@ -954,7 +954,7 @@ local function chatMsgLoot(...)
 	    				local class;
 	    				if (IsInRaid()) then
 							for i = 1, 40 do
-								local n, r = UnitName("raid" .. i);
+								local n, r = NIT.UnitName("raid" .. i);
 								if (name == n or (r and name == n .. "-" .. r)) then
 									local _, classEnglish = UnitClass("raid" .. i);
 									class = classEnglish;
@@ -963,7 +963,7 @@ local function chatMsgLoot(...)
 							end
 						elseif (IsInGroup()) then
 							for i = 1, 5 do
-								local n, r = UnitName("party" .. i);
+								local n, r = NIT.UnitName("party" .. i);
 								if (name == n or (r and name == n .. "-" .. r)) then
 									local _, classEnglish = UnitClass("party" .. i);
 									class = classEnglish;
@@ -975,7 +975,7 @@ local function chatMsgLoot(...)
 	    			end
 	    		else
 		    		if (karaRelics[itemID]) then
-		    			local me = UnitName("player");
+		    			local me = NIT.UnitName("player");
 		    			local _, classEnglish = UnitClass("player");
 		    			relicLooted(itemID,  me, classEnglish);
 		    		elseif (itemID == 226404) then
@@ -1064,10 +1064,10 @@ end
 
 local function addBossDied(npcOrEncounterID)
 	local resetTime = GetServerTime() + C_DateAndTime.GetSecondsUntilDailyReset();
-	if (not NIT.data.myChars[UnitName("player")].bossKills[npcOrEncounterID]) then
-		NIT.data.myChars[UnitName("player")].bossKills[npcOrEncounterID] = {};
+	if (not NIT.data.myChars[NIT.UnitName("player")].bossKills[npcOrEncounterID]) then
+		NIT.data.myChars[NIT.UnitName("player")].bossKills[npcOrEncounterID] = {};
 	end
-	NIT.data.myChars[UnitName("player")].bossKills[npcOrEncounterID].resetTime = resetTime;
+	NIT.data.myChars[NIT.UnitName("player")].bossKills[npcOrEncounterID].resetTime = resetTime;
 end
 
 local function encounterEndSuccess(encounterID)
@@ -1099,8 +1099,8 @@ local function combatLogEventUnfiltered(...)
 		npcID = tonumber(npcID);
 		local _, instanceType, difficultyID, _, _, _, _, instanceID = GetInstanceInfo();
 		if (turBosses[npcID] and not turBosses[npcID].encounterID) then
-			if (dungeons[instanceID] and (not NIT.data.myChars[UnitName("player")].bossKills[npcID]
-					or NIT.data.myChars[UnitName("player")].bossKills[npcID].resetTime < GetServerTime())) then
+			if (dungeons[instanceID] and (not NIT.data.myChars[NIT.UnitName("player")].bossKills[npcID]
+					or NIT.data.myChars[NIT.UnitName("player")].bossKills[npcID].resetTime < GetServerTime())) then
 				if (not skipRealMsgIfCapped()) then
 					addMsg(L["Loot the Tarnished Undermine Real"] .. "!", 10);
 				end

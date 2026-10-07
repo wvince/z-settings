@@ -229,14 +229,14 @@ local function unitSpellcastSucceeded(...)
 	local unit, castGUID, spellID = ...;
 	if (NIT.currentInstanceID == 409) then
 		if (spellID == 21358) then
-			NIT:debug("doused", unit, castGUID, UnitName(unit));
+			NIT:debug("doused", unit, castGUID, NIT.UnitName(unit));
 			if (not lastBossNpcID) then
 				return;
 			end
 			if (not NIT.data.instances[1].douses) then
 				NIT.data.instances[1].douses = {};
 			end
-			local name = UnitName(unit);
+			local name = NIT.UnitName(unit);
 			local _, class = UnitClass(unit);
 			--If last npc was shaz but shaz is done then use baron id
 			if (unit == "player") then

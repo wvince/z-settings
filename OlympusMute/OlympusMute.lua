@@ -122,8 +122,14 @@ for _, e in ipairs(CHAT_EVENTS) do INCOMING[e] = true end
 -- the line, which would also catch your own whispers to them). Otherwise fall
 -- back to the player link in the text.
 local function PurgeOneFrame(frame, keys)
-    frame:RemoveMessagesByPredicate(function(msg, _, _, _, _, _, _, event, args)
+    frame:RemoveMessagesByPredicate(function(msg, _, _, _, _, _, typeID, event, args)
         if type(msg) == "table" then msg = msg.message end
+        -- Lines copied into a "Move to Whisper Window" tab carry no event, only
+        -- their chat type: keep the whispers you sent.
+        if event == nil and type(typeID) == "number" and not IsSecret(typeID) and ChatHistory_GetChatType then
+            local ok, t = pcall(ChatHistory_GetChatType, typeID)
+            if ok and (t == "WHISPER_INFORM" or t == "BN_WHISPER_INFORM") then return false end
+        end
         if type(event) == "string" and not IsSecret(event) then
             if not INCOMING[event] then return false end
             if type(args) == "table" and not IsSecret(args) then
@@ -297,7 +303,7 @@ local TypedName
 do
     local realms
     TypedName = function(name)
-        name = strtrim(name or "")
+        name = (strtrim(name or ""):gsub("%s+", " "))   -- "Bacon  Eggz" -> "Bacon Eggz"
         if name:find(" ", 1, true) then return name end
         -- Only on clients with surnames (WoW Forever); elsewhere a dash means a realm.
         if not (CHARACTERNAME_SURNAME_SEPARATOR or (C_NameUtil and C_NameUtil.ReplaceSurnameSeparatorWithLinkSeparator)) then
@@ -392,7 +398,15 @@ local function HideGroupInvite()
             local a, b = StaticPopup_Visible("PARTY_INVITE")
             frame = (type(b) == "table" and b) or (type(a) == "table" and a) or (type(a) == "string" and _G[a]) or nil
         end
-        if frame then frame.inviteAccepted = true end
+        if frame then
+            frame.inviteAccepted = true
+            -- Keep Blizzard's own wording in case the invite is given back.
+            if not Humanlike.inviteText then
+                local t = frame.text or frame.Text
+                local ok, txt = pcall(function() return t and t.GetText and t:GetText() end)
+                if ok and type(txt) == "string" and not IsSecret(txt) and txt ~= "" then Humanlike.inviteText = txt end
+            end
+        end
         StaticPopup_Hide("PARTY_INVITE")
         if frame then frame.inviteAccepted = nil end
     end
@@ -420,7 +434,22 @@ local function DeclinePartyInvite(name, guild, listKey)
         return db.declineGroup and Humanlike.invite == key and key ~= nil and mkey ~= nil
             and db.names[mkey] ~= nil and not db.allow[mkey] and not db.partyPass[mkey]
     end, function()
-        if Humanlike.invite == key and StaticPopup_Show then StaticPopup_Show("PARTY_INVITE", name) end
+        if Humanlike.invite ~= key then return end
+        local a = Humanlike.inviteArgs or {}
+        local isTank, isHealer, isDamage = a[2], a[3], a[4]
+        if (isTank or isHealer or isDamage) and LFGInvitePopup and StaticPopupSpecial_Show and LFGInvitePopup_Update then
+            StaticPopupSpecial_Show(LFGInvitePopup)   -- role-check invite: its own window, roles and all
+            LFGInvitePopup_Update(name, isTank, isHealer, isDamage, a[6], a[8])
+            return
+        end
+        local text = Humanlike.inviteText
+        if not text then
+            text = (type(INVITATION) == "string" and INVITATION:format(name)) or name
+            if WillAcceptInviteRemoveQueues and WillAcceptInviteRemoveQueues() and type(ACCEPTING_INVITE_WILL_REMOVE_QUEUE) == "string" then
+                text = text .. "\n\n" .. ACCEPTING_INVITE_WILL_REMOVE_QUEUE
+            end
+        end
+        if StaticPopup_Show then StaticPopup_Show("PARTY_INVITE", text) end
     end)
 end
 
@@ -437,6 +466,7 @@ end
 local function Block(guid, name, guild)
     local key = ResolveKey(name)
     if not key or db.allow[key] then return end   -- on the never-mute list
+    if key == playerKey or (guid and guid == playerGUID) then return end   -- never yourself
     local isNew, listChanged = false, false
     local current = db.names[key]
     if current == nil then
@@ -525,7 +555,7 @@ local function PurgePlaceholderKeys()
 end
 
 local function UnblockFormer(name, newGuild)
-    local key = Normalize(name)
+    local key = ResolveKey(name)   -- also finds entries saved under the old "first-last" key
     if not key or not db.names[key] or db.manual[key] then return end
     Unblock(nil, name)
     if db.debug then Print(("debug: unmuted %s, now %s"):format(name,
@@ -589,7 +619,11 @@ end
 local function ScanGroup() RunBatched(ScanGroupNow) end
 
 -- Warn once per player per group when someone on the mute list is in it.
+-- (Answers given in the window are also saved in db.groupWarned, so a /reload
+-- mid-group doesn't ask again.)
 local warnedInGroup = {}
+-- Which players the open group / invite windows are about, and invites you sent.
+local popupState = { group = nil, invite = nil, sent = {} }
 
 local function Now() return time and time() or GetTime() end
 
@@ -609,22 +643,40 @@ local function GroupKeys()
     return present
 end
 
-local function UpdatePasses()
-    if not next(db.partyPass) then return end
-    local present, grouped = GroupKeys(), IsInGroup()
-    local ended = {}
-    for key, p in pairs(db.partyPass) do
-        local age = Now() - (tonumber(p.t) or 0)
-        if present[key] then
-            p.joined = true
-        elseif p.joined or age > 120 or (not grouped and age > 5) then
-            db.partyPass[key] = nil
-            ended[#ended + 1] = key:match("^[^%-]+") or key
+local UpdatePasses
+do
+    local gen = 0
+    UpdatePasses = function()
+        if not next(db.partyPass) then return end
+        local present, grouped = GroupKeys(), IsInGroup()
+        local left, never, changed, soonest = {}, {}, false, nil
+        for key, p in pairs(db.partyPass) do
+            local age = Now() - (tonumber(p.t) or 0)
+            if present[key] then
+                p.joined = true
+            elseif p.joined or age > 120 or (not grouped and age > 5) then
+                db.partyPass[key] = nil
+                changed = true
+                -- Only announce players who really are muted again.
+                if db.names[key] ~= nil and not db.allow[key] then
+                    local nm = type(p.name) == "string" and p.name or (key:match("^[^%-]+") or key)
+                    if p.joined then left[#left + 1] = nm else never[#never + 1] = nm end
+                end
+            else
+                -- Still waiting for them to join: look again right after the limit.
+                local due = (grouped and 121 or 6) - age
+                if not soonest or due < soonest then soonest = due end
+            end
         end
-    end
-    if #ended > 0 then
-        DataChanged(true)
-        Print("muted again (left the group): " .. table.concat(ended, ", ") .. ".")
+        if changed then DataChanged(true) end
+        if #left > 0 then Print("muted again (left the group): " .. table.concat(left, ", ") .. ".") end
+        if #never > 0 then Print("muted again (didn't join): " .. table.concat(never, ", ") .. ".") end
+        -- One timer at a time; it also survives nothing else changing in the group.
+        if soonest and C_Timer and C_Timer.After then
+            gen = gen + 1
+            local mine = gen
+            C_Timer.After(math.max(1, soonest), function() if gen == mine then pcall(UpdatePasses) end end)
+        end
     end
 end
 
@@ -632,32 +684,51 @@ end
 -- leave), or if they never join (invite declined or expired). Checked on
 -- every roster change, and also on timers so a pass can't outlive its limits
 -- when nothing in the group changes.
-local function GrantPass(key, joined)
-    if not key then return end
-    db.partyPass[key] = { joined = joined and true or false, t = Now() }
+local function GrantPass(key, joined, name)
+    -- Only for players who are muted right now (not never-muted, not unmuted since).
+    if not key or db.allow[key] or db.names[key] == nil then return false end
+    db.partyPass[key] = { joined = joined and true or false, t = Now(),
+        name = type(name) == "string" and name or nil }
     DataChanged(true)
-    if C_Timer and C_Timer.After then
-        C_Timer.After(7, function() pcall(UpdatePasses) end)     -- past the 5 s solo grace
-        C_Timer.After(122, function() pcall(UpdatePasses) end)   -- past the 120 s "never joined" limit
-    end
+    pcall(UpdatePasses)   -- schedules the checks that end it on time
+    return true
 end
 
 local function CheckGroupForMuted()
     if not db.groupWarn then return end
-    if not IsInGroup() then wipe(warnedInGroup) return end
-    local found = {}
-    for key, unit in pairs(GroupKeys()) do
-        if db.names[key] and not db.allow[key] and not db.partyPass[key] and not warnedInGroup[key] then
+    if not IsInGroup() then wipe(warnedInGroup); wipe(db.groupWarned) return end
+    local present = GroupKeys()
+    -- The player you invited has joined: the group window takes over from the invite window.
+    if popupState.invite and present[popupState.invite] and StaticPopup_Hide then
+        popupState.invite = nil
+        StaticPopup_Hide("OLYMPUSMUTE_INVITE")
+    end
+    local found, seen = {}, {}
+    for key, unit in pairs(present) do
+        if db.names[key] and not db.allow[key] and not db.partyPass[key]
+            and not warnedInGroup[key] and not db.groupWarned[key] then
             warnedInGroup[key] = true
+            seen[key] = true
             found[#found + 1] = { key = key, name = UnitNameString(unit) or key, guild = tostring(db.names[key]) }
         end
     end
     if #found == 0 then return end
+    -- A window is already open: add the new players to it instead of replacing it.
+    if popupState.group and StaticPopup_Visible and StaticPopup_Visible("OLYMPUSMUTE_GROUP") then
+        for _, m in ipairs(popupState.group) do
+            if not seen[m.key] and present[m.key] and db.names[m.key] and not db.allow[m.key] and not db.partyPass[m.key] then
+                seen[m.key] = true
+                found[#found + 1] = m
+            end
+        end
+    end
     table.sort(found, function(a, b) return a.name < b.name end)
     local lines = {}
     for i, m in ipairs(found) do lines[i] = ("%s <%s>"):format(m.name, m.guild) end
+    popupState.group = found
     local popup = StaticPopup_Show and StaticPopup_Show("OLYMPUSMUTE_GROUP", table.concat(lines, "\n"), nil, found)
     if not popup then
+        popupState.group = nil
         Print("|cffff5555muted in your group:|r " .. table.concat(lines, ", ") .. ". Their chat is hidden.")
     end
 end
@@ -814,14 +885,22 @@ local function DedupeWhoLine(msg, frame)
     if not frame or not frame.RemoveMessagesByPredicate then return end
     local last, now = lastWhoLine[frame], GetTime()
     if last and last.text == msg and now - last.time < 3 then
-        local kept = false
+        -- Remove only the line just added (the newest copy), never an older one.
+        local count = 0
         frame:RemoveMessagesByPredicate(function(m)
             if type(m) == "table" then m = m.message end
-            if m ~= msg then return false end
-            if kept then return true end
-            kept = true
+            if m == msg then count = count + 1 end
             return false
         end)
+        if count >= 2 then
+            local n = 0
+            frame:RemoveMessagesByPredicate(function(m)
+                if type(m) == "table" then m = m.message end
+                if m ~= msg then return false end
+                n = n + 1
+                return n == count
+            end)
+        end
     end
     lastWhoLine[frame] = { text = msg, time = now }
 end
@@ -830,6 +909,8 @@ end
 local function CheckWhoThrottle(msg)
     if not scanSentAt or GetTime() - scanSentAt > 2 then return end
     if type(msg) ~= "string" or IsSecret(msg) then return end
+    -- Not our own lines ("scan 3/9: /who g-\"waiting\"..."), and not players' chat.
+    if msg:sub(1, #PREFIX) == PREFIX or msg:find("|Hplayer:", 1, true) then return end
     local m = msg:lower()
     if m:find("/who", 1, true) and (m:find("wait", 1, true) or m:find("again", 1, true)) then
         scanStep, scanSentAt = scanRetryFrom, nil
@@ -925,13 +1006,14 @@ end
 ---------------------------------------------------------------------------
 -- Chat bubbles
 -- The game draws bubbles separately from the chat window. After a muted
--- player's say/yell/party message, look for a bubble with that exact text and
--- make it invisible. Dungeons and raids lock bubbles away from addons, so
--- this only works in the open world.
+-- player's say/yell/party/raid message, look for a bubble with that exact text
+-- and make it invisible. Bubbles inside dungeons and raid instances are locked
+-- away from addons, so this only works in the open world.
 ---------------------------------------------------------------------------
 local BUBBLE_EVENTS = {
     CHAT_MSG_SAY = true, CHAT_MSG_YELL = true,
     CHAT_MSG_PARTY = true, CHAT_MSG_PARTY_LEADER = true,
+    CHAT_MSG_RAID = true, CHAT_MSG_RAID_LEADER = true,
 }
 local mutedTexts = {}      -- text -> time it stops being hidden
 local allowedTexts = {}    -- text an unmuted player just said -> time; never hidden
@@ -946,18 +1028,22 @@ local function BubbleHolder(bubble)
     if bubble.String then return bubble end
 end
 
+-- Tidy expired texts, at most once a second.
+local function PruneBubbleTexts(now)
+    if now - lastBubbleClean < 1 then return end
+    lastBubbleClean = now
+    for text, t in pairs(mutedTexts) do
+        if t < now then mutedTexts[text] = nil end
+    end
+    for text, t in pairs(allowedTexts) do
+        if t < now then allowedTexts[text] = nil end
+    end
+end
+
 local function ScanBubbles()
     if not (C_ChatBubbles and C_ChatBubbles.GetAllChatBubbles) then return end
     local now = GetTime()
-    if now - lastBubbleClean >= 1 then   -- tidy expired texts once a second
-        lastBubbleClean = now
-        for text, t in pairs(mutedTexts) do
-            if t < now then mutedTexts[text] = nil end
-        end
-        for text, t in pairs(allowedTexts) do
-            if t < now then allowedTexts[text] = nil end
-        end
-    end
+    PruneBubbleTexts(now)
     for _, bubble in pairs(C_ChatBubbles.GetAllChatBubbles(false)) do
         local holder = BubbleHolder(bubble)
         if holder then
@@ -988,11 +1074,16 @@ end)
 -- to watch after unmuted messages to restore any bubble we hid earlier.
 local function WatchBubbles(text, muted)
     if not db.hideBubbles then return end
+    local now = GetTime()
+    PruneBubbleTexts(now)   -- keeps the tables small even when nobody muted speaks
     local usable = type(text) == "string" and not IsSecret(text)
     if usable and muted then
-        mutedTexts[text] = GetTime() + 5
+        mutedTexts[text] = now + 5
+        -- An unmuted player said this first: keep their bubble safe for as long.
+        local okT = allowedTexts[text]
+        if okT and okT >= now and okT < now + 5 then allowedTexts[text] = now + 5 end
     elseif usable then
-        allowedTexts[text] = GetTime() + 5
+        allowedTexts[text] = now + 10
         if mutedTexts[text] then muted = true end   -- scan now to put a matching bubble back
     end
     if muted or next(hiddenHolders) then
@@ -1031,7 +1122,7 @@ local function NameBlocked(key)
     return key ~= nil and key ~= playerKey and db.names[key] ~= nil and not db.allow[key]
 end
 
--- Muted guild for a name, or nil (used for duels, trades and tooltips)
+-- Muted guild for a name, or nil (used for duels, trades, invites and warnings)
 local function MutedGuildForName(name)
     local key = ResolveKey(name)
     if not key or db.allow[key] or db.partyPass[key] then return nil end
@@ -1041,7 +1132,8 @@ end
 -- Word filter: hides a message from anyone if it contains a listed phrase.
 
 -- A filter entry matches when the message contains ALL of its words, in any
--- order and anywhere ("invite layer" catches "inv to asmon layer pls").
+-- order and anywhere ("inv layer" catches "inv to asmon layer pls" and
+-- "invite to asmon layer pls"). Parts also match inside longer words.
 -- Put an entry in quotes to require that exact phrase instead.
 local wordParts = {}   -- entry -> list of pieces that must all appear
 local function WordParts(entry)
@@ -1149,8 +1241,6 @@ local function Filter(_, event, msg, author, _, _, _, flag, _, _, _, _, lineID, 
         end
     end
 
-    -- Bubbles run every time (cheap), so a reused bubble can still be restored.
-    if BUBBLE_EVENTS[event] then pcall(WatchBubbles, msg, hit) end
     if hit then
         -- Count each hidden line once, not once per chat window.
         local usable = lineID ~= nil and not IsSecret(lineID)
@@ -1190,8 +1280,10 @@ local function HandleDuel(challenger, which)
         PrintThrottled("duel:" .. challenger, ("declined a duel from %s <%s>."):format(challenger, tostring(guild)))
     end, function()
         return db.declineDuel and MutedGuildForName(challenger) ~= nil
-    end, function()   -- give the duel request back
-        if StaticPopup_Show then StaticPopup_Show(which or "DUEL_REQUESTED", challenger) end
+    end, function()   -- give the duel request back (death duels use the name twice)
+        if not StaticPopup_Show then return end
+        local ok = pcall(StaticPopup_Show, which or "DUEL_REQUESTED", challenger, challenger)
+        if not ok then CancelDuel() end   -- couldn't show it: don't leave it hidden and unanswered
     end)
 end
 
@@ -1207,7 +1299,7 @@ do
     end
 
     StaticPopupDialogs["OLYMPUSMUTE_TRADE"] = {
-        text = "%s <%s> wants to trade with you.\n\nThey're on your OlympusMute list.",
+        text = "Trade with %s <%s>?\n\nThey're on your OlympusMute list.",
         button1 = "Allow trade", button2 = "Decline",
         OnAccept = function(self, data)
             if not data then return end
@@ -1215,11 +1307,12 @@ do
             Print(("trading with %s allowed for the next 10 minutes. They stay muted."):format(data.name))
         end,
         OnCancel = function(self, data, reason)
+            if not self then return end                 -- the window couldn't open (handled below)
             if reason == "override" then return end   -- closed because the trade ended
             if not data then return end
             CancelTrade()
             if StaticPopup_Hide then StaticPopup_Hide("TRADE") end
-            Print(("declined a trade from %s <%s>."):format(data.name, tostring(data.guild)))
+            Print(("cancelled the trade with %s <%s>."):format(data.name, tostring(data.guild)))
         end,
         timeout = 0, whileDead = true, hideOnEscape = true, preferredIndex = 3,
     }
@@ -1242,7 +1335,7 @@ do
         if not popup then   -- no window available: decline, as before
             CancelTrade()
             if StaticPopup_Hide then StaticPopup_Hide("TRADE") end
-            PrintThrottled("trade:" .. name, ("declined a trade from %s <%s>."):format(name, tostring(guild)))
+            PrintThrottled("trade:" .. name, ("cancelled the trade with %s <%s>."):format(name, tostring(guild)))
         end
     end
 
@@ -1260,7 +1353,11 @@ local function OnTooltipUnit(tooltip)
     if db.allow[key] then
         tooltip:AddLine("OlympusMute: never muted", 0.4, 1, 0.4)
     elseif db.names[key] then
-        tooltip:AddLine("Muted by OlympusMute <" .. tostring(db.names[key]) .. ">", 1, 0.3, 0.3)
+        if db.partyPass[key] then
+            tooltip:AddLine("OlympusMute: unmuted while grouped", 1, 0.82, 0)
+        else
+            tooltip:AddLine("Muted by OlympusMute <" .. tostring(db.names[key]) .. ">", 1, 0.3, 0.3)
+        end
     end
 end
 
@@ -1275,7 +1372,7 @@ local warnedWhisper = {}
 
 local function WarnWhisper(target, guid)
     local guild = MutedGuildForName(target)
-    local key = Normalize(target)
+    local key = ResolveKey(target)
     if not guild and guid and not IsSecret(guid) then
         -- Fall back to the character ID the game sends with the whisper.
         local k = db.guids[guid]
@@ -1308,8 +1405,11 @@ local function WarnInvite(target)
     if type(target) ~= "string" or target == "" or IsSecret(target) then return end
     local guild = MutedGuildForName(target)
     if not guild then return end
+    local key = ResolveKey(target)
+    popupState.invite = key
     local popup = StaticPopup_Show and StaticPopup_Show("OLYMPUSMUTE_INVITE", target, tostring(guild),
-        { key = ResolveKey(target), name = target })
+        { key = key, name = target })
+    if not popup then popupState.invite = nil end
     if not popup then   -- no popup available: one chat line per player instead
         local key = Normalize(target)
         if not key or warnedInvite[key] then return end
@@ -1330,7 +1430,10 @@ local function HookEditBoxes()
 end
 
 local function InstallWhisperWarning()
-    local invHook = function(name) pcall(WarnInvite, name) end
+    local invHook = function(name)
+        if type(name) == "string" and not IsSecret(name) then popupState.sent[name:lower()] = GetTime() end
+        pcall(WarnInvite, name)
+    end
     if C_PartyInfo and type(C_PartyInfo.InviteUnit) == "function" then
         hooksecurefunc(C_PartyInfo, "InviteUnit", invHook)
     end
@@ -1379,7 +1482,7 @@ f:SetScript("OnEvent", function(self, event, arg1, ...)
         if type(db.declineGuild) ~= "boolean" then db.declineGuild = old end
         if type(db.declineGroup) ~= "boolean" then db.declineGroup = old end
         db.declineInvites = nil
-        for _, k in ipairs({ "guids", "names", "manual", "allow", "guildAllow", "words", "nameWords", "partyPass" }) do
+        for _, k in ipairs({ "guids", "names", "manual", "allow", "guildAllow", "words", "nameWords", "partyPass", "groupWarned" }) do
             if type(db[k]) ~= "table" then db[k] = {} end
         end
         if type(db.keywords) ~= "table" then
@@ -1417,20 +1520,67 @@ f:SetScript("OnEvent", function(self, event, arg1, ...)
         for _, k in pairs(db.keywords) do if type(k) == "string" then kws[#kws + 1] = k end end
         db.keywords = kws
         for k, v in pairs(db.partyPass) do
-            if type(k) ~= "string" or type(v) ~= "table" then db.partyPass[k] = nil end
+            if type(k) ~= "string" or type(v) ~= "table" then db.partyPass[k] = nil
+            elseif v.name ~= nil and type(v.name) ~= "string" then v.name = nil end
         end
-        local nws = {}
-        for _, k in pairs(db.nameWords) do if type(k) == "string" and k ~= "" then nws[#nws + 1] = k end end
+        for k, v in pairs(db.groupWarned) do
+            if type(k) ~= "string" or v ~= true then db.groupWarned[k] = nil end
+        end
+        local nws, seenNW = {}, {}
+        for _, k in pairs(db.nameWords) do
+            if type(k) == "string" then
+                k = strtrim((k:lower():gsub('[%*%%"]', "")))   -- "tiny " from 1.3.1 -> "tiny"
+                if k ~= "" and not seenNW[k] then seenNW[k] = true; nws[#nws + 1] = k end
+            end
+        end
         db.nameWords = nws
+        local ga = {}
+        for k, v in pairs(db.guildAllow) do
+            if type(k) == "string" and v then
+                k = strtrim((k:lower():gsub('"', "")))
+                if k ~= "" then ga[k] = true end
+            end
+        end
+        db.guildAllow = ga
+        local lvl = db.maxSeenLevel
+        if type(lvl) ~= "number" or lvl ~= lvl or lvl < 1 or lvl > 200 then db.maxSeenLevel = nil end
         DataChanged(false)
         self:UnregisterEvent("ADDON_LOADED")
     elseif event == "PLAYER_LOGIN" then
         -- Saved passes: check them once group info has loaded.
-        if C_Timer and C_Timer.After then C_Timer.After(5, function() pcall(UpdatePasses) end) end
+        if C_Timer and C_Timer.After then C_Timer.After(5, function()
+            pcall(UpdatePasses)
+            -- The group may have broken up while you were offline.
+            if not IsInGroup() then wipe(db.groupWarned) end
+        end) end
         playerGUID = UnitGUID("player")
         playerKey = Normalize(UnitNameString("player"))
         pcall(PurgePlaceholderKeys)
         pcall(FixRealmKeys)
+        pcall(function()   -- names saved with doubled spaces ("bacon  eggz") never matched chat
+            local map = {}
+            for _, t in ipairs({ db.names, db.allow, db.manual, db.partyPass }) do
+                for k in pairs(t) do
+                    if type(k) == "string" and k:find("%s%s") then map[k] = (k:gsub("%s+", " ")) end
+                end
+            end
+            for old, new in pairs(map) do
+                Rekey(old, new)
+                if db.manual[old] then db.manual[new] = true; db.manual[old] = nil end
+                if db.partyPass[old] then db.partyPass[new] = db.partyPass[new] or db.partyPass[old]; db.partyPass[old] = nil end
+            end
+            if next(map) then DataChanged(true) end
+        end)
+        pcall(function()   -- a /who result could add you to your own list
+            local drop = {}
+            if playerKey and db.names[playerKey] ~= nil then drop[playerKey] = true end
+            if playerGUID and db.guids[playerGUID] then
+                local k = db.guids[playerGUID]
+                db.guids[playerGUID] = nil
+                if db.names[k] ~= nil then drop[k] = true end
+            end
+            if next(drop) then UnblockMany(drop) end
+        end)
         if not filterAvailable then
             Print("|cffff5555chat filtering isn't available on this game version.|r Other features still work.")
         end
@@ -1451,19 +1601,50 @@ f:SetScript("OnEvent", function(self, event, arg1, ...)
         pcall(self.RegisterEvent, self, "TRADE_REQUEST")   -- not on every client
         self:RegisterEvent("TRADE_CLOSED")
         pcall(self.RegisterEvent, self, "TRADE_REQUEST_CANCEL")
+        -- Bubbles: watched here, not in the chat filter, so they're hidden even
+        -- when no chat tab shows that kind of chat.
+        for e in pairs(BUBBLE_EVENTS) do self:RegisterEvent(e) end
         ScanGroup()
         HookChatFrames()
         InstallWhoDebounce()
         pcall(InstallTooltip)
         pcall(InstallWhisperWarning)
+        -- You answered an invite yourself: forget it, so nothing declines it later.
+        local answered = function()
+            pendingInvite = nil
+            Humanlike.invite = nil
+            Humanlike.Cancel("group")
+        end
+        if type(DeclineGroup) == "function" then hooksecurefunc("DeclineGroup", answered) end
+        if type(AcceptGroup) == "function" then hooksecurefunc("AcceptGroup", answered) end
         if type(FCF_OpenTemporaryWindow) == "function" then
             -- Whisper pop-out tabs are created later: hook them as they open.
-            hooksecurefunc("FCF_OpenTemporaryWindow", function()
+            hooksecurefunc("FCF_OpenTemporaryWindow", function(chatType, chatTarget, sourceChatFrame)
                 pcall(HookChatFrames); pcall(HookEditBoxes)
+                -- A tab the game opened for a new whisper (not one you made): if the
+                -- whisper was hidden, the tab is empty. Close it right after.
+                if chatType ~= "WHISPER" or sourceChatFrame ~= nil or type(chatTarget) ~= "string"
+                    or IsSecret(chatTarget) or not db.enabled or not (C_Timer and C_Timer.After) then return end
+                C_Timer.After(0, function()
+                    for _, fr in ipairs(ChatFrames()) do
+                        if fr.isTemporary and fr.chatType == "WHISPER" and fr.chatTarget == chatTarget
+                            and fr.GetNumMessages and fr:GetNumMessages() == 0 and FCF_Close then
+                            pcall(FCF_Close, fr)
+                        end
+                    end
+                end)
             end)
         end
         self:RegisterEvent("CHAT_MSG_WHISPER_INFORM")
         CreatePanel()
+    elseif BUBBLE_EVENTS[event] then
+        if not db.enabled or not db.hideBubbles then return end
+        local author = ...
+        local flag, guid = select(5, ...), select(11, ...)
+        if IsSecret(author) or IsSecret(guid) then return end
+        if IsSecret(flag) or type(flag) ~= "string" then flag = nil end
+        local ok, hit = pcall(Evaluate, arg1, author, guid, flag)
+        pcall(WatchBubbles, arg1, ok and hit)
     elseif event == "PLAYER_TARGET_CHANGED" then
         SafeScan("target")
     elseif event == "UPDATE_MOUSEOVER_UNIT" then
@@ -1477,6 +1658,7 @@ f:SetScript("OnEvent", function(self, event, arg1, ...)
     elseif event == "PARTY_INVITE_REQUEST" then
         Humanlike.Cancel("group")   -- a new invite: any older wait is stale
         Humanlike.invite = type(arg1) == "string" and not IsSecret(arg1) and ResolveKey(arg1) or nil
+        Humanlike.inviteText, Humanlike.inviteArgs = nil, { arg1, ... }
         local n = select("#", ...)
         local args = { arg1, ... }
         xpcall(function() HandlePartyInvite(unpack(args, 1, n + 1)) end, ReportError)
@@ -1551,8 +1733,15 @@ local function AddPlayer(name)
     local key = ResolveKey(name)
     if not key then return end
     if key == playerKey then Print("you can't mute yourself.") return end
+    -- Muting by hand ends "unmute while grouped" for them.
+    local passEnded = db.partyPass[key] ~= nil
+    if passEnded then db.partyPass[key] = nil; DataChanged(true) end
     if db.names[key] then
-        if db.manual[key] then
+        if passEnded then
+            db.manual[key] = true
+            PurgeHistory(key)
+            Print(name .. " is muted again (ended unmute while grouped).")
+        elseif db.manual[key] then
             Print(name .. " is already muted.")
         else
             -- Found automatically before; pin them so a guild change doesn't unmute them.
@@ -1637,6 +1826,7 @@ local function AllowPlayer(name)
         Print(name .. " can be muted again.")
     else
         db.allow[key] = true
+        db.partyPass[key] = nil
         Unblock(nil, name, true)
         Print(name .. " will never be muted.")
     end
@@ -1670,7 +1860,7 @@ end
 
 -- Guild names match any part of a guild's name, so * wildcards aren't needed.
 local function CleanKeyword(text)
-    return (strtrim(text or ""):lower():gsub('[%*%%"]', ""))
+    return strtrim(((text or ""):lower():gsub('[%*%%"]', "")))   -- remove * % " first, then trim
 end
 
 -- The existing entry that already matches everything kw would, if any.
@@ -1868,7 +2058,7 @@ end
 -- Guild whitelist: exact guild names that are never muted, even if they contain a muted name
 -- (e.g. a guild called "Anti Olympus"). Toggles on/off.
 local function ExemptGuild(text)
-    local g = strtrim(text or ""):lower():gsub('"', "")
+    local g = strtrim(((text or ""):lower():gsub('"', "")))
     if g == "" then return end
     if db.guildAllow[g] then
         db.guildAllow[g] = nil
@@ -1931,9 +2121,9 @@ local function HasKeyword(t)
     local kw = CleanKeyword(t)
     for _, k in ipairs(db.keywords) do if k == kw then return true end end
 end
-local function HasExempt(t) return db.guildAllow[(strtrim(t):lower():gsub('"', ""))] end
-local function HasMuted(t) local k = Normalize(strtrim(t)); return k and db.names[k] ~= nil end
-local function HasAllowed(t) local k = Normalize(strtrim(t)); return k and db.allow[k] end
+local function HasExempt(t) return db.guildAllow[strtrim((t:lower():gsub('"', "")))] end
+local function HasMuted(t) local k = Normalize((strtrim(t):gsub("%s+", " "))); return k and db.names[k] ~= nil end
+local function HasAllowed(t) local k = Normalize((strtrim(t):gsub("%s+", " "))); return k and db.allow[k] end
 
 AddKeyword, RemoveKeyword, ExemptGuild = EachEntry(AddKeyword), EachEntry(RemoveKeyword, HasKeyword), EachEntry(ExemptGuild, HasExempt)
 AddWord, RemoveWord = EachEntry(AddWord), EachEntry(RemoveWord, HasWord)
@@ -1946,8 +2136,17 @@ end
 do
 local function PassAll(list, joined)
     local names = {}
-    for _, m in ipairs(list) do GrantPass(m.key, joined); names[#names + 1] = m.name end
+    for _, m in ipairs(list) do
+        if GrantPass(m.key, joined, m.name) then names[#names + 1] = m.name end
+    end
+    if #names == 0 then return end
     Print(("unmuted while you're grouped: %s. They're muted again when the group ends."):format(table.concat(names, ", ")))
+end
+
+-- A real answer in the group window: don't ask about these players again in
+-- this group, even after a /reload.
+local function Answered(list)
+    for _, m in ipairs(list) do if m.key then db.groupWarned[m.key] = true end end
 end
 
 local function AllowAll(list)
@@ -1959,22 +2158,41 @@ end
 local function CancelInvite(name)
     if C_PartyInfo and C_PartyInfo.UninviteUnit then pcall(C_PartyInfo.UninviteUnit, name)
     elseif UninviteUnit then pcall(UninviteUnit, name) end
-    -- While the invite is pending, the game holds you in a group of one.
-    -- If nobody else has joined, leaving it cancels the invite for certain.
+    -- While the invite is pending, the game holds you in a group of one, and
+    -- leaving it cancels the invite for certain. But leaving also withdraws any
+    -- other invites you just sent, so only do it when this was the only one.
+    local others = false
+    for n, t in pairs(popupState.sent) do
+        if GetTime() - t > 120 then popupState.sent[n] = nil
+        elseif n ~= tostring(name):lower() then others = true end
+    end
     local members = GetNumGroupMembers and GetNumGroupMembers() or 0
-    if members <= 1 and IsInGroup and IsInGroup() then
+    if members <= 1 and IsInGroup and IsInGroup() and not others then
         if C_PartyInfo and C_PartyInfo.LeaveParty then pcall(C_PartyInfo.LeaveParty)
         elseif LeaveParty then pcall(LeaveParty) end
     end
+    popupState.sent[tostring(name):lower()] = nil
     Print(("cancelled the invite to %s."):format(tostring(name)))
 end
 
 StaticPopupDialogs["OLYMPUSMUTE_INVITE"] = {
     text = "%s is on your OlympusMute list <%s>.\n\nIf they join, you won't see their party chat.",
     button1 = "Unmute while grouped", button2 = "Keep muted", button3 = "Cancel invite",
-    OnAccept = function(self, data) if data then PassAll({ data }, false) end end,
-    OnCancel = function(self, data) if data and data.key then warnedInGroup[data.key] = true end end,
-    OnAlt = function(self, data) if data and data.name then CancelInvite(data.name) end end,
+    OnAccept = function(self, data)
+        popupState.invite = nil
+        if data then PassAll({ data }, false) end
+    end,
+    OnCancel = function(self, data, reason)
+        -- Only a real "Keep muted" (or Escape) counts as an answer: not the window
+        -- being replaced, closed by logout, or failing to open.
+        if not self or reason ~= "clicked" then return end
+        popupState.invite = nil
+        if data and data.key then warnedInGroup[data.key] = true; db.groupWarned[data.key] = true end
+    end,
+    OnAlt = function(self, data)
+        popupState.invite = nil
+        if data and data.name then CancelInvite(data.name) end
+    end,
     timeout = 0, whileDead = true, hideOnEscape = true, preferredIndex = 3,
 }
 
@@ -1982,12 +2200,28 @@ StaticPopupDialogs["OLYMPUSMUTE_GROUP"] = {
     text = "Muted players in your group:\n\n%s\n\nYou won't see their party chat.",
     button1 = "Unmute while grouped", button2 = "Keep muted", button3 = "Unmute forever",
     OnAccept = function(self, data)
+        popupState.group = nil
         if not data then return end
+        Answered(data)
         local present, still = GroupKeys(), {}
         for _, m in ipairs(data) do if present[m.key] then still[#still + 1] = m end end
         if #still > 0 then PassAll(still, true) else Print("they've already left your group.") end
     end,
-    OnAlt = function(self, data) if data then AllowAll(data) end end,
+    OnCancel = function(self, data, reason)
+        if not self or not data then return end
+        if reason == "clicked" then          -- Keep muted / Escape
+            popupState.group = nil
+            Answered(data)
+        elseif reason == "override" and popupState.group == data then
+            -- Closed by something else (like logout): ask again later.
+            popupState.group = nil
+            for _, m in ipairs(data) do warnedInGroup[m.key] = nil end
+        end
+    end,
+    OnAlt = function(self, data)
+        popupState.group = nil
+        if data then Answered(data); AllowAll(data) end
+    end,
     timeout = 0, whileDead = true, hideOnEscape = true, preferredIndex = 3,
 }
 end
@@ -2000,7 +2234,7 @@ local function NameWordList()
 end
 
 local function CleanNameWord(text)
-    return (strtrim(text or ""):lower():gsub('[%*%%"]', ""))
+    return strtrim(((text or ""):lower():gsub('[%*%%"]', "")))   -- remove * % " first, then trim
 end
 
 local function AddNameWord(text)
@@ -2243,16 +2477,19 @@ end
 
 local function ImportIgnores(removeFromIgnore)
     local names = IgnoreNames()
-    local added, removed = 0, 0
+    local added, removed, already, skipped = 0, 0, 0, 0
     for _, name in ipairs(names) do
         local key = ResolveKey(name)
-        if key and key ~= playerKey and not db.allow[key] then
+        if key and db.allow[key] then
+            skipped = skipped + 1   -- on your never-mute list: left alone, and left on the ignore list
+        elseif key and key ~= playerKey then
             if db.names[key] == nil then
                 db.manual[key] = true
                 Block(nil, name, IGNORE_TAG)
                 added = added + 1
             else
                 db.manual[key] = true   -- keep them muted whatever guild they join
+                already = already + 1
             end
             if removeFromIgnore then
                 local ok = pcall(function()
@@ -2266,10 +2503,13 @@ local function ImportIgnores(removeFromIgnore)
     DataChanged(true)
     if removeFromIgnore then
         Print(("imported %d players from your ignore list (%d were already muted) and removed %d from the ignore list."):format(
-            added, #names - added, removed))
+            added, already, removed))
     else
         Print(("imported %d players from your ignore list (%d were already muted). Your ignore list is unchanged."):format(
-            added, #names - added))
+            added, already))
+    end
+    if skipped > 0 then
+        Print(("skipped %d on your never-mute list (left on your ignore list)."):format(skipped))
     end
     if panel and panel:IsShown() then panel:Refresh() end
 end
@@ -2526,10 +2766,14 @@ local function OnShareMessage(text, channel, sender)
     if lastOfferFrom[key] and GetTime() - lastOfferFrom[key] < 300 then return end   -- one per sender per 5 min
     if GetTime() - lastOfferAny < SHARE_GLOBAL_GAP then return end                     -- one per minute overall
     if StaticPopup_Visible and StaticPopup_Visible("OLYMPUSMUTE_SHARE") then return end
-    lastOfferFrom[key] = GetTime(); lastOfferAny = GetTime()
     local preview = ("Guild names (%d): %s\nFiltered words (%d): %s"):format(
         #guilds, ShareSummary(guilds), #words, ShareSummary(words))
-    StaticPopup_Show("OLYMPUSMUTE_SHARE", sender, preview, { from = sender, guilds = guilds, words = words })
+    local popup = StaticPopup_Show("OLYMPUSMUTE_SHARE", sender, preview, { from = sender, guilds = guilds, words = words })
+    if popup then
+        lastOfferFrom[key] = GetTime(); lastOfferAny = GetTime()   -- limits count only shown offers
+    else
+        PrintThrottled("sharefail:" .. key, ("%s shared their lists, but the window couldn't open right now. Ask them to send it again."):format(sender))
+    end
 end
 
 local shareFrame = CreateFrame("Frame")
@@ -2601,7 +2845,7 @@ local function WhoScan()
         Print(("next scan ready in %d s."):format(math.ceil(left)))
         return
     end
-    scanRetryFrom, scanSentAt = scanStep, GetTime()
+    local from = scanStep
     lastScanTime = GetTime()
     scanStep = scanStep % #scanQueries + 1
     local query = scanQueries[scanStep]
@@ -2611,6 +2855,8 @@ local function WhoScan()
         SendWho(query)
     end
     Print(("scan %d/%d: /who %s"):format(scanStep, #scanQueries, query))
+    -- Start listening for the server's "too soon" notice only after our own lines.
+    scanRetryFrom, scanSentAt = from, GetTime()
     if panel and panel.UpdateScanButton then panel:UpdateScanButton() end
 end
 
@@ -2695,7 +2941,7 @@ local function BuildListLines(filter)
         table.sort(muted, function(a, b) return a.name < b.name end)
         for _, m in ipairs(muted) do lines[#lines + 1] = m.name .. "  |cff999999<" .. m.g .. ">|r" end
     end
-    return lines, total, #muted
+    return lines, total, #allowed + #muted
 end
 
 ShowListWindow = function()
@@ -2982,9 +3228,10 @@ CreatePanel = function()
     wBox:SetScript("OnEnterPressed", BoxAction(wBox, AddWord))
     local wAdd = MakeButton("Add word", 90, BoxAction(wBox, AddWord), wBox, 8, 1)
     Tip(wAdd, "Add word", "A message is hidden if it contains every word you enter, in any order. "
-        .. "\"invite layer\" hides \"inv to asmon layer pls\".",
+        .. "\"inv layer\" hides \"inv to asmon layer pls\" and \"invite to asmon layer pls\". "
+        .. "Parts also match inside longer words (\"inv\" matches \"inventory\").",
         "Put it in quotes, like \"asmon layer\", to match only that exact phrase.",
-        "Add several at once with commas: invite layer, \"asmon layer\"")
+        "Add several at once with commas: inv layer, \"asmon layer\"")
     MakeButton("Remove word", 110, BoxAction(wBox, RemoveWord), wAdd, 6, 0)
 
     local wText = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")

@@ -1,6 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
@@ -12,8 +11,6 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-H1
 #defaultfor Troll/Orc
 #next 6-10 Durotar
-
-
 step << !Orc !Troll
     #completewith next
     +|cRXP_WARN_You have selected a guide meant for Orcs and Trolls. You should choose the same starter zone that you start in|r
@@ -319,14 +316,14 @@ step << skip
     .turnin 97279 >>Turn in Wayward Weapons
     .target Kzan Thornslash
 step << Shaman
-    .goto 1411/1,-4948.35,-769.15
+    .goto 1411/1,-4102.600,-588.800
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kzan|r
     .vendor >> Vendor trash. Sell your weapon if it gives you enough money for a |T135139:0|t[Short Staff] (97c)
     .target Kzan Thornslash
     .itemStat 16,QUALITY,<7
     .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<1.9
 step << Shaman
-    .goto 1411/1,-4102.35,-588.67.00
+    .goto 1411/1,-4102.600,-588.800
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kzan|r
     >>|cRXP_BUY_Buy a|r |T135139:0|t[Short Staff] |cRXP_BUY_from him|r
     .collect 2132,1,5441,1 --Collect Short Staff (1)
@@ -1083,7 +1080,6 @@ step
     .goto 1411/1,-4600.96,-603.82,25 >>Exit the Valley of Trials
     .isOnQuest 805
 ]])
-
 RXPGuides.RegisterGuide([[
 #forever
 << Horde
@@ -1094,7 +1090,6 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-H1
 #defaultfor Troll/Orc
 #next 10-12 Durotar
-
 step
     .goto 1411/1,-4715.17,-599.240
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ukor|r
@@ -2254,9 +2249,9 @@ step
 step --center of first small island
     #label MartEgg
     .goto 1411/1,-5599.500,-716.700
-    >>Kill the |cRXP_ENEMY_Bloodtalon Martriarch|r. Loot it for the |cRXP_LOOT_Bloodtalon Martriarch Eggs|r
-    .complete 97223,1 --|1/1 Bloodtalon Martriarch Eggs
-    .mob Bloodtalon Martriarch
+    >>Kill the |cRXP_ENEMY_Bloodtalon Matriarch|r. Loot it for the |cRXP_LOOT_Bloodtalon Matriarch Eggs|r
+    .complete 97223,1 --|1/1 Bloodtalon Matriarch Eggs
+    .mob Bloodtalon Matriarch
 step
     #label MainIsland
     .goto 1411/1,-5501.95,-1167.12,150 >>Swim to the main island
@@ -2754,7 +2749,7 @@ step
     .goto 1411/1,-4198.05,911.22,30,0
     .goto 1411/1,-4165.27,903.11,20 >>Jump into Thunder Ridge << !Hunter !Warlock
     .goto 1411/1,-4165.27,903.11,20 >>|cRXP_WARN_Dismiss your|r |T136218:0|t[Imp] |cRXP_WARN_by right clicking its unit frame and clicking dismiss|r << Warlock
-    .cast 2641 |cRXP_WARN_Cast|r |T136095:0|t[Dismiss Pet] |cRXP_WARN_and then jump into Thunder Ridge|r << Hunter
+    .cast 2641 >>|cRXP_WARN_Cast|r |T136095:0|t[Dismiss Pet] |cRXP_WARN_and then jump into Thunder Ridge|r << Hunter
 step
     #softcore
     .goto 1411/1,-4190.12,868.22
@@ -3078,7 +3073,6 @@ step << Rogue
     .train 674 >> Train your class spells
     .target Kaplak
 ]])
-
 RXPGuides.RegisterGuide([[
 #forever
 << Horde
@@ -3090,8 +3084,6 @@ RXPGuides.RegisterGuide([[
 #defaultfor Troll/Orc
 #next 10-12 Tirisfal (Orc/Troll) << !Hunter !Shaman !Tauren !Skyborne
 #next 12-17 The Barrens << Orc Hunter/Troll Hunter/Orc Shaman/Troll Shaman
-
-
 step << Shaman/Hunter
     .goto 1411/1,-4648.55,271.43
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Takrin|r
@@ -3689,8 +3681,6 @@ step
     #optional
     .abandon 816 >>Abandon Lost But Not Forgotten
 ]])
-
-
 RXPGuides.RegisterGuide([[
 #forever
 << Horde
@@ -3701,7 +3691,6 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-H1
 #defaultfor !Hunter !Shaman !Tauren !Skyborne !Undead
 #next 12-14 Silverpine Forest << !Hunter !Shaman !Tauren !Skyborne !Undead
-
 step
     #completewith DeliverytoSPF
     .goto 1420/0,253.4,2234.85,80 >> Travel to Brill
@@ -3789,6 +3778,7 @@ step << Rogue
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Marion|r on the second floor
     .train 1766 >> Train |T132219:0|t[Kick]
     .target Marion Call
+    .money <0.08
     .xp <12,1
 step << Warlock
     .goto 1420/0,250.24,2259.25
@@ -4042,7 +4032,7 @@ step << Priest
     .itemStat 18,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<11.3
 step << Priest
     .goto 1458/0,194.34,1681.63
-    >>|cRXP_WARN_Turn all your|r |T132889:0|t[Linen Cloth] |cRXP_WARN_into|r |T132890:0|t[Bolt of linen Linen Cloth]
+    >>|cRXP_WARN_Turn all your|r |T132889:0|t[Linen Cloth] |cRXP_WARN_into|r |T132890:0|t[Bolt of Linen Cloth]
     .collect 2996,30,435,1 --Bolt of Linen Cloth (30)
     .itemStat 18,QUALITY,<7
     .itemStat 18,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<11.3

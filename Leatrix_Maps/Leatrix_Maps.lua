@@ -1,6 +1,6 @@
 ﻿
 	----------------------------------------------------------------------
-	-- 	Leatrix Maps 1.60.14 (6th October 2026)
+	-- 	Leatrix Maps 1.60.20 (10th October 2026)
 	----------------------------------------------------------------------
 
 	-- 10:Func, 20:Comm, 30:Evnt, 40:Panl
@@ -12,7 +12,7 @@
 	local LeaMapsLC, LeaMapsCB, LeaConfigList = {}, {}, {}
 
 	-- Version
-	LeaMapsLC["AddonVer"] = "1.60.14"
+	LeaMapsLC["AddonVer"] = "1.60.20"
 
 	-- Get locale table
 	local void, Leatrix_Maps = ...
@@ -56,34 +56,6 @@
 	-- Main function
 	function LeaMapsLC:MainFunc()
 
-		-- Base taint: No longer an issue and zoom settings are removed now anyway
-		-- Have a keystone in your bag, open the world map, navigate to a zone with a world boss quest
-		-- (such as Zereth Mortis), shift-click on the world boss icon 4 times to toggle quest tracking off
-		-- and on twice, click the objective tracker icon for the world quest to open group finder.  The 3 zoom
-		-- settings cause base taint due to setting global values (remember zoom, increase zoom and center map
-		-- on player).
-
-		-- Group finder dungeon title taint: No longer an issue
-		-- Follow base taint then click back, click dungeons and click start group.  This taint happens because
-		-- the dungeon title is protected.  This is mitigated by preventing Wow from setting the dungeon title
-		-- but only if the user has 2FA enabled.  Without 2FA, users cannot set the dungeon title so Wow has to
-		-- do it for them which means the taint fix cannot be applied.
-		-- Appears fixed as setting the dungeon title no longer causes taint.
-
-		-- Report player taint: Still an issue
-		-- Follow base taint and group finder taint then use report player.
-
-		-- Editing mode taint: No longer an issue
-		-- Follow base taint and group finder taint but edit the group after listing it and toggle the opposite
-		-- faction checkbox.  This is mitigated by locking the checkbox in editing mode.
-		-- Appears fixed as toggling the checkbox no longer causes taint.
-
-		-- Scale map taint: No longer an issue
-		-- Appears fixed as replacing WorldMapFrame.ScrollContainer.GetCursorPosition is no longer needed.
-
-		-- Command taint: Still an issue
-		-- Enter /ltm map 150 during combat and click a boss button.
-
 		-- Load Battlefield addon
 		if not C_AddOns.IsAddOnLoaded("Blizzard_BattlefieldMap") then
 			LoadAddOnWithErrorHandling("Blizzard_BattlefieldMap")
@@ -93,12 +65,300 @@
 		local playerFaction = UnitFactionGroup("player")
 
 		-- Remove blackout frame
-		WorldMapFrame.BlackoutFrame:SetAlpha(0)
-		WorldMapFrame.BlackoutFrame:EnableMouse(false)
+		if LeaMapsLC["HideBlackoutFrame"] == "On" then
+			WorldMapFrame.BlackoutFrame:SetAlpha(0)
+			WorldMapFrame.BlackoutFrame:EnableMouse(false)
+		end
 
 		-- Hide the world map tutorial button
 		WorldMapFrame.BorderFrame.Tutorial:HookScript("OnShow", WorldMapFrame.BorderFrame.Tutorial.Hide)
 		SetCVarBitfield("closedInfoFrames", LE_FRAME_TUTORIAL_WORLD_MAP_FRAME, true)
+
+		----------------------------------------------------------------------
+		-- Simple map frame
+		----------------------------------------------------------------------
+
+		if LeaMapsLC["SimpleMapFrame"] == "On" then
+
+			-- Function to check if a frame can be changed (protected frames cannot be changed during combat)
+			local function CanChange(frame)
+				return not InCombatLockdown() or not frame:IsProtected()
+			end
+
+			-- Function to hide a frame or texture permanently
+			local function HideFrame(frame)
+				frame:SetAlpha(0)
+				if frame:IsObjectType("Frame") then
+					if CanChange(frame) then
+						frame:Hide()
+						frame:EnableMouse(false)
+					end
+					frame:HookScript("OnShow", function()
+						if CanChange(frame) then frame:Hide() else frame:SetAlpha(0) end
+					end)
+				end
+			end
+
+			----------------------------------------------------------------------
+			-- Windowed map
+			----------------------------------------------------------------------
+
+			-- Function to set map CVars (map is always windowed and opens without the quest log)
+			local function SetMapCVars()
+				if InCombatLockdown() then return end
+				if GetCVar("questLogOpen") ~= "0" then SetCVar("questLogOpen", "0") end
+			end
+
+			-- Set map CVars when map is closed and on startup
+			WorldMapFrame:HookScript("OnHide", SetMapCVars)
+			SetMapCVars()
+
+			----------------------------------------------------------------------
+			-- Hide map elements
+			----------------------------------------------------------------------
+
+			-- Hide border, portrait, title and maximise button (but not close button)
+			for i, v in pairs({WorldMapFrame.BorderFrame:GetRegions()}) do
+				HideFrame(v)
+			end
+			for i, v in pairs({WorldMapFrame.BorderFrame:GetChildren()}) do
+				if v ~= WorldMapFrame.BorderFrame.CloseButton and v ~= WorldMapFrame.BorderFrame.MaximizeMinimizeFrame then
+					HideFrame(v)
+				end
+			end
+
+			-- Hide border background (the game moves it from the border frame to the map frame)
+			HideFrame(WorldMapFrame.BorderFrame.Bg)
+
+			-- Hide navigation bar
+			HideFrame(WorldMapFrame.NavBar)
+
+			-- Hide quest log search box and quest count
+			HideFrame(QuestScrollFrame.SearchBox)
+			HideFrame(QuestLogCount)
+
+			----------------------------------------------------------------------
+			-- Create map frame
+			----------------------------------------------------------------------
+
+			local frameLevel = math.min(WorldMapFrame:GetFrameLevel() + 2000, 9000)
+
+			-- Create border (covers the map and the quest log when it's shown)
+			local borderFrame = CreateFrame("Frame", nil, WorldMapFrame, "BackdropTemplate")
+			borderFrame:SetFrameLevel(WorldMapFrame:GetFrameLevel())
+			borderFrame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1})
+			borderFrame:SetBackdropColor(0, 0, 0, 0.9)
+			borderFrame:SetBackdropBorderColor(0.3, 0.3, 0.3, 1)
+
+			-- Create title bar (uses the space left by the navigation bar)
+			local titleFrame = CreateFrame("Frame", nil, WorldMapFrame)
+			titleFrame:SetFrameStrata("HIGH")
+			titleFrame:SetFrameLevel(frameLevel)
+			titleFrame:SetHeight(22)
+
+			-- Assign file level scope to title bar (needed for Unlock map frame)
+			LeaMapsCB["MapTitleFrame"] = titleFrame
+
+			local titleTexture = titleFrame:CreateTexture(nil, "BACKGROUND")
+			titleTexture:SetAllPoints()
+			titleTexture:SetColorTexture(0.06, 0.06, 0.06, 1)
+
+			-- Create gold border (same art as the default map frame)
+			local goldBorder = CreateFrame("Frame", nil, WorldMapFrame, "NineSlicePanelTemplate")
+			goldBorder:ClearAllPoints()
+			goldBorder:SetPoint("TOPLEFT", borderFrame, "TOPLEFT", -5, 0)
+			goldBorder:SetPoint("BOTTOMRIGHT", borderFrame, "BOTTOMRIGHT", 5, -5)
+			goldBorder:SetFrameStrata("HIGH")
+			goldBorder:SetFrameLevel(frameLevel + 1)
+			NineSliceUtil.ApplyLayoutByName(goldBorder, "ButtonFrameTemplateNoPortrait")
+
+			-- Create frame for title bar text (above the gold border)
+			local titleTextFrame = CreateFrame("Frame", nil, titleFrame)
+			titleTextFrame:SetAllPoints()
+			titleTextFrame:SetFrameLevel(frameLevel + 2)
+
+			-- Create map title
+			local titleText = titleTextFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+			titleText:SetPoint("CENTER")
+
+			-- Create quest count
+			local questCount = titleTextFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+			questCount:SetPoint("LEFT", 8, 0)
+
+			----------------------------------------------------------------------
+			-- Title bar buttons
+			----------------------------------------------------------------------
+
+			-- Set button sizes to fit the title bar
+			WorldMapFrame.BorderFrame.CloseButton:SetSize(20, 20)
+			WorldMapFrame.BorderFrame.MaximizeMinimizeFrame:SetSize(20, 20)
+
+			-- Function to replace button art with an icon (the button still works as normal)
+			local function SetButtonIcon(button, file, normal, hover, boxColor)
+				for i, v in pairs({button:GetNormalTexture(), button:GetPushedTexture(), button:GetHighlightTexture(), button:GetDisabledTexture()}) do
+					v:SetAlpha(0)
+				end
+				-- Hover background
+				local box = button:CreateTexture(nil, "BACKGROUND")
+				box:SetAllPoints()
+				boxColor = boxColor or {1, 1, 1, 0.2}
+				box:SetColorTexture(boxColor[1], boxColor[2], boxColor[3], boxColor[4])
+				box:Hide()
+				-- Icon
+				local icon = button:CreateTexture(nil, "OVERLAY")
+				icon:SetTexture("Interface\\AddOns\\Leatrix_Maps\\" .. file)
+				icon:SetAllPoints()
+				icon:SetVertexColor(normal[1], normal[2], normal[3])
+				button:HookScript("OnEnter", function()
+					box:Show()
+					icon:SetVertexColor(hover[1], hover[2], hover[3])
+				end)
+				button:HookScript("OnLeave", function()
+					box:Hide()
+					icon:SetVertexColor(normal[1], normal[2], normal[3])
+				end)
+			end
+
+			-- Set button icons
+			SetButtonIcon(WorldMapFrame.BorderFrame.CloseButton, "Leatrix_Maps_Close", {0.8, 0.8, 0.8}, {1, 1, 1}, {0.45, 0.05, 0.05, 0.7})
+			SetButtonIcon(WorldMapFrame.BorderFrame.MaximizeMinimizeFrame.MaximizeButton, "Leatrix_Maps_Maximise", {0.8, 0.66, 0}, {1, 0.82, 0}, {0.4, 0.3, 0.02, 0.7})
+			SetButtonIcon(WorldMapFrame.BorderFrame.MaximizeMinimizeFrame.MinimizeButton, "Leatrix_Maps_Restore", {0.8, 0.66, 0}, {1, 0.82, 0}, {0.4, 0.3, 0.02, 0.7})
+
+			----------------------------------------------------------------------
+			-- Map title bar and quest count
+			----------------------------------------------------------------------
+
+			-- Function to set map title
+			local function SetMapTitle()
+				local mapID = WorldMapFrame.mapID
+				if mapID then
+					local mapInfo = C_Map.GetMapInfo(mapID)
+					if mapInfo then
+						titleText:SetText(mapInfo.name)
+					end
+				end
+			end
+
+			-- Set map title when map is changed
+			hooksecurefunc(WorldMapFrame, "OnMapChanged", SetMapTitle)
+
+			-- Function to set quest count
+			local function SetQuestCount()
+				local numEntries, numQuests = C_QuestLog.GetNumQuestLogEntries()
+				local maxQuests = Constants.QuestLogConsts.MAXIMUM_NUM_QUESTS_LOG_CAN_ACCEPT
+				if numQuests > maxQuests then
+					questCount:SetFormattedText("%s%d|r/%d", RED_FONT_COLOR_CODE, numQuests, maxQuests)
+				else
+					questCount:SetFormattedText("%s%d|r/%d", "|cffffffff", numQuests, maxQuests)
+				end
+			end
+
+			----------------------------------------------------------------------
+			-- Map frame layout
+			----------------------------------------------------------------------
+
+			local detailsHeight, detailsScrollHeight
+
+			-- Function to set map frame layout
+			local function SetFrameLayout()
+
+				-- Get quest log width (if it's shown)
+				local questWidth = 0
+				if QuestMapFrame:IsShown() then questWidth = WorldMapFrame.questLogWidth end
+
+				-- Set title bar and border to cover the map and quest log
+				titleFrame:ClearAllPoints()
+				titleFrame:SetPoint("BOTTOMLEFT", WorldMapFrame.ScrollContainer, "TOPLEFT", 0, 0)
+				titleFrame:SetPoint("BOTTOMRIGHT", WorldMapFrame.ScrollContainer, "TOPRIGHT", questWidth, 0)
+				borderFrame:ClearAllPoints()
+				borderFrame:SetPoint("TOPLEFT", titleFrame, "TOPLEFT", -1, 1)
+				borderFrame:SetPoint("BOTTOMRIGHT", WorldMapFrame.ScrollContainer, "BOTTOMRIGHT", questWidth + 1, -1)
+
+				-- Move filter button inside the map (it's anchored to the navigation bar which is hidden)
+				local filterButton = WorldMapFrame.WorldMapTrackingOptionsButton
+				if filterButton and CanChange(filterButton) then
+					filterButton:ClearAllPoints()
+					filterButton:SetPoint("TOPRIGHT", WorldMapFrame.ScrollContainer, "TOPRIGHT", -4, -2)
+				end
+
+				-- Move close button to the right of the title bar
+				local closeButton = WorldMapFrame.BorderFrame.CloseButton
+				if CanChange(closeButton) then
+					closeButton:ClearAllPoints()
+					closeButton:SetPoint("RIGHT", titleFrame, "RIGHT", -2, 0)
+					closeButton:SetFrameLevel(frameLevel + 5)
+				end
+
+				-- Show maximise button in the title bar (it's anchored to the left of the close button)
+				local maxButton = WorldMapFrame.BorderFrame.MaximizeMinimizeFrame
+				if CanChange(maxButton) then
+					maxButton:ClearAllPoints()
+					maxButton:SetPoint("RIGHT", closeButton, "LEFT", -2, 0)
+					maxButton:SetFrameLevel(frameLevel + 6)
+					for i, v in pairs({maxButton:GetChildren()}) do
+						v:SetFrameLevel(frameLevel + 7)
+					end
+				end
+
+				if QuestMapFrame:IsShown() and CanChange(QuestScrollFrame) then
+
+					-- Move quest list under the title bar (so it's the same height as the map)
+					QuestScrollFrame:ClearAllPoints()
+					QuestScrollFrame:SetPoint("TOPLEFT", QuestScrollFrame:GetParent(), "TOPLEFT", 0, -50)
+					QuestScrollFrame:SetPoint("BOTTOMRIGHT", QuestScrollFrame:GetParent(), "BOTTOMRIGHT", 0, 0)
+
+					-- Move quest details under the title bar and shorten it so the bottom stays in place
+					local detailsFrame = QuestMapFrame.DetailsFrame
+					if CanChange(detailsFrame) and CanChange(detailsFrame.ScrollFrame) then
+						if not detailsHeight then
+							detailsHeight = detailsFrame:GetHeight()
+							detailsScrollHeight = detailsFrame.ScrollFrame:GetHeight()
+						end
+						detailsFrame:ClearAllPoints()
+						detailsFrame:SetPoint("TOPRIGHT", detailsFrame:GetParent(), "TOPRIGHT", 0, -47)
+						detailsFrame:SetHeight(detailsHeight - 46)
+						detailsFrame.ScrollFrame:SetHeight(detailsScrollHeight - 46)
+						detailsFrame.Bg:SetPoint("BOTTOMLEFT", detailsFrame, "BOTTOMLEFT", 0, 0)
+						detailsFrame.Bg:SetPoint("BOTTOMRIGHT", detailsFrame, "BOTTOMRIGHT", 0, 0)
+					end
+
+					-- Move quest settings button to the left of the close button
+					local settingsButton = QuestScrollFrame.SettingsDropdown
+					if CanChange(settingsButton) and CanChange(maxButton) then
+						settingsButton:ClearAllPoints()
+						settingsButton:SetPoint("RIGHT", maxButton, "LEFT", -2, 0)
+						settingsButton:SetFrameLevel(frameLevel + 5)
+					end
+
+				end
+
+			end
+
+			-- Set map frame layout when map is shown, quest log is toggled and on startup
+			WorldMapFrame:HookScript("OnShow", function()
+				SetQuestCount()
+				SetFrameLayout()
+			end)
+			hooksecurefunc(WorldMapFrame, "OnFrameSizeChanged", SetFrameLayout)
+			QuestMapFrame:HookScript("OnShow", SetFrameLayout)
+			QuestMapFrame:HookScript("OnHide", SetFrameLayout)
+			SetFrameLayout()
+			SetQuestCount()
+
+			-- Set quest count when quest log is updated and set map after combat
+			local mapEvents = CreateFrame("Frame")
+			mapEvents:RegisterEvent("QUEST_LOG_UPDATE")
+			mapEvents:RegisterEvent("PLAYER_REGEN_ENABLED")
+			mapEvents:SetScript("OnEvent", function(self, event)
+				if event == "QUEST_LOG_UPDATE" then
+					SetQuestCount()
+				elseif event == "PLAYER_REGEN_ENABLED" then
+					SetMapCVars()
+					if WorldMapFrame:IsShown() then SetFrameLayout() end
+				end
+			end)
+
+		end
 
 		----------------------------------------------------------------------
 		-- Hide filter reset button
@@ -639,6 +899,14 @@
 				end
 			end)
 
+			-- Allow map to be moved by the title bar (needed for simple map frame)
+			if LeaMapsCB["MapTitleFrame"] then
+				LeaMapsCB["MapTitleFrame"]:EnableMouse(true)
+				LeaMapsCB["MapTitleFrame"]:RegisterForDrag("LeftButton")
+				LeaMapsCB["MapTitleFrame"]:SetScript("OnDragStart", WorldMapFrame:GetScript("OnDragStart"))
+				LeaMapsCB["MapTitleFrame"]:SetScript("OnDragStop", WorldMapFrame:GetScript("OnDragStop"))
+			end
+
 			WorldMapFrame:SetClampedToScreen(true)
 
 			-- Function to set map position
@@ -657,6 +925,23 @@
 			hooksecurefunc(WorldMapFrame, "SynchronizeDisplayState", SetMapPositionFunc)
 			hooksecurefunc(WorldMapFrame, "OnFrameSizeChanged", SetMapPositionFunc) -- Needed when maximising the map
 			SetMapPositionFunc()
+
+			-- Function to set map movement clickable area
+			local function SetMapHitRect()
+				if LeaMapsLC["EnableMovement"] == "On" then
+					WorldMapFrame:SetHitRectInsets(-10, -10, -10, -10)
+				else
+					if LeaMapsLC["SimpleMapFrame"] == "On" then
+						WorldMapFrame:SetHitRectInsets(0, 0, 44, 0)
+					else
+						WorldMapFrame:SetHitRectInsets(0, 0, 0, 0)
+					end
+				end
+			end
+
+			-- Set map movement clickable area on startup and when setting is changed
+			SetMapHitRect()
+			LeaMapsCB["EnableMovement"]:HookScript("OnClick", SetMapHitRect)
 
 			----------------------------------------------------------------------
 			-- Panel button handlers
@@ -933,6 +1218,9 @@
 				TravelA = {texture = "Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps.blp", size = 46, left = 0, right = 0.25, top = 0.75, bottom = 1},
 				TravelH = {texture = "Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps.blp", size = 46, left = 0.25, right = 0.5, top = 0.75, bottom = 1},
 				TravelN = {texture = "Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps.blp", size = 46, left = 0.5, right = 0.75, top = 0.75, bottom = 1},
+				PortalA = {atlas = "MagePortalAlliance", size = 32},
+				PortalH = {atlas = "MagePortalHorde", size = 32},
+				PortalN = {atlas = "MagePortalAlliance", size = 32},
 				Dunraid = {texture = "Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps.blp", size = 46, left = 0.75, right = 1, top = 0.75, bottom = 1},
 				Arrow = {atlas = "Garr_LevelUpgradeArrow", width = 48, height = 54},
 			}
@@ -1164,17 +1452,22 @@
 
 			local function ShouldShow(kind)
 				local dungeons = LeaMapsLC["ShowDungeonIcons"] == "On"
-				local travel = LeaMapsLC["ShowTravelPoints"] == "On"
-				local opposing = LeaMapsLC["ShowTravelOpposing"] == "On"
+				local flight = LeaMapsLC["ShowFlightPoints"] == "On"
+				local bztram = LeaMapsLC["ShowBoatZeppTram"] == "On"
+				local portal = LeaMapsLC["ShowPortals"] == "On"
+				local opposing = LeaMapsLC["ShowOpposingPoi"] == "On"
 				local own, other = "A", "H"
 				if playerFaction == "Horde" then own, other = "H", "A" end
 
 				if kind == "Dungeon" or kind == "Raid" or kind == "Dunraid" then return dungeons end
 				if kind == "Spirit" then return LeaMapsLC["ShowSpiritHealers"] == "On" end
 				if kind == "Arrow" then return LeaMapsLC["ShowZoneCrossings"] == "On" end
-				if kind == "FlightN" or kind == "TravelN" then return travel or opposing end
-				if kind == "Flight" .. own or kind == "Travel" .. own then return travel end
-				if kind == "Flight" .. other or kind == "Travel" .. other then return opposing end
+				if kind == "FlightN" or kind == "Flight" .. own then return flight end
+				if kind == "Flight" .. other then return flight and opposing end
+				if kind == "TravelN" or kind == "Travel" .. own then return bztram end
+				if kind == "Travel" .. other then return bztram and opposing end
+				if kind == "PortalN" or kind == "Portal" .. own then return portal end
+				if kind == "Portal" .. other then return portal and opposing end
 				return false
 			end
 
@@ -1217,10 +1510,14 @@
 			-- Add controls
 			LeaMapsLC:MakeTx(poiFrame, "Settings", 16, -72)
 			LeaMapsLC:MakeCB(poiFrame, "ShowDungeonIcons", "Show dungeons and raids", 16, -92, false, "If checked, dungeons and raids will be shown.")
-			LeaMapsLC:MakeCB(poiFrame, "ShowTravelPoints", "Show travel points for same faction", 16, -112, false, "If checked, travel points for the same faction will be shown.|n|nThis includes flight points, boat harbors, zeppelin towers and tram stations.")
-			LeaMapsLC:MakeCB(poiFrame, "ShowTravelOpposing", "Show travel points for opposing faction", 16, -132, false, "If checked, travel points for the opposing faction will be shown.|n|nThis includes flight points, boat harbors, zeppelin towers and tram stations.")
-			LeaMapsLC:MakeCB(poiFrame, "ShowSpiritHealers", "Show spirit healers", 16, -152, false, "If checked, spirit healers will be shown.")
-			LeaMapsLC:MakeCB(poiFrame, "ShowZoneCrossings", "Show zone crossings", 16, -172, false, "If checked, zone crossings will be shown.|n|nThese are arrows that indicate the zone exit pathways.")
+			LeaMapsLC:MakeCB(poiFrame, "ShowFlightPoints", "Show flight points", 16, -112, false, "If checked, flight points will be shown.")
+			LeaMapsLC:MakeCB(poiFrame, "ShowBoatZeppTram", "Show boats, zeppelins and trams", 16, -132, false, "If checked, boat harbors, zepplin towers and tram stations will be shown.")
+			LeaMapsLC:MakeCB(poiFrame, "ShowPortals", "Show portals", 16, -152, false, "If checked, portals will be shown.")
+			LeaMapsLC:MakeCB(poiFrame, "ShowSpiritHealers", "Show spirit healers", 16, -172, false, "If checked, spirit healers will be shown.")
+			LeaMapsLC:MakeCB(poiFrame, "ShowZoneCrossings", "Show zone crossings", 16, -192, false, "If checked, zone crossings will be shown.|n|nThese are arrows that indicate the zone exit pathways.")
+
+			local PoiFooter = LeaMapsLC:MakeFT(poiFrame, "For the settings above, you can show opposing faction points of interest too where applicable.", 16, 380, 136)
+			LeaMapsLC:MakeCB(poiFrame, "ShowOpposingPoi", "Show opposing faction points of interest", 16, -292, false, "If checked, points of interest belonging to the opposing faction will be shown.|n|nThis applies to flight points, boats, zeppelins and trams, and portals.")
 
 			-- Function to refresh points of interest
 			local function SetPointsOfInterest()
@@ -1230,10 +1527,12 @@
 
 			-- Set points of interest when options are clicked
 			LeaMapsCB["ShowDungeonIcons"]:HookScript("OnClick", SetPointsOfInterest)
-			LeaMapsCB["ShowTravelPoints"]:HookScript("OnClick", SetPointsOfInterest)
-			LeaMapsCB["ShowTravelOpposing"]:HookScript("OnClick", SetPointsOfInterest)
+			LeaMapsCB["ShowFlightPoints"]:HookScript("OnClick", SetPointsOfInterest)
+			LeaMapsCB["ShowBoatZeppTram"]:HookScript("OnClick", SetPointsOfInterest)
+			LeaMapsCB["ShowPortals"]:HookScript("OnClick", SetPointsOfInterest)
 			LeaMapsCB["ShowSpiritHealers"]:HookScript("OnClick", SetPointsOfInterest)
 			LeaMapsCB["ShowZoneCrossings"]:HookScript("OnClick", SetPointsOfInterest)
+			LeaMapsCB["ShowOpposingPoi"]:HookScript("OnClick", SetPointsOfInterest)
 
 			-- Back to Main Menu button click
 			poiFrame.b:HookScript("OnClick", function()
@@ -1244,10 +1543,12 @@
 			-- Reset button click
 			poiFrame.r:HookScript("OnClick", function()
 				LeaMapsLC["ShowDungeonIcons"] = "On"
-				LeaMapsLC["ShowTravelPoints"] = "On"
-				LeaMapsLC["ShowTravelOpposing"] = "Off"
+				LeaMapsLC["ShowFlightPoints"] = "On"
+				LeaMapsLC["ShowBoatZeppTram"] = "On"
+				LeaMapsLC["ShowPortals"] = "On"
 				LeaMapsLC["ShowSpiritHealers"] = "On"
 				LeaMapsLC["ShowZoneCrossings"] = "On"
+				LeaMapsLC["ShowOpposingPoi"] = "Off"
 				SetPointsOfInterest()
 				poiFrame:Hide(); poiFrame:Show()
 			end)
@@ -1257,10 +1558,12 @@
 				if IsShiftKeyDown() and IsControlKeyDown() then
 					-- Preset profile
 					LeaMapsLC["ShowDungeonIcons"] = "On"
-					LeaMapsLC["ShowTravelPoints"] = "On"
-					LeaMapsLC["ShowTravelOpposing"] = "Off"
+					LeaMapsLC["ShowFlightPoints"] = "On"
+					LeaMapsLC["ShowBoatZeppTram"] = "On"
+					LeaMapsLC["ShowPortals"] = "On"
 					LeaMapsLC["ShowSpiritHealers"] = "On"
 					LeaMapsLC["ShowZoneCrossings"] = "On"
+					LeaMapsLC["ShowOpposingPoi"] = "Off"
 					SetPointsOfInterest()
 					if poiFrame:IsShown() then poiFrame:Hide(); poiFrame:Show(); end
 				else
@@ -1876,6 +2179,27 @@
 			reloadb.f:Hide()
 		end)
 
+		-- Add reset map layout button
+		local resetMapBtn = LeaMapsLC:CreateButton("ResetMapLayoutButton", LeaMapsLC["PageF"], "Reset map layout", "BOTTOMLEFT", 16, 10, 25, "Click to reset the map position and scale to the game default.")
+		resetMapBtn:SetScript("OnClick", function()
+			-- Reset saved map position and scale
+			LeaMapsLC["MapPosA"], LeaMapsLC["MapPosR"], LeaMapsLC["MapPosX"], LeaMapsLC["MapPosY"] = "TOPLEFT", "TOPLEFT", 16, -94
+			LeaMapsLC["MaxMapPosA"], LeaMapsLC["MaxMapPosR"], LeaMapsLC["MaxMapPosX"], LeaMapsLC["MaxMapPosY"] = "CENTER", "CENTER", 0, 0
+			LeaMapsLC["MapScale"] = 1.0
+			LeaMapsLC["MaxMapScale"] = 1.0
+			-- Apply them now (the map frame is not protected so this works during combat)
+			if InCombatLockdown() and WorldMapFrame:IsProtected() then return end
+			WorldMapFrame:SetScale(1)
+			if LeaMapsLC["UnlockMap"] == "On" then
+				WorldMapFrame:ClearAllPoints()
+				if WorldMapFrame:IsMaximized() then
+					WorldMapFrame:SetPoint(LeaMapsLC["MaxMapPosA"], UIParent, LeaMapsLC["MaxMapPosR"], LeaMapsLC["MaxMapPosX"], LeaMapsLC["MaxMapPosY"])
+				else
+					WorldMapFrame:SetPoint(LeaMapsLC["MapPosA"], UIParent, LeaMapsLC["MapPosR"], LeaMapsLC["MapPosX"], LeaMapsLC["MapPosY"])
+				end
+			end
+		end)
+
 		-- Set textures
 		LeaMapsLC:CreateBar("FootTexture", Side, 470, 48, "BOTTOM", 0.5, 0.5, 0.5, 1.0, "Interface\\ACHIEVEMENTFRAME\\UI-GuildAchievement-Parchment-Horizontal-Desaturated.png")
 		LeaMapsLC:CreateBar("MainTexture", Side, 470, 403, "TOPRIGHT", 0.7, 0.7, 0.7, 0.7,  "Interface\\ACHIEVEMENTFRAME\\UI-GuildAchievement-Parchment-Horizontal-Desaturated.png")
@@ -2106,8 +2430,10 @@
 
 	-- Set reload button status
 	function LeaMapsLC:ReloadCheck()
-		if	(LeaMapsLC["UnlockMap"] ~= LeaMapsDB["UnlockMap"])							-- Unlock map
+		if	(LeaMapsLC["SimpleMapFrame"] ~= LeaMapsDB["SimpleMapFrame"])				-- Simple map frame
+		or	(LeaMapsLC["UnlockMap"] ~= LeaMapsDB["UnlockMap"])							-- Unlock map
 		or	(LeaMapsLC["ScaleWorldMap"] ~= LeaMapsDB["ScaleWorldMap"])					-- Scale the map
+		or	(LeaMapsLC["HideBlackoutFrame"] ~= LeaMapsDB["HideBlackoutFrame"])			-- Hide blackout frame
 		or	(LeaMapsLC["RevealMap"] ~= LeaMapsDB["RevealMap"])							-- Show unexplored areas
 		or	(LeaMapsLC["ShowPointsOfInterest"] ~= LeaMapsDB["ShowPointsOfInterest"])	-- Show unexplored areas
 		or	(LeaMapsLC["ShowZoneLevels"] ~= LeaMapsDB["ShowZoneLevels"])				-- Show zone levels
@@ -2238,6 +2564,29 @@
 		CfgBtn.tiptext = L["Click to configure the settings for this option."]
 		CfgBtn:SetScript("OnEnter", LeaMapsLC.ShowTooltip)
 		CfgBtn:SetScript("OnLeave", GameTooltip_Hide)
+	end
+
+	-- Create a help button to the right of a fontstring
+	function LeaMapsLC:CreateHelpButton(frame, panel, parent, tip)
+		LeaMapsLC:CfgBtn(frame, panel)
+		LeaMapsCB[frame]:ClearAllPoints()
+		LeaMapsCB[frame]:SetPoint("LEFT", parent, "RIGHT", -parent:GetWidth() + parent:GetStringWidth(), 0)
+		LeaMapsCB[frame]:SetSize(25, 25)
+		LeaMapsCB[frame].t:SetTexture("Interface\\COMMON\\help-i.blp")
+		LeaMapsCB[frame].t:SetTexCoord(0, 1, 0, 1)
+		LeaMapsCB[frame].t:SetVertexColor(0.9, 0.8, 0.0)
+		LeaMapsCB[frame]:SetHighlightTexture("Interface\\COMMON\\help-i.blp")
+		LeaMapsCB[frame]:GetHighlightTexture():SetTexCoord(0, 1, 0, 1)
+		LeaMapsCB[frame].tiptext = L[tip]
+		LeaMapsCB[frame]:SetScript("OnEnter", LeaMapsLC.TipSee)
+	end
+
+	-- Show a footer
+	function LeaMapsLC:MakeFT(frame, text, left, width, bottom)
+		local footer = LeaMapsLC:MakeTx(frame, text, left, bottom)
+		footer:SetWidth(width); footer:SetJustifyH("LEFT"); footer:SetWordWrap(true); footer:ClearAllPoints()
+		footer:SetPoint("BOTTOMLEFT", left, bottom)
+		return footer
 	end
 
 	-- Create a slider control
@@ -2386,9 +2735,11 @@
 				wipe(LeaMapsDB)
 
 				-- Mechanics
+				LeaMapsDB["SimpleMapFrame"] = "On"
 				LeaMapsDB["UnlockMap"] = "On"
 				LeaMapsDB["EnableMovement"] = "On"
 				LeaMapsDB["ScaleWorldMap"] = "Off"
+				LeaMapsDB["HideBlackoutFrame"] = "On"
 				LeaMapsDB["MapScale"] = 1.0
 				LeaMapsDB["MaxMapScale"] = 0.9
 				LeaMapsDB["NoMapFade"] = "On"
@@ -2411,9 +2762,11 @@
 				LeaMapsDB["tintBlue"] = 1.0
 				LeaMapsDB["tintAlpha"] = 1.0
 				LeaMapsDB["ShowPointsOfInterest"] = "On"
+				LeaMapsDB["ShowOpposingPoi"] = "Off"
 				LeaMapsDB["ShowDungeonIcons"] = "On"
-				LeaMapsDB["ShowTravelPoints"] = "On"
-				LeaMapsDB["ShowTravelOpposing"] = "Off"
+				LeaMapsDB["ShowFlightPoints"] = "On"
+				LeaMapsDB["ShowBoatZeppTram"] = "On"
+				LeaMapsDB["ShowPortals"] = "On"
 				LeaMapsDB["ShowSpiritHealers"] = "On"
 				LeaMapsDB["ShowZoneCrossings"] = "On"
 				LeaMapsDB["ShowZoneLevels"] = "On"
@@ -2490,11 +2843,13 @@
 
 		if event == "ADDON_LOADED" and arg1 == "Leatrix_Maps" then
 			-- Load settings or set defaults
+			LeaMapsLC:LoadVarChk("SimpleMapFrame", "Off")				-- Simple map frame
 			LeaMapsLC:LoadVarChk("UnlockMap", "Off")					-- Unlock map frame
 			LeaMapsLC:LoadVarChk("EnableMovement", "On")				-- Enable frame movement
 			LeaMapsLC:LoadVarChk("ScaleWorldMap", "Off")				-- Scale the map
 			LeaMapsLC:LoadVarNum("MapScale", 1.0, 0.5, 2)				-- Map scale
 			LeaMapsLC:LoadVarNum("MaxMapScale", 1.0, 0.5, 2)			-- Maximised map scale
+			LeaMapsLC:LoadVarChk("HideBlackoutFrame", "On")				-- Hide blackout frame
 			LeaMapsLC:LoadVarChk("NoMapFade", "On")						-- Disable map fade
 			LeaMapsLC:LoadVarChk("NoFilterResetBtn", "On")				-- Hide filter reset button
 
@@ -2515,9 +2870,11 @@
 			LeaMapsLC:LoadVarNum("tintBlue", 1, 0, 1)					-- Tint blue
 			LeaMapsLC:LoadVarNum("tintAlpha", 1, 0, 1)					-- Tint transparency
 			LeaMapsLC:LoadVarChk("ShowPointsOfInterest", "On")			-- Show points of interest
+			LeaMapsLC:LoadVarChk("ShowOpposingPoi", "Off")				-- Show opposing faction points of interest
 			LeaMapsLC:LoadVarChk("ShowDungeonIcons", "On")				-- Show dungeons and raids
-			LeaMapsLC:LoadVarChk("ShowTravelPoints", "On")				-- Show travel points for same faction
-			LeaMapsLC:LoadVarChk("ShowTravelOpposing", "Off")			-- Show travel points for opposing faction
+			LeaMapsLC:LoadVarChk("ShowFlightPoints", "On")				-- Show flight points
+			LeaMapsLC:LoadVarChk("ShowBoatZeppTram", "On")				-- Show boats, zeppelins and trams
+			LeaMapsLC:LoadVarChk("ShowPortals", "On")					-- Show portals
 			LeaMapsLC:LoadVarChk("ShowSpiritHealers", "On")				-- Show spirit healers
 			LeaMapsLC:LoadVarChk("ShowZoneCrossings", "On")				-- Show zone crossings
 			LeaMapsLC:LoadVarChk("ShowZoneLevels", "On")				-- Show zone levels
@@ -2561,11 +2918,13 @@
 
 		elseif event == "PLAYER_LOGOUT" and not LeaMapsLC["NoSaveSettings"] then
 			-- Mechanics
+			LeaMapsDB["SimpleMapFrame"] = LeaMapsLC["SimpleMapFrame"]
 			LeaMapsDB["UnlockMap"] = LeaMapsLC["UnlockMap"]
 			LeaMapsDB["EnableMovement"] = LeaMapsLC["EnableMovement"]
 			LeaMapsDB["ScaleWorldMap"] = LeaMapsLC["ScaleWorldMap"]
 			LeaMapsDB["MapScale"] = LeaMapsLC["MapScale"]
 			LeaMapsDB["MaxMapScale"] = LeaMapsLC["MaxMapScale"]
+			LeaMapsDB["HideBlackoutFrame"] = LeaMapsLC["HideBlackoutFrame"]
 			LeaMapsDB["NoMapFade"] = LeaMapsLC["NoMapFade"]
 			LeaMapsDB["NoFilterResetBtn"] = LeaMapsLC["NoFilterResetBtn"]
 
@@ -2586,9 +2945,11 @@
 			LeaMapsDB["tintBlue"] = LeaMapsLC["tintBlue"]
 			LeaMapsDB["tintAlpha"] = LeaMapsLC["tintAlpha"]
 			LeaMapsDB["ShowPointsOfInterest"] = LeaMapsLC["ShowPointsOfInterest"]
+			LeaMapsDB["ShowOpposingPoi"] = LeaMapsLC["ShowOpposingPoi"]
 			LeaMapsDB["ShowDungeonIcons"] = LeaMapsLC["ShowDungeonIcons"]
-			LeaMapsDB["ShowTravelPoints"] = LeaMapsLC["ShowTravelPoints"]
-			LeaMapsDB["ShowTravelOpposing"] = LeaMapsLC["ShowTravelOpposing"]
+			LeaMapsDB["ShowFlightPoints"] = LeaMapsLC["ShowFlightPoints"]
+			LeaMapsDB["ShowBoatZeppTram"] = LeaMapsLC["ShowBoatZeppTram"]
+			LeaMapsDB["ShowPortals"] = LeaMapsLC["ShowPortals"]
 			LeaMapsDB["ShowSpiritHealers"] = LeaMapsLC["ShowSpiritHealers"]
 			LeaMapsDB["ShowZoneCrossings"] = LeaMapsLC["ShowZoneCrossings"]
 			LeaMapsDB["ShowZoneLevels"] = LeaMapsLC["ShowZoneLevels"]
@@ -2706,8 +3067,10 @@
 
 	-- Add content
 	LeaMapsLC:MakeTx(PageF, "System", 16, -72)
-	LeaMapsLC:MakeCB(PageF, "UnlockMap", "Unlock map frame", 16, -92, true, "If checked, you will be able to move the map.|n|nThe map position will be saved separately for the maximised and windowed maps.")
-	LeaMapsLC:MakeCB(PageF, "ScaleWorldMap", "Scale the map", 16, -112, true, "If checked, you will be able to scale the map.")
+	LeaMapsLC:MakeCB(PageF, "SimpleMapFrame", "Use simple map frame", 16, -92, true, "If checked, the map will use a simple frame with a compact title bar.")
+	LeaMapsLC:MakeCB(PageF, "UnlockMap", "Unlock map frame", 16, -112, true, "If checked, you will be able to move the map.|n|nThe map position will be saved separately for the maximised and windowed maps.")
+	LeaMapsLC:MakeCB(PageF, "ScaleWorldMap", "Scale the map", 16, -132, true, "If checked, you will be able to scale the map.")
+	LeaMapsLC:MakeCB(PageF, "HideBlackoutFrame", "Hide blackout frame", 16, -152, true, "If checked, the blackout frame will be hidden.")
 
 	LeaMapsLC:MakeTx(PageF, "Elements", 225, -72)
 	LeaMapsLC:MakeCB(PageF, "RevealMap", "Show unexplored areas", 225, -92, true, "If checked, unexplored areas of the map will be shown on the world map and the battlefield map.")

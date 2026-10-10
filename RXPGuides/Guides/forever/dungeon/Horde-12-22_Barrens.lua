@@ -1,6 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
@@ -15,8 +14,6 @@ RXPGuides.RegisterGuide([[
 #subgroup (WIP) Dungeon Guide 1-22
 --#groupid RXP-SRGCE-H1
 #next 17-22 Stonetalon/Barrens/Ashenvale
-
-
 step << Tauren Shaman
     .goto 1411/1,-4648.55,271.43
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Takrin|r
@@ -716,9 +713,7 @@ step << Orc Warrior/Troll Warrior/Orc Shaman/Troll Shaman
     .isQuestComplete 5723
     .dungeon RFC
     .zoneskip Thunder Bluff
-
     --not worth to turn in 5723/5724 w/o TB flight path
-
 step << skip
     #completewith RFCTurninsTB1
     .goto 1412/1,-1480.52,-2339.56,120,0
@@ -1585,9 +1580,7 @@ step
     .complete 867,1 --Witchwing Talon (8)
     .mob Witchwing Harpy
     .mob Witchwing Roguefeather
-
     --RFC turnin section below no longer possible due to TB logout skip no longer workng
-
 step << skip --!Tauren
     #completewith next
     .zone Stonetalon Mountains >> Travel to Stonetalon Mountains
@@ -1838,7 +1831,7 @@ step
 step
     #label Ignition
     .goto 1413/1,-3104.44,1109.16
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to|r |cRXP_FRIENDLY_Wizzlecrank's Shredder|r in The Sludge Ven
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to|r |cRXP_FRIENDLY_Wizzlecrank's Shredder|r in The Sludge Fen
     >>|cRXP_FRIENDLY_Wizzlecrank's Shredder|r |cRXP_WARN_has a long respawn timer. Consider skipping this quest if there is a lot of competition|r
     .accept 858 >>Accept Ignition
     .target Wizzlecrank's Shredder
@@ -3175,7 +3168,6 @@ step
     .accept 1062 >> Accept Goblin Invaders
     .target Seereth Stonebreak
 ]])
-
 RXPGuides.RegisterGuide([[
 #forever
 #xprate <1.99
@@ -3188,8 +3180,6 @@ RXPGuides.RegisterGuide([[
 #subgroup (WIP) Dungeon Guide 1-22
 --#groupid RXP-SRGCE-H1
 #next RestedXP Horde 22-30\22-24 Hillsbrad
-
-
 step << Druid
     #season 2
     #completewith next
@@ -4409,7 +4399,7 @@ step
     .subzoneskip 380,1
 step
     .goto 1413/1,-1891.48,-2391.93
-    >>Kill |cRXP_ENEMY_Bristleback Quilboars|r. Loot them for a |T134128:0|t[|cRXP_LOOT_Blood Shard|r
+    >>Kill |cRXP_ENEMY_Bristleback Quilboars|r. Loot them for a |T134128:0|t[|cRXP_LOOT_Blood Shard|r]
     .collect 5075,1,5052,1 --Blood Shard (1)
     .mob Bristleback Water Seeker
     .mob Bristleback Thornweaver
@@ -4954,9 +4944,7 @@ step << Hunter
     >>|cRXP_BUY_Buy|r |T132382:0|t[Sharp Arrows] |cRXP_BUY_from her|r
     .collect 2515,1600,493,1 << Hunter --Sharp Arrow (1600)
     .target Kuna Thunderhorn
-
     --WC
-
 step
     #completewith next
     .goto 1456/1,26.1,-1196.66
@@ -6560,7 +6548,7 @@ step << Rogue/Druid
     .zoneskip The Barrens
 step << Rogue/Druid
     #completewith MissionProbable
-    .goto 1413/1,-3216.92,1107.13,120 >> Travel toward the Sludge Ven
+    .goto 1413/1,-3216.92,1107.13,120 >> Travel toward The Sludge Fen
 step << Druid
     .goto 1413/1,-3119.64,1050.38
     >>Loot the |cRXP_PICK_Strange Lockbox|r in the water for the |T133443:0|t[Half Pendant of Aquatic Agility]
@@ -6740,8 +6728,6 @@ step
     #optional
     .abandon 6563 >>Abandon The Essence of Aku'Mai
 ]])
-
-
 RXPGuides.RegisterGuide([[
 #forever
 << Horde
@@ -6753,8 +6739,6 @@ RXPGuides.RegisterGuide([[
 #subgroup (WIP) Dungeon Guide 1-22
 --#groupid RXP-SRGCE-H1
 #next 20-24 Stonetalon/Barrens
-
-
 step << !Tauren
     #xprate <2.1 << !Undead
     #softcore
@@ -7661,9 +7645,7 @@ step << Orc Warrior/Troll Warrior/Orc Shaman/Troll Shaman
     .isQuestComplete 5723
     .dungeon RFC
     .zoneskip Thunder Bluff
-
     --not worth to turn in 5723/5724 w/o TB flight path
-
 step << skip
     #completewith RFCTurninsTB1
     .goto 1412/1,-1480.52,-2339.56,120,0
@@ -8988,7 +8970,7 @@ step
 step
     #label Ignition
     .goto 1413/1,-3104.44,1109.16
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to|r |cRXP_FRIENDLY_Wizzlecrank's Shredder|r in The Sludge Ven
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to|r |cRXP_FRIENDLY_Wizzlecrank's Shredder|r in The Sludge Fen
     >>|cRXP_FRIENDLY_Wizzlecrank's Shredder|r |cRXP_WARN_has a long respawn timer. Consider skipping this quest if there is a lot of competition|r
     .accept 858 >>Accept Ignition
     .target Wizzlecrank's Shredder
@@ -10061,9 +10043,7 @@ step << Hunter
     .collect 11362,1,896,1 --Medium Quiver (1)
     .collect 2515,2200,896,1 --Sharp Arrow (2200)
     .target Uthrok
-
     --Warlock skips Herog/Counterattack below for 150% route. Will do it later otwt Stonetalon for class q into logout skip to TB
-
 step
     #xprate <2.1
     .goto 1413/1,-1972.55,-306.95
@@ -10353,9 +10333,7 @@ step
     .turnin 1061 >> Turn in The Spirits of Stonetalon
     .accept 1062 >> Accept Goblin Invaders
     .target Seereth Stonebreak
-
     ]])
-
 RXPGuides.RegisterGuide([[
 #forever
 #xprate >1.99
@@ -10368,8 +10346,6 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-H1
 #next 24-26 Southern Barrens << !Rogue !Shaman
 #next 23-24 Hillsbrad Class Quests << Rogue/Shaman
-
-
 step << Druid
     #xprate <2.1
     #season 2
@@ -11765,9 +11741,7 @@ step
     .fly Camp Taurajo >> Fly to Camp Taurajo
     .target Devrak
     .subzoneskip 380,1
-
     --Warlock Class Q section
-
 step << Warlock
     #xprate >2.09
     #label EnterSTMWL
@@ -11809,7 +11783,7 @@ step << Warlock
     .target Grunt Logmar
 step
     .goto 1413/1,-1891.48,-2391.93
-    >>Kill |cRXP_ENEMY_Bristleback Quilboars|r. Loot them for a |T134128:0|t[|cRXP_LOOT_Blood Shard|r
+    >>Kill |cRXP_ENEMY_Bristleback Quilboars|r. Loot them for a |T134128:0|t[|cRXP_LOOT_Blood Shard|r]
     .collect 5075,1,5052,1 --Blood Shard (1)
     .mob Bristleback Water Seeker
     .mob Bristleback Thornweaver
@@ -13222,7 +13196,7 @@ step << Rogue
     .zoneskip The Barrens
 step << Rogue
     #completewith MissionProbable
-    .goto 1413/1,-3216.92,1107.13,120 >> Travel toward the Sludge Ven
+    .goto 1413/1,-3216.92,1107.13,120 >> Travel toward The Sludge Fen
 step << Rogue
     #completewith next
     .goto 1413/1,-3021.35,1214.56

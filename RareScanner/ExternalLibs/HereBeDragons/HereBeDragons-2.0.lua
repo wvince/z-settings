@@ -1,6 +1,6 @@
 -- HereBeDragons is a data API for the World of Warcraft mapping system
 
-local MAJOR, MINOR = "HereBeDragons-2.0", 32
+local MAJOR, MINOR = "HereBeDragons-2.0", 35
 assert(LibStub, MAJOR .. " requires LibStub")
 
 local HereBeDragons, oldversion = LibStub:NewLibrary(MAJOR, MINOR)
@@ -16,6 +16,7 @@ HereBeDragons.transforms       = HereBeDragons.transforms or {}
 HereBeDragons.instanceZones    = HereBeDragons.instanceZones or {}
 HereBeDragons.callbacks        = HereBeDragons.callbacks or CBH:New(HereBeDragons, nil, nil, false)
 
+local WoWForever = (WOW_PROJECT_ID == WOW_PROJECT_CAMELOT)
 local WoWClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)
 local WoWBC = (WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC)
 local WoWWrath = (WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC)
@@ -86,7 +87,7 @@ local function overrideInstance(instance) return instanceIDOverrides[instance] o
 HereBeDragons.___DIIDO = dynamicInstanceIDOverrides
 
 -- gather map info, but only if this isn't an upgrade (or the upgrade version forces a re-map)
-if not oldversion or oldversion < 32 then
+if not oldversion or oldversion < 35 then
     -- wipe old data, if required, otherwise the upgrade path isn't triggered
     if oldversion then
         wipe(mapData)
@@ -98,7 +99,7 @@ if not oldversion or oldversion < 32 then
     -- map transform data extracted from UIMapAssignment.db2 (see HereBeDragons-Scripts on GitHub)
     -- format: instanceID, newInstanceID, minY, maxY, minX, maxX, offsetY, offsetX
     local transformData
-    if WoWClassic then
+    if WoWClassic or WoWForever then
         transformData = {}
     elseif WoWBC or WoWWrath or WoWCata then
         transformData = {
@@ -249,7 +250,10 @@ if not oldversion or oldversion < 32 then
         end
 
         -- data for the azeroth world map
-        if WoWClassic then
+        if WoWForever then
+            worldMapData[0] = { 44688.53, 29795.12, 32601.03,  9894.93 }
+            worldMapData[1] = { 44878.66, 29916.1,   8723.96, 14824.53 }
+        elseif WoWClassic then
             worldMapData[0] = { 44688.53, 29795.11, 32601.04,  9894.93 }
             worldMapData[1] = { 44878.66, 29916.10,  8723.96, 14824.53 }
         elseif WoWBC then
@@ -286,7 +290,7 @@ if not oldversion or oldversion < 32 then
         processTransforms()
 
         -- find all maps in well known structures
-        if WoWClassic then
+        if WoWClassic or WoWForever then
             processMap(WORLD_MAP_ID)
             processMapChildrenRecursive(WORLD_MAP_ID)
         else
@@ -372,7 +376,14 @@ function StartUpdateTimer()
 end
 
 local function OnEvent(frame, event, ...)
-    UpdateCurrentPosition(true)
+    local instanceCheck = false
+    if event == "ZONE_CHANGED_NEW_AREA" then
+        instanceCheck = true
+    elseif event == "PLAYER_ENTERING_WORLD" then
+        local initial, reload = ...
+        instanceCheck = (initial or reload)
+    end
+    UpdateCurrentPosition(instanceCheck)
 
     -- try to work around missing zone changes where the event fires before the zone updates
     StartUpdateTimer()
@@ -481,7 +492,7 @@ function HereBeDragons:GetZoneCoordinatesFromWorldInstance(x, y, instance, zone,
     if not data or data[1] == 0 or data[2] == 0 then return nil, nil end
     if not x or not y then return nil, nil end
 
-    local targetInstance = overrideInstance(data.instance)
+    local targetInstance = data.instance
     if targetInstance ~= instance then
         if instanceZones[instance] and instanceZones[instance][targetInstance] then
             x, y, instance = TranslateInstanceZone(self, instanceZones[instance][targetInstance], x, y)

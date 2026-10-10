@@ -8,6 +8,13 @@ function W.Quote(book, required, scanned, incomplete, skipped)
   local result = { required = required, available = 0, bidOnly = 0, own = 0, plan = {} }
   if skipped then result.reason = "skipped"; return result end
   if not scanned then result.reason = "unscanned"; return result end
+  if book and book.databaseMissing then result.reason = "databaseMissing"; return result end
+  if book and book.databasePrice then
+    result.estimated, result.databaseEstimate = true, true
+    result.cost, result.estimateUnitPrice = book.databasePrice * required, book.databasePrice
+    result.ageDays, result.reason = book.ageDays, "database"
+    return result
+  end
   if book and book.estimated then
     -- Browse stock is total stock, NOT stock at the minimum price. Do not
     -- manufacture purchase plans or price levels from these summaries.
@@ -119,7 +126,9 @@ function W.Evaluate(crates, books, settings, level, scanned, incomplete, targete
       local variants = {}
       for _, offer in ipairs(books[crate.name] or {}) do
         local quality = offer.quality or -1
-        variants[quality] = variants[quality] or {estimated = books[crate.name].estimated}
+        variants[quality] = variants[quality] or {estimated = books[crate.name].estimated,
+          databasePrice = books[crate.name].databasePrice, databaseMissing = books[crate.name].databaseMissing,
+          ageDays = books[crate.name].ageDays}
         table.insert(variants[quality], offer)
       end
       if not next(variants) then variants[-1] = {estimated = books[crate.name] and books[crate.name].estimated} end

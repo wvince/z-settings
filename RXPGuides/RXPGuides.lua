@@ -5,6 +5,16 @@ local _G = _G
 local UnitInRaid = UnitInRaid
 local fmt = string.format
 
+function addon.IsGamePadEnabled()
+    local interfaceStyle = _G.GetCVar and _G.GetCVar("InputDeviceInterfaceStyle")
+    if interfaceStyle ~= nil then
+        return interfaceStyle == "1"
+    end
+
+    local gamePad = _G.C_GamePad
+    return gamePad and gamePad.IsEnabled and gamePad.IsEnabled() or false
+end
+
 function addon.safeCall(callback, ...)
     local args = {...}
 
@@ -1491,6 +1501,7 @@ function addon:OnInitialize()
         RXPData.gameVersion = gameVersion
     end
     addon.settings:InitializeDatabase()
+    addon:SetupQuestLog()
     RXPCData.guideProgress = RXPCData.guideProgress or {}
     addon.CreateMetaDataTable()
     addon.settings:InitializeSettings()
@@ -1530,6 +1541,7 @@ function addon:OnInitialize()
     addon.SetupGuideWindow()
     addon.RenderFrame()
     addon.SetupArrow()
+    addon.SetupWorldMap()
     addon:CreateActiveItemFrame()
     addon.comms:Setup()
     addon.targeting:Setup()
@@ -1601,6 +1613,8 @@ function addon:OnEnable()
         RXPData.maxLoadTime = math.ceil(RXPData.maxLoadTime/1.5)
     end
     addon.addonLoaded = true
+
+    if addon.inventoryManager then addon.inventoryManager:Setup() end
 
     --addon.RXPFrame.GenerateMenuTable()
 

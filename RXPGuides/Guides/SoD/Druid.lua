@@ -6,7 +6,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Chest
 #name Fury of Stormrage - 4 (Shadowglen)
 #title Fury of Stormrage
-
 step << Druid
     #season 2
     .goto Teldrassil,57.80,40.97,25,0
@@ -46,7 +45,6 @@ step << Druid
     .target Mardant Strongoak
     .train 410061,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Druid SoD
@@ -54,7 +52,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Chest
 #name Living Seed - 10 (Teldrassil)
 #title Living Seed
-
 step << Druid
     .goto Teldrassil,64.0,54.0,60,0
     .goto Teldrassil,59.0,60.0,60,0
@@ -96,7 +93,6 @@ step << Druid
     .use 206963
     .itemcount 206963,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Druid SoD
@@ -104,7 +100,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Lifebloom - 8 (Teldrassil)
 #title Lifebloom
-
 step << Druid
     #sticky
     +|cRXP_WARN_You must have a helper to collect this rune! It cannot be soloed as they must assist in clicking a summoning ritual which requires a second player!|r
@@ -123,7 +118,6 @@ step << Druid
     .use 206970
     .itemcount 206970,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Druid SoD
@@ -131,7 +125,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Savage Roar - 20 (Darkshore)
 #title Savage Roar
-
 step << Druid
     #season 2
     #sticky
@@ -159,7 +152,6 @@ step << Druid
     .use 208689
     .itemcount 208689,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Druid SoD
@@ -167,7 +159,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Savage Roar - 20 (Westfall)
 #title Savage Roar
-
 step << Druid
     #season 2
     #sticky
@@ -199,7 +190,6 @@ step << Druid
     .use 208689
     .itemcount 208689,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Druid SoD
@@ -207,7 +197,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Sunfire - 6 (Teldrassil)
 #title Sunfire
-
 step << Druid
     #season 2
     .goto Teldrassil,52.831,78.731,20,0
@@ -224,7 +213,6 @@ step << Druid
     .use 206989
     .itemcount 206989,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Druid SoD
@@ -232,7 +220,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Lacerate - 10 (Loch Modan)
 #title Lacerate
-
 step << Druid
     #season 2
     .goto Loch Modan,40.371,39.404,10,0
@@ -255,7 +242,6 @@ step << Druid
     .use 208687
     .itemcount 208687,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Druid SoD
@@ -263,10 +249,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Chest
 #name Fury of Stormrage - 4 (Mulgore)
 #title Fury of Stormrage
-
-
     --Rune of Fury of Stormrage
-
 step << Druid
     #season 2
     .goto Mulgore,45.09,75.93
@@ -298,9 +281,7 @@ step << Druid
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gart|r
     .turnin 77648 >>Turn in Relics of the Tauren
     .target Gart Mistrunner
-
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Druid SoD
@@ -308,10 +289,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Mangle - 10 (Mulgore)
 #title Mangle
-
-
     --Rune of Mangle
-
 step
     #season 2
     .goto Mulgore,43.78,10.96,90,0
@@ -338,9 +316,7 @@ step
     .train 410025 >> |cRXP_WARN_Use the|r |T134903:0|t[|cRXP_FRIENDLY_Idol of Ursine Rage|r] |cRXP_WARN_to train|r |T132135:0|t[Mangle]
     .use 206954
     .itemcount 206954,1
-
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Druid SoD
@@ -348,10 +324,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Sunfire - 5 (Mulgore)
 #title Sunfire
-
-
     --Rune of Sunfire
-
 step
     #season 2
     .goto Mulgore,35.72,69.57
@@ -365,9 +338,7 @@ step
     .train 416044 >> |cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of the Sun|r] |cRXP_WARN_to train|r |T236216:0|t[Sunfire]
     .use 206989
     .itemcount 206989,1
-
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Druid SoD
@@ -375,9 +346,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Lifebloom - 10 (Mulgore)
 #title Lifebloom
-
     --Rune of Lifebloom
-
 step
     #season 2
     .goto Mulgore,60.39,33.54
@@ -392,9 +361,7 @@ step << Druid
     .train 410033 >> |cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of Life|r] |cRXP_WARN_to train|r |T134206:0|t[Lifebloom]
     .use 206970
     .itemcount 206970,1
-
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Druid SoD
@@ -402,9 +369,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Chest
 #name Living Seed - 8 (Mulgore)
 #title Living Seed
-
     --Rune of Living Seed
-
 step
     #season 2
     .goto Mulgore,58.88,51.18,50,0
@@ -443,10 +408,7 @@ step
     .train 416050 >> |cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of Natural Potential|r] |cRXP_WARN_to train|r |T136152:0|t[Living Seed]
     .use 206963
     .itemcount 206963,1
-
-
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Druid SoD
@@ -454,9 +416,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Lacerate - 15 (The Barrens)
 #title Lacerate
-
     --Rune of Lacerate
-
 step
     #season 2
     #completewith next
@@ -483,7 +443,6 @@ step
     .use 208687 --Rune of Lacerate (1)
     .itemcount 208687,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Druid SoD
@@ -491,9 +450,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Savage Roar - 15 (The Barrens)
 #title Savage Roar
-
     --Rune of Savage Roar
-
 step
     #season 2
     #sticky
@@ -540,10 +497,7 @@ step
     .train 407988 >>|cRXP_WARN_Deal 20 instances of bleeding damage from|r |T132152:0|t[Rip] |cRXP_WARN_or|r |T132122:0|t[Rake] |cRXP_WARN_to humanoids, then use the|r |T132942:0|t[|cRXP_FRIENDLY_Ferocious Idol|r] |cRXP_WARN_again to learn|r |T236167:0|t[Savage Roar]
     .use 208689
     .itemcount 208689,1
-
-
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Druid SoD
@@ -551,7 +505,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Belt
 #name Berserk - 28 (Thousand Needles)
 #title Berserk
-
 step
     #optional
     +|cRXP_WARN_You must be level at least level 28 to learn|r |T236149:0|t[Berserk]
@@ -594,7 +547,6 @@ step
     .use 213594
     .train 424760 >> |cRXP_WARN_Use the|r |T134912:0|t[|cRXP_FRIENDLY_Idol of the Heckler|r] |cRXP_WARN_to train|r |T236149:0|t[Berserk]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Druid SoD
@@ -602,7 +554,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Boots
 #name Dreamstate - 33 (Desolace)
 #title Dreamstate
-
 step
     #completewith next
     .train 410060,1
@@ -629,7 +580,6 @@ step
     .goto Desolace,75.5,20.7
     .train 410060 >>Click on the |cRXP_PICK_Sandy Loam|r to plant the seed to learn |T136090:0|t[Dreamstate]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Druid SoD
@@ -637,9 +587,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Belt
 #name Nourish - 35 (Azeroth)
 #title Nourish
-
 -- Probably needs better waypoints to avoid some dangerous mobs or anything else that could kill you
-
 step
     #completewith next
     .train 410059,1
@@ -818,14 +766,12 @@ step
     .use 213594
     .train 410059 >>Use |T134419:0|t[|cRXP_FRIENDLY_Rune of Nourishing|r] to learn |T236162:0|t[Nourish]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Druid SoD
 #group RestedXP Rune & Books Guide
 #subgroup Bracers
 #name Efflorescence - 45 (Azeroth)
-
 step
     #optional
     .train 431468,1
@@ -949,10 +895,7 @@ step
     .itemcount 220360,1
     .use 220360
     .train 431468 >>Use |T134419:0|t[|cRXP_FRIENDLY_Rune of Efflorescence|r] to learn |T134222:0|t[Efflorescence]
-
 ]])
-
-
 -- RXPGuides.RegisterGuide([[
 -- #classic
 -- << Druid SoD
@@ -960,17 +903,13 @@ step
 -- #subgroup Bracers
 -- #name Improved Frenzied Regeneration
 -- for phase 3
-
-
 -- ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Druid SoD
 #group RestedXP Rune & Books Guide
 #subgroup Helmet
 #name Gale Winds - 40 (Feralas)
-
 step
     #completewith NamidaGrimtotem
     .train 431451,1
@@ -986,16 +925,13 @@ step
     .itemcount 220754,1
     .use 220754
     .train 431451 >> |cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of the Windstorm|r] |cRXP_WARN_to train|r |T236154:0|t[Gale Winds]
-
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Druid SoD
 #group RestedXP Rune & Books Guide
 #subgroup Bracers
 #name Elune's Fire - 45 (Azshara)
-
 step
     #completewith next
     .zone Azshara >>Travel to Azshara
@@ -1041,7 +977,6 @@ step
     .use 221020
     .train 416051 >> |cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of the Windstorm|r] |cRXP_WARN_to train|r |T236154:0|t[Gale Winds]
 ]])
-
 -- RXPGuides.RegisterGuide([[
 -- #classic
 -- << Druid SoD
@@ -1049,17 +984,13 @@ step
 -- #subgroup Helmet
 -- #name Gore
 -- for phase 3
-
-
 -- ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Druid SoD
 #group RestedXP Rune & Books Guide
 #subgroup Helmet
 #name Improved Barkskin - 44 (Tanaris)
-
 step
     #optional
     .train 431449,1
@@ -1090,7 +1021,6 @@ step
     .use 221020
     .train 431449 >> |cRXP_WARN_Use the|r |T136061:0|t[|cRXP_FRIENDLY_Idol of the Raging Shambler|r] |cRXP_WARN_to train|r |T136097:0|t[Improved Barkskin]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Druid SoD
@@ -1098,7 +1028,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Cloak
 #name Improved Swipe - 50 (Un'Goro Crater)
 #title Improved Swipe
-
 step
     #completewith next
     .train 439765,1
@@ -1131,7 +1060,6 @@ step
     .use 227444
     .train 439765 >> |cRXP_WARN_Use the|r |T134912:0|t[|cRXP_FRIENDLY_Idol of the Huntress|r] |cRXP_WARN_to train|r |T134296:0|t[Improved Swipe]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Druid SoD
@@ -1139,7 +1067,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Cloak
 #name Tree of Life - 50 (Felwood)
 #title Tree of Life
-
 step
     #completewith next
     .train 439767,1
@@ -1161,7 +1088,6 @@ step
     .use 227746
     .train 439767 >> |cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of the World Tree|r] |cRXP_WARN_to train|r |T132145:0|t[Tree of Life]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Druid SoD
@@ -1169,7 +1095,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Cloak
 #name Starfall - 60 (Winterspring)
 #title Starfall
-
 step
     #completewith next
     .train 439770,1

@@ -43,7 +43,137 @@ function W.LoadSnapshot()
   W.scanTimeUnknown = saved and saved.timeUnknown or false
   W.targeted = saved and saved.targeted or false
   W.scanMode = saved and saved.mode == "fast" and "fast" or "full"
+  W.auctionatorSource = nil
+  if W.UseAuctionatorPrices then W.UseAuctionatorPrices(saved) end
   W.message = nil; W.scanError = false
+end
+
+function W.AuctionatorAPI()
+  return Auctionator and Auctionator.API and Auctionator.API.v1
+end
+
+-- Optional compatibility adapter: Auctionator's public price age has only day
+-- precision. Its completed summary/replicate scans supply observed items.
+-- Keep only our catalog IDs, using public prices; never read or modify its DB.
+function W.RegisterAuctionatorScanListener()
+  local bus = Auctionator and Auctionator.EventBus
+  if not bus or type(bus.Register) ~= "function" then return end
+  local pending, seen = {}, W.auctionatorScanEvents or {}
+  for _, scan in ipairs({"FullScan", "IncrementalScan"}) do
+    local object = Auctionator[scan]
+    local event = object and object.Events and object.Events.ScanComplete
+    if type(event) == "string" and not seen[event] then pending[#pending + 1] = event end
+  end
+  if #pending == 0 then return end
+  local listener = W.auctionatorListener or {}
+  function listener:ReceiveEvent(_, rows)
+    local api = W.AuctionatorAPI()
+    if not W.db or not api or not api.GetAuctionPriceByItemID or type(rows) ~= "table" then return end
+    local wanted, observations = {}, {}
+    for _, catalog in ipairs({WaylaidCostCrates, WaylaidCostWrits}) do
+      for _, order in ipairs(catalog) do
+        wanted[order.itemID] = true
+        for _, bundle in ipairs(order.bundles) do
+          local id = W.itemIDs[bundle[2]]
+          if id then wanted[id] = true end
+        end
+      end
+    end
+    local stamp = time()
+    for _, row in ipairs(rows) do
+      local info = type(row) == "table" and (row.replicateInfo or row.auctionInfo)
+      local id, count, buyout
+      if type(info) == "table" then
+        id, count, buyout = info[17], info[3], info[10]
+      elseif type(row) == "table" and type(row.itemKey) == "table" then
+        id, count, buyout = row.itemKey.itemID, row.totalQuantity, row.minPrice
+      end
+      if wanted[id] and type(count) == "number" and count > 0
+        and type(buyout) == "number" and buyout > 0 then
+        local ok, price = pcall(api.GetAuctionPriceByItemID, "WaylaidCost", id)
+        if ok and type(price) == "number" and price > 0 and price < math.huge then
+          observations[id] = {price = price, scannedAt = stamp}
+        end
+      end
+    end
+    W.db.auctionatorObservations = {key = W.scanKey, items = observations}
+    if not W.scanning then W.LoadSnapshot(); W.Refresh() end
+  end
+  local ok = pcall(bus.Register, bus, listener, pending)
+  if ok then
+    W.auctionatorListener, W.auctionatorScanEvents = listener, seen
+    for _, event in ipairs(pending) do seen[event] = true end
+  end
+end
+
+function W.UseAuctionatorPrices(saved)
+  local api = W.AuctionatorAPI()
+  if not W.db or W.db.auctionatorPrices == false or W.scanning
+    or not api or not api.GetAuctionPriceByItemID then return end
+  local books, seen, found = {}, {}, false
+  if saved then for name, book in pairs(saved.books) do books[name] = book end end
+  local function add(name, id, quality)
+    if not id or seen[name] then return end
+    seen[name] = true
+    if not saved then books[name] = {databaseMissing = true, {quality = quality, itemID = id}} end
+    local ok, price = pcall(api.GetAuctionPriceByItemID, "WaylaidCost", id)
+    if not ok or type(price) ~= "number" or price <= 0 or price >= math.huge then return end
+    local age
+    if api.GetAuctionAgeByItemID then
+      local success, value = pcall(api.GetAuctionAgeByItemID, "WaylaidCost", id)
+      if success and type(value) == "number" and value >= 0 then age = value end
+    end
+    -- Age is an integer day bucket, not a timestamp. Only replace a saved
+    -- observation when even the oldest possible database observation is newer.
+    -- This deliberately keeps the scan when freshness is ambiguous.
+    local recorded = W.db.auctionatorObservations
+    local observation = recorded and recorded.key == W.scanKey and recorded.items and recorded.items[id]
+    local observedNewer = observation and observation.price == price
+      and type(observation.scannedAt) == "number" and observation.scannedAt <= time()
+      and saved and observation.scannedAt > saved.scannedAt
+    if saved and not observedNewer and (saved.timeUnknown or saved.scannedAt <= 0 or not age
+      or time() - saved.scannedAt <= (age + 1) * 86400) then return end
+    books[name] = {databasePrice = price, ageDays = age,
+      {quality = quality, itemID = id}}
+    found = true
+  end
+  for _, order in ipairs(W.GetCatalog()) do
+    add(order.name, order.itemID, order.quality)
+    for _, bundle in ipairs(order.bundles) do add(bundle[2], W.itemIDs[bundle[2]]) end
+  end
+  if found then
+    W.books, W.scannedAt, W.scanMode = books, saved and saved.scannedAt or 0, "fast"
+    W.auctionatorSource, W.scanTimeUnknown = saved and "mixed" or true, not saved
+    W.incomplete, W.targeted = false, false
+  end
+end
+
+function W.AuctionatorSourceLabel()
+  return W.auctionatorSource == "mixed" and "Mixed prices; Auctionator estimates included" or "Auctionator estimate; stock unknown"
+end
+
+function W.AuctionatorShoppingAvailable()
+  local api = W.AuctionatorAPI()
+  return W.db and W.db.auctionatorSearch ~= false and api and api.MultiSearchAdvanced
+end
+
+function W.SearchAuctionator(items)
+  if not W.AuctionatorShoppingAvailable() or not AuctionHouseFrame or not AuctionHouseFrame:IsShown() then return false end
+  local terms = {}
+  for _, item in ipairs(items) do
+    local name = W.LocalItemName(item.name)
+    if not name then
+      local id = W.itemIDs[item.name]
+      if id and C_Item and C_Item.RequestLoadItemDataByID then C_Item.RequestLoadItemDataByID(id) end
+      return false
+    end
+    terms[#terms + 1] = {searchString = name, isExact = true, quantity = item.quantity or 1,
+      quality = item.quality and item.quality > 0 and item.quality or nil}
+  end
+  W.CancelScan("Scan stopped: opened Buy search")
+  GameTooltip:Hide()
+  local ok = pcall(W.AuctionatorAPI().MultiSearchAdvanced, "WaylaidCost", terms)
+  return ok
 end
 function W.SetOrderKind(kind)
   if not W.db then return end

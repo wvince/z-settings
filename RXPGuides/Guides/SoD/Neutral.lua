@@ -12,7 +12,6 @@ RXPGuides.RegisterGuide([[
 #displayname Cobra Slayer - 25 (Wetlands) << Hunter
 #title Consumed by Rage << Warrior
 #title Cobra Slayer << Hunter
-
 step
     #season 2
     #completewith next
@@ -43,9 +42,7 @@ step << Hunter
     .train 410115 >>|cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of Cobra Slayer|r] |cRXP_WARN_to train|r |T136040:0|t[Cobra Slayer]
     .use 211205
     .itemcount 211205,1
-
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Rogue SoD
@@ -53,10 +50,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Envenom - 25 (Hillsbrad)
 #title Envenom
-
-
     --Rune of Envenom
-
 step
     #season 2
     #completewith next
@@ -89,9 +83,7 @@ step
     .train 400102 >>Use the |T134419:0|t[|cRXP_FRIENDLY_Rune of Venom|r]
     .use 210322
     .itemcount 210322,1
-
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Rogue SoD
@@ -99,7 +91,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Cutthroat - 25 (Duskwood)
 #title Cutthroat
-
 step
     #season 2
     .goto Duskwood,81.24,71.86
@@ -129,9 +120,7 @@ step
     .train 424988 >>Use the |T134419:0|t[|cRXP_FRIENDLY_Rune of Shiving|r] to train |T236280:0|t[Cutthroat]
     .use 210252
     .itemcount 210252,1
-
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Druid SoD
@@ -139,7 +128,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Chest
 #name Wild Strikes - 14 (Stonetalon Mountains)
 #title Wild Strikes
-
 step << Druid
     .goto Stonetalon Mountains,80.2,90.6,60,0
     .goto Stonetalon Mountains,83.2,87.0,60,0
@@ -164,7 +152,6 @@ step << Druid
     .train 410021 >> |cRXP_WARN_Use the|r |T134233:0|t[|cRXP_FRIENDLY_Idol of the Wild|r] |cRXP_WARN_to train|r |T132143:0|t[Wild Strikes]
     .itemcount 210534,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Druid SoD
@@ -172,7 +159,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Starsurge - 25 (Wetlands)
 #title Starsurge
-
 step << Druid
     #completewith next
     +|cRXP_WARN_It is possible to do this at level 1 however you will have to die a lot for it|r
@@ -203,7 +189,6 @@ step << Druid
     .use 210500
     .itemcount 210500,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
@@ -233,9 +218,7 @@ RXPGuides.RegisterGuide([[
 #title Divine Sacrifice << Paladin
 #title Rewind Time << Mage
 #title Main Gauche << Rogue
-
 << SoD
-
 step
     #completewith next
     .zone The Barrens >>Travel to Ratchet in The Barrens. |cRXP_WARN_You will need 3 gold to buy the rune|r
@@ -262,7 +245,6 @@ step
     .train 410096 >>|cRXP_WARN_Buy and use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of Dual Wield Specialization|r] |cRXP_WARN_to train|r |T132686:0|t[Engrave Chest - Dual Wield Specialization] << Shaman
     .target Grizzby
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
@@ -289,11 +271,8 @@ RXPGuides.RegisterGuide([[
 #title Beacon of Light << Paladin
 #title Arcane Surge << Mage
 #title Just a Flesh Wound << Rogue
-
 << SoD
-
 --VV if (Reputation) name formatting removed, change in Paladin guide too
-
 step
     >>Go out and find |T132765:0|t[Waylaid Supplies]. Then go back into a capital city and deliver them. If you want to get the reputation faster buy the required items in the AH to upgrade them.
     *|cRXP_WARN_You can farm lower level mobs until you hit Friendly. Afterwards you have to farm high level mobs (>=17).|r Chests in the open world have a 90%+ chance to drop one of those items.
@@ -332,7 +311,6 @@ step
     .target Dokimi << Horde
     .target Gishah << Horde
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Druid SoD
@@ -340,7 +318,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Wild Growth - 25 (Multiple Zones)
 #title Wild Growth
-
 step << Druid
     #completewith next
     .zone Ashenvale >> Travel to Ashenvale
@@ -421,7 +398,6 @@ step << Druid
     .use 210137
     .itemcount 210137,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Warrior SoD/Mage SoD
@@ -433,7 +409,6 @@ RXPGuides.RegisterGuide([[
 #displayname Mass Regeneration - 25 (Duskwood) << Mage
 #title Flagellation << Warrior
 #title Mass Regeneration << Mage
-
 step << Warrior/Mage
     #completewith next
     .goto Duskwood,23.630,34.888,15 >> Enter the north eastern crypt
@@ -478,7 +453,6 @@ step << Mage
     .itemcount 211514,1
     .train 415939,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Warrior SoD
@@ -486,7 +460,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Chest
 #name Raging Blow - 25 (Multiple Zones)
 #title Raging Blow
-
 step << Warrior
     #completewith next
     .goto Wetlands,49.40,16.98
@@ -559,7 +532,6 @@ step << Warrior
     .train 425444 >> |cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of Raging Blow|r] |cRXP_WARN_to train|r |T132215:0|t[Raging Blow]
     .use 210015
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Priest SoD
@@ -567,7 +539,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Chest
 #name Strength of Soul - 22 (Ashenvale)
 #title Strength of Soul
-
 step << Priest
     .goto Ashenvale,32.0,43.0,65,0
     .goto Ashenvale,33.6,38.8,65,0
@@ -600,7 +571,6 @@ step << Priest
     .use 211531
     .itemcount 211531,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Priest SoD
@@ -608,7 +578,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Bracers
 #name Power Word: Barrier - 22 (Redridge Mountains)
 #title Power Word: Barrier
-
 step << Priest
     #completewith next
     .zone Redridge Mountains >> Travel to Redridge Mountains
@@ -635,7 +604,6 @@ step << Priest
     .use 211530
     .itemcount 211530,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Priest SoD
@@ -643,7 +611,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Circle of Healing - 25 (Duskwood)
 #title Circle of Healing
-
 step << Priest
     .goto Duskwood,50.4,70.8,60,0
     .goto Duskwood,50.2,76.4
@@ -672,7 +639,6 @@ step << Priest
     .use 211490
     .itemcount 211490,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Hunter SoD
@@ -680,10 +646,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Chest
 #name Cobra Strikes - 25 (Hillsbrad Foothills)
 #title Cobra Strikes
-
-
     --Rune of Cobra Strikes
-
 step
     #season 2
     #completewith next
@@ -695,7 +658,7 @@ step
     .goto Hillsbrad Foothills,58.2,19.6,40,0
     .goto Hillsbrad Foothills,57.5,36.4,50,0
     .goto Hillsbrad Foothills,51.1,46.4,40,0
-    >>Look for |cRXP_FRIENDLY_Zixil|r. He patrolls between Tarren Mill and Southshore. Buy the |T134041:0|t[Freshwater Snapper Bait] from him
+    >>Look for |cRXP_FRIENDLY_Zixil|r. He patrols between Tarren Mill and Southshore. Buy the |T134041:0|t[Freshwater Snapper Bait] from him
     .collect 210410,1 --Freshwater Snapper Bait (1)
     .target Zixil
     .train 425759,1
@@ -712,9 +675,7 @@ step
     .train 425759 >>|cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of Cobra Strikes|r] |cRXP_WARN_to train|r |T236177:0|t[Cobra Strikes]
     .use 210596
     .itemcount 210596,1
-
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Hunter SoD
@@ -722,7 +683,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Kill Shot - 25 (Multiple Zones)
 #title Kill Shot
-
 step
     #completewith WyvernWrangling
     >>|cRXP_BUY_Buy a|r |T135144:0|t[Greater Magic Wand] |cRXP_BUY_from the auction house|r
@@ -801,10 +761,7 @@ step
     .train 410111 >>|cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of Kill Command|r] |cRXP_WARN_to train|r |T236174:0|t[Kill Shot]
     .use 209852
     .itemcount 209852,1
-
-
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
@@ -831,7 +788,6 @@ RXPGuides.RegisterGuide([[
 #title Infusion of Light << Paladin
 #title Missile Barrage << Mage
 #title Waylay << Rogue
-
 step
     #completewith Sigil
     +|cRXP_WARN_Before attemping to acquire this rune it is strongly advised you look for a group. You must kill a level 41 elite 7 times total|r
@@ -1218,9 +1174,7 @@ step
     .train 415926 >>|cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of the Assailant|r] |cRXP_WARN_to train|r |T236286:0|t[Waylay] << Rogue
     .train 436368 >>|cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of Two-Handed Mastery|r] |cRXP_WARN_to train|r |T135145:0|t[Two-Handed Mastery] << Shaman
 ]])
-
 RXPGuides.RegisterGuide([[
-
 #classic
 << SoD
 #group RestedXP Rune & Books Guide
@@ -1245,7 +1199,6 @@ RXPGuides.RegisterGuide([[
 #title The Art of War << Paladin
 #title Brain Freeze << Mage
 #title Poisoned Knife << Rogue
-
 step
     #completewith next
     .zone Desolace >>Travel to Desolace
@@ -1433,7 +1386,7 @@ step
     >>Open the |T133876:0|t[|cRXP_LOOT_Jewel-Encrusted Box|r] for the |T134419:0|t[|cRXP_FRIENDLY_Rune of Eclipse|r] << Druid
     >>Open the |T133876:0|t[|cRXP_LOOT_Jewel-Encrusted Box|r] for the |T134419:0|t[|cRXP_FRIENDLY_Rune of Healing Rage|r] << Warrior
     >>Open the |T133876:0|t[|cRXP_LOOT_Jewel-Encrusted Box|r] for the |T134419:0|t[|cRXP_FRIENDLY_Rune of Burning Darkness|r] << Warlock
-    >>Open the |T133876:0|t[|cRXP_LOOT_Jewel-Encrusted Box|r] for the |T134419:0|t[|cRXP_FRIENDLY_Rune of Poisoned Blade|r] << Rogue
+    >>Open the |T133876:0|t[|cRXP_LOOT_Jewel-Encrusted Box|r] for the |T134419:0|t[|cRXP_FRIENDLY_Rune of the Poisoned Blade|r] << Rogue
     >>Open the |T133876:0|t[|cRXP_LOOT_Jewel-Encrusted Box|r] for the |T134419:0|t[|cRXP_FRIENDLY_Rune of Ancestral Awakening|r] << Shaman
     .collect 212552,1 << Priest
     .collect 212551,1 << Paladin
@@ -1453,7 +1406,7 @@ step
     .train 410029 >>|cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of Eclipse|r] |cRXP_WARN_to train|r |T236151:0|t[Eclipse] << Druid
     .train 403467 >>|cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of Healing Rage|r] |cRXP_WARN_to train|r |T132345:0|t[Enraged Regeneration] << Warrior
     .train 426452 >>|cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of Burning Darkness|r] |cRXP_WARN_to train|r |T135823:0|t[Shadow and Flame] << Warlock
-    .train 425102 >>|cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of Poisoned Blade|r] |cRXP_WARN_to train|r |T236270:0|t[Poisoned Knife] << Rogue
+    .train 425102 >>|cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of the Poisoned Blade|r] |cRXP_WARN_to train|r |T236270:0|t[Poisoned Knife] << Rogue
     .train 425883 >>|cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of Ancestral Awakening|r] |cRXP_WARN_to train|r |T237571:0|t[Ancestral Awakening] << Shaman
     .use 212552 << Priest
     .use 212551 << Paladin
@@ -1478,14 +1431,12 @@ step
     .cast 6477 >>Enter the |cRXP_PICK_Rowboat|r in the water to get back to Arathi
     .subzoneskip 308,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << SoD
 #group RestedXP Rune & Books Guide
 #subgroup Spell Books
 #name Spell Book Runes
-
 #displayname Expanded Intellect (Stormwind) << Alliance Mage
 #displayname Expanded Intellect (Orgrimmar) << Horde Mage
 #title Expanded Intellect << Mage
@@ -1511,7 +1462,6 @@ RXPGuides.RegisterGuide([[
 #title Testament of the Exorcist/Enhanced Blessings << Paladin
 #displayname Totemic Projection/Shamanistic Rage (Orgrimmar) << Shaman
 #title Totemic Projection/Shamanistic Rage << Shaman
-
 step
     #completewith BuyBook
     >>|cRXP_WARN_Skill Books can now bought with gold from Stormwind instead of having to run Scarlet Monastery for them.|r << Alliance
@@ -1594,7 +1544,6 @@ step
     .target Milton Sheaf << Alliance
     .target Zor Lonetree << Horde
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Hunter SoD/Druid SoD
@@ -1605,7 +1554,6 @@ RXPGuides.RegisterGuide([[
 #displayname Survival Instincts - 35 (Azeroth) << Druid
 #title Wyvern Strike << Hunter
 #title Survival Instincts << Druid
-
 step
     .train 416089,1 << Hunter
     .train 410027,1 << Druid
@@ -1705,7 +1653,6 @@ step
     .use 213125 << Hunter
     .use 213119 << Druid
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << SoD
@@ -1714,7 +1661,6 @@ RXPGuides.RegisterGuide([[
 #subweight -1
 #name Cozy Sleeping Bag - 14
 #title Cozy Sleeping Bag
-
 step
     #optional
     +|cRXP_WARN_You must be at least level 14 before you can begin the quest for the|r |T133662:0|t[|cRXP_LOOT_Cozy Sleeping Bag|r]
@@ -1799,7 +1745,6 @@ step
 step
     +|cRXP_WARN_It is strongly advised you save your|r |T134057:0|t[|cRXP_LOOT_Student Fodder|r] |cRXP_WARN_for higher levels before consuming them. Each use of|r |T134057:0|t[|cRXP_LOOT_Student Fodder|r] |cRXP_WARN_adds 20% rested experience to your character, therefore it is more efficient to use at higher levels|r
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << SoD
@@ -1816,7 +1761,6 @@ RXPGuides.RegisterGuide([[
 #displayname Burn <<Shaman
 #displayname Unstable Affliction <<Warlock
 #displayname Shield Mastery <<Warrior
-
 step
     +|cRXP_WARN_Go to any of the zones listed below. At the marked locations in each respecive one you will find an NPC from a new faction,|r |cRXP_FRIENDLY_The Emerald Wardens|r.
     >>Duskwood
@@ -1865,10 +1809,7 @@ step
     .use 221515 << Hunter --Rune of Detonation
     .use 221517 << Druid --Rune of Bloodshed
     .use 223288,1 << Paladin --Rune of the Hammer
-
 ]])
-
-
 RXPGuides.RegisterGuide([[
 #classic
 << SoD
@@ -1885,7 +1826,6 @@ RXPGuides.RegisterGuide([[
 #displayname Vengeance - 40 (Azeroth) <<Warlock
 #displayname Sword and Board - 40 (Azeroth) <<Warrior
 #displayname Improved Frenzied Regeneration - 40 (Azeroth) <<Druid
-
 step
     #completewith next
     .zone Felwood >>Travel to Felwood
@@ -1938,7 +1878,6 @@ step
     .train 427082 >>|cRXP_WARN_Use the|r |T236160:0|t[|cRXP_FRIENDLY_Hyjal's Wisdom|r] item you received |cRXP_WARN_to train|r |T236315:0|t[Sword and Board] << Warrior
     .use 222962 --Hyjal's Wisdom
 ]])
-
 RXPGuides.RegisterGuide([[
 <<Warlock/Priest/Mage/Paladin
 << SoD
@@ -1951,7 +1890,6 @@ RXPGuides.RegisterGuide([[
 #displayname Purifying Power - 45 (Azeroth) <<Paladin
 #displayname Despair - 45 (Azeroth) <<Priest
 #displayname Backdraft - 45 (Azeroth) <<Warlock
-
 step
     #optional
     #completewith next
@@ -1960,7 +1898,6 @@ step
     +|cRXP_WARN_In order to find this rune you will need to party up with a warlock with|r |T132842:0|t|cRXP_FRIENDLY_Worldcore Fragments|r |cRXP_WARN_or a mage with|r |T134938:0|t|cRXP_LOOT_Scrolls of Geomancy|r |cRXP_WARN_to summon the needed mobs. You can't summon them by yourself|r << Priest/Paladin
     .collect 223171,4 << Mage
     .collect 223168,4 << Warlock
-
 step
     >>Go to each of the Ley Crystals marked on your map and use your |T134938:0|t|cRXP_LOOT_Scroll of Geomancy|r on them or have someone in your party do it to summon an |cRXP_ENEMY_Enraged Leywalker|r. Defeat it and loot for its |cRXP_LOOT_Leycryst|r. This can be done in any order << Mage
     >>Go to each of the Ley Crystals marked on your map and use your |T132842:0|t|cRXP_FRIENDLY_Worldcore Fragment|r on them or have someone in your party do it to summon an |cRXP_ENEMY_Enraged Leywalker|r. Defeat it and loot for its |cRXP_LOOT_Leycryst|r. This can be done in any order << Warlock
@@ -1985,7 +1922,6 @@ step
     .train 431673 >> |cRXP_WARN_Use any of the four crystals you collected to combine them and learn|r |T237555:0|t[Despair] << Priest
     .use 221318 --Azshara Leycryst
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Shaman SoD/Priest SoD
@@ -1995,10 +1931,8 @@ RXPGuides.RegisterGuide([[
 #title Pain and Suffering << Priest
 #name Mental Dexterity - 43 (Tanaris) << Shaman
 #name Pain and Suffering - 43 (Tanaris) << Priest
-
 -- Mental Dexterity/Pain and Suffering
 -- PERMOK: Needs better waypoints
-
 step
     #completewith next
     .zone Tanaris >>Travel to Tanaris
@@ -2054,7 +1988,6 @@ step
     .train 416055 >>|cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of Mental Dexterity|r] |cRXP_WARN_to learn|r |T136055:0|t[Mental Dexterity] << Shaman
     .train 415991 >>|cRXP_WARN_Use the|r |T135975:0|t[|cRXP_FRIENDLY_Prophecy of Verdant Winter|r] |cRXP_WARN_to learn|r |T237567:0|t[Pain and Suffering] << Priest
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Warrior SoD/Hunter SoD/Rogue SoD
@@ -2062,7 +1995,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Ring
 #title Ranged Weapon Specialization
 #name Ranged Weapon Specialization - 58 (Eastern Plaguelands)
-
 step
     #completewith rangeSpec
     .zone Eastern Plaguelands >>Travel to Eastern Plaguelands
@@ -2083,7 +2015,6 @@ step
     .train 453692 >>|cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of Ranged Weapon Specialization|r] |cRXP_WARN_to learn|r |T135490:0|t[Ranged Weapon Specialization]
     .use 226410
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Priest SoD/Paladin SoD
@@ -2091,7 +2022,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Ring
 #title Holy Specialization
 #name Holy Specialization - 60 (Eastern Plaguelands)
-
 step
     #completewith next
     >>|cRXP_WARN_Getting this rune will require you to fight mobs in an elite area. It's possible to do solo but if you're lower level or not very geared consider looking for someone to help you|r
@@ -2112,7 +2042,6 @@ step
     .itemcount 226418,1
     .use 226418
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Mage SoD/Druid SoD/Hunter SoD
@@ -2120,7 +2049,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Ring
 #title Arcane Specialization
 #name Arcane Specialization - 60 (Western Plaguelands)
-
 step
     #completewith next
     >>|cRXP_WARN_Getting this rune will require you to fight mobs in an elite area. It's possible to do solo but if you're lower level or not very geared consider looking for someone to help you|r
@@ -2139,7 +2067,6 @@ step
     .itemcount 226413,1
     .use 226413
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Hunter SoD/Paladin SoD/Warrior SoD/Shaman SoD
@@ -2147,7 +2074,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Ring
 #title Axe Specialization
 #name Axe Specialization - 58 (Burning Steppes)
-
 step
     #completewith next
     .zone Burning Steppes >> Travel to Burning Steppes
@@ -2163,7 +2089,6 @@ step
     .itemcount 226407,1
     .use 226407
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Hunter SoD/Druid SoD/Warrior SoD/Shaman SoD/Mage SoD/Priest SoD/Rogue SoD/Warlock SoD
@@ -2171,7 +2096,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Ring
 #title Dagger Specialization
 #name Dagger Specialization - 60 (Silithus)
-
 step
     #completewith next
     .zone Burning Steppes >> Travel to Silithus
@@ -2187,7 +2111,6 @@ step
     .itemcount 226409,1
     .use 226409
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Druid SoD/Warrior SoD/Shaman SoD/Rogue SoD/Warlock SoD/Paladin SoD
@@ -2195,7 +2118,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Ring
 #title Defense Specialization
 #name Defense Specialization - 60 (Blackrock Mountain)
-
 step
     #completewith next
     .zone 25 >> Travel to the Blackrock Mountain either through Searing Gorge or the Burning Steppes
@@ -2213,7 +2135,6 @@ step
     .itemcount 226694,1
     .use 226694
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Druid SoD
@@ -2221,7 +2142,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Ring
 #title Feral Combat Specialization
 #name Feral Combat Specialization - 60 (Winterspring)
-
 step
     #completewith next
     .zone Winterspring >> Travel to Winterspring
@@ -2237,7 +2157,6 @@ step
     .itemcount 226419,1
     .use 226419
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Hunter SoD/Mage SoD/Shaman SoD/Warlock SoD
@@ -2245,7 +2164,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Ring
 #title Fire Specialization
 #name Fire Specialization - 52 (Searing Gorge)
-
 step
     #completewith next
     .zone Searing Gorge >> Travel to Searing Gorge
@@ -2265,7 +2183,6 @@ step
     .itemcount 226414,1
     .use 226414
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Hunter SoD/Warrior SoD/Rogue SoD/Druid SoD/Shaman SoD
@@ -2273,7 +2190,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Ring
 #title Fist Weapon Specialization
 #name Fist Weapon Specialization - 60 (Silithus)
-
 step
     #completewith next
     .zone Silithus >> Travel to Silithus
@@ -2287,7 +2203,6 @@ step
     .itemcount 226411,1
     .use 226411
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Mage SoD/Hunter SoD/Shaman SoD
@@ -2295,7 +2210,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Ring
 #title Frost Specialization
 #name Frost Specialization - 60 (Winterspring)
-
 step
     #completewith next
     .zone Winterspring >> Travel to Winterspring
@@ -2311,7 +2225,6 @@ step
     .itemcount 226415,1
     .use 226415
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Druid SoD/Rogue SoD/Shaman SoD/Hunter SoD
@@ -2319,7 +2232,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Ring
 #title Nature Specialization
 #name Nature Specialization - 56 (Felwood)
-
 step
     #completewith next
     .zone Felwood >> Travel to Felwood
@@ -2335,7 +2247,6 @@ step
     .itemcount 226416,1
     .use 226416
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Warrior SoD/Rogue SoD/Shaman SoD/Paladin SoD/Priest SoD/Druid SoD
@@ -2343,7 +2254,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Ring
 #title Mace Specialization
 #name Mace Specialization - 60 (Wetlands)
-
 step
     #completewith next
     .zone Wetlands >> Travel to Wetlands
@@ -2361,7 +2271,6 @@ step
     .itemcount 226408,1
     .use 226408
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Warrior SoD/Warlock SoD/Shaman SoD/Mage SoD/Priest SoD/Druid SoD/Hunter SoD
@@ -2369,7 +2278,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Ring
 #title Pole Weapon Specialization
 #name Pole Weapon Specialization - 60 (Azshara)
-
 step
     #completewith next
     .zone Azshara >> Travel to Azshara
@@ -2385,7 +2293,6 @@ step
     .itemcount 226412,1
     .use 226412
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Warlock SoD/Priest SoD
@@ -2393,7 +2300,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Ring
 #title Shadow Specialization
 #name Shadow Specialization - 60 (Blasted Lands)
-
 step
     #completewith next
     .zone Blasted Lands >> Travel to Blasted Lands
@@ -2409,7 +2315,6 @@ step
     .itemcount 226417,1
     .use 226417
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Hunter SoD/Warrior SoD/Rogue SoD/Paladin SoD/Mage SoD/Warlock SoD
@@ -2417,7 +2322,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Ring
 #title Sword Specialization
 #name Sword Specialization - 60 (Deadwind Pass)
-
 step
     #completewith next
     .zone Deadwind Pass >> Travel to Deadwind Pass
@@ -2435,7 +2339,6 @@ step
     .itemcount 226406,1
     .use 226406
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Hunter SoD/Druid SoD/Shaman SoD/Paladin SoD/Mage SoD/Warlock SoD/Priest SoD
@@ -2443,7 +2346,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Ring
 #title Meditation Specialization
 #name Meditation Specialization - 30 (Thousand Needles)
-
 step
     #completewith next
     .zone Thousand Needles >> Travel to the Shimmering Flats in Thousand Needles
@@ -2459,7 +2361,6 @@ step
     .itemcount 231828,1
     .use 231828
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Druid SoD/Shaman SoD/Paladin SoD/Mage SoD/Priest SoD
@@ -2467,7 +2368,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Ring
 #title Healing Specialization
 #name Healing Specialization - 40 (Arathi Highlands)
-
 step
     #completewith next
     .zone Arathi Highlands >> Travel to Arathi Highlands

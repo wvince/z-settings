@@ -8,33 +8,40 @@
 --
 -------------------------------------------------------------------------
 --
+-- 16001-26
+--   - Fixed an issue with displaying City of Dalaran
+--   - Added the Dire Maul quests
+--  
+-- 16001-25
+--   - Added City of Dalaran quests
+--   - Added Lazy Sleeping Bag quests
 --
--- 1.6.24
+-- 16001-24
 --   - Added Excavation Site: Wetlands quests
 --   - Fixed an issue where Attune was interfering with the treeview in other addons
 --
--- 1.6.23
+-- 16001-23
 --   - Added Placeholders for upcoming dungeons
 --   - Changed step colors for quests and items: yellow if you have the quest or some of the required items, green is you have all the required items or have completed the quest, grey otherwise
 --   - Added Zul'Farrak quests
 --   - Added The Temple of Atal'Hakkar quests
 --   - if you are not at the minimum level for a quest, the quest level text will show in red
 --
--- 1.6.22
+-- 16001-22
 --   - Added option to use full map in quest details
 --   - Added missing Wailing Caverns quests for Alliance
 --   - Added dungeon art as background
 --   - Added level range for dungeons
 --
--- 1.6.21
+-- 16001-21
 --   - Click a quest to list its reward items and map of the quest giver. Click it again to go back to the treeview
 --   - Attune now uses the Forever frame
 --
--- 1.6.20
+-- 16001-20
 --   - Added quest giver in tooltip and map display
 --   - Changed default to not announce completion in guild chat
 --
--- 1.6.19
+-- 16001-19
 --  Updated dungeons up to Maraudon
 --
 
@@ -7033,6 +7040,64 @@ local function Attune_CollectQuestRewards(questIDs)
 	return fixed, choices
 end
 
+-- XP from the quest log only (no static table). Returns nil when unavailable.
+local function Attune_QuestLogIndexForID(questID)
+	if C_QuestLog and C_QuestLog.GetLogIndexForQuestID then
+		return C_QuestLog.GetLogIndexForQuestID(questID)
+	end
+	if GetQuestLogIndexByID then
+		return GetQuestLogIndexByID(questID)
+	end
+	return nil
+end
+
+local function Attune_IsQuestInLog(questID)
+	if C_QuestLog and C_QuestLog.IsOnQuest then
+		return C_QuestLog.IsOnQuest(questID)
+	end
+	local index = Attune_QuestLogIndexForID(questID)
+	return index and index > 0
+end
+
+local function Attune_QuestLogRewardXPForID(questID)
+	questID = tonumber(questID)
+	if not questID or type(GetQuestLogRewardXP) ~= "function" then return nil end
+	if not Attune_IsQuestInLog(questID) then return nil end
+
+	local ok, xp = pcall(GetQuestLogRewardXP, questID)
+	if ok and type(xp) == "number" and xp > 0 then return xp end
+
+	local index = Attune_QuestLogIndexForID(questID)
+	if not index or index <= 0 or not SelectQuestLogEntry then return nil end
+
+	local prev = GetQuestLogSelection and GetQuestLogSelection()
+	SelectQuestLogEntry(index)
+	ok, xp = pcall(GetQuestLogRewardXP)
+	if prev and prev > 0 and prev ~= index then
+		SelectQuestLogEntry(prev)
+	end
+	if ok and type(xp) == "number" and xp > 0 then return xp end
+	return nil
+end
+
+local function Attune_GetQuestLogRewardXP(questIDs)
+	local total, found = 0, false
+	for _, questID in ipairs(questIDs or {}) do
+		local xp = Attune_QuestLogRewardXPForID(questID)
+		if xp then
+			total = total + xp
+			found = true
+		end
+	end
+	if found then return total end
+	return nil
+end
+
+local function Attune_FormatXPAmount(xp)
+	if BreakUpLargeNumbers then return BreakUpLargeNumbers(xp) end
+	return tostring(xp)
+end
+
 local function Attune_CreateRewardRow(parent)
 	local row = CreateFrame("Button", nil, parent)
 	row:SetHeight(36)
@@ -7576,10 +7641,30 @@ local function Attune_LayoutQuestDetail(panel)
 	if not questName or questName == "" then questName = AttuneLang["Quest rewards"] end
 	panel.title:SetText(questName)
 
-	local fixed, choices = Attune_CollectQuestRewards(Attune_RewardQuestIDs(panel.step.ID_WOWHEAD))
+	local questIDs = Attune_RewardQuestIDs(panel.step.ID_WOWHEAD)
+	local fixed, choices = Attune_CollectQuestRewards(questIDs)
 	local items = {}
 	for _, entry in ipairs(fixed) do items[#items + 1] = entry end
 	for _, entry in ipairs(choices) do items[#items + 1] = entry end
+
+	local y = 6
+	local xp = Attune_GetQuestLogRewardXP(questIDs)
+	if panel.xpText then
+		if xp then
+			local fmt = AttuneLang["Experience reward"]
+			if type(fmt) ~= "string" or fmt == "" or not string.find(fmt, "%%s", 1, true) then
+				fmt = "+%s XP"
+			end
+			panel.xpText:SetText(fmt:format(Attune_FormatXPAmount(xp)))
+			panel.xpText:ClearAllPoints()
+			panel.xpText:SetPoint("TOPLEFT", 6, -y)
+			panel.xpText:SetPoint("RIGHT", panel.rewardChild, "RIGHT", -6, 0)
+			panel.xpText:Show()
+			y = y + 20
+		else
+			panel.xpText:Hide()
+		end
+	end
 
 	for _, row in ipairs(panel.rows) do row:Hide() end
 	if #items == 0 then
@@ -7593,11 +7678,13 @@ local function Attune_LayoutQuestDetail(panel)
 		else
 			msg = AttuneLang["Rewards only if available"]
 		end
+		panel.empty:ClearAllPoints()
+		panel.empty:SetPoint("TOPLEFT", 6, -y)
+		panel.empty:SetPoint("RIGHT", panel.rewardChild, "RIGHT", -8, 0)
 		panel.empty:SetText(msg)
-		panel.rewardChild:SetHeight(known and 28 or 48)
+		panel.rewardChild:SetHeight(math.max(y + (known and 28 or 48), 28))
 	else
 		panel.empty:Hide()
-		local y = 6
 		local shown = 0
 		for _, entry in ipairs(items) do
 			local name, quality, texture = entry.name, entry.quality, entry.texture
@@ -7761,6 +7848,10 @@ local function Attune_EnsureQuestDetail()
 	child:SetSize(100, 20)
 	scroll:SetScrollChild(child)
 	panel.rewardChild = child
+	panel.xpText = child:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+	panel.xpText:SetJustifyH("LEFT")
+	panel.xpText:SetTextColor(0.15, 0.85, 1)
+	panel.xpText:Hide()
 	panel.empty = child:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 	panel.empty:SetPoint("TOPLEFT", 6, -20)
 	panel.empty:SetPoint("RIGHT", child, "RIGHT", -8, 0)
@@ -7877,6 +7968,9 @@ local function Attune_EnsureQuestDetail()
 			Attune_RefreshRewardTooltip(panel.rows)
 			return
 		end
+		if event == "UNIT_QUEST_LOG_CHANGED" and arg1 ~= "player" then
+			return
+		end
 		if event == "QUEST_DATA_LOAD_RESULT" and arg1 and arg2 then
 			panel.questLoaded = panel.questLoaded or {}
 			panel.questLoaded[arg1] = true
@@ -7886,10 +7980,18 @@ local function Attune_EnsureQuestDetail()
 	panel:SetScript("OnShow", function(self)
 		listener:RegisterEvent("QUEST_DATA_LOAD_RESULT")
 		listener:RegisterEvent("GET_ITEM_INFO_RECEIVED")
+		listener:RegisterEvent("QUEST_LOG_UPDATE")
+		listener:RegisterEvent("QUEST_ACCEPTED")
+		listener:RegisterEvent("QUEST_REMOVED")
+		listener:RegisterEvent("UNIT_QUEST_LOG_CHANGED")
 	end)
 	panel:SetScript("OnHide", function()
 		listener:UnregisterEvent("QUEST_DATA_LOAD_RESULT")
 		listener:UnregisterEvent("GET_ITEM_INFO_RECEIVED")
+		listener:UnregisterEvent("QUEST_LOG_UPDATE")
+		listener:UnregisterEvent("QUEST_ACCEPTED")
+		listener:UnregisterEvent("QUEST_REMOVED")
+		listener:UnregisterEvent("UNIT_QUEST_LOG_CHANGED")
 	end)
 	panel:SetScript("OnSizeChanged", function(self)
 		if self:IsShown() and not self.layingOut then

@@ -10,7 +10,6 @@ RXPGuides.RegisterGuide([[
 #subweight -1
 #title Boosted Character 58-60
 #next 59-61 Hellfire Peninsula
-
 step
 +As soon as you log in for the first time, finish the little tutorial section in front of your class trainer to get access to all of the boosted gear
 .use 185964

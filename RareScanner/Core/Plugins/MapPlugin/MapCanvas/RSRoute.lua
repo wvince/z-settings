@@ -352,17 +352,102 @@ local function DrawSegment(parent, mapWidth, mapHeight, p1, p2, r, g, b, a, zoom
     end
 end
 -----------------------------------------------------------------------
--- Held-Karp async
+-- Held-Karp async with Progress Bar
 -----------------------------------------------------------------------
+local progressBar = nil
+local activeCalculationRoutine = nil
+
+local function GetProgressBar()
+    if (progressBar) then 
+        return progressBar 
+    end
+
+    local parent = (WorldMapFrame and WorldMapFrame.ScrollContainer) or WorldMapFrame
+    if (not parent) then
+        return nil
+    end
+
+    local barFrame = CreateFrame("Frame", "RSRouteProgressBar", parent, "BackdropTemplate")
+    barFrame:SetSize(220, 20)
+    barFrame:SetPoint("TOP", parent, "TOP", 0, -100)
+    barFrame:SetFrameStrata("FULLSCREEN_DIALOG")
+    barFrame:SetFrameLevel(9999)
+    barFrame:SetBackdrop({
+        bgFile = "Interface\\Buttons\\WHITE8X8",
+        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        tile = true,
+        tileSize = 16,
+        edgeSize = 12,
+        insets = { left = 2, right = 2, top = 2, bottom = 2 },
+    })
+    barFrame:SetBackdropColor(0, 0, 0, 0.8)
+    barFrame:SetBackdropBorderColor(0.6, 0.6, 0.6, 0.9)
+
+    local statusBar = CreateFrame("StatusBar", nil, barFrame)
+    statusBar:SetPoint("TOPLEFT", barFrame, "TOPLEFT", 3, -3)
+    statusBar:SetPoint("BOTTOMRIGHT", barFrame, "BOTTOMRIGHT", -3, 3)
+    statusBar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
+    if (statusBar:GetStatusBarTexture()) then
+        statusBar:GetStatusBarTexture():SetHorizTile(false)
+    end
+
+    statusBar:SetMinMaxValues(0, 100)
+    statusBar:SetValue(0)
+
+    local text = statusBar:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    text:SetPoint("CENTER", statusBar, "CENTER", 0, 0)
+    text:SetText("")
+
+    barFrame.statusBar = statusBar
+    barFrame.text = text
+    barFrame:Hide()
+
+    progressBar = barFrame
+    return progressBar
+end
+
+local function ShowProgressBar(percent)
+    local bar = GetProgressBar()
+    if (not bar) then 
+        return 
+    end
+    
+    local r, g, b = RSConfigDB.GetRouteColour()
+    bar.statusBar:SetStatusBarColor(r, g, b, 0.85)
+    bar.statusBar:SetValue(percent)
+    local pattern = AL["MAP_ROUTES_CALCULATING"]
+    bar.text:SetText(string.format(pattern, percent))
+    if (not bar:IsShown()) then
+        bar:Show()
+    end
+end
+
+local function HideProgressBar()
+    if (progressBar) then
+        progressBar:Hide()
+    end
+end
+
 local function SolveHeldKarpAsync(startPos, targets, onFinishedCallback)
     local n = #targets
     if (n == 0) then 
-        if onFinishedCallback then onFinishedCallback({}) end
+        if (onFinishedCallback) then 
+            onFinishedCallback({}) 
+        end
+
         return 
     end
     if (n == 1) then 
-        if onFinishedCallback then onFinishedCallback({ targets[1] }) end
+        if (onFinishedCallback) then 
+            onFinishedCallback({ targets[1] }) 
+        end
+
         return 
+    end
+
+    if (activeCalculationRoutine) then
+        activeCalculationRoutine:Reset()
+        activeCalculationRoutine = nil
     end
 
     local dist = {}
@@ -395,22 +480,30 @@ local function SolveHeldKarpAsync(startPos, targets, onFinishedCallback)
     local BATCH_SIZE = 512
     local totalSteps = math.ceil((numStates - 1) / BATCH_SIZE)
 
+    ShowProgressBar(0)
+
     local hkRoutine = RSRoutines.LoopIndexRoutineNew()
+    activeCalculationRoutine = hkRoutine
+
     hkRoutine:Init(
         totalSteps, 
         function(ctx, step)
+            if (activeCalculationRoutine ~= hkRoutine) then
+                return
+            end
+
             local startMask = ((step - 1) * BATCH_SIZE) + 1
             local endMask = math.min(step * BATCH_SIZE, numStates - 1)
 
             for mask = startMask, endMask do
                 for last = 1, n do
-                    if bit.band(mask, bit.lshift(1, last - 1)) ~= 0 and dp[mask][last] then
+                    if (bit.band(mask, bit.lshift(1, last - 1)) ~= 0 and dp[mask][last]) then
                         for nextNode = 1, n do
-                            if bit.band(mask, bit.lshift(1, nextNode - 1)) == 0 then
+                            if (bit.band(mask, bit.lshift(1, nextNode - 1)) == 0) then
                                 local nextMask = bit.bor(mask, bit.lshift(1, nextNode - 1))
                                 local newCost = dp[mask][last] + dist[last][nextNode]
 
-                                if not dp[nextMask][nextNode] or newCost < dp[nextMask][nextNode] then
+                                if (not dp[nextMask][nextNode] or newCost < dp[nextMask][nextNode]) then
                                     dp[nextMask][nextNode] = newCost
                                     parent[nextMask][nextNode] = last
                                 end
@@ -419,8 +512,17 @@ local function SolveHeldKarpAsync(startPos, targets, onFinishedCallback)
                     end
                 end
             end
+
+            local pct = math.min(99, math.floor((step / totalSteps) * 100))
+            ShowProgressBar(pct)
         end,
         function(ctx)
+            if (activeCalculationRoutine ~= hkRoutine) then
+                return
+            end
+            activeCalculationRoutine = nil
+            HideProgressBar()
+
             local fullMask = numStates - 1
             local bestLastNode = 1
             local minTotalCost = math.huge
@@ -435,7 +537,7 @@ local function SolveHeldKarpAsync(startPos, targets, onFinishedCallback)
             local revRoute = {}
             local currMask, currNode = fullMask, bestLastNode
 
-            while currNode ~= 0 do
+            while (currNode ~= 0) do
                 table.insert(revRoute, targets[currNode])
                 local prevNode = parent[currMask][currNode]
                 currMask = bit.bxor(currMask, bit.lshift(1, currNode - 1))
@@ -447,7 +549,7 @@ local function SolveHeldKarpAsync(startPos, targets, onFinishedCallback)
                 table.insert(route, revRoute[i])
             end
 
-            if onFinishedCallback then
+            if (onFinishedCallback) then
                 onFinishedCallback(route, minTotalCost)
             end
         end
@@ -793,6 +895,12 @@ function RSRoute.ToggleOrRestartRoute()
 end
 
 function RSRoute.CancelRoute()
+    if (activeCalculationRoutine) then
+        activeCalculationRoutine:Reset()
+        activeCalculationRoutine = nil
+    end
+    HideProgressBar()
+
     activeRoute.nodes = {}
     activeRoute.isCompleted = true
     if (trackerTicker) then
@@ -806,6 +914,10 @@ end
 
 function RSRoute.HasActiveRoute()
     return activeRoute.nodes ~= nil and #activeRoute.nodes > 0
+end
+
+function RSRoute.GetActiveRouteMapID()
+    return activeRoute.mapID
 end
 
 function RSRoute.IsCompleted()

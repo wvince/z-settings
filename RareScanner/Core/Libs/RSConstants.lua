@@ -30,7 +30,7 @@ RSConstants.LOOT_ITEM_ID = nil
 ---============================================================================
 
 RSConstants.CURRENT_DB_VERSION = 7
-RSConstants.CURRENT_LOOT_DB_VERSION = 3
+RSConstants.CURRENT_LOOT_DB_VERSION = 4
 
 ---============================================================================
 -- Current maps (newer)
@@ -498,6 +498,7 @@ RSConstants.CONTAINERS_WITH_EVENT_VIGNETTE = { }
 RSConstants.EVENTS_WITH_NPC_VIGNETTE = { }
 RSConstants.NPCS_WITH_MULTIPLE_SPAWNS = { }
 RSConstants.IGNORED_TRACKING_SYSTEMS_NOT_VIGNETTE = { }
+RSConstants.CONTAINERS_BATTERED_CHESTS = {106318,106319,2843,2849}
 
 ---============================================================================
 -- Custom NPCs

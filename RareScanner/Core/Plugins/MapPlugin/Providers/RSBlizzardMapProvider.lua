@@ -229,7 +229,7 @@ local function OnPinMouseDown(pin, button)
 					-- If same guide showing then disable it
 					if (guideEntityID ~= pin.POI.entityID) then
 						RSGeneralDB.SetGuideActive(pin.POI.entityID)
-						RareScannerDataProviderMixin:ShowGuideLayer(pin.POI.entityID, pin.POI.mapID)
+						RareScannerDataProviderMixin:ShowGuideLayer(pin.POI.entityID, pin.POI.mapID, pin)
 					else
 						RSGeneralDB.RemoveGuideActive()
 					end
@@ -237,7 +237,7 @@ local function OnPinMouseDown(pin, button)
 			-- Otherwise show it
 			else
 				RSGeneralDB.SetGuideActive(pin.POI.entityID)
-				RareScannerDataProviderMixin:ShowGuideLayer(pin.POI.entityID, pin.POI.mapID)
+				RareScannerDataProviderMixin:ShowGuideLayer(pin.POI.entityID, pin.POI.mapID, pin)
 			end
 	        
 	        -- Refresca minimapa de forma segura

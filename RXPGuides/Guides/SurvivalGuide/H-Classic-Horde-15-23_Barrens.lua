@@ -1,6 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #hardcore
@@ -12,8 +11,6 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Survival Guide (H)
 #subgroup RXP Survival Guide 1-20
 #next 19-23 Stonetalon/Barrens/Ashenvale
-
-
 step << !Tauren !Hunter !Shaman
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gar'Thok|r
     .turnin 837 >>Turn in Encroachment
@@ -1604,11 +1601,11 @@ step
 step
     #sticky
     #completewith Slugs
-    >>Loot |cRXP_PICK_Tool Buckets|r from the ground around The Sludge Ven
+    >>Loot |cRXP_PICK_Tool Buckets|r from the ground around The Sludge Fen
     .complete 3922,1 --Nugget Slugs (15)
 step
     .goto The Barrens,56.52,7.45
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to|r |cRXP_FRIENDLY_Wizzlecrank's Shredder|r in The Sludge Ven
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to|r |cRXP_FRIENDLY_Wizzlecrank's Shredder|r in The Sludge Fen
     .accept 858 >>Accept Ignition
     .target Wizzlecrank's Shredder
 step
@@ -1656,7 +1653,7 @@ step
 	.goto The Barrens,56.72,6.92,25,0
 	.goto The Barrens,56.17,6.80,25,0
 	.goto The Barrens,55.69,6.94,25,0
-    >>Loot |cRXP_PICK_Tool Buckets|r from the ground around The Sludge Ven
+    >>Loot |cRXP_PICK_Tool Buckets|r from the ground around The Sludge Fen
     .complete 3922,1 --Nugget Slugs (15)
 step
 	#completewith NuggetSlugsTurnIn
@@ -2106,9 +2103,7 @@ step
     .accept 6548 >> Accept Avenge My Village
     .target +Makaba Flathoof
     .goto The Barrens,35.19,27.79
-
 ]])
-
 RXPGuides.RegisterGuide([[
 #hardcore
 #classic
@@ -2119,7 +2114,6 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Survival Guide (H)
 #subgroup RXP Survival Guide 1-20
 #next 23-25 Hillsbrad
-
 step
     #optional
     #completewith next
@@ -3118,7 +3112,7 @@ step << !Shaman
     .subzoneskip 380,1
 step
     .goto The Barrens,44.55,59.27
-    >>Kill |cRXP_ENEMY_Bristleback Quilboars|r. Loot them for a |T134128:0|t[|cRXP_LOOT_Blood Shard|r
+    >>Kill |cRXP_ENEMY_Bristleback Quilboars|r. Loot them for a |T134128:0|t[|cRXP_LOOT_Blood Shard|r]
     .collect 5075,1,5052,1 --Blood Shard (1)
     .mob Bristleback Water Seeker
     .mob Bristleback Thornweaver
@@ -4852,7 +4846,7 @@ step << Rogue/Druid
     .zoneskip The Barrens
 step << Rogue/Druid
     #completewith MissionProbable
-    .goto The Barrens,57.63,7.48,120 >> Travel toward the Sludge Ven
+    .goto The Barrens,57.63,7.48,120 >> Travel toward The Sludge Fen
 step << Druid
     .goto The Barrens,56.67,8.32
     >>Loot the |cRXP_PICK_Strange Lockbox|r in the water for the |T133443:0|t[Half Pendant of Aquatic Agility]
@@ -5081,6 +5075,4 @@ step
     .zone Tirisfal Glades >>Take the Zeppelin to Tirisfal Glades
     .zoneskip Tirisfal Glades
     .zoneskip Undercity
-
 ]])
-

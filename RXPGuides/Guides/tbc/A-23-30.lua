@@ -9,7 +9,6 @@ RXPGuides.RegisterGuide([[
 #name 23-24 Wetlands
 #subgroup RestedXP Alliance 20-32
 #next 24-27 Redridge/Duskwood
-
 step
 .dungeon SFK
     #completewith FinalAccept
@@ -759,7 +758,6 @@ step << skip
 	.goto Ironforge,76.4,51.2,50 >> Hop ontop of the gryphon's head then logout and back in to logout skip to the tram.
     .zone Stormwind City >>Take the tram to Stormwind
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -769,7 +767,6 @@ RXPGuides.RegisterGuide([[
 #name 24-27 Redridge/Duskwood
 #subgroup RestedXP Alliance 20-32
 #next 27-30 Wetlands/Hillsbrad;28-30 Duskwood
-
 step
     .goto Stormwind City,55.21,7.04
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Billibub Cogspinner|r
@@ -1632,7 +1629,6 @@ step << Rogue
     .home >> Set your hearthstone to Darkshire
     .target Innkeeper Trelayne
     --xx nosubzone. check on ptr
-
 --
 step << Rogue skip
     .goto Stormwind City,75.9,59.9
@@ -1671,7 +1667,6 @@ step << Rogue skip
     .goto Stormwind City,78.0,58.9
     .turnin 2609 >> Turn in The Touch of Zanzil
 --
-
 step
     .goto Duskwood,73.83,44.05
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Chef Grual|r
@@ -2680,8 +2675,6 @@ step
     .turnin 396 >> Turn in An Audience with the King
     .target Lady Katrana Prestor
     .isQuestTurnedIn 391
-
-
 --xx
 step << skip
 --Rogue
@@ -2699,8 +2692,6 @@ step << skip
     .train 54 >> Train Maces << Rogue/Shaman
     .train 44 >> Train Axes << Shaman
 --xx
-
-
 step
 .dungeon Stockades
     #completewith next
@@ -2974,7 +2965,6 @@ step
     >>Click the |cRXP_PICK_The Sparklematic 5200|r one more time
     .accept 2947 >> Accept Return of the Ring
     .isQuestTurnedIn 2945
-
 -- Turn ins:
 step
 .dungeon Gnomer
@@ -3077,7 +3067,6 @@ step
     .target Gryth Thurden
     .zoneskip Wetlands
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -3088,7 +3077,6 @@ RXPGuides.RegisterGuide([[
 #name 27-30 Wetlands/Hillsbrad
 #subgroup RestedXP Alliance 20-32
 #next 30-32 Duskwood/STV
-
 step
     .isQuestComplete 279
     .goto Wetlands,8.359,58.526
@@ -3857,7 +3845,6 @@ step
     .accept 689 >> Accept A King's Tribute
     .target Grand Mason Marblesten
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -3868,7 +3855,6 @@ RXPGuides.RegisterGuide([[
 #name 30-32 Duskwood/STV
 #subgroup RestedXP Alliance 20-32
 #next 32-33 Shimmering Flats
-
 step
     .goto Ironforge,67.844,42.499
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gearcutter Cogspinner|r
@@ -5278,7 +5264,6 @@ step
     .zoneskip Thousand Needles
     .zoneskip The Barrens
 ]])
-
 --1.5x guides:
 RXPGuides.RegisterGuide([[
 #tbc
@@ -5290,7 +5275,6 @@ RXPGuides.RegisterGuide([[
 #subgroup RestedXP Alliance 20-32
 #next 30-32 Hillsbrad
 #xprate >1.49
-
 step << !Mage
     #optional
     .goto Ironforge,76.61,51.28,0
@@ -5958,7 +5942,6 @@ step << Mage
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Milstaff Stormeye|r
     .trainer >> Train |T135757:0|t[Teleport: Ironforge]
     .target Milstaff Stormeye
-
 step << skip
 --Hunter/Warrior/Paladin/Shaman/Rogue
 	.goto Ironforge,61.34,89.25
@@ -5968,7 +5951,6 @@ step << skip
     .train 198 >> Train Maces << Rogue/Shaman
     .train 44 >> Train Axes << Warrior wotlk/Shaman/Rogue wotlk
     .zoneskip Wetlands
-
 step << Dwarf Paladin
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Brandur Ironhammer|r
     .target Brandur Ironhammer
@@ -6120,7 +6102,6 @@ step
     .target Gryth Thurden
     .zoneskip Wetlands
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -6131,7 +6112,6 @@ RXPGuides.RegisterGuide([[
 #name 30-32 Hillsbrad
 #next 32-33 Shimmering Flats
 #xprate >1.49
-
 step
     #optional
     .goto Wetlands,10.89,59.66
@@ -6499,14 +6479,6 @@ step
     .mob Crimson Ooze
     .mob Monstrous Ooze
     .mob Black Ooze
-
-
-
-
-
-
-
-
 step
     .goto Wetlands,49.905,18.240
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Rhag Garmason|r

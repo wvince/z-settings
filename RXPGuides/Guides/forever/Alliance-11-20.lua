@@ -1,6 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Horde" then return end
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
@@ -12,10 +11,8 @@ RXPGuides.RegisterGuide([[
 #subgroup Speedrun Guide 1-20
 --#groupid RXP-SRGCE-A1
 #next 14-16 Darkshore
-#defaultfor !NightElf !Hunter
-
+#defaultfor !NightElf !Hunter/!Dwarf !Hunter/!Human !Hunter/!Skyborne !Hunter
 --Going to Darkshore if already 15
-
 step
     #optional
     .maxlevel 14,endOfTheGuide
@@ -25,10 +22,8 @@ step
     .home >> Set your Hearthstone to Stormwind City
     .target Innkeeper Allison
     .bindlocation 16509
-
 step
     #label NEWestfallStart --hidden step for #include
-
 step
     #ah
     .goto 1453/0,660.28,-8814.55
@@ -55,7 +50,6 @@ step << Human
     .turnin 6261 >> Turn in Dungar Longdrink
     .accept 6285 >> Accept Return to Lewis
     .target Dungar Longdrink
-
 step << !Skyborne
     .goto 1453/0,490.03,-8835.82
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Dungar Longdrink|r
@@ -473,7 +467,7 @@ step
     .target Alba Fairmoon::253092
     .turnin 92742 >>Turn in Testing the Wells
     .turnin 92744 >>Turn in Murloc Gills
-step
+step << !Skyborne
     .hs >> Hearth to Stormwind
     .bindlocation 16509,1
     .cooldown item,6948,>2,1
@@ -487,11 +481,9 @@ step
     .target Thor
     .zoneskip Stormwind City
     .zoneskip Darkshore
-
 step
     #optional
     #label endOfTheGuide
-
 step << Human Rogue
     #ah
     .goto 1453/0,609.63,-8787.71
@@ -508,6 +500,68 @@ step << Human Rogue
     .money <0.3815
     .itemStat 17,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<8.7
     .target Marda Weller
+step << Skyborne
+    #optional
+    .goto 1453/0,673.58,-8867.76
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Innkeeper Allison|r
+    .home >> Set your Hearthstone to Stormwind City
+    .target Innkeeper Allison
+    .bindlocation 16509
+step << Skyborne
+    #completewith next
+    .goto 1453/0,562.300,-8385.300,20,0
+    .goto 1453/0,522.000,-8352.101
+    .subzone 2257 >>Enter the Deeprun Tram
+    .zoneskip Ironforge
+step << Skyborne
+    #optional
+    #label TramEnd
+    >>|cRXP_WARN_Take the Deeprun Tram to the Ironforge side|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Monty|r on the middle platform on the Ironforge side of the Deeprun Tram
+    .accept 6661 >> Accept Deeprun Rat Roundup
+    .target Monty
+step << Skyborne
+    >>|cRXP_WARN_Use the|r |T133942:0|t[Rat Catcher's Flute] |cRXP_WARN_on |cRXP_ENEMY_Deeprun Rats|r inside the Deeprun Tram|r
+    .complete 6661,1 --Rats Captured (x5)
+    .use 17117
+    .mob Deeprun Rat
+step << Skyborne
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Monty|r inside the Deeprun Tram
+    .turnin 6661 >> Turn in Deeprun Rat Roundup
+    .target Monty
+step << Skyborne
+    .goto Ironforge,55.491,47.751
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gryth Thurden|r
+    .fp Ironforge >> Get the Ironforge flight path
+    .target Gryth Thurden
+step << Skyborne Warrior
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Bixi Wobblebonk|r and |cRXP_FRIENDLY_Buliwyf Stonehand|r
+    >>Train Thrown and 2h Maces if you didn't earlier
+    .train 2567 >> Train Thrown
+    .target +Bixi Wobblebonk
+    .goto 1455/0,-1205.65,-5042.12
+    .train 199 >> Train 2h Maces
+    .goto 1455/0,-1197.27,-5041.49
+    .target +Buliwyf Stonehand
+step << Skyborne Warrior
+    .goto 1455,62.378,88.671
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Brenwyn Wintersteel|r downstairs
+    >>|cRXP_BUY_Buy the|r |T135425:0|t[Keen Throwing Knives] |cRXP_BUY_from her|r
+    .collect 3107,1 --Collect Keen Throwing Knife (200)
+    .target Brenwyn Wintersteel
+    .itemStat 18,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<6.3
+step << Skyborne Warrior
+    #optional
+    +|cRXP_WARN_Equip the|r |T135425:0|t[Keen Throwing Knives]
+    .use 3107
+    .itemcount 3107,1
+    .itemStat 18,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<6.3
+step << Skyborne
+    .hs >> Hearth to Stormwind
+    .bindlocation 16509,1
+    .cooldown item,6948,>2,1
+    .zoneskip Stormwind City
+    .zoneskip Darkshore
 step << !NightElf
     .goto 1453/0,596.400,-8831.700
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thurman Mullby|r
@@ -746,7 +800,6 @@ step
     .goto 1453/0,1330.100,-8645.400
     .zone Darkshore >> Take the boat to Darkshore
 ]])
-
 RXPGuides.RegisterGuide([[
 #forever
 #version 1
@@ -755,16 +808,13 @@ RXPGuides.RegisterGuide([[
 #subgroup Speedrun Guide 1-20
 --#groupid RXP-SRGCE-A1
 #name 14-16 Darkshore
-#displayname 11-16 Darkshore/Westfall << NightElf
-#displayname 13-16 Darkshore << Dwarf Hunter/Human Hunter
-#displayname 15-16 Darkshore << !NightElf/!Dwarf/!Human Hunter
+#displayname 11-16 Darkshore/Loch Modan << NightElf
+#displayname 13-16 Darkshore << Dwarf Hunter/Human Hunter/Skyborne Hunter
+#displayname 15-16 Darkshore << !NightElf/!Dwarf/!Human/!Skyborne Hunter
 #next 16-19 Darkshore
-
-
 -- #displayname 11-16 Darkshore << NightElf/Dwarf Hunter !SoD
 -- #displayname 15-17 Darkshore << !NightElf !Dwarf/!Hunter !SoD
 -- #displayname 13-18 Darkshore << Dwarf Hunter/!NightElf sod
-
 step << NightElf
     #label WashedA
     .goto 1439,36.621,45.596
@@ -875,10 +925,7 @@ step << !NightElf
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Caylais Moonfeather|r
     .fp Auberdine >> Get the Auberdine flight path
     .target Caylais Moonfeather
-
-
-
-step << Dwarf Hunter/Human Hunter
+step << Dwarf Hunter/Human Hunter/Skyborne Hunter
     #optional
     #completewith RabidThistle
     #loop
@@ -1027,7 +1074,6 @@ step
     .turnin 3524 >> Turn in Washed Ashore
     .accept 4681 >> Accept Washed Ashore
     .target Gwennyth Bly'Leggonde
-
 step << Druid NightElf
     #optional
     #completewith Lunaclaw
@@ -1112,6 +1158,7 @@ step << Druid NightElf
     .target Sentinel Glynda Nal'Shea
     .isQuestTurnedIn 4811
 step << Druid NightElf
+    .isOnQuest 4812
     .goto 1439,37.767,44.001
     >>|cRXP_WARN_Use the|r |T134865:0|t[Empty Water Tube] |cRXP_WARN_at the Auberdine moonwell|r
     .complete 4812,1 --Moonwell Water Tube (1)
@@ -1274,10 +1321,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thundris Windweaver|r
     .turnin 4761 >> Turn in Thundris Windweaver
     .accept 4762 >> Accept The Cliffspring River
-
 ----Start of NE >1.49x catchup (everyone 1x) Early boat section----
-
-
 step
     #completewith MistVeil
     .goto 1439/1,620.35,6768.76,0
@@ -1364,11 +1408,7 @@ step
     .complete 1002,1 -- Moonstalker Fang (6)
     .mob Moonstalker Runt
     .isQuestTurnedIn 1001
-
-
 ----End of NE >1.49x catchup (everyone 1x) Early boat section----
-
-
  step
     #optional
     #completewith AsterionTravel
@@ -1563,10 +1603,7 @@ step
     >>Travel up to the |cRXP_PICK_Mysterious Red Crystal|r
     >>|cRXP_WARN_Be careful of the two group of 2 |cRXP_ENEMY_Raging Moonkins|r west of the |cRXP_PICK_Mysterious Red Crystal|r as the duos closest to each other are leashed together|r
     .complete 4811,1 --Locate the large, red crystal on Darkshore's eastern mountain range
-
 ----Start of Early Red Crystal turnin Section (NE below 14 for xp, Hunters/Druids for staff wep upgrade)/Druid bear q final if not done earlier----
-
-
 step << NightElf/Hunter/Warrior/Druid
     #optional
     #completewith Cascade
@@ -1744,11 +1781,8 @@ step << NightElf !Hunter/Druid/Warrior
     .isQuestComplete 982
 ----Start of forced Level 14 Druid Turnin/train----
 --Removed in wowF
-
 ----End of forced Level 14 Druid Turnin/train----
 ----End of Early Red Crystal turnin Section (NE for xp, Hunters/Druids for staff)/Druid bear q final if not done earlier----
-
-
 step << Druid
     #optional
     #completewith AmethStart
@@ -1757,10 +1791,7 @@ step << Druid
     .collect 5469,5,2178,1 -- Strider Meat (5)
     .mob Foreststrider Fledgling
     .subzoneskip 447
-
-
 ----Start of alternate section if early Red Crystal turnin----
-
 step << NightElf !Hunter/Druid/Warrior
     #optional
     #loop
@@ -1807,15 +1838,10 @@ step
     .target Sentinel Tysha Moonblade
     .isQuestTurnedIn 4811
     .xp >17,1
-
-
 step
     #label EndFirstMoonstalker
-
 ----End of alternate section if early Red Crystal turnin----
-
 ----Start of small south loop for ERA and SoD Warrior/Rogue/Priest----
-
 step
     #optional
     #completewith AmethStart
@@ -2174,10 +2200,7 @@ step
     .accept 97914 >>Accept Expanding Horizons << NightElf
     .target Thundris Windweaver
     .isQuestComplete 958
-
 ----End of small south loop for ERA and SoD Warrior/Rogue/Priest----
-
-
 ---Start of Night Elf Westfall section----
 step << NightElf
     #optional
@@ -2209,12 +2232,12 @@ step << NightElf
     .accept 95065 >>Accept Fishin' Time
     .turnin 95065 >>Turn in Fishin' Time
     .target Gilbert Gray
-step << NightElf
+step << NightElf Rogue/NightElf Warrior/NightElf Hunter
     .goto 1453/0,1194.500,-8332.101
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Manifest Clerk Philmor::268511|r
     .target Manifest Clerk Philmor::268511
     .accept 97220 >>Accept Philmor's Favor
-step << NightElf
+step << NightElf Rogue/NightElf Warrior/NightElf Hunter
     #completewith next
     .goto 1453/0,1194.200,-8360.900,10,0
     .goto 1453/0,1076.300,-8408.500,15,0
@@ -2223,33 +2246,24 @@ step << NightElf
     .goto 1453/0,960.100,-8501.800,15,0
     .goto 1453/0,981.200,-8581.800,15,0
     .goto 1453/0,875.500,-8680.900,10 >> Exit the Stormwind Harbor
-step << NightElf
-    .goto 1453/0,719.67,-8550.30
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Baros Alexston|r
-    .turnin 97914 >> Turn in Expanding Horizons
-    .accept 97926 >> Accept Making Do
-    .accept 399 >> Accept Humble Beginnings
-    .target Baros Alexston
+--@TODO add new coords for harbor exit cus no philmor's favor
 step << NightElf Druid
     .goto 1453/0,1347.6192,-8591.2168
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Theridran|r
     .trainer >>Train your class spells
 	.target Theridran
-step << NightElf Hunter
-    .goto 1453/0,552.78,-8415.71
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Einris Brightspear|r
-    .trainer >> Train your class spells
-    .target Einris Brightspear
-step << NightElf Hunter
-    .goto 1453/0,553.22,-8422.23
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Karrina Mekenda|r
-    .trainer >> Train your pet spells
-    .target Karrina Mekenda
 step << NightElf Priest
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Brother Joshua|r
     .goto 1453/0,862.89,-8519.61
     .trainer >> Train your class spells
     .target Brother Joshua
+step << NightElf
+    .goto 1453/0,719.67,-8550.30
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Baros Alexston|r
+    .turnin 97914 >> Turn in Expanding Horizons
+    .accept 97926 >> Accept Making Do
+--    .accept 399 >> Accept Humble Beginnings
+    .target Baros Alexston
 step << NightElf Rogue
     .goto 1453/0,377.47,-8752.39
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Osborne|r
@@ -2263,31 +2277,640 @@ step << NightElf Warrior
     .trainer >> Train your class spells
     .target Wu Shen
     .target Ilsa Corbin
-step << NightElf Rogue/NightElf Warrior
+step << NightElf Rogue/NightElf Warrior/NightElf Hunter
     .goto 1453/0,613.12,-8795.96
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Woo Ping|r
     .train 201 >> Train 1h Swords << Rogue
-    .train 202 >> Train 2h Swords << Warrior
+    .train 202 >> Train 2h Swords << Warrior/Hunter
     .target Woo Ping
-step << NightElf
+step << NightElf Rogue/NightElf Warrior/NightElf Hunter
     .goto 1453/0,568.700,-8848.700
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Elaine Trias::483|r
     .target Elaine Trias::483
     .turnin 97220 >>Turn in Philmor's Favor
     .accept 97222 >>Accept Gatehouse Goods
-step << NightElf
+step << NightElf Rogue/NightElf Warrior/NightElf Hunter
     .goto 1453/0,569.400,-8860.300
     >>Go |cRXP_WARN_UPSTAIRS|r and use the |T132762:0|t[|cRXP_LOOT_Shipment|r] in front of the |cRXP_PICK_Gatehouse Door|r
     .use 277198 --Gatehouse Shipment
     .complete 97222,1 --|1/1 Gatehouse Shipment delivered
-step << NightElf
+step << NightElf Rogue/NightElf Warrior/NightElf Hunter
     #label Gatehouse
     .goto 1453/0,566.900,-8847.800
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Elaine Trias::483|r
     .target Elaine Trias::483
     .turnin 97222 >>Turn in Gatehouse Goods
+step << NightElf Hunter
+    .goto 1453/0,552.78,-8415.71
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Einris Brightspear|r
+    .trainer >> Train your class spells
+    .target Einris Brightspear
+step << NightElf Hunter
+    .goto 1453/0,553.22,-8422.23
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Karrina Mekenda|r
+    .trainer >> Train your pet spells
+    .target Karrina Mekenda
 step << NightElf
-    #include 13-15 Westfall@NEWestfallStart-NEWestfallEnd
+    #label DeeprunEnter
+    #completewith next
+    .goto 1453/0,562.300,-8385.300,20,0
+    .goto 1453/0,522.000,-8352.101
+    .subzone 2257 >>Enter the Deeprun Tram
+    .zoneskip Ironforge
+    .zoneskip Loch Modan
+    .zoneskip Dun Morogh
+step << NightElf
+    .zone Ironforge >> Take the tram to Ironforge
+    .zoneskip Loch Modan
+    .zoneskip Dun Morogh
+step << NightElf
+    .goto Ironforge,55.491,47.751
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gryth Thurden|r
+    .fp Ironforge >> Get the Ironforge flight path
+    .target Gryth Thurden
+step << NightElf Warrior
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Bixi Wobblebonk|r and |cRXP_FRIENDLY_Buliwyf Stonehand|r
+    >>Train Thrown and 2h Maces if you didn't earlier
+    .train 2567 >> Train Thrown
+    .target +Bixi Wobblebonk
+    .goto 1455/0,-1205.65,-5042.12
+    .train 199 >> Train 2h Maces
+    .goto 1455/0,-1197.27,-5041.49
+    .target +Buliwyf Stonehand
+step << NightElf Warrior
+    .goto 1455,62.378,88.671
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Brenwyn Wintersteel|r downstairs
+    >>|cRXP_BUY_Buy the|r |T135425:0|t[Keen Throwing Knives] |cRXP_BUY_from her|r
+    .collect 3107,1 --Collect Keen Throwing Knife (200)
+    .target Brenwyn Wintersteel
+    .itemStat 18,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<6.3
+step << NightElf Warrior
+    #optional
+    #completewith DRT
+    +|cRXP_WARN_Equip the|r |T135425:0|t[Keen Throwing Knives]
+    .use 3107
+    .itemcount 3107,1
+    .itemStat 18,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<6.3
+step << NightElf
+    #completewith next
+    .zone Dun Morogh >> Travel to Dun Morogh
+step << NightElf
+    .goto Dun Morogh, 59.9, 49.5, 30, 0
+    .goto Dun Morogh, 61.2, 47.2, 15, 0
+    .goto Dun Morogh, 62.1, 47.3, 20 >>Run up the ramp to |cRXP_ENEMY_Vagash|r
+step << NightElf
+    #completewith next
+    +Kite |cRXP_ENEMY_Vagash|r to |cRXP_FRIENDLY_Rudra Amberstill|r
+    >>|cRXP_WARN_Try to avoid getting close to him or he will cast|r |T135848:16|t[Glacial Roar] |cRXP_WARN_which stuns you for 3 seconds|r
+    .mob Vagash
+step << NightElf
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:16|tTalk to |cRXP_FRIENDLY_Rudra Amberstill|r
+    .goto Dun Morogh, 63.1, 49.8
+    .target Rudra Amberstill
+    .accept 314 >>Accept Protecting the Herd
+step << NightElf
+    >>Kite |cRXP_ENEMY_Vagash|r into the |cRXP_FRIENDLY_Dun Morogh Mountaineer|r
+    >>|cRXP_WARN_Make sure you deal at least 50% damage to him|r
+    .goto Dun Morogh, 62.8, 54.6, 10, 0
+    .mob Vagash
+    .target Dun Morogh Mountaineer
+    .complete 314, 1
+step << NightElf
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:16|tTalk to |cRXP_FRIENDLY_Rudra Amberstill|r
+    .goto Dun Morogh, 63.1, 49.8
+    .target Rudra Amberstill
+    .turnin 314 >>Turn in Protecting the Herd
+step << NightElf
+    #optional
+    #label LochEnter
+    .goto 1432,16.494,58.424,20,0
+    .goto 1432,19.594,62.735,20,0
+    .goto 1432,20.749,64.326,20,0
+    .goto 1432,21.106,65.007,20,0
+    .goto 1432,21.388,66.357,20,0
+    .goto 1432,21.498,67.840
+    .subzone 924 >> Travel through the South Gate Pass into Loch Modan
+    .zoneskip Loch Modan
+step << NightElf
+    .goto 1432/0,-2602.54,-5832.73
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mountaineer Cobbleflint|r
+    .accept 224 >> Accept In Defense of the King's Lands
+    .target Mountaineer Cobbleflint
+step << NightElf
+    #optional
+    #completewith next
+    .goto 1432/0,-2635.61,-5879.14,12,0
+    .goto 1432/0,-2645.27,-5874.91,12,0
+    .goto 1432/0,-2631.48,-5847.50,12 >> Enter the Bunker. Go to the top floor
+step << NightElf
+    .goto 1432/0,-2634.59,-5842.81
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Captain Rugelfuss|r inside the bunker
+    .accept 267 >> Accept The Trogg Threat
+    .target Captain Rugelfuss
+step << NightElf
+    .goto 1432/0,-2729.40,-5534.96
+    >>Kill |cRXP_ENEMY_Stonesplinter Troggs|r and |cRXP_ENEMY_Stonesplinter Scouts|r. Loot them for their |cRXP_LOOT_Trogg Stone Teeth|r
+    >>|cRXP_WARN_Be careful as |cRXP_ENEMY_Stonesplinter Scouts|r cast|r |T132222:0|t[Shoot] |cRXP_WARN_(Ranged Cast: Deals 14-20 damage)|r
+    >>|cRXP_WARN_This is a hyperspawn area. You should not need to move from here|r
+    .complete 224,1 --Kill Stonesplinter Trogg (x10)
+    .mob +Stonesplinter Trogg
+    .complete 224,2 --Kill Stonesplinter Scout (x10)
+    .mob +Stonesplinter Scout
+    .complete 267,1 --Collect Trogg Stone Tooth (x8)
+    .mob +Stonesplinter Trogg
+    .mob +Stonesplinter Scout
+    .isOnQuest 224
+    .isOnQuest 267
+step << NightElf
+    #optional
+    #completewith next
+    #label Thelsamar
+    .subzone 144 >> Travel to Thelsamar
+step << NightElf
+    #completewith next
+    #optional
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mountaineer Kadrell|r
+    >>|cRXP_FRIENDLY_Mountaineer Kadrell|r |cRXP_WARN_patrols the road through Thelsamar|r
+    .accept 416 >> Accept Rat Catching
+    .accept 1339 >> Accept Mountaineer Stormpike's Task
+    .target Mountaineer Kadrel
+step << NightElf
+    #label ThelsamarFirst
+    .goto 1432/0,-2954.42,-5394.10
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Vidra Hearthstove|r
+    .accept 418 >> Accept Thelsamar Blood Sausages
+    .target Vidra Hearthstove
+step << NightElf
+    #optional
+    .goto 1432/0,-2954.42,-5394.10
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Vidra Hearthstove|r
+    .turnin 418 >> Turn in Thelsamar Blood Sausages
+    .target Vidra Hearthstove
+    .isQuestComplete 418
+step << NightElf
+    #optional
+    #completewith StormpikeO
+    .abandon 1338 >> Abandon Stormpike's Order. This is to unlock Mountaineer Stormpike's Task which will give a free 550xp turn in
+step << NightElf
+    #label StormpikeO
+    .line Loch Modan,36.72,41.97,37.24,43.19,37.33,45.63,36.77,46.20,35.19,46.88,32.67,49.71,35.19,46.88,36.77,46.20,37.33,45.63,37.24,43.19,36.72,41.97
+    .goto 1432/0,-3006.61,-5259.57,15,0
+    .goto 1432/0,-3020.95,-5282.02,15,0
+    .goto 1432/0,-3023.44,-5326.90,15,0
+    .goto 1432/0,-3007.99,-5337.390,15,0
+    .goto 1432/0,-2964.41,-5349.90,15,0
+    .goto 1432/0,-2894.90,-5401.96,20,0
+    .goto 1432/0,-3007.99,-5337.390
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mountaineer Kadrell|r
+    >>|cRXP_FRIENDLY_Mountaineer Kadrell|r |cRXP_WARN_patrols the road through Thelsamar|r
+    .accept 416 >> Accept Rat Catching
+    .accept 1339 >> Accept Mountaineer Stormpike's Task
+    .target Mountaineer Kadrell
+step << NightElf
+    .goto 1432/0,-2929.87,-5424.84
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thorgrum Borrelson|r
+    .fp Thelsamar >> Get the Thelsamar flight path
+    .target Thorgrum Borrelson
+step << NightElf
+    #optional
+    #completewith Snowbound
+    >>Kill |cRXP_ENEMY_Elder Black Bears|r. Loot them for their |cRXP_LOOT_Bear Meat|r
+    >>Kill |cRXP_ENEMY_Mountain Boars|r. Loot them for their |cRXP_LOOT_Boar Intestines|r
+    >>Kill |cRXP_ENEMY_Forest Lurkers|r. Loot them for their |cRXP_LOOT_Spider Ichor|r
+    .collect 3172,3,418,1 --Collect Boar Intestines (x3)
+    .mob +Mountain Boar
+    .collect 3173,3,418,1 --Collect Bear Meat (x3)
+    .mob +Elder Black Bear
+    .collect 3174,3,418,1 --Collect Spider Ichor (x3)
+    .mob +Forest Lurker
+    >>|cRXP_WARN_Save any|r |T133970:0|t|cRXP_LOOT_[Chunks of Boar Meat]|r |cRXP_WARN_to use for leveling |T133971:0|t[Cooking] |cRXP_WARN_later|r
+    >>|cRXP_WARN_Don't go out of your way to complete this right now. You'll come back to Loch Modan soon|r
+    .isOnQuest 418
+step << NightElf
+    #optional
+    #completewith next
+    .goto 1432/0,-2677.26,-5778.34,10,0
+    .goto 1432/0,-2648.30,-5876.75,15 >> Run up the dirt path then drop down into the bunker
+step << NightElf
+    .goto 1432/0,-2634.59,-5842.81
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Captain Rugelfuss|r inside the bunker
+    .turnin 267 >> Turn in The Trogg Threat
+    .target Captain Rugelfuss
+    .isQuestComplete 267
+step << NightElf
+    .goto 1432/0,-2602.54,-5832.73
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mountaineer Cobbleflint|r
+    .turnin 224 >> Turn in In Defense of the King's Lands
+    .target Mountaineer Cobbleflint
+    .isQuestComplete 224
+step << NightElf
+    #optional
+    #completewith Algaz
+    >>Kill |cRXP_ENEMY_Elder Black Bears|r. Loot them for their |cRXP_LOOT_Bear Meat|r
+    >>Kill |cRXP_ENEMY_Mountain Boars|r. Loot them for their |cRXP_LOOT_Boar Intestines|r
+    >>Kill |cRXP_ENEMY_Forest Lurkers|r. Loot them for their |cRXP_LOOT_Spider Ichor|r
+    .collect 3172,3,418,1 --Collect Boar Intestines (x3)
+    .mob +Mountain Boar
+    .collect 3173,3,418,1 --Collect Bear Meat (x3)
+    .mob +Elder Black Bear
+    .collect 3174,3,418,1 --Collect Spider Ichor (x3)
+    .mob +Forest Lurker
+    >>|cRXP_WARN_Save any|r |T133970:0|t|cRXP_LOOT_[Chunks of Boar Meat]|r |cRXP_WARN_to use for leveling |T133971:0|t[Cooking] |cRXP_WARN_later|r
+    >>|cRXP_WARN_Don't go out of your way to complete this right now. You'll come back to Loch Modan soon|r
+    .isOnQuest 418
+    .subzoneskip 925 --Algaz Station
+step << NightElf
+    #optional
+    #label Algaz
+    #completewith Stormpike1
+    .goto 1432,23.490,18.008
+    .subzone 925 >>Travel to Algaz Station
+step << NightElf
+    #optional
+    #requires Algaz
+    #completewith Stormpike1
+    .goto 1432,23.490,18.008,15,0
+    .goto 1432,24.279,17.959,12 >> Enter the Bunker. Go to the top floor
+step << NightElf
+    #label Stormpike1
+    .goto Loch Modan,24.77,18.40
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mountaineer Stormpike|r inside the bunker
+    .turnin 1339 >> Turn in Mountaineer Stormpike's Task
+    .accept 307 >> Accept Filthy Paws
+    .target Mountaineer Stormpike
+step << NightElf
+    #completewith Gear
+    #optional
+    #loop
+    .goto 1432/0,-2684.71,-5042.87,0
+    .goto 1432/0,-2712.57,-5286.61,0
+    .goto 1432/0,-3033.92,-4797.29,0
+    .waypoint 1432/0,-3033.92,-4797.29,50,0
+    .waypoint 1432/0,-2972.41,-4796.92,50,0
+    .waypoint 1432/0,-2684.71,-5042.87,50,0
+    .waypoint 1432/0,-2712.57,-5286.61,50,0
+    >>Kill |cRXP_ENEMY_Tunnel Rats|r. Loot them for their |cRXP_LOOT_Ears|r
+    .complete 416,1 --Collect Tunnel Rat Ear (x12)
+    .mob +Tunnel Rat Scout
+    .mob +Tunnel Rat Vermin
+    .mob +Tunnel Rat Forager
+    .mob +Tunnel Rat Geomancer
+    .mob +Tunnel Rat Digger
+    .mob +Tunnel Rat Surveyor
+step << NightElf
+    #optional
+    #label SilverMine
+    #completewith next
+    .goto 1432/0,-2972.96,-4835.187,20 >> Enter the Silver Stream Mine
+step << NightElf
+    .goto 1432/0,-2984.82,-4902.33
+    >>Open the |cRXP_PICK_Miners' League Crates|r inside the mine. Loot them for the |cRXP_LOOT_Miners' Gear|r
+    .complete 307,1 --Miners' Gear (4)
+step << NightElf Warrior
+    #ssf
+    #label Gear
+    .goto 1432/0,-3176.16,-4669.34
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Nillen Andemar|r
+    >>|cRXP_BUY_Buy the|r |T133476:0|t[Heavy Spiked Mace] |cRXP_BUY_OR the|r |T133053:0|t[Ironwood Maul] |cRXP_BUY_from him (if they're up)|r
+    >>|cRXP_WARN_If you can't afford this, then grind money from the nearby |cRXP_ENEMY_Tunnel Rats|r until you have enough|r
+    >>|cRXP_WARN_Do this quickly as another player may purchase it before you do|r
+    >>|cRXP_WARN_If you don't wish to do this, skip this step|r
+    .collect 4778,1,307,1 --Heavy Spiked Mace (1)
+    .collect 4777,1,307,1 --Ironwood Maul (1)
+    .target Nillen Andemar
+    .itemcount 4778,<1 --Heavy Spiked Mace (<1)
+    .itemcount 4777,<1 --Ironwood Maul (<1)
+    .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<11.8
+step << NightElf Warrior
+    #ah
+    #label Gear
+    .goto 1432/0,-3176.16,-4669.34
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Nillen Andemar|r
+    >>|cRXP_BUY_Buy the|r |T133476:0|t[Heavy Spiked Mace] |cRXP_BUY_OR the|r |T133053:0|t[Ironwood Maul] |cRXP_BUY_from him (if they're up)|r
+    >>|cRXP_WARN_If you can't afford this, then grind money from the nearby |cRXP_ENEMY_Tunnel Rats|r until you have enough|r
+    >>|cRXP_WARN_Do this quickly as another player may purchase it before you do|r
+    >>|cRXP_WARN_If you don't wish to do this or would rather try to buy a cheaper/better weapon from the AH soon instead, skip this step|r
+    .collect 4778,1,307,1 --Heavy Spiked Mace (1)
+    .collect 4777,1,307,1 --Ironwood Maul (1)
+    .target Nillen Andemar
+    .itemcount 4778,<1 --Heavy Spiked Mace (<1)
+    .itemcount 4777,<1 --Ironwood Maul (1)
+    .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<11.8
+step << NightElf Warrior
+    #optional
+    #completewith PawsDelivery
+    +|cRXP_WARN_Equip the|r |T133476:0|t[Heavy Spiked Mace]
+    .use 4778
+    .itemcount 4778,1
+    .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<12.5
+    .xp <14,1
+step << NightElf Warrior
+    #optional
+    #completewith PawsDelivery
+    +|cRXP_WARN_Equip the|r |T133053:0|t[Ironwood Maul]
+    .use 4777
+    .itemcount 4777,1
+    .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<11.7
+    .xp <13,1
+step
+    #label Gear
+step << NightElf
+    .goto 1432/0,-2684.71,-5042.87,0
+    .goto 1432/0,-2712.57,-5286.61,0
+    .goto 1432/0,-3033.92,-4797.29,0
+    .goto 1432/0,-3033.92,-4797.29,50,0
+    .goto 1432/0,-2972.41,-4796.92,50,0
+    .goto 1432/0,-2684.71,-5042.87,50,0
+    .goto 1432/0,-2712.57,-5286.61,50,0
+    .goto 1432/0,-3033.92,-4797.29,50,0
+    .goto 1432/0,-2972.41,-4796.92
+    >>Kill |cRXP_ENEMY_Tunnel Rats|r. Loot them for their |cRXP_LOOT_Ears|r
+    .complete 416,1 --Collect Tunnel Rat Ear (x12)
+    .mob +Tunnel Rat Scout
+    .mob +Tunnel Rat Vermin
+    .mob +Tunnel Rat Forager
+    .mob +Tunnel Rat Geomancer
+    .mob +Tunnel Rat Digger
+    .mob +Tunnel Rat Surveyor
+step << NightElf
+    #optional
+    #completewith PawsDelivery
+    >>Kill |cRXP_ENEMY_Elder Black Bears|r. Loot them for their |cRXP_LOOT_Bear Meat|r
+    >>Kill |cRXP_ENEMY_Mountain Boars|r. Loot them for their |cRXP_LOOT_Boar Intestines|r
+    >>Kill |cRXP_ENEMY_Forest Lurkers|r. Loot them for their |cRXP_LOOT_Ichor|r
+    .collect 3172,3,418,1 --Collect Boar Intestines (x3)
+    .mob +Mountain Boar
+    .collect 3173,3,418,1 --Collect Bear Meat (x3)
+    .mob +Elder Black Bear
+    .collect 3174,3,418,1 --Collect Spider Ichor (x3)
+    .mob +Forest Lurker
+    .subzoneskip 925 --Algaz Station
+step << NightElf
+    #optional
+    #completewith next
+    .goto 1432,23.490,18.008,15,0
+    .goto 1432,24.279,17.959,15 >> Enter the Bunker
+step << NightElf
+    #optional
+    #completewith next
+    .goto 1432/0,-2659.45,-4822.45
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gothor Brumn|r
+    .vendor 1362 >>|cRXP_WARN_Vendor and repair if needed|r
+    .target Gothor Brumn
+step << NightElf
+    #label PawsDelivery
+    .goto 1432/0,-2676.99,-4825.980
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mountaineer Stormpike|r
+    .turnin 307 >> Turn in Filthy Paws
+    .target Mountaineer Stormpike
+step << NightElf
+    >>Kill |cRXP_ENEMY_Elder Black Bears|r. Loot them for their |cRXP_LOOT_Bear Meat|r
+    >>Kill |cRXP_ENEMY_Mountain Boars|r. Loot them for their |cRXP_LOOT_Boar Intestines|r
+    >>Kill |cRXP_ENEMY_Forest Lurkers|r. Loot them for their |cRXP_LOOT_Ichor|r
+    .collect 3173,3,418,1 --Bear Meat (3)
+    .mob +Elder Black Bear
+    .goto 1432/0,-2735.74,-4684.34,90,0
+    .goto 1432/0,-2846.07,-4682.50,90,0
+    .goto 1432/0,-2782.63,-4770.80,90,0
+    .goto 1432/0,-2835.04,-4976.83,90,0
+    .goto 1432/0,-2915.03,-5044.89,90,0
+    .goto 1432/0,-3080.53,-5100.08,90,0
+    .goto 1432/0,-2735.74,-4684.34,90,0
+    .goto 1432/0,-2846.07,-4682.50,90,0
+    .goto 1432/0,-2782.63,-4770.80,90,0
+    .goto 1432/0,-2835.04,-4976.83,90,0
+    .goto 1432/0,-2915.03,-5044.89,90,0
+    .goto 1432/0,-3080.53,-5100.08,90,0
+    .goto 1432/0,-2735.74,-4684.34
+    .collect 3172,3,418,1 --Boar Intestines (3)
+    .mob +Mountain Boar
+    .goto 1432/0,-3041.92,-5129.51,90,0
+    .goto 1432/0,-3017.09,-5219.65,90,0
+    .goto 1432/0,-2815.73,-5147.91,90,0
+    .goto 1432/0,-2757.81,-4952.91,90,0
+    .goto 1432/0,-2782.63,-4903.25,90,0
+    .goto 1432/0,-3041.92,-5129.51,90,0
+    .goto 1432/0,-3017.09,-5219.65,90,0
+    .goto 1432/0,-2815.73,-5147.91,90,0
+    .goto 1432/0,-2757.81,-4952.91,90,0
+    .goto 1432/0,-2782.63,-4903.25,90,0
+    .goto 1432/0,-3041.92,-5129.51
+    .collect 3174,3,418,1 --Spider Ichor (3)
+    .mob +Forest Lurker
+    .goto 1432/0,-2873.66,-4789.19,90,0
+    .goto 1432/0,-2766.08,-4866.45,90,0
+    .goto 1432/0,-2926.07,-5232.53,90,0
+    .goto 1432/0,-2992.27,-5055.93,90,0
+    .goto 1432/0,-3069.5,-5078.01,90,0
+    .goto 1432/0,-2873.66,-4789.19,90,0
+    .goto 1432/0,-2766.08,-4866.45,90,0
+    .goto 1432/0,-2926.07,-5232.53,90,0
+    .goto 1432/0,-2992.27,-5055.93,90,0
+    .goto 1432/0,-3069.5,-5078.01,90,0
+    .goto 1432/0,-2873.66,-4789.19
+step << NightElf
+    #completewith FlintTinder
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mountaineer Kadrell|r
+    >>|cRXP_FRIENDLY_Mountaineer Kadrell|r |cRXP_WARN_patrols the road through Thelsamar|r
+    .target Mountaineer Kadrell
+    .turnin 416 >> Turn in Rat Catching
+step << NightElf
+    #optional
+    #completewith FlintTinder
+    .goto 1432,35.273,47.750,10,0
+    .goto 1432,35.433,48.243,12 >> Enter the Stoutlager Inn
+step << NightElf
+    .goto 1432/0,-2954.42,-5394.10
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Vidra Hearthstove|r
+    .turnin 418 >> Turn in Thelsamar Blood Sausages
+    .target Vidra Hearthstove
+step << NightElf
+    .goto Loch Modan,37.17,47.94,8,0
+    .goto Loch Modan,37.24,47.38
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Jern Hornhelm|r
+    .accept 436 >> Accept Ironband's Excavation
+    .target Jern Hornhelm
+step << NightElf
+    .line Loch Modan,36.72,41.97,37.24,43.19,37.33,45.63,36.77,46.20,35.19,46.88,32.67,49.71,35.19,46.88,36.77,46.20,37.33,45.63,37.24,43.19,36.72,41.97
+    .goto 1432/0,-3006.61,-5259.57,15,0
+    .goto 1432/0,-3020.95,-5282.02,15,0
+    .goto 1432/0,-3023.44,-5326.90,15,0
+    .goto 1432/0,-3007.99,-5337.390,15,0
+    .goto 1432/0,-2964.41,-5349.90,15,0
+    .goto 1432/0,-2894.90,-5401.96,20,0
+    .goto 1432/0,-3007.99,-5337.390
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mountaineer Kadrell|r
+    >>|cRXP_FRIENDLY_Mountaineer Kadrell|r |cRXP_WARN_patrols the road through Thelsamar|r
+    .target Mountaineer Kadrell
+    .turnin 416 >> Turn in Rat Catching
+step << NightElf
+    #loop
+    .goto 1432/0,-3319.800,-5217.600,20,0
+    .goto 1432/0,-3251.5499,-5285.8790,20,0
+    .goto 1432/0,-3342.5748,-5484.5540,20,0
+    .goto 1432/0,-3386.7082,-5462.4790,20,0
+    .goto 1432/0,-3319.800,-5217.600,0
+    .goto 1432/0,-3251.5499,-5285.8790,0
+    .goto 1432/0,-3342.5748,-5484.5540,0
+    .goto 1432/0,-3386.7082,-5462.4790,0
+    >>Click the |cRXP_PICK_Discarded Fishing Toolbox|r on the lake floor
+    >>|cRXP_WARN_NOTE: This can spawn in one of many different locations. Swim around until you see the exclamation point on your minimap|r
+    >>|cRXP_WARN_Be careful of high level|r |cRXP_ENEMY_Young Threshadon|r
+    .accept 86614 >>Accept Silver of the Waves
+step << NightElf
+    .goto Loch Modan,64.89,66.66
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Magmar Fellhew|r
+    .turnin 436 >> Turn in Ironband's Excavation
+    .target Magmar Fellhew
+step << NightElf
+    .goto Loch Modan,65.934,65.622
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Prospector Ironband|r
+    .accept 298 >> Accept Excavation Progress Report
+    .target Prospector Ironband
+step << NightElf
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Daryl the Youngling|r
+    .accept 257 >> Accept A Hunter's Boast
+    .goto Loch Modan,83.49,65.40
+    .target Daryl the Youngling
+step << NightElf Rogue/NightElf Hunter/NightElf Warrior/NightElf Druid
+    .goto Loch Modan,82.6,64.0
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kat|r
+    .vendor >> |cRXP_BUY_Buy|r |T132539:0|t[Agile Boots] |cRXP_BUY_from her if they're up|r
+    .target Kat Sampson
+step << NightElf
+    .goto Loch Modan,80.09,64.16,60,0
+    .goto Loch Modan,77.16,75.57,60,0
+    .goto Loch Modan,70.78,72.91,60,0
+    .goto Loch Modan,76.65,62.27,60,0
+    .goto Loch Modan,76.36,56.05,60,0
+    .goto Loch Modan,80.09,64.16,60,0
+    .goto Loch Modan,77.16,75.57,60,0
+    .goto Loch Modan,70.78,72.91,60,0
+    .goto Loch Modan,76.65,62.27,60,0
+    .goto Loch Modan,76.36,56.05,60,0
+    .goto Loch Modan,80.09,64.16
+    >>Kill |cRXP_ENEMY_Mountain Buzzards|r
+    >>|cRXP_WARN_You must complete this quest and return to |cRXP_FRIENDLY_Daryl the Youngling|r within 15 minutes. If you fail the quest, abandon it and pick it up again|r
+    .complete 257,1 -- Mountain Buzzard slain (6)
+    .mob Mountain Buzzard
+step << NightElf
+    #completewith next
+    .goto Loch Modan,82.92,59.37,80,0
+    .goto Loch Modan,83.28,62.97,25 >> Travel toward |cRXP_FRIENDLY_Daryl the Youngling|r
+step << NightElf
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Daryl the Youngling|r
+    .goto Loch Modan,83.49,65.40
+    .turnin 257 >> Turn in A Hunter's Boast
+    .target Daryl the Youngling
+step << NightElf
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Marek Ironheart|r
+    .accept 385 >> Accept Crocolisk Hunting
+    .accept 86758 >>Accept Twisting the Knife
+    .goto Loch Modan,81.76,61.66
+    .target Marek Ironheart
+step << NightElf
+    #completewith next
+    >>Kill |cRXP_ENEMY_Loch Crocolisks|r. Loot them for their |cRXP_LOOT_Meat|r and |cRXP_LOOT_Skin|r
+    .complete 385,1 -- Crocolisk Meat (5)
+    .complete 385,2 -- Crocolisk Skin (6)
+    .mob Loch Crocolisk
+step
+    --@TODO add a line for this
+    .goto Loch Modan,62,44
+    >>Kill |cRXP_ENEMY_Daggerfang|r, he |cRXP_WARN_might be patroling along the shore|r. Loot him for |T3736888:0|t[|cRXP_LOOT_Marek's Croc-Hunting Knife|r]
+    .complete 86758,1 --Marek's Croc Hunting Knife (1)
+    .mob Daggerfang
+step << NightElf
+    #completewith next
+    .goto Loch Modan,54.7,38.3,200 >> Travel to the island located in the middle of The Loch
+step << NightElf
+    .goto Loch Modan,58.86,38.32,80,0
+    .goto Loch Modan,54.80,40.02,60,0
+    .goto Loch Modan,54.16,35.79,60,0
+    .goto Loch Modan,54.72,38.15
+    >>Kill |cRXP_ENEMY_Loch Crocolisks|r. Loot them for their |cRXP_LOOT_Meat|r and |cRXP_LOOT_Skin|r
+    .complete 385,1 -- Crocolisk Meat (5)
+    .complete 385,2 -- Crocolisk Skin (6)
+    .mob Loch Crocolisk
+step << NightElf
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Marek Ironheart|r
+    .turnin 385 >>Turn in Crocolisk Hunting
+    .turnin 86758 >>Turn in Twisting the Knife
+    .goto Loch Modan,81.76,61.66
+    .target Marek Ironheart
+step << NightElf
+    >>Jump out of the lodge and die to the mobs below
+    .deathskip >> Die and respawn at the Thelsamar graveyard
+step << NightElf
+    .goto Loch Modan,37.17,47.94,8,0
+    .goto Loch Modan,37.24,47.38
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Jern Hornhelm|r
+    .turnin 298 >> Turn in Excavation Progress Report
+    .accept 301 >> Accept Report to Ironforge
+    .target Jern Hornhelm
+step << NightElf
+    .goto 1432/0,-3104.900,-5210.100,5,0
+    .goto 1432/0,-3086.600,-5216.800
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Khara Deepwater::1684|r
+    .target Khara Deepwater::1684
+    .turnin 86614 >>Turn in Silver of the Waves
+step << NightElf
+    #label flyIF
+    .goto 1432/0,-2929.87,-5424.84
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thorgrum Borrelson|r
+    .fly Ironforge >> Fly to Ironforge
+    .target Thorgrum Borrelson
+    .zoneskip Ironforge
+step << NightElf
+    .goto Ironforge,74.645,11.742
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Prospector Stormpike|r
+    .turnin 301 >> Turn in Report to Ironforge
+    .target Prospector Stormpike
+step << NightElf Hunter
+    .goto 1455/0,-1266.100,-5006.700
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Belia Thundergranite|r
+    .trainer >> Train your class spells
+    .target Regnus Thundergranite
+step << NightElf Priest
+    .goto 1455/0,-897.200,-4607.200
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_High Priest Rohan|r  
+    .trainer >> Train your class spells
+    .target High Priest Rohan
+step << NightElf Priest/NightElf Druid
+    #ah
+    #label OilWandFood
+    #completewith AHCheck
+    .goto 1455/0,-917.57,-4967.58,-1--c:Ironforge,25.800,75.500
+    .goto 1455/0,-904.92,-4962.83,-1--c:Ironforge,24.200,74.600
+    .goto 1455/0,-901.76,-4948.06,-1--c:Ironforge,23.800,71.800
+    >>|cRXP_WARN_Buy the following if you can afford it:|r
+    >>|T134711:0|t[Minor Wizard Oil] |cRXP_WARN_and|r |T133906:0|t[Smoked Sagefish]
+    >>|cRXP_WARN_Also check for any high DPS|r |T132317:0|t[Wand] |cRXP_WARN_upgrades that you can use now/soon|r << Priest
+    >>|cRXP_WARN_These will provide a high DPS increase in early levels. If you don't want to or can't do this, skip this step|r
+    .collect 20744,1 -- Minor Wizard Oil (1)
+    .collect 21072,20 -- Smoked Sagefish (20)
+    .target Auctioneer Lympkin
+    .target Auctioneer Redmuse
+    .target Auctioneer Buckler
+step << NightElf Rogue
+    .goto Ironforge,51.495,15.330
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Fenthwick|r
+    .trainer >> Train your class spells
+    .target Fenthwick
+step << NightElf Warrior
+    .goto Ironforge,65.905,88.405
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Bilban Tosslespanner|r
+    .trainer >> Train your class spells
+    .target Bilban Tosslespanner
+step << NightElf Druid
+    #completewith next
+	.cast 18960 >> Cast Teleport: Moonglade
+	.zoneskip Moonglade
+step << NightElf Druid
+    .goto Moonglade,52.53,40.57
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Loganaar|r
+    .trainer >> Train your class spells
+    .target Loganaar
 step << NightElf
     .hs >>Hearthstone to Auberdine
     .zoneskip Darkshore
@@ -2327,11 +2950,7 @@ step
     >>Click the |cRXP_PICK_Beached Sea Creature|r
     .accept 4723 >> Accept Beached Sea Creature
     .isOnQuest 982
-
-
 ----End of NE >1.49x catchup (everyone 1x) Final boat section----
-
-
 step
     #optional
     #completewith BoatSeaCreature
@@ -2451,11 +3070,7 @@ step
     >>Click the |cRXP_PICK_Buzzbox 323|r on the ground
     .accept 1003 >> Accept Buzzbox 525
     .isQuestTurnedIn 1002
-
-
 ----Start of Hunter/Druid 1x early Althalaxx section (for money+xp)----
-
-
 step << Hunter/Druid
     #optional
     #completewith Tower1
@@ -2538,9 +3153,7 @@ step << Hunter/Druid
     >>Kill |cRXP_ENEMY_Foreststriders|r. Loot them for their |cRXP_LOOT_Strider Meat|r
     .collect 5469,5,2178,1 -- Strider Meat (5)
     .mob Foreststrider
-
 ----End of Hunter/Druid 1x and SoD Warrior early Althalaxx section (for money+xp)----
-
 step
     #optional
     #completewith CliffCave
@@ -2687,16 +3300,22 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Alanndarian Nightsong|r
     .accept 2178 >> Accept Easy Strider Living
     .turnin 2178 >> Turn in Easy Strider Living
-    .turnin 6122 >> Turn in The Principal Source << Druid
-    .accept 6123 >> Accept Gathering the Cure << Druid
     .target Alanndarian Nightsong
     .skill cooking,<10,1 -- step only displays if skill is 10 or higher
-    .isQuestAvailable 2178 << Druid
+    .itemcount 5469,5 -- strider meat (5)
 step << Druid
     #optional
+    .isOnQuest 6122
     .goto 1439/1,472.32,6556.100
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Alanndarian Nightsong|r
     .turnin 6122 >> Turn in The Principal Source
+    .accept 6123 >> Accept Gathering the Cure
+    .target Alanndarian Nightsong
+step << Druid
+    #optional
+    .isQuestTurnedIn 6123
+    .goto 1439/1,472.32,6556.100
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Alanndarian Nightsong|r
     .accept 6123 >> Accept Gathering the Cure
     .target Alanndarian Nightsong
 step << !NightElf
@@ -2782,11 +3401,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gwennyth Bly'Leggonde|r
     .turnin 4725 >> Turn in Beached Sea Turtle
     .target Gwennyth Bly'Leggonde
-
-
 ----Start of Druid Quest section----
-
-
 step << Druid
     #optional
     .goto 1439,39.899,54.745,0
@@ -2875,13 +3490,8 @@ step << Druid
     #optional
     .hs >> Hearth to Darkshore
     .zoneskip Darkshore
-
-
 ----End of Druid Quest section----
-
-
 ]])
-
 RXPGuides.RegisterGuide([[
 #forever
 #version 1
@@ -2892,7 +3502,6 @@ RXPGuides.RegisterGuide([[
 #name 16-19 Darkshore
 #next 19-20 Redridge;20-21 Darkshore/Ashenvale << !Hunter
 #next 19-21 Darkshore/Ashenvale << Hunter
-
 -- step << NightElf !Druid
 --     #optional
 --     #completewith PortalDarn
@@ -3275,16 +3884,6 @@ step << Hunter
     .link https://youtu.be/lfQM3Q-Ag5A >> |cRXP_WARN_Click here for a video guide|r
 step
     #completewith CompleteThistleBears
---  .goto Darkshore,33.85,80.92,45,0
---  .goto Darkshore,32.17,82.92,45,0
---  .goto Darkshore,35.41,78.96,45,0
---  .goto Darkshore,35.68,75.23,45,0
---  .goto Darkshore,35.03,72.19,45,0
---  .goto Darkshore,35.68,75.23,45,0
---  .goto Darkshore,35.41,78.96,45,0
---  .goto Darkshore,32.17,82.92,45,0
---  .goto Darkshore,33.85,80.92,45,0
---  .goto Darkshore,35.03,72.19
     >>Kill |cRXP_ENEMY_Encrusted Tide Crawlers|r and |cRXP_ENEMY_Reef Crawlers|r. Loot them for their |cRXP_LOOT_Fine Crab Chunks|r
     >>Be careful as |cRXP_ENEMY_Reef Crawlers|r can cast |T132155:0|t[Muscle Tear] an instant attack dealing 30-55 damage
     .complete 1138,1 -- Fine Crab Chunks (6)
@@ -3359,7 +3958,7 @@ step << Druid
     .fly Auberdine >> Fly to Darkshore
     .target Sindrayl
     .zoneskip Darkshore
-step << NightElf !Druid/Dwarf Hunter/Human Hunter
+step << NightElf !Druid/Dwarf Hunter/Human Hunter/Skyborne Hunter
     #label Southcrabs
     #completewith CleansingTharnariun
     .subzone 442 >> Travel to Auberdine
@@ -3795,13 +4394,12 @@ step << Druid
     >>|cRXP_WARN_Swim out in the water|r
     >>Open the |cRXP_PICK_Strange Lockbox|r. Loot it for the |cRXP_LOOT_Half Pendant of Aquatic Agility|r
     .collect 15883,1,272,1 --Collect Half Pendant of Aquatic Agility (x1)
-
-step << Dwarf Hunter/Human Hunter
+step << Dwarf Hunter/Human Hunter/Skyborne Hunter
     #softcore
     #optional
     #completewith next
     .deathskip >> Grind until your HS cooldown is <6 minutes. Die and respawn at the |cRXP_FRIENDLY_Spirit Healer|r
-step << Dwarf Hunter/Human Hunter
+step << Dwarf Hunter/Human Hunter/Skyborne Hunter
     #hardcore
     #optional
     #completewith next
@@ -3847,13 +4445,13 @@ step << !NightElf
     .equip 15,5387 >>|cRXP_WARN_Equip the|r |T133762:0|t[Enchanted Moonstalker Cloak] |cRXP_WARN_If it's better than your current Cloak|r
     .itemcount 5387,1
     .itemStat 15,QUALITY,<7
-step << Dwarf Hunter/Human Hunter
+step << Dwarf Hunter/Human Hunter/Skyborne Hunter
     #label TravelDarnDwarfHBoat
     #completewith DarnDwarfHBoat
     .goto 1439,33.169,40.179,15 >> Travel to the dock of the Darnassus boat
     .zoneskip Teldrassil
     .zoneskip Darnassus
-step << Dwarf Hunter/Human Hunter
+step << Dwarf Hunter/Human Hunter/Skyborne Hunter
     #optional
     #label DarnDwarfHCook1
     #requires TravelDarnDwarfHBoat
@@ -3867,7 +4465,7 @@ step << Dwarf Hunter/Human Hunter
     .itemcount 4470,1 --Simple Wood (1+)
     .itemcount 4471,1 --Flint and Tinder (1)
     .skill cooking,50,1 --XX Shows if cooking skill is <50
-step << Dwarf Hunter/Human Hunter
+step << Dwarf Hunter/Human Hunter/Skyborne Hunter
     #optional
     #requires DarnDwarfHCook1
     #completewith DarnDwarfHBoat
@@ -3879,35 +4477,35 @@ step << Dwarf Hunter/Human Hunter
     .itemcount 6889,1 --Small Egg (1+)
     .itemcount 4471,1 --Flint and Tinder (1)
     .skill cooking,50,1
-step << Dwarf Hunter/Human Hunter
+step << Dwarf Hunter/Human Hunter/Skyborne Hunter
     #label DarnDwarfHBoat
     .goto 1439,33.213,39.883
     .zone Teldrassil >> Take the boat to Darnassus
     .zoneskip Darnassus
-step << Dwarf Hunter/Human Hunter
+step << Dwarf Hunter/Human Hunter/Skyborne Hunter
     .goto 1438/1,841.56,8640.79
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Vesprystus|r
     .fp Teldrassil >> Get the Teldrassil Flight Path
     .target Vesprystus
-step << Dwarf Hunter/Human Hunter
+step << Dwarf Hunter/Human Hunter/Skyborne Hunter
     #optional
     #completewith next
     .goto 1438/1,965.80,8780.95
     .zone Darnassus >> Take the purple portal into Darnassus
-step << Dwarf Hunter/Human Hunter
+step << Dwarf Hunter/Human Hunter/Skyborne Hunter
     #completewith next
     .goto 1457/1,2511.01,10178.05
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Jocaste|r
     .trainer >> Train your class spells
     .target Jocaste
-step << Dwarf Hunter/Human Hunter
+step << Dwarf Hunter/Human Hunter/Skyborne Hunter
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ilyenia Moonfire|r
     .skipgossipid 96881
     .goto 1457/1,2329.19,9908.60
     .train 264 >> Train Bows
     .train 227 >> Train Staves
     .target Ilyenia Moonfire
-step << Dwarf Hunter/Human Hunter
+step << Dwarf Hunter/Human Hunter/Skyborne Hunter
     .goto 1457/1,2268.76,9770.63
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Landria|r
     >>|cRXP_BUY_Buy a|r |T135489:0|t[Heavy Recurve Bow] |cRXP_BUY_and a|r |T134410:0|t[Medium Quiver] |cRXP_BUY_from her|r
@@ -3923,14 +4521,14 @@ step << Hunter
     .itemcount 3027,1
     .itemStat 18,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<9.19
     .xp <20,1
-step << Dwarf Hunter/Human Hunter
+step << Dwarf Hunter/Human Hunter/Skyborne Hunter
     .goto 1438/1,2607.86,9641.94
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Chief Archaeologist Greywhisker|r
     .turnin 741 >> Turn in The Absent Minded Prospector
     .accept 942 >> Accept The Absent Minded Prospector
     .target Chief Archaeologist Greywhisker
     .isOnQuest 741
-step << Dwarf Hunter/Human Hunter
+step << Dwarf Hunter/Human Hunter/Skyborne Hunter
     #optional
     .goto 1438/1,2607.86,9641.94
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Chief Archaeologist Greywhisker|r
@@ -3956,12 +4554,12 @@ step << Druid
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Loganaar|r
     .trainer >> Train your class spells
     .target Loganaar
-step << NightElf/Dwarf Hunter/Human Hunter
+step << NightElf/Dwarf Hunter/Human Hunter/Skyborne Hunter
     #completewith BeachedCloak
     #map Darkshore
     .goto 1448/1,577.92,6371.65,100 >> Travel to Auberdine
     .cooldown item,6948,<0
-step << NightElf/Dwarf Hunter/Human Hunter
+step << NightElf/Dwarf Hunter/Human Hunter/Skyborne Hunter
     #optional
     #completewith next
     .hs >> Hearth to Auberdine
@@ -4014,18 +4612,15 @@ step << NightElf
     .turnin 986 >> Turn in A Lost Master
     .accept 993 >> Accept A Lost Master
     .target Terenthis
-
 step << NightElf
     #optional
     >>|cRXP_WARN_If you equip the|r |T133762:0|t[Enchanted Moonstalker Cloak]|cRXP_WARN_, make sure you save your current cloak for later as the|r |T133762:0|t[Enchanted Moonstalker Cloak] |cRXP_WARN_is lost upon a later turn in|r
     .equip 15,5387 >>|cRXP_WARN_Equip the|r |T133762:0|t[Enchanted Moonstalker Cloak] |cRXP_WARN_If it's better than your current Cloak|r
     .itemcount 5387,1
     .itemStat 15,QUALITY,<7
-
 --Hunter stays Darkshore/Ashenvale
 --Shaman to IF for training then SW > Redridge
 --!Hunter !Shaman straight to SW > Redridge
-
 step << !Hunter
     .goto 1439/1,488.69,6564.830
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Dalmond|r
@@ -4150,7 +4745,6 @@ step << Shaman
     >>|cRXP_WARN_Level your|r |T135966:0|t[First Aid] |cRXP_WARN_if needed while waiting for the tram|r
     >>|cRXP_WARN_You will need your|r |T135966:0|t[First Aid] |cRXP_WARN_to be 80 for a quest at level 24 << Rogue !Dwarf
 ]])
-
 RXPGuides.RegisterGuide([[
 #forever
 #version 1
@@ -4160,12 +4754,22 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-A1
 #name 19-20 Redridge
 #next 20-21 Darkshore/Ashenvale
-
 step << !Shaman
     .goto 1453/0,1193.100,-8328.900
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Manifest Clerk Philmor::268511|r 
     .target Manifest Clerk Philmor::268511
     .accept 97220 >>Accept Philmor's Favor
+step << Shaman
+    .goto 1453/0,758.4316,-8140.6689
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Shoni the Shilent|r
+    .accept 2040 >> Accept Underground Assault
+    .target Shoni the Shilent
+step << Shaman
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Wilder Thistlenettle|r
+    .accept 167 >> Accept Oh Brother. . .
+    .accept 168 >> Accept Collecting Memories
+    .goto 1453/0,585.9322,-8241.1085
+    .target Wilder Thistlenettle
 step << Mage
     #completewith next
     .goto 1453/0,874.32,-9014.67,10 >> Travel to the Mage Tower
@@ -4230,6 +4834,11 @@ step << !NightElf
     .turnin 1338 >> Turn in Stormpike's Order
     .target Furen Longbeard
     .isOnQuest 1338
+step << !Shaman
+    .goto 1453/0,758.4316,-8140.6689
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Shoni the Shilent|r
+    .accept 2040 >> Accept Underground Assault
+    .target Shoni the Shilent
 step
     #completewith BMenace
     .goto 1453/0,638.8,-8341.95
@@ -4239,6 +4848,12 @@ step
 --    >>You will need 2 bronze tubes for a quest later << Rogue
     .bronzetube
     .target Billibub Cogspinner
+step << !Shaman
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Wilder Thistlenettle|r
+    .accept 167 >> Accept Oh Brother. . .
+    .accept 168 >> Accept Collecting Memories
+    .goto 1453/0,585.9322,-8241.1085
+    .target Wilder Thistlenettle
 step << Rogue
     .goto 1453/0,377.61,-8752.30
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Osborne|r
@@ -4712,9 +5327,7 @@ step
 step
     .goto 1433/0,-2634.54,-9588.54
     .xp 20 >> Grind until you are level 20
-
 -- Druid Cat form quest --
-
 step << Druid
     #completewith catspirit1
 	.cast 18960 >> Cast Teleport: Moonglade
@@ -4740,7 +5353,6 @@ step << Druid
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mathrengyl Bearwalker::4217|r
     .target Mathrengyl Bearwalker::4217
     .accept 98393 >>Accept The Great Cat Spirit
-
 step << Druid
     .goto 1450/1,-2678.900,8020.000
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Dendrite Starblaze::11802|r
@@ -4833,9 +5445,7 @@ step << Druid
 step << Druid
     #completewith next
     .hs >> Hearth to Lakeshire
-
 -- Druid cat form quest end --
-
 step
     #completewith InRR
     .goto 1433/0,-2234.89,-9435.35
@@ -4869,6 +5479,27 @@ step << Rogue
     .itemcount 923,1
     .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<12.19
     .xp <21,1
+step
+    #optional
+    .isQuestComplete 2040
+    .goto 1453/0,758.4316,-8140.6689
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Shoni the Shilent|r
+    .turnin 2040 >> Turn in Underground Assault
+    .target Shoni the Shilent
+step
+    #optional
+    .isQuestComplete 168
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Wilder Thistlenettle|r
+    .turnin 168 >> Turn in Collecting Memories
+    .goto 1453/0,585.9322,-8241.1085
+    .target Wilder Thistlenettle
+step
+    #optional
+    .isQuestComplete 167
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Wilder Thistlenettle|r
+    .turnin 167 >> Turn in Oh Brother. . .
+    .goto 1453/0,585.9322,-8241.1085
+    .target Wilder Thistlenettle
 step << Warrior/Paladin
     #ah
     .goto 1453/0,607.48,-8790.40
@@ -4985,25 +5616,19 @@ step << Warrior
     .trainer >> Train your class spells
     .target Wu Shen
     .target Ilsa Corbin
-
-
-
 ----Start of Rogue 20 Quest <1.59x Section----
-
-
-
-step << NightElf Rogue
+step << NightElf Rogue/Skyborne Rogue
     .goto 1436/0,1037.42,-10628.27,5,0
     .zone Westfall >> Travel to Westfall
     >>Fly there if you already have the Westfall Flight Path
     .isOnQuest 2360
-step << NightElf Rogue
+step << NightElf Rogue/Skyborne Rogue
     .goto 1436/0,1037.42,-10628.27
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thor|r
     .fp Westfall >> Get the Westfall flight path
     .target Thor
     .isOnQuest 2360
-step << !NightElf Rogue
+step << Human Rogue/Dwarf Rogue
     .goto 1453/0,490.03,-8835.82
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Dungar Longdrink|r
     .fly Westfall >> Fly to Westfall
@@ -5154,14 +5779,7 @@ step << Rogue
     >>|cRXP_WARN_Remember to re-equip your main weapon if you switched to a|r |T135641:0|t[Dagger] |cRXP_WARN_earlier|r << Rogue
     .turnin 2359 >> Turn in Klaven's Tower
     .target Master Mathias Shaw
-
-
-
 ----End of Rogue 20 Quest <1.59x Section----
-
-
-
-
 step
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_General Marcus Jonathan|r
 	.target General Marcus Jonathan
@@ -5316,7 +5934,6 @@ step
     .goto 1433/0,-2267.67,-9280.140
     .turnin 89 >> Turn in The Everstill Bridge
 ]])
-
 RXPGuides.RegisterGuide([[
 #forever
 #version 1
@@ -5326,7 +5943,6 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-A1
 #name 19-21 Darkshore/Ashenvale
 #next RestedXP Forever Guide (A)\21-23 Ashenvale/Stonetalon
-
 step
     #optional
     .goto 1439,43.555,76.293
@@ -5339,7 +5955,7 @@ step
     .goto 1439,44.401,76.425
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kerlonian Evershade|r to start the escort
     >>|cRXP_WARN_Skip this step if he is not there. It can take up to 25 minutes for him to respawn|r
-    >>|cRXP_WARN_This is a timed quest, you have to escort him all the way to ashenvale in 20 minutes|r
+    >>|cRXP_WARN_This is a timed quest, you have to escort him to his bag in 20 minutes|r
     .accept 5321 >> Accept The Sleeper Has Awakened
     .target Kerlonian Evershade
     .isQuestTurnedIn 731 --Only shows if Prospector was already escorted
@@ -5474,7 +6090,7 @@ step
     .goto 1439,44.401,76.425
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kerlonian Evershade|r to start the escort
     >>|cRXP_WARN_Skip this step if he is not there. It can take up to 25 minutes for him to respawn|r
-    >>|cRXP_WARN_This is a timed quest, you have to escort him all the way to ashenvale in 20 minutes|r
+    >>|cRXP_WARN_This is a timed quest, you have to escort him to his bag in 20 minutes|r
     .accept 5321 >> Accept The Sleeper Has Awakened
     .target Kerlonian Evershade
     .itemcount 13536,<1 --Horn of Awakening
@@ -5485,24 +6101,24 @@ step
     .complete 5321,1 -- Horn of Awakening (1)
     .itemcount 13536,<1 --Horn of Awakening
 step
+    #label Kerlonian
+    --@TODO add coordinates for this
+    >>|cRXP_WARN_Escort |cRXP_FRIENDLY_Kerlonian|r to his bag |cRXP_WARN_in Darkshore|r|r
+    .use 13536 >> |cRXP_WARN_Use the|r |T134229:0|t[|cRXP_LOOT_Horn of Awakening|r] |cRXP_WARN_whenever |cRXP_FRIENDLY_Kerlonian|r falls asleep next to him|r
+    >>|cRXP_WARN_Avoid running on the main road as much as possible. Enemies will only spawn if you're on the road|r
+    .complete 5321,2
+    .isOnQuest 5321
+step
     #label AshenStart
     #completewith tower
     .zone Ashenvale >> Travel south to Ashenvale
     .goto 1440/1,-12.70,4150.17
 step
     #sticky
-    #completewith Kerlonian
+    #completewith next
     >>Kill and loot |cRXP_WARN_Ghostpaw Runners|r you encounter while questing. Keep any |T133970:0|t[|cRXP_LOOT_Lean Wolf Flanks|r] you get. You will need 10 for a cooking quest later
     .collect 1015,10
     .mob Ghostpaw Runner
-step
-    #label Kerlonian
-    .goto 1440/1,128.01,3305.31
-    >>|cRXP_WARN_Escort |cRXP_FRIENDLY_Kerlonian|r to Maestra's Post in Ashenvale|r
-    .use 13536 >> |cRXP_WARN_Use the|r |T134229:0|t[|cRXP_LOOT_Horn of Awakening|r] |cRXP_WARN_whenever |cRXP_FRIENDLY_Kerlonian|r falls asleep next to him|r
-    >>|cRXP_WARN_Avoid running on the main road as much as possible. Enemies will only spawn if you're on the road|r
-    .complete 5321,2
-    .isOnQuest 5321
 step
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Liladris Moonriver|r
 	.target Liladris Moonriver
@@ -5639,7 +6255,7 @@ step
     .accept 1054 >> Accept Culling the Threat
 step
     #label HCHunterNoHS --hidden step for #include
-step << !Dwarf/!Hunter
+step << NightElf Hunter
     .goto 1440/1,-433.09,2781.02
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Innkeeper Kimlya|r
     .home >> Set your Hearthstone to Astranaar
@@ -5827,17 +6443,17 @@ step
 	.mob Saltspittle Oracle
 	.mob Saltspittle Puddlejumper
     .complete 1023,1
-step << Dwarf Hunter/Human Hunter
+step << Dwarf Hunter/Human Hunter/Skyborne Hunter
     .hs >> Hearth to Auberdine
-step << !Dwarf/!Hunter
+step << NightElf Hunter
     #softcore
     #completewith next
     .deathskip >> Die on the eastern side of the lake and spirit res at Astranaar
-step << !Dwarf/!Hunter
+step << NightElf Hunter
     #hardcore
     #completewith next
     .goto 1440/1,-283.73,2827.92,200 >> Travel to Astranaar
-step << !Dwarf/!Hunter
+step << NightElf Hunter
     .goto 1440/1,-284.31,2828.69
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Daelyshia|r
     .fly Darkshore>> Fly to Darkshore
@@ -5897,7 +6513,7 @@ step
     >>|T134304:0|t[Murloc Fins] --1468
     >>|T134321:0|t[Gooey Spider Legs] --2251
     >>|T133970:0|t[Lean Wolf Flanks] --1015
-step << Dwarf Hunter/Human Hunter
+step << Dwarf Hunter/Human Hunter/Skyborne Hunter
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ilyenia Moonfire|r
     .skipgossipid 96881
     .goto 1457/1,2329.19,9908.60
@@ -5919,15 +6535,15 @@ step
     .goto 1438/1,2607.86,9641.94
     .accept 942 >> Accept The Absent Minded Prospector
     .isQuestTurnedIn 741
-step << !Dwarf/!Hunter
+step << NightElf Hunter
     #label end
     .hs >> Hearth to Astranaar
-step << Dwarf Hunter/Human Hunter
+step << Dwarf Hunter/Human Hunter/Skyborne Hunter
     .goto 1457/1,2626.51,9946.11
     .zone Teldrassil >> Travel through the purple portal to Rut'theran Village
     .zoneskip Ashenvale
     .zoneskip Darkshore
-step << Dwarf Hunter/Human Hunter
+step << Dwarf Hunter/Human Hunter/Skyborne Hunter
     #label end
     .goto 1438/1,841.56,8640.79
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Vesprystus|r
@@ -5935,7 +6551,6 @@ step << Dwarf Hunter/Human Hunter
     .target Vesprystus
     .zoneskip Ashenvale
 ]])
-
 RXPGuides.RegisterGuide([[
 #forever
 #version 1
@@ -5945,8 +6560,6 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-A1
 #name 20-21 Darkshore/Ashenvale
 #next RestedXP Forever Guide (A)\21-23 Stonetalon/Ashenvale
-
-
 step << Druid
 	#completewith next
 	.cast 18960 >> Cast Teleport: Moonglade
@@ -5961,6 +6574,12 @@ step
     #optional
     #completewith AshenvaleEnd
     .hs >> Hearth to Auberdine
+step
+    #optional
+    #sticky
+    .abandon 2040 >> Abandon Underground Assault
+    .abandon 167 >> Abandon Oh Brother. . .
+    .abandon 168 >> Abandon Collecting Memories
 step
     .goto 1439/1,504.41,6402.39
     >>Click the |cRXP_PICK_Wanted Poster|r
@@ -6219,7 +6838,7 @@ step
     .goto 1439,44.401,76.425
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kerlonian Evershade|r to start the escort
     >>|cRXP_WARN_Skip this step if he is not there. It can take up to 25 minutes for him to respawn|r
-    >>|cRXP_WARN_This is a timed quest, you have to escort him all the way to ashenvale in 20 minutes|r
+    >>|cRXP_WARN_This is a timed quest, you have to escort him to his bag in 20 minutes|r
     .accept 5321 >> Accept The Sleeper Has Awakened
     .target Kerlonian Evershade
 step
@@ -6230,7 +6849,7 @@ step
 step
     #completewith volcorEnd
     .goto 1440/1,128.01,3305.31
-    +|cRXP_FRIENDLY_Kerlonian|r will follow you and occasionally help in combat. |cRXP_WARN_Make sure you don't lose him as he will stop moving when he falls asleep. You have 25 minutes to reach Ashenvale and complete this quest|r
+    +|cRXP_FRIENDLY_Kerlonian|r will follow you and occasionally help in combat. |cRXP_WARN_Make sure you don't lose him as he will stop moving when he falls asleep. You have 25 minutes to reach his bag and complete this quest|r
     .use 13536 >> |cRXP_WARN_Use the|r |T134229:0|t[|cRXP_LOOT_Horn of Awakening|r] |cRXP_WARN_whenever |cRXP_FRIENDLY_Kerlonian|r falls asleep while standing next to him to wake him up|r
     >>|cRXP_WARN_Avoid running on the main road as much as possible. Enemies will only spawn if you're on the road|r
     .isOnQuest 5321
@@ -6252,16 +6871,17 @@ step
     .complete 995,1
     .isOnQuest 995
 step
-    #completewith tower
-    .zone Ashenvale >> Travel south to Ashenvale
-    .goto 1440/1,-12.70,4150.17
-step
-    .goto 1440/1,128.01,3305.31
-    >>|cRXP_WARN_Escort |cRXP_FRIENDLY_Kerlonian|r to Maestra's Post in Ashenvale|r
+    #label KerlonianTwo
+    --@TODO add coordinates for this
+    >>|cRXP_WARN_Escort |cRXP_FRIENDLY_Kerlonian|r to his bag |cRXP_WARN_in Darkshore|r|r
     .use 13536 >> |cRXP_WARN_Use the|r |T134229:0|t[|cRXP_LOOT_Horn of Awakening|r] |cRXP_WARN_whenever |cRXP_FRIENDLY_Kerlonian|r falls asleep next to him|r
     >>|cRXP_WARN_Avoid running on the main road as much as possible. Enemies will only spawn if you're on the road|r
     .complete 5321,2
     .isOnQuest 5321
+step
+    #completewith tower
+    .zone Ashenvale >> Travel south to Ashenvale
+    .goto 1440/1,-12.70,4150.17
 step
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Liladris Moonriver|r
 	.target Liladris Moonriver

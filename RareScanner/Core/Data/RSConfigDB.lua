@@ -742,7 +742,7 @@ function RSConfigDB.IsContainerFiltered(containerID)
 	end
 	
 	-- If filtering by repeatable 
-	if (RSConfigDB.IsRepeatableContainerFilterEnabled() and containerInfo.repeatable) then
+	if (RSConfigDB.IsRepeatableContainerFilterEnabled() and containerInfo.repeatable and not containerInfo.prof) then
 		return true
 	end
 	

@@ -38,16 +38,8 @@ function RSOverlayMixin:OnAcquired(x, y, r, g, b, pin)
 end
 
 function RSOverlayMixin:OnMouseEnter()
-	if (self.pin.ShowPingAnim and not self.pin.ShowPingAnim:IsPlaying()) then
-		if (RSConfigDB.IsHighlightingReputation()) then
-			local _, bountyFactionID, bountyFrameType = self.pin.dataProvider:GetBountyInfo();
-			if (bountyFrameType ~= BountyFrameType.ActivityTracker or not self.pin.POI.factionID or not RSUtils.Contains(self.pin.POI.factionID, bountyFactionID)) then
-				-- Avoid animating if the bounty animation is active, it meshes it up
-				self.pin.ShowPingAnim:Play();
-			end
-		else
-			self.pin.ShowPingAnim:Play();
-		end
+	if (not self.pin.ShowPingAnim:IsPlaying() and not self.pin:IsReputationHighlight()) then
+		self.pin.ShowPingAnim:Play()
 	end
 
 	RSTooltip.Tooltip:SetOwner(self, "ANCHOR_CURSOR")

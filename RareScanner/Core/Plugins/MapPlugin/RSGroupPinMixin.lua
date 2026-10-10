@@ -49,6 +49,10 @@ function RSGroupPinMixin:OnAcquired(POI, dataProvider)
 		self.RightTexture:SetTexture(nil)
 	end
 	self.IconTexture:SetAtlas(POI.iconAtlas)
+	local scale = RSConfigDB.GetIconsWorldMapScale()
+	self.HighlightRing:SetScale(scale)
+	self.HighlightRing:SetVertexColor(1, 0.85, 0.2, 1)
+	self:UpdateHighlight()
 end
 
 function RSGroupPinMixin:OnMouseEnter()
@@ -64,9 +68,43 @@ end
 function RSGroupPinMixin:OnReleased()
 	RSPinMixin.OnReleased(self)
 	
+	if (self.HighlightRingAnim:IsPlaying()) then
+		self.HighlightRingAnim:Stop()
+	end
+	self.HighlightRing:Hide()
+
 	if (self.groupTooltip) then
 		RSTooltip.ReleaseTooltip(self.groupTooltip)
 		self.groupTooltip = nil
+	end
+end
+
+function RSGroupPinMixin:IsReputationHighlight()
+	if (RSConfigDB.IsHighlightingReputation()) then
+		local _, bountyFactionID = self.dataProvider:GetBountyInfo();
+		if (bountyFactionID and self.POI and self.POI.POIs) then
+			for _, childPOI in ipairs(self.POI.POIs) do
+				if (childPOI.factionID and RSUtils.Contains(childPOI.factionID, bountyFactionID)) then
+					return true;
+				end
+			end
+		end
+	end
+
+	return false;
+end
+
+function RSGroupPinMixin:UpdateHighlight()
+	if (self:IsReputationHighlight()) then
+		if (not self.HighlightRingAnim:IsPlaying()) then
+			self.HighlightRing:Show()
+			self.HighlightRingAnim:Play()
+		end
+	else
+		if (self.HighlightRingAnim:IsPlaying()) then
+			self.HighlightRingAnim:Stop()
+		end
+		self.HighlightRing:Hide()
 	end
 end
 

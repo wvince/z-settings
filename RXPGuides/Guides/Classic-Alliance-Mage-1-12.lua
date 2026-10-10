@@ -1,6 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Horde" then return end
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #classic
@@ -808,7 +807,6 @@ step
 step
     .goto Dun Morogh,84.4,31.1,25 >>Go through the tunnel to Loch Modan
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
@@ -1458,7 +1456,6 @@ step
 .target Mountaineer Barleybrew
     .accept 414 >> Accept Stout to Kadrell
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
@@ -1894,4 +1891,3 @@ step
     #label Darkshore1
     .zone Darkshore >>Get onto the boat when it comes. Take it to Darkshore. Start conjuring as much level 5 water as possible
 ]])
-

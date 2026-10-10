@@ -1,6 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Horde" then return end
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #tbc
@@ -348,7 +347,6 @@ step
 >>Talk to |cRXP_FRIENDLY_Porthannius|r
     .accept 2159 >> Accept Dolanaar Delivery
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk

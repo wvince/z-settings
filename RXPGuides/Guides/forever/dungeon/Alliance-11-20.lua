@@ -12,7 +12,6 @@ RXPGuides.RegisterGuide([[
 #subgroup (WIP) Dungeon Guide 1-20
 --#groupid RXP-SRGCE-A1
 #next 15-16 Hall of Thanes
-
 step
     #include RestedXP Forever Guide (A)\14-16 Darkshore@WashedA-Gatehouse
 step
@@ -378,7 +377,6 @@ step
     .target Thor
     .zoneskip Stormwind City
     .zoneskip Darkshore
-
 step << Rogue
     #ah
     .goto 1453/0,609.63,-8787.71
@@ -457,12 +455,7 @@ step
     .zone Ironforge >> Take the tram to Ironforge
     .zoneskip Loch Modan
     .zoneskip Dun Morogh
-
-
 ]])
-
-
-
 RXPGuides.RegisterGuide([[
 #forever
 #version 1
@@ -475,7 +468,6 @@ RXPGuides.RegisterGuide([[
 #subgroup (WIP) Dungeon Guide 1-20
 --#groupid RXP-SRGCE-A1
 #next 15-16 Hall of Thanes
-
 step
     #optional
     .maxlevel 14,endOfTheGuide
@@ -487,7 +479,6 @@ step
     .bindlocation 16509
 step
     #label NEWestfallStart --hidden step for #include
-
 step
     #ah
     .goto 1453/0,660.28,-8814.55
@@ -509,14 +500,12 @@ step
     .collect 255007,14,92909,1 -- Golem Isospring (14)
     .collect 255010,5,92909,1 -- Harvester Gyrostabilizer (5)
     .target Auctioneer Jaxon
-
 step << Human
     .goto 1453/0,489.99,-8835.76
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Dungar Longdrink|r
     .turnin 6261 >> Turn in Dungar Longdrink
     .accept 6285 >> Accept Return to Lewis
     .target Dungar Longdrink
-
 step << !Skyborne
     .goto 1453/0,490.03,-8835.82
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Dungar Longdrink|r
@@ -953,7 +942,6 @@ step
     .target Thor
     .zoneskip Stormwind City
     .zoneskip Darkshore
-
 step << Human Rogue
     #ah
     .goto 1453/0,609.63,-8787.71
@@ -1092,7 +1080,6 @@ step
     .zoneskip Loch Modan
     .zoneskip Dun Morogh
 ]])
-
 RXPGuides.RegisterGuide([[
 #forever
 #version 1
@@ -1103,7 +1090,6 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-A1
 #name 15-16 Hall of Thanes
 #next 16-18 Ruins of Lordaeron
-
 step << NightElf
     .goto Ironforge,55.491,47.751
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gryth Thurden|r
@@ -1169,7 +1155,6 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Earthseer Farsen|r
     .turnin 96390 >> Turn in Nip 'Em in the Bud
     .target Earthseer Farsen
-
 step
     #completewith EnterHoT
     +|cRXP_WARN_Start looking for a group for the Hall of Thanes|r
@@ -1205,7 +1190,6 @@ step
     #label EnterHoT
     .goto 1455/0,-933.200,-4821.900
     .subzone 16919 >> Enter the Hall of Thanes
-
 step
     #completewith FaldrimAnvilmar
     >>Loot the |cRXP_PICK_Dwarven Heirlooms|r on the ground through the Hall of Thanes
@@ -1260,7 +1244,6 @@ step
 step
     .zone Ironforge >> |cRXP_WARN_Exit the Hall of Thanes. Fastest way is running straight down the corridor from the final boss room|r
     .subzoneskip 16919,1
-
 step
     .goto 1455/0,-968.200,-4803.700
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thom Filch|r
@@ -1292,7 +1275,6 @@ step
     .turnin 96393 >> Turn in Old Ironforge Incursion
     .turnin 98423 >> Turn in The Treaty of Understanding
     .target King Magni Bronzebeard
-
 step << Shaman
     .goto 1455/0,-1086.500,-4642.400
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Eldrun Stormbreaker::258098|r
@@ -1334,8 +1316,6 @@ step << Warrior/Hunter
     .target Regnus Thundergranite << Hunter
     .target Bilban Tosslespanner << Warrior
 ]])
-
-
 RXPGuides.RegisterGuide([[
 #forever
 #season 0,1
@@ -1347,7 +1327,6 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-A1
 #name 16-18 Ruins of Lordaeron
 #next 18-20 Deadmines
-
 step
     #completewith EnterRoL
     +|cRXP_WARN_You will now run Ruins of Lordaeron|r
@@ -1359,7 +1338,6 @@ step
     .fly Wetlands >> Fly to Wetlands
     .target Gryth Thurden
     .zoneskip Ironforge,1
-
 step
     .goto 1426/0,-826.400,-5027.100,30,0
     .goto 1426/0,-721.900,-5078.900,30,0
@@ -1434,7 +1412,6 @@ step
     .subzone 16611 >>Travel to the Ruins of Lordaeron in Undercity. Enter the dungeon
     >>|cRXP_WARN_Be careful of higher level |cRXP_ENEMY_Cats|r, |cRXP_ENEMY_Bears|r, |cRXP_ENEMY_Spiders|r or |cRXP_ENEMY_Murlocs|r as you run over|r
     >>|cRXP_WARN_As soon as you enter Undercity you will be automatically PVP flagged, becoming attackable by|r |cRXP_ENEMY_Horde|r
-
 step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Captain Truman|r
     .accept 95250 >> Accept Abominable Creatures
@@ -1482,7 +1459,6 @@ step
     >>|cRXP_FRIENDLY_Captain Truman|r |cRXP_WARN_is back at the start of the dungeon|r
     .turnin 95250 >> Turn in Abominable Creatures
     .target Captain Truman
-
 step
     .hs >> Hearth to Stormwind
     >>|cRXP_WARN_If your Hearthstone was not set at Stormwind, make your way there|r
@@ -1588,7 +1564,6 @@ step << Priest
     .trainer >> Train your class spells
     .target Brother Joshua
 ]])
-
 RXPGuides.RegisterGuide([[
 #forever
 #version 1
@@ -1599,7 +1574,6 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-A1
 #name 18-20 Deadmines
 #next 20-20 Redridge
-
 step
     #completewith next
     .goto 1453/0,490.03,-8835.82
@@ -1875,7 +1849,6 @@ step
     .turnin 214 >> Turn in Red Silk Bandanas
     .goto 1436/0,1033.22,-10504.83
     .target Scout Riell
-
 --Shaman water totem quest start
 step << Shaman
     .goto 1436/0,1037.42,-10628.27
@@ -1951,8 +1924,6 @@ step << Shaman
     .target Hervdana Saegrund::258203
     .turnin 94497 >>Turn in Call of Water
     .accept 94499 >>Accept Call of Water
-
 --sham can hs to sw
 --everyone else can fly sw turn in / train 20 spells
-
 ]])

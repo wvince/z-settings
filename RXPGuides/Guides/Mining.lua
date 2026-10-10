@@ -5,7 +5,6 @@ RXPGuides.RegisterGuide([[
 << Horde
 #name 1-450 Mining (H)
 #displayname 1-450 Mining
-
 step << Mage
     #completewith Makaru
     .zone Orgrimmar >> Teleport to Orgrimmar
@@ -313,14 +312,12 @@ step
 step
     +Congratulations on reaching skill level 450 in Mining!
 ]])
-
 RXPGuides.RegisterGuide([[
 #wotlk
 #group +Profession Leveling
 << Alliance
 #name 1-450 Mining (A)
 #displayname 1-450 Mining
-
 step << Mage
     #completewith Gelman
     .zone Stormwind City >> Teleport to Stormwind

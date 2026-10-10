@@ -2,7 +2,6 @@ local _,addon = ...
 if addon.gameVersion < 40000 or addon.player.faction == 'Horde' then return end
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
-
 #version 1
 #group RXP Cataclysm 1-80 (A) << cata
 #group RXP MoP 1-80 (A) << mop
@@ -13,9 +12,7 @@ RXPGuides.RegisterGuide([[
 #next 10-18 Darkshore
 #defaultfor !DK
 #next 10-18 Darkshore
-
 << Worgen
-
 step
     .goto 202,59.130,23.865
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Prince Liam Greymane|r
@@ -1346,7 +1343,7 @@ step
     #completewith next
     .goto 179,30.27,52.03,15,0
     .goto 179,29.54,51.55,15,0
-    .goto 179,28.67,51.02,10 >>Enter Graymane Manor
+    .goto 179,28.67,51.02,10 >>Enter Greymane Manor
 step
     .goto 179,28.132,50.021
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Queen Mia Greymane|r inside
@@ -1379,7 +1376,7 @@ step
     #optional
     #completewith next
     .goto 179,29.12,51.80,20,0
-    .goto 179,29.86,52.22,15 >>Descend the tower, then exit Graymane Manor. Jump down toward the |cRXP_FRIENDLY_Stagecoach Carriage|r
+    .goto 179,29.86,52.22,15 >>Descend the tower, then exit Greymane Manor. Jump down toward the |cRXP_FRIENDLY_Stagecoach Carriage|r
 step
     .goto 179,28.90,54.22
     .isOnQuest 24438

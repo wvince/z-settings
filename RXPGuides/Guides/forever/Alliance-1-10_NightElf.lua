@@ -1,6 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Horde" then return end
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
@@ -56,7 +55,7 @@ step << !sod/Warrior
 	.goto 1438/1,763.45,10389.79
     .target +Melithar Staghelm
 step << Priest
-    .goto Teldrassil,59.602,40.696
+    .goto 1438/1,779.8482,10450.1295
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Dellylah|r
     .vendor >> |cRXP_WARN_Vendor trash|r
     >>|cRXP_BUY_Buy 15|r |T132794:0|t[Refreshing Spring Water]
@@ -203,7 +202,7 @@ step << Warrior
 	.turnin 3116 >> Turn in Simple Sigil
     .trainer >> Train your class spells
 step << Priest
-    .goto Teldrassil,59.602,40.696
+    .goto 1438/1,779.8482,10450.1295
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Dellylah|r
     .vendor >> |cRXP_WARN_Vendor trash|r
     >>|cRXP_BUY_Buy up to 25|r |T132794:0|t[Refreshing Spring Water]
@@ -293,7 +292,7 @@ step
     .target Dirania Silvershine
     .accept 3522 >> Accept Iverron's Antidote
 step << Priest
-    .goto Teldrassil,59.602,40.696
+    .goto 1438/1,779.8482,10450.1295
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Dellylah|r
     .vendor >> |cRXP_WARN_Vendor trash|r
     >>|cRXP_BUY_Buy up to 25|r |T132794:0|t[Refreshing Spring Water]
@@ -440,7 +439,6 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Porthannius|r
     .accept 2159 >> Accept Dolanaar Delivery
 ]])
-
 RXPGuides.RegisterGuide([[
 #forever
 #season 0,1
@@ -453,7 +451,6 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-A1
 #defaultfor NightElf
 #next 14-16 Darkshore
-
 step
     .goto 1438/1,734.13,9920.57
     .target Zenn Foulhoof
@@ -1136,7 +1133,7 @@ step
     .turnin 4161 >> Turn in Recipe of the Kaldorei
     .target Zarrin
 step
-    .goto Teldrassil,57.2,61.2
+    .goto 1438/1,902.1500,9754.2750
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Nyoma|r
     +Buy 5 |T134059:0|t[Mild Spices] from her, use |T133971:0|t[|cRXP_FRIENDLY_Cooking|r] to cook |T132834:0|t[|cRXP_LOOT_Herb Baked Eggs|r] until you run out of |T132832:0|t[|cRXP_LOOT_Small Eggs|r]
     .collect 2678,5 --Mild Spices
@@ -1324,7 +1321,6 @@ step
     .goto 1438/1,1857.86,10676.36
     .use 18152 >>|cRXP_WARN_Use the|r |T134798:0|t[Amethyst Phial] |cRXP_WARN_at The Oracle Glade moonwell|r
     .complete 7383,1 --Collect Filled Amethyst Phial (x1)
-
 --with the new quests, druids can go straight to 10, a 5 minute save later down the road
 --@TODO add mist here
 step << Druid/Priest
@@ -1417,8 +1413,7 @@ step << Hunter
 step << Hunter
     #sticky
     #label xp10
-    --@TODO change the XP req here
-    .xp 9+2250 >> Grind until you are 2250 into level 9 (2250/6500)
+    .xp 9+800 >> Grind until you are 800xp into level 9
     >>|cRXP_WARN_Once you reach this xp breakpoint, skip the harpy/escort quest and go straight to Darnassus. You will have another opportunity to finish those quests later|r
 step << Hunter
     #completewith xp10
@@ -1460,12 +1455,13 @@ step << !Rogue
     #completewith next
     .goto 1457/1,2070.42,9979.310,100 >> Travel to Darnassus
 step << Hunter
-    .goto Darnassus,58.76,44.48
+    #requires xp10
+    .goto 1457/1,2316.49,9924.41
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ariyell Skyshadow|r
     .vendor >>|cRXP_BUY_Sell your vendor trash|r
     .target Ariyell Skyshadow
 step << Hunter
-    .goto Darnassus,57.56,46.73
+    .goto 1457/1,2329.19,9908.53
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ilyenia Moonfire|r
     .skipgossipid 96881
     .train 227 >>Train Staves
@@ -1572,18 +1568,31 @@ step << Druid NightElf/Priest NightElf
     .accept 952 >> Accept Grove of the Ancients
     .xp 10,1
 step << Druid NightElf
-    #completewith next
     .goto 1457/1,2572.300,10185.800
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Denatharion::4218|r
     .target Denatharion::4218
     .accept 5923 >>Accept Heeding the Call
     .isNotOnQuest 5925
 step << Druid NightElf
+    .isOnQuest 5923
     .goto 1457/1,2563.92,10179.040
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mathrengyl Bearwalker|r on the middle level
-    .turnin -5923 >> Turn in Heeding the Call
+    .turnin 5923 >> Turn in Heeding the Call
     .accept 5921 >> Accept Moonglade
 	.trainer >> Train your class spells
+    .target Mathrengyl Bearwalker
+step << Druid NightElf
+    .isOnQuest 5925
+    .goto 1457/1,2563.92,10179.040
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mathrengyl Bearwalker|r on the middle level
+    .turnin 5925 >> Turn in Heeding the Call
+    .accept 5921 >> Accept Moonglade
+	.trainer >> Train your class spells
+    .target Mathrengyl Bearwalker
+step << Druid NightElf
+    .goto 1457/1,2563.92,10179.040
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mathrengyl Bearwalker|r on the middle level
+    .accept 5921 >> Accept Moonglade
     .target Mathrengyl Bearwalker
 step << !Rogue
     .goto 1457/1,2508.68,9605.98--c:Darnassus,40.6,89.6
@@ -1716,7 +1725,7 @@ step
     .itemcount 3418,3
     .isOnQuest 489
 step << Hunter
-    .goto Teldrassil,56.308,59.488
+    .goto 1438/1,947.57,9812.38
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Shalomon|r
     >>|cRXP_BUY_Buy and equip a|r |T135145:0|t[Walking Stick] |cRXP_BUY_if you can afford it (5s 4c), if not skip this step|r
     .collect 2495,1 --Walking Stick (1)
@@ -1846,7 +1855,7 @@ step
     .goto 1438/1,997.200,9903.601
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Byancie::6094|r
     .target Byancie::6094
-    .turnin 99050 >>Turn in the Great Tree Provides
+    .turnin 99050 >>Turn in The Great Tree Provides
     .accept 99073 >>Accept Easing Suffering
     .xp >10,1
 step
@@ -1964,7 +1973,7 @@ step << Hunter
     .goto 1438/1,997.200,9903.601
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Byancie::6094|r
     .target Byancie::6094
-    .turnin 99050 >>Turn in the Great Tree Provides
+    .turnin 99050 >>Turn in The Great Tree Provides
     .accept 99073 >>Accept Easing Suffering
 step
     .goto 1438/1,971.91,9852.35,40,0
@@ -1976,7 +1985,7 @@ step
     .target Moon Priestess Amara
 step
     #optional
-    .abandon 87288 >> Abandon Soft Saber Pelts you won't be returning to Dolnaar
+    .abandon 87288 >> Abandon Soft Saber Pelts you won't be returning to Dolanaar
 step << Rogue
     #softcore
     #completewith next
@@ -2093,6 +2102,7 @@ step
     .accept 98392 >> Accept Darkness in the Glade
     .target Sentinel Arynia Cloudsbreak
 step
+    .isOnQuest 99073
     .goto 1438/1,1899.700,10582.900
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Sentinel Eralya Leafshadow::275683|r
     .target Sentinel Eralya Leafshadow::275683

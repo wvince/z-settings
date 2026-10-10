@@ -76,8 +76,7 @@ local function applies(textEntry,customClass,func)
                     end
                     local customCheck = func and func(entry, uppercase)
                     v = (not(gendercheck or uppercase == class or entry == race or
-                             entry == faction or playerLevel >= level or uppercase == addon.game or
-                             (addon.game == "FOREVER" and uppercase == "CLASSIC") or entry == customClass or entry == locale or customCheck) ==
+                             entry == faction or playerLevel >= level or uppercase == addon.game or entry == customClass or entry == locale or customCheck) ==
                              state)
                     if not v then
                         break
@@ -303,11 +302,6 @@ local function CheckDataIntegrity(str, h1, mode, yieldImport)
         return false, decodeError or L("Failed integrity check")
     end
 
-    -- Keep one small byte buffer and concatenate completed chunks. A table
-    -- entry for every byte of the entire export causes large GC allocations.
-    local byteChars = {}
-    for byte = 0, 255 do byteChars[byte] = strchar(byte) end
-    local chunkBuffer = {}
     i, j = 0, 0
     local chunkEnd
     for chunkStart = 1, #decoded, importChunkSize do
@@ -319,15 +313,13 @@ local function CheckDataIntegrity(str, h1, mode, yieldImport)
             i = bitand(i + 1, 0xff)
             j = bitand(j + S[i], 0xff)
             S[i], S[j] = S[j], S[i]
-            chunkBuffer[k - chunkStart + 1] = byteChars[bitxor(strbyte(decoded, k), S[bitand((S[i] + S[j]), 0xff)])]
+            tinsert(buffer, strchar(bitxor(strbyte(decoded, k), S[bitand((S[i] + S[j]), 0xff)])))
         end
 
-        buffer[#buffer + 1] = table.concat(chunkBuffer, "", 1, chunkEnd - chunkStart + 1)
         if yieldImport then yieldImport() end
     end
 
     local compressed = table.concat(buffer)
-    buffer, chunkBuffer, byteChars, decoded = nil, nil, nil, nil
     -- Reject likely account mismatches before passing data to the native decoder.
     local compressedLength = #compressed
     local cmf, flg = strbyte(compressed, 1, 2)
@@ -401,7 +393,7 @@ end
 function addon.ImportGuide(guide, text, defaultFor, cache)
     if addon.db then -- Addon loaded already
         local importedGuide, errorMsg, metadata = addon.ParseGuide(guide)
-        if errorMsg ~= "#0" and importedGuide and importedGuide.name and
+        if errorMsg ~= "#0" and importedGuide and
             ((errorMsg and not cache) or addon.AddGuide(importedGuide)) then
             -- print(errorMsg,importedGuide.name)
             importedGuide.key = importedGuide.key or addon.BuildGuideKey(importedGuide)
@@ -410,7 +402,7 @@ function addon.ImportGuide(guide, text, defaultFor, cache)
             addon.CacheGuide(importedGuide.key, guide, importedGuide.enabledFor,
                              importedGuide.version, metadata)
         end
-        return importedGuide, errorMsg
+        return importedGuide
     else -- Addon not loaded, add to queue
         tinsert(embeddedGuides, {
             groupOrContent = guide,
@@ -425,7 +417,8 @@ function addon.RegisterGuide(groupOrContent, text, defaultFor)
     if not groupOrContent then
         return error(L'Error: Guide has no contents')
     elseif addon.addonLoaded or
-      (addon.addonLoaded == false and (addon.settings.profile.preLoadData or not addon.player.hardcore)) then
+      (addon.addonLoaded == false and addon.settings.profile and
+       (addon.settings.profile.preLoadData or not addon.player.hardcore)) then
         local importedGuide, errorMsg = addon.ParseGuide(groupOrContent, text,
                                                         defaultFor)
 
@@ -551,7 +544,7 @@ local function LoadGuide(guideData,n)
         addon.ImportGuide(guideData.groupOrContent, guideData.text,
                             guideData.defaultFor, true)
     else
-        local guide, errorMsg, metadata, length, key, group, name, version
+        local guide, errorMsg, metadata, length, key, group, name
         local enabled = true
         if RXPCData.guideDisabled[n] then
             enabled = false
@@ -563,7 +556,7 @@ local function LoadGuide(guideData,n)
                 local subgroup, enabledFor
                 enabled = false
                 for line in header:gmatch("[^\r\n]+") do
-                    if subgroup and name and group and enabledFor and enabled and version then
+                    if subgroup and name and group and enabledFor and enabled then
                         break
                     end
                     line = line:gsub("%-%-.*$","")
@@ -577,8 +570,7 @@ local function LoadGuide(guideData,n)
                     if not enabled then
                         local u = strupper(line)
                         if u:find("#" .. addon.game) or
-                            (addon.game == "RETAIL" and u:find("#DF")) or
-                            (addon.game == "FOREVER" and u:find("#CLASSIC")) then
+                            (addon.game == "RETAIL" and u:find("#DF")) then
                             enabled = true
                         end
                     end
@@ -586,21 +578,10 @@ local function LoadGuide(guideData,n)
                     group = group or line:match("^%s*#group%s+(.-)%s*$")
                     subgroup = subgroup or line:match("^%s*#subgroup%s+(.-)%s*$")
                     name = name or line:match("^%s*#name%s+(.-)%s*$")
-                    version = version or tonumber(line:match("^%s*#version%s+(.-)%s*$"))
                 end
                 enabled = enabled and (not enabledFor or applies(enabledFor))
 
                 if enabled then
-                    -- Keep an equal/newer loaded route before touching its metadata
-                    -- or lazy parser. A newer embedded version may still replace it.
-                    if group and name then
-                        local existingGroup = addon.GroupOverride(group, subgroup)
-                        local existingName = name:gsub("^(%d)-(%d%d?)", addon.affix)
-                        local existingGuide = addon.guides[existingGroup .. "||" .. existingName]
-                        if existingGuide and (tonumber(existingGuide.version) or 0) >= (version or 0) then
-                            return
-                        end
-                    end
                     key = addon.BuildGuideKey(group,"",name)
                     guide = key and RXPCData.guideMetaData[key]
                 else
@@ -651,6 +632,9 @@ local function LoadGuide(guideData,n)
             end
         end
         if enabled then
+            if name and group and addon.guides[group .. "||" .. name] then
+                addon.error("Error trying to load a guide already parsed: " .. group .. "/" .. name)
+            end
             addon.AddGuide(guide)
         end
     end
@@ -834,7 +818,7 @@ function addon.LoadCachedGuides()
                 end
             else
                 guide = LibDeflate:DecompressDeflate(guideData.groupOrContent)
-                if guide:find("^--" .. addon.ReadCacheData("string")) then
+                if guide and guide:find("^--" .. addon.ReadCacheData("string")) then
                     guide, errorMsg, metadata = addon.ParseGuide(guide)
                     if metadata then
                         guideData.metadata = metadata
@@ -989,7 +973,6 @@ addon.ParseLine = parseLine
 function addon.ParseGuide(groupOrContent, text, defaultFor, isEmbedded, group, key)
 
     addon.lastObjective = nil
-    addon.currentGuideName = nil
     if not groupOrContent then return end
 
     local playerLevel = UnitLevel("player")
@@ -1000,11 +983,10 @@ function addon.ParseGuide(groupOrContent, text, defaultFor, isEmbedded, group, k
     else
         length = groupOrContent:match("^%-%-(%d+)")
     end
-    -- A final inline comment needs a line terminator before normalization.
     if not (groupOrContent and text) then
         local currentGroup = group
         if type(length) ~= "string" then
-            text = (groupOrContent .. "\n"):gsub("%-%-[^\r\n]*[\r\n]+", "\n")
+            text = groupOrContent:gsub("%-%-[^\r\n]*[\r\n]+", "\n")
         else
             text = groupOrContent
         end
@@ -1032,7 +1014,7 @@ function addon.ParseGuide(groupOrContent, text, defaultFor, isEmbedded, group, k
             end
         end
     else
-        text = (text .. "\n"):gsub("%-%-[^\r\n]*[\r\n]", "\n")
+        text = text:gsub("%-%-[^\r\n]*[\r\n]", "\n")
     end
 
     local guide = {}
@@ -1062,20 +1044,19 @@ function addon.ParseGuide(groupOrContent, text, defaultFor, isEmbedded, group, k
         line = line:gsub("%s+$", "")
         -- print(line)
         if line:sub(1, 4) == "step" then
+            if not addon.currentGuideName then
+                error(L("Error parsing guide") .. ": " .. L("Guide has no name") .. "\n" .. text)
+            end
             if currentStep == 0 then
                 if guide.df then guide.retail = true end
 
-                hasGameTag = guide.classic or guide.tbc or guide.wotlk or guide.df or guide.retail or guide.cata or guide.mop
+                hasGameTag = guide.classic or guide.tbc or guide.wotlk or guide.df or guide.retail or guide.cata
                 isGameCompatible = guide[game] or (addon.game == "FOREVER" and guide.classic)
                 hasGuideMetadata = guide.name and guide.group
 
-                if hasGameTag and not isGameCompatible then
+                if (hasGameTag and not isGameCompatible) or not hasGuideMetadata then
+                    -- print(game,guide[game],guide.name)
                     skipGuide = "#0"
-                end
-                -- Excluded faction/class/season guides may have no conditional name.
-                -- Applicable guides still need valid metadata.
-                if not skipGuide and not hasGuideMetadata then
-                    error(L("Error parsing guide") .. ": " .. L("Guide has no name"))
                 end
                 --debug purposes
                 addon.lastGuideName = guide.name
@@ -1365,7 +1346,6 @@ local function LoadImportBuffer(str, nGuides, yieldImport)
 end
 
 function addon.guideImporter:AbortImport()
-    self.nextProgressUpdate = nil
     self.importCoroutine = nil
     importBuffer = {}
     importedGuideCount = 0
@@ -1430,7 +1410,6 @@ function addon.guideImporter.RestoreScriptErrorSetting()
 end
 
 function addon.guideImporter:ImportString(str, synchronous)
-    self.nextProgressUpdate = nil
     self:Setup()
     importBuffer = {}
     self.importBufferSize = 0
@@ -1500,105 +1479,85 @@ function addon.guideImporter:ImportString(str, synchronous)
     return true
 end
 
--- RestedXP import work limits (milliseconds and maximum batch size).
-local importFrameBudgetMs = 8
-local importFrameWorkLimit = 64
-
 function addon.guideImporter.ProcessInputBuffer(workerFrame)
     local guideImporter = addon.guideImporter
     local importCoroutine = guideImporter.importCoroutine
-    local frameStarted = debugprofilestop()
-    local frameWork = 0
 
     if importCoroutine then
-        repeat
-            frameWork = frameWork + 1
-            local success, errorMsg = coroutine.resume(importCoroutine)
-            local finished = coroutine.status(importCoroutine) == "dead"
+        local success, errorMsg = coroutine.resume(importCoroutine)
+        if success and coroutine.status(importCoroutine) ~= "dead" then return end
 
-            if not success or (finished and errorMsg) then
-                addon.safeCall(function() guideImporter:AbortImport() end)
-                addon.safeCall(function()
-                    guideImporter:UpdateImportStatusHistory(
-                        "%s", true,
-                        tostring(errorMsg or L("Guide import failed due to a Lua error.")))
-                end)
-                return
-            end
+        guideImporter.importCoroutine = nil
 
-            if finished then
-                guideImporter.importCoroutine = nil
-                guideImporter.importBufferSize = #importBuffer
-                break
-            end
-        until frameWork >= importFrameWorkLimit or
-              debugprofilestop() - frameStarted >= importFrameBudgetMs
+        if not success or errorMsg then
+            addon.safeCall(function() guideImporter:AbortImport() end)
+            addon.safeCall(function()
+                guideImporter:UpdateImportStatusHistory(
+                    "%s", true,
+                    tostring(errorMsg or L("Guide import failed due to a Lua error.")))
+            end)
 
-        if guideImporter.importCoroutine or frameWork >= importFrameWorkLimit or
-           debugprofilestop() - frameStarted >= importFrameBudgetMs then
             return
         end
+
+        guideImporter.importBufferSize = #importBuffer
     end
 
-    local processed = 0
-    while #importBuffer > 0 do
+    local parseGuide
+
+    if #importBuffer > 0 then
         local guideString = tremove(importBuffer)
-        local success, parseGuide, skipReason = addon.safeCall(function()
+        local success
+
+        success, parseGuide = addon.safeCall(function()
             return RXPGuides.ImportGuide(guideString)
         end)
 
         if not success then
-            addon.safeCall(function() guideImporter:AbortImport() end)
-            addon.safeCall(function() guideImporter:UpdateImportStatusHistory("%s", true, parseGuide) end)
+            addon.safeCall(function() addon.guideImporter:AbortImport() end)
+            addon.safeCall(function() addon.guideImporter:UpdateImportStatusHistory("%s", true, parseGuide) end)
+
             return
         end
 
-        -- A conditional skip may legitimately have no applicable guide name.
-        if type(parseGuide) ~= "table" or (not parseGuide.name and not skipReason) then
-            addon.safeCall(function() guideImporter:AbortImport() end)
+        if type(parseGuide) ~= "table" or not parseGuide.name then
+            addon.safeCall(function() addon.guideImporter:AbortImport() end)
+
             addon.safeCall(function()
-                guideImporter:UpdateImportStatusHistory(L("Error parsing guide"), true)
+                addon.guideImporter:UpdateImportStatusHistory(L("Error parsing guide"), true)
             end)
+
             return
         end
 
         if parseGuide.imported then importedGuideCount = importedGuideCount + 1 end
-        processed = processed + 1
-        frameWork = frameWork + 1
 
-        if frameWork >= importFrameWorkLimit or
-           debugprofilestop() - frameStarted >= importFrameBudgetMs then
-            break
-        end
-    end
-
-    -- Refresh the progress display at most ten times per second. Errors and
-    -- the final count still update immediately, even in a very short import.
-    if processed > 0 and (#importBuffer == 0 or
-                         GetTime() >= (guideImporter.nextProgressUpdate or 0)) then
-        guideImporter.nextProgressUpdate = GetTime() + 0.1
         addon.safeCall(function()
-            guideImporter:UpdateImportStatusHistory(
+            addon.guideImporter:UpdateImportStatusHistory(
                 L("Loading Guides") .. "... (%d/%d)",
-                false, guideImporter.importBufferSize - #importBuffer,
-                guideImporter.importBufferSize)
+                false,
+                addon.guideImporter.importBufferSize - #importBuffer,
+                addon.guideImporter.importBufferSize)
         end)
-    end
-    if #importBuffer > 0 then return end
 
-    guideImporter.nextProgressUpdate = nil
-    workerFrame:SetScript("OnUpdate", nil)
-    workerFrame:Hide()
-    guideImporter.RestoreScriptErrorSetting()
+        return
+    else
+        workerFrame:SetScript("OnUpdate", nil)
+        workerFrame:Hide()
 
-    if guideImporter.guideContent or guideImporter.guideLength or guideImporter.guideId then
-        addon.db.profile.guideContent = guideImporter.guideContent
-        addon.db.profile.guideLength = guideImporter.guideLength
-        addon.db.profile.guideId = guideImporter.guideId
+        addon.guideImporter.RestoreScriptErrorSetting()
 
-        guideImporter.guideContent = nil
-        guideImporter.guideLength = nil
-        guideImporter.guideId = nil
+        if addon.guideImporter.guideContent or addon.guideImporter.guideLength or addon.guideImporter.guideId then
+
+            addon.db.profile.guideContent = addon.guideImporter.guideContent
+            addon.db.profile.guideLength = addon.guideImporter.guideLength
+            addon.db.profile.guideId = addon.guideImporter.guideId
+
+            addon.guideImporter.guideContent = nil
+            addon.guideImporter.guideLength = nil
+            addon.guideImporter.guideId = nil
+        end
+
     end
 
     if importedGuideCount > 0 then
@@ -1613,7 +1572,7 @@ function addon.guideImporter.ProcessInputBuffer(workerFrame)
     else
         addon.safeCall(function() addon.guideImporter:AbortImport() end)
         addon.safeCall(function()
-            addon.guideImporter:UpdateImportStatusHistory(L("No guides apply to this game version or character."), true)
+            addon.guideImporter:UpdateImportStatusHistory(L("Error parsing guide"), true)
         end)
     end
 

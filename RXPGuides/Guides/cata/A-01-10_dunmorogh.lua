@@ -2,7 +2,6 @@ local _,addon = ...
 if addon.gameVersion < 40000 or addon.player.faction == 'Horde' then return end
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
-
 #version 1
 #group RXP Cataclysm 1-80 (A) << cata
 #group RXP MoP 1-80 (A) << mop
@@ -12,12 +11,8 @@ RXPGuides.RegisterGuide([[
 #displayname 1-6 Coldridge Valley
 #next 6-7 Dun Morogh;6-9 Elwynn Forest
 #defaultfor Dwarf !DK
-
 << Alliance
-
 --XX Map ID changes from 27 -> 427 in MoP / custom starter zone map gets added
-
-
 step
     .goto 27,36.872,70.045
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Joren Ironstock|r
@@ -564,7 +559,6 @@ step
     .goto 27,32.064,74.170
 	.target +Grelin Whitebeard
 --XX 182 can be completed later
-
 --steps for strictly cata, changes in mop
 step << cata
     #optional
@@ -619,7 +613,6 @@ step << cata
     .waypoint 428,67.202,42.936,12,0
 	.mob Frostmane Blade
     .mob Frostmane Novice
-
 --steps for mop onwards
 step << !tbc !wotlk !cata
     #optional
@@ -782,11 +775,9 @@ step
     .subzone 131 >> Travel to Kharanos
     .isOnQuest 24493
 ]])
-
 --TODO: Polish the gnome section, havent touched it
 --XX Logout Dwarves come from GY, non-logout from in front of blacksmith
 RXPGuides.RegisterGuide([[
-
 #version 1
 #group RXP Cataclysm 1-80 (A) << cata
 #group RXP MoP 1-80 (A) << mop
@@ -796,9 +787,7 @@ RXPGuides.RegisterGuide([[
 #displayname 1-6 New Tinkertown
 #next 6-7 Dun Morogh;6-9 Elwynn Forest
 #defaultfor Gnome !DK
-
 << Gnome Alliance
-
 step
     .goto 30,34.101,32.243
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Nevin Twistwrench|r
@@ -883,7 +872,6 @@ step << skip -- not working currently in cata
     .target Sanitron 500
 --XX  .emote SIT,46185 Doesn't work here, needs a delay (batch makes this not work)
 --   .timer 26,Decontamination RP
-
 step
     .isOnQuest 27635
     .goto 30,58.746,82.974
@@ -1522,9 +1510,7 @@ step
 	.target Ciara Deepstone
 --XX Doable by other races but simpler to do for gnomes only
 ]])
-
 RXPGuides.RegisterGuide([[
-
 #xprate <1.2
 #version 1
 #group RXP Cataclysm 1-80 (A) << cata
@@ -1534,9 +1520,7 @@ RXPGuides.RegisterGuide([[
 #name 6-7 Dun Morogh
 #next 6-9 Elwynn Forest
 #defaultfor Dwarf/Gnome
-
 << Alliance
-
 --XX 6-9 and 9-10 separated so can combine human guide without maintaining 2x code
 step
     #xprate >1.19
@@ -1566,7 +1550,6 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ragnar Thunderbrew|r
     .accept 384 >>Accept Beer Basted Boar Ribs
 	.target Ragnar Thunderbrew
-
 step
     #optional
     #label Distillery
@@ -1584,8 +1567,6 @@ step << Gnome
 	.target Innkeeper Belm
     .isOnQuest 26380
 --XX not sure how to do this otherwise
-
-
 step
     #label Belm
     .goto 27,54.485,50.847
@@ -1895,9 +1876,7 @@ step
     .turnin 384 >>Turn in Beer Basted Boar Ribs
 	.target Ragnar Thunderbrew
 ]])
-
 RXPGuides.RegisterGuide([[
-
 #version 1
 #group RXP Cataclysm 1-80 (A) << cata
 #group RXP MoP 1-80 (A) << mop
@@ -2227,9 +2206,7 @@ step
     .goto 27,70.410,48.918
     .target +Sergeant Flinthammer
 ]])
-
 RXPGuides.RegisterGuide([[
-
 #version 1
 #group RXP Cataclysm 1-80 (A) << cata
 #group RXP MoP 1-80 (A) << mop
@@ -2239,9 +2216,7 @@ RXPGuides.RegisterGuide([[
 #displayname 9-10 Dun Morogh
 #next 10-20 Loch Modan
 #defaultfor Dwarf/Gnome/Human
-
 << Alliance
-
 step << Human
     #completewith next
     #label FlySW
@@ -2250,7 +2225,6 @@ step << Human
     .fly Gol'Bolar Quarry >> Fly to Gol'Bolar Quarry
 	.target Bartlett the Brave
     .zoneskip Dun Morogh
-
 step
     .goto 27,75.899,54.312
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Senator Mehr Stonehallow|r

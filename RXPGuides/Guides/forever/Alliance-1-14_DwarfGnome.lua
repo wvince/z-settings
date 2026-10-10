@@ -1,6 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Horde" then return end
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
@@ -13,7 +12,6 @@ RXPGuides.RegisterGuide([[
 #name 1-5 Coldridge Valley
 #next 5-11 Dun Morogh
 #defaultfor Dwarf/Gnome
-
 step << !Gnome !Dwarf
     #completewith next
     +You have selected a guide meant for Gnomes and Dwarves. You should choose the same starter zone that you start in
@@ -86,7 +84,6 @@ step << Warrior/Warlock
     #requires WarriorHS
     #completewith WolfMeat
 	.destroy 6948 >> Delete the |T134414:0|t[Hearthstone] from your bags, as it's no longer needed
-
 step
     #label WolfMeat
     .goto 1426,29.529,73.286,0
@@ -154,7 +151,6 @@ step
     .accept 98574 >>Accept Hallowed Memorandum << Gnome Priest
     .accept 98581 >>Accept Archaic Rune << Dwarf Shaman
     .target Sten Stoutarm
-
 step << Warlock
     #season 0,1
     #optional
@@ -225,7 +221,6 @@ step << Warlock
     .turnin -3115 >> Turn in Tainted Memorandum
     .target Alamar Grimm
 --XX Warlock Imp Quest End. Return to normal
-
 step
 #season 0,1
     #label Talin
@@ -262,7 +257,6 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Talin Keeneye|r
     .turnin 183 >> Turn in The Boar Hunter
     .target Talin Keeneye
-
 step << Paladin/Warlock/Shaman
     #loop
     .goto 1426,23.595,72.462,0
@@ -513,7 +507,6 @@ step << !Paladin !Warlock !Hunter !Shaman
     .accept 3365 >> Accept Bring Back the Mug
     .target Durnan Furcutter
     .isQuestAvailable 317
-
 step << Mage
     #season 0,1
     .goto 1426/0,388.17,-6056.10
@@ -645,7 +638,6 @@ step
     .subzoneskip 800,1
     .isOnQuest 2160
 ]])
-
 RXPGuides.RegisterGuide([[
 #forever
 #season 0,1
@@ -657,7 +649,6 @@ RXPGuides.RegisterGuide([[
 #name 5-11 Dun Morogh
 #next 11-12 Elwynn (Dwarf/Gnome);11-12 Voidwalker Quest;12-14 Loch Modan (Dwarf/Gnome);11-13 Loch Modan (Hunter)
 #defaultfor Dwarf/Gnome
-
 step
     #optional
     #label BoarMeatQuest
@@ -1311,14 +1302,12 @@ step
     >>Kill |cRXP_ENEMY_Frostmane Headhunters|r inside the cave
     .complete 287,1 --Kill Frostmane Headhunter (x5)
     .mob Frostmane Headhunter
-
 step
     #hardcore
     #completewith Distracting
     .goto 1426/0,-531.23,-5601.59
     .subzone 131 >> Return to Kharanos
 --XX if they don't somehow meet xp gate by Kharanos then wcyd
-
 step
     #softcore
     #completewith next
@@ -1405,7 +1394,6 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ragnar Thunderbrew|r outside
     .turnin 384 >> Turn in Beer Basted Boar Ribs
     .target Ragnar Thunderbrew
-
 --Alternative path now for Hunters to hit 10 fast for pet quest
 step << Hunter
     .goto 1426/0,-1041.000,-5350.600
@@ -2709,7 +2697,6 @@ step << Rogue
     .itemcount 851,1
     .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<6.8
 ]])
-
 RXPGuides.RegisterGuide([[
 #xprate <1.5
 #forever
@@ -2723,7 +2710,6 @@ RXPGuides.RegisterGuide([[
 #defaultfor Gnome/Dwarf
 #next 12-14 Loch Modan (Dwarf/Gnome)
 --#era << !Warlock
-
 step << Warlock
     #softcore
     #optional
@@ -2824,7 +2810,6 @@ step
     .accept 88 >> Accept Princess Must Die!
     .target +Ma Stonefield
     .goto 1429/0,332.43,-9895.01--c:Elwynn Forest,34.660,84.483
-
 --
 step << skip
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ma Stonefield|r and |cRXP_FRIENDLY_"Auntie" Bernice Stonefield|r
@@ -2924,7 +2909,6 @@ step << skip
     .goto 1429/0,72.81,-9496.23--c:Elwynn Forest,42.140,67.254
     .turnin 47 >> Turn in Gold Dust Exchange
 --
-
 step
     #completewith next
     .goto 1429/0,-1032.06,-9610.23,30 >> Travel east to |cRXP_FRIENDLY_Guard Thomas|r
@@ -3372,7 +3356,6 @@ step << !Paladin
     .zoneskip Ironforge
     .zoneskip Loch Modan
 ]])
-
 RXPGuides.RegisterGuide([[
 #forever
 #season 0,1
@@ -3384,7 +3367,6 @@ RXPGuides.RegisterGuide([[
 #name 12-14 Loch Modan (Dwarf/Gnome)
 #next 13-15 Westfall;14-16 Darkshore
 #defaultfor Gnome/Dwarf
-
 step -- dont delete
     #label LochStart
 step << Dwarf Paladin
@@ -4061,9 +4043,7 @@ step << Dwarf Paladin
     .goto 1426/0,-669.77,-5216.35,20,0--c:Dun Morogh,50.19,40.79
     .goto 1455/0,-831.39,-5028.78,40,0--c:Ironforge,14.90,87.10
     .zone Ironforge >> Return to Ironforge
-
 ----Start of <1.5x IF->Westfall Section----
-
 step << Rogue
     .goto 1455/0,-1197.27,-5041.49
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Buliwyf Stonehand|r inside
@@ -4167,10 +4147,8 @@ step << Warrior
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Bilban Tosslespanner|r
     .trainer >> Train your class spells
     .target Bilban Tosslespanner
-
 step -- dont delete
     #label LochEnd
-
 step << skip --logout skip << Warrior
     #optional
     #completewith Deeprun
@@ -4377,7 +4355,6 @@ step << Mage/Priest/Warlock
 step
     #label Fly2WF
 ]])
-
 RXPGuides.RegisterGuide([[
 #forever
 #season 0,1
@@ -4390,7 +4367,6 @@ RXPGuides.RegisterGuide([[
 #name 11-13 Loch Modan (Hunter)
 #next 14-16 Darkshore
 #defaultfor Dwarf
-
 step -- dont delete
     #label NormalRouteStart
 step
@@ -4833,10 +4809,8 @@ step
     .target Woo Ping
     .goto 1453/0,613.0,-8796.03
     .trainer >>Train Staves
-
 step --dont delete
     #label NormalRouteEnd
-
 step
     #ah
     .goto 1453/0,660.28,-8814.55

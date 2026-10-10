@@ -1,6 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
@@ -11,7 +10,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Speedrun Guide Mage AoE
 #defaultfor Horde Mage
 #next 17-21 Stonetalon/Barrens AoE
-
 step << Mage
 	#era/som
     #completewith next
@@ -704,7 +702,6 @@ step
 >>Talk to |cRXP_FRIENDLY_Makaba Flathoof|r
     .accept 6548 >> Accept Avenge My Village
 ]])
-
 RXPGuides.RegisterGuide([[
 #forever
 << Horde Mage
@@ -714,7 +711,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Speedrun Guide Mage AoE
 #defaultfor Horde Mage
 #next 21-30 Silverpine/Hillsbrad AoE
-
 step
     .goto 1442/1,-695.02,12.09,50,0
     .goto 1442/1,-758.5,116.29,50,0

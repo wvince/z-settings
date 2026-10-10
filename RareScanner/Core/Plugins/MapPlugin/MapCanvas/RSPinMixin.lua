@@ -51,8 +51,8 @@ function RSPinMixin:GetMap()
 	return RSWorldMap
 end
 
-function RSPinMixin:GetHighlightType()
-	return MapPinHighlightType.None;
+function RSPinMixin:IsReputationHighlight()
+	return false;
 end
 
 function RSPinMixin:SetScalingLimits(scaleFactor, startScale, endScale)

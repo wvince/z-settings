@@ -4,7 +4,6 @@ RXPGuides.RegisterGuide([[
 #season 2
 #group RestedXP Nightmare Incursion Dailies
 #name (25-32) Duskwood Nightmare Incursion
-
 step
     #optional
     #completewith travel
@@ -244,7 +243,7 @@ step
 step
     .goto Duskwood,49.8,74.4
     .group 3
-    >>|cRXP_WARN_Kill|r |cRXP_ENEMY_Ylanthrius|r. |cRXP_WARN_A green dragon flying above the farm|r|cRXP_WARN_. He has a massive healtpool, is immune to nature spells, has a|r|T132338:0|t[Cleave]|cRXP_WARN_,|r |T134307:0|t[Tail Swipe] |cRXP_WARN_and|r |T135745:0|t[Summons] |cRXP_WARN_a|r |cRXP_ENEMY_Drake|r |cRXP_WARN_add that casts a frontal breath which does enormous damage|r
+    >>|cRXP_WARN_Kill|r |cRXP_ENEMY_Ylanthrius|r. |cRXP_WARN_A green dragon flying above the farm|r|cRXP_WARN_. He has a massive health pool, is immune to nature spells, has a|r|T132338:0|t[Cleave]|cRXP_WARN_,|r |T134307:0|t[Tail Swipe] |cRXP_WARN_and|r |T135745:0|t[Summons] |cRXP_WARN_a|r |cRXP_ENEMY_Drake|r |cRXP_WARN_add that casts a frontal breath which does enormous damage|r
     .complete 81742,1 --Ylanthrius (1)
     .maxlevel 53
     .isOnQuest 81742
@@ -342,13 +341,11 @@ step
     #optional
     +You have completed this Nightmare Incursion loop. The quests will become available again after the daily reset. |cRXP_WARN_Select a different guide from the list to continue|r
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #season 2
 #group RestedXP Nightmare Incursion Dailies
 #name (40-49) Ashenvale Nightmare Incursion
-
 step
     #optional
     #completewith next
@@ -511,7 +508,7 @@ step
     #completewith IncursionsComplete
     .goto Ashenvale,93.94,38.21,25,0
     .goto Ashenvale,94.27,35.13,20 >>Enter the |cRXP_PICK_Emerald Dream Portal|r
-    >>|cRXP_WARN_Run straight past the |cRXP_ENEMY_Satyr's|r, |cRXP_ENEMY_Felhounds|r and |cRXP_ENEMY_Imps|r. They will reset aggro as you enter the portal|r
+    >>|cRXP_WARN_Run straight past the |cRXP_ENEMY_Satyrs|r, |cRXP_ENEMY_Felhounds|r and |cRXP_ENEMY_Imps|r. They will reset aggro as you enter the portal|r
     .aura 444759
     .maxlevel 53
 step
@@ -546,7 +543,7 @@ step
     #season 2
     .group 3
     .goto Ashenvale,86.0,46.0
-    >>|cRXP_WARN_Kill|r |cRXP_ENEMY_Larsera|r|cRXP_WARN_. She has a massive healtpool, is immune to nature spells, has a|r|T132338:0|t[Cleave]|cRXP_WARN_,|r |T134307:0|t[Tail Swipe] |cRXP_WARN_and|r |T135745:0|t[Summons] |cRXP_WARN_a|r |cRXP_ENEMY_Drake|r |cRXP_WARN_add that casts a frontal breath which does enormous damage|r
+    >>|cRXP_WARN_Kill|r |cRXP_ENEMY_Larsera|r|cRXP_WARN_. She has a massive health pool, is immune to nature spells, has a|r|T132338:0|t[Cleave]|cRXP_WARN_,|r |T134307:0|t[Tail Swipe] |cRXP_WARN_and|r |T135745:0|t[Summons] |cRXP_WARN_a|r |cRXP_ENEMY_Drake|r |cRXP_WARN_add that casts a frontal breath which does enormous damage|r
     .complete 81780,1 --Defeat Larsera
     .isOnQuest 81780
     .maxlevel 53
@@ -755,14 +752,11 @@ step
     #optional
     +You have completed this Nightmare Incursion loop. The quests will become available again after the daily reset. |cRXP_WARN_Select a different guide from the list to continue|r
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #season 2
 #group RestedXP Nightmare Incursion Dailies
 #name (50-53) The Hinterlands Nightmare Incursion
-
-
 step
     #ah
     >>Buy 10 |T134207:0|t[|cRXP_LOOT_Star Lotus|r], 10 |T134964:0|t[|cRXP_LOOT_Starshells|r] and 10 |T237436:0|t[|cRXP_LOOT_Starsilver Ore|r] from the auction house before heading to the Hinterlands
@@ -889,7 +883,7 @@ step
     .accept 81832 >> Accept Hinterlands Mission IX: Recover Dreampearl
     .accept 81850 >> Accept Hinterlands Mission XVI: Rescue Elianar Shadowdrinker
     .accept 81851 >> Accept Hinterlands Mission XVII: Rescue Serlina Starbright
-    .accept 81852 >> Accept Hinterlands Mission XVII: Rescue Veanna Cloudsleeper
+    .accept 81852 >> Accept Hinterlands Mission XVIII: Rescue Veanna Cloudsleeper
     .target Field Captain Korlian
     .maxlevel 53
 step
@@ -1000,7 +994,7 @@ step
     .group 3
     .goto The Hinterlands,46.0,39.8
     >>Kill |cRXP_ENEMY_Florius|r the green dragon flying above the ruins
-    >>|cRXP_WARN_Be careful as He has a massive healtpool, is immune to nature spells, has a|r|T132338:0|t[Cleave]|cRXP_WARN_,|r |T134307:0|t[Tail Swipe] |cRXP_WARN_and|r |T135745:0|t[Summons] |cRXP_WARN_a|r |cRXP_ENEMY_Drake|r |cRXP_WARN_add that casts a frontal breath which does enormous damage|r
+    >>|cRXP_WARN_Be careful as He has a massive health pool, is immune to nature spells, has a|r|T132338:0|t[Cleave]|cRXP_WARN_,|r |T134307:0|t[Tail Swipe] |cRXP_WARN_and|r |T135745:0|t[Summons] |cRXP_WARN_a|r |cRXP_ENEMY_Drake|r |cRXP_WARN_add that casts a frontal breath which does enormous damage|r
     .complete 81837,1 --Defeat Florius
     .mob Florius
     .isOnQuest 81837
@@ -1103,7 +1097,6 @@ step
     .goto The Hinterlands,61.4,34.6
     .target Field Captain Korlian
     .maxlevel 53
-
 step
     #optional
     +|cRXP_WARN_You have outleveled all incursion zones and will no longer be able to accept any of the regular quests in any of them|r
@@ -1114,13 +1107,11 @@ step
     #optional
     +You have completed this Nightmare Incursion loop. The quests will become available again after the daily reset. |cRXP_WARN_Select a different guide from the list to continue|r
     ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #season 2
 #group RestedXP Nightmare Incursion Dailies
 #name (50-53) Feralas Nightmare Incursion
-
 step
     #ah
     >>Buy 10 |T134186:0|t[|cRXP_LOOT_Moonroot|r], |T133594:0|t[|cRXP_LOOT_Greater Moonstones|r] and |T134312:0|t[|cRXP_LOOT_Moondragon Scales|r] from the auction house before heading to the Hinterlands
@@ -1272,7 +1263,7 @@ step
     #completewith IncursionsComplete3
     .goto Feralas,50.95,11.67,30,0
     .goto Feralas,51.28,10.64,20 >>Enter the |cRXP_PICK_Emerald Dream Portal|r
-    >>|cRXP_WARN_Run straight past the |cRXP_ENEMY_Satyr's|r, |cRXP_ENEMY_Felhounds|r and |cRXP_ENEMY_Imps|r. They will reset aggro as you enter the portal|r
+    >>|cRXP_WARN_Run straight past the |cRXP_ENEMY_Satyrs|r, |cRXP_ENEMY_Felhounds|r and |cRXP_ENEMY_Imps|r. They will reset aggro as you enter the portal|r
     .aura 444762
     .maxlevel 53
 step
@@ -1308,7 +1299,7 @@ step
     .group 3
     .goto Feralas,53.2,16.6
     >>Kill the boss dragon |cRXP_ENEMY_Tyrannikus|r
-    >>|cRXP_WARN_Be careful as He has a massive healtpool, is immune to nature spells, has a|r|T132338:0|t[Cleave]|cRXP_WARN_,|r |T134307:0|t[Tail Swipe] |cRXP_WARN_and|r |T135745:0|t[Summons] |cRXP_WARN_a|r |cRXP_ENEMY_Drake|r |cRXP_WARN_add that casts a frontal breath which does enormous damage|r
+    >>|cRXP_WARN_Be careful as He has a massive health pool, is immune to nature spells, has a|r|T132338:0|t[Cleave]|cRXP_WARN_,|r |T134307:0|t[Tail Swipe] |cRXP_WARN_and|r |T135745:0|t[Summons] |cRXP_WARN_a|r |cRXP_ENEMY_Drake|r |cRXP_WARN_add that casts a frontal breath which does enormous damage|r
     .complete 81868,1 --Tyrannikus slain
     .mob Tyrannikus
     .maxlevel 53

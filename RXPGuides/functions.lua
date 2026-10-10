@@ -15,7 +15,11 @@ local IsPlayerSpell = C_Spell and C_Spell.IsPlayerSpell or _G.IsPlayerSpell
 local GetSpellInfo = C_Spell and C_Spell.GetSpellInfo and addon.GetSpellInfo or _G.GetSpellInfo
 local GetSpellCooldown = addon.GetSpellCooldown
 local UnitName = addon.GetUnitName
-local BANK_CONTAINER = _G.BANK_CONTAINER or Enum.BagIndex.CharacterBankTab_1
+local BANK_CONTAINER = _G.BANK_CONTAINER
+if not BANK_CONTAINER and Enum and Enum.BagIndex then
+    BANK_CONTAINER = Enum.BagIndex.Bank or Enum.BagIndex.CharacterBankTab_1
+end
+if not BANK_CONTAINER and gameVersion < 60000 then BANK_CONTAINER = -1 end
 
 local GetMerchantItemInfo = function(...)
     local GMII = C_MerchantFrame and C_MerchantFrame.GetItemInfo or _G.GetMerchantItemInfo
@@ -282,9 +286,9 @@ function addon.error(text, arg1)
     if arg1 and addon.ignoredMaps and addon.ignoredMaps[arg1] then
         return
     elseif arg1 then
-        addon.comms.PrettyPrint("%s %s: %s\n%s", L("Error parsing guide"), addon.currentGuideName, arg1, text)
+        addon.comms.PrettyDebug("%s %s: %s\n%s", L("Error parsing guide"), addon.currentGuideName, arg1, text)
     else
-        addon.comms.PrettyPrint(text)
+        addon.comms.PrettyDebug(text)
     end
 end
 
@@ -523,21 +527,31 @@ end
 
 function addon.ClearQuestCache()
     local questObjectivesCache = RXPCData.questObjectivesCache
-    if not addon.currentGuide or questObjectivesCache[0] < 100 then
-        return
-    end
+    local guide = addon.currentGuide
+    if not guide or questObjectivesCache[0] < 100 then return end
+
     local questNameCache = RXPCData.questNameCache
-    local guideQuests = {}
-    for i,step in pairs(addon.currentGuide.steps) do
-        for j,element in pairs(step.elements or {}) do
-            if element.tag == "complete" then
-                local id = element.questId
-                guideQuests[id] = bit.bor(guideQuests[id] or 0,0x1)
-            elseif element.tag == "accept" then
-                local id = element.questId
-                guideQuests[id] = bit.bor(guideQuests[id] or 0,0x2)
+    local guideQuests = guide.questCacheIndex
+
+    if not guideQuests then
+        guideQuests = {}
+        local id
+
+        for _, step in pairs(guide.steps) do
+            for _, element in pairs(step.elements or {}) do
+                if element.tag == "complete" then
+                    id = element.questId
+
+                    guideQuests[id] = bit.bor(guideQuests[id] or 0,0x1)
+                elseif element.tag == "accept" then
+                    id = element.questId
+
+                    guideQuests[id] = bit.bor(guideQuests[id] or 0,0x2)
+                end
             end
         end
+
+        guide.questCacheIndex = guideQuests
     end
 
     for id in pairs(questObjectivesCache) do
@@ -546,11 +560,13 @@ function addon.ClearQuestCache()
             questObjectivesCache[0] = questObjectivesCache[0] - 1
         end
     end
+
     for id in pairs(questNameCache) do
         if not (guideQuests[id] and guideQuests[id] > 1) then
             questNameCache[id] = nil
         end
     end
+
     return true
 end
 
@@ -949,11 +965,14 @@ function addon.SetElementComplete(self, disable, skipIfInactive)
     if element.timer and active and not element.completed and not element.textOnly and not element.tag == "countdown" then
         addon.StartTimer(element.timer,element.timerText)
     end
+    local changed = not (element.completed and element.skip)
     element.completed = true
     element.skip = true
-    addon.updateSteps = true
-    addon.UpdateMap()
-    if active and GetTime() - addon.lastStepUpdate > 1 then
+    if changed then
+        addon.updateSteps = true
+        addon.UpdateMap()
+    end
+    if changed and active and GetTime() - addon.lastStepUpdate > 1 then
         addon:QueueMessage("RXP_OBJECTIVE_COMPLETE",element,addon.currentGuide)
     end
 
@@ -1891,12 +1910,11 @@ addon.functions["goto"] = function(self, ...)
         local subzone,continent = zone:match("(.-)/(%d+)")
         if subzone then
             element.fixedMapID = true
-            zone = addon.GetMapId(subzone) or tonumber(subzone)
+            zone,x,y,continent = addon.GetMapInfo(subzone,x,y,tonumber(continent))
             if addon.mapConversion[zone] then
                 zone = addon.mapConversion[zone]
             end
-            x = tonumber(x)
-            y = tonumber(y)
+
             if not (x and y) then
                 return addon.comms.PrettyDebug("Error parsing guide " .. (addon.currentGuideName or _G.NONE) ..
                            ": Invalid coordinates or map name\n" .. self, zone)
@@ -1908,7 +1926,7 @@ addon.functions["goto"] = function(self, ...)
                 element.x = zx*100
                 element.y = zy*100
                 element.zone = zone
-                element.instance = tonumber(continent)
+                element.instance = addon.mapConversion[continent] or tonumber(continent)
             end
         else
             element.zone, element.x , element.y = addon.GetMapInfo(zone,x,y)
@@ -2088,8 +2106,8 @@ function addon.functions.waypoint(self, text, zone, x, y, radius, lowPrio, ...)
         if subzone then
             element.fixedMapID = true
             zone = addon.GetMapId(subzone) or tonumber(subzone)
-            if addon.mapConversion[element.zone] then
-                zone = addon.mapConversion[element.zone]
+            if addon.mapConversion[zone] then
+                zone = addon.mapConversion[zone]
             end
             x = tonumber(x)
             y = tonumber(y)
@@ -2100,7 +2118,7 @@ function addon.functions.waypoint(self, text, zone, x, y, radius, lowPrio, ...)
                 element.x = zx*100
                 element.y = zy*100
                 element.zone = zone
-                element.instance = tonumber(continent)
+                element.instance = addon.mapConversion[continent] or tonumber(continent)
             end
         else
             element.zone, element.x , element.y = addon.GetMapInfo(zone,x,y)
@@ -2227,7 +2245,7 @@ function addon.functions.pin(self, ...)
                 element.x = zx*100
                 element.y = zy*100
                 element.zone = zone
-                element.instance = tonumber(continent)
+                element.instance = addon.mapConversion[continent] or tonumber(continent)
             end
         else
             element.zone, element.x , element.y = addon.GetMapInfo(zone,x,y)
@@ -2293,7 +2311,7 @@ function addon.functions.ingamewaypoint(self, ...)
                 element.zx = zx*100
                 element.zy = zy*100
                 element.zone = zone
-                element.instance = tonumber(continent)
+                element.instance = addon.mapConversion[continent] or tonumber(continent)
             end
         else
             element.zone, element.zx , element.zy = addon.GetMapInfo(zone,x,y)
@@ -3252,7 +3270,7 @@ function addon.functions.destroy(self, ...)
     local element = self.element
     local step = element and element.step
     if step and step.active then
-        RXPCData.discardPile[element.id] = true
+        addon.inventoryManager:SetDiscardedItem(element.id, true)
         local name = addon.GetItemName(element.id)
 
         if name then
@@ -3277,9 +3295,9 @@ function addon.functions.destroy(self, ...)
 
         if count == 0 then
             addon.SetElementComplete(self)
-            RXPCData.discardPile[element.id] = nil
+            addon.inventoryManager:SetDiscardedItem(element.id, false)
         else
-            RXPCData.discardPile[element.id] = true
+            addon.inventoryManager:SetDiscardedItem(element.id, true)
             addon.SetElementIncomplete(self)
         end
     end
@@ -3812,7 +3830,7 @@ function addon.functions.money(self, ...)
     if not self.element.step.active then return end
     local money
     if self.element.useNetWorth and addon.inventoryManager then
-        money = addon.inventoryManager.GetNetWorth()
+        money = addon.inventoryManager:GetNetWorth()
     else
         money = GetMoney()
     end
@@ -5171,14 +5189,17 @@ function addon.functions.questitemcount(self,text,itemId,qty,...)
 end
 
 function addon.PutItemInBank(bagContents)
+    if not BANK_CONTAINER then return end
+
     local _, isBankOpened = GetContainerNumFreeSlots(BANK_CONTAINER);
     if CursorHasItem() and isBankOpened then
         local bank = {BANK_CONTAINER}
-        local tab = Enum.BagIndex["CharacterBankTab_1"]
-        if tab then
+        local firstBankTab = Enum and Enum.BagIndex and Enum.BagIndex.CharacterBankTab_1
+        if firstBankTab then
             local i = 1
+            local tab = firstBankTab
             while tab do
-                tinsert(bank, tab)
+                if tab ~= BANK_CONTAINER then tinsert(bank, tab) end
                 i = i + 1
                 tab = Enum.BagIndex["CharacterBankTab_" .. i]
             end
@@ -5269,6 +5290,8 @@ function addon.GoThroughBags(itemList, func)
 end
 
 function addon.DepositItems(itemList)
+    if not BANK_CONTAINER then return end
+
     local _, isBankOpened = GetContainerNumFreeSlots(BANK_CONTAINER);
     if itemList and isBankOpened then
         if type(itemList) ~= "table" then itemList = {itemList} end
@@ -5297,6 +5320,8 @@ function addon.DepositItems(itemList)
 end
 
 function addon.IsItemInBags(itemList, reverseLogic)
+    if not BANK_CONTAINER then return end
+
     local _, isBankOpened = GetContainerNumFreeSlots(BANK_CONTAINER);
     if itemList and isBankOpened then
         if type(itemList) ~= "table" then itemList = {itemList} end
@@ -5320,21 +5345,24 @@ function addon.IsItemNotInBags(itemList)
 end
 
 function addon.GoThroughBank(itemList, func)
+    if not BANK_CONTAINER then return end
 
     local bank = {BANK_CONTAINER}
-        if Enum.BagIndex.CharacterBankTab_1 then
-            local i = 1
-            local tab = Enum.BagIndex["CharacterBankTab_" .. i]
-            while tab do
-                tinsert(bank, tab)
-                i = i + 1
-                tab = Enum.BagIndex["CharacterBankTab_" .. i]
-            end
-        else
-            for i = _G.NUM_BAG_SLOTS + 1, _G.NUM_BAG_SLOTS + _G.NUM_BANKBAGSLOTS do
-                tinsert(bank, i)
-            end
+    local firstBankTab = Enum and Enum.BagIndex and Enum.BagIndex.CharacterBankTab_1
+
+    if firstBankTab then
+        local i = 1
+        local tab = Enum.BagIndex["CharacterBankTab_" .. i]
+        while tab do
+            if tab ~= BANK_CONTAINER then tinsert(bank, tab) end
+            i = i + 1
+            tab = Enum.BagIndex["CharacterBankTab_" .. i]
         end
+    else
+        for i = _G.NUM_BAG_SLOTS + 1, _G.NUM_BAG_SLOTS + _G.NUM_BANKBAGSLOTS do
+            tinsert(bank, i)
+        end
+    end
 
     local bagContents = {}
 
@@ -5355,6 +5383,8 @@ function addon.GoThroughBank(itemList, func)
 end
 
 function addon.WithdrawItems(itemList)
+    if not BANK_CONTAINER then return end
+
     local _, isBankOpened = GetContainerNumFreeSlots(BANK_CONTAINER);
     if itemList and isBankOpened then
         if type(itemList) ~= "table" then itemList = {itemList} end
@@ -5383,6 +5413,8 @@ function addon.WithdrawItems(itemList)
 end
 
 function addon.IsItemInBank(itemList, reverseLogic)
+    if not BANK_CONTAINER then return end
+
     local _, isBankOpened = GetContainerNumFreeSlots(BANK_CONTAINER);
     if itemList and isBankOpened then
         if type(itemList) ~= "table" then itemList = {itemList} end
@@ -7957,7 +7989,7 @@ function addon.functions.openitem(self,text,id)
     end
     local element = self.element
     if element.step.active then
-        addon.inventoryManager.itemsToOpen[element.id] = true
+        addon.inventoryManager:OpenItems(element.id)
     end
 end
 

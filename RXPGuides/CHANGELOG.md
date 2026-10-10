@@ -1,20 +1,36 @@
 # RestedXP Guides
 
-## [v4.11.15](https://github.com/RestedXP/RXPGuides/tree/v4.11.15) (2026-10-04)
-[Full Changelog](https://github.com/RestedXP/RXPGuides/compare/v4.11.14...v4.11.15) [Previous Releases](https://github.com/RestedXP/RXPGuides/releases)
+## [v4.11.22](https://github.com/RestedXP/RXPGuides/tree/v4.11.22) (2026-10-10)
+[Full Changelog](https://github.com/RestedXP/RXPGuides/compare/v4.11.21...v4.11.22) [Previous Releases](https://github.com/RestedXP/RXPGuides/releases)
 
-- Added an option to disable all map pins  
-- Skyborne refine Shen'dar Highlands routing  
-    - improve Alliance travel with Walk on Air and ley-line stops  
-    - reorder Turncoat, Assassin, and Windsong Crawler objectives  
-    - streamline the Strange Hermit and Skybreaker routes  
-    - refine Abandoned Belongings waypoints  
-    - clean up warning and equipment reminder formatting  
-- Comment Cleanup  
-- Discovery Route for later  
-- Small optimization  
-- fix skyborne: improve weapon upgrades and quest routing  
-    - add weapon equip reminders  
-    - improve class-specific reward selections  
-    - refine Alliance and Druid routing  
-    - clarify cooking, ammunition, and enemy instructions  
+- l10n: refresh addon source strings (#410)  
+    * l10n: refresh addon source strings  
+    * l10n: refresh addon source strings  
+    * l10n: refresh addon source strings  
+    * l10n: refresh addon source strings  
+    * l10n: refresh addon source strings  
+    * l10n: refresh addon source strings  
+- feat(guides): improve Skyborne route and class guidance  
+    - add profession, crafting, vendor, and equipment instructions  
+    - improve tornado, travel, and quest interaction warnings  
+    - fix faction handling, NPC IDs, waypoints, labels, and typos  
+- fix(skyborne)  
+- fix(skyborne)  
+    - restore The Anchors of Zephras steps  
+    - removed leftover discovery steps  
+    - fixed a bug that caused players to go on a detour  
+    - improve guide wording and fix typos  
+- Minor fixes/improvements era guides  
+- Fixed Wild Hearts turnin  
+- Added Skyborne quest turnin Barrens / TB Rogue training  
+- added missing nil check  
+- Improved guide loading on non english locales  
+- l10n: refresh addon source strings (#408)  
+    * l10n: refresh addon source strings  
+    * l10n: refresh addon source strings  
+    * l10n: refresh addon source strings  
+    * l10n: refresh addon source strings  
+    * l10n: refresh addon source strings  
+- Skyborne: Fix up Horde route  
+- Update ptBR mop starter guides from Pontoon  
+- Update zhCN mop starter guides from Pontoon  

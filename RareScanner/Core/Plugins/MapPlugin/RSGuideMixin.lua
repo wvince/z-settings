@@ -32,20 +32,51 @@ function RSGuideMixin:OnAcquired(POI, pin)
 	self.Texture:SetScale(RSConfigDB.GetIconsWorldMapScale())
 end
 
+function RSGuideMixin:GetEntityPin()
+	-- Uses parent if receives when added to the world map
+	if (self.pin and self.pin:IsShown() and self.pin.POI) then
+		if (self.pin.POI.entityID == self.POI.entityID) then
+			return self.pin
+		elseif (self.pin.POI.POIs) then
+			for _, childPOI in ipairs(self.pin.POI.POIs) do
+				if (childPOI.entityID == self.POI.entityID) then
+					return self.pin
+				end
+			end
+		end
+	end
+
+	-- Otherwise look for the parent among the pins in the map
+	if (self.POI and self.POI.entityID and self:GetMap()) then
+		for pin in self:GetMap():EnumeratePinsByTemplate("RSEntityPinTemplate") do
+			if (pin:IsShown() and pin.POI and pin.POI.entityID == self.POI.entityID) then
+				self.pin = pin
+				return pin
+			end
+		end
+
+		for pin in self:GetMap():EnumeratePinsByTemplate("RSGroupPinTemplate") do
+			if (pin:IsShown() and pin.POI and pin.POI.POIs) then
+				for _, childPOI in ipairs(pin.POI.POIs) do
+					if (childPOI.entityID == self.POI.entityID) then
+						self.pin = pin
+						return pin
+					end
+				end
+			end
+		end
+	end
+
+	return nil
+end
+
 function RSGuideMixin:OnMouseEnter()
 	if (self.ShowPingAnim:IsPlaying()) then
 		self.ShowPingAnim:Stop()
 	end
-	if (self.pin and self.pin.ShowPingAnim and not self.pin.ShowPingAnim:IsPlaying()) then
-		if (RSConfigDB.IsHighlightingReputation()) then
-			local _, bountyFactionID, bountyFrameType = self.pin.dataProvider:GetBountyInfo();
-			if (bountyFrameType ~= BountyFrameType.ActivityTracker or not self.pin.POI.factionID or not RSUtils.Contains(self.pin.POI.factionID, bountyFactionID)) then
-				-- Avoid animating if the bounty animation is active, it meshes it up
-				self.pin.ShowPingAnim:Play();
-			end
-		else
-			self.pin.ShowPingAnim:Play();
-		end
+	local targetPin = self:GetEntityPin()
+	if (targetPin and not targetPin.ShowPingAnim:IsPlaying() and not targetPin:IsReputationHighlight()) then
+		targetPin.ShowPingAnim:Play()
 	end
 	
 	if (self.POI.tooltip) then
@@ -67,9 +98,15 @@ function RSGuideMixin:OnMouseLeave()
 	if (self.POI.tooltip) then
 		RSTooltip.Tooltip:Hide()
 	end
-	if (self.pin and self.pin.ShowPingAnim and self.pin.ShowPingAnim:IsPlaying()) then
-		self.pin.ShowPingAnim:Stop();
+	local targetPin = self:GetEntityPin()
+	if (targetPin and targetPin.ShowPingAnim and targetPin.ShowPingAnim:IsPlaying()) then
+		targetPin.ShowPingAnim:Stop();
 	end
+end
+
+function RSGuideMixin:OnReleased()
+	RSPinMixin.OnReleased(self)
+	self.pin = nil
 end
 
 function RSGuideMixin:OnMouseDown(button)

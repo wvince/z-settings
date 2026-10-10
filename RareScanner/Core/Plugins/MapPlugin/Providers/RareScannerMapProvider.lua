@@ -95,7 +95,7 @@ function RareScannerDataProviderMixin:RemoveAllData()
 	self:GetMap():RemoveAllPinsByTemplate("RSGroupPinTemplate");
 end
 
-function RareScannerDataProviderMixin:ShowGuideLayer(entityID, mapID)
+function RareScannerDataProviderMixin:ShowGuideLayer(entityID, mapID, parentPin)
 	-- Gets the information of the entity
 	local guide = nil
 	local isNpc = false
@@ -113,10 +113,29 @@ function RareScannerDataProviderMixin:ShowGuideLayer(entityID, mapID)
 	end
 
 	if (guide) then
+		if (not parentPin and self:GetMap()) then
+			for pin in self:GetMap():EnumeratePinsByTemplate("RSEntityPinTemplate") do
+				if (pin:IsShown() and pin.POI and pin.POI.entityID == entityID) then
+					parentPin = pin
+				end
+			end
+			if (not parentPin) then
+				for pin in self:GetMap():EnumeratePinsByTemplate("RSGroupPinTemplate") do
+					if (pin:IsShown() and pin.POI and pin.POI.POIs) then
+						for _, childPOI in ipairs(pin.POI.POIs) do
+							if (childPOI.entityID == entityID) then
+								parentPin = pin
+							end
+						end
+					end
+				end
+			end
+		end
+
 		for pinType, info in pairs (guide) do
 			local POI = RSGuidePOI.GetGuidePOI(entityID, pinType, info)
 			if (not info.questID or not C_QuestLog.IsQuestFlaggedCompleted(info.questID)) then
-				local guidePin = self:GetMap():AcquirePin("RSGuideTemplate", POI);
+				local guidePin = self:GetMap():AcquirePin("RSGuideTemplate", POI, parentPin);
 				if ((isNpc and not RSNpcDB.IsInternalNpcInMap(entityID, mapID)) or (isContainer and not RSContainerDB.IsInternalContainerInMap(entityID, mapID)) or (isEvent and not RSEventDB.IsInternalEventInMap(entityID, mapID))) then
 					guidePin.ShowPingAnim:SetLooping("REPEAT")
 					guidePin.ShowPingAnim:Play()
@@ -220,4 +239,13 @@ function RareScannerDataProviderMixin:RefreshAllData(fromOnShow)
 	end
 
 	RSRoute.RefreshRoute()
+end
+
+function RareScannerDataProviderMixin:UpdatePinsHighlight()
+	for pin in self:GetMap():EnumeratePinsByTemplate("RSEntityPinTemplate") do
+		pin:UpdateHighlight()
+	end
+	for pin in self:GetMap():EnumeratePinsByTemplate("RSGroupPinTemplate") do
+		pin:UpdateHighlight()
+	end
 end

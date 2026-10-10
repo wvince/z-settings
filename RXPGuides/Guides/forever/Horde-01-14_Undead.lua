@@ -1,6 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
@@ -12,7 +11,6 @@ RXPGuides.RegisterGuide([[
 #defaultfor Undead
 #name 1-6 Tirisfal Glades
 #next 6-12 Tirisfal Glades
-
 step << !Undead
     #completewith next
     +|cRXP_WARN_You have selected a guide meant for Undead. It is recommended you choose the same starter zone that you start in|r
@@ -470,6 +468,7 @@ step
     >>Open the |cRXP_PICK_Equipment Boxes|r on the ground. Loot them for the |cRXP_LOOT_Scavenged Goods|r
     .complete 3902,1 --Collect Scavenged Goods (x6)
 step << Paladin
+    .goto 1420/0,1782.400,1914.700
     >>Talk to the |cRXP_FRIENDLY_Frightened Paladin|r, kill her as she becomes hostile
     .complete 91208,1 --|1/1 Offer aid to the Frightened Paladin
     .skipgossip
@@ -695,9 +694,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Calvin|r
     .accept 8 >> Accept A Rogue's Deal
     .target Calvin Montague
-
 ]])
-
 RXPGuides.RegisterGuide([[
 #forever
 << Horde
@@ -709,7 +706,6 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-H1
 #defaultfor Undead
 #next 12-14 Silverpine Forest; 12-17 The Barrens
-
 step
     .goto 1420/0,1184.71,2205.63
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Simmer|r
@@ -745,6 +741,7 @@ step
 step
     .goto 1420/0,391.400,2289.200
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Deathguard Bartholomew|r
+    >>|cRXP_WARN_He may be patrolling around the graveyard|r
     .accept 86784 >>Accept Sticks and Bones
     .target Deathguard Bartholomew
 step
@@ -1109,7 +1106,7 @@ step
     .goto 1420/0,1587.700,2439.700
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Bareth Dawnstone|r at the top of the tower
     >>|cRXP_WARN_This starts an escort quest|r
-    >>|cRXP_WARN_Be careful!. At the top of the tower you can easily agro 3 |cRXP_ENEMY_Scarlet Warriors|r at the same time|r
+    >>|cRXP_WARN_Be careful!. At the top of the tower you can easily aggro 3 |cRXP_ENEMY_Scarlet Warriors|r at the same time|r
     .accept 99144,1 >>Accept Seeking Refuge
     .target Bareth Dawnstone
 step
@@ -1655,7 +1652,7 @@ step
     .itemcount 2876,5 --Duskbat Pelt (5)
     .isQuestAvailable 375
 step
-    .goto 1420/0,295.87,2277.93+
+    .goto 1420/0,295.87,2277.93
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Zygand|r
     .turnin 398 >>Turn in Wanted: Maggot Eye
     .target Executor Zygand
@@ -2532,7 +2529,7 @@ step << Priest
 step << Warrior
     .goto 1420/0,238.49,2255.03--c:Tirisfal Glades,61.85,52.53
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Austil|r
-    .train 7384 >>Train Train your class spells
+    .train 7384 >>Train your class spells
     .target Austil de Mon
     .xp <12,1
 step << Warlock
@@ -2569,9 +2566,7 @@ step
     >>|cRXP_WARN_He patrols around the graveyard|r
     .turnin 99142 >>Turn in Tomb Weed
     .target Junior Apothecary Holland
-
     --Bandarion Keep section
-
 step << !Paladin
     #optional
     .maxlevel 11,BandarionKeepSkip
@@ -2777,7 +2772,7 @@ step << Priest
 step << Warrior
     .goto 1420/0,238.49,2255.03--c:Tirisfal Glades,61.85,52.53
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Austil|r
-    .train 7384 >>Train Train your class spells
+    .train 7384 >>Train your class spells
     .target Austil de Mon
     .xp <12,1
 step << Warlock
@@ -2999,7 +2994,7 @@ step << Priest
 step << Priest
     #optional
     .goto 1458/0,194.34,1681.63
-    >>|cRXP_WARN_Turn all your|r |T132889:0|t[Linen Cloth] |cRXP_WARN_into|r |T132890:0|t[Bolt of linen Linen Cloth]
+    >>|cRXP_WARN_Turn all your|r |T132889:0|t[Linen Cloth] |cRXP_WARN_into|r |T132890:0|t[Bolt of Linen Cloth]
     .collect 2996,30,435,1 --Bolt of Linen Cloth (30)
     .itemStat 18,QUALITY,<7
     .itemStat 18,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<11.3
@@ -3082,9 +3077,7 @@ step << Paladin
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lady Sylvanas Windrunner|r
     .turnin 95803 >>Turn in A Token of Good Faith
     .target Lady Sylvanas Windrunner
-
     --Paladin Ressurrect chain route
-
 step << Paladin
     #completewith
     .goto 1420/0,235.32,1883.89
@@ -3137,9 +3130,7 @@ step << Paladin
     .accept 94438 >>Accept A Lesson in Divinity
     .target Deathguard Billmuth
     .isQuestTurnedIn 94436
-
     --East Tirisfal south of SM
-
 step << Paladin
     #completewith next
     .goto 1420/0,-885.200,2399.800,50 >>Travel to Eastern Tirisfal
@@ -3162,9 +3153,7 @@ step << Paladin
     .mob Scarlet Friar
     .mob Scarlet Zealot
     .isQuestTurnedIn 94436
-
     --Back to Bandarion Keep
-
 step << Paladin
     #completewith next
     .goto 1420/0,1732.500,2437.900,50,0
@@ -3211,8 +3200,6 @@ step
     .goto 1420/0,629.36,1553.42
     .zone Silverpine Forest >> Travel to Silverpine Forest
 ]])
-
-
 RXPGuides.RegisterGuide([[
 #group RestedXP Forever Guide (H)
 #subgroup Speedrun Guide 1-22
@@ -3225,8 +3212,9 @@ RXPGuides.RegisterGuide([[
 #name 12-14 Silverpine Forest
 #displayname 13-15 Silverpine Forest << Paladin
 #next 12-17 The Barrens
-
-
+step << Skyborne
+    #optional
+    .maxlevel 13,Silverpineskip
 step << Undead Rogue
     #sticky
     #completewith RotHideCluesTurnIn
@@ -3272,7 +3260,7 @@ step
     .unitscan Gorefang
 step
     .goto 1421/0,715.000,1335.400
-    >>Kill |cRXP_ENEMY_Vile Vin Murlocs|r. Loot them for their |T133884:0|t[|cRXP_LOOT_Murloc Eyes|r]
+    >>Kill |cRXP_ENEMY_Vile Fin Murlocs|r. Loot them for their |T133884:0|t[|cRXP_LOOT_Murloc Eyes|r]
     .collect 730,3,91920,1 --Collect Murloc Eyes (x3)
     .mob Vile Vin Shredder
     .mob Vile Vin Tidehunter
@@ -3309,15 +3297,14 @@ step
     .goto 1421/0,1204.68,1290.07
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Rane Yorick|r
     .turnin 435 >>Turn in Escorting Erland
-    .turnin 429 >>Turn in Wild Hearts
     .accept 449 >>Accept The Deathstalkers' Report
     .target Rane Yorick
-step
+step << skip
     #softcore
     #completewith ProveyourWorth
     .deathskip >> Die and respawn at the |cRXP_FRIENDLY_Spirit Healer|r
 step
-    #hardcore
+    --#hardcore
     #completewith next
     .goto 1421/0,1359.66,864.19,50,0
     .goto 1421/0,1359.66,741.27,50,0
@@ -3444,7 +3431,7 @@ step
     .target Quinn Yorick
 step
     .goto 1421/0,715.000,1335.400
-    >>Kill |cRXP_ENEMY_Vile Vin Murlocs|r. Loot them for their |T133884:0|t[|cRXP_LOOT_Murloc Eyes|r]
+    >>Kill |cRXP_ENEMY_Vile Fin Murlocs|r. Loot them for their |T133884:0|t[|cRXP_LOOT_Murloc Eyes|r]
     .collect 730,3,91920,1 --Collect Murloc Eyes (x3)
     .mob Vile Vin Shredder
     .mob Vile Vin Tidehunter
@@ -4013,6 +4000,20 @@ step << Undead Warlock
     .train 1455 >> Train your class spells
     .target Richard Kerwin
     .xp <16,1
+step << Paladin
+    .goto 1458/0,418.500,1782.600
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Garen|r
+    .train 647 >>Train your class spells
+    .target Garen Largo
+    .xp <14,1
+    .xp >16,1
+step << Paladin
+    #optional
+    .goto 1458/0,418.500,1782.600
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Garen|r
+    .train 7294 >>Train your class spells
+    .target Garen Largo
+    .xp <16,1
 step << Priest/Mage/Warlock
     #ssf
     .goto 1458/0,206.04,1705.57
@@ -4161,9 +4162,10 @@ step << Skyborne
     .use 6948
     .zoneskip Orgrimmar
     .bindlocation 1637,1
-
+step << Skyborne
+    #optional
+    #label Silverpineskip
     --Start Undead/Skyborne RFC
-
 step << Undead
     #completewith HiddenEnemiesPickup
     .goto 1454/1,-4367.46,1405.44,50,0
@@ -4376,14 +4378,12 @@ step << Skyborne
     #completewith Conscript
     .goto Thunder Bluff,47.00,49.82
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tal|r
-    .fly Orgrimmar >>Fly to the Orgrimmar
+    .fly Orgrimmar >>Fly to Orgrimmar
     .target Tal
     .zoneskip Thunder Bluff,1
     .cooldown item,6948,<0
     .dungeon RFC
-
     --End Undead/Skyborne RFC
-
 step << Undead/Skyborne
     #completewith Conscript
     .subzone 362 >> Travel to Razor Hill
@@ -4471,5 +4471,4 @@ step << !Undead !Skyborne
     >>|cRXP_WARN_Loot the|r |T134095:0|t[Flawed Power Stone] |cRXP_WARN_next to|r |cRXP_FRIENDLY_Ak'Zeloth|r|cRXP_WARN_. This item has a 30 minute timer, so be sure to be quick|r
     .turnin 926 >>Turn in Flawed Power Stone
     .isOnQuest 924
-
 ]])

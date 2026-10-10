@@ -623,7 +623,6 @@ end
 
 function addon.guideImporter:UpdateImportStatusHistory(data, isError, ...)
     local current, total
-    local progressOnly = false
     if type(data) == "table" then
         self.gui.importStatusHistory = data
         for index = #data, maxHistoryEntries + 1, -1 do
@@ -635,7 +634,6 @@ function addon.guideImporter:UpdateImportStatusHistory(data, isError, ...)
         local message = fmt(data, ...)
         current, total = message:match("(%d+)/(%d+)")
         current, total = tonumber(current), tonumber(total)
-        progressOnly = not isError and current and total and current > 0 and current < total
 
         if current and total then
             local details
@@ -675,9 +673,7 @@ function addon.guideImporter:UpdateImportStatusHistory(data, isError, ...)
         self.widgets.progressText:SetText(latest or "")
     end
 
-    -- Changing the count does not change controls or history. Rebuilding the
-    -- complete saved-guide dropdown on each batch repeatedly sorts every guide.
-    if not progressOnly then self:UpdateImportUI() end
+    self:UpdateImportUI()
 end
 
 function addon.guideImporter:Validate()

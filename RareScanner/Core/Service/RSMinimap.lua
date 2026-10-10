@@ -51,6 +51,7 @@ function RSMinimap.LoadMinimapButton()
 		text = "RareScanner",
 		label = "RareScanner",
 		icon = RSConstants.NORMAL_NPC_TEXTURE,
+		iconCoords = { 0, 0.9, 0.0, 0.9 },
 		OnClick = function(self, button) 
 			if (not InCombatLockdown()) then
 				if (button == "LeftButton") then

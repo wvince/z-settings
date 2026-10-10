@@ -814,7 +814,7 @@ function addon.SetStep(n, n2, loopback)
     table.wipe(addon.activeItems)
     table.wipe(addon.activeSpells)
     table.wipe(addon.activeMacros)
-    table.wipe(addon.inventoryManager.itemsToOpen)
+    addon.inventoryManager:OpenItems(nil, true)
 
     local useV2GuideWindow = addon.v2:IsGuideWindowEnabled()
     if not useV2GuideWindow then
@@ -1596,7 +1596,7 @@ function addon.ProcessGuideTable(guide)
     for k, v in pairs(guide) do
         if type(v) ~= "table" then
             currentGuide[k] = v
-        elseif k ~= "steps" and k ~= "tips" then
+        elseif k ~= "steps" and k ~= "tips" and k ~= "questCacheIndex" then
             currentGuide[k] = CopyTable(v)
         end
     end
@@ -1887,6 +1887,10 @@ function addon:LoadGuide(guide, OnLoad)
     addon.currentGuide = addon.ProcessGuideTable(guide)
     guide = addon.currentGuide
 
+    if #guide.steps == 0 then
+        return addon:LoadGuide(addon.emptyGuide)
+    end
+
     if guideStepId then
         for index, step in ipairs(guide.steps) do
             if step.stepId == guideStepId then
@@ -2071,6 +2075,7 @@ function addon:LoadGuide(guide, OnLoad)
             frame.text:SetFontObject(_G.GameFontNormalSmall)
             frame.text:ClearAllPoints()
             frame.text:SetPoint("TOPLEFT", frame, 0, -5)
+            -- Only anchor by width, the row height is is derived from text height/wrap
             frame.text:SetPoint("RIGHT", frame.number, "LEFT", 0, 0)
             frame.text:SetJustifyH("LEFT")
             frame.text:SetJustifyV("TOP")
@@ -2204,18 +2209,8 @@ function BottomFrame.UpdateFrame(self, stepn, startFrom, skip)
             step.text = text
         end
 
-        local layoutWidth = math.floor((frame:GetWidth() or 0) + 0.5)
-        local layoutFont = addon.font
-        local layoutFontSize = addon.settings.profile.guideFontSize
-        local textChanged = frame._rxpLayoutText ~= text
-        local layoutChanged = frame._rxpLayoutWidth ~= layoutWidth or
-                              frame._rxpLayoutFont ~= layoutFont or
-                              frame._rxpLayoutFontSize ~= layoutFontSize
-
-        if frame.text and textChanged then
+        if frame.text and frame.text:GetText() ~= text then
             frame.text:SetText(text)
-            frame._rxpLayoutText = text
-            frame._rxpLayoutHeight = nil
         end
 
         if hideStep then
@@ -2224,26 +2219,20 @@ function BottomFrame.UpdateFrame(self, stepn, startFrom, skip)
             frame:SetAlpha(0)
         else
             frame.text:Show()
-            if not frame._rxpLayoutHeight or layoutChanged then
-                frame._rxpLayoutHeight = math.ceil(frame.text:GetStringHeight() + 8)
-                frame._rxpLayoutWidth = layoutWidth
-                frame._rxpLayoutFont = layoutFont
-                frame._rxpLayoutFontSize = layoutFontSize
-            end
-            fheight = frame._rxpLayoutHeight
+            fheight = math.ceil(frame.text:GetStringHeight() + 8)
             frame:SetAlpha(1)
         end
 
         local hDiff = fheight - frame:GetHeight()
-        if math.abs(hDiff) > 0.01 then
-            frame:SetHeight(fheight)
+        if hDiff == 0 then return end
 
-            for n = stepNumber + 1, #stepPos do
-                stepPos[n] = stepPos[n] + hDiff
-            end
+        frame:SetHeight(fheight)
 
-            stepPos[0] = stepPos[0] + hDiff
+        for n = stepNumber + 1, #stepPos do
+            stepPos[n] = stepPos[n] + hDiff
         end
+
+        stepPos[0] = stepPos[0] + hDiff
 
     else
         addon.updateBottomFrame = false
@@ -2439,92 +2428,6 @@ function RXPFrame:GenerateMenuTable(menu)
     local farmGuides = {}
     local unusedGuides = {}
     local defaultGuide, defaultGuideHC
-    -- Keep obsolete Remix and War Within preparation entries out of guide menus.
-    -- Their cached content remains available to existing saved selections.
-    local function IsHiddenMenuGuide(guide)
-        if not guide then return false end
-        local group = (guide.group or ""):gsub("^%*", "")
-        -- Older MoP imports include the separate Cataclysm collections.
-        if addon.game == "MOP" then
-            return group:match("^RXP Cataclysm ") ~= nil
-        end
-        if addon.game ~= "RETAIL" then return false end
-        if group == "The War Within" and guide.subgroup == "War Within Preparation" then
-            return true
-        end
-        if group == "RestedXP Legion Remix" or group == "RestedXP Panda Remix" or
-            group == "RestedXP Pandaria Remix" then
-            return true
-        end
-        if group ~= "RestedXP Speed Leveling" then return false end
-        local subgroup = (guide.subgroup or ""):gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
-        local label = subgroup:match("^%(%d+%-%d+%+?%)%s+(.+)$") or subgroup
-        return label == "Legion Remix" or label == "Pandaria Remix" or label == "Panda Remix"
-    end
-    -- Old and current exports use different submenu labels for these same routes.
-    -- Resolve their menu placement without changing cached guides or saved progress.
-    local menuSubgroups = {
-        ["Level-Up Campaigns"] = {
-            ["a) Eversong Woods Campaign (H)"] = {"a) The Light's Summons (H);a) Whispers in the Twilight (H);a) Shadowfall (H);a) Ripple Effects (H)", "|cFF00FF001|r - Eversong Woods", "|cFFFCDC00(80-87)|r Level-Up Campaigns"},
-            ["a) Eversong Woods Campaign(A)"] = {"a) The Light's Summons (A);a) Whispers in the Twilight (A);a) Shadowfall (A);a) Ripple Effects (A)", "|cFF00FF001|r - Eversong Woods", "|cFFFCDC00(80-87)|r Level-Up Campaigns"},
-            ["ab) Arator's Journey (H)"] = {"a) The Path of Light (H);a) Regrets of the Past (H)", "|cFF00FF002|r - Arator's Journey", "|cFFFCDC00(80-87)|r Level-Up Campaigns"},
-            ["ab) Arator's Journey(A)"] = {"a) The Path of Light (A);a) Regrets of the Past (A)", "|cFF00FF002|r - Arator's Journey", "|cFFFCDC00(80-87)|r Level-Up Campaigns"},
-            ["ac) Harandar Campaign (A)"] = {"a) Of Caves and Cradles (A);a) Call of the Goddess (A);a) Emergence (A)", "|cFF00FF003|r - Harandar", "|cFFFCDC00(80-87)|r Level-Up Campaigns"},
-            ["ac) Harandar Campaign (H)"] = {"a) Of Caves and Cradles (H);a) Call of the Goddess (H);a) Emergence (H)", "|cFF00FF003|r - Harandar", "|cFFFCDC00(80-87)|r Level-Up Campaigns"},
-            ["ad) Zul'aman Campaign (H)"] = {"a) Dis Was Our Land (H);a) Path of de Hash'ey (H);a) Where War Slumbers (H);a) De Amani Never Die (H)", "|cFF00FF004|r - Zul'Aman", "|cFFFCDC00(80-87)|r Level-Up Campaigns"},
-            ["ad) Zul'aman Campaign(A)"] = {"a) Dis Was Our Land (A);a) Path of de Hash'ey (A);a) Where War Slumbers (A);a) De Amani Never Die (A)", "|cFF00FF004|r - Zul'Aman", "|cFFFCDC00(80-87)|r Level-Up Campaigns"},
-            ["ae) Voidstorm Campaign (H)"] = {"a) Darkening Sky (H);a) Into the Abyss (H);a) The Night's Veil (H);a) Dawn of Reckoning (H)", "|cFF00FF005|r - Voidstorm", "|cFFFCDC00(80-87)|r Level-Up Campaigns"},
-            ["ae) Voidstorm Campaign(A)"] = {"a) Darkening Sky (A);a) Into the Abyss (A);a) The Night's Veil (A);a) Dawn of Reckoning (A)", "|cFF00FF005|r - Voidstorm", "|cFFFCDC00(80-87)|r Level-Up Campaigns"},
-        },
-        ["Storylines"] = {
-            ["a) Eversong Woods Storylines (A)"] = {"a) The Drinking Debt (A);a) Fear and Fel (A);a) Lesser Evil (A);a) Tailor Troubles (A);a) Scootin' Through Silvermoon (A);a) How to Train Your Protege (A);a) Aspiring Academic (A);a) One Adventurous Hatchling (A);a) Far Striding (A);a) Runestone Rumbles (A);a) Theft Tracking (A);a) Port Detective (A);a) Daggerspine Landing (A);a) Flowers for Amalthea (A);a) Sunbath, Take Me Away (A);a) Blinding Sun (A);a) Paladin Rescue (A)", "|cFF00FF001|r - Eversong Woods Sojourner", "Sojourner & Storylines"},
-            ["a) Eversong Woods Storylines (H)"] = {"a) The Drinking Debt (H);a) Fear and Fel (H);a) Lesser Evil (H);a) Tailor Troubles (H);a) Scootin' Through Silvermoon (H);a) How to Train Your Protege (H);a) Aspiring Academic (H);a) One Adventurous Hatchling (H);a) Far Striding (H);a) Runestone Rumbles (H);a) Theft Tracking (H);a) Port Detective (H);a) Daggerspine Landing (H);a) Flowers for Amalthea (H);a) Sunbath, Take Me Away (H);a) Blinding Sun (H);a) Paladin Rescue (H)", "|cFF00FF001|r - Eversong Woods", "Sojourner & Storylines"},
-            ["ab) Zul'aman Storylines (A)"] = {"a) Bitter Honor (A);a) Sawdust to Sawdust (A);a) A Venomous History (A);a) The Sound of Her Voice (A);a) Unlikely Friends (A);a) The Loa of Murlocs (A);a) Vengeance for Tolbani (A);a) Between Two Trolls (A);a) Healing the Spirit (A);a) Beyond the Walls (A);a) No Fear (A);a) Sorrowing Kin (A);a) River-Walkers of the Prowl (A);a) The Voice of Nalorakk (A);a) Reclaiming de Honor (A);a) Bloodstains (A);a) Something Vile This Way Comes (A)", "|cFF00FF002|r - Zul'Aman Sojourner", "Sojourner & Storylines"},
-            ["ab) Zul'aman Storylines (H)"] = {"a) Bitter Honor (H);a) Sawdust to Sawdust (H);a) A Venomous History (H);a) The Sound of Her Voice (H);a) Unlikely Friends (H);a) The Loa of Murlocs (H);a) Vengeance for Tolbani (H);a) Between Two Trolls (H);a) Healing the Spirit (H);a) Beyond the Walls (H);a) No Fear (H);a) Sorrowing Kin (H);a) River-Walkers of the Prowl (H);a) The Voice of Nalorakk (H);a) Reclaiming de Honor (H);a) Bloodstains (H);a) Something Vile This Way Comes (H)", "|cFF00FF002|r - Zul'Aman", "Sojourner & Storylines"},
-            ["ac) Harandar Storylines (A)"] = {"a) A Goblin in Harandar (A);a) The Legend of Aln'sharan (A);a) Late Bloomers (A);a) The Greenspeaker's Vigil (A);a) Peril Among Petals (A);a) Haranir Never Say Die (A);a) Harandar's Kitchen (A);a) Silence at Fungara Village (A);a) Cultivating Hope (A);a) Hunter's Rights (A);a) A Palette of Feelings (A);a) Predator Reintroduction (A);a) Bloomtown (A);a) The Grudge Pit 2 (A);a) Trials of the Shul'ka (A)", "|cFF00FF003|r - Harandar Sojourner", "Sojourner & Storylines"},
-            ["ac) Harandar Storylines (H)"] = {"a) A Goblin in Harandar (H);a) The Legend of Aln'sharan (H);a) Late Bloomers (H);a) The Greenspeaker's Vigil (H);a) Peril Among Petals (H);a) Haranir Never Say Die (H);a) Harandar's Kitchen (H);a) Silence at Fungara Village (H);a) Cultivating Hope (H);a) Hunter's Rights (H);a) A Palette of Feelings (H);a) Predator Reintroduction (H);a) Bloomtown (H);a) The Grudge Pit 2 (H);a) Trials of the Shul'ka (H)", "|cFF00FF003|r - Harandar", "Sojourner & Storylines"},
-            ["ad) Voidstorm Storylines (A)"] = {"a) The Void Peers Back (A);a) Shadow Puppets (A);a) The Nethersent (A);a) The Nightbreaker (A);a) Pathogenic Problem (A);a) A Voice Inside (A);a) Shadowguard's Shadow (A);a) A Gift, Given Freely (A);a) Breaking the Triad (A);a) Go Low, Go Loud (A);a) Secrets in the Dark (A);a) Oaths to Family (A);a) To Be Changed (A);a) A Dance with the Devil (A);a) A Domanaar's Best Friend (A);a) A More Potent Foe (A)", "|cFF00FF004|r - Voidstorm Sojourner", "Sojourner & Storylines"},
-            ["ad) Voidstorm Storylines (H)"] = {"a) The Void Peers Back (H);a) Shadow Puppets (H);a) The Nethersent (H);a) The Nightbreaker (H);a) Pathogenic Problem (H);a) A Voice Inside (H);a) Shadowguard's Shadow (H);a) A Gift, Given Freely (H);a) Breaking the Triad (H);a) Go Low, Go Loud (H);a) Secrets in the Dark (H);a) Oaths to Family (H);a) To Be Changed (H);a) A Dance with the Devil (H);a) A Domanaar's Best Friend (H);a) A More Potent Foe (H)", "|cFF00FF004|r - Voidstorm", "Sojourner & Storylines"},
-            ["ae) Crimson Rogue (A)"] = {"a) The Regent's Request (A); a) A Favor for the Lion (A)", "The Crimson Rogue", "Sojourner & Storylines"},
-            ["ae) Crimson Rogue (H)"] = {"a) The Regent's Request (H); a) A Favor for the Lion (H)", "The Crimson Rogue", "Sojourner & Storylines"},
-            ["af) Old Soldiers (A)"] = {false, "Arcantina Storylines", "Sojourner & Storylines"},
-            ["af) Old Soldiers (H)"] = {false, "Old Soldiers", "Sojourner & Storylines"},
-            ["ag) Legends Never Die & The Empty Cradle (A)"] = {false, "Legend of the Haranir", "Sojourner & Storylines"},
-            ["ag) Legends Never Die & The Empty Cradle (H)"] = {false, "Legends Never Die & The Empty Cradle", "Sojourner & Storylines"},
-        },
-    }
-    local function GetMenuSubgroup(guide)
-        if addon.game == "RETAIL" and guide.group == "RestedXP Midnight" then
-            local routes = menuSubgroups[guide.subgroup]
-            local expected = routes and routes[guide.name]
-            if expected and guide.chapters == (expected[1] or nil) and guide.displayname == expected[2] then
-                return expected[3]
-            end
-        end
-        return guide.subgroup
-    end
-    -- These older Midnight names point to the same routes as their replacements.
-    local menuAliases = {
-        ["a) Endeavor (H)"] = "a) Endeavor Setup",
-        ["a) The War of Light and Shadow Campaign (A)"] = "Z) The War of Light and Shadow Campaign (A)",
-        ["a) The War of Light and Shadow Campaign (H)"] = "Z) The War of Light and Shadow Campaign (H)",
-    }
-    local function IsRedundantMenuAlias(guide)
-        if addon.game ~= "RETAIL" or guide.group ~= "RestedXP Midnight" then
-            return false
-        end
-        local replacementName = menuAliases[guide.name]
-        if not replacementName then return false end
-        local replacement = addon.GetGuideTable(guide.group, replacementName)
-        if not replacement or replacement == guide or not IsGuideActive(replacement) or
-            replacement.chapter or replacement.disabled or
-            GetMenuSubgroup(guide) ~= GetMenuSubgroup(replacement) or guide.lowPrio ~= replacement.lowPrio or
-            guide.chapters ~= replacement.chapters or guide.OnClick ~= replacement.OnClick or
-            (tonumber(guide.version) or 0) > (tonumber(replacement.version) or 0) then
-            return false
-        end
-        return addon.GetGuideName(guide) == addon.GetGuideName(replacement)
-    end
     local function OnClick(self,...)
         local guide = addon.GetGuideTable(...)
         local func = guide.OnClick
@@ -2548,24 +2451,7 @@ function RXPFrame:GenerateMenuTable(menu)
         end
     end
 
-    -- Keep the current retail collections together in the requested order.
-    local menuGroupOrder = {
-        ["RestedXP Midnight"] = 1,
-        ["RestedXP Dragonflight"] = 2,
-        ["RestedXP War Within"] = 3,
-        ["RestedXP War Within Campaigns"] = 4,
-        ["RestedXP Speed Leveling"] = 5,
-    }
     local sortfunc = function(g1,g2)
-        if addon.game == "RETAIL" then
-            local rank1 = menuGroupOrder[g1:gsub("^%*", "")]
-            local rank2 = menuGroupOrder[g2:gsub("^%*", "")]
-            if rank1 ~= rank2 then
-                if not rank1 then return false end
-                if not rank2 then return true end
-                return rank1 < rank2
-            end
-        end
         local w1 = addon.guideList[g1].weight_ or 0
         local w2 = addon.guideList[g2].weight_ or 0
         if w1 == w2 then
@@ -2585,7 +2471,7 @@ function RXPFrame:GenerateMenuTable(menu)
             if not activeChapters then activeChapters = {} end
             for chapterName in string.gmatch(guide.chapters,"%s*([^;]+)%s*") do
                 local chapter = addon.GetGuideTable(guide.group, chapterName)
-                if not IsHiddenMenuGuide(chapter) and addon.IsGuideActive(chapter,true) then
+                if addon.IsGuideActive(chapter,true) then
                     if not tbl.menuList then
                         tbl.menuList = {}
                         tbl.func = nil
@@ -2636,10 +2522,10 @@ function RXPFrame:GenerateMenuTable(menu)
             local groupName = g.group
             local guide = addon.GetGuideTable(groupName, guideName)
             --if not guide then print(guide,group,guideName) end
-            if not IsHiddenMenuGuide(guide) and IsGuideActive(guide) and not guide.chapter and not IsRedundantMenuAlias(guide) then
+            if IsGuideActive(guide) and not guide.chapter then
                 nActive = nActive + 1
-                local subgroup = GetMenuSubgroup(guide)
-                if subgroup then
+                if guide.subgroup then
+                    local subgroup = guide.subgroup
                     local subtable = item.subtable[subgroup]
                     if not subtable then
                         local subname = subgroup:gsub("^(%d)-(%d%d?)",
@@ -2709,20 +2595,6 @@ function RXPFrame:GenerateMenuTable(menu)
                     return w1 > w2
                 end
             end)
-            -- Keep leveling campaigns immediately before the max-level campaigns.
-            if addon.game == "RETAIL" and group == "RestedXP Midnight" then
-                local levelingIndex, maxLevelIndex
-                for i, subgroup in ipairs(item.subgroups) do
-                    local label = subgroup:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
-                    if label == "(80-87) Level-Up Campaigns" then levelingIndex = i end
-                    if label == "(90) Max-Level Campaigns" then maxLevelIndex = i end
-                end
-                if levelingIndex and maxLevelIndex and levelingIndex ~= maxLevelIndex - 1 then
-                    local subgroup = table.remove(item.subgroups, levelingIndex)
-                    if levelingIndex < maxLevelIndex then maxLevelIndex = maxLevelIndex - 1 end
-                    table.insert(item.subgroups, maxLevelIndex, subgroup)
-                end
-            end
             for i, subgroup in ipairs(item.subgroups) do
                 tinsert(item.menuList, item.subtable[subgroup])
             end

@@ -471,7 +471,7 @@
 					<Anchor point="BOTTOMRIGHT" x="-38" y="20" />
 				</Anchors>
 			</Frame>
-			<Frame parentKey="CustomLoot" inherits="RSExplorerCustomLootTemplate" hidden="true" mixin="RSExplorerLoot" name="$customLoot">
+			<Frame parentKey="CustomLoot" inherits="RSExplorerCustomLootTemplate" hidden="true" mixin="RSExplorerLoot" name="$parentCustomLoot">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="60" y="-50" />
 					<Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="-60" />

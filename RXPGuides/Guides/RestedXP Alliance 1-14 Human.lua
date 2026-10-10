@@ -1,6 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Horde" then return end
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #tbc
@@ -1178,7 +1177,6 @@ step << Mage wotlk
    .complete 12,1
    .complete 12,2
    .complete 153,1
-
 step << Mage wotlk
 #xprate >1.3
     .goto Westfall,54.00,52.90
@@ -1523,7 +1521,6 @@ step << Warrior tbc
 step << tbc
     #completewith next
     .goto Dun Morogh,53.5,34.9,100 >>Run out of Ironforge
-
 --TBC only part:
 step << tbc
 #xprate >1.3
@@ -1564,7 +1561,6 @@ step << tbc
     .zone Darkshore >>Get onto the boat when it comes. Take it to Darkshore.
     >> Use this time to level your first aid or make weapon stones. << Warrior/Rogue/Paladin
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -1966,7 +1962,6 @@ step << Warlock
 #xprate >1.499
     .goto Loch Modan,32.7,76.5,0
     .xp 14-2730 >>Grind until you are 2730xp away from level 14
-
 step << Warlock
     .goto Loch Modan,22.2,73.3
 .target Mountaineer Cobbleflint
@@ -2098,7 +2093,6 @@ step << tbc
     .zone Darkshore >>Get onto the boat when it comes. Take it to Darkshore.
     >> Use this time to level your first aid or make weapon stones. << Warrior/Rogue/Paladin
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -2110,7 +2104,6 @@ RXPGuides.RegisterGuide([[
 #defaultfor Human Warlock
 #next 14-20 Bloodmyst
 #xprate <1.5 << wotlk
-
 step
     .maxlevel 13
     #completewith next

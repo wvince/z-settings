@@ -1933,12 +1933,6 @@ end
 
 function RSExplorerMixin:HideCustomLootPanels()
 	self.CustomLoot:Hide()
-	self.CustomLoot.background:Hide()
-	self.CustomLoot.background2:Hide()
-	self.CustomLoot.Border:Hide()
-	self.CustomLoot.ControlFrame:Hide()
-	self.CustomLoot.GroupList:Hide()
-	self.CustomLoot.GroupInfo:Hide()
 	
 	-- Move to the center
 	self.ScanRequired:SetPoint("TOPLEFT")
@@ -1948,12 +1942,6 @@ end
 
 function RSExplorerMixin:ShowCustomLootPanels()
 	self.CustomLoot:Show()
-	self.CustomLoot.background:Show()
-	self.CustomLoot.background2:Show()
-	self.CustomLoot.Border:Show()
-	self.CustomLoot.ControlFrame:Show()
-	self.CustomLoot.GroupList:Show()
-	self.CustomLoot.GroupInfo:Show()
 	
 	-- Move to the bottom
 	if (not self.ScanRequired.moved) then
@@ -2007,7 +1995,6 @@ function RSExplorerMixin:OnShow()
     	self.ScanRequired.ScanRequiredText:SetText(AL["EXPLORER_SCAN_REQUIRED"])
     	self.ScanRequired.StartScanningButton:SetText(AL["EXPLORER_START_SCAN"])
     	self.ScanRequired.StartScanningButton:Show()		
-    	self.CustomLoot:Show()
     	self.ScanRequired:Show()
     	self:HideContentPanels()
 		self.CustomLoot:Initialize(self);
@@ -2046,3 +2033,4 @@ function RSExplorerMixin:HideTooltip(frame)
 		tooltip:Hide()
 	end
 end
+

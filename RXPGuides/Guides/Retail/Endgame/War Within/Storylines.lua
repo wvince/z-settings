@@ -8,8 +8,6 @@ RXPGuides.RegisterGuide([[
 #name a) Fate of Kirin Tor
 #displayname Fate of Kirin Tor
 #next a) Horrific Visions
-
-
 step
     .isQuestAvailable 82702
     #completewith next
@@ -408,7 +406,6 @@ step
     .turnin 83773 >>Turn in Farewell, City of Magic
     .target Archmage Khadgar
 ]])
-
 --Story Mode: Queen Ansurek
 RXPGuides.RegisterGuide([[
 #retail
@@ -418,8 +415,6 @@ RXPGuides.RegisterGuide([[
 #name a) Story Mode: Queen Ansurek
 #displayname Story Mode: Queen Ansurek
 #next a) Fate of Kirin Tor
-
-
 step
     .goto 2339,31.62,63.16
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Webster|r
@@ -587,7 +582,6 @@ step
     .turnin 82141 >>Turn in To Kill a Queen
     .target Executor Nizrek
 ]])
-
 --Horrific Visions
 RXPGuides.RegisterGuide([[
 #retail
@@ -597,7 +591,6 @@ RXPGuides.RegisterGuide([[
 #name a) Horrific Visions
 #displayname Horrific Vision Intro
 #next a) Nightfall Radiance
-
 step
     .goto 2339,42.51,28.38
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Researcher Onermu|r
@@ -764,7 +757,6 @@ step
     >>Kill |cRXP_ENEMY_Bosses|r inside the Horrific Vision and open the crates at the end to loot them for |T3528446:0|t[|cRXP_LOOT_Black Blood Residue|r].
     .complete 90719,1
 ]])
-
 --Nightfall Radiance
 RXPGuides.RegisterGuide([[
 #retail
@@ -773,7 +765,6 @@ RXPGuides.RegisterGuide([[
 #subgroup |cFFFCDC00(80)|r Storylines
 #name a) Nightfall Radiance
 #displayname Nightfall Radiance
-
 step
     >>Open the Adventure Guide (default: Shift + J), navigate to Suggested Content, and look for the quest Nightfall Radiance. Accept it.
     .accept 85005 >>Accept A Radiant Call
@@ -958,7 +949,6 @@ step
     .turnin 89331 >>Turn in Flame Fortification
     .target Mylton Wyldbraun
 ]])
-
 --Rise of the Red Dawn
 RXPGuides.RegisterGuide([[
 #retail
@@ -967,8 +957,6 @@ RXPGuides.RegisterGuide([[
 #subgroup |cFFFCDC00(80)|r Storylines
 #name a) Rise of the Red Dawn
 #displayname Rise of the Red Dawn
-
-
 -- step
 --     #completewith next
 --     #label Faerin

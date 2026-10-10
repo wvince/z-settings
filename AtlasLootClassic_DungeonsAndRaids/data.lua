@@ -1075,6 +1075,7 @@ data["TheStockade"] = {
 }
 
 data["Gnomeregan"] = {
+	name = C_Map.GetAreaInfo(721) .. LTNX,
 	MapID = 721,
 	InstanceID = 90,
 	AtlasModule = ATLAS_MODULE_NAME,
@@ -1102,6 +1103,8 @@ data["Gnomeregan"] = {
 			AtlasMapBossID = 1,
 			[NORMAL_DIFF] = {
 				{ 1, 9445 }, -- Grubbis Paws
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 274043 }, -- Irradiated Shield
 			},
 		},
 		{ -- GnViscousFallout
@@ -1138,6 +1141,8 @@ data["Gnomeregan"] = {
 			[NORMAL_DIFF] = {
 				{ 1, 9449 }, -- Manual Crowd Pummeler
 				{ 3, 9450 }, -- Gnomebot Operating Boots
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 274068 }, -- Thermaplugg Medal of Honor
 			},
 		},
 		{ -- GnDIAmbassador
@@ -1203,11 +1208,11 @@ data["Gnomeregan"] = {
 				{ 26, 9316 }, -- Prismatic Punch Card
 			},
 		},
-
 	},
 }
 
 data["RazorfenKraul"] = {
+	name = C_Map.GetAreaInfo(491) .. LTNX,
 	MapID = 491,
 	InstanceID = 47,
 	AtlasModule = ATLAS_MODULE_NAME,
@@ -1226,6 +1231,9 @@ data["RazorfenKraul"] = {
 			AtlasMapBossID = 2,
 			[NORMAL_DIFF] = {
 				{ 1, 6681 }, -- Thornspike
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 274159 }, -- Thorncursed Grips
+				{ 18, 274158 }, -- Death Prophet Spine
 			},
 		},
 		{ -- RFKDeathSpeakerJargba
@@ -1249,6 +1257,8 @@ data["RazorfenKraul"] = {
 			[NORMAL_DIFF] = {
 				{ 1, 6687 }, -- Corpsemaker
 				{ 3, 6686 }, -- Tusken Helm
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 274161 }, -- Quillord Mail Leggings
 			},
 		},
 		{ -- RFKRazorfenSpearhide
@@ -1271,7 +1281,7 @@ data["RazorfenKraul"] = {
 				{ 1, 6691 }, -- Swinetusk Shank
 				{ 3, 6690 }, -- Ferine Leggings
 				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
-				{ 17, 274158 }, -- {FOREVER} Death Prophet Spine
+				{ 17, 274160 }, -- Quilrager Throwing Axe
 			},
 		},
 		{ -- RFKBlindHunter
@@ -1322,6 +1332,8 @@ data["RazorfenKraul"] = {
 			[NORMAL_DIFF] = {
 				{ 1,  "INV_Box_01", nil, AL["Forever"],  nil },
 				{ 2, 274152 }, -- Roogug's Severed Head
+				{ 3, 274149 }, -- Thornweaver Drape
+				{ 4, 274155 }, -- Geomancer Headdress
 			},
 		},
 		{ -- RFKTrash
@@ -1344,6 +1356,7 @@ data["RazorfenKraul"] = {
 }
 
 data["ScarletMonasteryGraveyard"] = {
+	name = C_Map.GetAreaInfo(796) .. LTNX,
 	MapID = 796,
 	InstanceID = 189,
 	SubAreaIDs = { 21379, 24000, 23805 },
@@ -1367,6 +1380,8 @@ data["ScarletMonasteryGraveyard"] = {
 			[NORMAL_DIFF] = {
 				{ 1, 7682 }, -- Torturing Poker
 				{ 3, 7683 }, -- Bloody Brass Knuckles
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 274290 }, -- Painwalker Buckler
 			},
 		},
 		{ -- SMAzshir
@@ -1419,6 +1434,8 @@ data["ScarletMonasteryGraveyard"] = {
 			[NORMAL_DIFF] = {
 				{ 1, 7685 }, -- Orb of the Forgotten Seer
 				{ 3, 7684 }, -- Bloodmage Mantle
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 274291 }, -- Polished Skullcap
 			},
 		},
 		{ -- SMGTrash
@@ -1484,6 +1501,7 @@ data["ScarletMonasteryGraveyard"] = {
 }
 
 data["ScarletMonasteryLibrary"] = {
+	name = C_Map.GetAreaInfo(796) .. LTNX,
 	MapID = 796,
 	InstanceID = 189,
 	SubAreaIDs = { 21426, 21444, 21420 },
@@ -1522,7 +1540,8 @@ data["ScarletMonasteryLibrary"] = {
 				{ 2, 7713 },                                           -- Illusionary Rod
 				{ 4, 7712 },                                           -- Mantle of Doan
 				{ 5, 7711 },                                           -- Robe of Doan
-				AtlasLoot:GameVersion_GE(AtlasLoot.BC_VERSION_NUM, { 16, 34227 }), -- Deadman's Hand
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 274293 }, -- Spellsever Crossbow (ranged, crossbow)
 			},
 		},
 		{ -- SMLTrash
@@ -7425,9 +7444,47 @@ data["CityOfDalaran"] = {
 	LoadDifficulty = NORMAL_DIFF,
 	LevelRange = { 24, 28, 33 },
 	items = {
-		{
-			name = "Loot will be updated asap! Data mining is not yet fully possible!",
-			[NORMAL_DIFF] = {},
+		{ -- Boss 1: Atrexis the Grave Knight
+			name = "Atrexis the Grave Knight",
+			[NORMAL_DIFF] = {
+				-- No drops discovered yet
+			},
+		},
+		{ -- Boss 2: Arcane Anomaly
+			name = "Arcane Anomaly",
+			[NORMAL_DIFF] = {
+				-- No drops discovered yet
+			},
+		},
+		{ -- Boss 3: Arcanic Enigma
+			name = "Arcanic Enigma",
+			[NORMAL_DIFF] = {
+				-- No drops discovered yet
+			},
+		},
+		{ -- Boss 4: Unstable Sentinel
+			name = "Unstable Sentinel",
+			[NORMAL_DIFF] = {
+				-- No drops discovered yet
+			},
+		},
+		{ -- Boss 5: Fel Ancient
+			name = "Fel Ancient",
+			[NORMAL_DIFF] = {
+				-- No drops discovered yet
+			},
+		},
+		{ -- Boss 6: Lyn the Ignored
+			name = "Lyn the Ignored",
+			[NORMAL_DIFF] = {
+				-- No drops discovered yet
+			},
+		},
+		{ -- Boss 7: Shade of the Archmage
+			name = "Shade of the Archmage",
+			[NORMAL_DIFF] = {
+				-- No drops discovered yet
+			},
 		},
 	},
 }

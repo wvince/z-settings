@@ -1,6 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
@@ -13,11 +12,9 @@ RXPGuides.RegisterGuide([[
 #defaultfor Undead
 #name 1-6 Tirisfal Glades
 #next 6-12 Tirisfal Glades
-
 step
-#include RestedXP Forever Guide (H)\1-6 Tirisfal Glades
+#include RestedXP Forever Guide (A)\1-6 Tirisfal Glades
 ]])
-
 RXPGuides.RegisterGuide([[
 #forever
 << Horde
@@ -30,12 +27,9 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-H1
 #defaultfor Undead
 #next 12-14 Silverpine Forest; 12-17 The Barrens
-
 step
-#include RestedXP Forever Guide (H)\6-12 Tirisfal Glades
+#include RestedXP Forever Guide (A)\6-12 Tirisfal Glades
 ]])
-
-
 RXPGuides.RegisterGuide([[
 #group RestedXP Forever Dungeon Guide (H)
 #subgroup (WIP) Dungeon Guide 1-22
@@ -49,8 +43,6 @@ RXPGuides.RegisterGuide([[
 #name 12-14 Silverpine Forest
 #displayname 13-15 Silverpine Forest << Paladin
 #next 12-17 The Barrens
-
-
 step
-#include RestedXP Forever Guide (H)\12-14 Silverpine Forest
+#include RestedXP Forever Guide (A)\12-14 Silverpine Forest
 ]])

@@ -74,14 +74,14 @@ function RSWorldMapButtonMixin:Refresh()
 end
 
 function RSWorldMapButtonMixin:SetupMenu()
-	if (self.mapID and self.mapID == MapUtil.GetDisplayableMapForPlayer()) then
+	if (self.mapID and self.mapID == self:GetParent():GetMapID()) then
 		return
 	end
 	
 	DropdownButtonMixin.SetupMenu(self, function(dropdown, rootDescription)
 		rootDescription:SetTag("MENU_WORLD_MAP_RARESCANNER");
 
-		local mapID = MapUtil.GetDisplayableMapForPlayer();
+		local mapID = self:GetParent():GetMapID();
 
 		-- Rare NPCs
 		local npcsSubmenu =	rootDescription:CreateButton("|T"..RSConstants.NORMAL_NPC_TEXTURE..":18:18:::::0:32:0:32|t "..AL["MAP_MENU_RARE_NPCS"]);		
@@ -247,27 +247,31 @@ function RSWorldMapButtonMixin:SetupMenu()
 		local numNpcs = RSUtils.GetTableLength(npcIDsWithNames)
 		local inInstance = IsInInstance()
 		local playerMapID = C_Map.GetBestMapForUnit("player")
+		local hasActiveRouteInMap = RSRoute.HasActiveRoute() and not RSRoute.IsCompleted() and RSRoute.GetActiveRouteMapID() == mapID
+		local canStartRoute = not inInstance and numNpcs > 1 and playerMapID and playerMapID == mapID
 
-		if (not inInstance and numNpcs > 1 and playerMapID and playerMapID == mapID) then
+		if (canStartRoute or hasActiveRouteInMap) then
 			npcsSubmenu:CreateDivider()
-			npcsSubmenu:CreateTitle(AL["MAP_MENU_ROUTES_TITLE"] or "Rutas:")
+			npcsSubmenu:CreateTitle(AL["MAP_MENU_ROUTES_TITLE"])
 
-			local routeText = (RSRoute.HasActiveRoute() and not RSRoute.IsCompleted()) and AL["MAP_MENU_REFRESH_ROUTE"] or AL["MAP_MENU_START_ROUTE"]
-			local startRouteBtn = npcsSubmenu:CreateButton("|TInterface\\Minimap\\Tracking\\FlightMaster:16:16|t "..routeText, function()
-				RSRoute.ToggleOrRestartRoute()
-			end)
-			startRouteBtn:SetEnabled(function() 
-				if (not RSConfigDB.IsShowingNpcs()) then
-					return false
-				end
-				
-				if (not RSRoute.HasActiveRoute() or RSRoute.IsCompleted()) then
-					local targets = RSRoute.GetRoutableTargets(mapID)
-					return targets and #targets > 1
-				end
-				
-				return true
-			end)
+			if (canStartRoute) then
+				local routeText = hasActiveRouteInMap and AL["MAP_MENU_REFRESH_ROUTE"] or AL["MAP_MENU_START_ROUTE"]
+				local startRouteBtn = npcsSubmenu:CreateButton("|TInterface\\Minimap\\Tracking\\FlightMaster:16:16|t "..routeText, function()
+					RSRoute.ToggleOrRestartRoute()
+				end)
+				startRouteBtn:SetEnabled(function() 
+					if (not RSConfigDB.IsShowingNpcs()) then
+						return false
+					end
+					
+					if (not RSRoute.HasActiveRoute() or RSRoute.IsCompleted()) then
+						local targets = RSRoute.GetRoutableTargets(mapID)
+						return targets and #targets > 1
+					end
+					
+					return true
+				end)
+			end
 
 			local cancelRouteBtn = npcsSubmenu:CreateButton("|TInterface\\RAIDFRAME\\ReadyCheck-NotReady:16:16|t "..AL["MAP_MENU_CANCEL_ROUTE"], function()
 				RSRoute.CancelRoute()
@@ -624,7 +628,7 @@ function RSWorldMapButtonMixin:SetupMenu()
 					
 					if (RSConfigDB.IsAchievementContainerFilterEnabled() and containerInfo.achievementID and RSUtils.GetTableLength(RSAchievementDB.GetNotCompletedAchievementIDsByMap(containerID, mapID, containerInfo.achievementID, containerInfo.questID, containerInfo.criteria, true)) == 0) then
 						return false
-					elseif (RSConfigDB.IsRepeatableContainerFilterEnabled() and containerInfo.repeatable) then
+					elseif (RSConfigDB.IsRepeatableContainerFilterEnabled() and containerInfo.repeatable and not containerInfo.prof) then
 						return false
 					end
 					
@@ -822,5 +826,5 @@ function RSWorldMapButtonMixin:SetupMenu()
 	end);
 	
 	-- Avoids reconstructing if no changes
-	self.mapID = MapUtil.GetDisplayableMapForPlayer()
+	self.mapID = self:GetParent():GetMapID()
 end

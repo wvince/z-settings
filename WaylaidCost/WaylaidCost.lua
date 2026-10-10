@@ -1,7 +1,7 @@
 local addonName, W = ...
 local addon = CreateFrame("Frame")
 local metadata = C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata
-W.version = metadata and metadata(addonName, "Version") or "0.1.1-dev"
+W.version = metadata and metadata(addonName, "Version") or "0.1.2-dev"
 W.author = metadata and metadata(addonName, "Author") or "Shakam"
 W.target = metadata and metadata(addonName, "X-Game-Version") or "WoW Forever 1.60 beta (1.60.1)"
 W.icon = "Interface\\AddOns\\" .. addonName .. "\\Assets\\Icon"
@@ -16,7 +16,9 @@ function W.Refresh()
   -- Item tooltips read the saved books directly. Ranking is only needed while
   -- the AH tab is visible; settings/level events must not rebuild it at idle.
   if not W.db or not W.panel or not W.panel:IsShown() then return end
-  W.results = W.Evaluate(W.GetCatalog(), W.books, W.db, UnitLevel("player"), W.scannedAt, W.incomplete, W.targeted)
+  local settings = W.db
+  if W.auctionatorSource then settings = setmetatable({showUnavailable=true}, {__index=W.db}) end
+  W.results = W.Evaluate(W.GetCatalog(), W.books, settings, UnitLevel("player"), W.scannedAt, W.incomplete, W.targeted)
   W.Draw()
 end
 local function attach()
@@ -27,6 +29,18 @@ local function attach()
   local lib = LibStub and LibStub:GetLibrary("LibAHTab-1-0", true)
   if lib then
     lib:CreateTab("WaylaidCost", W.panel, "Waylaid", W.title)
+    -- Other addons may register their tabs later. Insert those before ours,
+    -- preserving the library's registry and selection handling.
+    local own = lib:GetButton("WaylaidCost")
+    local point, previous, relativePoint, x, y = own:GetPoint(1)
+    hooksecurefunc(lib, "CreateTab", function(self, id)
+      if id == "WaylaidCost" then return end
+      local added = self:GetButton(id)
+      if not added or not previous then return end
+      added:ClearAllPoints(); added:SetPoint(point, previous, relativePoint, x, y)
+      own:ClearAllPoints(); own:SetPoint("TOPLEFT", added, "TOPRIGHT", x, y)
+      previous, relativePoint = added, "TOPRIGHT"
+    end)
     selectTab = function() lib:SetSelected("WaylaidCost") end
   elseif parent.SetDisplayMode and parent.Tabs and #parent.Tabs > 0 then
     -- This template inherits parentArray="Tabs". Isolate its automatic
@@ -70,6 +84,7 @@ function W.SearchInBuy(name)
   local bar = ah and ah.SearchBar
   local categories = ah and ah.CategoriesList
   if type(name) ~= "string" or name == "" then return end
+  if W.SearchAuctionator({{name=name, quantity=1}}) then return end
   local localized = W.LocalItemName(name)
   if not localized then
     local id = W.itemIDs[name]
@@ -135,13 +150,15 @@ addon:SetScript("OnEvent", function(_, event)
     WaylaidCostDB = type(WaylaidCostDB) == "table" and WaylaidCostDB or {}
     W.db = WaylaidCostDB
     local defaults = { details = false, showUnavailable = true, levelOnly = true, common = true, uncommon = true,
-      showMinimap = true, itemTooltips = true, tooltipExplanations = "shift", enableWrits = true, orderKind = "waylaid" }
+      showMinimap = true, itemTooltips = true, tooltipExplanations = "shift", enableWrits = true, orderKind = "waylaid",
+      auctionatorPrices = true, auctionatorSearch = true }
     for key, value in pairs(defaults) do if W.db[key] == nil then W.db[key] = value end end
     if W.db.tooltipExplanations ~= "shift" and W.db.tooltipExplanations ~= "always" and W.db.tooltipExplanations ~= "never" then
       W.db.tooltipExplanations = "shift"
     end
     W.InitRewardDefaults()
     W.scanKey = GetRealmName() .. ":" .. UnitName("player")
+    W.RegisterAuctionatorScanListener()
     W.LoadSnapshot()
     W.BuildMinimap()
     W.RegisterOptions()
@@ -158,6 +175,7 @@ addon:SetScript("OnEvent", function(_, event)
     end
   elseif event == "AUCTION_HOUSE_SHOW" then
     ahOpen = true
+    W.RegisterAuctionatorScanListener()
     C_Timer.After(0, function()
       if ahOpen then
         attach(); W.Refresh()

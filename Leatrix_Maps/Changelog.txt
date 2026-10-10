@@ -1,4 +1,23 @@
-﻿1.60.14 - 6th October 2026
+﻿1.60.20 - 10th October 2026
+- Added a new option 'Hide blackout frame'.  If checked, the blackout frame will be hidden.
+
+1.60.19 - 7th October 2026
+- The 'Use simple map frame' now has a bronze border.  Thanks for the feedback.
+
+1.60.18 - 7th October 2026
+- The 'Use simple map frame' now has a toggle for the maximised map.
+
+1.60.17 - 7th October 2026
+- The 'Use simple map frame' setting is disabled by default.
+- Fixed a minor issue of a small deadzone with 'Unlock map frame' when 'Allow frame movement' was disabled.
+
+1.60.15 - 7th October 2026
+- Added a new setting 'Simple map frame'.  If checked, the map frame will look more like classic while still having modern features.  It's enabled by default.
+- Added a 'Reset map layout' button.  If clicked, the map position and scale will be reset to the game default values.
+- For 'Show points of interest', travel points of interest are now separate settings and there is now an additional setting if you want to show points of interest belonging to the opposing faction.
+- Note that native game controller support in Wow Forever is still in alpha development stage and may cause issues until Blizzard has progressed further along with developing the feature.
+
+1.60.14 - 6th October 2026
 - Updated 'Show points of interest'.
 
 1.60.13 - 6th October 2026

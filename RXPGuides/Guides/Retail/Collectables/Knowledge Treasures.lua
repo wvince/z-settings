@@ -1,4 +1,5 @@
 --Nesting
+local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #retail
 #version 1
@@ -8,7 +9,6 @@ RXPGuides.RegisterGuide([[
 #displayname Midnight
 #chapters a) Eversong Woods Knowledge;a) Zul'aman Knowledge;a) Harandar Knowledge;a) Voidstorm Knowledge
 ]])
-
 --Eversong Woods
 RXPGuides.RegisterGuide([[
 #retail
@@ -18,7 +18,6 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - Eversong Woods Knowledge
 #next a) Zul'aman Knowledge
 #chapter
-
 step
     #include RestedXP Midnight\a) GC: Knowledge@SindoreiMasterworkChisel-SindoreiMasterworkChisel
 step
@@ -89,7 +88,6 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Zul'aman Knowledge
 #next a) Harandar Knowledge
 #chapter
-
 -- step
 --     #include RestedXP Midnight\a) GC: Knowledge@HalfBakedTechniques-HalfBakedTechniques
 step
@@ -134,8 +132,6 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF003|r - Harandar Knowledge
 #next a) Voidstorm Knowledge
 #chapter
-
-
 step
     #include RestedXP Midnight\a) GC: Knowledge@HaranirLeatherworkingKnife-HaranirLeatherworkingKnife
 step
@@ -175,7 +171,6 @@ RXPGuides.RegisterGuide([[
 #name a) Voidstorm Knowledge
 #displayname |cFF1EFF004|r - Voidstorm Knowledge
 #chapter
-
 step
     #include RestedXP Midnight\a) GC: Knowledge@PureVoidCrystal-PureVoidCrystal
 step
@@ -209,7 +204,6 @@ step
 step
     #include RestedXP Midnight\a) GC: Knowledge@EtherealStormwrench-EtherealStormwrench
 ]])
-
 --GC: Knowledge
 RXPGuides.RegisterGuide([[
 #retail
@@ -217,7 +211,6 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Midnight
 #name a) GC: Knowledge
 #internal
-
 step
     #label SindoreiMasterworkChisel
     #arrowtext Click on |cRXP_PICK_Sin'dorei Masterwork Chisel|r
@@ -456,7 +449,7 @@ step
     #arrowtext Click on |cRXP_PICK_Telescope|r
     .goto 2395,40.52,44.28
     >>|TInterface/cursor/crosshair/interact.blp:20|tClick on the |cRXP_PICK_Telescope|r.
-    .complete 87394,1 --1/1 
+    .complete 87394,1 --1/1
 step
     #label ManualofMistakesandMishaps
     #arrowtext Click on |cRXP_PICK_Manual of Mistakes and Mishaps|r
@@ -484,7 +477,7 @@ step
 step
     #label CarefullyRackedSpear
     #arrowtext Click on |cRXP_PICK_Carefully Racked Spear|r
-    .isQuestAvailable 89179 
+    .isQuestAvailable 89179
     .goto 2536,33.19,65.73
     >>|TInterface/cursor/crosshair/interact.blp:20|tClick on the |cRXP_PICK_Carefully Racked Spear|r.
     .turnin 89179 >>Blacksmithing Knowledge Treasure

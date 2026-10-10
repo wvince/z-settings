@@ -1,5 +1,37 @@
 # OlympusMute Changelog
 
+## 1.3.2
+
+### Fixed
+- When a second muted player joins while the "Muted players in your group" window is open, they're added to it instead of replacing the first player.
+- "Keep muted" in the group window is remembered through a /reload, so you aren't asked again in the same group.
+- If the invite window is replaced, closed by logging out, or can't open, that no longer counts as "Keep muted": you're still asked when they join.
+- When the player you invited joins, the invite window closes and the group window asks instead, so you don't get two windows for one player.
+- Muting a player by hand now ends "Unmute while grouped" for them right away.
+- "Unmute while grouped" for someone who never joins now ends on time after a /reload too.
+- The "muted again" message now says "didn't join" for invites that weren't accepted, uses the player's real name, and isn't shown for players you've since unmuted or never-muted.
+- The tooltip says "unmuted while grouped" instead of "Muted by OlympusMute" while that's active.
+- Scan no longer gets stuck when a guild name on your list contains "wait" or "again".
+- A /who result can no longer add you to your own mute list or remove your own chat lines.
+- Removing a muted player's old messages keeps the whispers you sent them in a "Move to Whisper Window" tab too.
+- Names typed with two spaces ("Bacon  Eggz") are saved correctly. Entries saved that way before are fixed at login.
+- /who now unmutes players saved under an old-style name who have left the guild.
+- A repeated /who result keeps the new line instead of an older identical one.
+- Raid chat bubbles from muted players are now hidden in the open world.
+- Chat bubbles are hidden even when none of your chat tabs show that kind of chat.
+- An invite given back after the pause shows the game's normal invite text (and role choice for role-check invites).
+- A hardcore death-duel request given back after the pause shows correctly.
+- When a muted player whispers you with whispers set to open in a new tab, the empty tab closes again.
+- "Cancel invite" no longer withdraws other invites you sent in the last two minutes.
+- Answering an invite yourself stops OlympusMute from declining it later.
+- The trade question now reads "Trade with Name?", since it also appears for trades you start.
+- Guild and name keywords typed next to a * no longer keep a stray space ("tiny *" is saved as "tiny"). Entries saved that way are fixed at login.
+- Ignore list import counts never-muted players separately, and says they were left on your ignore list.
+- A shared list that arrives while its window can't open now tells you, instead of disappearing and blocking a resend.
+- The muted players list counts never-muted rows in "N found".
+- The word filter tooltip's example now works: "inv layer" hides both "inv to asmon layer pls" and "invite to asmon layer pls".
+- Smaller fixes: the whisper warning shows once for "First-Last" names, a damaged saved level no longer stops guild learning, and a few rare double messages.
+
 ## 1.3.1
 
 ### New
@@ -103,7 +135,7 @@
 - Thanks to Adondriel2 for suggesting the whisper/invite warnings.
 
 ## 1.0.11
-- Improved: word filter entries with several words now match messages that contain all of those words in any order, e.g. "invite layer" hides "inv to asmon layer pls". Put an entry in quotes to match only that exact phrase.
+- Improved: word filter entries with several words now match messages that contain all of those words in any order, e.g. "inv layer" hides "inv to asmon layer pls" and "invite to asmon layer pls". Put an entry in quotes to match only that exact phrase.
 - Fixed: the muted-player list window now shows every player. Long lists used to get cut off partway through the alphabet. It also has a search box.
 - Improved: guild names don't need a * wildcard (they already match any part of the name). A * is ignored, and entries already covered by a shorter name (like "olympusa" when "olympus" is listed) are cleaned up automatically, which also shortens the Scan rotation.
 - Fixed: shift-click and /who results are recognized again when chat timestamps are turned on.

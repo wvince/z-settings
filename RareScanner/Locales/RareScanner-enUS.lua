@@ -1513,6 +1513,7 @@ AL["CONTAINERS_AMATHET_CACHE"] = "Amathet Cache"
 AL["CONTAINERS_AMBERED_CACHE"] = "Ambered Cache"
 AL["CONTAINERS_ANCIENT_EREDAR_CACHE"] = "Ancient Eredar Cache"
 AL["CONTAINERS_ARCANE_CHEST"] = "Arcane Chest"
+AL["CONTAINERS_BATTERED_CHEST"] = "Battered Chest"
 AL["CONTAINERS_BLACK_EMPIRE_CACHE"] = "Black Empire Cache"
 AL["CONTAINERS_BROKEN_BELL"] = "Broken Bell"
 AL["CONTAINERS_BURIED_TREASURE_CHEST"] = "Buried Treasure Chest"
@@ -2121,6 +2122,7 @@ AL["MAP_REPUTATION_DESC"] = "Options to configure how RareScanner integrates wit
 AL["MAP_REPUTATION_HIGHLIGHT"] = "Highglight entities that reward reputation with the faction selected"
 AL["MAP_REPUTATION_HIGHLIGHT_DESC"] = "When selected, if you are tracking a reputation in the world map, every entity that grants reputation with that faction will also appear highlighted."
 AL["MAP_ROUTES"] = "Routes"
+AL["MAP_ROUTES_CALCULATING"] = "Calculating route (%s)..."
 AL["MAP_ROUTES_COLOUR"] = "Route color"
 AL["MAP_ROUTES_COLOUR_DESC"] = "Color used to draw route lines and directional arrows"
 AL["MAP_ROUTES_DESC"] = "Options for rare navigation routes"
@@ -3695,6 +3697,8 @@ AL["ZONE_318"] = "%s (Undead side)"
 AL["ZONE_943"] = "%s (Warfront)"
 AL["ZONES_FILTER"] = "Zone filters"
 AL["ZONES_FILTERS_SEARCH_DESC"] = "Type the name of the zone to filter the list below"
+
+AL["CONTAINERS_BATTERED_CHEST"] = "Battered Chest"
 
 	-- CONTINENT names
 	AL["ZONES_CONTINENT_LIST"] = {

@@ -38,8 +38,12 @@ function RSEntityPinMixin:OnAcquired(POI, dataProvider)
 	RSPinMixin.OnAcquired(self, POI, dataProvider)
 	self:SetFrameLevel(self:GetParent():GetFrameLevel() + 100)
 	self.Texture:SetTexture(POI.Texture)
-	self.Texture:SetScale(RSConfigDB.GetIconsWorldMapScale())
+	local scale = RSConfigDB.GetIconsWorldMapScale()
+	self.Texture:SetScale(scale)
 	self.IconTexture:SetAtlas(POI.iconAtlas)
+	self.HighlightRing:SetScale(scale)
+	self.HighlightRing:SetVertexColor(1, 0.85, 0.2, 1)
+	self:UpdateHighlight()
 end
 
 function RSEntityPinMixin:OnMouseEnter()
@@ -207,21 +211,38 @@ end
 function RSEntityPinMixin:OnReleased()
 	RSPinMixin.OnReleased(self)
     
+	if (self.HighlightRingAnim:IsPlaying()) then
+		self.HighlightRingAnim:Stop()
+	end
+	self.HighlightRing:Hide()
+
     if (self.tooltip) then
 		RSTooltip.ReleaseTooltip(self.tooltip)
 		self.tooltip = nil
 	end
 end
 
-function RSEntityPinMixin:GetHighlightType()
+function RSEntityPinMixin:UpdateHighlight()
+	if (self:IsReputationHighlight()) then
+		if (not self.HighlightRingAnim:IsPlaying()) then
+			self.HighlightRing:Show()
+			self.HighlightRingAnim:Play()
+		end
+	else
+		if (self.HighlightRingAnim:IsPlaying()) then
+			self.HighlightRingAnim:Stop()
+		end
+		self.HighlightRing:Hide()
+	end
+end
+
+function RSEntityPinMixin:IsReputationHighlight()
 	if (RSConfigDB.IsHighlightingReputation()) then
-		local _, bountyFactionID, bountyFrameType = self.dataProvider:GetBountyInfo();
-		if (bountyFrameType == BountyFrameType.ActivityTracker) then
-			if (self.POI.factionID and RSUtils.Contains(self.POI.factionID, bountyFactionID)) then
-				return MapPinHighlightType.SupertrackedHighlight;
-			end
+		local _, bountyFactionID = self.dataProvider:GetBountyInfo();
+		if (bountyFactionID and self.POI.factionID and RSUtils.Contains(self.POI.factionID, bountyFactionID)) then
+			return true;
 		end
 	end
 
-	return MapPinHighlightType.None;
+	return false;
 end

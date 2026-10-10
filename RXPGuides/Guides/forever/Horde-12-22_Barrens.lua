@@ -1,6 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
@@ -13,8 +12,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Speedrun Guide 1-22
 --#groupid RXP-SRGCE-H1
 #next 17-22 Stonetalon/Barrens/Ashenvale
-
-
 step << Tauren Shaman
     .goto 1411/1,-4648.55,271.43
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Takrin|r
@@ -68,14 +65,14 @@ step << Tauren Warrior
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thun'grim|r
     .turnin 1503 >>Turn in Forged Steel
     .target Thun'grim Firegaze
-step << !Tauren
+step << skip --!Tauren
     #softcore
     #completewith ThievesPickup
     .goto 1413/1,-2516.71,-590.71
     .deathskip >> Die and respawn at the |cRXP_FRIENDLY_Spirit Healer|r
     .xp >15,1
 step << !Tauren
-    #softcore
+    --#softcore
     #completewith ThievesPickup
     .subzone 380 >> Travel to The Crossroads
     .xp <15,1
@@ -116,6 +113,7 @@ step << !Tauren
 step << !Tauren
     .goto 1413/1,-2595.75,-473.15
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thork|r
+    .turnin 98024 >>Turn in Journey to the Crossroads << Skyborne
     .accept 871 >>Accept Disrupt the Attacks
     .accept 5041 >>Accept Supplies for the Crossroads
     .target Thork
@@ -133,7 +131,7 @@ step << Undead/Skyborne
     .fp >> Get the The Crossroads flight path
     .target Devrak
     .isQuestAvailable 1492
-step << !Tauren !Skyborne !Shaman !Hunter 
+step << !Tauren
     .goto 1413/1,-2589.67,-424.51
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Helbrim|r
     .accept 1492 >>Accept Wharfmaster Dizzywig
@@ -698,9 +696,7 @@ step << !Tauren !Undead !Skyborne
     .zoneskip The Barrens
     .bindlocation 380,1
     .dungeon RFC
-
     --not worth to turn in 5723/5724 w/o TB flight path
-
 step << skip
     #completewith RFCTurninsTB1
     .goto 1412/1,-1480.52,-2339.56,120,0
@@ -1407,7 +1403,7 @@ step << Tauren Shaman
     .train 8498 >> Train your class spells
     .target Tigor Skychaser
     .xp <16,1
-step << Hunter/Warrior
+step << Tauren Hunter/Tauren Warrior
     #completewith HunterTraining1 << Tauren Hunter
     #completewith WarriorTraining1 << Tauren Warrior
     .goto 1456/1,-123.26,-1394.49,60 >> Travel to the Hunter Rise
@@ -1653,6 +1649,7 @@ step
     .goto 1413/1,-1871.600,653.700,50,0
     .goto 1413/1,-1729.700,592.400,50,0
     >>Kill |cRXP_LOOT_Savannah Patriarchs|r. Loot them for their |cRXP_LOOT_Hides|r and |cRXP_LOOT_Tusks|r
+    >>|cRXP_WARN_If the |cRXP_LOOT_Savannah Patriarchs|r are heavily contested consider skipping this quest for now, it can be completed later|r
     .complete 95494,1 --|6/6 Savannah Lion Hide
     .complete 821,1 --Savannah Lion Tusk (5)
     .disablecheckbox
@@ -1675,6 +1672,7 @@ step
     .turnin 95507 >>Turn in Vrang's Game
     .accept 95495 >>Accept The Hermit Tanner
     .target Vrang Wildgore
+    .isQuestComplete 95494
 step
     #completewith next
     .goto 1413/1,-1778.100,684.200,25,0
@@ -1687,10 +1685,14 @@ step
     .turnin 95495 >>Turn in The Hermit Tanner
     .accept 95621 >>Accept Trouble in the Valley
     .target Walton
+    .isQuestTurnedIn 95494
 step
+    .goto 1413/1,-1611.500,549.000
     >>Kill |cRXP_ENEMY_Corporal Adamore|r
+    >>|cRXP_WARN_Be careful! You may aggro 2-3 mobs at the same time|r
     .complete 95621,1 --|1/1 Learn why the Kul Tirans are here
     .mob Corporal Adamore
+    .isQuestTurnedIn 95494
 step
     #completewith next
     .goto 1413/1,-1778.100,684.200,25,0
@@ -1704,17 +1706,20 @@ step
     .accept 95508 >>Accept Unwelcome Guests
     .timer 67,Unwelcome Guests RP
     .target Walton
+    .isQuestTurnedIn 95494
 step
     .goto 1413/1,-1629.200,835.600
-    >>Move behind the house as you wait for the RP to finish to avoid getting agro by all mobs at once
+    >>Move behind the house as you wait for the RP to finish to avoid getting aggro by all mobs at once
     >>|cRXP_WARN_You don't actually need to assist |cRXP_FRIENDLY_Walton|r, he will survive with the help of|r |cRXP_FRIENDLY_Vrang Wildgore|r
     .complete 95508,1 --|1/1 Assist Walton
     .mob Terry Longdrink
+    .isQuestTurnedIn 95494
 step
     .goto 1413/1,-1635.400,838.800
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Walton|r
     .turnin 95508 >>Turn in Unwelcome Guests
     .target Walton
+    .isQuestTurnedIn 95494
 step
 	#label Samophlange
     .goto 1413/1,-2686.95,825.40
@@ -1795,7 +1800,7 @@ step
 step
     #label Ignition
     .goto 1413/1,-3104.44,1109.16
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to|r |cRXP_FRIENDLY_Wizzlecrank's Shredder|r in The Sludge Ven
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to|r |cRXP_FRIENDLY_Wizzlecrank's Shredder|r in The Sludge Fen
     >>|cRXP_FRIENDLY_Wizzlecrank's Shredder|r |cRXP_WARN_has a long respawn timer. Consider skipping this quest if there is a lot of competition|r
     .accept 858 >>Accept Ignition
     .target Wizzlecrank's Shredder
@@ -2079,6 +2084,20 @@ step << Warrior !Skyborne
     .train 197 >>Train Two-Handed Axes
     .train 227 >>Train Staves
     .target Hanashi
+    .money <0.020
+step << Warrior !Skyborne
+    #optional
+    .goto 1454/1,-4824.00,2090.540
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Hanashi|r
+    .train 197 >>Train Two-Handed Axes
+    .target Hanashi
+    .money <0.010
+step << Shaman !Skyborne
+    .goto 1454/1,-4824.00,2090.540
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Hanashi|r
+    .train 197 >>Train Two-Handed Axes
+    .target Hanashi
+    .money <0.010
 step << Hunter
     .goto 1454/1,-4819.1,2099.05
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|cRXP_BUY_Talk to|r |cRXP_FRIENDLY_Zendo'jian|r|cRXP_BUY_. Buy a|r |T135490:0|t[Reinforced Bow] |cRXP_BUY_from him|r
@@ -2708,6 +2727,22 @@ step
     .target Rahauro
     .isQuestComplete 5723
     .dungeon RFC
+step << Paladin
+    .goto 1456/1,253.900,-950.200
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Alodan|r
+    .train 1044 >>Train your class spells
+    .target Alodan the Hopeful 
+    .xp <18,1
+    .xp >20,1
+    .dungeon RFC
+step << Paladin
+    #optional
+    .goto 1456/1,253.900,-950.200
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Alodan|r
+    .train 1866 >>Train your class spells
+    .target Alodan the Hopeful 
+    .xp <20,1
+    .dungeon RFC
 step
     #optional
     .goto 1456/1,26.1,-1196.66
@@ -3029,7 +3064,6 @@ step
     .accept 1062 >> Accept Goblin Invaders
     .target Seereth Stonebreak
 ]])
-
 RXPGuides.RegisterGuide([[
 #forever
 << Horde
@@ -3040,8 +3074,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Speedrun Guide 1-22
 --#groupid RXP-SRGCE-H1
 #next 22-24 Hillsbrad
-
-
 step
     #loop
     .goto 1442/1,-691.11,-13.63,0
@@ -3449,6 +3481,12 @@ step
     .complete 821,3 --Thunder Lizard Horn (1)
     .mob Stormsnout
 step
+    #label LakotaMani2
+    #completewith LakotaMani2
+    >>Kill |cRXP_ENEMY_Razormane Raiders|r. Loot them for |cRXP_LOOT_Olgra's Adornments|r
+    .complete 95774,1 --|4/4 Olgra's Adornments
+    .mob Razormane Raider
+step
     #completewith next
     >>Kill |cRXP_ENEMY_Bristleback Quilboars|r. Loot them for their |cRXP_LOOT_Tusks|r. Save the |T134128:0|t[|cRXP_LOOT_Blood Shards|r] you get
 	.complete 878,1 --Kill Bristleback Water Seeker (x6)
@@ -3610,6 +3648,12 @@ step
     .complete 880,1 --Altered Snapjaw Shell (8)
     .mob Oasis Snapjaw
 step
+    #completewith IshamuhalesFang
+    >>Kill |cRXP_LOOT_Savannah Matriarchs|r and |cRXP_ENEMY_Savannah Patriarchs|r. Loot them for their |cRXP_LOOT_Hides|r
+    .complete 95494,1 --|6/6 Savannah Lion Hide
+    .mob Savannah Matriarch
+    .mob Savannah Patriarchs
+step
     #completewith next
     >>Kill any |cRXP_ENEMY_Zhevra|r. Loot it for a |cRXP_LOOT_Fresh Zhevra Carcass|r
 	.collect 10338,1 --Collect Fresh Zhevra Carcass
@@ -3622,6 +3666,16 @@ step
     .complete 882,1 --Ishamuhale's Fang (1)
     .mob Ishamuhale
 step
+    #loop
+    .goto 1413/1,-3633.200,-600.500,0
+    .goto 1413/1,-3633.200,-600.500,50,0
+    .goto 1413/1,-3469.100,-495.000,50,0
+    .goto 1413/1,-3428.300,-584.300,50,0
+    >>Kill |cRXP_LOOT_Savannah Matriarchs|r and |cRXP_ENEMY_Savannah Patriarchs|r. Loot them for their |cRXP_LOOT_Hides|r
+    .complete 95494,1 --|6/6 Savannah Lion Hide
+    .mob Savannah Matriarch
+    .mob Savannah Patriarchs
+step
     #completewith BootyTurnin
     .subzone 392 >> Travel to Ratchet
 step
@@ -3630,6 +3684,13 @@ step
     .turnin 2381 >>Turn in Plundering the Plunderers << Rogue
     .turnin 97253 >>Turn in Parts and Pieces
     .target Wrenix the Wretched
+    .isQuestComplete 97253
+step << Rogue
+    #optional
+    .goto 1413/1,-3767.800,-842.900
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Wrenix|r
+    .turnin 2381 >>Turn in Plundering the Plunderers
+    .target Wrenix the Wretched
 step
     #label BootyTurnin
     .goto 1413/1,-3728.66,-835.29
@@ -3637,33 +3698,34 @@ step
     .turnin 888 >>Turn in Stolen Booty
     .target Gazlowe
 step
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Sputtervalve|r, |cRXP_FRIENDLY_Mebok|r and |cRXP_FRIENDLY_Drohn|r
+    .goto 1413/1,-3759.06,-902.18
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Sputtervalve|r
     .turnin 1094 >>Turn in Further Instructions
     .accept 1095 >>Accept Further Instructions
-    .target +Sputtervalve
-    .goto 1413/1,-3759.06,-902.18
+    .target Sputtervalve
+step
+    .goto 1413/1,-3720.300,-920.000
+    >>Click the |cRXP_PICK_Wanted Poster|r
+    .accept 92706 >>Accept WANTED: Bruuz
+step
+    .goto 1413/1,-3697.24,-929.20
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mebok|r
     .turnin 865 >>Turn in Raptor Horns
     .turnin 1069 >>Turn in Deepmoss Spider Eggs
     .accept 1491 >>Accept Smart Drinks
-    .target +Mebok Mizzyrix
-    .goto 1413/1,-3697.24,-929.20
-    .turnin 821 >>Turn in Chen's Empty Keg
-    .target +Brewmaster Drohn
-    .goto 1413/1,-3687.11,-981.22
+    .target Mebok Mizzyrix
     .dungeon WC
 step
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Sputtervalve|r, |cRXP_FRIENDLY_Mebok|r and |cRXP_FRIENDLY_Drohn|r
-    .turnin 1094 >>Turn in Further Instructions
-    .accept 1095 >>Accept Further Instructions
-    .target +Sputtervalve
-    .goto 1413/1,-3759.06,-902.18
+    .goto 1413/1,-3697.24,-929.20
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mebok|r
     .turnin 865 >>Turn in Raptor Horns
     .turnin 1069 >>Turn in Deepmoss Spider Eggs
-    .target +Mebok Mizzyrix
-    .goto 1413/1,-3697.24,-929.20
-    .turnin 821 >>Turn in Chen's Empty Keg
-    .target +Brewmaster Drohn
+    .target Mebok Mizzyrix
+step
     .goto 1413/1,-3687.11,-981.22
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Drohn|r
+    .turnin 821 >>Turn in Chen's Empty Keg
+    .target Brewmaster Drohn
 step << Warrior
     .goto 1413/1,-3680.02,-982.58
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Grazlix|r
@@ -3710,26 +3772,21 @@ step
     .bindlocation 392
     .isQuestTurnedIn 865
 step
-    .goto 1413/1,-3720.300,-920.000
-    >>Click the |cRXP_PICK_Wanted Poster|r
-    .accept 92706 >>Accept WANTED: Bruuz
-    .group
-step
     #loop
     .goto 1413/1,-3911.900,-1049.200
     .goto 1413/1,-3951.600,-1093.500
     .goto 1413/1,-4012.800,-1081.800
     .goto 1413/1,-3973.000,-1028.700
-    >>Kill |cRXP_PICK_Bruuz|r (lvl 20 elite)
-    >>|cRXP_WARN_He swims around in the sea near Ratchet|r
+    >>Kill |cRXP_PICK_Bruuz|r (lvl 20 elite) in the sea near Ratchet
+    >>|cRXP_WARN_This is hard! Group up if possible|r
+    >>|cRXP_WARN_It can be solo'd by kiting him to the Ratchet guards who will help, but make sure to deal at least 50% damage!|r
+    .complete 92706,1 --Kill Bruuz
     .isOnQuest 92706
-    .group 3
 step
     .goto 1413/1,-3720.300,-920.000
     >>Click the |cRXP_PICK_Wanted Poster|r
-    .accept 92706 >>Accept WANTED: Bruuz
+    .turnin 92706 >>Turn in WANTED: Bruuz
     .isQuestComplete 92706
-    .group
 step
     .goto 1413/1,-3770.20,-928.53
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Bigglefuzz|r
@@ -4168,8 +4225,8 @@ step
     .target Devrak
     .subzoneskip 380,1
 step
-    .goto 1413/1,-1891.48,-2391.93
-    >>Kill |cRXP_ENEMY_Bristleback Quilboars|r. Loot them for a |T134128:0|t[|cRXP_LOOT_Blood Shard|r
+    .goto 1413/1,-2515.7,-2076.41
+    >>Kill |cRXP_ENEMY_Bristleback Quilboars|r. Loot them for a |T134128:0|t[|cRXP_LOOT_Blood Shard|r]
     .collect 5075,1,5052,1 --Blood Shard (1)
     .mob Bristleback Water Seeker
     .mob Bristleback Thornweaver
@@ -4397,6 +4454,22 @@ step << Rogue
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|cRXP_BUY_Talk to|r |cRXP_FRIENDLY_Kuruk|r|cRXP_BUY_. Buy |r |T135423:0|t[Deadly Throwing Axe] |cRXP_BUY_from him|r
     .collect 3137,200,6562,1 --Deadly Throwing Axe (200)
     .target Kuruk
+step << Rogue
+    #optional
+    .goto 1456/1,104.500,-1308.400
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Boarton Shadetotem|
+    >>|cRXP_WARN_He is|r |T132320:0|t[Stealthed] 
+    .train 6761 >>Train your class spells
+    .target Boarton Shadetotem
+    .xp <16,1
+    .xp >20,1
+step << Rogue
+    .goto 1456/1,104.500,-1308.400
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Boarton Shadetotem|
+    >>|cRXP_WARN_He is|r |T132320:0|t[Stealthed] 
+    .train 1943 >>Train your class spells
+    .target Boarton Shadetotem
+    .xp <20,1
 step
     .goto 1456/1,24.85,-1252.75
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Chesmu|r
@@ -4473,12 +4546,26 @@ step << Mage
     .train 2138 >> Train your class spells
     .target Archmage Shymm
     .xp <22,1
+step << Paladin
+    .goto 1456/1,253.900,-950.200
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Alodan|r
+    .train 1866 >>Train your class spells
+    .target Alodan the Hopeful 
+    .xp <20,1
+    .xp >22,1
+step << Paladin
+    #optional
+    .goto 1456/1,253.900,-950.200
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Alodan|r
+    .train 1026 >>Train your class spells
+    .target Alodan the Hopeful 
+    .xp <22,1
 step
     #optional
     #label DeathDUPpickup
 step << Shaman
     .goto 1456/1,269.92,-980.40
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tigor|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tigor|r |cRXP_WARN_outside|r
     .train 2645 >> Train your class spells
     .target Tigor Skychaser
     .xp <20,1
@@ -4486,7 +4573,7 @@ step << Shaman
 step << Shaman
     #optional
     .goto 1456/1,269.92,-980.40
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tigor|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tigor|r |cRXP_WARN_outside|r
     .train 8498 >> Train your class spells
     .target Tigor Skychaser
     .xp <22,1
@@ -4695,9 +4782,7 @@ step << Hunter
     >>|cRXP_BUY_Buy|r |T132382:0|t[Sharp Arrows] |cRXP_BUY_from her|r
     .collect 2515,1600,493,1 << Hunter --Sharp Arrow (1600)
     .target Kuna Thunderhorn
-
     --WC
-
 step
     #completewith next
     .goto 1456/1,26.1,-1196.66
@@ -5271,6 +5356,88 @@ step
     .complete 876,1 --Serena's Head (1)
     .mob Serena Bloodfeather
     .isQuestTurnedIn 875
+step
+    #completewith next
+    >>Loot the |cRXP_PICK_Sprung Traps|r on the ground
+    .complete 95507,1 --|8/8 Trapped Game
+step
+    #loop
+    .goto 1413/1,-1848.200,486.900,0
+    .goto 1413/1,-1848.200,486.900,50,0
+    .goto 1413/1,-1937.500,480.000,50,0
+    .goto 1413/1,-1983.100,579.700,50,0
+    .goto 1413/1,-1960.600,653.700,50,0
+    .goto 1413/1,-1871.600,653.700,50,0
+    .goto 1413/1,-1729.700,592.400,50,0
+    >>Kill |cRXP_LOOT_Savannah Patriarchs|r. Loot them for their |cRXP_LOOT_Hides|r
+    .complete 95494,1 --|6/6 Savannah Lion Hide
+    .mob Savannah Patriarch
+step
+    #loop
+    .goto 1413/1,-1960.600,653.700,0
+    .goto 1413/1,-1848.200,486.900,50,0
+    .goto 1413/1,-1937.500,480.000,50,0
+    .goto 1413/1,-1983.100,579.700,50,0
+    .goto 1413/1,-1960.600,653.700,50,0
+    .goto 1413/1,-1871.600,653.700,50,0
+    .goto 1413/1,-1729.700,592.400,50,0
+    >>Loot the |cRXP_PICK_Sprung Traps|r on the ground
+    .complete 95507,1 --|8/8 Trapped Game
+step
+    .goto 1413/1,-1812.600,789.800
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Vrang Wildgore|r
+    .turnin 95494 >>Turn in Bruised Pride and Lion Hides
+    .turnin 95507 >>Turn in Vrang's Game
+    .accept 95495 >>Accept The Hermit Tanner
+    .target Vrang Wildgore
+    .isQuestComplete 95494
+step
+    #completewith next
+    .goto 1413/1,-1778.100,684.200,25,0
+    .goto 1413/1,-1741.700,721.400,25,0
+    .goto 1413/1,-1643.900,786.000,25,0
+    .goto 1413/1,-1605.300,818.300,20 >>Travel up the mountain
+step
+    .goto 1413/1,-1635.400,838.900
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Walton|r
+    .turnin 95495 >>Turn in The Hermit Tanner
+    .accept 95621 >>Accept Trouble in the Valley
+    .target Walton
+    .isQuestTurnedIn 95494
+step
+    .goto 1413/1,-1611.500,549.000
+    >>Kill |cRXP_ENEMY_Corporal Adamore|r
+    >>|cRXP_WARN_Be careful! You may aggro 2-3 mobs at the same time|r
+    .complete 95621,1 --|1/1 Learn why the Kul Tirans are here
+    .mob Corporal Adamore
+    .isQuestTurnedIn 95494
+step
+    #completewith next
+    .goto 1413/1,-1778.100,684.200,25,0
+    .goto 1413/1,-1741.700,721.400,25,0
+    .goto 1413/1,-1643.900,786.000,25,0
+    .goto 1413/1,-1605.300,818.300,20 >>Travel up the mountain
+step
+    .goto 1413/1,-1635.500,838.900
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Walton|r
+    .turnin 95621 >>Turn in Trouble in the Valley
+    .accept 95508 >>Accept Unwelcome Guests
+    .timer 67,Unwelcome Guests RP
+    .target Walton
+    .isQuestTurnedIn 95494
+step
+    .goto 1413/1,-1629.200,835.600
+    >>Move behind the house as you wait for the RP to finish to avoid getting aggro by all mobs at once
+    >>|cRXP_WARN_You don't actually need to assist |cRXP_FRIENDLY_Walton|r, he will survive with the help of|r |cRXP_FRIENDLY_Vrang Wildgore|r
+    .complete 95508,1 --|1/1 Assist Walton
+    .mob Terry Longdrink
+    .isQuestTurnedIn 95494
+step
+    .goto 1413/1,-1635.400,838.800
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Walton|r
+    .turnin 95508 >>Turn in Unwelcome Guests
+    .target Walton
+    .isQuestTurnedIn 95494
 step << Hunter
     .goto 1413/1,-2347.48,857.83
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Wenikee|r
@@ -5468,18 +5635,24 @@ step
     #completewith Tsunaman1
     .subzone 460 >>Travel to Sun Rock Retreat
 step
+    #completewith next
+    .goto 1442/1,834.44,908.21,30,0
+    .goto 1442/1,856.91,874.67,30,0
+    .goto 1442/1,896.46,836.57,30,0
+    .goto 1442/1,940.41,831.04,30 >> Run up the path to the right
+step
+    #label Tsunaman1
+    .goto 1442/1,933.09,824.53
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tsunaman|r
+    .accept 6562 >>Accept Trouble in the Deeps
+    .accept 6393 >>Accept Elemental War
+    .target Tsunaman
+step
     .goto 1442/1,940.9,925.14
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Maggran|r
 	.turnin 6284 >> Turn in Arachnophobia
     .target Maggran Earthbinder
     .isQuestComplete 6284
-step
-    #label KayaLives
-    .goto 1442/1,928.20,1015.99
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tammra|r
-    .turnin 6401 >>Turn in Kaya's Alive
-    .target Tammra Windfield
-    .isQuestTurnedIn 6523
 step
     .goto 1442/1,927.72,893.56
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Innkeeper Jayka|r
@@ -5498,80 +5671,80 @@ step
     .target Jeeda
     .isOnQuest 1095
 step
-    #completewith next
-    .goto 1442/1,834.44,908.21,30,0
-    .goto 1442/1,856.91,874.67,30,0
-    .goto 1442/1,896.46,836.57,30,0
-    .goto 1442/1,940.41,831.04,30 >> Run up the path to the right
-step
-    #label Tsunaman1
-    .goto 1442/1,933.09,824.53
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tsunaman|r
-    .accept 6562 >>Accept Trouble in the Deeps
-    .accept 6393 >>Accept Elemental War
-    .target Tsunaman
+    #label KayaLives
+    .goto 1442/1,928.20,1015.99
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tammra|r
+    .turnin 6401 >>Turn in Kaya's Alive
+    .accept 6301 >>Accept Cycle of Rebirth
+    .target Tammra Windfield
+    .isQuestTurnedIn 6523
 step
     .goto 1442/1,365.16,878.250
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ziz|r
     .turnin 1095 >>Turn in Further Instructions
+    .accept 1096 >>Accept Gerenzo Wrenchwhistle
     .target Ziz Fizziks
 step
-    #loop
     .line Stonetalon Mountains,70.82,55.25,70.52,56.22,69.76,56.70,68.52,56.04,67.77,55.97,66.94,56.25,66.41,56.31,65.74,57.20,65.14,57.02,64.37,56.47,63.72,56.80,62.99,56.25,62.32,56.11,61.58,55.10,61.10,54.68,60.98,54.06,59.81,53.51,59.66,52.14,60.33,51.68
-    .goto 1442/1,265.54,1213.00,50,0
-    .goto 1442/1,299.72,1233.84,50,0
-    .goto 1442/1,332.44,1218.86,50,0
-    .goto 1442/1,325.11,1174.25,50,0
-    .goto 1442/1,267.98,1156.34,50,0
-    .goto 1442/1,262.12,1136.15,50,0
-    .goto 1442/1,238.68,1122.470,50,0
-    .goto 1442/1,202.54,1089.58,50,0
-    .goto 1442/1,169.82,1085.03,50,0
-    .goto 1442/1,134.17,1067.120,50,0
-    .goto 1442/1,102.43,1077.86,50,0
-    .goto 1442/1,64.83,1059.95,50,0
-    .goto 1442/1,35.53,1054.090,50,0
-    .goto 1442/1,2.81,1083.07,50,0
-    .goto 1442/1,-23.07,1085.03,50,0
-    .goto 1442/1,-63.60,1094.14,50,0
-    .goto 1442/1,-100.23,1091.86,50,0
-    .goto 1442/1,-160.78,1070.370,50,0
-    .goto 1442/1,-197.89,1086.00,50,0
-    .goto 1442/1,-212.54,1117.59,50,0
-    .goto 1442/1,332.44,1218.86,0
-    >>Kill |cRXP_ENEMY_XT:9|r. It patrols the southern side of the river
-    >>|cRXP_WARN_Skip this step if you can't find it|r
+    .goto 1442/1,265.54,1213.0,80,0
+    .goto 1442/1,299.72,1233.84,80,0
+    .goto 1442/1,332.44,1218.86,80,0
+    .goto 1442/1,325.11,1174.25,80,0
+    .goto 1442/1,267.98,1156.34,80,0
+    .goto 1442/1,262.12,1136.15,80,0
+    .goto 1442/1,238.68,1122.47,80,0
+    .goto 1442/1,202.54,1089.58,80,0
+    .goto 1442/1,169.82,1085.03,80,0
+    .goto 1442/1,134.17,1067.12,80,0
+    .goto 1442/1,102.43,1077.86,80,0
+    .goto 1442/1,64.83,1059.95,80,0
+    .goto 1442/1,35.53,1054.09,80,0
+    .goto 1442/1,2.81,1083.07,80,0
+    .goto 1442/1,-23.07,1085.03,80,0
+    .goto 1442/1,-63.6,1094.14,80,0
+    .goto 1442/1,-100.23,1091.86,80,0
+    .goto 1442/1,-160.78,1070.37,80,0
+    .goto 1442/1,-197.89,1086.0,80,0
+    .goto 1442/1,-212.54,1117.59,80,0
+    .goto 1442/1,332.44,1218.86,80,0
+    .goto 1442/1,-202.900,1088.600
+    >>Kill |cRXP_ENEMY_XT:9|r
+    >>|cRXP_WARN_It patrols the southern side of the river|r
+    >>|cRXP_WARN_His spawn point is marked on your map|r
     .complete 1068,2 --XT:9 (1)
     .unitscan XT:9
-step
+    .isQuestTurnedIn 1062
+step << skip --better to do in stonetalon part 2
     #loop
     .line Stonetalon Mountains,67.18,46.87,66.53,46.95,65.72,45.09,63.73,45.02,63.72,45.92,63.43,46.57,64.43,46.13,64.72,46.63,64.82,47.72,65.11,48.31,65.98,48.67,66.24,49.65,66.65,49.58,66.88,48.95,68.41,49.58,69.45,46.56,70.22,48.62,70.95,48.49,71.41,45.54,71.25,43.45
-    .goto 1442/1,-34.79,1390.46,50,0
-    .goto 1442/1,-3.05,1387.86,50,0
-    .goto 1442/1,36.51,1448.42,50,0
-    .goto 1442/1,133.69,1450.70,50,0
-    .goto 1442/1,134.17,1421.40,50,0
-    .goto 1442/1,148.34,1400.23,50,0
-    .goto 1442/1,99.50,1414.56,50,0
-    .goto 1442/1,85.34,1398.28,50,0
-    .goto 1442/1,80.46,1362.78,50,0
-    .goto 1442/1,66.30,1343.57,50,0
-    .goto 1442/1,23.81,1331.85,50,0
-    .goto 1442/1,11.11,1299.94,50,0
-    .goto 1442/1,-8.91,1302.22,50,0
-    .goto 1442/1,-20.14,1322.73,50,0
-    .goto 1442/1,-94.85,1302.22,50,0
-    .goto 1442/1,-145.64,1400.56,50,0
-    .goto 1442/1,-183.24,1333.48,50,0
-    .goto 1442/1,-218.89,1337.71,50,0
-    .goto 1442/1,-241.35,1433.77,50,0
-    .goto 1442/1,-233.54,1501.83,50,0
-    .goto 1442/1,80.46,1378.74,50,0
+    .goto 1442/1,-34.79,1390.46,80,0
+    .goto 1442/1,-3.05,1387.86,80,0
+    .goto 1442/1,36.51,1448.42,80,0
+    .goto 1442/1,133.69,1450.7,80,0
+    .goto 1442/1,134.17,1421.4,80,0
+    .goto 1442/1,148.34,1400.23,80,0
+    .goto 1442/1,99.5,1414.56,80,0
+    .goto 1442/1,85.34,1398.28,80,0
+    .goto 1442/1,80.46,1362.78,80,0
+    .goto 1442/1,66.3,1343.57,80,0
+    .goto 1442/1,23.81,1331.85,80,0
+    .goto 1442/1,11.11,1299.94,80,0
+    .goto 1442/1,-8.91,1302.22,80,0
+    .goto 1442/1,-20.14,1322.73,80,0
+    .goto 1442/1,-94.85,1302.22,80,0
+    .goto 1442/1,-145.64,1400.56,80,0
+    .goto 1442/1,-183.24,1333.48,80,0
+    .goto 1442/1,-218.89,1337.71,80,0
+    .goto 1442/1,-241.35,1433.77,80,0
+    .goto 1442/1,-233.54,1501.83,80,0
+    .goto 1442/1,80.46,1378.74,80,0
     .goto 1442/1,80.46,1378.74,0
-    >>Kill |cRXP_ENEMY_XT:4|r. It patrols the northern side of the river
+    >>Kill |cRXP_ENEMY_XT:4|r
+    >>|cRXP_WARN_It patrols the northern side of the river|r
     >>|cRXP_WARN_Skip this step if you can't find it|r
     .complete 1068,1 --XT:4 (1)
     .unitscan XT:4
+    .isQuestTurnedIn 1062
 step
     #completewith next
     .goto 1442/1,-357.09,978.55
@@ -5604,74 +5777,6 @@ step << skip
     .goto 1442/1,434.5,898.12,30 >>|cRXP_WARN_Jump onto the wooden wheel. Perform a Logout Skip by logging out and back in|r
     .link https://www.youtube.com/watch?v=8s1SRza7qFg&ab_channel=RestedXP >> |cRXP_WARN_CLICK HERE for an example|r
     .group
-step
-    .goto 1442/1,365.16,878.250
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ziz|r
-    .turnin 1092 >> Turn in Gerenzo's Orders
-    .target Ziz Fizziks
-    .isQuestTurnedIn 1090
-    .group
-step
-    #loop
-    .line Stonetalon Mountains,70.82,55.25,70.52,56.22,69.76,56.70,68.52,56.04,67.77,55.97,66.94,56.25,66.41,56.31,65.74,57.20,65.14,57.02,64.37,56.47,63.72,56.80,62.99,56.25,62.32,56.11,61.58,55.10,61.10,54.68,60.98,54.06,59.81,53.51,59.66,52.14,60.33,51.68
-    .goto 1442/1,265.54,1213.00,50,0
-    .goto 1442/1,299.72,1233.84,50,0
-    .goto 1442/1,332.44,1218.86,50,0
-    .goto 1442/1,325.11,1174.25,50,0
-    .goto 1442/1,267.98,1156.34,50,0
-    .goto 1442/1,262.12,1136.15,50,0
-    .goto 1442/1,238.68,1122.470,50,0
-    .goto 1442/1,202.54,1089.58,50,0
-    .goto 1442/1,169.82,1085.03,50,0
-    .goto 1442/1,134.17,1067.120,50,0
-    .goto 1442/1,102.43,1077.86,50,0
-    .goto 1442/1,64.83,1059.95,50,0
-    .goto 1442/1,35.53,1054.090,50,0
-    .goto 1442/1,2.81,1083.07,50,0
-    .goto 1442/1,-23.07,1085.03,50,0
-    .goto 1442/1,-63.60,1094.14,50,0
-    .goto 1442/1,-100.23,1091.86,50,0
-    .goto 1442/1,-160.78,1070.370,50,0
-    .goto 1442/1,-197.89,1086.00,50,0
-    .goto 1442/1,-212.54,1117.59,50,0
-    .goto 1442/1,332.44,1218.86,0
-    >>Kill |cRXP_ENEMY_XT:9|r. It patrols the southern side of the river
-    >>|cRXP_WARN_Skip this step if you can't find it|r
-    .complete 1068,2 --XT:9 (1)
-    .unitscan XT:9
-    .isQuestTurnedIn 1092
-    .group 0
-step
-    #loop
-    .line Stonetalon Mountains,67.18,46.87,66.53,46.95,65.72,45.09,63.73,45.02,63.72,45.92,63.43,46.57,64.43,46.13,64.72,46.63,64.82,47.72,65.11,48.31,65.98,48.67,66.24,49.65,66.65,49.58,66.88,48.95,68.41,49.58,69.45,46.56,70.22,48.62,70.95,48.49,71.41,45.54,71.25,43.45
-    .goto 1442/1,-34.79,1390.46,50,0
-    .goto 1442/1,-3.05,1387.86,50,0
-    .goto 1442/1,36.51,1448.42,50,0
-    .goto 1442/1,133.69,1450.70,50,0
-    .goto 1442/1,134.17,1421.40,50,0
-    .goto 1442/1,148.34,1400.23,50,0
-    .goto 1442/1,99.50,1414.56,50,0
-    .goto 1442/1,85.34,1398.28,50,0
-    .goto 1442/1,80.46,1362.78,50,0
-    .goto 1442/1,66.30,1343.57,50,0
-    .goto 1442/1,23.81,1331.85,50,0
-    .goto 1442/1,11.11,1299.94,50,0
-    .goto 1442/1,-8.91,1302.22,50,0
-    .goto 1442/1,-20.14,1322.73,50,0
-    .goto 1442/1,-94.85,1302.22,50,0
-    .goto 1442/1,-145.64,1400.56,50,0
-    .goto 1442/1,-183.24,1333.48,50,0
-    .goto 1442/1,-218.89,1337.71,50,0
-    .goto 1442/1,-241.35,1433.77,50,0
-    .goto 1442/1,-233.54,1501.83,50,0
-    .goto 1442/1,80.46,1378.74,50,0
-    .goto 1442/1,80.46,1378.74,0
-    >>Kill |cRXP_ENEMY_XT:4|r. It patrols the northern side of the river
-    >>|cRXP_WARN_Skip this step if you can't find it|r
-    .complete 1068,1 --XT:4 (1)
-    .unitscan XT:4
-    .isQuestTurnedIn 1092
-    .group 0
 step
     #completewith next
     .goto 1442/1,-577.33,1532.43,30 >> Enter the Talondeep Path
@@ -6074,6 +6179,20 @@ step
     .turnin 1064 >> Turn in Forsaken Aid
     .accept 1065 >> Accept Journey to Tarren Mill
     .target Apothecary Zamah
+step << Paladin
+    .goto 1456/1,253.900,-950.200
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Alodan|r
+    .train 1866 >>Train your class spells
+    .target Alodan the Hopeful 
+    .xp <20,1
+    .xp >22,1
+step << Paladin
+    #optional
+    .goto 1456/1,253.900,-950.200
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Alodan|r
+    .train 1026 >>Train your class spells
+    .target Alodan the Hopeful 
+    .xp <22,1
 step << Warlock
     .goto 1456/1,26.1,-1196.66
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tal|r
@@ -6243,7 +6362,7 @@ step << Rogue/Druid
     .zoneskip The Barrens
 step << Rogue/Druid
     #completewith MissionProbable
-    .goto 1413/1,-3216.92,1107.13,120 >> Travel toward the Sludge Ven
+    .goto 1413/1,-3216.92,1107.13,120 >> Travel toward The Sludge Fen
 step << Druid
     .goto 1413/1,-3119.64,1050.38
     >>Loot the |cRXP_PICK_Strange Lockbox|r in the water for the |T133443:0|t[Half Pendant of Aquatic Agility]

@@ -9,7 +9,6 @@ RXPGuides.RegisterGuide([[
 #subgroup RXP TBC Survival Guide 1-30
 #defaultfor Orc/Troll
 #next 6-10 Durotar
-
 step << !Orc !Troll
     #completewith next
     +|cRXP_WARN_You have selected a guide meant for Orcs and Trolls. You should choose the same starter zone that you start in|r
@@ -952,9 +951,7 @@ step
     .goto Durotar,49.02,69.13,20,0
     .goto Durotar,49.90,68.43,25 >>Exit the Valley of Trials
     .isOnQuest 805
-
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -965,7 +962,6 @@ RXPGuides.RegisterGuide([[
 #subgroup RXP TBC Survival Guide 1-30
 #defaultfor Orc/Troll
 #next 10-12 Eversong Woods
-
 step
     .goto Durotar,52.06,68.30
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ukor|r
@@ -2817,5 +2813,4 @@ step << Paladin
     .trainer >>Train your class spells
 	.target Ithelis
 	.target Osselan
-
 ]])

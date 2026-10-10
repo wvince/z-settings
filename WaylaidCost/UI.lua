@@ -14,6 +14,11 @@ function W.Money(value)
   return text:gsub("%s+$", "")
 end
 function W.Reason(q)
+  if q.reason == "databaseMissing" then return "No Auctionator price saved" end
+  if q.databaseEstimate then
+    return W.L("Auctionator estimate; stock unknown") .. " · " ..
+      (q.ageDays and W.L("Price age: %d days", q.ageDays) or W.L("Price age unknown"))
+  end
   if q.estimated and q.cost then return string.format("Estimate · %d total listed · stock at this price not verified", q.available) end
   if q.reason == "summaryShort" then return string.format("Summary: %d/%d total units · at least %d missing", q.available, q.required, q.missing) end
   if q.reason == "estimateUnknown" then return "No estimate: run Full Scan to check buyout availability and unit prices" end
@@ -67,7 +72,7 @@ local function planTooltip(owner, name, q)
         GameTooltip:AddLine(W.Text("  Whole stacks: " .. q.purchased .. " purchased, " .. q.extra .. " extra."), 1, 0.68, 0.47, true)
       end
     end
-    GameTooltip:AddLine(W.Text(q.estimated and "Fast Scan · estimate, stock not verified" or "Snapshot prices: check the auctions before buying."), 0.7, 0.75, 0.82, true)
+    GameTooltip:AddLine(W.Text(q.databaseEstimate and "Auctionator estimate; stock unknown" or q.estimated and "Fast Scan · estimate, stock not verified" or "Snapshot prices: check the auctions before buying."), 0.7, 0.75, 0.82, true)
     if q.mayIncludeOwn then GameTooltip:AddLine(W.Text("Summary stock includes your auctions; purchasable prices are not verified."), 1, 0.68, 0.47, true) end
     return
   end
@@ -76,7 +81,7 @@ local function planTooltip(owner, name, q)
       GameTooltip:AddDoubleLine(W.Text("Lowest listed price"),W.Text(W.Money(q.estimateUnitPrice)), 0.8, 0.85, 0.9, 1, 1, 1)
       GameTooltip:AddDoubleLine(W.Text("Estimate for " .. q.required),W.Text("≈ " .. W.Money(q.cost)), 1, 0.82, 0.45, 1, 1, 1)
     end
-    GameTooltip:AddLine(W.Text("Fast Scan assumes the lowest price for the required quantity. Price tiers, stacks, sellers and buyout availability are not verified."), 1, 0.68, 0.47, true)
+    GameTooltip:AddLine(W.Text(q.databaseEstimate and "Auctionator estimate; stock unknown" or "Fast Scan assumes the lowest price for the required quantity. Price tiers, stacks, sellers and buyout availability are not verified."), 1, 0.68, 0.47, true)
     if q.mayIncludeOwn then GameTooltip:AddLine(W.Text("This summary includes your auctions. Their share of the stock and purchasable prices have not been checked."), 1, 0.68, 0.47, true) end
     GameTooltip:AddLine(W.Text("Run Full Scan to verify prices and quantities before choosing."), 0.7, 0.8, 0.9, true)
     GameTooltip:Show(); return
@@ -107,13 +112,16 @@ local function planTooltip(owner, name, q)
   GameTooltip:Show()
 end
 
-local function searchTooltip(owner, name)
+local function searchTooltip(owner, name, best)
   name = W.ItemLabel(name)
   -- Anchor the action hint to the name button, not the moving cursor.
   -- Detailed row prices keep the separate ANCHOR_RIGHT placement.
   GameTooltip:SetOwner(owner, "ANCHOR_TOPLEFT")
-  GameTooltip:AddLine(W.Text("Click to search in the Buy tab"), 1, 0.82, 0.45)
+  GameTooltip:AddLine(W.Text(W.AuctionatorShoppingAvailable() and "Search with Auctionator" or "Click to search in the Buy tab"), 1, 0.82, 0.45)
   GameTooltip:AddLine(W.Text(name), 0.85, 0.88, 0.94, true)
+  if best and W.AuctionatorShoppingAvailable() then
+    GameTooltip:AddLine(W.SafeText(best.quantity .. " × " .. W.ItemLabel(best.name)), 0.85, 0.88, 0.94, true)
+  end
   if W.scanning then GameTooltip:AddLine(W.Text("Stops this scan and keeps the previous snapshot."), 1, 0.68, 0.47, true) end
   GameTooltip:Show()
 end
@@ -236,6 +244,7 @@ local function buildSettings()
       if key == "details" and W.panel then W.panel.expanded = {} end
       if key == "showMinimap" then W.SetMinimapVisible(value) end
       if key == "enableWrits" then W.SetOrderKind("waylaid") end
+      if key == "auctionatorPrices" then W.LoadSnapshot() end
       W.Refresh()
     end)
     if description then help(b, text, description) end
@@ -250,9 +259,11 @@ local function buildSettings()
     "Left-click opens Waylaid at the auction house. Right-click opens settings. If hidden, use /wcrate config.")
   check("enableWrits", "Enable Craftsman's Writs", 12, -204, false, options,
     "Enabled by default for new settings. Adds the Craftsman's Writs tab and item tooltips. Prices cover the writ and requested finished goods. Writs rank by cost per base reputation. Each tab is scanned separately.")
-  label(options, "Using the results", 15, -284, "GameFontNormal")
+  check("auctionatorPrices", "Use newer Auctionator prices when available", 12, -236)
+  check("auctionatorSearch", "Use Auctionator search when available", 12, -262)
+  label(options, "Using the results", 15, -310, "GameFontNormal")
   local tips = label(options, "Click an item name to search in the Buy tab.\nClick the row or arrow to show or hide required items.\nChoose Waylaid Crates or Craftsman's Writs in the AH.\nUse Available to buy beside the tabs to hide unlisted orders.", 15, -310)
-  tips:SetWidth(405)
+  tips:ClearAllPoints(); tips:SetPoint("TOPLEFT", 15, -336); tips:SetWidth(405)
   label(tooltips, "Item tooltips", 15, -48, "GameFontNormalLarge")
   check("itemTooltips", "Show prices on crate / writ item tooltips", 12, -80, false, tooltips,
     "Adds cached goods prices when hovering a crate or enabled writ in your bags, the auction house, or an item link. Disabling this only hides WaylaidCost's section.")
@@ -516,7 +527,9 @@ function W.BuildUI(parent)
   panel.scanInfo:SetScript("OnEnter", function(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOP")
     GameTooltip:AddLine(W.Text("Scan details"), 1, 0.82, 0.45)
-    if W.scannedAt then
+    if W.auctionatorSource then
+      GameTooltip:AddLine(W.Text(W.AuctionatorSourceLabel()), 1, 0.82, 0.45, true)
+    elseif W.scannedAt then
       GameTooltip:AddLine(W.Text(W.scanTimeUnknown and "Snapshot date unknown" or ("Last scan: " .. date("%Y-%m-%d %H:%M", W.scannedAt) .. " (local time)")), 0.8, 0.85, 0.9)
       GameTooltip:AddLine(W.Text(W.scanMode == "fast" and "Estimates; stock at the lowest price is not verified." or "Recorded prices and quantities; auctions may have changed."), 0.8, 0.85, 0.9, true)
     end
@@ -527,7 +540,14 @@ function W.BuildUI(parent)
   panel.empty = label(content, "", 10, -20); panel.empty:SetWidth(600)
 
   panel:SetScript("OnSizeChanged", function() if W.results then W.Draw() end end)
-  panel:SetScript("OnShow", function() W.Refresh() end)
+  panel:SetScript("OnShow", function()
+    if not W.scanning and W.db.auctionatorPrices ~= false and W.AuctionatorAPI() then
+      local message, scanError = W.message, W.scanError
+      W.LoadSnapshot()
+      W.message, W.scanError = message, scanError
+    end
+    W.Refresh()
+  end)
   panel:SetScript("OnHide", function()
     panel.progress.editor:Hide()
     W.CancelScan("Scan cancelled: left the tab")
@@ -579,8 +599,8 @@ function W.Draw()
     tab.bg:SetColorTexture(selected and 0.13 or 0.055, selected and 0.16 or 0.075, selected and 0.20 or 0.095, 1)
     tab.label:SetTextColor(selected and 1 or 0.65, selected and 0.87 or 0.71, selected and 0.55 or 0.79)
   end
-  p.available:SetChecked(not W.db.showUnavailable)
-  p.available:SetEnabled(W.scannedAt ~= nil)
+  p.available:SetChecked(not W.auctionatorSource and not W.db.showUnavailable)
+  p.available:SetEnabled(W.scannedAt ~= nil and not W.auctionatorSource)
   p.headers[1]:SetText(W.Text(writs and "Writ / Goods" or "Crate / Materials"))
   p.headers[2]:SetText(W.EfficiencyHeading())
   p.orderHeader:SetText(W.Text(writs and "Writ / required goods" or "Crate / recommended fill"))
@@ -686,6 +706,11 @@ function W.Draw()
       divider.name:SetText(W.Text(color(W.scanMode == "fast" and "ORDERS WITHOUT AN ESTIMATE" or "ORDERS UNAVAILABLE TO BUY", MUTED))); divider.sub:SetText(W.Text(""))
     end
     local r = acquire(writs and 65 or 53)
+    local function searchOrder()
+      if item.best and W.SearchAuctionator({{name=item.crate.name, quantity=1, quality=item.quality},
+        {name=item.best.name, quantity=item.best.quantity}}) then return end
+      W.SearchInBuy(item.crate.name)
+    end
     local code, qualityText = rarity(item.quality)
     local expanded = p.expanded[item.key]
     if expanded == nil then expanded = W.db.details end
@@ -711,7 +736,7 @@ function W.Draw()
     local description = item.rewardValue and ("+" .. item.rewardValue .. " " .. item.rewardLabel) or "Reward unknown"
     if not W.scannedAt then description = description .. " · Run a scan to get prices"
     elseif not item.crateQuote.cost then description = description .. " · " .. W.CrateStatus(item.crateQuote)
-    elseif not item.total then description = description .. (W.scanMode == "fast" and " · Incomplete estimate" or " · Missing materials")
+    elseif not item.total then description = description .. (W.auctionatorSource and " · No Auctionator price saved" or W.scanMode == "fast" and " · Incomplete estimate" or " · Missing materials")
     elseif item.best then description = description .. " · " .. item.best.quantity .. "× " .. W.ItemLabel(item.best.name) end
     r.sub:SetText(W.Text(color(description, (not W.scannedAt or item.total) and MUTED or "|cffffac79")))
     if writs then
@@ -725,7 +750,7 @@ function W.Draw()
     end
     r.expand:SetScript("OnClick", toggleDetails)
     r:SetScript("OnClick", toggleDetails)
-    r.search:SetScript("OnClick", function() W.SearchInBuy(item.crate.name) end)
+    r.search:SetScript("OnClick", searchOrder)
     local function showOrder(self)
       if W.ShowTooltipExplanations() then
         planTooltip(self, W.ItemLabel(item.crate.name) .. " · " .. qualityText, item.crateQuote)
@@ -738,7 +763,7 @@ function W.Draw()
         if item.crateQuote.extra and item.crateQuote.extra > 0 then
           GameTooltip:AddLine(W.Text("  Whole stacks: " .. item.crateQuote.purchased .. " purchased, " .. item.crateQuote.extra .. " extra."), 1, 0.68, 0.47, true)
         end
-        GameTooltip:AddLine(W.Text(W.scanMode == "fast" and "Fast Scan · estimate, stock not verified" or "Snapshot prices: check the auctions before buying."), 0.65, 0.7, 0.78, true)
+        GameTooltip:AddLine(W.Text(W.auctionatorSource and W.AuctionatorSourceLabel() or W.scanMode == "fast" and "Fast Scan · estimate, stock not verified" or "Snapshot prices: check the auctions before buying."), 0.65, 0.7, 0.78, true)
         if item.crateQuote.mayIncludeOwn then GameTooltip:AddLine(W.Text("Summary stock includes your auctions; purchasable prices are not verified."), 1, 0.68, 0.47, true) end
       end
       GameTooltip:AddDoubleLine(W.Text(writs and "Writ" or "Crate"),W.Text(W.Price(item.crateQuote.cost)), 0.8, 0.85, 0.9, 1, 1, 1)
@@ -756,7 +781,7 @@ function W.Draw()
       GameTooltip:Show()
     end
     r:SetScript("OnEnter", showOrder)
-    r.search:SetScript("OnEnter", function(self) searchTooltip(self, item.crate.name) end)
+    r.search:SetScript("OnEnter", function(self) searchTooltip(self, item.crate.name, item.best) end)
     if expanded then
       for _, bundle in ipairs(item.bundles) do
         local option = acquire(49, true)
@@ -788,7 +813,7 @@ function W.Draw()
         end
         local detail = W.Reason(q)
         if q.cost then
-          detail = string.format(q.estimated and "%d listed · %d needed" or "%d available · %d needed", q.available, q.required)
+          if not q.databaseEstimate then detail = string.format(q.estimated and "%d listed · %d needed" or "%d available · %d needed", q.available, q.required) end
           option.goodsCost:ClearAllPoints(); option.goodsCost:SetPoint("TOPLEFT", nameWidth, -29)
           option.goodsCost:SetWidth(costWidth - 9)
           local purchasedUnits = q.purchased or q.required
@@ -831,6 +856,8 @@ function W.Draw()
   p.note:SetTextColor(W.scanError and 1 or 0.55, W.scanError and 0.68 or 0.61, W.scanError and 0.47 or 0.7)
   if W.scanning then
     p.status:SetText(W.Text(W.message or "Scanning…")); p.status:SetTextColor(1, 0.82, 0.45)
+  elseif W.auctionatorSource then
+    p.status:SetText(W.Text(W.AuctionatorSourceLabel())); p.status:SetTextColor(1, 0.82, 0.45)
   elseif W.scannedAt then
     local age = math.max(0, math.floor((time() - W.scannedAt) / 60))
     local elapsed = age < 1 and "Just now" or (age < 60 and (age .. " min ago") or (math.floor(age / 60) .. " h " .. age % 60 .. " min ago"))

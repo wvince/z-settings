@@ -40,7 +40,7 @@
 			{"Arrow", 80.7, 34.2, L["Western Plaguelands"], nil, arTex, nil, nil, nil, nil, nil, 0, 1422},
 			{"Arrow", 51.8, 68.8, L["Hillsbrad Foothills"], nil, arTex, nil, nil, nil, nil, nil, 3, 1424},
 			{"Arrow", 81.7, 77.5, L["Hillsbrad Foothills"], L["Ravenholdt Manor"], arTex, nil, nil, nil, nil, nil, 2.2, 1424},
-			{"TravelA", 12.0, 56.2, L["Portal to"] .. " " .. L["Stormwind"], nil, fATex, nil, nil, nil, nil, nil, 0, 1453},
+			{"PortalA", 12.0, 56.2, L["Portal to"] .. " " .. L["Stormwind"], nil, fATex, nil, nil, nil, nil, nil, 0, 1453},
 			{"Dungeon", 8.5, 59.3, L["City of Dalaran"], L["Dungeon"], dnTex, 28, 33},
 		},
 		--[[Arathi Highlands]] [1417] = {
@@ -241,7 +241,7 @@
 			{"FlightA", 71.6, 72.3, L["Stormwind"] .. ", " .. L["Elwynn"], nil, tATex},
 			{"TravelA", 66.6, 34.7, L["Tram to"] .. " " .. L["Tinker Town"] .. ", " .. L["Ironforge"], nil, fATex, nil, nil, nil, nil, nil, 0, 1455},
 			{"Arrow", 74.5, 92.3, L["Elwynn Forest"], nil, arTex, nil, nil, nil, nil, nil, 3.8, 1429},
-			{"TravelA", 50.0, 86.9, L["Portal to"] .. " " .. L["Dalaran"] .. ", " .. L["Alterac Mountains"], nil, fATex, nil, nil, nil, nil, nil, 0, 1416},
+			{"PortalA", 50.0, 86.9, L["Portal to"] .. " " .. L["Dalaran"] .. ", " .. L["Alterac Mountains"], nil, fATex, nil, nil, nil, nil, nil, 0, 1416},
 			{"TravelA", 21.8, 56.9, L["Boat to"] .. " " .. L["Auberdine"] .. ", " .. L["Darkshore"], nil, fATex, nil, nil, nil, nil, nil, 0, 1439},
 		},
 		--[[Ironforge]] [1455] = {

@@ -1,3 +1,4 @@
+local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 -- Main 1-14 Skyborne leveling guide
 RXPGuides.RegisterGuide([[
 #forever
@@ -12,12 +13,9 @@ RXPGuides.RegisterGuide([[
 #subgroup (WIP) Dungeon Guide 1-22 << Horde
 #defaultfor Skyborne
 #next "correct westfall guide" << Alliance
-
 step
 #include RestedXP Forever Guide (A)\1-14 Zephras Isle
 ]])
-
-
 --Hunter class quest chain
 RXPGuides.RegisterGuide([[
 #forever
@@ -27,7 +25,6 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Forever Dungeon Guide (A) << Alliance
 #group RestedXP Forever Dungeon Guide (H) << Horde
 #internal
-
 step
 #include RestedXP Forever Guide (A)\Skyborne Hunter Class Quests
 ]])
@@ -42,7 +39,6 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Forever Dungeon Guide (H) << Horde
 #defaultfor Skyborne Druid
 #internal
-
 -- The Great Ursera Spirit (94006) is accepted from the Druid trainer in Valanaar.
 step
 #include RestedXP Forever Guide (A)\Skyborne Druid Class Quests
@@ -56,7 +52,6 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Forever Dungeon Guide (A) << Alliance
 #group RestedXP Forever Dungeon Guide (H) << Horde
 #internal
-
     .goto 2521,41.07,22.33 -- spirit healer thendal village
     .goto 2521,40.23,63.82 --watchtower
     .goto 2521,55.01,68.16 --gustberry highlands

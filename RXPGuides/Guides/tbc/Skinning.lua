@@ -7,9 +7,7 @@ RXPGuides.RegisterGuide([[
 << Horde
 #name 1-375 Horde_b1
 #displayname 1-375 Horde
-
 --XX TBC 1-375 Skinning guide
-
 step << Mage
     #completewith Thuwd
     .zone Orgrimmar >> Teleport to Orgrimmar
@@ -199,7 +197,6 @@ step
 step
     +Congratulations on reaching 375 Skinning!
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -208,7 +205,6 @@ RXPGuides.RegisterGuide([[
 << Alliance
 #name 1-375 Alliance_b2
 #displayname 1-375 Alliance
-
 step << Mage
     #completewith Maris
     .zone Stormwind City >> Teleport to Stormwind

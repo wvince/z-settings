@@ -8,7 +8,6 @@ RXPGuides.RegisterGuide([[
 #version 7
 #subgroup RXP TBC Survival Guide 1-30
 #next 16-18 Ghostlands
-
 step << BloodElf/Undead
     #completewith next
     .goto Orgrimmar,48.97,92.84,50,0
@@ -1513,5 +1512,4 @@ step << BloodElf Rogue/Undead Rogue
     .fly Tranquillien >> Fly to Tranquillien
     .target Skymistress Gloaming
     .zoneskip Ghostlands
-
 ]])

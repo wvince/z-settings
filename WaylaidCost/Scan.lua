@@ -3,6 +3,24 @@ local _, W = ...
 -- background refresh. All callbacks are tied to their session and operation.
 local active, internalRequest, hooked
 local searchTimes = {}
+function W.AuctionCategoryName(classID)
+  local classes = Enum and Enum.ItemClass or {}
+  local labels = {
+    [classes.Consumable or 0] = {"AUCTION_CATEGORY_CONSUMABLES", "Consumables"},
+    [classes.Container or 1] = {"AUCTION_CATEGORY_CONTAINERS", "Containers"},
+    [classes.Weapon or 2] = {"AUCTION_CATEGORY_WEAPONS", "Weapons"},
+    [classes.Armor or 4] = {"AUCTION_CATEGORY_ARMOR", "Armor"},
+    [classes.Projectile or 6] = {"AUCTION_CATEGORY_PROJECTILE", "Ammo"},
+    [classes.Tradegoods or 7] = {"AUCTION_CATEGORY_TRADE_GOODS", "Trade Goods"},
+  }
+  local label = labels[classID]
+  local native = label and _G[label[1]]
+  if type(native) == "string" and native ~= "" then return native end
+  if W.Locale() == "enUS" and label then return label[2] end
+  local getClassName = C_Item and C_Item.GetItemClassInfo or GetItemClassInfo
+  local name = getClassName and getClassName(classID)
+  return type(name) == "string" and name ~= "" and name or W.L("Unknown")
+end
 local function trimSearchTimes()
   while searchTimes[1] and GetTime() - searchTimes[1] >= 60.1 do table.remove(searchTimes, 1) end
 end
@@ -15,6 +33,7 @@ end
 local function status(s, text)
   if active ~= s then return end
   W.message = text
+  s.statusText = text
   W.Draw()
 end
 local function finish(s, errorText)
@@ -26,6 +45,7 @@ local function finish(s, errorText)
   else
     W.books, W.scannedAt, W.targeted = s.books, time(), true
     W.scanMode = s.scanMode
+    W.auctionatorSource = nil
     W.incomplete, W.scanTimeUnknown = false, false
     W.message = string.format("%d orders · %d goods · %d requests · %.1f s", s.crateCount, #s.materials, s.requests, GetTime() - s.started)
     W.db.lastSnapshot = {schema = 2, key = W.scanKey, locale = W.Locale(), books = W.books, scannedAt = W.scannedAt, targeted = true, mode = W.scanMode, kind = s.kind}
@@ -46,7 +66,7 @@ local function operation(s, text)
     if active ~= s or s.operation ~= op then return end
     local remaining = s.deadline - GetTime()
     if remaining > 0 then C_Timer.After(remaining, watchdog)
-    else finish(s, "Incomplete auction response or timeout: " .. text) end
+    else finish(s, "Incomplete auction response or timeout: " .. (s.statusText or text)) end
   end
   C_Timer.After(45, watchdog)
   return op
@@ -82,7 +102,7 @@ local function request(s, fn, search)
   pending.send = send
   send()
 end
-local function browse(s, text, wanted, done, classID)
+local function browse(s, text, wanted, done, classID, knownIDsOnly)
   local op = operation(s, text)
   s.mode, s.browseEntries, s.browseSeen = "browse", {}, {}
   s.browseDone = function()
@@ -92,9 +112,9 @@ local function browse(s, text, wanted, done, classID)
       if active ~= s or s.operation ~= op then return end
       local matches = {}
       for _, entry in ipairs(s.browseEntries) do
-        -- In localized clients only verified IDs can match. Unrelated auction
-        -- metadata must not stall a scan that browses without an English prefix.
-        if W.Locale() == "enUS" or wanted[entry.itemKey.itemID] then
+        -- Localized queries and Writ category summaries match verified IDs.
+        -- Unrelated auction metadata must not stall these broad queries.
+        if wanted[entry.itemKey.itemID] or (W.Locale() == "enUS" and not knownIDsOnly) then
           local info = C_AuctionHouse.GetItemKeyInfo(entry.itemKey)
           if not info or not info.itemName or type(info.isCommodity) ~= "boolean" or not info.quality then
             C_Timer.After(0.2, resolve); return
@@ -240,16 +260,33 @@ local function fullMaterials(s)
 end
 local function fastMaterials(s)
   if #s.materials == 0 then finish(s); return end
-  local names, found = {}, {}
+  local names, found, itemClasses = {}, {}, {}
+  local classes = Enum and Enum.ItemClass or {}
+  local tradeClass = classes.Tradegoods or 7
+  local getInfo = C_Item and C_Item.GetItemInfoInstant or GetItemInfoInstant
   for _, name in ipairs(s.materials) do
     names[normalize(name)] = name
     if W.itemIDs[name] then names[W.itemIDs[name]] = name end
+    if s.kind == "writs" and getInfo and W.itemIDs[name] then
+      local _, _, _, _, _, classID = getInfo(W.itemIDs[name])
+      itemClasses[name] = classID
+    end
+  end
+  local function completeCategory(classID, matches)
+    for _, match in ipairs(matches) do found[match.name] = true end
+    -- A complete category result also establishes absence for items whose
+    -- class is known. Unknown classes still get a safe name-search fallback.
+    if s.kind == "writs" then
+      for name, itemClass in pairs(itemClasses) do
+        if itemClass == classID then found[name] = true end
+      end
+    end
   end
   -- One category summary instead of a separate detailed search per material.
   -- Items outside Trade Goods (and missing items) get an exact-name fallback.
   browse(s, "", names, function(matches)
     if not addEstimates(s, matches) then return end
-    for _, match in ipairs(matches) do found[match.name] = true end
+    completeCategory(tradeClass, matches)
     local index = 0
     local function missing()
       if active ~= s then return end
@@ -264,8 +301,35 @@ local function fastMaterials(s)
       end)
       status(s, "Fast Scan · summary: " .. name)
     end
-    missing()
-  end, Enum and Enum.ItemClass and Enum.ItemClass.Tradegoods or 7)
+    if s.kind == "writs" then
+      -- Discover finished goods by category before individual name fallbacks.
+      -- Each completed category reduces the wanted set for the next one.
+      local categories = {classes.Consumable or 0, classes.Armor or 4,
+        classes.Weapon or 2, classes.Container or 1, classes.Projectile or 6}
+      local categoryIndex = 0
+      local function nextCategory()
+        if active ~= s then return end
+        local remaining = {}
+        for _, name in ipairs(s.materials) do
+          if not found[name] then
+            remaining[normalize(name)] = name
+            if W.itemIDs[name] then remaining[W.itemIDs[name]] = name end
+          end
+        end
+        if not next(remaining) then finish(s); return end
+        categoryIndex = categoryIndex + 1
+        local classID = categories[categoryIndex]
+        if not classID then missing(); return end
+        browse(s, "", remaining, function(matches)
+          if not addEstimates(s, matches) then return end
+          completeCategory(classID, matches)
+          nextCategory()
+        end, classID, true)
+        status(s, W.L("Fast Scan") .. " · " .. W.AuctionCategoryName(classID))
+      end
+      nextCategory()
+    else missing() end
+  end, tradeClass, s.kind == "writs")
   status(s, "Fast Scan · Trade Goods summaries")
 end
 function W.StartTargetedScan(mode)

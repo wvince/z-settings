@@ -26,6 +26,10 @@ function W.ShowTooltipExplanations()
 end
 local function addScanSource(tooltip, explanations, source)
   tooltip:AddLine(W.Text(" "))
+  if source.auctionatorSource then
+    tooltip:AddLine(W.Text(source.auctionatorSource == "mixed" and "Mixed prices; Auctionator estimates included" or "Auctionator estimate; stock unknown"), 1, 0.82, 0.45, true)
+    return
+  end
   if not source.scannedAt then
     tooltip:AddLine(W.Text("No saved scan. Open the AH and run Fast Scan or Full Scan."), 1, 0.68, 0.47, true)
     return
@@ -63,7 +67,7 @@ function W.AppendCrateTooltip(tooltip, data)
   local source
   if kind == (W.IsWritView() and "writs" or "waylaid") then
     source = {books = W.books, scannedAt = W.scannedAt, incomplete = W.incomplete,
-      targeted = W.targeted, mode = W.scanMode, timeUnknown = W.scanTimeUnknown}
+      targeted = W.targeted, mode = W.scanMode, timeUnknown = W.scanTimeUnknown, auctionatorSource = W.auctionatorSource}
   else source = W.GetSnapshot(kind) or {books = {}} end
   if tooltip.__waylaidCostCrate then return end
   if not tooltip.__waylaidCostClearHook then
@@ -107,6 +111,7 @@ function W.AppendCrateTooltip(tooltip, data)
       local units = q.purchased or q.required
       tooltip:AddDoubleLine(W.Text(text),W.Text(price(q.cost / units, q.estimated) .. " |cff9ca9b9" .. W.L("/ unit") .. "|r"), 0.85, 0.88, 0.94, 1, 1, 1)
       tooltip:AddDoubleLine(W.Text("  Total"),W.Text(price(q.cost, q.estimated)), 0.65, 0.74, 0.84, 1, 1, 1)
+      if q.databaseEstimate then tooltip:AddLine(W.Text(W.Reason(q)), 0.7, 0.75, 0.82, true) end
       if q.extra and q.extra > 0 then
         surplus = true
         tooltip:AddLine(W.Text("  Whole stacks: " .. q.purchased .. " purchased, " .. q.extra .. " extra."), 0.7, 0.75, 0.82, true)

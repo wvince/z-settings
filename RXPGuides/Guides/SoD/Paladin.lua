@@ -7,9 +7,7 @@ RXPGuides.RegisterGuide([[
 #name Crusader Strike - 4 (Elwynn Forest)
 #title Crusader Strike
 #next Inspiration Exemplar - 6 (Elwynn Forest)
-
 --VV Not sure if you want to gate CS in Elwynn for humans only/DunM for dwarves only
-
 step
     +|cRXP_WARN_You MUST be at least level 4 in order to acquire|r |T133816:0|t[Engrave Gloves - Crusader Strike] |cRXP_WARN_as it is the level requirement of training|r |T135959:0|t[Judgement]
     >>|cRXP_WARN_You need to level up more before even attempting to acquire|r |T133816:0|t[Engrave Gloves - Crusader Strike]
@@ -79,7 +77,6 @@ step
     .train 410002,1
     .xp <4,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Paladin SoD
@@ -88,7 +85,6 @@ RXPGuides.RegisterGuide([[
 #name Crusader Strike - 4 (Dun Morogh)
 #title Crusader Strike
 #next Inspiration Exemplar - 6 (Dun Morogh)
-
 step
     +|cRXP_WARN_You MUST be at least level 4 in order to acquire|r |T133816:0|t[Engrave Gloves - Crusader Strike] |cRXP_WARN_as it is the level requirement of training|r |T135959:0|t[Judgement]
     >>|cRXP_WARN_You need to level up more before even attempting to acquire|r |T133816:0|t[Engrave Gloves - Crusader Strike]
@@ -155,7 +151,6 @@ step
     .train 410002,1
     .xp <4,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Paladin SoD
@@ -164,8 +159,6 @@ RXPGuides.RegisterGuide([[
 #name Hand of Reckoning - 14 (Loch Modan)
 #title Hand of Reckoning
 #next Inspiration Exemplar - 6 (Elwynn Forest)
-
-
 step
     +|cRXP_WARN_You should be at least level 14 in order to acquire|r |T133816:0|t[Engrave Gloves - Hand of Reckoning] |cRXP_WARN_in Loch Modan alone|r
     >>|cRXP_WARN_You MUST be at least level 8 as it is the level requirement of equipping the|r |T134916:0|t|cRXP_LOOT_[Libram of Justice]|r
@@ -325,7 +318,6 @@ step
     .train 410001,1
     .xp <8,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Paladin SoD
@@ -334,8 +326,6 @@ RXPGuides.RegisterGuide([[
 #name Hand of Reckoning - 20 (Westfall)
 #title Hand of Reckoning
 #next Exorcist - 24 (Duskwood)
-
-
 step
     +|cRXP_WARN_You should be at least level 20 in order to acquire|r |T133816:0|t[Engrave Gloves - Hand of Reckoning] |cRXP_WARN_in Westfall alone|r
     >>|cRXP_WARN_You MUST be at least level 8 as it is the level requirement of equipping the|r |T134916:0|t|cRXP_LOOT_[Libram of Justice]|r
@@ -453,7 +443,6 @@ step
     .train 410001,1
     .xp <8,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Paladin SoD
@@ -462,7 +451,6 @@ RXPGuides.RegisterGuide([[
 #name Hallowed Ground - 4 (Loch Modan)
 #title Hallowed Ground
 #next Hand of Reckoning - 14 (Loch Modan)
-
 step
     +|cRXP_WARN_You MUST be at least level 4 in order to acquire|r |T133815:0|t[Engrave Chest - Hallowed Ground] |cRXP_WARN_as it is the level requirement of training|r |T135906:0|t[Blessing of Might]
     >>|cRXP_WARN_You need to level up more before even attempting to acquire|r |T133815:0|t[Engrave Chest - Hallowed Ground]
@@ -539,7 +527,6 @@ step
     .train 425618,1
     .xp <4,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Paladin SoD
@@ -548,8 +535,6 @@ RXPGuides.RegisterGuide([[
 #name Horn of Lordaeron - 12 (Westfall)
 #title Horn of Lordaeron
 #next Hand of Reckoning - 20 (Westfall)
-
-
 step
     +|cRXP_WARN_You should be at least level 12 in order to acquire|r |T133815:0|t[Engrave Chest - Horn of Lordaeron] |cRXP_WARN_in Westfall alone|r
     >>|cRXP_WARN_You MUST be at least level 4 as it is the level requirement of training|r |T135906:0|t[Blessing of Might]
@@ -579,8 +564,8 @@ step
     .xp <4,1
 step << skip
     #completewith next
-    >>|cRXP_WARN_It is heavily recommended you get the|r |T134229:0|t[Rune of Horn of Lordaeron] |cRXP_WARN_in Loch Modan instead as it is a LOT easier|r
-    >>|cRXP_WARN_It is NOT recommended to use the|r |T134229:0|t[Rune of Horn of Lordaeron] |cRXP_WARN_over the|r |T236250:0|t[Rune of Divine Storm] |cRXP_WARN_or the|r |T135961:0|t[Rune of Seal of Martyrdom]
+    >>|cRXP_WARN_It is heavily recommended you get the|r |T134229:0|t[Testament of Horn of Lordaeron] |cRXP_WARN_in Loch Modan instead as it is a LOT easier|r
+    >>|cRXP_WARN_It is NOT recommended to use the|r |T134229:0|t[Testament of Horn of Lordaeron] |cRXP_WARN_over the|r |T236250:0|t[Rune of Divine Storm] |cRXP_WARN_or the|r |T133745:0|t[Testament of Martyrdom]
     .train 425618,1
     .xp <12,1
 step
@@ -646,7 +631,6 @@ step
     .train 425618,1
     .xp <4,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Paladin SoD
@@ -655,7 +639,6 @@ RXPGuides.RegisterGuide([[
 #name Aegis - 8 (Elwynn Forest)
 #title Aegis
 #next Rebuke - 10 (Stormwind)
-
 step
     +|cRXP_WARN_You MUST be at least level 8 in order to acquire|r |T133815:0|t[Engrave Chest - Aegis] |cRXP_WARN_as it is the level requirement of training|r |T135949:0|t[Purify]
     >>|cRXP_WARN_You need to level up more before even attempting to acquire|r |T133815:0|t[Engrave Chest - Aegis]
@@ -724,7 +707,6 @@ step
 --XX cast 425589
 --XX Rune acquirable if someone else purifies him for you?
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Paladin SoD
@@ -733,7 +715,6 @@ RXPGuides.RegisterGuide([[
 #name Aegis - 8 (Dun Morogh)
 #title Aegis
 #next Rebuke - 10 (Ironforge)
-
 step
     +|cRXP_WARN_You MUST be at least level 8 in order to acquire|r |T133815:0|t[Engrave Chest - Aegis] |cRXP_WARN_as it is the level requirement of training|r |T135949:0|t[Purify]
     >>|cRXP_WARN_You need to level up more before even attempting to acquire|r |T133815:0|t[Engrave Chest - Aegis]
@@ -784,9 +765,7 @@ step
     .train 425619,1
     .xp <8,1
 --XX Rune acquirable if someone else purifies him for you?
-
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Paladin SoD
@@ -795,7 +774,6 @@ RXPGuides.RegisterGuide([[
 #name Divine Light - 10 (Stormwind)
 #title Divine Light
 #next Horn of Lordaeron - 12 (Westfall)
-
 step
     #completewith LibramS
     +|cRXP_WARN_You should be at least level 10 in order to acquire|r |T133815:0|t[Engrave Chest - Divine Light] |cRXP_WARN_in Stormwind alone|r
@@ -877,7 +855,6 @@ step
     .use 205897
     .itemcount 205897,1 --Rune of Divine Light (1)
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Paladin SoD
@@ -886,7 +863,6 @@ RXPGuides.RegisterGuide([[
 #name Divine Storm - 25 (Darkshore)
 #title Divine Storm
 #next Divine Sacrifice - 25 (Azeroth)
-
 step
     #completewith LibramS
     +|cRXP_WARN_You should be at least level 25 in order to acquire|r |T133815:0|t[Engrave Chest - Divine Storm] |cRXP_WARN_AND you should find at least 2 other level 25 Paladins to do this with comfortably|r
@@ -1103,7 +1079,6 @@ step
     .target Delgren the Purifier
     .train 410014,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Paladin SoD
@@ -1112,7 +1087,6 @@ RXPGuides.RegisterGuide([[
 #name Inspiration Exemplar - 6 (Elwynn Forest)
 #title Inspiration Exemplar
 #next Aegis - 8 (Elwynn Forest)
-
 step
     #completewith LibramS
     +|cRXP_WARN_You should be at least level 6 in order to acquire|r |T134596:0|t[Engrave Pants - Inspiration Exemplar] |cRXP_WARN_in Elwynn Forest with another player|r
@@ -1145,7 +1119,6 @@ step
     .itemcount 206264,1 --Rune of Inspiration (1)
     .train 410011,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Paladin SoD
@@ -1154,7 +1127,6 @@ RXPGuides.RegisterGuide([[
 #name Inspiration Exemplar - 6 (Dun Morogh)
 #title Inspiration Exemplar
 #next Aegis - 8 (Dun Morogh)
-
 step
     #completewith LibramS
     +|cRXP_WARN_You should be at least level 6 in order to acquire|r |T134596:0|t[Engrave Pants - Inspiration Exemplar] |cRXP_WARN_in Dun Morogh with another player|r
@@ -1198,7 +1170,6 @@ step
     .itemcount 206264,1 --Rune of Inspiration (1)
     .train 410011,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Paladin SoD
@@ -1207,7 +1178,6 @@ RXPGuides.RegisterGuide([[
 #name Rebuke - 10 (Ironforge)
 #title Rebuke
 #next Seal of Martyrdom - 10 (Stormwind)
-
 step
     #completewith LibramS
     +|cRXP_WARN_You should be at least level 10 in order to acquire|r |T134596:0|t[Engrave Pants - Rebuke] |cRXP_WARN_in Ironforge alone|r
@@ -1269,7 +1239,6 @@ step
     .itemcount 205683,1 --Rune of Rebuke (1)
     .train 425621,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Paladin SoD
@@ -1278,7 +1247,6 @@ RXPGuides.RegisterGuide([[
 #name Rebuke - 10 (Stormwind)
 #title Rebuke
 #next Seal of Martyrdom - 10 (Stormwind)
-
 step
     #completewith LibramS
     +|cRXP_WARN_You should be at least level 10 in order to acquire|r |T134596:0|t[Engrave Pants - Rebuke] |cRXP_WARN_in Stormwind alone|r
@@ -1342,7 +1310,6 @@ step
     .itemcount 205683,1 --Rune of Rebuke (1)
     .train 425621,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Paladin SoD
@@ -1351,7 +1318,6 @@ RXPGuides.RegisterGuide([[
 #name Aura Mastery - 24 (Duskwood)
 #title Aura Mastery
 #next Beacon of Light - 25 (Reputation)
-
 step
     +|cRXP_WARN_You MUST be at least level 24 in order to acquire|r |T134596:0|t[Engrave Pants - Aura Mastery] |cRXP_WARN_as it is the level requirement of training|r |T135983:0|t[Turn Undead]
     >>|cRXP_WARN_You need to level up more before even attempting to acquire|r |T134596:0|t[Engrave Pants - Aura Mastery]
@@ -1418,7 +1384,6 @@ step
     .train 416037,1
     .xp <24,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Paladin SoD
@@ -1427,7 +1392,6 @@ RXPGuides.RegisterGuide([[
 #name Avenger's Shield - 25 (Redridge Mountains)
 #title Avenger's Shield
 #next Inspiration Exemplar - 6 (Elwynn Forest)
-
 step
     +|cRXP_WARN_You should be at least level 25 in order to acquire|r |T134596:0|t[Engrave Pants - Avenger's Shield] |cRXP_WARN_in Redridge alone|r
     .train 410008,1
@@ -1462,7 +1426,6 @@ step
     .train 410008,1
 --VV Overall paladin routing can be improved if Divine Sac turnin has items bought before Divine Storm -> Turned in after Divine Storm (run down after accepting Return to Delgren -> Turn in -> Fly to Astranaar -> DS Turnin)
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Paladin SoD
@@ -1470,7 +1433,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Belt
 #title Malleable Protection
 #name Malleable Protection - 34 (Arathi Highlands)
-
 step
     #optional
     .train 426175,1
@@ -1626,8 +1588,6 @@ step
     .use 213128
     .train 426175 >>|cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of Piety|r] |cRXP_WARN_to train|r |T236251:0|t[Malleable Protection]
 ]])
-
-
 RXPGuides.RegisterGuide([[
 #classic
 << Paladin SoD
@@ -1635,7 +1595,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Belt
 #name Sheath of Light - 40 (Azeroth)
 #title Sheath of Light
-
 step
     #completewith next
     .zone Desolace >>Travel to Desolace
@@ -1761,7 +1720,6 @@ step
     .train 426178 >> Train |T236263:0|t[Sheath of Light]
     .target Aeonas the Vindicated
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Paladin SoD
@@ -1769,7 +1727,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Boots
 #name Guarded by the Light - 30 (Alterac Mountains)
 #title Guarded by the Light
-
 step
     #optional
     .train 416035,1
@@ -1811,7 +1768,6 @@ step
     .itemcount 213132,1
     .train 416035 >>|cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of the Guardian|r] |cRXP_WARN_to train|r |T237537:0|t[Guarded by the Light]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Paladin SoD
@@ -1819,7 +1775,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Boots
 #name Sacred Shield - 30 (Desolace)
 #title Sacred Shield
-
 step
     #optional
     .train 416028,1
@@ -1861,8 +1816,6 @@ step
     .use 213513
     .train 416028 >>|cRXP_WARN_Use the|r |T134916:0|t[|cRXP_FRIENDLY_Libram of Deliverance|r] |cRXP_WARN_to train|r |T236249:0|t[Sacred Shield]
 ]])
-
-
 -- RXPGuides.RegisterGuide([[
 -- #classic
 -- << Paladin SoD
@@ -1870,12 +1823,8 @@ step
 -- #subgroup Bracers
 -- #name Improved Hammer of Wrath
 -- for phase 3
-
 -- Improved Hammer of Wrath
-
-
 -- ]])
-
 -- RXPGuides.RegisterGuide([[
 -- #classic
 -- << Paladin SoD
@@ -1883,10 +1832,7 @@ step
 -- #subgroup Bracers
 -- #name Purifying Power
 -- for phase 3
-
 -- Purifying Power
-
-
 -- ]])
 RXPGuides.RegisterGuide([[
 #classic
@@ -1894,7 +1840,6 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Rune & Books Guide
 #subgroup Helmet
 #name Fanaticism - 44 (Azeroth)
-
 step
     #optional
     .train 426178 >>|cRXP_WARN_You have to learn the rune for|r |T236263:0|t[Sheath of Light] |cRXP_WARN_first before you can obtain this one|r
@@ -1955,14 +1900,12 @@ step
     .turnin 81762 >>Turn in The Bloody Missive
     .target Katherine the Pure
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Paladin SoD
 #group RestedXP Rune & Books Guide
 #subgroup Bracers
 #name Light's Grace - 40 (Feralas)
-
 step
     #optional
     .train 5599 >>|cRXP_WARN_You must have|r |T135964:0|t[Blessing of Protection] |cRXP_WARN_trained in order to acquire the|r |T135931:0|t[Light's Grace] |cRXP_WARN_rune|r
@@ -2014,16 +1957,13 @@ step
     .use 219147
     .train 429242 >>|cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of Grace|r] |cRXP_WARN_to train|r |T236249:0|t[Sacred Shield]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Paladin SoD
 #group RestedXP Rune & Books Guide
 #subgroup Helmet
 #name Wrath - 43 (The Hinterlands)
-
 -- Wrath
-
 step
     #optional
     .train 5502 >>|cRXP_WARN_You must have|r |T135974:0|t[Sense Undead] |cRXP_WARN_trained in order to acquire the|r |T236260:0|t[Wrath] |cRXP_WARN_rune|r
@@ -2049,14 +1989,12 @@ step
     .use 220165
     .train 429249 >>|cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of Wrath|r] |cRXP_WARN_to train|r |T236260:0|t[Wrath]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Paladin SoD
 #group RestedXP Rune & Books Guide
 #subgroup Bracers
 #name Hammer of the Righteous - 50 (Azeroth)
-
 --x shiek: needs better coordinates
 step
     #optional
@@ -2183,16 +2121,13 @@ step
     .target Aeonas the Vindicated
     .train 410013,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Paladin SoD
 #group RestedXP Rune & Books Guide
 #subgroup Cloak
 #name Shield of Righteousness - 60 (Eastern Plaguelands)
-
 --There wasn't very precise info for this available, might need confirmation if it works properly
-
 step
     #completewith next
     >>|cRXP_WARN_Unlocking this rune will require killing a boss in Stratholme(undead). Start looking for a group for it if you wish|r
@@ -2200,7 +2135,7 @@ step
 step
     .line Eastern Plaguelands,28.6,84.2,33.2,83.0,35.30,82.55,41.19,81.68,45.42,80.68,48.8,79.9,51.5,78.3,55.1,76.4
     >>Look for a |cRXP_ENEMY_Slack-Jawed Ghoul|r. Kill him and |Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Orthas|r a dwarf spirit that will appear. Accept his quest
-    >>|cRXP_WARN_The|r |cRXP_ENEMY_Slack-Jawed Ghoul|r |cRXP_WARN_patrolls the area south of the road between the Undercroft and Corrin's Crossing|r
+    >>|cRXP_WARN_The|r |cRXP_ENEMY_Slack-Jawed Ghoul|r |cRXP_WARN_patrols the area south of the road between the Undercroft and Corrin's Crossing|r
     .accept 84318 >> Accept Oi!
     .unitscan Slack-Jawed Ghoul
     .target Orthas
@@ -2237,9 +2172,7 @@ step
     .goto Eastern Plaguelands,22.7,86.1
     .accept 84332 >> Accept A Thane's Gratitude
     .turnin 84332 >> Turnin A Thane's Gratitude
-
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Paladin SoD
@@ -2248,7 +2181,6 @@ RXPGuides.RegisterGuide([[
 #name Righteous Vengeance - 55 (Western Plaguelands)
 #title Righteous Vengeance
 #next Shock and Awe - 55 (Western and Eastern Plaguelands)
-
 step
     #completewith next
     .zone Western Plaguelands >> Head to the Western Plaguelands
@@ -2311,7 +2243,6 @@ step
     .turnin 83936 >> Turn in Dalton's Quest
     .target Squire Cuthbert
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Paladin SoD
@@ -2319,7 +2250,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Cloak
 #name Shock and Awe - 60 (Western and Eastern Plaguelands)
 #title Shock and Awe & Avenging Wrath
-
 step
     #completewith next
     +|cRXP_WARN_In order to begin the quest for this rune you will need to have unlocked the rune of|r |T236260:0|t[|cRXP_FRIENDLY_Righteous Vengeance|r]. |cRXP_WARN_Go to the Righteous Vengeance guide to begin|r

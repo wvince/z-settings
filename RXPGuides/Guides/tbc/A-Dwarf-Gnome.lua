@@ -9,7 +9,6 @@ RXPGuides.RegisterGuide([[
 #defaultfor Gnome/Dwarf
 #next 6-11 Dun Morogh << !Hunter
 #next 6-10 Dun Morogh (Hunter) << Hunter
-
 step << !Gnome !Dwarf
     #sticky
     #completewith next
@@ -565,7 +564,6 @@ step
     .subzoneskip 800,1
     .isOnQuest 2160
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -577,7 +575,6 @@ RXPGuides.RegisterGuide([[
 #next 11-14 Elwynn Forest/Loch Modan << Warlock
 #subgroup RestedXP Alliance 1-20
 #defaultfor Gnome/Dwarf
-
 step
     #optional
     #completewith SenirEnd
@@ -2907,7 +2904,6 @@ step << Rogue/Warrior
     .fly Menethil >> Fly to Menethil Harbor
     .target Thorgrum Borrelson
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -2917,7 +2913,6 @@ RXPGuides.RegisterGuide([[
 #next 14-20 Bloodmyst
 #subgroup RestedXP Alliance 1-20
 #defaultfor Gnome Warlock
-
 step
     .goto StormwindClassic,66.277,62.137
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Dungar Longdrink|r
@@ -4183,7 +4178,6 @@ step
     .goto Darkshore,30.749,40.995
     .zone Azuremyst Isle >> Take the boat to Azuremyst Isle
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -4193,7 +4187,6 @@ RXPGuides.RegisterGuide([[
 #next 12-14 Darkshore
 #subgroup RestedXP Alliance 1-20
 #defaultfor Dwarf Hunter
-
 step
     #optional
     #completewith SenirEnd

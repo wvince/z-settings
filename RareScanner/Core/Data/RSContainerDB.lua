@@ -401,6 +401,9 @@ function RSContainerDB.GetContainerName(containerID)
 			return private.dbglobal.object_names[GetLocale()][containerID]
 		elseif (AL[string.format("CONTAINER_%s", containerID)] ~= string.format("CONTAINER_%s", containerID)) then
 			return AL[string.format("CONTAINER_%s", containerID)]
+		elseif (RSUtils.Contains(RSConstants.CONTAINERS_BATTERED_CHESTS, containerID)) then
+			private.dbglobal.object_names[GetLocale()][containerID] = AL["CONTAINERS_BATTERED_CHEST"]
+			return AL["CONTAINERS_BATTERED_CHEST"]
 		end
 	end
 

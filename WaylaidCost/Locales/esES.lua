@@ -4,6 +4,15 @@ local locale = W.Locale()
 if locale ~= "esES" and locale ~= "esMX" then return end
 local L = {}
 W.dictionary = L
+L["Use newer Auctionator prices when available"] = "Usar precios más recientes de Auctionator"
+L["Mixed prices; Auctionator estimates included"] = "Precios mixtos; incluye estimaciones de Auctionator"
+L["Use Auctionator search when available"] = "Usar búsqueda de Auctionator si está disponible"
+L["Search with Auctionator"] = "Buscar con Auctionator"
+L["Shop"] = "Comprar"
+L["Auctionator estimate; stock unknown"] = "Estimación Auctionator; existencias desconocidas"
+L["Price age: %d days"] = "Antigüedad del precio: %d días"
+L["Price age unknown"] = "Antigüedad del precio desconocida"
+L["No Auctionator price saved"] = "Sin precio guardado en Auctionator"
 L["  Total"] = "  Total"
 L["  Whole stacks: %d purchased, %d extra."] = "  Lotes completos: %d comprados, %d sobrantes."
 L["Choice: %d× %s"] = "A elegir: %d× %s"

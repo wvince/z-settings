@@ -35,15 +35,19 @@ function RSWorldMapProviderMixin:RefreshAllData(fromOnShow)
 end
 
 function RSWorldMapProviderMixin:SetBounty(bountyQuestID, bountyFactionID, bountyFrameType)
-	local changed = self.bountyQuestID ~= bountyQuestID;
+	local changed = self.bountyQuestID ~= bountyQuestID or self.bountyFactionID ~= bountyFactionID or self.bountyFrameType ~= bountyFrameType;
 	if (changed) then
 		self.bountyQuestID = bountyQuestID;
 		self.bountyFactionID = bountyFactionID;
 		self.bountyFrameType = bountyFrameType;
 		if (self:GetMap()) then
-			self:RefreshAllData();
+			self:UpdatePinsHighlight();
 		end
 	end
+end
+
+function RSWorldMapProviderMixin:UpdatePinsHighlight()
+
 end
 
 function RSWorldMapProviderMixin:GetBountyInfo()

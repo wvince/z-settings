@@ -6,7 +6,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Penance - 3 (Elwynn Forest)
 #title Penance
-
 step << Priest
     #season 2
     .goto Elwynn Forest,48.61,27.63
@@ -24,7 +23,6 @@ step << Priest
     .itemcount 205951,1
     .train 402862,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Priest SoD
@@ -32,8 +30,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Penance - 1 (Dun Morogh)
 #title Penance
-
-
 step << Priest
     #season 2
     .goto Dun Morogh,26.733,72.552
@@ -54,7 +50,6 @@ step << Priest
     .aura -410935
     .use 205951
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << NightElf Priest SoD
@@ -62,7 +57,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Penance - 2 (Shadowglen)
 #title Penance
-
 step << NightElf Priest
     #season 2
     .goto Teldrassil,59.92,41.74,20,0
@@ -101,7 +95,6 @@ step << NightElf Priest
     .target Shanda
     .train 402862,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Troll Priest SoD
@@ -109,10 +102,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Penance - 2 (Durotar)
 #title Penance
-
-
     --Rune of Penance
-
 step << Priest
     #season 2
     .goto Durotar,42.36,68.81
@@ -134,7 +124,6 @@ step << Priest
     .turnin 77642 >>Turn in Wisdom of the Loa
     .target Ken'jai
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Undead Priest SoD
@@ -142,10 +131,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Penance - 2 (Tirisfal)
 #title Penance
-
-
     --Rune of Penance
-
 step << Priest
     #season 2
     .goto Tirisfal Glades,31.11,66.02
@@ -164,9 +150,7 @@ step << Priest
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Duesten|r
     .turnin 77670 >>Turn in Meditation on Undeath
     .target Dark Cleric Duesten
-
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Priest SoD
@@ -174,7 +158,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Homunculi - 8 (Durotar)
 #title Homunculi
-
 step
     .train 402852,1
     #completewith next
@@ -216,7 +199,6 @@ step
     .itemcount 205947,1
     .train 402852 >>|cRXP_WARN_Use the|r |T135975:0|t[|cRXP_FRIENDLY_Prophecy of a Desecrated Citadel|r] |cRXP_WARN_to train|r |T237570:0|t[Homunculi]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Priest SoD
@@ -224,7 +206,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Homunculi - 7 (Tirisfal Glades)
 #title Homunculi
-
 step
     .train 402852,1
     #completewith next
@@ -268,7 +249,6 @@ step
     .itemcount 205947,1
     .train 402852 >>|cRXP_WARN_Use the|r |T135975:0|t[|cRXP_FRIENDLY_Prophecy of a Desecrated Citadel|r] |cRXP_WARN_to train|r |T237570:0|t[Homunculi]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Priest SoD
@@ -276,7 +256,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Shared Pain - 13 (Durotar)
 #title Shared Pain
-
 step
     #completewith next
     .zone Durotar >>Travel to Durotar
@@ -300,7 +279,6 @@ step
     .itemcount 205945,1
     .train 402854 >>|cRXP_WARN_Use the|r |T136222:0|t[|cRXP_FRIENDLY_Memory of an Imprisoned Savior|r] |cRXP_WARN_to train|r |T136160:0|t[Shared Pain]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Priest SoD
@@ -308,7 +286,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Shared Pain - 6 (Tirisfal Glades)
 #title Shared Pain
-
 step
     #completewith next
     .zone Tirisfal Glades >>Travel to Tirisfal Glades
@@ -339,7 +316,6 @@ step
     .itemcount 205945,1
     .train 402854 >>|cRXP_WARN_Use the|r |T136222:0|t[|cRXP_FRIENDLY_Memory of an Imprisoned Savior|r] |cRXP_WARN_to train|r |T136160:0|t[Shared Pain]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Priest SoD
@@ -347,7 +323,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Chest
 #name Void Plague - 5 (Durotar)
 #title Void Plague
-
 step
     #completewith next
     .zone Durotar >>Travel to Durotar
@@ -370,7 +345,6 @@ step
     .itemcount 205940,1
     .train 425216 >>|cRXP_WARN_Use the|r |T136222:0|t[|cRXP_FRIENDLY_Memory of Dark Purpose|r] |cRXP_WARN_to train|r |T237514:0|t[Void Plague]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Priest SoD
@@ -378,7 +352,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Chest
 #name Void Plague - 6 (Tirisfal Glades)
 #title Void Plague
-
 step
     #completewith next
     .zone Tirisfal Glades >>Travel to Tirisfal Glades
@@ -406,7 +379,6 @@ step
     .itemcount 205940,1
     .train 425216 >>|cRXP_WARN_Use the|r |T136222:0|t[|cRXP_FRIENDLY_Memory of Dark Purpose|r] |cRXP_WARN_to train|r |T237514:0|t[Void Plague]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Priest SoD
@@ -414,7 +386,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Prayer of Mending - 6 (Durotar)
 #title Prayer of Mending
-
 step
     .goto Durotar,48.04,79.58
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Adventurer's Spirit|r inside Kolkar Crag
@@ -428,7 +399,6 @@ step
     .itemcount 205944,1
     .train 402848 >>|cRXP_WARN_Use the|r |T135791:0|t[|cRXP_FRIENDLY_Reciprocal Epiphany|r] |cRXP_WARN_to train|r |T135944:0|t[Prayer of Mending]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Priest SoD
@@ -436,7 +406,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Prayer of Mending - 10 (Mulgore)
 #title Prayer of Mending
-
 step
     .goto Mulgore,60.39,33.54
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Adventurer's Spirit|r outside of the Venture Co. Mine
@@ -450,7 +419,6 @@ step
     .itemcount 205944,1
     .train 402848 >>|cRXP_WARN_Use the|r |T135791:0|t[|cRXP_FRIENDLY_Reciprocal Epiphany|r] |cRXP_WARN_to train|r |T135944:0|t[Prayer of Mending]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Priest SoD
@@ -458,7 +426,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Chest
 #name Twisted Faith - 10 (Loch Modan)
 #title Twisted Faith
-
 step << Priest
     #completewith MinerGear
     .goto Loch Modan,35.50,18.97,20 >> Enter the Silver Stream Mine
@@ -481,7 +448,6 @@ step << Priest
     .use 205905
     .itemcount 205905,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Priest SoD
@@ -489,7 +455,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Chest
 #name Twisted Faith - 14 (Westfall)
 #title Twisted Faith
-
 step << Priest
     .goto Westfall,32.6,43.2,60,0
     .goto Westfall,29.8,46.6,60,0
@@ -507,7 +472,6 @@ step << Priest
     .use 205905
     .itemcount 205905,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Priest SoD
@@ -515,7 +479,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Chest
 #name Twisted Faith - 18 (Darkshore)
 #title Twisted Faith
-
 step << Priest
     .goto Darkshore,59.2,23.4,60,0
     .goto Darkshore,60.0,15.4
@@ -536,7 +499,6 @@ step << Priest
     .use 205905
     .itemcount 205905,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Priest SoD
@@ -544,7 +506,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Shared Pain - 10 (Dun Morogh)
 #title Shared Pain
-
 step << Priest
     .goto Loch Modan,77.894,62.236
     >>Kill |cRXP_ENEMY_Captain Beld|r downstairs inside the building. Loot him for the |T136222:0|t[|cRXP_FRIENDLY_Memory of an Imprisoned Savior|r]
@@ -557,7 +518,6 @@ step << Priest
     .use 205945
     .itemcount 205945,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Priest SoD
@@ -565,7 +525,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Shared Pain - 6 (Elwynn Forest)
 #title Shared Pain
-
 step << Priest
     .goto Elwynn Forest,40.6,81.8
     >>Kill |cRXP_ENEMY_Kobold Miners|r. Loot them for the |T136222:0|t[|cRXP_FRIENDLY_Memory of an Imprisoned Savior|r]
@@ -578,7 +537,6 @@ step << Priest
     .use 205945
     .itemcount 205945,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Priest SoD
@@ -586,7 +544,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Homunculi - 8 (Dun Morogh)
 #title Homunculi
-
 step << Priest
     .goto Dun Morogh,42.0,44.6,50,0
     .goto Dun Morogh,42.4,35.8
@@ -600,7 +557,6 @@ step << Priest
     .use 205947
     .itemcount 205947,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Priest SoD
@@ -608,7 +564,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Homunculi - 8 (Elwynn Forest)
 #title Homunculi
-
 step << Priest
     .goto Elwynn Forest,74.0,51.8
     >>Kill |cRXP_ENEMY_Defias Rogue Wizards|r. Loot them for the |T135975:0|t[|cRXP_FRIENDLY_Prophecy of a Desecrated Citadel|r]
@@ -621,7 +576,6 @@ step << Priest
     .use 205947
     .itemcount 205947,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Priest SoD
@@ -629,7 +583,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Homunculi - 8 (Teldrassil)
 #title Homunculi
-
 step << Priest
     #completewith next
     .goto Teldrassil,54.68,52.84,20,0
@@ -649,7 +602,6 @@ step << Priest
     .use 205947
     .itemcount 205947,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Priest SoD
@@ -657,7 +609,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Prayer of Mending - 6 (Elwynn Forest)
 #title Prayer of Mending
-
 step << Priest
     .goto Elwynn Forest,52.28,84.56
     >>|cRXP_WARN_Join a group with another Priest or Paladin standing over the |cRXP_FRIENDLY_Adventurer's Remains|r, or look for help from a Paladin or Priest in General Chat (Type /1 into chat)|r
@@ -670,7 +621,6 @@ step << Priest
     .target Adventurer's Remains
     .target Adventurer's Spirit
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Priest SoD
@@ -678,7 +628,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Prayer of Mending - 8 (Teldrassil)
 #title Prayer of Mending
-
 step << Priest
     .goto Teldrassil,33.610,35.732
     >>|cRXP_WARN_Join a group with another Priest or Druid standing over the |cRXP_FRIENDLY_Adventurer's Remains|r, or look for help from a Druid or Priest in General Chat (Type /1 into chat)|r
@@ -691,7 +640,6 @@ step << Priest
     .target Adventurer's Remains
     .target Adventurer's Spirit
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Priest SoD
@@ -699,7 +647,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Prayer of Mending - 6 (Dun Morogh)
 #title Prayer of Mending
-
 step << Priest
     .goto Dun Morogh,43.0,49.6
     >>|cRXP_WARN_Join a group with another Priest or Paladin standing over the |cRXP_FRIENDLY_Adventurer's Remains|r, or look for help from a Paladin or Priest in General Chat (Type /1 into chat)|r
@@ -712,7 +659,6 @@ step << Priest
     .target Adventurer's Remains
     .target Adventurer's Spirit
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Priest SoD
@@ -720,7 +666,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Shadow Word: Death - 10 (Darkshore)
 #title Shadow Word: Death
-
 step << Priest
     .goto Darkshore,30.5,47.5
     >>Click the |cRXP_PICK_Remnant|r on the small island. Loot it for the |T135975:0|t[|cRXP_FRIENDLY_Prophecy of a King's Demise|r]
@@ -734,7 +679,6 @@ step << Priest
     .use 205932
     .itemcount 205932,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Priest SoD
@@ -742,7 +686,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Shadow Word - Death - 12 (Loch Modan)
 #title Shadow Word: Death
-
 step << Priest
     #completewith next
     .goto Loch Modan,71.8,27.6
@@ -763,7 +706,6 @@ step << Priest
     .use 205932
     .itemcount 205932,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Priest SoD
@@ -771,7 +713,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Shadow Word: Death - 20 (The Barrens)
 #title Shadow Word: Death
-
 step
     #completewith next
     .zone The Barrens >> Travel to The Barrens
@@ -780,7 +721,7 @@ step
     .goto The Barrens,54.8,35.6,40,0
     .goto The Barrens,58.8,37.6,40,0
     >>Use |T135894:0|t[Dispel Magic] on the |cRXP_ENEMY_Desert Mirage|r. Loot it for the |T135975:0|t[|cRXP_FRIENDLY_Prophecy of a King's Demise|r]
-    *|cRXP_WARN_It's a green ghost which patrolls around. Use the RestedXP target macro to target it.|r
+    *|cRXP_WARN_It's a green ghost which patrols around. Use the RestedXP target macro to target it.|r
     .collect 205932,1 -- Prophecy of a King's Demise (1)
     .train 402849,1
     .mob Desert Mirage
@@ -805,7 +746,6 @@ step << Undead
     .use 205932
     .itemcount 205932,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Priest SoD
@@ -813,7 +753,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Shadow Word: Death - 24 (Silverpine Forest)
 #title Shadow Word: Death
-
 step
     #completewith next
     .zone Silverpine Forest >> Travel to the Silverpine Forest
@@ -845,15 +784,13 @@ step << Undead
     .use 205932
     .itemcount 205932,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Priest SoD
 #group RestedXP Rune & Books Guide
 #subgroup Chest
-#name Twisted Fate - 10 (Silverpine Forest)
-#title Twisted Fate
-
+#name Twisted Faith - 10 (Silverpine Forest)
+#title Twisted Faith
 step
     #completewith next
     .zone Silverpine Forest >> Travel to the Silverpine Forest
@@ -873,15 +810,13 @@ step
     .use 205905
     .itemcount 205905,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Priest SoD
 #group RestedXP Rune & Books Guide
 #subgroup Chest
-#name Twisted Fate - 10 (The Barrens)
-#title Twisted Fate
-
+#name Twisted Faith - 10 (The Barrens)
+#title Twisted Faith
 step
     #completewith next
     .zone The Barrens >> Travel to The Barrens
@@ -908,7 +843,6 @@ step
     .use 205905
     .itemcount 205905,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Priest SoD
@@ -916,7 +850,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Chest
 #name Void Plague - 6 (Elwynn Forest)
 #title Void Plague
-
 step << Priest
     #season 2
     #completewith next
@@ -934,7 +867,6 @@ step << Priest
     .train 425216 >>|cRXP_WARN_Use the|r |T136222:0|t[|cRXP_FRIENDLY_Memory of a Dark Purpose|r] |cRXP_WARN_to train|r |T237514:0|t[Void Plague]
     .use 205940
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Priest SoD
@@ -942,8 +874,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Chest
 #name Void Plague - 6 (Dun Morogh)
 #title Void Plague
-
-
 step << Priest
     #season 2
     .goto Dun Morogh,27.2,43.0,60,0
@@ -961,7 +891,6 @@ step << Priest
     .train 425216 >>|cRXP_WARN_Use the|r |T136222:0|t[|cRXP_FRIENDLY_Memory of a Dark Purpose|r] |cRXP_WARN_to train|r |T237514:0|t[Void Plague]
     .use 205940
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Priest SoD
@@ -969,10 +898,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Belt
 #name Empowered Renew - 27 (Thousand Needles)
 #title Empowered Renew
-
-
 -- Empowered Renew
-
 step
     .train 425309,1
     .zone Thousand Needles >>Travel to |cFFfa9602Thousand Needles|r
@@ -994,7 +920,6 @@ step
     .train 425309 >>|cRXP_WARN_Use the|r |T135975:0|t[|cRXP_LOOT_Prophecy of the Quickened Path|r] |cRXP_WARN_to train|r |T236254:0|t[Empowered Renew]
     .use 213140
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Priest SoD
@@ -1002,9 +927,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Belt
 #name Empowered Renew - 33 (Alterac Mountains)
 #title Empowered Renew
-
 -- Empowered Renew
-
 step
     .train 425309,1
     .zone Alterac Mountains >>Travel to |cFFfa9602Alterac Mountains|r
@@ -1024,7 +947,6 @@ step
     .train 425309 >>|cRXP_WARN_Use the|r |T135975:0|t[|cRXP_LOOT_Prophecy of the Quickened Path|r] |cRXP_WARN_to train|r |T236254:0|t[Empowered Renew]
     .use 213140
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Priest SoD
@@ -1032,9 +954,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Belt
 #name Renewed Hope - 31 (Desolace)
 #title Renewed Hope
-
 -- Renewed Hope
-
 step
     #optional
     .train 425310,1
@@ -1085,7 +1005,6 @@ step
     .train 425310 >> |cRXP_WARN_Use the|r |T136222:0|t[|cRXP_LOOT_Unsettling Vision|r] |cRXP_WARN_to train|r |T135923:0|t[Renewed Hope]
     .use 213599
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Priest SoD
@@ -1093,9 +1012,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Boots
 #name Dispersion 40 (Stranglethorn Vale)
 #title Dispersion
-
 -- Dispersion
-
 step
     .train 425314,1
     >>|cRXP_WARN_Find a Rogue with the|r |T132299:0|t[Master of Subtlety] |cRXP_WARN_rune and|r |T338666:0|t[Jani's Charm] |cRXP_WARN_trinket to|r |T133644:0|t[Pick Pocket] |cRXP_WARN_any |cRXP_ENEMY_Bloodscalp Troll|r in Stranglethorn Vale for the|r |T237446:0|t[Mysterious Troll Scroll]|cRXP_WARN_. A Mage must then use a|r |T135933:0|t[Comprehension Charm] |cRXP_WARN_to decipher it for it to become a |T134938:0|t[|cRXP_LOOT_Deciphered Troll Scroll|r]|r
@@ -1142,7 +1059,6 @@ step
     .turnin 79731 >> Turn in The Troll Scroll
     .target Hemet Nesingwary
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Priest SoD
@@ -1150,9 +1066,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Boots
 #name Pain Suppression - 32 (Azeroth)
 #title Pain Suppression
-
 -- Pain Suppression
-
 step
     .train 402855,1
     .zone Tirisfal Glades >>Travel to |cFFfa9602Tirisfal Glades|r
@@ -1219,14 +1133,12 @@ step
     .train 402855 >>Click on the Orange Remnant in the center of the room to receive |T135791:0|t|cRXP_FRIENDLY_[Apocryphal Epiphany]|r, use it to learn |T135936:0|t[Pain Suppression]
     .use 213143
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Priest SoD
 #group RestedXP Rune & Books Guide
 #subgroup Helmet
 #name Eye of the Void - 50 (Azeroth)
-
 --x shiek: needs better coordinates and travelsteps
 step
     #completewith next
@@ -1303,7 +1215,6 @@ step
     .target Shrine of the Watcher
     .train 402864,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Priest SoD
@@ -1311,9 +1222,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Bracers
 #title Surge of Light
 #name Surge of Light - 40 (Tanaris)
-
 -- Surge of Light
-
 step
     #completewith RuneLearned
     +|cRXP_WARN_You may only get the|r |T135981:0|t[Surge of Light] |cRXP_WARN_rune between 9pm-6am in Tanaris.|r
@@ -1336,7 +1245,6 @@ step
     *|cRXP_WARN_You need TWO meditation buffs: Look for a priest with multiple buffs, /kneel before him, wait for him to /pray for you.|r
     .train 431669 >>|cRXP_WARN_Use the|r |T135975:0|t[|cRXP_FRIENDLY_Prophecy of the Lost Tribe|r] |cRXP_WARN_to train|r |T135981:0|t[Surge of Light]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Priest SoD
@@ -1344,9 +1252,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Bracers
 #title Surge of Light
 #name Surge of Light - 40 (Swamp of Sorrows)
-
 -- Surge of Light
-
 step
     #completewith RuneLearned
     +|cRXP_WARN_You may only get the|r |T135981:0|t[Surge of Light] |cRXP_WARN_rune between 9pm-6am in Swamp of Sorrows.|r
@@ -1369,8 +1275,6 @@ step
     *|cRXP_WARN_You need TWO meditation buffs: Look for a priest with multiple buffs, /kneel before him, wait for him to /pray for you.|r
     .train 431669 >>|cRXP_WARN_Use the|r |T135975:0|t[|cRXP_FRIENDLY_Prophecy of the Lost Tribe|r] |cRXP_WARN_to train|r |T135981:0|t[Surge of Light]
 ]])
-
-
 RXPGuides.RegisterGuide([[
 #classic
 << Priest SoD
@@ -1378,9 +1282,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Bracers
 #title Surge of Light
 #name Surge of Light - 40 (The Hinterlands)
-
 -- Surge of Light
-
 step
     #completewith RuneLearned
     +|cRXP_WARN_You may only get the|r |T135981:0|t[Surge of Light] |cRXP_WARN_rune between 9pm-6am in The Hinterlands.|r
@@ -1403,7 +1305,6 @@ step
     *|cRXP_WARN_You need TWO meditation buffs: Look for a priest with multiple buffs, /kneel before him, wait for him to /pray for you.|r
     .train 431669 >>|cRXP_WARN_Use the|r |T135975:0|t[|cRXP_FRIENDLY_Prophecy of the Lost Tribe|r] |cRXP_WARN_to train|r |T135981:0|t[Surge of Light]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Priest SoD
@@ -1411,9 +1312,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Bracers
 #title Surge of Light
 #name Surge of Light - 40 (Stranglethorn Vale) 2
-
 -- Surge of Light
-
 step
     #completewith RuneLearned
     +|cRXP_WARN_The soul may only spawn after a Blood Moon event. You can also disable the event and run to the waypoint location|r.
@@ -1435,7 +1334,6 @@ step
     *|cRXP_WARN_You need TWO meditation buffs: Look for a priest with multiple buffs, /kneel before him, wait for him to /pray for you.|r
     .train 431669 >>|cRXP_WARN_Use the|r |T135975:0|t[|cRXP_FRIENDLY_Prophecy of the Lost Tribe|r] |cRXP_WARN_to train|r |T135981:0|t[Surge of Light]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Priest SoD
@@ -1443,9 +1341,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Bracers
 #title Surge of Light
 #name Surge of Light - 40 (Stranglethorn Vale) 1
-
 -- Surge of Light
-
 step
     #completewith RuneLearned
     +|cRXP_WARN_You may only get the|r |T135981:0|t[Surge of Light] |cRXP_WARN_rune between 9pm-6am.|r
@@ -1468,7 +1364,6 @@ step
     *|cRXP_WARN_You need TWO meditation buffs: Look for a priest with multiple buffs, /kneel before him, wait for him to /pray for you.|r
     .train 431669 >>|cRXP_WARN_Use the|r |T135975:0|t[|cRXP_FRIENDLY_Prophecy of the Lost Tribe|r] |cRXP_WARN_to train|r |T135981:0|t[Surge of Light]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Priest SoD
@@ -1477,7 +1372,6 @@ RXPGuides.RegisterGuide([[
 #title Binding Heal
 #name Binding Heal - 58 (Western and Eastern Plaguelands)
 #next Priest Racials - 60 (Azeroth)
-
 step << Alliance
     #completewith next
     .zone Stormwind City >> Travel to Stormwind
@@ -1590,7 +1484,6 @@ step
     .train 402853 >> Use the |T135791:0|t[|cRXP_FRIENDLY_Jubilant Epiphany|r] to train |T135883:0|t[|cRXP_FRIENDLY_Binding Heal|r]
     .use 228123
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Priest SoD
@@ -1598,7 +1491,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Cloak
 #title Vampiric Touch
 #name Vampiric Touch - 60 (Demon Fall Canyon Dungeon)
-
 step
     #completewith next
     >>The rune of |T135978:0|t[|cRXP_FRIENDLY_Vampiric Touch|r] drops from the last boss of Demon Fall Canyon the new dungeon added in SoD
@@ -1649,7 +1541,6 @@ step
     .train 402857 >> Use the |T135791:0|t[|cRXP_FRIENDLY_Aperitive Epiphany|r] to train |T135978:0|t[|cRXP_FRIENDLY_Vampiric Touch|r]
     .use 228126
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Priest SoD
@@ -1657,8 +1548,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Extras
 #title Priest Racials
 #name Priest Racials - 60 (Azeroth)
-
-
 step
     #completewith next
     >>|cRXP_WARN_The extra priest ability is a server-wide unlock. This means that if someone has already done it on your server you can skip the entire questline and go straight to Karazhan to train your new racial ability. If thats not the case you can use the guide below to be the person who unlocks it for your server!|r
@@ -1841,7 +1730,6 @@ step
 step
     +Turning in the above quest should complete the questline and unlock the ability to train a racial priest ability from another race server-wide
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Priest SoD
@@ -1849,7 +1737,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Cloak
 #title Soul Warding
 #name Soul Warding - 60 (Stratholme)
-
 step
     #completewith next
     >>|cRXP_WARN_In order to complete this rune you will need to complete a couple tasks within the Stratholme Dungeon (both living and dead sides). Start looking for a group for it|r

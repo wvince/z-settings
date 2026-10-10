@@ -1,9 +1,0 @@
-RXP Guide Vault - BattleTagless build
-
-Embedded 157 guide records across 1 expansion bundles.
-Generated Lua files: 5.
-The guide packs are stored directly under RXPGuides/Guides in their expansion folders.
-Each generated pack detects the current RestedXP/WoW client and only registers on its matching game.
-No BattleTag is required for these embedded guide files.
-
-Bundles: forever932:157

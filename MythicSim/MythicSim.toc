@@ -1,0 +1,17 @@
+## Interface: 120100, 16001
+## Title: MythicSim
+## Notes: Sim your character or your whole raid on mythicsim.com. Retail and World of Warcraft: Forever.
+## Author: MythicSim
+## Version: 0.3.0
+## SavedVariables: MythicSimDB
+## OptionalDeps: Simulationcraft
+## X-Website: https://mythicsim.com
+## X-Category: Combat
+## IconTexture: Interface\AddOns\MythicSim\icon
+## X-License: MIT
+## X-Curse-Project-ID: 1702936
+## AddonCompartmentFunc: MythicSim_OnAddonCompartmentClick
+
+MythicSim.lua
+Forever.lua
+Minimap.lua

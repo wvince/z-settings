@@ -1,4 +1,5 @@
-# Zeroshin's own addons, never shared
-BarSync/
+# Zeroshin's own addon, never shared
 WoWCompanion/
+# your saved characters, written by ./characters
+Z-Settings/ZCharacters.lua
 __pycache__/

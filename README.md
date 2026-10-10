@@ -1,16 +1,11 @@
 # Z-Settings
 
-A shared WoW Forever `Interface\AddOns` folder. Cloning it installs the addons; at login a popup
-offers the parts of the bundled setup that differ from your UI, with keybinds converted to your keyboard.
+A shared WoW Forever `Interface\AddOns` folder. Cloning it installs the addons, and the Z-Settings addon
+does two things:
 
-## How it works
-
-| Step | Command | Result |
-|---|---|---|
-| Export | `/z export [note]` | setup saved to `WTF\...\SavedVariables\Z-Settings.lua`, UI reloads |
-| Publish | `git commit`, `git push` | `.githooks/pre-commit` copies the setup into `Z-Settings/ZBundle.lua` |
-| Update | `git pull` | addons added, updated and removed; untracked addons untouched |
-| Apply | log in, click Apply | the listed parts applied from `ZBundle.lua`, UI reloads |
+- **Setup sharing:** at login, a popup offers the parts of the published setup that differ from your UI,
+  with keybinds converted to your keyboard.
+- **Character copy:** copies one of your characters' complete setup onto another, on any account.
 
 ## Install
 
@@ -22,7 +17,7 @@ Requires [Git for Windows](https://git-scm.com/download/win) and collaborator ac
 4. Optional: copy personal addons from `AddOns-old` into `AddOns`.
 5. Start WoW, click Apply in the popup and press the key right of Tab (QWERTY or Belgian AZERTY).
    The key is asked once.
-6. Put your own spells on your bars. Nothing is ever placed on them.
+6. Put your own spells on your bars. Setup sharing never places anything on them.
 
 ## Update
 
@@ -38,11 +33,17 @@ block `git pull`. If `git pull` reports local changes, `git reset --hard origin/
 
 | Command | Does |
 |---|---|
-| `/z update` | opens the popup with every part, also after Later |
-| `/z import` | applies every part and asks the keyboard key again |
-| `/z undo` | puts back what the last apply on this character changed |
+| `/z update` | opens the setup popup with every part, also after Later |
+| `/z import` | applies the whole setup and asks the keyboard key again |
+| `/z save` | saves this character for copying |
+| `/z copy [name]` | copies a saved character onto this one; without a name, a list to choose from |
+| `/z undo` | reverts the last apply or copy on this character |
+| `/z export [note]` | saves your setup for publishing (publisher only) |
+| `/z help` | lists the commands |
 
-## Scope
+Each command reloads the UI when it changes something, and none runs in combat.
+
+## Setup sharing
 
 | Shared | Not shared |
 |---|---|
@@ -50,21 +51,36 @@ block `git pull`. If `git pull` reports local changes, `git reset --hard origin/
 | Enabled addons and their settings | Class macros, macros that cast a spell, RareScanner and RXP macros |
 | Target and menu click casting, General macros without spells | Graphics, sound, addon data and per-character profiles |
 
-The exporter's active Edit Mode layout arrives as a layout named `Zeroshin UI`, imported through Edit
-Mode's own layout string and selected; other layouts stay. With every account slot taken it becomes a
-character layout; with every slot taken Edit Mode is left alone. A macro an earlier import brought and
-the setup no longer has is deleted; your own macros never are, even one sharing a name with a shared macro.
+The publisher's active Edit Mode layout arrives as a layout named `Zeroshin UI` and is selected; your
+other layouts stay. With every account slot taken it becomes a character layout; with every slot taken
+Edit Mode is left alone. A macro an earlier import brought and the setup no longer has is deleted; your
+own macros never are, even one sharing a name with a shared macro.
+
+## Character copy
+
+A copy replaces the whole setup of the character you are on: action bars, macros, keybinds, click
+casting, settings, Edit Mode layouts, Cooldown Manager, chat windows, which addons are on and their
+settings. It works across classes: spells the character doesn't know are listed and left off the bars.
+
+1. On the character to copy from: `/z save`, then log out.
+2. Only when copying to another game account whose `SavedVariables` folder isn't linked to this one: in
+   `AddOns`, run `./characters`.
+3. On the character to copy to: `/z copy`, choose the character, click Copy.
+4. Check the result. `/z undo` puts the character back as it was.
+
+Save right before copying: everything comes from the save, except addon settings files the two
+characters already share (same account, or linked `SavedVariables` folders). Those stay as they are, and
+only the saved character's AceDB profile and character data move over. Addons that store characters
+another way keep this character's own entry. Saves stay on this PC and are never published.
 
 ## Publishing
 
-```
-./publish
-```
+1. In game: `/reload`, then `/z export [note]`.
+2. In `AddOns`: `./publish`.
 
-Run after `/z export`. It commits everything with `--allow-empty` and pushes: without that flag, a new
-export alone looks like nothing to git, which then never runs the hook that bundles it. The hook also
-writes each addon's settings-table names from the tocs, and rejects the commit when no export exists,
-the addon list changed since the export, or nothing changed at all. `BarSync` and `WoWCompanion` are
-ignored.
+`./publish` commits everything and pushes. The commit hook writes `Z-Settings/ZBundle.lua`: each addon's
+settings-table names, read from the tocs, and the latest export. It rejects the commit when there is no
+export, when the export was made before the addon list last changed, or when nothing changed.
+`WoWCompanion` and `Z-Settings/ZCharacters.lua` are never committed.
 
 Tests: `uv run --with lupa --with pytest pytest .tests/test_zsettings.py -q`.

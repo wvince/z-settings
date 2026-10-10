@@ -1,11 +1,14 @@
 -- Z-Settings: share your whole interface with friends.
 -- /z export saves your setup for the git commit hook. A friend logging in with a newer setup (ZBundle.lua,
 -- written by that hook) gets a popup listing the parts that differ from their UI; /z update opens it,
--- /z import applies everything, /z undo puts back what the last apply changed. Each reloads the UI itself.
+-- /z import applies everything, /z undo puts back what the last apply or copy changed. Each reloads the UI.
 -- Shared: interface settings, keybinds (converted between QWERTY and AZERTY), Edit Mode, chat windows,
 -- enabled addons, every addon's account-wide settings, target/menu click casting and General macros that
 -- cast no spell. Left out: action bars, Cooldown Manager, character macros and spell macros (class-specific),
--- per-character addon data, BarSync and WoWCompanion. On command only. Never in combat.
+-- per-character addon data and WoWCompanion. On command only. Never in combat.
+-- Copying one of your own characters onto another (/z save, /z copy) lives in Characters.lua.
+
+local _, ns = ...
 
 local FORMAT = "ZS1:"
 local MAX_ACCOUNT_MACROS = (Constants and Constants.MacroConsts and Constants.MacroConsts.MAX_ACCOUNT_MACROS) or 120
@@ -24,9 +27,9 @@ end
 -- state, not setup. Never shared, applied or compared, so the addon rewriting them can't bring the popup back.
 local ADDON_MACROS = { RS_MACRO = true, RXPTargeting = true }
 local MAX_ADDON_TABLE = 300000   -- bytes of one addon's settings before compression; larger ones are listed, not shared
--- never shared or switched: this addon, BarSync (the exporter's own character sync) and WoWCompanion
--- (the exporter's link to the WoW Companion app, installed by its PC task)
-local KEEP_ADDONS = { ["Z-Settings"] = true, BarSync = true, WoWCompanion = true }
+-- never shared or switched: this addon and WoWCompanion (the exporter's link to the WoW Companion app,
+-- installed by its PC task)
+local KEEP_ADDONS = { ["Z-Settings"] = true, WoWCompanion = true }
 
 -- Settings: every one Blizzard stores server-side per account or character (the interface
 -- options), except these categories and the per-character state below
@@ -210,7 +213,8 @@ local function context(command)
   return C_KeyBindings and C_KeyBindings.GetBindingContextForAction and C_KeyBindings.GetBindingContextForAction(command) or nil
 end
 
-local function applyBinds(wanted)
+-- set: the binding set to save into, account or character; the current one when nil
+local function applyBinds(wanted, set)
   local current = readBinds()
   for key, command in pairs(current) do
     if wanted[key] ~= command then SetBinding(key, nil, context(command)) end
@@ -218,7 +222,7 @@ local function applyBinds(wanted)
   for key, command in pairs(wanted) do
     if current[key] ~= command then SetBinding(key, command, context(command)) end
   end
-  SaveBindings(GetCurrentBindingSet())
+  SaveBindings(set or GetCurrentBindingSet())
 end
 
 local function applyCVars(wanted)
@@ -799,15 +803,16 @@ local function restore(snap)
   if snap.clicks then applyClicks(snap.clicks) end   -- spell and macro clicks stay as they are now
 end
 
-local function encode(data)
-  return FORMAT .. C_EncodingUtil.EncodeBase64(C_EncodingUtil.CompressString(C_EncodingUtil.SerializeCBOR(data)))
+local function encode(data, prefix)
+  return (prefix or FORMAT) .. C_EncodingUtil.EncodeBase64(C_EncodingUtil.CompressString(C_EncodingUtil.SerializeCBOR(data)))
 end
 
-local function decode(text)
+local function decode(text, prefix)
+  prefix = prefix or FORMAT
   text = (text or ""):gsub("%s+", "")
-  if text:sub(1, #FORMAT) ~= FORMAT then return nil, "that's not a Z-Settings setup" end
+  if text:sub(1, #prefix) ~= prefix then return nil, "that's not a Z-Settings setup" end
   local ok, data = pcall(function()
-    return C_EncodingUtil.DeserializeCBOR(C_EncodingUtil.DecompressString(C_EncodingUtil.DecodeBase64(text:sub(#FORMAT + 1))))
+    return C_EncodingUtil.DeserializeCBOR(C_EncodingUtil.DecompressString(C_EncodingUtil.DecodeBase64(text:sub(#prefix + 1))))
   end)
   if not ok or type(data) ~= "table" or data.format ~= 1 then return nil, "the setup is damaged or incomplete" end
   return data
@@ -1115,7 +1120,13 @@ local function undo()
   local mine = type(ZSettingsDB.undo) == "table" and ZSettingsDB.undo[key]
   local legacy = type(ZSettingsDB.undo) == "string" and ZSettingsDB.undo   -- an older version's single undo
   local data = mine and decode(mine)
-  if data then
+  if data and data.kind == "copy" then
+    ns.restoreCopy(data)
+    ZSettingsDB.undo[key] = nil
+    note("what the last copy changed is back as it was")
+    ReloadUI()
+    return
+  elseif data then
     restore(data)
     ZSettingsDB.undo[key] = nil
     for _, p in ipairs(PARTS) do
@@ -1153,7 +1164,8 @@ SlashCmdList.ZSETTINGS = function(msg)
     askLayout(function(layout)
       data.layout = layout
       ZSettingsDB = ZSettingsDB or {}
-      ZSettingsDB.export, ZSettingsDB.exportMade = encode(data), data.made   -- copied into ZBundle.lua by the commit hook
+      -- copied into ZBundle.lua by the commit hook, which checks exportVars against the addon list it writes
+      ZSettingsDB.export, ZSettingsDB.exportMade, ZSettingsDB.exportVars = encode(data), data.made, Z_VARS_ID
       note(("your keyboard: %s. Friends on another layout get their keybinds converted."):format(LAYOUT_NAMES[layout] or "unknown"))
       if #skipped > 0 then note("not included (too large or not shareable): " .. table.concat(skipped, ", ")) end
       note("export saved: commit and push the AddOns folder")
@@ -1170,12 +1182,18 @@ SlashCmdList.ZSETTINGS = function(msg)
     checkForUpdate(true)
   elseif cmd == "undo" then
     undo()
+  elseif cmd == "save" then
+    ns.saveCharacter()
+  elseif cmd == "copy" then
+    ns.copyCharacter(rest)
   else
     local text, data = bundle()
-    say("/z update: choose what to apply from " .. (text and ("%s's setup of %s"):format(data.by or "?", data.made or "?") or "the setup in this addon (none yet)"))
-    say("/z import: apply all of it")
-    say("/z undo: put back what the last apply changed")
-    say("/z export [note]: save your own setup for publishing, with an optional note for friends")
+    say("/z update: choose what to apply from " .. (text and ("%s's setup of %s"):format(data.by or "?", data.made or "?") or "the published setup (none yet)"))
+    say("/z import: apply the whole setup")
+    say("/z save: save this character for copying")
+    say("/z copy [name]: copy a saved character onto this one")
+    say("/z undo: revert the last apply or copy on this character")
+    say("/z export [note]: save your setup for publishing")
   end
 end
 
@@ -1197,5 +1215,14 @@ saver:SetScript("OnEvent", function(_, event)
   end
   for _, line in ipairs(ZSettingsDB and ZSettingsDB.notice or {}) do say(line) end
   if ZSettingsDB then ZSettingsDB.notice = nil end
+  if ns.afterLogin() then return end   -- a copy's follow-up reloads the UI; the popup waits for that
   checkForUpdate(false)
 end)
+
+-- what Characters.lua reuses
+ns.say, ns.note, ns.encode, ns.decode, ns.hash = say, note, encode, decode, hash
+ns.readBinds, ns.applyBinds, ns.readCVars, ns.applyCVars = readBinds, applyBinds, readCVars, applyCVars
+ns.readEditMode, ns.readChat, ns.applyChat, ns.readAddons, ns.applyAddons = readEditMode, readChat, applyChat, readAddons, applyAddons
+ns.findMacro, ns.charKey, ns.playerKey, ns.assignPending = findMacro, charKey, playerKey, assignPending
+ns.pending, ns.CLEAR, ns.DATA_TABLES, ns.KEEP_ADDONS, ns.MAX_ADDON_TABLE, ns.PRESETS = pending, CLEAR, DATA_TABLES, KEEP_ADDONS, MAX_ADDON_TABLE, PRESETS
+ns.MAX_ACCOUNT_MACROS = MAX_ACCOUNT_MACROS

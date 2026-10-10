@@ -1,6 +1,8 @@
 ## Interface: 16001
 ## Title: Z-Settings
-## Notes: Zeroshin's setup for friends: a popup at login applies it, /z undo reverts it.
+## Notes: Zeroshin's setup for friends: a popup at login applies it, /z undo reverts it. /z copy copies one of your characters onto another.
 ## SavedVariables: ZSettingsDB
 ZBundle.lua
+ZCharacters.lua
 ZSettings.lua
+Characters.lua

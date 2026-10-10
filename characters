@@ -1,0 +1,18 @@
+#!/bin/sh
+# Gathers the characters saved with /z save on every game account into Z-Settings/ZCharacters.lua, so
+# /z copy on one account lists the characters of the others. Run after logging out of the account you
+# saved on (WoW writes saves at logout); the newest save of a character wins.
+set -e
+root=$(cd "$(dirname "$0")" && pwd)
+out="$root/Z-Settings/ZCharacters.lua"
+saves=$(ls -t "$root"/../../WTF/Account/*/SavedVariables/Z-Settings.lua 2>/dev/null | while IFS= read -r f; do
+  tr -d '\r' < "$f" | grep -E '^\["[^"]+"\] = "ZC1:[A-Za-z0-9+/=]*",?$' || true
+done | awk -F'"' '!seen[$2]++' | sed 's/",\{0,1\}$/",/')
+{
+  echo "-- Written by ./characters. Edits here are overwritten."
+  echo "Z_CHARACTERS = {"
+  [ -n "$saves" ] && echo "$saves"
+  echo "}"
+} > "$out"
+n=$(printf '%s' "$saves" | grep -c . || true)
+echo "$n saved characters in Z-Settings/ZCharacters.lua"

@@ -1,5 +1,6 @@
--- Simulated WoW for Z-Settings: you export, a friend imports on another PC, then undoes.
-local ADDON = ...
+-- Simulated WoW for Z-Settings: you export, a friend imports on another PC, then undoes; then you copy
+-- one of your characters onto another.
+local ADDON, CHARACTERS = ...
 
 local function deepcopy(t, seen)
   if type(t) ~= "table" then return t end
@@ -36,7 +37,7 @@ local function newChar(name, realm, account, known)
     cdm = name .. "-cdm",
     chat = { [1] = { "General", 14, 0, 0, 0, 0.4, true, true, nil, false, "TOPLEFT", 10, 10, 400, 200, { "SAY", "PARTY" }, { "General" } },
              [2] = { "Combat Log", 14, 0, 0, 0, 0.4, true, true, 1, false, nil, nil, nil, nil, nil, {}, {} } },
-    addons = { DBM = true, GTFO = false, Leatrix_Plus = true, BarSync = true } }
+    addons = { DBM = true, GTFO = false, Leatrix_Plus = true, WoWCompanion = true } }
 end
 
 local function serialize(v)
@@ -63,7 +64,7 @@ function date(f) return os.date(f, clock) end  -- WoW global; the test moves clo
 function print(...) local t = {} for i = 1, select("#", ...) do t[#t + 1] = tostring(select(i, ...)) end printed[#printed + 1] = table.concat(t, " ") end
 function UnitName() return cur.name end
 function GetRealmName() return cur.realm end
-function UnitClass() return "Warlock", "WARLOCK" end
+function UnitClass() return cur.class or "Warlock", (cur.class or "Warlock"):upper() end
 function InCombatLockdown() return combat end
 C_Timer = { After = function(_, fn) timers[#timers + 1] = fn end, NewTicker = function() end }
 function CreateFrame() frame = { events = {} }
@@ -141,8 +142,9 @@ function SetBinding(key, command, ctx)
   end
   return true
 end
-function SaveBindings() end
-function GetCurrentBindingSet() return 1 end
+function SaveBindings(set) cur.bindSet = set end
+function LoadBindings() end
+function GetCurrentBindingSet() return cur.bindSet or 1 end
 C_KeyBindings = { GetBindingContextForAction = function() return 1 end }
 
 C_ClickBindings = {
@@ -154,6 +156,7 @@ local CVAR_META = {
   nameplateShowEnemies = { 4, true }, enableMouseoverCast = { 3, true }, autoLootDefault = { 4, true },
   graphicsQuality = { 1, false }, NamePlateHorizontalScale = { 1, false }, nameplateMaxDistance = { 0, false }, hardTrackedQuests = { 4, true },
   SoftTargetEnemy = { 10, true }, enableMultiActionBars = { 10, false }, Sound_MasterVolume = { 7, true },
+  showTargetOfTarget = { 4, false, true },   -- stored per character
 }
 function ConsoleGetAllCommands()
   local out = {}
@@ -163,7 +166,7 @@ end
 C_CVar = {
   GetCVar = function(n) return cur.cvars[n] end,
   SetCVar = function(n, v) cur.cvars[n] = v end,
-  GetCVarInfo = function(n) local m = CVAR_META[n]; return cur.cvars[n], "0", m[2], false, false, false, false end,
+  GetCVarInfo = function(n) local m = CVAR_META[n]; return cur.cvars[n], "0", m[2], m[3] or false, false, false, false end,
 }
 C_EditMode = {
   GetLayouts = function() return deepcopy(cur.account.editmode.layouts) end,
@@ -256,10 +259,17 @@ function CreateFrame(kind, name)
 end
 UIParent, ChatFontNormal = {}, {}
 local SVS = {}   -- addon -> "Var1, Var2"
+Z_VARS_ID = "4242"
 -- what the commit hook writes from the tocs, read from SVS at call time
 Z_VARS = setmetatable({}, { __index = function(_, name)
   local out = {}
   for v in (SVS[name] or ""):gmatch("[^,%s]+") do out[#out + 1] = v end
+  return out
+end })
+SVCS = {}   -- addon -> "CharVar1, CharVar2"
+Z_CHARVARS = setmetatable({}, { __index = function(_, name)
+  local out = {}
+  for v in (SVCS[name] or ""):gmatch("[^,%s]+") do out[#out + 1] = v end
   return out
 end })
 C_AddOns.GetAddOnMetadata = function() return nil end   -- like the client: no SavedVariables field
@@ -272,19 +282,6 @@ local function runTimers()
     for _, fn in ipairs(t) do fn() end
   end
 end
-
-local function login(c)
-  cur, timers, printed = c, {}, {}
-  BarSyncDB = deepcopy(SV.BarSyncDB)
-  frame = nil
-  loadChatFrames()
-  assert(loadstring(ADDON))()
-  assert(frame == nil, "addon must not create a frame (no events)")
-  assert(#timers == 0, "addon must not start timers")
-end
-local function bs(cmd) SlashCmdList.BARSYNC(cmd) end
-
-local function logout() SV.BarSyncDB = deepcopy(BarSyncDB) end
 
 -- checks -------------------------------------------------------------------------------------
 local passed, failed = 0, 0
@@ -326,17 +323,17 @@ me.clicks = { { type = 3, actionID = 1, button = "LeftButton", modifiers = 0 }, 
 me.cvars.nameplateShowEnemies = "0"; me.cvars.NamePlateHorizontalScale = "1.4"; me.cvars.nameplateMaxDistance = "60"; me.cvars.graphicsQuality = "3"; me.cvars.enableMultiActionBars = "31"
 accA.editmode.layouts.layouts[1].systems[1].x = 77
 me.chat[3] = { "Guild", 18, 0, 0, 0, 0.6, true, true, 3, false, nil, nil, nil, nil, nil, { "GUILD" }, {} }
-me.addons = { Leatrix_Plus = false, Attune = true, Guide = true, DBM = true, BetterBlizzFrames = true, BigData = true, Weird = true, BarSync = true, ["Z-Settings"] = true }
+me.addons = { Leatrix_Plus = false, Attune = true, Guide = true, DBM = true, BetterBlizzFrames = true, BigData = true, Weird = true, WoWCompanion = true, ["Z-Settings"] = true }
 me.cdm = "my-warlock-cdm"
 SVS = { DBM = "DBM_AllSavedOptions", BetterBlizzFrames = "BetterBlizzFramesDB", BigData = "BigDataDB", Weird = "WeirdDB",
-        BarSync = "BarSyncDB", ["Z-Settings"] = "ZSettingsDB", Attune = "Attune_DB", Guide = "GuideDB" }
+        WoWCompanion = "WoWCompanionDB", ["Z-Settings"] = "ZSettingsDB", Attune = "Attune_DB", Guide = "GuideDB" }
 
 -- the friend's own setup
 accB.general = { { "Buddy macro", 9, "/wave" } }
 accB.binds[1][2] = "W"
 friend.clicks = { { type = 3, actionID = 2, button = "LeftButton", modifiers = 0 }, { type = 1, actionID = 133, button = "RightButton", modifiers = 1 } }
 friend.cvars.nameplateShowEnemies = "1"
-friend.addons = { Attune = true, Guide = true, DBM = true, BetterBlizzFrames = nil, BigData = false, Weird = false, BarSync = false, ["Z-Settings"] = true, Details = true }
+friend.addons = { Attune = true, Guide = true, DBM = true, BetterBlizzFrames = nil, BigData = false, Weird = false, WoWCompanion = false, ["Z-Settings"] = true, Details = true }
 friend.addons.BetterBlizzFrames = nil  -- not installed
 friend.cdm = "friend-mage-cdm"
 
@@ -348,7 +345,9 @@ local function useChar(c, globals)
   ZSettingsDB = c.ZSettingsDB
   c.loaded = {}
   for name, on in pairs(c.addons) do c.loaded[name] = on end
-  assert(loadstring(ADDON))()
+  local ns = {}
+  assert(loadstring(ADDON))("Z-Settings", ns)
+  assert(loadstring(CHARACTERS))("Z-Settings", ns)
 end
 
 -- 1. export on my character
@@ -367,7 +366,7 @@ local function fire(event)
 end
 useChar(me, { DBM_AllSavedOptions = { warnings = true, bars = { size = 2 } }, BetterBlizzFramesDB = { castbar = 1 },
   BigDataDB = { blob = string.rep("x", 400000) }, Attune_DB = { toons = { Zeroshin = 1 } },
-  GuideDB = { profileKeys = { ["Zeroshin - PvP"] = "Zeroshin - PvP" }, profiles = { ["Zeroshin - PvP"] = { size = 2 } } }, WeirdDB = { f = function() end }, BarSyncDB = { secret = 1 } })
+  GuideDB = { profileKeys = { ["Zeroshin - PvP"] = "Zeroshin - PvP" }, profiles = { ["Zeroshin - PvP"] = { size = 2 } } }, WeirdDB = { f = function() end }, WoWCompanionDB = { secret = 1 } })
 ZSettingsDB = nil
 printed, reloads = {}, 0
 SlashCmdList.ZSETTINGS("export")
@@ -375,6 +374,7 @@ check("1 export waits for the keyboard", reloads == 0 and ZSettingsDB == nil)
 pressKeys("Q")
 local text = ZSettingsDB and ZSettingsDB.export or ""
 check("1 export saved for the commit hook", text:sub(1, 4) == "ZS1:" and ZSettingsDB.exportMade ~= nil)
+check("1 export records the addon list it was made with", ZSettingsDB.exportVars == Z_VARS_ID)
 check("1 export reloads the UI", reloads == 1)
 check("1 my keyboard detected as QWERTY", said("QWERTY"))
 local data = C_EncodingUtil.DeserializeCBOR(C_EncodingUtil.DecompressString(C_EncodingUtil.DecodeBase64(text:sub(5))))
@@ -392,7 +392,7 @@ check("1 only target/menu clicks shared", #data.clicks == 1 and data.clicks[1].t
 check("1 graphics not shared", data.cvars.graphicsQuality == nil)
 check("1 local nameplate settings shared", data.cvars.NamePlateHorizontalScale == "1.4" and data.cvars.nameplateMaxDistance == "60")
 check("1 DBM settings shared", data.settings.DBM_AllSavedOptions ~= nil)
-check("1 BarSync never shared", data.settings.BarSyncDB == nil)
+check("1 WoWCompanion never shared", data.settings.WoWCompanionDB == nil)
 check("1 oversized table left out", data.settings.BigDataDB == nil)
 check("1 unshareable table left out", data.settings.WeirdDB == nil)
 check("1 character data left out", data.settings.Attune_DB == nil)
@@ -406,7 +406,7 @@ check("1 messages repeated after the reload", said("commit and push") and said("
 check("1 messages shown once", ZSettingsDB.notice == nil)
 
 -- 2. the friend pulls the repo and imports the setup that ships with the addon
-BetterBlizzFramesDB, BigDataDB, WeirdDB, BarSyncDB = nil, nil, nil, nil   -- the friend's PC has none of these
+BetterBlizzFramesDB, BigDataDB, WeirdDB, WoWCompanionDB = nil, nil, nil, nil   -- the friend's PC has none of these
 Z_BUNDLE = text
 useChar(friend, { DBM_AllSavedOptions = { warnings = false } })
 friend.ZSettingsDB = nil
@@ -454,7 +454,7 @@ check("2 addon friend lacks skipped", BetterBlizzFramesDB == nil)
 check("2 friend's Cooldown Manager untouched", friend.cdm == "friend-mage-cdm")
 check("2 friend's bars untouched", next(friend.bars) == nil)
 check("2 Z-Settings stays on", friend.addons["Z-Settings"] == true)
-check("2 BarSync not switched on", friend.addons.BarSync == false)
+check("2 WoWCompanion not switched on", friend.addons.WoWCompanion == false)
 check("2 undo step kept for this character", friend.ZSettingsDB and type(friend.ZSettingsDB.undo) == "table" and friend.ZSettingsDB.undo["Buddy-Classic Beta PvP"] ~= nil)
 check("2 missing addon reported", said("BetterBlizzFrames"))
 -- an addon that rewrites its table at logout doesn't undo the import
@@ -1050,5 +1050,142 @@ do
   check("8 an undo on one character doesn't quiet another", #popupBoxes() > 0)
 end
 Z_BUNDLE = nil
+
+-- 9. copying one of my characters onto another, any class, on the same game account and across accounts
+do
+  SVS = { DBM = "DBM_AllSavedOptions", Guide = "GuideDB", WoWCompanion = "WoWCompanionDB", ["Z-Settings"] = "ZSettingsDB" }
+  SVCS = { DBM = "DBM_Char", GTFO = "GTFOChar" }
+  local cAcc = newAccount()
+  cAcc.general = { { "Shared", 1, "/wave" } }
+  local src = newChar("Src", "R", cAcc, { "Shadow Bolt", "Fear" })
+  local dst = newChar("Dst", "R", cAcc, { "Fear" })
+  dst.class = "Mage"
+  src.charMacros = { { "Tap", 5, "/cast Life Tap" } }
+  dst.charMacros = { { "Blink", 1, "/cast Blink" } }
+  src.bars = { [1] = { kind = "spell", id = 1 }, [2] = { kind = "spell", id = 6 }, [3] = { kind = "macro", name = "Tap" }, [4] = { kind = "item", id = 6948 } }
+  dst.bars = { [1] = { kind = "spell", id = 6 }, [9] = { kind = "macro", name = "Blink" } }
+  src.clicks = { { type = 2, actionID = 121, button = "LeftButton", modifiers = 2 } }
+  src.cvars.showTargetOfTarget, dst.cvars.showTargetOfTarget = "1", "0"
+  src.cvars.nameplateShowEnemies, dst.cvars.nameplateShowEnemies = "0", "1"
+  src.cvars.enableMultiActionBars, dst.cvars.enableMultiActionBars = "31", "1"   -- which bars show
+  cAcc.editmode.layouts.layouts[1].systems[1].x = 40   -- Src's account layout, before Dst's account moves it
+  cAcc.editmode.layouts.layouts[2] = { layoutName = "Src own", layoutType = 2, systems = { { system = 0, x = 3 } } }
+  cAcc.editmode.layouts.activeLayout = 4
+  src.cdm, dst.cdm = "src-cdm", "dst-cdm"
+  src.chat[3] = { "Trade", 12, 0, 0, 0, 0.5, true, true, 3, false, nil, nil, nil, nil, nil, { "CHANNEL" }, {} }
+  src.addons = { DBM = true, GTFO = true, Guide = true, ["Z-Settings"] = true, WoWCompanion = true }
+  dst.addons = { DBM = true, GTFO = false, Guide = true, ["Z-Settings"] = true, WoWCompanion = false }
+  local guide = { profileKeys = { ["Src - R"] = "Src - R", ["Other - R"] = "Default" },
+    profiles = { ["Src - R"] = { size = 5 }, Default = { size = 1 } }, char = { ["Src - R"] = { seen = 1 } } }
+
+  useChar(src, { DBM_Char = { src = 1 }, GTFOChar = { g = 1 }, GuideDB = deepcopy(guide), DBM_AllSavedOptions = { warnings = true } })
+  ZSettingsDB = { applied = { ["Src-R"] = { editmode = 111 }, ["Dst-R"] = { editmode = 222 } } }
+  printed = {}
+  SlashCmdList.ZSETTINGS("save")
+  local db = ZSettingsDB
+  check("9 save kept for this character", db.characters and type(db.characters["Src-R"]) == "string" and db.characters["Src-R"]:sub(1, 4) == "ZC1:")
+  check("9 save says what it kept", said("saved Src%-R"))
+  local saved = C_EncodingUtil.DeserializeCBOR(C_EncodingUtil.DecompressString(C_EncodingUtil.DecodeBase64(db.characters["Src-R"]:sub(5))))
+  check("9 save holds per-character tables", saved.charTables.DBM_Char ~= nil and saved.charTables.GTFOChar ~= nil)
+  check("9 save leaves WoWCompanion and Z-Settings out", saved.accountTables.WoWCompanionDB == nil and saved.accountTables.ZSettingsDB == nil)
+
+  -- the help lists every command
+  printed = {}
+  SlashCmdList.ZSETTINGS("help")
+  check("9 help lists every command", said("/z update") and said("/z import") and said("/z undo") and said("/z export") and said("/z save") and said("/z copy"))
+
+  -- since the save, an account-wide addon profile changed
+  guide.profiles.Default.size = 2
+  useChar(dst, { DBM_Char = { dst = 1 }, GTFOChar = nil, GuideDB = deepcopy(guide) })
+  ZSettingsDB = db
+  cAcc.editmode.layouts.layouts[1].systems[1].x = 12   -- Dst's account had moved the frames
+  printed, reloads = {}, 0
+  SlashCmdList.ZSETTINGS("copy src")
+  check("9 copy reloads the UI", reloads == 1)
+  check("9 bars copied by what they hold", barName(dst, 2) == "spell:6" and barName(dst, 3) == "macro:Tap" and barName(dst, 4) == "item:6948")
+  check("9 a spell this class lacks is left off and listed", dst.bars[1] == nil and said("Shadow Bolt"))
+  check("9 a button the source lacks is cleared", GetActionInfo(9) == nil)
+  check("9 character macros replaced", GetMacroIndexByName("Tap") > 0 and GetMacroIndexByName("Blink") == 0)
+  check("9 General macros copied", macroBody("Shared") == "/wave")
+  check("9 macro click follows the macro", #dst.clicks == 1 and dst.clicks[1].type == 2 and dst.clicks[1].actionID == GetMacroIndexByName("Tap"))
+  check("9 per-character setting copied", dst.cvars.showTargetOfTarget == "1")
+  check("9 the setup popup compares against the source's layout", db.applied["Dst-R"].editmode == 111)
+  check("9 account setting copied", dst.cvars.nameplateShowEnemies == "0")
+  check("9 which action bars show copied", dst.cvars.enableMultiActionBars == "31")
+  local cem = cAcc.editmode.layouts
+  check("9 UI positions copied", cem.layouts[1].systems[1].x == 40)
+  check("9 source's layout selected", cem.activeLayout == 4 and dst.activeLayout == 4 and cem.layouts[2].layoutName == "Src own")
+  check("9 Cooldown Manager and chat copied", dst.cdm == "src-cdm" and dst.chat[3][1] == "Trade")
+  check("9 addons switched like the source", dst.addons.GTFO == true and dst.addons.WoWCompanion == false)
+  check("9 per-character addon table copied", DBM_Char.src == 1 and DBM_Char.dst == nil)
+  check("9 profile copied under this character's name", GuideDB.profileKeys["Dst - R"] == "Dst - R" and GuideDB.profiles["Dst - R"].size == 5)
+  check("9 character data copied", GuideDB.char["Dst - R"] and GuideDB.char["Dst - R"].seen == 1)
+  check("9 shared addon files: shared profile as it is now", GuideDB.profiles.Default.size == 2 and GuideDB.profileKeys["Other - R"] == "Default")
+  check("9 an addon it switched on waits for the reload", said("one more reload follows for the settings of: GTFO"))
+
+  -- the reload: GTFO runs now and gets its table, then one more reload
+  dst.addons.GTFO = true
+  useChar(dst, { GTFOChar = { old = 1 } })
+  ZSettingsDB = db
+  printed, reloads = {}, 0
+  fire("PLAYER_LOGIN")
+  check("9 after the reload the switched-on addon's table follows", GTFOChar.g == 1 and reloads == 1)
+  check("9 the setup popup waits for that reload", #popupBoxes() == 0)
+  printed, reloads = {}, 0
+  fire("PLAYER_LOGIN")
+  check("9 the follow-up runs once", reloads == 0)
+
+  -- undo puts this character back
+  useChar(dst, {})
+  ZSettingsDB = db
+  SlashCmdList.ZSETTINGS("undo")
+  check("9 undo: bars back", barName(dst, 1) == "spell:6" and barName(dst, 9) == "macro:Blink" and GetActionInfo(3) == nil)
+  check("9 undo: macros back", GetMacroIndexByName("Blink") > 0 and GetMacroIndexByName("Tap") == 0)
+  check("9 undo: settings, Cooldown Manager, addons back", dst.cvars.showTargetOfTarget == "0" and dst.cdm == "dst-cdm" and dst.addons.GTFO == false)
+  check("9 undo: addon tables back, the follow-up's too", DBM_Char.dst == 1 and GTFOChar.old == 1 and GuideDB.profileKeys["Dst - R"] == nil)
+  check("9 undo: the source's own entries stay", GuideDB.profileKeys["Src - R"] == "Src - R")
+  check("9 undo: the setup popup's record back", db.applied["Dst-R"].editmode == 222)
+
+  -- another game account: the save arrives through ./characters
+  Z_CHARACTERS = { ["Src-R"] = db.characters["Src-R"] }
+  local xAcc = newAccount()
+  xAcc.general = { { "Mine", 2, "/sit" } }
+  local x = newChar("Xen", "R", xAcc, { "Fear" })
+  x.addons = { DBM = true, GTFO = false, Guide = true, ["Z-Settings"] = true }
+  useChar(x, { GuideDB = { profileKeys = { ["Yon - R"] = "Yon - R" }, profiles = { ["Yon - R"] = { size = 9 } } }, DBM_AllSavedOptions = { warnings = false } })
+  ZSettingsDB = nil
+  printed, reloads = {}, 0
+  SlashCmdList.ZSETTINGS("copy")
+  local row
+  for _, o in ipairs(frames) do if o.kind == "Button" and o.text:find("^Src%-R, Warlock, saved ") then row = o end end
+  check("9 the picker lists the other account's save", row ~= nil)
+  check("9 Copy waits for a choice", button("Copy") and button("Copy").enabled == false and reloads == 0)
+  if row then row.scripts.OnClick() end
+  check("9 choosing a character copies nothing yet", reloads == 0 and button("Copy").enabled == true)
+  click("Copy")
+  check("9 other account: copy reloads", reloads == 1)
+  check("9 other account: General macros copied", macroBody("Shared") == "/wave" and GetMacroIndexByName("Mine") == 0)
+  check("9 other account: keybinds copied", keyOf(xAcc, "MOVEFORWARD") == keyOf(cAcc, "MOVEFORWARD"))
+  check("9 other account: account settings copied", x.cvars.nameplateShowEnemies == "0")
+  check("9 other account: account addon table copied", DBM_AllSavedOptions.warnings == true)
+  check("9 other account: its other characters keep their profiles", GuideDB.profileKeys["Yon - R"] == "Yon - R" and GuideDB.profiles["Yon - R"].size == 9)
+  check("9 other account: profile copied", GuideDB.profileKeys["Xen - R"] == "Xen - R" and GuideDB.profiles["Xen - R"].size == 5)
+  check("9 other account: layouts copied", xAcc.editmode.layouts.layouts[2] and xAcc.editmode.layouts.layouts[2].layoutName == "Src own")
+
+  -- nothing saved, and a name that isn't saved
+  useChar(newChar("Lonely", "R", newAccount(), {}), {})
+  ZSettingsDB, Z_CHARACTERS = nil, nil
+  printed, reloads = {}, 0
+  SlashCmdList.ZSETTINGS("copy")
+  check("9 nothing saved is explained", said("no saved characters") and reloads == 0)
+  Z_CHARACTERS = { ["Src-R"] = db.characters["Src-R"] }
+  printed = {}
+  SlashCmdList.ZSETTINGS("copy Nobody")
+  check("9 an unknown name lists the saved ones", said("Src%-R") and reloads == 0)
+  combat = true; printed = {}
+  SlashCmdList.ZSETTINGS("copy Src"); combat = false
+  check("9 no copy in combat", said("not in combat") and reloads == 0)
+  Z_CHARACTERS = nil
+end
 
 io.write(("%d passed, %d failed\n"):format(passed, failed))

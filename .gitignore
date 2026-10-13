@@ -1,5 +1,6 @@
-# Zeroshin's own addon, never shared
+# Zeroshin's own addons, never shared
 WoWCompanion/
+SpyGodMode/
 # your saved characters, written by ./characters
 Z-Settings/ZCharacters.lua
 __pycache__/

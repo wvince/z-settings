@@ -27,9 +27,9 @@ end
 -- state, not setup. Never shared, applied or compared, so the addon rewriting them can't bring the popup back.
 local ADDON_MACROS = { RS_MACRO = true, RXPTargeting = true }
 local MAX_ADDON_TABLE = 300000   -- bytes of one addon's settings before compression; larger ones are listed, not shared
--- never shared or switched: this addon and WoWCompanion (the exporter's link to the WoW Companion app,
--- installed by its PC task)
-local KEEP_ADDONS = { ["Z-Settings"] = true, WoWCompanion = true }
+-- never shared or switched: this addon, WoWCompanion (the exporter's link to the WoW Companion app,
+-- installed by its PC task) and SpyGodMode (the exporter's own, kept out of the repo)
+local KEEP_ADDONS = { ["Z-Settings"] = true, WoWCompanion = true, SpyGodMode = true }
 
 -- Settings: every one Blizzard stores server-side per account or character (the interface
 -- options), except these categories and the per-character state below

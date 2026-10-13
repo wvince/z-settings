@@ -4,8 +4,9 @@
 #   Z_VARS_ID   a checksum of Z_VARS; /z export records the one the game had loaded
 #   Z_CHARVARS  each addon's SavedVariablesPerCharacter names, for /z save and /z copy
 #   Z_BUNDLE    the latest /z export, which WoW writes to WTF\...\SavedVariables at /reload
-# and refuses the commit when the export was made with another Z_VARS (it misses addons' settings)
-# or when nothing at all changed.
+# Addon folders git ignores are never shared, so they are left out of both lists. The commit is
+# refused when the export was made before a shared addon (or its names) arrived, so it misses that
+# addon's settings, or when nothing at all changed.
 set -e
 root=$(git rev-parse --show-toplevel)
 sv=$(ls -t "$root"/../../WTF/Account/*/SavedVariables/Z-Settings.lua 2>/dev/null | head -n 1)
@@ -20,6 +21,7 @@ table() {
   echo "$1 = {"
   for dir in "$root"/*/; do
     addon=$(basename "$dir")
+    git -C "$root" check-ignore -q "$addon/" && continue
     names=$(cat "$dir"*.toc 2>/dev/null | tr -d '\r' | sed -n "s/^## *$2 *: *//p" |
       tr ',' '\n' | sed 's/^[[:space:]]*//; s/[[:space:]]*$//' | grep -v '^$' | sort -u |
       sed 's/.*/"&"/' | paste -sd, - || true)
@@ -30,6 +32,21 @@ table() {
 vars=$(table Z_VARS SavedVariables)
 id=$(printf '%s\n' "$vars" | cksum | cut -d' ' -f1)
 out="$root/Z-Settings/ZBundle.lua"
+# The Z_VARS the game had loaded at the export: the bundle carrying the exported id, as it stands
+# before this run rewrites it or in any commit. A shared addon line missing from it is an addon whose
+# settings the export lacks; addons gone since, or ignored, don't matter.
+loaded=$(mktemp)
+trap 'rm -f "$loaded"' EXIT
+if [ -n "$exported" ]; then
+  for rev in worktree $(git -C "$root" log --format=%H -- Z-Settings/ZBundle.lua); do
+    if [ "$rev" = worktree ]; then cat "$out" 2>/dev/null || true
+    else git -C "$root" show "$rev:Z-Settings/ZBundle.lua"; fi | tr -d '\r' > "$loaded"
+    grep -qxF "Z_VARS_ID = \"$exported\"" "$loaded" && break
+    : > "$loaded"
+  done
+fi
+missing=$(printf '%s\n' "$vars" | grep '^  \[' | grep -vxF -f "$loaded" |
+  sed 's/^  \["\([^"]*\)"\].*/\1/' | paste -sd' ' - || true)
 {
   echo "-- Written by the commit hook. Edits here are overwritten."
   printf '%s\n' "$vars"
@@ -37,8 +54,12 @@ out="$root/Z-Settings/ZBundle.lua"
   table Z_CHARVARS SavedVariablesPerCharacter
   printf 'Z_BUNDLE = "%s"\n' "$text"
 } > "$out"
-if [ "$exported" != "$id" ]; then
-  echo "The addon list changed since your last export, so it misses some addons' settings." >&2
+if [ ! -s "$loaded" ] || [ -n "$missing" ]; then
+  if [ -s "$loaded" ]; then
+    echo "Your last export was made before these addons were added: $missing" >&2
+  else
+    echo "Your last export was made before Z-Settings knew your addons' settings names." >&2
+  fi
   echo "In game: /reload, then /z export. Then publish again." >&2
   exit 1
 fi

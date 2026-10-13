@@ -121,5 +121,31 @@ def test_hook_catches_an_addon_added_after_the_export(tmp_path):
     (addons / "NewAddon").mkdir()
     (addons / "NewAddon" / "NewAddon.toc").write_text("## SavedVariables: NewDB\n")
     r = run_hook(addons)
-    assert r.returncode != 0 and "/reload" in r.stderr
+    assert r.returncode != 0 and "/reload" in r.stderr and "NewAddon" in r.stderr
     assert run_hook(addons).returncode != 0   # still refused until a new export
+
+
+def test_hook_ignores_addons_that_are_never_shared(tmp_path):
+    addons = fake_install(tmp_path, {"2#3": "ZS1:x"})
+    run_hook(addons)
+    export_with_loaded_list(addons, "2#3")
+    git = ["git", "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "--no-verify", "-m", "setup"]
+    assert run_hook(addons).returncode == 0
+    subprocess.run(git, cwd=addons, check=True)
+    # a private addon, gitignored: no re-export, and its names stay out of the bundle
+    (addons / "Private").mkdir()
+    (addons / "Private" / "Private.toc").write_text("## SavedVariables: PrivateDB\n")
+    (addons / ".gitignore").write_text("Private/\n")
+    subprocess.run(["git", "add", ".gitignore"], cwd=addons, check=True)
+    r = run_hook(addons)
+    assert r.returncode == 0, r.stderr
+    assert "PrivateDB" not in (addons / "Z-Settings" / "ZBundle.lua").read_text()
+    subprocess.run(git, cwd=addons, check=True)
+    # an addon removed since the export: nothing missing, so still no re-export
+    for f in (addons / "GTFO").iterdir():
+        f.unlink()
+    (addons / "GTFO").rmdir()
+    (addons / "README.md").write_text("changed\n")
+    subprocess.run(["git", "add", "README.md"], cwd=addons, check=True)
+    r = run_hook(addons)
+    assert r.returncode == 0, r.stderr

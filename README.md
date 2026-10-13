@@ -80,7 +80,8 @@ another way keep this character's own entry. Saves stay on this PC and are never
 
 `./publish` commits everything and pushes. The commit hook writes `Z-Settings/ZBundle.lua`: each addon's
 settings-table names, read from the tocs, and the latest export. It rejects the commit when there is no
-export, when the export was made before the addon list last changed, or when nothing changed.
-`WoWCompanion` and `Z-Settings/ZCharacters.lua` are never committed.
+export, when a shared addon was added after the export (it names them), or when nothing changed. Addon
+folders in `.gitignore` are never shared and never ask for a re-export. `Z-Settings/ZCharacters.lua` is
+never committed.
 
 Tests: `uv run --with lupa --with pytest pytest .tests/test_zsettings.py -q`.

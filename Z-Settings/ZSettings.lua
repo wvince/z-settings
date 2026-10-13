@@ -914,16 +914,18 @@ end
 local function showPrompt(title)
   if not window then
     window = CreateFrame("Frame", "ZSettingsWindow", UIParent, "BackdropTemplate")
-    window:SetSize(460, 100)
+    window:SetSize(520, 132)
     window:SetPoint("CENTER")
     window:SetFrameStrata("DIALOG")
     window:SetBackdrop({ bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
       edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", tile = true, tileSize = 32, edgeSize = 32,
       insets = { left = 8, right = 8, top = 8, bottom = 8 } })
     window.title = window:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    window.title:SetPoint("TOP", 0, -20)
-    window.hint = window:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    window.hint:SetPoint("TOP", window.title, "BOTTOM", 0, -14)
+    window.title:SetPoint("TOP", 0, -24)
+    window.hint = window:CreateFontString(nil, "OVERLAY", "GameFontHighlightMedium")
+    window.hint:SetPoint("TOP", window.title, "BOTTOM", 0, -16)
+    window.hint:SetSize(460, 40) -- two lines, so the longer hint wraps instead of running off the edge
+    window.hint:SetJustifyV("TOP")
     local close = CreateFrame("Button", nil, window, "UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", -6, -6)
     -- closing cancels: no key press is waited for any more
@@ -962,32 +964,34 @@ local popup
 local function showUpdate(text, data, offer, updated)
   if not popup then
     popup = CreateFrame("Frame", "ZSettingsUpdate", UIParent, "BackdropTemplate")
-    popup:SetSize(400, 150 + #PARTS * 24)
+    popup:SetSize(460, 172 + #PARTS * 30)
     popup:SetPoint("CENTER")
     popup:SetFrameStrata("DIALOG")
     popup:SetBackdrop({ bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
       edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", tile = true, tileSize = 32, edgeSize = 32,
       insets = { left = 8, right = 8, top = 8, bottom = 8 } })
     popup.title = popup:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    popup.title:SetPoint("TOP", 0, -20)
+    popup.title:SetPoint("TOP", 0, -24)
     popup.note = popup:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    popup.note:SetPoint("TOP", popup.title, "BOTTOM", 0, -8)
+    popup.note:SetPoint("TOP", popup.title, "BOTTOM", 0, -10)
+    popup.note:SetSize(400, 32) -- room for a two-line note from the exporter
+    popup.note:SetJustifyV("TOP")
     popup.boxes = {}
     for i, p in ipairs(PARTS) do
       local box = CreateFrame("CheckButton", nil, popup, "UICheckButtonTemplate")
-      box:SetPoint("TOPLEFT", 28, -60 - (i - 1) * 24)
-      box.label = popup:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-      box.label:SetPoint("LEFT", box, "RIGHT", 4, 0)
+      box:SetPoint("TOPLEFT", 36, -96 - (i - 1) * 30)
+      box.label = popup:CreateFontString(nil, "OVERLAY", "GameFontHighlightMedium")
+      box.label:SetPoint("LEFT", box, "RIGHT", 6, 0)
       box.key = p.key
       popup.boxes[i] = box
     end
     popup.apply = CreateFrame("Button", nil, popup, "UIPanelButtonTemplate")
-    popup.apply:SetSize(120, 24)
-    popup.apply:SetPoint("BOTTOMRIGHT", popup, "BOTTOM", -6, 18)
+    popup.apply:SetSize(140, 30)
+    popup.apply:SetPoint("BOTTOMRIGHT", popup, "BOTTOM", -8, 22)
     popup.apply:SetText("Apply")
     popup.later = CreateFrame("Button", nil, popup, "UIPanelButtonTemplate")
-    popup.later:SetSize(120, 24)
-    popup.later:SetPoint("BOTTOMLEFT", popup, "BOTTOM", 6, 18)
+    popup.later:SetSize(140, 30)
+    popup.later:SetPoint("BOTTOMLEFT", popup, "BOTTOM", 8, 22)
     popup.later:SetText("Later")
   end
   popup.title:SetText(("%s's setup, %s"):format(data.by or "?", data.made or "?"))
@@ -997,7 +1001,7 @@ local function showUpdate(text, data, offer, updated)
     local box = popup.boxes[i]
     if offer[p.key] then
       box:ClearAllPoints()
-      box:SetPoint("TOPLEFT", 28, -60 - row * 24)
+      box:SetPoint("TOPLEFT", 36, -96 - row * 30)
       row = row + 1
       box:SetChecked(true)
       box.label:SetText(p.label .. (updated[p.key] and " (updated)" or ""))
@@ -1007,7 +1011,7 @@ local function showUpdate(text, data, offer, updated)
       box:Hide(); box.label:Hide()
     end
   end
-  popup:SetHeight(150 + row * 24)
+  popup:SetHeight(172 + row * 30)
   popup.apply:SetScript("OnClick", function()
     local chosen, any = {}, false
     for _, box in ipairs(popup.boxes) do

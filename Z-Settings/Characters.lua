@@ -407,25 +407,26 @@ local function showPicker(list)
   local keys = sortedKeys(list)
   if not picker then
     picker = CreateFrame("Frame", "ZSettingsCopy", UIParent, "BackdropTemplate")
-    picker:SetWidth(460)
+    picker:SetWidth(520)
     picker:SetPoint("CENTER")
     picker:SetFrameStrata("DIALOG")
     picker:SetBackdrop(BACKDROP)
     picker.title = picker:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    picker.title:SetPoint("TOP", 0, -20)
+    picker.title:SetPoint("TOP", 0, -24)
     picker.title:SetText("Copy a character")
     picker.note = picker:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    picker.note:SetPoint("TOP", picker.title, "BOTTOM", 0, -8)
+    picker.note:SetPoint("TOP", picker.title, "BOTTOM", 0, -10)
+    picker.note:SetWidth(460)
     picker.note:SetText("Replaces this character's whole setup. /z undo reverts it.")
     local close = CreateFrame("Button", nil, picker, "UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", -6, -6)
     picker.copy = CreateFrame("Button", nil, picker, "UIPanelButtonTemplate")
-    picker.copy:SetSize(120, 24)
-    picker.copy:SetPoint("BOTTOMRIGHT", picker, "BOTTOM", -6, 18)
+    picker.copy:SetSize(140, 30)
+    picker.copy:SetPoint("BOTTOMRIGHT", picker, "BOTTOM", -8, 22)
     picker.copy:SetText("Copy")
     picker.cancel = CreateFrame("Button", nil, picker, "UIPanelButtonTemplate")
-    picker.cancel:SetSize(120, 24)
-    picker.cancel:SetPoint("BOTTOMLEFT", picker, "BOTTOM", 6, 18)
+    picker.cancel:SetSize(140, 30)
+    picker.cancel:SetPoint("BOTTOMLEFT", picker, "BOTTOM", 8, 22)
     picker.cancel:SetText("Cancel")
     picker.cancel:SetScript("OnClick", function() picker:Hide() end)
     picker.rows = {}
@@ -440,22 +441,24 @@ local function showPicker(list)
   for i, key in ipairs(keys) do
     local row = picker.rows[i] or CreateFrame("Button", nil, picker, "UIPanelButtonTemplate")
     picker.rows[i] = row
-    row:SetSize(400, 24)
+    row:SetSize(460, 30)
     row:ClearAllPoints()
-    row:SetPoint("TOP", 0, -64 - (i - 1) * 28)
+    row:SetPoint("TOP", 0, -72 - (i - 1) * 34)
     local d = ns.decode(list[key], FORMAT)
     row:SetText(d and ("%s, %s, saved %s"):format(key, d.className or "?", d.made or "?") or (key .. ", damaged: save it again"))
     row:UnlockHighlight()
+    row:SetNormalFontObject("GameFontHighlight")
     row:SetScript("OnClick", function()
-      for _, r in ipairs(picker.rows) do r:UnlockHighlight() end
+      for _, r in ipairs(picker.rows) do r:UnlockHighlight(); r:SetNormalFontObject("GameFontHighlight") end
       row:LockHighlight()
+      row:SetNormalFontObject("GameFontNormal") -- the chosen row reads gold, the rest white
       chosen = key
       picker.copy:SetEnabled(d ~= nil)
     end)
     row:Show()
   end
   for i = #keys + 1, #picker.rows do picker.rows[i]:Hide() end
-  picker:SetHeight(124 + #keys * 28)
+  picker:SetHeight(140 + #keys * 34)
   picker:Show()
 end
 

@@ -14,11 +14,12 @@ HOOK = ADDONS / ".githooks" / "pre-commit"
 def test_simulated_export_import_undo():
     addon = (ADDONS / "Z-Settings" / "ZSettings.lua").read_text()
     characters = (ADDONS / "Z-Settings" / "Characters.lua").read_text()
+    minimap = (ADDONS / "Z-Settings" / "Minimap.lua").read_text()
     sim = (ADDONS / ".tests" / "sim.lua").read_text()
     lua = lua51.LuaRuntime()
     out = []
     lua.globals().io = lua.table(write=lambda *a: out.append("".join(str(x) for x in a)))
-    lua.eval("function(src, addon, chars) local f, e = loadstring(src) if not f then error(e) end return f(addon, chars) end")(sim, addon, characters)
+    lua.eval("function(src, ...) local f, e = loadstring(src) if not f then error(e) end return f(...) end")(sim, addon, characters, minimap)
     report = "".join(out)
     assert not [l for l in report.splitlines() if l.startswith("FAIL")], report
     assert " 0 failed" in report

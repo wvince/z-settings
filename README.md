@@ -42,6 +42,9 @@ block `git pull`. If `git pull` reports local changes, `git reset --hard origin/
 | `/z help` | lists the commands |
 
 Each command reloads the UI when it changes something, and none runs in combat.
+The minimap button (drag it round the edge) opens the same commands as a menu, Export only on the PC
+that publishes. Its orange dot means the published setup still changes something on this character,
+also after Later.
 
 ## Setup sharing
 

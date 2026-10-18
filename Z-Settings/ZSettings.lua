@@ -1038,8 +1038,12 @@ local function checkForUpdate(force)
   if not text then if force then say(data) end return end
   ZSettingsDB = ZSettingsDB or {}
   -- a PC that exports is the source: ZBundle.lua there trails the newest export until the next commit
-  if not force and (ZSettingsDB.export or laterFor()[charKey()] == hash(text)) then return end
+  local source = ZSettingsDB.export ~= nil
+  if not force and source then return end
   local offer, updated = partsToOffer(data, force)
+  -- the minimap button's dot: the setup still changes something here, also after Later
+  if not source and ns.setDue then ns.setDue(next(updated) ~= nil) end
+  if not force and laterFor()[charKey()] == hash(text) then return end
   if not next(offer) then
     if force then say("this setup carries nothing to apply") end
     return

@@ -1,6 +1,6 @@
 -- Simulated WoW for Z-Settings: you export, a friend imports on another PC, then undoes; then you copy
 -- one of your characters onto another.
-local ADDON, CHARACTERS = ...
+local ADDON, CHARACTERS, MINIMAP = ...
 
 local function deepcopy(t, seen)
   if type(t) ~= "table" then return t end
@@ -241,6 +241,7 @@ function ReloadUI() reloads = reloads + 1 end
 local frames = {}
 function CreateFrame(kind, name)
   local o = { scripts = {}, text = "", kind = kind, events = {} }
+  if name then _G[name] = o end
   setmetatable(o, { __index = function(_, k)
     if k == "SetScript" then return function(self, what, fn) self.scripts[what] = fn end end
     if k == "SetText" then return function(self, v) self.text = v end end
@@ -250,6 +251,8 @@ function CreateFrame(kind, name)
     if k == "SetEnabled" then return function(self, v) self.enabled = v and true or false end end
     if k == "Show" then return function(self) self.shown = true end end
     if k == "Hide" then return function(self) self.shown = false end end
+    if k == "IsShown" then return function(self) return self.shown == true end end
+    if k == "CreateTexture" or k == "CreateMaskTexture" then return function() return CreateFrame("Texture") end end
     if k == "CreateFontString" then return function() return CreateFrame("FontString") end end
     if k == "RegisterEvent" then return function(self, e) self.events[e] = true end end
     return function() end
@@ -258,6 +261,8 @@ function CreateFrame(kind, name)
   return o
 end
 UIParent, ChatFontNormal = {}, {}
+Minimap = { GetWidth = function() return 140 end }
+GameTooltip = setmetatable({}, { __index = function() return function() end end })
 local SVS = {}   -- addon -> "Var1, Var2"
 Z_VARS_ID = "4242"
 -- what the commit hook writes from the tocs, read from SVS at call time
@@ -348,6 +353,7 @@ local function useChar(c, globals)
   local ns = {}
   assert(loadstring(ADDON))("Z-Settings", ns)
   assert(loadstring(CHARACTERS))("Z-Settings", ns)
+  assert(loadstring(MINIMAP))("Z-Settings", ns)
 end
 
 -- 1. export on my character
@@ -768,6 +774,7 @@ Z_BUNDLE = text
 useChar(mate, {}); ZSettingsDB = nil
 printed, reloads, addonCalls = {}, 0, {}
 fire("PLAYER_LOGIN")
+check("5 the minimap button shows a dot while the setup differs", ZSettingsMinimapButton.due.shown == true)
 check("5 popup lists only the parts that differ", offered() ==
   "Addon settings, Addons on or off, Chat windows, Edit Mode layout, General macros, Interface and nameplate settings, Keybinds")
 local allTicked = #popupBoxes() > 0
@@ -790,6 +797,7 @@ check("5 addons switched for this character, so undo can put them back exactly",
 useChar(mate, {}); ZSettingsDB = mate.ZSettingsDB
 fire("PLAYER_LOGIN")
 check("5 no popup when nothing differs", #popupBoxes() == 0)
+check("5 no dot when nothing differs", ZSettingsMinimapButton.due.shown == false)
 -- the friend changes a keybind by hand: the setup's keybinds differ again
 local own = mateAcc.binds[1][2]
 mateAcc.binds[1][2] = "I"
@@ -821,10 +829,22 @@ useChar(alt, {}); ZSettingsDB = mate.ZSettingsDB
 fire("PLAYER_LOGIN")
 check("5 an alt is offered only its own differing parts", offered() == "Addons on or off, Chat windows, Edit Mode layout, Interface and nameplate settings")
 click("Later")
+useChar(alt, {}); ZSettingsDB = mate.ZSettingsDB
+fire("PLAYER_LOGIN")
+check("5 after Later no popup, but the dot stays", #popupBoxes() == 0 and ZSettingsMinimapButton.due.shown == true)
+ZSettingsMinimapButton.scripts.OnClick(ZSettingsMinimapButton)
+check("5 a friend's menu has no Export", button("Export setup").shown == false)
+click("Review setup")
+check("5 the menu's Review setup runs /z update: every part", #popupBoxes() == 8 and ZSettingsMenu.shown == false)
+click("Later")
 -- a PC that exports never gets the popup by itself, even when its bundle trails its newest export
 useChar(me, {}); ZSettingsDB = { export = "ZS1:a newer export than the bundle" }
 fire("PLAYER_LOGIN")
 check("5 no popup on a PC that exports", #popupBoxes() == 0)
+check("5 no dot on a PC that exports", ZSettingsMinimapButton.due.shown == false)
+ZSettingsMinimapButton.scripts.OnClick(ZSettingsMinimapButton)
+check("5 the publisher's menu has Export", button("Export setup").shown == true)
+ZSettingsMenu.shown = false
 SlashCmdList.ZSETTINGS("update")
 check("5 /z update lists every part there", #popupBoxes() == 8)
 -- combat at login: the popup waits for combat to end

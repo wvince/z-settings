@@ -232,7 +232,7 @@ local function UpdateRareFound(entityID, vignetteInfo, coordinates)
 		RSRoute.OnEntityFound(entityID, mapID, vignettePosition.x, vignettePosition.y)
 	end
 	
-	return vignettePosition
+	return vignettePosition, mapID
 end
 
 local tempVignettePos = {}
@@ -242,6 +242,7 @@ local function ShowAlert(button, vignetteInfo, isNavigating)
 
 	wipe(tempVignettePos)
 	local vignettePosition = tempVignettePos
+	local foundMapID
 	if (not isNavigating) then
 		-- Ignore if hidden quest is completed
 		if (RSConfigDB.IsIgnoringCompletedEntities()) then
@@ -270,9 +271,9 @@ local function ShowAlert(button, vignetteInfo, isNavigating)
 		if (vignetteInfo.x and vignetteInfo.y) then
 			vignettePosition.x = vignetteInfo.x
 			vignettePosition.y = vignetteInfo.y
-			UpdateRareFound(entityID, vignetteInfo, vignettePosition)
+			foundMapID = select(2, UpdateRareFound(entityID, vignetteInfo, vignettePosition))
 		else
-			vignettePosition = UpdateRareFound(entityID, vignetteInfo)
+			vignettePosition, foundMapID = UpdateRareFound(entityID, vignetteInfo)
 			
 			-- If the entity doesn't have coordinates (for example a custom NPC) set a random coordinate set so at least it shows the notification
 			if (not vignettePosition) then
@@ -289,47 +290,47 @@ local function ShowAlert(button, vignetteInfo, isNavigating)
 
 		-- If we have it as dead but we got a notification it means that the restart time is wrong (this is normal when playing while a world quest reset)
 		if (RSNpcDB.IsNpcKilled(entityID)) then
-			RSLogger:PrintDebugMessage(string.format("El NPC [%s] estaba marcado como muerto, pero lo acabamos de detectar vivo, resucitado!", entityID))
+			--RSLogger:PrintDebugMessage(string.format("El NPC [%s] estaba marcado como muerto, pero lo acabamos de detectar vivo, resucitado!", entityID))
 			RSNpcDB.DeleteNpcKilled(entityID)
 		end
 		
 		-- disable ALL alerts for containers
 		if (RSConstants.IsContainerAtlas(vignetteInfo.atlasName) and not RSConfigDB.IsScanningForContainers()) then
-			RSLogger:PrintDebugMessage(string.format("El contenedor [%s] se ignora por haber deshabilitado alertas de contenedores", entityID))
+			--RSLogger:PrintDebugMessage(string.format("El contenedor [%s] se ignora por haber deshabilitado alertas de contenedores", entityID))
 			return
 		-- disable alerts for filtered containers. Check if the container is filtered, in which case we don't show anything
 		elseif (RSConstants.IsContainerAtlas(vignetteInfo.atlasName) and RSConfigDB.IsContainerFiltered(entityID)) then
-			RSLogger:PrintDebugMessage(string.format("El contenedor [%s] se ignora por estar filtrado (completo)", entityID))
+			--RSLogger:PrintDebugMessage(string.format("El contenedor [%s] se ignora por estar filtrado (completo)", entityID))
 			return
 		-- disable alerts for rare NPCs
 		elseif (RSConstants.IsNpcAtlas(vignetteInfo.atlasName) and not RSConfigDB.IsScanningForNpcs()) then
-			RSLogger:PrintDebugMessage(string.format("El NPC [%s] se ignora por haber deshabilitado alertas de NPCs", entityID))
+			--RSLogger:PrintDebugMessage(string.format("El NPC [%s] se ignora por haber deshabilitado alertas de NPCs", entityID))
 			return
 		-- disable alerts for filtered rare NPCs (completely)
 		elseif (RSConstants.IsNpcAtlas(vignetteInfo.atlasName) and RSConfigDB.IsNpcFiltered(entityID)) then
-			RSLogger:PrintDebugMessage(string.format("El NPC [%s] se ignora por estar filtrado (completo)", entityID))
+			--RSLogger:PrintDebugMessage(string.format("El NPC [%s] se ignora por estar filtrado (completo)", entityID))
 			return
 		-- disable alerts for filtered rare NPCs (alerts)
 		elseif (RSConstants.IsNpcAtlas(vignetteInfo.atlasName) and RSConfigDB.IsNpcFilteredOnlyAlerts(entityID)) then
-			RSLogger:PrintDebugMessage(string.format("El NPC [%s] se ignora por estar filtrado (alertas)", entityID))
-			RSRecentlySeenTracker.AddRecentlySeen(entityID, vignetteInfo.atlasName, false)
+			--RSLogger:PrintDebugMessage(string.format("El NPC [%s] se ignora por estar filtrado (alertas)", entityID))
+			RSRecentlySeenTracker.AddRecentlySeen(entityID, vignetteInfo.atlasName, false, foundMapID, vignettePosition.x, vignettePosition.y)
 			return true
 		-- disable alerts for events
 		elseif (RSConstants.IsEventAtlas(vignetteInfo.atlasName) and not RSConfigDB.IsScanningForEvents()) then
-			RSLogger:PrintDebugMessage(string.format("El evento [%s] se ignora por haber deshabilitado alertas de eventos", entityID))
+			--RSLogger:PrintDebugMessage(string.format("El evento [%s] se ignora por haber deshabilitado alertas de eventos", entityID))
 			return
 		-- disable alerts for filtered events (completely)
 		elseif (RSConstants.IsEventAtlas(vignetteInfo.atlasName) and RSConfigDB.IsEventFiltered(entityID)) then
-			RSLogger:PrintDebugMessage(string.format("El evento [%s] se ignora por estar filtrado (completo)", entityID))
+			--RSLogger:PrintDebugMessage(string.format("El evento [%s] se ignora por estar filtrado (completo)", entityID))
 			return
 		-- disable alerts for filtered events (alerts)
 		elseif (RSConstants.IsEventAtlas(vignetteInfo.atlasName) and RSConfigDB.IsEventFilteredOnlyAlerts(entityID)) then
-			RSLogger:PrintDebugMessage(string.format("El evento [%s] se ignora por estar filtrado (alertas)", entityID))
-			RSRecentlySeenTracker.AddRecentlySeen(entityID, vignetteInfo.atlasName, false)
+			--RSLogger:PrintDebugMessage(string.format("El evento [%s] se ignora por estar filtrado (alertas)", entityID))
+			RSRecentlySeenTracker.AddRecentlySeen(entityID, vignetteInfo.atlasName, false, foundMapID, vignettePosition.x, vignettePosition.y)
 			return true
 		-- disable alerts for filtered zones
 		elseif (RSConfigDB.IsZoneFiltered(mapID) or RSConfigDB.IsZoneFilteredOnlyAlerts(mapID) or RSConfigDB.IsEntityZoneFilteredOnlyAlerts(entityID, vignetteInfo.atlasName, mapID)) then
-			RSLogger:PrintDebugMessage(string.format("La entidad [%s] se ignora por pertenecer a una zona [%s] filtrada", entityID, mapID))
+			--RSLogger:PrintDebugMessage(string.format("La entidad [%s] se ignora por pertenecer a una zona [%s] filtrada", entityID, mapID))
 			return
 		-- extra checkings for containers
 		elseif (RSConstants.IsContainerAtlas(vignetteInfo.atlasName)) then		
@@ -347,13 +348,13 @@ local function ShowAlert(button, vignetteInfo, isNavigating)
 			
 			-- disable visual/sound alerts for filtered containers
 			if (RSConfigDB.IsContainerFilteredOnlyAlerts(entityID)) then
-				RSRecentlySeenTracker.AddRecentlySeen(entityID, vignetteInfo.atlasName, false)
+				RSRecentlySeenTracker.AddRecentlySeen(entityID, vignetteInfo.atlasName, false, foundMapID, vignettePosition.x, vignettePosition.y)
 				return true
 			end
 	
 			-- disable button alert for containers
 			if (not RSConfigDB.IsButtonDisplayingForContainers()) then
-				RSRecentlySeenTracker.AddRecentlySeen(entityID, vignetteInfo.atlasName, false)
+				RSRecentlySeenTracker.AddRecentlySeen(entityID, vignetteInfo.atlasName, false, foundMapID, vignettePosition.x, vignettePosition.y)
 				RSWaypoints.AddAutomaticWaypoint(mapID, vignettePosition.x, vignettePosition.y, vignetteInfo.name)
 	
 				if (RSNotificationTracker.IsAlreadyNotificated(vignetteInfo.id, false, entityID)) then
@@ -368,7 +369,7 @@ local function ShowAlert(button, vignetteInfo, isNavigating)
 					
 					RSAudioAlerts.PlaySoundAlert(vignetteInfo.atlasName)
 					button:DisplayMessages(entityID, vignetteInfo.preEvent and string.format(AL["PRE_EVENT"], vignetteInfo.name) or vignetteInfo.name)
-					return
+					return true
 				end
 			end
 		-- extra checkings for events
@@ -473,7 +474,7 @@ local function ShowAlert(button, vignetteInfo, isNavigating)
 	end
 
 	-- Add recently seen
-	RSRecentlySeenTracker.AddRecentlySeen(entityID, vignetteInfo.atlasName, isNavigating)
+	RSRecentlySeenTracker.AddRecentlySeen(entityID, vignetteInfo.atlasName, isNavigating, foundMapID, vignettePosition.x, vignettePosition.y)
 	
 	-- Enable guidance icons
 	if (RSConfigDB.IsShowingAutoGuidanceIcons()) then
@@ -566,6 +567,7 @@ function RSButtonHandler.AddAlert(button, vignetteInfo, isNavigating)
 			preFoundAlerts[entityID] = { trackingSystem = trackingSystem, expireTime = time() + RSConstants.PREFOUND_TIMER }
 		end
 	end
+
 	-- Apply filters
 	local mapID = RSGeneralDB.GetBestMapForUnit(entityID, vignetteInfo.atlasName)
 	local isInInstance, _ = IsInInstance()
@@ -601,10 +603,6 @@ function RSButtonHandler.AddAlert(button, vignetteInfo, isNavigating)
 	-- disable alerts while flying
 	elseif (UnitOnTaxi("player") and not RSConfigDB.IsScanningWhileOnTaxi()) then
 		RSLogger:PrintDebugMessageEntityID(entityID, string.format("La entidad [%s] se ignora por estar montado en un transporte", entityID))
-		return
-	-- disable alerts while racing
-	elseif (not RSConfigDB.IsScanningWhileOnRacingQuest() and C_UnitAuras.GetPlayerAuraBySpellID(RSConstants.RACING_SPELL_ID)) then
-		RSLogger:PrintDebugMessageEntityID(entityID, string.format("La entidad [%s] se ignora por estar haciendo una mision de vuelo", entityID))
 		return
 	-- disable alerts while in pet combat
 	elseif (C_PetBattles.IsInBattle() and not RSConfigDB.IsScanningWhileOnPetBattle()) then

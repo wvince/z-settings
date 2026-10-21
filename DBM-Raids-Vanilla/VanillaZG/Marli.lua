@@ -12,8 +12,10 @@ end
 local mod	= DBM:NewMod("Marli", "DBM-Raids-Vanilla", catID)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20260920054026")
-mod:DisableHardcodedOptions()
+mod:SetRevision("20261019224112")
+if DBM:IsForever() then
+	mod:EnableGenericTrash()
+end
 mod:SetCreatureID(14510)
 mod:SetEncounterID(786)
 mod:SetModelID(15220)

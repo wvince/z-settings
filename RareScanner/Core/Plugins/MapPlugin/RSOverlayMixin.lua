@@ -24,12 +24,14 @@ function RSOverlayMixin:OnLoad()
 	self:SetScalingLimits(1, 1.4, 2.5);
 end
 
-function RSOverlayMixin:OnAcquired(x, y, r, g, b, pin)
+function RSOverlayMixin:OnAcquired(x, y, r, g, b, poi, groupPin)
 	self:SetFrameStrata("HIGH")
 	self:SetFrameLevel(self:GetParent():GetFrameLevel() + 1)
 
 	-- Set attributes
-	self.pin = pin
+	-- Group pins pass the child POI and the group pin itself
+	self.pin = groupPin or poi
+	self.childPOI = groupPin and poi or nil
 	self.x = RSUtils.FixCoord(x)
 	self.y = RSUtils.FixCoord(y)
 	self.Texture:SetTexture(RSConstants.OVERLAY_SPOT_TEXTURE)
@@ -44,7 +46,9 @@ function RSOverlayMixin:OnMouseEnter()
 
 	RSTooltip.Tooltip:SetOwner(self, "ANCHOR_CURSOR")
 	
-	if (self.pin.POI) then
+	if (self.childPOI) then
+		RSTooltip.Tooltip:SetText(self.childPOI.name)
+	elseif (self.pin.POI) then
 		RSTooltip.Tooltip:SetText(self.pin.POI.name)
 	else
 		RSTooltip.Tooltip:SetText(self.pin.name)
@@ -77,7 +81,9 @@ function RSOverlayMixin:OnMouseDown(button)
 end
 
 function RSOverlayMixin:GetEntityID()
-	if (self.pin.POI) then
+	if (self.childPOI) then
+		return self.childPOI.entityID
+	elseif (self.pin.POI) then
 		return self.pin.POI.entityID
 	else
 		return self.pin.entityID

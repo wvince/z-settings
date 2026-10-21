@@ -1,8 +1,10 @@
 local faction = UnitFactionGroup("player")
 if faction == "Horde" then return end
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 #season 0,1
 << Alliance
 #name 1-6 Shadowglen
@@ -439,8 +441,10 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Porthannius|r
     .accept 2159 >> Accept Dolanaar Delivery
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 #season 0,1
 << Alliance
 #name 6-11 Teldrassil
@@ -451,6 +455,7 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-A1
 #defaultfor NightElf
 #next 14-16 Darkshore
+
 step
     .goto 1438/1,734.13,9920.57
     .target Zenn Foulhoof
@@ -1305,7 +1310,7 @@ step << Druid/Priest
     .turnin 487 >> Turn in The Road to Darnassus
 step
     #completewith next
-    .goto 1438/1,1863.46,10665.16,50 >> Travel to The Oracle Glade
+    .goto 1438/1,1899.700,10582.900,50 >> Travel to The Oracle Glade
 step
     .goto 1438/1,1899.700,10582.900
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Sentinel Eralya Leafshadow::275683|r
@@ -1321,8 +1326,8 @@ step
     .goto 1438/1,1857.86,10676.36
     .use 18152 >>|cRXP_WARN_Use the|r |T134798:0|t[Amethyst Phial] |cRXP_WARN_at The Oracle Glade moonwell|r
     .complete 7383,1 --Collect Filled Amethyst Phial (x1)
+
 --with the new quests, druids can go straight to 10, a 5 minute save later down the road
---@TODO add mist here
 step << Druid/Priest
     #completewith next
     >>Kill |cRXP_ENEMY_Bloodfeather Harpies|r. Loot them for their |cRXP_LOOT_Belts|r
@@ -1433,10 +1438,7 @@ step << Hunter
 step << !Rogue
     #softcore
     #requires xp10
-    #completewith next
     .deathskip >> Die and respawn at the Spirit Healer in Darnassus
-    >>|cRXP_WARN_Make sure you're closer to the Darnassus graveyard than to the Dolanaar one or you might end up going the wrong way. Run all the way out of the den and then die if you're not sure about it|r << sod Priest
-    >>|cRXP_WARN_Make sure you're closer to the Darnassus graveyard than to the Dolanaar one or you might end up going the wrong way. Run to the west side of the river if you're not sure about it|r << sod Hunter/sod Warrior/sod Druid
     .target Spirit Healer
 step << !Rogue
     #hardcore
@@ -1656,18 +1658,18 @@ step << !Druid
     .collect 3371,1 --Empty Vial
     .target Narret Shadowgrove
 step
-    .goto 1438/1,984.94,9898.58
-    .target Tallonkai Swiftroot
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tallonkai Swiftroot|r atop the Tree
-    .turnin 932 >> Turn in Twisted Hatred
-    .turnin 2459 >> Turn in Ferocitas the Dream Eater
-step
     #optional
     .goto 1438/1,988.30,9891.89
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Aldia|r up stairs
     .turnin 87288 >> Turn in Soft Saber Pelts
     .target Aldia
     .isQuestComplete 87288
+step
+    .goto 1438/1,984.94,9898.58
+    .target Tallonkai Swiftroot
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tallonkai Swiftroot|r atop the Tree
+    .turnin 932 >> Turn in Twisted Hatred
+    .turnin 2459 >> Turn in Ferocitas the Dream Eater
 step
     >>Kill |cRXP_ENEMY_Nightsabers|r. Loot them for their |cRXP_LOOT_Fangs|r and |cRXP_LOOT_Pelts|r
     >>Kill |cRXP_ENEMY_Strigid Owls|r. Loot them for their |cRXP_LOOT_Feathers|r
@@ -1743,7 +1745,7 @@ step << Hunter/Warrior/Rogue
     .target Moon Priestess Amara
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Moon Priestess Amara|r
     .turnin 487 >> Turn in The Road to Darnassus
-	.maxlevel 9
+	.xp 9.56,1 --Only Turn in early if needed to ding 10
 step << Hunter
 #xprate <1.99
     #optional
@@ -1961,15 +1963,6 @@ step << Priest
 	.trainer >> Train your class spells
     .target Laurna Morninglight
 step << Hunter
-	#xprate <1.5--money issues 1.5x
-    .goto 1438/1,947.57,9812.38
-    .money <0.0504
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Shalomon|r
-    >>|cRXP_BUY_Buy a|r |T135145:0|t[Walking Stick]
-    >>|cRXP_WARN_You will equip this later. Skip this step if you happened to find a different staff|r
-    .collect 2495,1 -- Walking Stick (1)
-    .target Shalomon
-    .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<4.20step
     .goto 1438/1,997.200,9903.601
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Byancie::6094|r
     .target Byancie::6094
@@ -2403,6 +2396,14 @@ step << Rogue
     >>|cRXP_BUY_Buy a|r |T135641:0|t[Balanced Throwing Dagger]
     .collect 2946,1 -- Balanced Throwing Dagger
     .target Turian
+step << Hunter
+    #optional
+    .goto 1457/1,2511.04,10178.01
+    .target Jocaste
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Jocaste|r
+    .train 2974 >>Train |T132309:0|t[|cRXP_LOOT_Wing Clip|r]
+    .xp <12,1
+    .money <0.0600
 step
     #completewith NessaShadowsong
     .goto 1457/1,2636.53,9956.80

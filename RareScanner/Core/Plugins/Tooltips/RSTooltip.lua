@@ -31,6 +31,7 @@ local RSTimeUtils = private.ImportLib("RareScannerTimeUtils")
 local RSLootTooltip = private.ImportLib("RareScannerLootTooltip")
 local RSNotes = private.ImportLib("RareScannerNotes")
 local RSLoot = private.ImportLib("RareScannerLoot")
+local RSTelemetry = private.ImportLib("RareScannerTelemetry")
 
 --=====================================================
 -- Shared tooltip
@@ -44,7 +45,7 @@ RSTooltip.Tooltip = RSGameTooltip
 
 local provider, cellPrototype = RareScannerMapTooltip:CreateCellProvider()
 
-local pinFramePool = CreateFramePool("FRAME", UIParent, "RSEntityPinTemplate");
+local pinFramePool = CreateFramePool("BUTTON", UIParent, "RSEntityPinTemplate");
 
 local function GetTipAnchor(frame)
 	local x, y = frame:GetCenter()
@@ -79,6 +80,7 @@ function cellPrototype:SetupCell(cell, args)
 		end
 	end)
 	self.pin.POI = POI
+	self.pin.groupPin = parentPin
 	self.pin.Texture:SetTexture(POI.Texture)
 	self.pin.IconTexture:SetAtlas(POI.iconAtlas)
 	self.pin.Texture:SetScale(0.7)
@@ -103,7 +105,7 @@ local InfoToolTip = CreateFrame("GameTooltip", "RSMapInfoToolTip", nil, "GameToo
 ItemToolTip.shoppingTooltips = { ItemToolTipComp1, ItemToolTipComp2 }
 
 local function showItemToolTip(cell, args)
-	local itemID, itemLink, itemClassID, itemSubClassID, isLink = unpack(args)
+	local itemID, itemLink, itemClassID, itemSubClassID, isLink, dropChance = unpack(args)
 	if (isLink) then
 		ItemToolTip:SetScale(RSConfigDB.GetChatLootAchievTooltipsScale())
 	else
@@ -126,7 +128,7 @@ local function showItemToolTip(cell, args)
 	ItemToolTip:SetFrameLevel(cell:GetParent():GetParent():GetParent():GetFrameLevel() + 100)
 	
 	-- Adds extra information
-	RSLootTooltip.AddRareScannerInformation(ItemToolTip, itemLink, itemID, itemClassID, itemSubClassID)
+	RSLootTooltip.AddRareScannerInformation(ItemToolTip, itemLink, itemID, itemClassID, itemSubClassID, dropChance)
 	ItemToolTip:Show()
 end
 
@@ -190,6 +192,34 @@ end
 -- Tooltip lines
 --=====================================================
 
+local function AddNameTooltip(tooltip, pin)
+	local line = tooltip:AddLine()
+	local name = RSUtils.TextColor(pin.POI.name or UKNOWNBEING, "3399FF")
+
+	-- NPC level, at the right of the name and colored by difficulty (white instead of gray)
+	local level = pin.POI.isNpc and RSNpcDB.GetNpcLevel(pin.POI.entityID)
+	if (level) then
+		local levelText = level
+		local color
+		if (level == RSConstants.NPC_BOSS_LEVEL) then
+			levelText = "??"
+			color = QuestDifficultyColors["impossible"]
+		else
+			color = GetCreatureDifficultyColor(level)
+		end
+
+		local hexColor = "FFFFFF"
+		if (color ~= QuestDifficultyColors["trivial"]) then
+			hexColor = string.format("%02x%02x%02x", color.r * 255, color.g * 255, color.b * 255)
+		end
+
+		tooltip:SetCell(line, 1, name, nil, "LEFT", 9, nil, nil, nil, RSConstants.TOOLTIP_MAX_WIDTH, RSConstants.TOOLTIP_MIN_WIDTH)
+		tooltip:SetCell(line, 10, RSUtils.TextColor(levelText, hexColor), nil, "RIGHT", 1)
+	else
+		tooltip:SetCell(line, 1, name, nil, "LEFT", 10, nil, nil, nil, RSConstants.TOOLTIP_MAX_WIDTH, RSConstants.TOOLTIP_MIN_WIDTH)
+	end
+end
+
 function RSTooltip.ShowGroupTooltip(pin)
 	-- If a tooltip is already being displayed, dont add another one
 	if (pin.groupTooltip and not RSTooltip.HideGroupTooltip(pin.groupTooltip)) then
@@ -231,7 +261,7 @@ local function AddLastTimeSeenTooltip(tooltip, pin, isLink)
 		if (not RSConfigDB.IsShowingChatTooltipsSeen()) then
 			return
 		end
-	elseif (not RSConfigDB.IsShowingTooltipsSeen() or pin.POI.isDragonGlyph) then
+	elseif (not RSConfigDB.IsShowingTooltipsSeen()) then
 		return
 	end
 	
@@ -240,6 +270,44 @@ local function AddLastTimeSeenTooltip(tooltip, pin, isLink)
 		tooltip:SetCell(line, 1, string.format(AL["MAP_TOOLTIP_SEEN"], RSUtils.TextColor(RSTimeUtils.TimeStampToClock(pin.POI.foundTime, true), "FF8000")), nil, "LEFT", 10, nil, nil, nil, RSConstants.TOOLTIP_MAX_WIDTH, RSConstants.TOOLTIP_MIN_WIDTH)
 	else
 		tooltip:SetCell(line, 1, RSUtils.TextColor(AL["MAP_TOOLTIP_NOT_FOUND"], "FF0000"), nil, "LEFT", 10, nil, nil, nil, RSConstants.TOOLTIP_MAX_WIDTH, RSConstants.TOOLTIP_MIN_WIDTH)
+	end
+end
+
+local function AddTelemetryTooltip(tooltip, pin)
+	if (not RSConfigDB.IsShowingTooltipsRespawn()) then
+		return
+	end
+	if (not pin or not pin.POI or not pin.POI.isNpc or not pin.POI.entityID) then
+		return
+	end
+
+	local est = RSTelemetry.GetEstimatedRespawn(pin.POI.entityID)
+	if (not est) then
+		return
+	end
+
+	local text = nil
+	if (est.isTriggered) then
+		text = RSUtils.TextColor(AL["MAP_TOOLTIP_RESPAWN_MANUAL"], "FFCC00")
+	elseif (est.secondsUntilNext and est.nextClock) then
+		local timeStr = RSUtils.TextColor(RSTimeUtils.FormatShortDuration(est.secondsUntilNext), "00FFCC")
+		text = string.format(AL["MAP_TOOLTIP_NEXT_SPAWN"], timeStr, RSUtils.TextColor(est.nextClock, "FFFFCC"))
+	elseif (est.minRespawn and est.maxRespawn) then
+		if (est.isExactRespawn) then
+			local timeStr = RSUtils.TextColor(RSTimeUtils.FormatShortDuration(est.minRespawn), "00FFCC")
+			text = string.format(AL["MAP_TOOLTIP_RESPAWN_EXACT"], timeStr)
+		else
+			local minStr = RSUtils.TextColor(RSTimeUtils.FormatShortDuration(est.minRespawn), "00FFCC")
+			local maxStr = RSUtils.TextColor(RSTimeUtils.FormatShortDuration(est.maxRespawn), "00FFCC")
+			if (est.hasStaticConfig) then
+				text = string.format(AL["MAP_TOOLTIP_RESPAWN_RANGE"], minStr, maxStr)
+			end
+		end
+	end
+
+	if (text) then
+		local line = tooltip:AddLine()
+		tooltip:SetCell(line, 1, text, nil, "LEFT", 10, nil, nil, nil, RSConstants.TOOLTIP_MAX_WIDTH, RSConstants.TOOLTIP_MIN_WIDTH)
 	end
 end
 
@@ -300,10 +368,15 @@ local function AddNotesTooltip(tooltip, pin)
 		return
 	end
 	
-	local note = RSNotes.GetNote(pin.POI.entityID, pin.POI.mapID, pin.POI.minieventID)
+	local note = RSNotes.GetNote(pin.POI.entityID, pin.POI.mapID, pin.POI.minieventID, function()
+		if (tooltip and tooltip:IsShown() and pin and pin.OnEnter) then
+			pin:OnEnter()
+		end
+	end)
 	if (note) then
 		local line = tooltip:AddLine()
 		tooltip:SetCell(line, 1, RSUtils.TextColor(note, "FFFFCC"), nil, "LEFT", 10, nil, nil, nil, RSConstants.TOOLTIP_MAX_WIDTH, RSConstants.TOOLTIP_MIN_WIDTH)
+		tooltip:SetCellTextColor(line, 1, 1, 1, 0.8, 1)
 	end
 end
 
@@ -319,11 +392,15 @@ local function AddLootTooltip(tooltip, pin, isLink)
 	end
 	
 	local itemsIDs
+	local chances
 	if (pin.POI.isNpc) then
 		itemsIDs = RSNpcDB.GetNpcLoot(pin.POI.entityID)
+		chances = RSNpcDB.GetNpcLootChance(pin.POI.entityID)
 	elseif (pin.POI.isContainer) then
 		itemsIDs = RSContainerDB.GetContainerLoot(pin.POI.entityID)
+		chances = RSContainerDB.GetContainerLootChance(pin.POI.entityID)
 	end
+	chances = chances or {}
 
 	-- Apply loot filters
 	local itemsIDsFiltered = {}
@@ -337,13 +414,24 @@ local function AddLootTooltip(tooltip, pin, isLink)
 		end
 	end
 		
-	-- Sort loot by Class and SubClass
-	table.sort(itemsIDsFiltered, function(a, b) 
-		if a[6] == b[6] then
-			return a[7] < b[7]
-		else
-			return a[6] < b[6] 
+	-- Sort loot by quality, then by drop chance and finally by name (same order as the explorer)
+	table.sort(itemsIDsFiltered, function(a, b)
+		local qualityA, qualityB = a[3] or 1, b[3] or 1
+		if (qualityA ~= qualityB) then
+			return qualityA > qualityB
 		end
+
+		local chanceA, chanceB = tonumber(chances[a[1]]) or 0, tonumber(chances[b[1]]) or 0
+		if (chanceA ~= chanceB) then
+			return chanceA > chanceB
+		end
+
+		local nameA, nameB = C_Item.GetItemNameByID(a[1]), C_Item.GetItemNameByID(b[1])
+		if (nameA and nameB and nameA ~= nameB) then
+			return strcmputf8i(nameA, nameB) < 0
+		end
+
+		return a[1] < b[1]
 	end)
 
 	-- Add loot to the tooltip
@@ -367,7 +455,7 @@ local function AddLootTooltip(tooltip, pin, isLink)
 			end
 
 			tooltip:SetCell(line, j, "|T"..iconFileDataID..":24|t", nil, "LEFT", 1, nil, nil, nil, nil, 20, 20)
-			tooltip:SetCellScript(line, j, "OnEnter", showItemToolTip, { itemInfo[1], itemLink, itemClassID, itemSubClassID, isLink });
+			tooltip:SetCellScript(line, j, "OnEnter", showItemToolTip, { itemInfo[1], itemLink, itemClassID, itemSubClassID, isLink, tonumber(chances[itemInfo[1]]) });
 			tooltip:SetCellScript(line, j, "OnEvent", showHideItemComparationTooltip)
 			tooltip:SetCellScript(line, j, "OnLeave", hideItemToolTip)
 			tooltip:SetCellScript(line, j, "OnMouseDown", filterItem, { itemInfo[1], itemClassID, itemSubClassID, itemLink })
@@ -438,7 +526,7 @@ local function AddStateTooltip(tooltip, pin)
 		
 		if (respawnTimer) then
 			local line = tooltip:AddLine()	
-			tooltip:SetCell(line, 1, RSUtils.TextColor(string.format(AL["MAP_TOOLTIP_RESPAWN"], respawnTimer), "FF0000"), nil, "LEFT", 10, nil, nil, nil, RSConstants.TOOLTIP_MAX_WIDTH, RSConstants.TOOLTIP_MIN_WIDTH)
+			tooltip:SetCell(line, 1, RSUtils.TextColor(string.format(AL["MAP_TOOLTIP_RESET"], respawnTimer), "FF0000"), nil, "LEFT", 10, nil, nil, nil, RSConstants.TOOLTIP_MAX_WIDTH, RSConstants.TOOLTIP_MIN_WIDTH)
 		end
 	end
 end
@@ -612,11 +700,6 @@ local function AddFilterTooltip(tooltip, pin, addSeparator)
 		return false
 	end
 	
-	-- Skip if dragon glyph
-	if (pin.POI.isDragonGlyph) then
-		return false
-	end
-	
 	if (addSeparator) then
 		tooltip:AddSeparator(1)
 	end
@@ -726,12 +809,7 @@ function RSTooltip.ShowSimpleTooltip(pin, parentTooltip, isBlizzardPin)
 	end
 	
 	-- NPC name
-	local line = tooltip:AddLine()
-	if (pin.POI.name) then
-		tooltip:SetCell(line, 1, RSUtils.TextColor(pin.POI.name, "3399FF"), nil, "LEFT", 10, nil, nil, nil, RSConstants.TOOLTIP_MAX_WIDTH, RSConstants.TOOLTIP_MIN_WIDTH)
-	else
-		tooltip:SetCell(line, 1, RSUtils.TextColor(UKNOWNBEING, "3399FF"), nil, "LEFT", 10, nil, nil, nil, RSConstants.TOOLTIP_MAX_WIDTH, RSConstants.TOOLTIP_MIN_WIDTH)
-	end
+	AddNameTooltip(tooltip, pin)
 
 	-- Debug
 	if (RSConstants.DEBUG_MODE) then
@@ -754,6 +832,9 @@ function RSTooltip.ShowSimpleTooltip(pin, parentTooltip, isBlizzardPin)
 	
 	-- Last time seen
 	AddLastTimeSeenTooltip(tooltip, pin)
+
+	-- Telemetry Respawn Info (DEBUG mode only)
+	AddTelemetryTooltip(tooltip, pin)
 
 	-- State
 	AddStateTooltip(tooltip, pin)
@@ -828,15 +909,13 @@ function RSTooltip.ShowLinkTooltip(pin, chatFrame)
 	end
 
 	-- Entity name
-	local line = tooltip:AddLine()
-	if (pin.POI.name) then
-		tooltip:SetCell(line, 1, RSUtils.TextColor(pin.POI.name, "3399FF"), nil, "LEFT", 10, nil, nil, nil, RSConstants.TOOLTIP_MAX_WIDTH, RSConstants.TOOLTIP_MIN_WIDTH)
-	else
-		tooltip:SetCell(line, 1, RSUtils.TextColor(UKNOWNBEING, "3399FF"), nil, "LEFT", 10, nil, nil, nil, RSConstants.TOOLTIP_MAX_WIDTH, RSConstants.TOOLTIP_MIN_WIDTH)
-	end
+	AddNameTooltip(tooltip, pin)
 	
 	-- Last time seen
 	AddLastTimeSeenTooltip(tooltip, pin, true)
+
+	-- Telemetry Respawn Info (DEBUG mode only)
+	AddTelemetryTooltip(tooltip, pin)
 
 	-- Times completed
 	AddCounterTooltip(tooltip, pin, true)

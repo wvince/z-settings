@@ -9,6 +9,8 @@ RXPGuides.RegisterGuide([[
 #subgroup RXP TBC Survival Guide 1-30
 #defaultfor BloodElf
 #next 6-10 Eversong Woods
+
+
 step << !BloodElf
     #completewith next
     +|cRXP_WARN_You have selected a guide meant for Blood Elves. We do not recommend doing the 1-6 zone due to there being no quests for non-Blood Elves. You should choose the same starter zone that you start in|r
@@ -594,6 +596,7 @@ step
     .goto Eversong Woods,43.62,34.88,40,0
     .xp 5+2690 >> Grind to 2690+/2800xp
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -604,6 +607,7 @@ RXPGuides.RegisterGuide([[
 #version 7
 #subgroup RXP TBC Survival Guide 1-30
 #next 10-12 Eversong Woods
+
 step
     .goto Eversong Woods,47.26,46.31
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Jarondis|r
@@ -2063,7 +2067,9 @@ step << Mage
     .turnin 9402 >>Turn in Fetch!
     .accept 9403 >>Accept The Purest Water
     .target Instructor Antheol
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -2074,6 +2080,7 @@ RXPGuides.RegisterGuide([[
 #version 7
 #subgroup RXP TBC Survival Guide 1-30
 #next 12-14 Ghostlands
+
 step << Orc Hunter/Troll Hunter
     #completewith next
     .goto Silvermoon City,62.89,31.20,20,0
@@ -2591,7 +2598,9 @@ step << Mage
     .turnin 9403 >>Turn in The Purest Water
     .accept 9404 >>Accept Recently Living
     .target Instructor Antheol
+
     --Start Silvermoon visit 1
+
 step << BloodElf !Warlock/Undead !Warlock
     #completewith SMtraining01
     .goto Eversong Woods,56.51,49.61,25,0
@@ -2718,7 +2727,9 @@ step << BloodElf !Hunter !Warlock/Undead
     .cooldown item,6948,>0
     .bindlocation 3665,1
     .subzoneskip 3665
+
     --end Silvermoon visit 1
+
 step << Mage/Priest/Undead Warlock
     #completewith next
     .goto Eversong Woods,47.79,47.35,8,0
@@ -3081,7 +3092,9 @@ step << BloodElf !Hunter
     .turnin 9130 >> Turn in Goods from Silvermoon City
     .accept 9133 >> Accept Fly to Silvermoon City
     .target Skymaster Sunwing
+
     --Silvermoon segment 2
+
 step
     #completewith FlyGhostlands
     .goto Ghostlands,45.42,30.52
@@ -3496,7 +3509,9 @@ step << Rogue
     .zoneskip Eversong Woods
     .zoneskip Ghostlands
     .zoneskip Silvermoon City
+
     --end silvermoon segment 2
+
 step
     #completewith FlyGhostlands
     .goto Eversong Woods,56.52,49.83
@@ -3523,7 +3538,10 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Rathi|r
     .accept 9152 >> Accept Tomber's Supplies
     .target Rathis Tomber
+
 ]])
+
+
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -3533,6 +3551,8 @@ RXPGuides.RegisterGuide([[
 #version 7
 #subgroup RXP TBC Survival Guide 1-30
 #next 14-16 The Barrens
+
+
 step
     .goto Ghostlands,57.54,14.92
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to the |cRXP_FRIENDLY_Dying Blood Elf|r on the ground
@@ -4577,7 +4597,11 @@ step << Orc/Troll/Tauren
     .bindlocation 380,1
     .zoneskip The Barrens
     .use 6948
+
 ]])
+
+
+
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -4587,6 +4611,8 @@ RXPGuides.RegisterGuide([[
 #version 7
 #subgroup RXP TBC Survival Guide 1-30
 #next 18-21 Ghostlands
+
+
 step
     #optional
     .goto Ghostlands,46.02,31.95
@@ -5262,8 +5288,11 @@ step
     >>|cRXP_WARN_Be careful of their|r |T136130:0|t[Draining Touch] |cRXP_WARN_Lifesteal spell|r
     .complete 9159,1 --Kill Vampiric Mistbat (x10)
     .mob Vampiric Mistbat
+
     --TODO: Knucklerot and Luzran warnings whenever in western side of Ghostlands
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -5273,6 +5302,7 @@ RXPGuides.RegisterGuide([[
 #version 7
 #subgroup RXP TBC Survival Guide 1-30
 #next 21-24 Stonetalon/The Barrens
+
 step << Rogue
     .goto Ghostlands,47.20,34.31
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Eralan|r
@@ -5495,7 +5525,9 @@ step
     .turnin 9282 >> Turn in The Farstrider Enclave
     .accept 9161 >> Accept The Traitor's Shadow
     .target Ranger Vynna
+
     --wip
+
 step
     #completewith TrollR1
     >>Kill |cRXP_ENEMY_Mummified Headhunters|r and |cRXP_ENEMY_Shadowpine Oracles|r. Loot them for their |cRXP_LOOT_Troll Juju|r
@@ -7818,4 +7850,5 @@ step
     .goto Tirisfal Glades,60.94,46.35,-1
     >>Go up the Zeppelin Tower
     .zone Durotar >>Take the Zeppelin to Durotar
+
 ]])

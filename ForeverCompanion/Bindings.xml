@@ -1,0 +1,9 @@
+<Bindings>
+  <!-- Raccourcis clavier (Échap → Options → Raccourcis → AddOns → Forever Companion) ; noms dans GatherMap.lua -->
+  <Binding name="FORECOMP_GATHER_WORLDMAP" header="FORECOMP" category="ADDONS">
+    ForeverCompanion:ToggleGatherWorldMap()
+  </Binding>
+  <Binding name="FORECOMP_GATHER_MINIMAP" category="ADDONS">
+    ForeverCompanion:ToggleGatherMinimap()
+  </Binding>
+</Bindings>

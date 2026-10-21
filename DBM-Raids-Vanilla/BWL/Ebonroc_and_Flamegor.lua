@@ -7,8 +7,7 @@ if DBM:IsSeasonal("SeasonOfDiscovery") then
 else
 	mod.statTypes = "normal"
 end
-mod:SetRevision("20260917064253")
-mod:DisableHardcodedOptions()
+mod:SetRevision("20261019224112")
 mod:SetCreatureID(14601, 11981)
 mod:SetEncounterID(614, 615, 2566)
 mod:SetModelID(6377)

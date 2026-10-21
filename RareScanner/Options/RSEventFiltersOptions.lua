@@ -146,7 +146,7 @@ local function SearchEventByZoneID(mapID, eventName, isContinentZone)
 	end
 	
 	if (mapID) then
-		local eventIDsWithNames = RSEventDB.GetActiveEventIDsWithNamesByMapID(mapID)
+		local eventIDsWithNames = RSEventDB.GetActiveEventIDsWithNamesByMapID(mapID, true)
 		if (RSUtils.GetTableLength(eventIDsWithNames) > 0) then
 			for eventID, name in pairs(eventIDsWithNames) do
 				if (not eventName or RSUtils.Contains(name, eventName)) then

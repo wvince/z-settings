@@ -465,3 +465,11 @@ end
 function RSRoutines.ChainLoopRoutineNew()
 	return ChainLoopRoutine:New()
 end
+
+function RSRoutines.GetBudgetMS()
+	return getBudgetMS()
+end
+
+function RSRoutines.getBudgetMS()
+	return getBudgetMS()
+end

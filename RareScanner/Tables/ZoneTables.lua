@@ -9,7 +9,7 @@ private.CONTINENT_ZONE_IDS = {
 	[1415] = { zonefilter = true, npcfilter = true, showExplorer = true, id = 2, zones = {1416,1417,1418,1419,1420,1421,1422,1423,1424,1425,1426,1427,1428,1429,1430,1431,1432,1433,1434,1435,1436,1437,1453,1455,1458,2548} }; --Eastern Kingdoms
 	[2521] = { zonefilter = true, npcfilter = true, showExplorer = true, id = 3, zones = {2521} }; --Zephras isles
 	[9995] = { zonefilter = false, npcfilter = true, showExplorer = false, zones = {0} }; --Unknown
-	[9997] = { zonefilter = true, npcfilter = true, showExplorer = false, zones = {100001,100002,100003,100004,100005,100006,100007,100008,100009,100010,100011,100012,100013,100014,100015,100018,100019,100020,100021} }; --Dungeons or scenarios
+	[9997] = { zonefilter = true, npcfilter = true, showExplorer = true, zones = {100001,100002,100003,100004,100005,100006,100007,100008,100009,100010,100011,100012,100013,100014,100015,100016,100017,100018,100019,100020,100021,100022,100023,100024,100025,100026,100027,100028,100029,100030,100031,100032,100033,100034,100035,100036,100037,100039,100040,100041} }; --Dungeons or scenarios
 }
 
 private.SUBZONES_IDS = {
@@ -17,20 +17,20 @@ private.SUBZONES_IDS = {
 }
 
 private.DUNGEONS_IDS = {
-	[100001] = "Deadmines";
+	[100001] = "The Deadmines";
 	[100002] = "Wailing Caverns";
 	[100003] = "Shadowfang Keep";
 	[100004] = "Razorfen Kraul";
 	[100005] = "The Temple of Atal'Hakkar";
 	[100006] = "Gnomeregan";
-	[100007] = "Scarlet Monastery";
+	[100007] = "Scarlet Monastery - Graveyard";
 	[100008] = "Blackrock Depths";
-	[100009] = "Blackrock Spire";
+	[100009] = "Lower Blackrock Spire";
 	[100010] = "Zul'Farrak";
-	[100011] = "Stratholme";
+	[100011] = "Stratholme - Main Gate";
 	[100012] = "Upper Blackrock Spire";
-	[100013] = "Dire Maul";
-	[100014] = "Dire Maul (West)";
+	[100013] = "Dire Maul - East";
+	[100014] = "Dire Maul - West";
 	[100015] = "Maraudon";
 	[100016] = "Ragefire Chasm";
 	[100017] = "Naxxramas";
@@ -39,6 +39,24 @@ private.DUNGEONS_IDS = {
 	[100020] = "The Stockade";
 	[100021] = "Blackfathom Deeps";
 	[100022] = "Sunken Temple";
+	[100023] = "Ruins of Lordaeron";
+	[100024] = "The Hall of Thanes";
+	[100025] = "Excavation Site: Wetlands";
+	[100026] = "City of Dalaran";
+	[100027] = "The Drowned City";
+	[100028] = "Krol'dok Stronghold";
+	[100029] = "Alcaz Prison";
+	[100030] = "Blackmaw Hold";
+	[100031] = "The Shaper's Terrace";
+	[100032] = "Dire Maul - North";
+	[100033] = "Scarlet Monastery - Armory";
+	[100034] = "Scarlet Monastery - Cathedral";
+	[100035] = "Scarlet Monastery - Library";
+	[100036] = "Stratholme - Service Entrance";
+	[100037] = "DEADMINES_ENTRANCE";
+	[100039] = "WAILING_CAVERNS_ENTRANCE";
+	[100040] = "SUNKEN_TEMPLE_ENTRANCE";
+	[100041] = "BLACKROCK_DEPTHS_ENTRANCE";
 }
 
 private.ZONES_WITHOUT_VIGNETTE = {

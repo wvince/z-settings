@@ -20,14 +20,46 @@ local DB = addon:NewModule('Database')
 ---@field alpha number
 
 function DB:Init()
+  -- A new install has no saved variables yet: AceDB creates them only when the global is nil
+  -- (AceDB-3.0 New), and nothing reads them before this. A character new to an existing install is
+  -- no new install: every character shares the Default profile.
+  local newInstall = _G[addonName .. 'DB'] == nil
   -- Create the settings database.
   DB.data = LibStub('AceDB-3.0'):New(addonName .. 'DB', const.DATABASE_DEFAULTS --[[@as AceDB.Schema]], true) --[[@as databaseOptions]]
+  if newInstall then
+    -- New installs start with BetterBags Next (next.md §1). Saved in the profile: the default stays
+    -- off, so a profile from before that never turned Next on keeps the classic bags.
+    DB.data.profile.nextEnabled = true
+  end
   DB:Migrate()
 end
 
 ---@return databaseOptions
 function DB:GetData()
   return DB.data
+end
+
+-- GetChangelogLastSeen returns the id of the newest changelog release the player has seen.
+-- The changelog's state is account wide (AceDB global).
+---@return number
+function DB:GetChangelogLastSeen()
+  return DB.data.global.changelog.lastSeen
+end
+
+---@param id number
+function DB:SetChangelogLastSeen(id)
+  DB.data.global.changelog.lastSeen = id
+end
+
+-- GetChangelogAutoOpen returns whether the changelog opens by itself on login.
+---@return boolean
+function DB:GetChangelogAutoOpen()
+  return DB.data.global.changelog.autoOpen
+end
+
+---@param value boolean
+function DB:SetChangelogAutoOpen(value)
+  DB.data.global.changelog.autoOpen = value
 end
 
 ---@param kind BagKind
@@ -138,6 +170,18 @@ function DB:GetShowBankTabs()
   return DB.data.profile.showBankTabs
 end
 
+-- The guild bank shows its own tabs, one at a time, instead of every tab in categories
+-- (guild-bank.md §4).
+---@param shown boolean
+function DB:SetShowGuildBankTabs(shown)
+  DB.data.profile.showGuildBankTabs = shown
+end
+
+---@return boolean
+function DB:GetShowGuildBankTabs()
+  return DB.data.profile.showGuildBankTabs
+end
+
 ---@param enabled boolean
 function DB:SetEnableBagFading(enabled)
   DB.data.profile.enableBagFading = enabled
@@ -146,6 +190,101 @@ end
 ---@return boolean
 function DB:GetEnableBagFading()
   return DB.data.profile.enableBagFading
+end
+
+-- GetAnimateItemMovement returns whether items, sections and rows travel to their new places when
+-- the bags rearrange (render-pipeline.md §4c). Off unless turned on.
+---@return boolean
+function DB:GetAnimateItemMovement()
+  return DB.data.profile.animateItemMovement
+end
+
+---@param enabled boolean
+function DB:SetAnimateItemMovement(enabled)
+  DB.data.profile.animateItemMovement = enabled
+end
+
+-- GetNextEnabled returns whether the backpack is BetterBags Next's panel (next.md); it takes
+-- effect after a reload. Off unless turned on.
+---@return boolean
+function DB:GetNextEnabled()
+  return DB.data.profile.nextEnabled
+end
+
+---@param enabled boolean
+function DB:SetNextEnabled(enabled)
+  DB.data.profile.nextEnabled = enabled
+end
+
+---@alias NextChainLayout "apart"|"left"|"right"
+
+-- GetNextChain returns how BetterBags Next's backpack and its companion (the bank or a vendor) sit:
+-- apart on opposite edges, or chained on the left or the right (next.md §12).
+---@return NextChainLayout
+function DB:GetNextChain()
+  return DB.data.profile.nextChain
+end
+
+---@param layout NextChainLayout
+function DB:SetNextChain(layout)
+  if layout ~= "apart" and layout ~= "left" and layout ~= "right" then
+    error("unknown BetterBags Next chain layout: " .. tostring(layout))
+  end
+  DB.data.profile.nextChain = layout
+end
+
+---@alias NextSize "full"|"small"
+
+-- GetNextSize returns BetterBags Next's panel size: "full" height on the screen's edges, or "small"
+-- movable panels (docs/next-small-mode.md).
+---@return NextSize
+function DB:GetNextSize()
+  return DB.data.profile.nextSize
+end
+
+---@param size NextSize
+function DB:SetNextSize(size)
+  if size ~= "full" and size ~= "small" then
+    error("unknown BetterBags Next size: " .. tostring(size))
+  end
+  DB.data.profile.nextSize = size
+end
+
+-- GetNextSmallPlace returns where a kind's small panel was left: its top left in UIParent's units,
+-- or nothing before it was first moved.
+---@param kind BagKind
+---@return number? x, number? y
+function DB:GetNextSmallPlace(kind)
+  local place = DB.data.profile.nextSmallPlaces[kind]
+  if place == nil then
+    return nil
+  end
+  return place.x, place.y
+end
+
+---@param kind BagKind
+---@param x number
+---@param y number
+function DB:SetNextSmallPlace(kind, x, y)
+  DB.data.profile.nextSmallPlaces[kind] = { x = x, y = y }
+end
+
+---@alias NextSmallChain "apart"|"backpack"|"companion"
+
+-- GetNextSmallChain returns which small panel anchors a chained pair (docs/next-small-mode.md):
+-- "apart", "backpack" (a companion was dropped beside it) or "companion" (the backpack was dropped
+-- beside a companion, and sits beside whichever is open).
+---@return NextSmallChain
+function DB:GetNextSmallChain()
+  return DB.data.profile.nextSmallChain
+end
+
+---@param layout NextSmallChain
+function DB:SetNextSmallChain(layout)
+  if layout ~= "apart" and layout ~= "backpack" and layout ~= "companion" then
+    error("unknown BetterBags Next small chain: " .. tostring(layout))
+  end
+  DB.data.profile.nextSmallChain = layout
 end
 
 ---@param kind BagKind
@@ -213,6 +352,38 @@ function DB:SetBagViewFrameSize(kind, view, width, height)
   DB.data.profile.size[view][kind].height = height
 end
 
+-- GetBagSizeMode returns how the bag's window is sized in the view it shows: "content" (it
+-- fits its contents) or "window" (the player sizes it and its contents reflow).
+---@param kind BagKind
+---@return WindowSizeMode
+function DB:GetBagSizeMode(kind)
+  return DB.data.profile.size[DB:GetBagView(kind)][kind].sizeMode
+end
+
+---@param kind BagKind
+---@param mode WindowSizeMode
+function DB:SetBagSizeMode(kind, mode)
+  if mode ~= "content" and mode ~= "window" then
+    error("unknown bag size mode: " .. tostring(mode))
+  end
+  DB.data.profile.size[DB:GetBagView(kind)][kind].sizeMode = mode
+end
+
+-- GetBagSnapToContent returns whether the bag's window, in the view it shows, shrinks to its
+-- content's width, and its height when there is room below it, when the player finishes
+-- resizing it. On unless turned off.
+---@param kind BagKind
+---@return boolean
+function DB:GetBagSnapToContent(kind)
+  return DB.data.profile.size[DB:GetBagView(kind)][kind].snapToContent ~= false
+end
+
+---@param kind BagKind
+---@param value boolean
+function DB:SetBagSnapToContent(kind, value)
+  DB.data.profile.size[DB:GetBagView(kind)][kind].snapToContent = value
+end
+
 function DB:GetItemLevelOptions(kind)
   return DB.data.profile.itemLevel[kind]
 end
@@ -257,6 +428,9 @@ function DB:ResetMaxItemLevel()
   local context = addon:GetModule('Context')
   local ctx = context:New('ResetMaxItemLevel')
   events:SendMessage(ctx, 'itemLevel/MaxChanged', 1)
+  -- The maximum is learned while items are read, and sweeps keep the items of unchanged
+  -- slots without reading them again; re-read everything so it is learned again.
+  events:SendMessage(ctx, 'bags/FullRefreshAll')
 end
 
 function DB:GetItemLevelColors()
@@ -418,15 +592,6 @@ function DB:DeleteItemCategory(category)
       end
     end
 
-    if DB.data.profile.collapsedSections[kind] then
-      DB.data.profile.collapsedSections[kind][category] = nil
-      for name in pairs(DB.data.profile.collapsedSections[kind]) do
-        if name:sub(1, #groupedPrefix) == groupedPrefix then
-          DB.data.profile.collapsedSections[kind][name] = nil
-        end
-      end
-    end
-
     if DB.data.profile.categoryToGroup[kind] then
       DB.data.profile.categoryToGroup[kind][category] = nil
       if addon.isRetail and kind == const.BAG_KIND.BANK then
@@ -440,21 +605,56 @@ function DB:DeleteItemCategory(category)
   end
 end
 
--- PruneOrphanedSectionSort removes pinned-sort ("Pinned" list) entries whose
--- category no longer exists in either the persistent (customCategoryFilters) or
--- persisted-ephemeral (ephemeralCategoryFilters) stores. Such orphans were left
--- behind by the old DeleteItemCategory (which did not scrub customSectionSort),
--- and the config pane's LoadPinnedItems would resurface them forever as
--- undeletable "dynamic" categories. Called once from Migrate to self-heal
--- existing profiles; new deletes no longer create orphans.
-function DB:PruneOrphanedSectionSort()
+-- The name GetCategory now gives a category whose name repeated its item type
+-- ("Quest - Quest" is "Quest", "Quest - Quest - Classic" is "Quest - Classic"), or nil.
+---@param name string
+---@return string|nil
+local function nameWithoutRepeatedType(name)
+  local separator = string.find(name, " - ", 1, true)
+  if not separator then return nil end
+  local typeName = string.sub(name, 1, separator - 1)
+  local rest = string.sub(name, separator + 3)
+  if rest == typeName or string.sub(rest, 1, #typeName + 3) == typeName .. " - " then
+    return rest
+  end
+  return nil
+end
+
+-- RenameRepeatedTypeCategories moves the hidden state, group assignments and pinned order
+-- saved under a category name that repeated its item type (issue #183) to the category's
+-- current name. Custom categories keep their names, and a setting already saved under the
+-- current name wins.
+function DB:RenameRepeatedTypeCategories()
+  local profile = DB.data.profile
+  ---@param map table<any, any>
+  local function renameKeys(map)
+    local renames = {}
+    for name in pairs(map) do
+      if type(name) == "string"
+        and profile.customCategoryFilters[name] == nil
+        and profile.ephemeralCategoryFilters[name] == nil then
+        renames[name] = nameWithoutRepeatedType(name)
+      end
+    end
+    for oldName, newName in pairs(renames) do
+      if map[newName] == nil then
+        map[newName] = map[oldName]
+      end
+      map[oldName] = nil
+    end
+  end
+
+  renameKeys(profile.categoryOptions)
   for _, kind in pairs(const.BAG_KIND) do
-    local sort = DB.data.profile.customSectionSort[kind]
-    if sort then
-      for name in pairs(sort) do
-        if DB.data.profile.customCategoryFilters[name] == nil
-          and DB.data.profile.ephemeralCategoryFilters[name] == nil then
-          sort[name] = nil
+    if type(profile.customSectionSort[kind]) == "table" then
+      renameKeys(profile.customSectionSort[kind])
+    end
+    local groupsByName = profile.categoryToGroup[kind]
+    if type(groupsByName) == "table" then
+      renameKeys(groupsByName)
+      for _, groupsByBankType in pairs(groupsByName) do
+        if type(groupsByBankType) == "table" then
+          renameKeys(groupsByBankType)
         end
       end
     end
@@ -572,27 +772,6 @@ end
 ---@return table<string, number>
 function DB:GetCustomSectionSort(kind)
   return DB.data.profile.customSectionSort[kind]
-end
-
----@param kind BagKind
----@param category string
----@return boolean
-function DB:GetSectionCollapsed(kind, category)
-  return DB.data.profile.collapsedSections[kind][category] or false
-end
-
----@param kind BagKind
----@param category string
----@param collapsed boolean
-function DB:SetSectionCollapsed(kind, category, collapsed)
-  DB.data.profile.collapsedSections[kind][category] = collapsed
-end
-
----@param kind BagKind
----@param category string
-function DB:ToggleSectionCollapsed(kind, category)
-  local current = DB:GetSectionCollapsed(kind, category)
-  DB:SetSectionCollapsed(kind, category, not current)
 end
 
 ---@param guid string
@@ -924,24 +1103,7 @@ function DB:RenameCategory(oldName, newName)
     end
   end
 
-  -- 6. Update collapse state for all bag kinds
-  for _, kind in pairs(const.BAG_KIND) do
-    if DB.data.profile.collapsedSections[kind] and DB.data.profile.collapsedSections[kind][oldName] ~= nil then
-      DB.data.profile.collapsedSections[kind][newName] = DB.data.profile.collapsedSections[kind][oldName]
-      DB.data.profile.collapsedSections[kind][oldName] = nil
-    end
-
-    -- Delete grouped sub-categories from collapsed sections
-    if DB.data.profile.collapsedSections[kind] then
-      for categoryName, _ in pairs(DB.data.profile.collapsedSections[kind]) do
-        if categoryName:sub(1, #groupedPrefix) == groupedPrefix then
-          DB.data.profile.collapsedSections[kind][categoryName] = nil
-        end
-      end
-    end
-  end
-
-  -- 7. Update custom section sort (pinned position) for all bag kinds
+  -- 6. Update custom section sort (pinned position) for all bag kinds
   for _, kind in pairs(const.BAG_KIND) do
     if DB.data.profile.customSectionSort[kind] and DB.data.profile.customSectionSort[kind][oldName] ~= nil then
       DB.data.profile.customSectionSort[kind][newName] = DB.data.profile.customSectionSort[kind][oldName]
@@ -1244,13 +1406,10 @@ function DB:Migrate()
   end
 
   --[[
-    Clear all collapsed section states since the collapse feature has been disabled.
-    Do not remove before Q1'27.
+    Section collapsing was removed: drop its saved state.
+    Do not remove before Q3'27.
   ]]--
-  DB.data.profile.collapsedSections = {
-    [const.BAG_KIND.BACKPACK] = {},
-    [const.BAG_KIND.BANK] = {},
-  }
+  DB.data.profile.collapsedSections = nil
 
   -- ============================================================
   -- Dynamic Item Level Coloring Migration (Q1'27)
@@ -1560,10 +1719,17 @@ function DB:Migrate()
     DB.data.profile.__profileSystemMigrated = true
   end
 
-  -- Heal profiles corrupted by the old DeleteItemCategory, which left pinned
-  -- categories behind in customSectionSort so they resurfaced as undeletable
-  -- "dynamic" categories.
-  DB:PruneOrphanedSectionSort()
+  -- Quest items are no longer named "Quest - Quest"; their settings follow the new name.
+  DB:RenameRepeatedTypeCategories()
+
+  --[[
+    The Moonlight themes were first released (alpha, 2026-10-16) under these keys.
+    Do not remove before Q3'27.
+  ]]--
+  local renamedThemes = { MoonlightDark = "Dark", MoonlightParchment = "Parchment" }
+  if renamedThemes[DB.data.profile.theme] ~= nil then
+    DB.data.profile.theme = renamedThemes[DB.data.profile.theme]
+  end
 end
 
 -- ============================================================

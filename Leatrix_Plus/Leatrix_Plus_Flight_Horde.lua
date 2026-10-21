@@ -36,6 +36,7 @@
 				["0.43:0.93:0.55:0.57:0.44:0.19:0.67:0.30"] = 1112, -- Booty Bay, Kargath, Undercity, Revantusk Village
 				["0.43:0.93:0.55:0.57:0.44:0.19:0.70:0.16"] = 1092, -- Booty Bay, Kargath, Undercity, Light's Hope Chapel
 				["0.43:0.93:0.55:0.57:0.56:0.61"] = 492, -- Booty Bay, Kargath, Flame Crest
+				["0.43:0.93:0.61:0.75:0.67:0.63"] = 436, -- Booty Bay, Stonard, Rog'mar
 
 				-- Horde: Flame Crest (Burning Steppes)
 				["0.56:0.61:0.61:0.75:0.43:0.93"] = 472, -- Flame Crest, Stonard, Booty Bay
@@ -93,6 +94,7 @@
 				["0.62:0.31:0.44:0.19:0.38:0.24"] = 290, -- Hammerfall, Undercity, The Sepulcher
 				["0.62:0.31:0.55:0.57:0.43:0.93"] = 675, -- Hammerfall, Kargath, Booty Bay
 				["0.62:0.31:0.44:0.19:0.70:0.16"] = 444, -- Hammerfall, Undercity, Light's Hope Chapel
+				["0.62:0.31:0.67:0.63"] = 326, -- Hammerfall, Rog'mar
 
 				-- Horde: Kargath (Badlands)
 				["0.55:0.57:0.43:0.93"] = 417, -- Kargath, Booty Bay
@@ -703,7 +705,7 @@
 
 				-- Horde: Thunder Bluff (Mulgore)
 				["0.45:0.56:0.61:0.80"] = 290, -- Thunder Bluff, Gadgetzan
-				["0.45:0.56:0.55:0.73"] = 204, -- Thunder Bluff, Freewind Post
+				["0.45:0.56:0.55:0.73"] = 219, -- Thunder Bluff, Freewind Post
 				["0.45:0.56:0.61:0.80:0.50:0.76"] = 397, -- Thunder Bluff, Gadgetzan, Marshal's Refuge
 				["0.45:0.56:0.44:0.69:0.42:0.79"] = 381, -- Thunder Bluff, Camp Mojache, Cenarion Hold
 				["0.45:0.56:0.44:0.69"] = 252, -- Thunder Bluff, Camp Mojache

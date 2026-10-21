@@ -13,7 +13,7 @@ local bossModPrototype = private:GetPrototype("DBMMod")
 local difficulties = private:GetPrototype("Difficulties")
 DBM.Difficulties = difficulties
 
-local test = private:GetPrototype("DBMTest")
+local GetInstanceInfo = GetInstanceInfo
 
 difficulties.savedDifficulty = nil
 difficulties.difficultyIndex = nil
@@ -99,7 +99,7 @@ if private.isRetail then
 		[2522] = {70, 3}, [2569] = {70, 3}, [2549] = {70, 3},--Dragonflight Raids
 		[2657] = {80, 3}, [2792] = {80, 3}, [2769] = {80, 3}, [2810] = {80, 3},--War Within Raids
 		[2912] = {90, 3}, [2939] = {90, 3}, [2913] = {90, 3}, [3004] = {90, 3},--Midnight Raids
-		[1592] = {90, 3}, [2987] = {90, 3},--Midnight Lairs (scalable multi difficulty "world bosses")
+		[1592] = {90, 3}, [2987] = {90, 3}, [3095] = {90, 3},--Midnight Lairs (scalable multi difficulty "world bosses")
 		--Dungeons
 		[48] = {30, 2}, [230] = {30, 2}, [429] = {30, 2}, [389] = {30, 2}, [34] = {30, 2},--Classic Dungeons
 		[540] = {30, 2}, [558] = {30, 2}, [556] = {30, 2}, [555] = {30, 2}, [542] = {30, 2}, [546] = {30, 2}, [545] = {30, 2}, [547] = {30, 2}, [553] = {30, 2}, [554] = {30, 2}, [552] = {30, 2}, [557] = {30, 2}, [269] = {30, 2}, [560] = {30, 2}, [543] = {30, 2}, [585] = {30, 2},--BC Dungeons
@@ -115,11 +115,11 @@ if private.isRetail then
 		[2805] = {90, 2}, [2811] = {90, 2}, [2813] = {90, 2}, [2825] = {90, 2}, [2859] = {90, 2}, [2874] = {90, 2}, [2915] = {90, 2}, [2923] = {90, 2}, [2993] = {90, 2},--Midnight Dungeons
 		--Delves
 		[2664] = {80, 4}, [2679] = {80, 4}, [2680] = {80, 4}, [2681] = {80, 4}, [2682] = {80, 4}, [2683] = {80, 4}, [2684] = {80, 4}, [2685] = {80, 4}, [2686] = {80, 4}, [2687] = {80, 4}, [2688] = {80, 4}, [2689] = {80, 4}, [2690] = {80, 4}, [2767] = {80, 4}, [2768] = {80, 4}, [2831] = {80, 4}, [2815] = {80, 4}, [2826] = {80, 4}, [2803] = {80, 4}, [2951] = {80, 4},--War Within Delves
-		[3003] = {90, 4}, [2961] = {90, 4}, [2962] = {90, 4}, [2963] = {90, 4}, [2964] = {90, 4}, [2953] = {90, 4}, [2933] = {90, 4}, [2952] = {90, 4}, [2979] = {90, 4}, [2965] = {90, 4}, [2966] = {90, 4}, [3077] = {90, 4}, [3079] = {90, 4}, [3081] = {90, 4}, [3038] = {90, 4},--Midnight Delves
+		[3003] = {90, 4}, [2961] = {90, 4}, [2962] = {90, 4}, [2963] = {90, 4}, [2964] = {90, 4}, [2953] = {90, 4}, [2933] = {90, 4}, [2952] = {90, 4}, [2979] = {90, 4}, [2965] = {90, 4}, [2966] = {90, 4}, [3077] = {90, 4}, [3079] = {90, 4}, [3081] = {90, 4}, [3038] = {90, 4}, [3043] = {90, 4},--Midnight Delves
 		--Challenges (Mage tower, visions, torghast, proving grounds)
 		[2212] = {50, 5}, [2213] = {50, 5}, [2827] = {80, 5}, [2828] = {80, 5}, [2162]= {80, 5}, [1148] = {80, 5}, [1698] = {80, 5}, [1710] = {80, 5}, [1703] = {80, 5}, [1702] = {80, 5}, [1684] = {80, 5}, [1673] = {80, 5}, [1616] = {80, 5},
 	}
-	seasonalDungeons = {[1762]=true, [1877]=true, [2521]=true, [2825]=true, [2813]=true, [2859]=true, [2923]=true, [2993]=true}--Midnight Season 1 and Season 2
+	seasonalDungeons = {[1762]=true, [1877]=true, [2521]=true, [2825]=true, [2813]=true, [2859]=true, [2923]=true, [2993]=true}--Midnight Season 2
 elseif private.isCata or private.isMop then
 	--Since 2 dungeons were changed from vanilla to cata dungeons, Cata and MoP need own table
 	--Still has to remain separate from retail due to level squishes retail has had
@@ -225,9 +225,6 @@ end
 
 ---@param self DBM|DBMMod
 function DBM:IsTrivial(customLevel)
-	if test.testRunning then
-		return false
-	end
 	local lastInstanceMapId = DBM:GetCurrentArea()
 	--if timewalking or chromie time or challenge modes or titanforged raid. it's always non trivial content
 	if C_PlayerInfo.IsPlayerInChromieTime and C_PlayerInfo.IsPlayerInChromieTime() or self:IsRemix() or difficulties.difficultyIndex == 24 or difficulties.difficultyIndex == 33 or difficulties.difficultyIndex == 8 or difficulties.difficultyIndex == 244 then
@@ -411,7 +408,7 @@ difficulties.SOD_BWL_TRIAL_RED    = 16
 --TODO C_IslandsQueue.GetIslandDifficultyInfo(), if 38-40 don't work
 --TODO, not sure how to classify lairs yet. New category, world bosses, or main raid category since they are progression multi difficulty bosses
 function DBM:GetCurrentInstanceDifficulty()
-	local _, instanceType, difficulty, difficultyName, _, _, _, instanceID, instanceGroupSize = private.GetInstanceInfo()
+	local _, instanceType, difficulty, difficultyName, _, _, _, instanceID, instanceGroupSize = GetInstanceInfo()
 	if difficulty == 0 or difficulty == 172 or (difficulty == 1 and instanceType == "none") or (C_Garrison and C_Garrison:IsOnGarrisonMap()) then--draenor field returns 1, causing world boss mod bug.
 		return "worldboss", RAID_INFO_WORLD_BOSS .. " - ", difficulty, instanceGroupSize, 0
 	elseif difficulty == 250 then--instanced world boss/lair

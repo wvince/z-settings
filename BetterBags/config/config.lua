@@ -15,9 +15,6 @@ local context = addon:GetModule('Context')
 ---@class Events: AceModule
 local events = addon:GetModule('Events')
 
----@class Themes: AceModule
-local themes = addon:GetModule('Themes')
-
 ---@class Bucket: AceModule
 local bucket = addon:GetModule('Bucket')
 
@@ -30,6 +27,9 @@ local categoryPane = addon:GetModule('CategoryPane')
 ---@class ThemePane: AceModule
 local themePane = addon:GetModule('ThemePane')
 
+---@class Sonata: AceModule
+local sonata = addon:GetModule('Sonata')
+
 ---@class CurrencyPane: AceModule
 local currencyPane = addon:GetModule('CurrencyPane')
 
@@ -39,6 +39,23 @@ local itemColorPane = addon:GetModule('ItemColorPane')
 ---@class Config: AceModule
 ---@field configFrame FormFrame
 local config = addon:NewModule('Config')
+
+-- askToReload asks the player to reload the UI, for a setting that takes effect only then.
+local function askToReload()
+  StaticPopupDialogs["BETTERBAGS_RELOAD_UI"] = {
+    text = "BetterBags needs to reload the UI for this change to take effect. Reload now?",
+    button1 = "Yes",
+    button2 = "No",
+    OnAccept = function()
+      ReloadUI()
+    end,
+    timeout = 0,
+    whileDead = true,
+    hideOnEscape = true,
+    preferredIndex = 3,
+  }
+  StaticPopup_Show("BETTERBAGS_RELOAD_UI")
+end
 
 function config:CreateConfig()
   local f = form:Create({
@@ -107,20 +124,7 @@ function config:CreateConfig()
     end,
     setValue = function(_, value)
       db:SetEnableBankBag(value)
-      -- Prompt user to reload UI
-      StaticPopupDialogs["BETTERBAGS_RELOAD_UI"] = {
-        text = "BetterBags needs to reload the UI for this change to take effect. Reload now?",
-        button1 = "Yes",
-        button2 = "No",
-        OnAccept = function()
-          ReloadUI()
-        end,
-        timeout = 0,
-        whileDead = true,
-        hideOnEscape = true,
-        preferredIndex = 3,
-      }
-      StaticPopup_Show("BETTERBAGS_RELOAD_UI")
+      askToReload()
     end
   })
 
@@ -132,6 +136,33 @@ function config:CreateConfig()
     end,
     setValue = function(_, value)
       db:SetEnableBagFading(value)
+    end
+  })
+
+  f:AddCheckbox({
+    title = 'Animate Item Movement',
+    description = 'If enabled, items, sections and rows glide to their new places when the bags rearrange (sorting, looting, resizing).',
+    getValue = function(_)
+      return db:GetAnimateItemMovement()
+    end,
+    setValue = function(_, value)
+      db:SetAnimateItemMovement(value)
+    end
+  })
+
+  f:AddCheckbox({
+    title = 'BetterBags Next (experimental)',
+    description = 'An experimental new backpack: a panel that slides in from the right edge of the screen, '
+      .. 'with tabs down its side and your categories in one column. Switches at once, outside combat, '
+      .. 'the bank and vendors.',
+    getValue = function(_)
+      return db:GetNextEnabled()
+    end,
+    setValue = function(ctx, value)
+      -- A switch refused (combat, the bank, a vendor) leaves the setting as it was: show it again.
+      if not addon:GetModule('BagSystem'):Switch(ctx, value and "next" or "classic") then
+        self.configFrame:ReloadAllFormElements()
+      end
     end
   })
 
@@ -158,10 +189,9 @@ function config:CreateConfig()
     end,
     setValue = function(ctx, value)
       db:SetUpgradeIconProvider(value)
-      -- A full refresh re-runs the data sweep so Phase6 re-resolves each item's
-      -- data.isUpgrade with the newly selected provider. bag/RedrawIcons only
-      -- re-reads the already-committed (stale) isUpgrade and would not update.
-      events:SendMessage(ctx, 'bags/FullRefreshAll')
+      -- The data sweep re-resolves each item's data.isUpgrade with the newly selected
+      -- provider; a redraw alone would draw the committed (stale) isUpgrade.
+      events:SendMessage(ctx, 'bags/Rederive', { resetLayout = true, buttons = true })
     end,
   })
 
@@ -210,6 +240,10 @@ function config:CreateConfig()
     {name = 'Backpack', kind = const.BAG_KIND.BACKPACK},
     {name = 'Bank', kind = const.BAG_KIND.BANK}
   }
+  -- The guild bank (BetterBags Next's, guild-bank.md §5) has its own, on a client with one.
+  if addon.hasGuildBank then
+    table.insert(bagTypes, {name = 'Guild Bank', kind = const.BAG_KIND.GUILD})
+  end
   for _, bagType in ipairs(bagTypes) do
 
     f:AddSection({
@@ -230,7 +264,7 @@ function config:CreateConfig()
       end,
       setValue = function(ctx, value)
         db:SetSectionSortType(bagType.kind, db:GetBagView(bagType.kind), sectionOrders[value])
-        events:SendMessage(ctx, 'bags/FullRefreshAll')
+        events:SendMessage(ctx, 'bags/Rederive', { resetLayout = true, buttons = true })
       end,
     })
 
@@ -249,7 +283,7 @@ function config:CreateConfig()
       end,
       setValue = function(ctx, value)
         db:SetItemSortType(bagType.kind, db:GetBagView(bagType.kind), itemOrders[value])
-        events:SendMessage(ctx, 'bags/FullRefreshAll')
+        events:SendMessage(ctx, 'bags/Rederive', { resetLayout = true, buttons = true })
       end,
     })
 
@@ -264,7 +298,7 @@ function config:CreateConfig()
         setValue = function(ctx, value)
           db:SetGroupsEnabled(bagType.kind, value)
           events:SendMessage(ctx, 'groups/EnabledChanged', bagType.kind, value)
-          events:SendMessage(ctx, 'bags/FullRefreshAll')
+          events:SendMessage(ctx, 'bags/Rederive', { resetLayout = true, buttons = true })
         end
       })
     end
@@ -286,7 +320,7 @@ function config:CreateConfig()
       end,
       setValue = function(ctx, value)
         db:GetCategoryFilters(bagType.kind).EquipmentLocation = value
-        events:SendMessage(ctx, 'bags/FullRefreshAll')
+        events:SendMessage(ctx, 'bags/Rederive', { resetLayout = true, buttons = true })
       end
     })
 
@@ -298,7 +332,7 @@ function config:CreateConfig()
       end,
       setValue = function(ctx, value)
         db:GetCategoryFilters(bagType.kind).Expansion = value
-        events:SendMessage(ctx, 'bags/FullRefreshAll')
+        events:SendMessage(ctx, 'bags/Rederive', { resetLayout = true, buttons = true })
       end
     })
 
@@ -310,7 +344,7 @@ function config:CreateConfig()
       end,
       setValue = function(ctx, value)
         db:GetCategoryFilters(bagType.kind).GearSet = value
-        events:SendMessage(ctx, 'bags/FullRefreshAll')
+        events:SendMessage(ctx, 'bags/Rederive', { resetLayout = true, buttons = true })
       end
     })
 
@@ -322,7 +356,7 @@ function config:CreateConfig()
       end,
       setValue = function(ctx, value)
         db:GetCategoryFilters(bagType.kind).RecentItems = value
-        events:SendMessage(ctx, 'bags/FullRefreshAll')
+        events:SendMessage(ctx, 'bags/Rederive', { resetLayout = true, buttons = true })
       end
     })
 
@@ -334,7 +368,7 @@ function config:CreateConfig()
       end,
       setValue = function(ctx, value)
         db:GetCategoryFilters(bagType.kind).TradeSkill = value
-        events:SendMessage(ctx, 'bags/FullRefreshAll')
+        events:SendMessage(ctx, 'bags/Rederive', { resetLayout = true, buttons = true })
       end
     })
 
@@ -346,7 +380,7 @@ function config:CreateConfig()
       end,
       setValue = function(ctx, value)
         db:GetCategoryFilters(bagType.kind).Type = value
-        events:SendMessage(ctx, 'bags/FullRefreshAll')
+        events:SendMessage(ctx, 'bags/Rederive', { resetLayout = true, buttons = true })
       end
     })
 
@@ -358,7 +392,7 @@ function config:CreateConfig()
       end,
       setValue = function(ctx, value)
         db:GetCategoryFilters(bagType.kind).Subtype = value
-        events:SendMessage(ctx, 'bags/FullRefreshAll')
+        events:SendMessage(ctx, 'bags/Rederive', { resetLayout = true, buttons = true })
       end
     })
 
@@ -397,7 +431,7 @@ function config:CreateConfig()
       end,
       setValue = function(ctx, value)
         db:GetStackingOptions(bagType.kind).mergeStacks = value
-        events:SendMessage(ctx, 'bags/FullRefreshAll')
+        events:SendMessage(ctx, 'bags/Rederive', { resetLayout = true, buttons = true })
       end
     })
 
@@ -409,7 +443,7 @@ function config:CreateConfig()
       end,
       setValue = function(ctx, value)
         db:GetStackingOptions(bagType.kind).mergeUnstackable = value
-        events:SendMessage(ctx, 'bags/FullRefreshAll')
+        events:SendMessage(ctx, 'bags/Rederive', { resetLayout = true, buttons = true })
       end
     })
 
@@ -421,7 +455,7 @@ function config:CreateConfig()
       end,
       setValue = function(ctx, value)
         db:GetStackingOptions(bagType.kind).dontMergePartial = value
-        events:SendMessage(ctx, 'bags/FullRefreshAll')
+        events:SendMessage(ctx, 'bags/Rederive', { resetLayout = true, buttons = true })
       end
     })
 
@@ -433,6 +467,8 @@ function config:CreateConfig()
       end,
       setValue = function(ctx, value)
         db:GetStackingOptions(bagType.kind).dontMergeTransmog = value
+        -- The item hash includes the transmog appearance only with this setting, and a slot's
+        -- hash is computed when the slot is read, so the bags are read again.
         events:SendMessage(ctx, 'bags/FullRefreshAll')
       end
     })
@@ -445,7 +481,7 @@ function config:CreateConfig()
       end,
       setValue = function(ctx, value)
         db:GetStackingOptions(bagType.kind).unmergeAtShop = value
-        events:SendMessage(ctx, 'bags/FullRefreshAll')
+        events:SendMessage(ctx, 'bags/Rederive', { resetLayout = true, buttons = true })
       end
     })
 
@@ -462,7 +498,7 @@ function config:CreateConfig()
       end,
       setValue = function(ctx, value)
         db:GetItemLevelOptions(bagType.kind).enabled = value
-        events:SendMessage(ctx, 'bags/FullRefreshAll')
+        events:SendMessage(ctx, 'bags/Redraw', { buttons = true })
       end
     })
 
@@ -474,7 +510,7 @@ function config:CreateConfig()
       end,
       setValue = function(ctx, value)
         db:GetItemLevelOptions(bagType.kind).color = value
-        events:SendMessage(ctx, 'bags/FullRefreshAll')
+        events:SendMessage(ctx, 'bags/Redraw', { buttons = true })
       end
     })
 
@@ -491,7 +527,7 @@ function config:CreateConfig()
       end,
       setValue = function(ctx, value)
         db:SetShowFullSectionNames(bagType.kind, value)
-        events:SendMessage(ctx, 'bags/FullRefreshAll')
+        events:SendMessage(ctx, 'bags/Redraw')
       end
     })
 
@@ -503,7 +539,7 @@ function config:CreateConfig()
       end,
       setValue = function(ctx, value)
         db:SetShowAllFreeSpace(bagType.kind, value)
-        events:SendMessage(ctx, 'bags/FullRefreshAll')
+        events:SendMessage(ctx, 'bags/Rederive', { resetLayout = true, buttons = true })
       end
     })
 
@@ -515,7 +551,7 @@ function config:CreateConfig()
       end,
       setValue = function(ctx, value)
         db:SetPreserveItemGaps(bagType.kind, value)
-        events:SendMessage(ctx, 'bags/FullRefreshAll')
+        events:SendMessage(ctx, 'bags/Rederive', { resetLayout = true, buttons = true })
       end
     })
 
@@ -532,7 +568,33 @@ function config:CreateConfig()
       end,
       setValue = function(ctx, value)
         db:SetGlowIntensity(bagType.kind, value)
-        events:SendMessage(ctx, 'bags/FullRefreshAll')
+        events:SendMessage(ctx, 'bags/Redraw', { buttons = true })
+      end
+    })
+
+    f:AddCheckbox({
+      title = 'Resizable Window',
+      description = 'If enabled, the ' .. string.lower(bagType.name) .. ' is a window you size by dragging its corner, '
+        .. 'and its sections fill it (Columns still sets how many sit side by side). '
+        .. 'If disabled, it sizes itself to its items, Items Per Row wide.',
+      getValue = function(_)
+        return db:GetBagSizeMode(bagType.kind) == "window"
+      end,
+      setValue = function(ctx, value)
+        db:SetBagSizeMode(bagType.kind, value and "window" or "content")
+        events:SendMessage(ctx, 'bags/Redraw')
+      end
+    })
+
+    f:AddCheckbox({
+      title = 'Snap to Content',
+      description = 'With Resizable Window on, when you let go after resizing the ' .. string.lower(bagType.name)
+        .. ', it shrinks to fit its items, so there is no empty space at the sides or below them.',
+      getValue = function(_)
+        return db:GetBagSnapToContent(bagType.kind)
+      end,
+      setValue = function(_, value)
+        db:SetBagSnapToContent(bagType.kind, value)
       end
     })
 
@@ -548,7 +610,7 @@ function config:CreateConfig()
       setValue = function(ctx, value)
         db:SetBagViewSizeItems(bagType.kind, db:GetBagView(bagType.kind), value)
         bucket:Later("setItemsPerRow", 0.2, function()
-          events:SendMessage(ctx, 'bags/FullRefreshAll')
+          events:SendMessage(ctx, 'bags/Redraw')
         end)
       end,
     })
@@ -565,7 +627,7 @@ function config:CreateConfig()
       setValue = function(ctx, value)
         db:SetBagViewSizeColumn(bagType.kind, db:GetBagView(bagType.kind), value)
         bucket:Later("setSectionsPerRow", 0.2, function()
-          events:SendMessage(ctx, 'bags/FullRefreshAll')
+          events:SendMessage(ctx, 'bags/Redraw')
         end)
       end,
     })
@@ -581,7 +643,7 @@ function config:CreateConfig()
       end,
       setValue = function(_, value)
         db:SetBagViewSizeOpacity(bagType.kind, db:GetBagView(bagType.kind), value)
-        themes:UpdateOpacity()
+        sonata:UpdateOpacity()
       end,
     })
 
@@ -595,11 +657,12 @@ function config:CreateConfig()
         return db:GetBagSizeInfo(bagType.kind, db:GetBagView(bagType.kind)).scale
       end,
       setValue = function(_, value)
-        -- TODO(lobato): This should be an event.
-        local bag = addon:GetBagFromKind(bagType.kind)
-        if not bag then return end
-        bag.frame:SetScale(value / 100)
         db:SetBagViewSizeScale(bagType.kind, db:GetBagView(bagType.kind), value)
+        local bag = addon:GetBagFromKind(bagType.kind)
+        -- A BetterBags Next backpack has no window: it has one size.
+        if bag and bag.window then
+          bag.window:UpdateScale()
+        end
       end,
     })
 
@@ -629,12 +692,12 @@ function config:CreateConfig()
       pane:SetAllPoints()
 
       -- Title
-      local title = pane:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+      local title = sonata:CreateText(pane, "Title")
       title:SetPoint("TOPLEFT", 10, -10)
       title:SetText("QuickFind Integration")
 
       -- Description
-      local desc = pane:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+      local desc = sonata:CreateText(pane, "Body")
       desc:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -10)
       desc:SetPoint("RIGHT", pane, "RIGHT", -10, 0)
       desc:SetWordWrap(true)
@@ -642,11 +705,11 @@ function config:CreateConfig()
       desc:SetText("BetterBags integrates with the QuickFind addon to make your items searchable.")
 
       -- How it works section
-      local howItWorksTitle = pane:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+      local howItWorksTitle = sonata:CreateText(pane, "Field")
       howItWorksTitle:SetPoint("TOPLEFT", desc, "BOTTOMLEFT", 0, -20)
       howItWorksTitle:SetText("How It Works:")
 
-      local howItWorksText = pane:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+      local howItWorksText = sonata:CreateText(pane, "BodySmall")
       howItWorksText:SetPoint("TOPLEFT", howItWorksTitle, "BOTTOMLEFT", 0, -10)
       howItWorksText:SetPoint("RIGHT", pane, "RIGHT", -10, 0)
       howItWorksText:SetWordWrap(true)
@@ -1106,14 +1169,28 @@ function config:Open()
 end
 
 function config:RegisterSettings()
-  LibStub('AceConsole-3.0'):RegisterChatCommand("bb", function()
+  -- /bb opens the settings; /bb changelog opens the changelog (frames/changelog.lua); /bb next
+  -- switches the bags between the classic design and BetterBags Next (next.md §11).
+  LibStub('AceConsole-3.0'):RegisterChatCommand("bb", function(input)
+    local command = strtrim(input or ""):lower()
+    if command == "changelog" then
+      events:SendMessage(context:New('SlashChangelog'), 'changelog/Open')
+      return
+    end
+    if command == "next" then
+      addon:GetModule('BagSystem'):Switch(context:New('SlashNext'), db:GetNextEnabled() and "classic" or "next")
+      return
+    end
     self:Open()
   end)
 
   LibStub('AceConsole-3.0'):RegisterChatCommand("bbanchor", function()
-    addon.Bags.Backpack.anchor:Activate()
-    addon.Bags.Backpack.anchor:Show()
-    if addon.Bags.Bank then
+    -- A BetterBags Next bag has no anchor.
+    if addon.Bags.Backpack.anchor then
+      addon.Bags.Backpack.anchor:Activate()
+      addon.Bags.Backpack.anchor:Show()
+    end
+    if addon.Bags.Bank and addon.Bags.Bank.anchor then
       addon.Bags.Bank.anchor:Activate()
       addon.Bags.Bank.anchor:Show()
     end
@@ -1125,6 +1202,11 @@ function config:RegisterSettings()
 
   events:RegisterMessage('config/Open', function()
     self:Open()
+  end)
+
+  -- The bags switched design from a menu (next.md §11): the checkbox shows it.
+  events:RegisterMessage('bags/DesignChanged', function()
+    self.configFrame:ReloadAllFormElements()
   end)
 
   LibStub('AceConsole-3.0'):RegisterChatCommand("bbdb", function()

@@ -239,13 +239,13 @@ function RSGeneralDB.UpdateAlreadyFoundEntity(entityID, mapID, x, y, artID, atla
 			foundDB[entityID].atlasName = atlasName;
 		end
 
-		RSLogger:PrintDebugMessage(string.format("UpdateAlreadyFoundEntity[%s]: %s", entityID, PrintAlreadyFoundTable(RSGeneralDB.GetAlreadyFoundEntity(entityID, atlasName))))
+		--RSLogger:PrintDebugMessage(string.format("UpdateAlreadyFoundEntity[%s]: %s", entityID, PrintAlreadyFoundTable(RSGeneralDB.GetAlreadyFoundEntity(entityID, atlasName))))
 		
 		-- If not in the database add to a temp table
 		AddAlreadyFoundEntityNoDB(mapID, artID, entityID)
 		
 		-- If multispawn record coordinates for debugging purposes
-		if (RSConstants.DEBUG_MODE and RSContainerDB.IsMultiZoneSpawn(entityID)) then
+		if (RSConstants.DEBUG_MODE and RSContainerDB.IsRepeatable(entityID)) then
 			if (not private.dbglobal.multitiple_spawns) then
 				private.dbglobal.multitiple_spawns = {}
 			end
@@ -412,24 +412,28 @@ end
 -- Recently seen entities database
 ---============================================================================
 
+-- Only for this session, it isn't saved
+local recentlySeen = {}
+
 function RSGeneralDB.InitRecentlySeenDB()
-	private.dbglobal.recentlySeen = {}
+	-- Removes the table saved by older versions
+	private.dbglobal.recentlySeen = nil
 end
 
 function RSGeneralDB.DeleteRecentlySeen(entityID)
-	if (entityID and private.dbglobal.recentlySeen[entityID]) then
-		private.dbglobal.recentlySeen[entityID] = nil
+	if (entityID) then
+		recentlySeen[entityID] = nil
 	end
 end
 
 function RSGeneralDB.SetRecentlySeen(entityID)
 	if (entityID) then
-		private.dbglobal.recentlySeen[entityID] = true
+		recentlySeen[entityID] = true
 	end
 end
 
 function RSGeneralDB.IsRecentlySeen(entityID)
-	if (entityID and private.dbglobal.recentlySeen[entityID]) then
+	if (entityID and recentlySeen[entityID]) then
 		return true
 	end
 

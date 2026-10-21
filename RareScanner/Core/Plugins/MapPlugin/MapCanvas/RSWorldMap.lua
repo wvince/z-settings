@@ -48,7 +48,12 @@ function RSWorldMap:GetMapFrame()
         self.mapFrame:SetFrameLevel(canvas:GetFrameLevel() + 10)
         
         -- OnMapChanged
-        EventRegistry:RegisterCallback("MapCanvas.MapSet", function(_, mapID)       
+        EventRegistry:RegisterCallback("MapCanvas.MapSet", function(_, mapID)
+            -- Every map canvas fires this event (flight map, battlefield map...), ignore the ones that aren't the world map
+            if (WorldMapFrame:GetMapID() ~= mapID) then
+                return
+            end
+
             self.mapID = mapID
             for provider in pairs(RSWorldMap.dataProviders) do
                 provider:OnMapChanged()
@@ -142,9 +147,6 @@ function RSWorldMap:RemoveDataProvider(dataProvider)
 end
 
 function RSWorldMap:GetPinTemplateType(pinTemplate)
-	-- Can always be overridden by manually calling SetPinTemplateType, but by default this will use the template
-	-- to look up type information and discover the most likely type so that pins can avoid needing to call
-	-- SetPinTemplateType.
 	local pinTemplateType = self.pinTemplateTypes[pinTemplate];
 	if (not pinTemplateType) then
 		local templateInfo = C_XMLUtil.GetTemplateInfo(pinTemplate);

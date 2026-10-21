@@ -22,6 +22,7 @@ local RSRoutines = private.ImportLib("RareScannerRoutines")
 
 -- RareScanner service libraries
 local RSMinimap = private.ImportLib("RareScannerMinimap")
+local RSMinimapTracking = private.ImportLib("RareScannerMinimapTracking")
 
 -----------------------------------------------------------------------
 -- Functions to delete custom NPCs
@@ -65,6 +66,7 @@ function RSCustomNpcs.DeleteCustomNpc(npcID, options)
 	
 	-- Update minimap
 	RSMinimap.HideIcon(tonumber(npcID))
+	RSMinimapTracking.ResetCache()
 end
 
 -----------------------------------------------------------------------
@@ -295,6 +297,7 @@ function RSCustomNpcs.ImportNpcs(text, options, callback)
 			if (skiplableNumLines == #lines) then
 				callback()
 			end
+			RSMinimapTracking.ResetCache()
 		end
 	)
 	

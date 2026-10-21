@@ -75,7 +75,7 @@ local STRATA_BELOW = {
 
 local function ApplyTimerStyle(cooldown)
     local db = BetterBlizzFramesDB
-    local formatter = BBF.GetTimerFormatter(db.bigDebuffsLowColor or { 1, 0.1, 0.1, 1 }, db.bigDebuffsLowThreshold or 6, db.bigDebuffsMilliseconds, false)
+    local formatter = BBF.GetTimerFormatter(db.bigDebuffsLowColor or { 1, 0.1, 0.1, 1 }, db.bigDebuffsLowThreshold or 6, db.bigDebuffsMilliseconds, false, nil, db.bigDebuffsHighThreshold or 30, db.bigDebuffsHighColor or { 1, 1, 1, 1 })
     cooldown:SetCountdownFormatter(formatter)
     cooldown:SetHideCountdownNumbers(db.bigDebuffsHideTimer and true or false)
     local text = cooldown:GetCountdownFontString()
@@ -136,8 +136,6 @@ local function CreateHost(unit, unitFrame, portrait, portraitMask)
 
     local portraitParent = portrait:GetParent()
     local strata = STRATA_BELOW[portraitParent:GetFrameStrata()] or "BACKGROUND"
-    local point, relTo, relPoint, x, y = portrait:GetPoint()
-    if not point then return end
 
     local portraitLayer = CreateFrame("Frame", nil, portraitParent)
     portraitLayer:SetAllPoints(portraitParent)
@@ -145,12 +143,9 @@ local function CreateHost(unit, unitFrame, portrait, portraitMask)
     portraitLayer:SetFrameLevel(0)
 
     portrait:SetParent(portraitLayer)
-    portrait:ClearAllPoints()
-    portrait:SetPoint(point, relTo or portraitLayer, relPoint or point, x or 0, y or 0)
 
     local anchor = CreateFrame("Frame", nil, portraitLayer, BBF.AURA_ANCHOR_TEMPLATE)
-    anchor:SetPoint(point, relTo or portraitLayer, relPoint or point, x or 0, y or 0)
-    anchor:SetSize(portrait:GetSize())
+    anchor:SetAllPoints(portrait)
     anchor:SetFrameStrata(strata)
     anchor:SetFrameLevel(0)
 

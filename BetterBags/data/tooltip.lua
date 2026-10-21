@@ -201,6 +201,141 @@ function tooltipScanner:ExtractClassic(bagid, slotid)
   return table.concat(lines, " ")
 end
 
+-- joinRetailLines joins a C_TooltipInfo tooltip's left and right texts with spaces, as
+-- ExtractRetail does, or nil when it has none.
+---@param tooltipData? TooltipData
+---@return string?
+local function joinRetailLines(tooltipData)
+  if not tooltipData or not tooltipData.lines then
+    return nil
+  end
+  local lines = {}
+  for _, line in ipairs(tooltipData.lines) do
+    if line.leftText and line.leftText ~= "" then
+      table.insert(lines, line.leftText)
+    end
+    if line.rightText and line.rightText ~= "" then
+      table.insert(lines, line.rightText)
+    end
+  end
+  if #lines == 0 then
+    return nil
+  end
+  return table.concat(lines, " ")
+end
+
+-- joinScanLines joins the scan tooltip's left and right texts with spaces, as ExtractClassic does,
+-- or nil when it has none.
+---@param scanTooltip GameTooltip
+---@return string?
+local function joinScanLines(scanTooltip)
+  local lines = {}
+  for i = 1, math.min(scanTooltip:NumLines(), 30) do
+    for _, side in ipairs({ "Left", "Right" }) do
+      local fontString = _G["BetterBagsScanTooltipText" .. side .. i]
+      local text = fontString and fontString:GetText()
+      if text and text ~= "" then
+        table.insert(lines, text)
+      end
+    end
+  end
+  if #lines == 0 then
+    return nil
+  end
+  return table.concat(lines, " ")
+end
+
+-- GetMerchantItemText returns the tooltip text of the open merchant's item at index, for
+-- BetterBags Next's vendor search (next/merchant.lua): C_TooltipInfo.GetMerchantItem on retail,
+-- the scan tooltip's SetMerchantItem on Classic. Not cached: merchants change their items.
+---@param index number
+---@return string?
+function tooltipScanner:GetMerchantItemText(index)
+  if addon.isRetail then
+    if not C_TooltipInfo or not C_TooltipInfo.GetMerchantItem then
+      return nil
+    end
+    return joinRetailLines(C_TooltipInfo.GetMerchantItem(index))
+  end
+  if not self.scanTooltip then
+    return nil
+  end
+  self.scanTooltip:ClearLines()
+  self.scanTooltip:SetMerchantItem(index)
+  return joinScanLines(self.scanTooltip)
+end
+
+-- GetGuildBankItemText returns the tooltip text of a guild bank item, for search
+-- (items:AttachGuildBankItemInfo): C_TooltipInfo.GetGuildBankItem on retail, the scan tooltip's
+-- SetGuildBankItem on Classic. A guild bank slot has no item GUID, so the text is cached by the
+-- item's link (an item's text is the same wherever it lies), under "guild:" .. link, a key no GUID
+-- has; a sparse retail tooltip resolves as a bag item's does (OnTooltipDataResolved).
+---@param tab number
+---@param slot number
+---@param link string
+---@return string?
+function tooltipScanner:GetGuildBankItemText(tab, slot, link)
+  local key = "guild:" .. link
+  if self.cache[key] then
+    return self.cache[key]
+  end
+  local text, dataInstanceID
+  if addon.isRetail then
+    if C_TooltipInfo and C_TooltipInfo.GetGuildBankItem then
+      local data = C_TooltipInfo.GetGuildBankItem(tab, slot)
+      text = joinRetailLines(data)
+      dataInstanceID = data and data.dataInstanceID
+    end
+  elseif self.scanTooltip then
+    self.scanTooltip:ClearLines()
+    self.scanTooltip:SetGuildBankItem(tab, slot)
+    text = joinScanLines(self.scanTooltip)
+  end
+  if text and text ~= "" then
+    self.cache[key] = text
+    if dataInstanceID ~= nil and (self.resolveRescans[key] or 0) < MAX_RESOLVE_RESCANS then
+      self:RecordInstance(key, dataInstanceID)
+    end
+  end
+  return text
+end
+
+-- GetInventoryRepairCost returns what repairing an equipped item costs: the TooltipData's
+-- repairCost on retail (Blizzard's TooltipDataRules.lua reads it), the third return of the scan
+-- tooltip's SetInventoryItem on Classic (PaperDollFrame.lua). 0 when nothing says.
+---@param slot number
+---@return number
+function tooltipScanner:GetInventoryRepairCost(slot)
+  if addon.isRetail then
+    local data = C_TooltipInfo and C_TooltipInfo.GetInventoryItem and C_TooltipInfo.GetInventoryItem("player", slot)
+    return data and data.repairCost or 0
+  end
+  if not self.scanTooltip then
+    return 0
+  end
+  self.scanTooltip:ClearLines()
+  local _, _, repairCost = self.scanTooltip:SetInventoryItem("player", slot)
+  return repairCost or 0
+end
+
+-- GetBagRepairCost returns what repairing an item in a bag costs: the TooltipData's repairCost on
+-- retail, the second return of the scan tooltip's SetBagItem on Classic (ContainerFrame_Shared.lua).
+---@param bag number
+---@param slot number
+---@return number
+function tooltipScanner:GetBagRepairCost(bag, slot)
+  if addon.isRetail then
+    local data = C_TooltipInfo and C_TooltipInfo.GetBagItem and C_TooltipInfo.GetBagItem(bag, slot)
+    return data and data.repairCost or 0
+  end
+  if not self.scanTooltip then
+    return 0
+  end
+  self.scanTooltip:ClearLines()
+  local _, repairCost = self.scanTooltip:SetBagItem(bag, slot)
+  return repairCost or 0
+end
+
 --- Clear the entire tooltip cache
 --- Called when items are wiped or addon is reset
 function tooltipScanner:ClearCache()
@@ -243,7 +378,7 @@ end
 --- Handle a debounced batch of TOOLTIP_DATA_UPDATE fires (retail only). Each
 --- resolved dataInstanceID that maps to one of our cached items means that item's
 --- tooltip was scanned while still sparse and has now resolved: drop the stale
---- cache entry so the next harvest re-scans it warm, and request a re-index.
+--- cache entry so the next sweep re-scans it warm, and request that sweep.
 --- @param resolved EventArg[] Coalesced fires; each entry's args[1] is a dataInstanceID.
 function tooltipScanner:OnTooltipDataResolved(resolved)
   if not addon.isRetail then return end
@@ -260,14 +395,12 @@ function tooltipScanner:OnTooltipDataResolved(resolved)
     end
   end
   if not invalidated then return end
-  -- Re-harvest so the invalidated item(s) re-scan (now warm) and the search index
-  -- rebuilds. Backpack is always re-swept; the bank only when it's actually open,
-  -- so we never clobber the last-seen bank contents while away from it.
+  -- Recalculate the bags: the sweep re-scans the invalidated items (a cache miss, now
+  -- warm) and re-indexes them, without reading the bags (refresh-scheduler.md §10). The
+  -- backpack always; the bank and the guild bank only when they are open.
   local ctx = context:New('TooltipDataResolved')
-  events:SendMessage(ctx, 'bags/RefreshBackpack')
-  if addon.atBank then
-    events:SendMessage(ctx, 'bags/RefreshBank')
-  end
+  events:SendMessage(ctx, 'bags/Rederive', { backpack = true, bank = addon.atBank == true,
+    guild = addon.atGuildBank == true or nil })
 end
 
 --- Get the current cache size (for debugging/monitoring)

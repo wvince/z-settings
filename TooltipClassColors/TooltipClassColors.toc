@@ -1,0 +1,8 @@
+## Interface: 16001
+## Title: Tooltip Class Colors
+## IconTexture: Interface\addons\TooltipClassColors\tcc
+## Notes: Colors player names and health bars in tooltips by class color.
+## Author: Dreambender
+## Version: 1.0.1
+
+Core.lua

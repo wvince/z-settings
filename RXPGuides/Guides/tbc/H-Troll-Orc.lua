@@ -12,6 +12,7 @@ RXPGuides.RegisterGuide([[
 #defaultfor Orc/Troll
 #next 6-10 Eversong Woods << !Shaman !Hunter !Warlock
 #next 6-10 Durotar << Shaman/Hunter/Warlock
+
 step << !Orc !Troll
     #completewith next
     +|cRXP_WARN_You have selected a guide meant for Orcs and Trolls. You should choose the same starter zone that you start in|r
@@ -1771,7 +1772,9 @@ step << !Shaman !Hunter !Warlock
 step << !Shaman !Hunter !Warlock
     .goto Eversong Woods,46.68,49.10,40 >>Travel to Falconwing Square
     .isQuestAvailable 8463
+
     ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -1783,6 +1786,7 @@ RXPGuides.RegisterGuide([[
 #defaultfor Orc Hunter/Orc Shaman/Troll Hunter/Troll Shaman/Orc Warlock
 #next 10-13 Durotar << Shaman
 #next 10-12 Eversong Woods << !Shaman
+
 step
     .goto Durotar,52.06,68.30
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ukor|r
@@ -3635,6 +3639,7 @@ step << Paladin
 	.target Ithelis
 	.target Osselan
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -3645,6 +3650,8 @@ RXPGuides.RegisterGuide([[
 #subgroup RestedXP Horde 1-30
 #defaultfor Shaman !Tauren
 #next 13-18 The Barrens
+
+
 step << Warrior/Shaman
     #optional
     .xp 10 >>Grind to level 10

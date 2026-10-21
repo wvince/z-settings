@@ -41,32 +41,38 @@ private.ITEM_QUALITY = {
 	[Enum.ItemQuality.Heirloom] = ITEM_QUALITY7_DESC,
 }
 
+-- Same qualities with the color of each one (used by the dropdowns)
+local function GetColoredItemQualities()
+	local qualities = {}
+	for quality, name in pairs(private.ITEM_QUALITY) do
+		qualities[quality] = ITEM_QUALITY_COLORS[quality].color:WrapTextInColorCode(name)
+	end
+
+	return qualities
+end
+
 -----------------------------------------------------------------------
 -- Item classes
 -----------------------------------------------------------------------
 
-local SPEAR_ID = 17 --CHECK (none uses it)
-
 private.ITEM_CLASSES = {
-	[Enum.ItemClass.Consumable] = { 0, 1, 2, 3, 5, 7, 8, 9 }, --consumables
-	[Enum.ItemClass.Container] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, --bags
-	[Enum.ItemClass.Weapon] = { Enum.ItemWeaponSubclass.Axe1H, Enum.ItemWeaponSubclass.Axe2H, Enum.ItemWeaponSubclass.Bows, Enum.ItemWeaponSubclass.Guns, Enum.ItemWeaponSubclass.Mace1H, Enum.ItemWeaponSubclass.Mace2H, Enum.ItemWeaponSubclass.Polearm, Enum.ItemWeaponSubclass.Sword1H, Enum.ItemWeaponSubclass.Sword2H, Enum.ItemWeaponSubclass.Warglaive, Enum.ItemWeaponSubclass.Staff, Enum.ItemWeaponSubclass.Bearclaw, Enum.ItemWeaponSubclass.Catclaw, Enum.ItemWeaponSubclass.Unarmed, Enum.ItemWeaponSubclass.Generic, Enum.ItemWeaponSubclass.Dagger, Enum.ItemWeaponSubclass.Thrown, SPEAR_ID, Enum.ItemWeaponSubclass.Crossbow, Enum.ItemWeaponSubclass.Wand, Enum.ItemWeaponSubclass.Fishingpole }, --weapons
-	[Enum.ItemClass.Gem] = { Enum.ItemGemSubclass.Intellect, Enum.ItemGemSubclass.Agility, Enum.ItemGemSubclass.Strength, Enum.ItemGemSubclass.Stamina, Enum.ItemGemSubclass.Spirit, Enum.ItemGemSubclass.Criticalstrike, Enum.ItemGemSubclass.Mastery, Enum.ItemGemSubclass.Haste, Enum.ItemGemSubclass.Versatility, 9, Enum.ItemGemSubclass.Multiplestats, Enum.ItemGemSubclass.Artifactrelic }, --gemes
-	[Enum.ItemClass.Armor] = { Enum.ItemArmorSubclass.Generic, Enum.ItemArmorSubclass.Cloth, Enum.ItemArmorSubclass.Leather, Enum.ItemArmorSubclass.Mail, Enum.ItemArmorSubclass.Plate, Enum.ItemArmorSubclass.Cosmetic, Enum.ItemArmorSubclass.Shield, Enum.ItemArmorSubclass.Libram, Enum.ItemArmorSubclass.Idol, Enum.ItemArmorSubclass.Totem, Enum.ItemArmorSubclass.Sigil, Enum.ItemArmorSubclass.Relic }, --armor
-	[Enum.ItemClass.Reagent] = { 0, 1 }, --consumable
-	[Enum.ItemClass.Projectile] = { 2, 3 }, --projectile
-	[Enum.ItemClass.Tradegoods] = { 1, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16 }, --tradeables
-	[Enum.ItemClass.ItemEnhancement] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 }, --object improvements
-	[Enum.ItemClass.Recipe] = { Enum.ItemRecipeSubclass.Book, Enum.ItemRecipeSubclass.Leatherworking, Enum.ItemRecipeSubclass.Tailoring, Enum.ItemRecipeSubclass.Engineering, Enum.ItemRecipeSubclass.Blacksmithing, Enum.ItemRecipeSubclass.Cooking, Enum.ItemRecipeSubclass.Alchemy, Enum.ItemRecipeSubclass.FirstAid, Enum.ItemRecipeSubclass.Enchanting, Enum.ItemRecipeSubclass.Fishing, Enum.ItemRecipeSubclass.Jewelcrafting, Enum.ItemRecipeSubclass.Inscription }, --recipes
-	-- [10] = { }, --money (obsolete)
-	-- [Enum.ItemClass.Quiver] = { 0 }, --quiver  (obsolete)
-	[Enum.ItemClass.Questitem] = { 0 }, --quests
-	[Enum.ItemClass.Key] = { 0, 1 }, --keys
-	-- [14] = { }, --permanent (obsolete)
-	[Enum.ItemClass.Miscellaneous] = { Enum.ItemMiscellaneousSubclass.Junk, Enum.ItemMiscellaneousSubclass.Reagent, Enum.ItemMiscellaneousSubclass.CompanionPet, Enum.ItemMiscellaneousSubclass.Holiday, Enum.ItemMiscellaneousSubclass.Other, Enum.ItemMiscellaneousSubclass.Mount }, --miscellaneous
-	--[Enum.ItemClass.Glyph] = { 0 }, --glyphs
-	[Enum.ItemClass.Battlepet] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }, --battle pets
-	--[Enum.ItemClass.WowToken] = { 0 }, --wow token
+	[0] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 13, 14, 15 }, --Consumable
+	[1] = { 0, 1, 2, 3, 4, 6, 7, 9, 10, 11, 12 }, --Container
+	[2] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 }, --Weapon
+	-- [3] = { 0 }, --Jewelry (obsolete)
+	[4] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }, --Armor
+	[5] = { 0 }, --Reagent
+	[6] = { 2, 3 }, --Projectile
+	[7] = { 1, 5, 6, 7, 8, 9, 10, 11, 12 }, --Trade Goods
+	-- [8] = { 0 }, --Generic (obsolete)
+	[9] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }, --Recipe
+	-- [10] = { 0 }, --Money (obsolete)
+	[11] = { 2, 3 }, --Quiver
+	[12] = { 0 }, --Quest
+	[13] = { 0, 1 }, --Key
+	-- [14] = { 0 }, --Permanent (obsolete)
+	[15] = { 0, 1, 2, 3, 4, 5 }, --Miscellaneous
+	-- [18] = { }, --WoW Token (no subcategories)
 }
 
 -----------------------------------------------------------------------
@@ -94,33 +100,63 @@ local function LoadSubcategoryCombo(mainClassID)
 	end
 end
 
-local function LoadFilteredItems()
-	for itemID, _ in pairs(RSConfigDB.GetAllFilteredItems()) do
-		local item = Item:CreateFromItemID(itemID)
-		item:ContinueOnItemLoad(function()
-			local itemLink = item:GetItemLink()
-			if (itemLink) then
-				options.args.filters.args.individual.args.filteredItems.values[itemID] = itemLink
-			end
-		end)
+-- Drop chance inputs: empty means no limit, otherwise a number between 0 and 100 (dot or comma as decimal separator)
+local CHANCE_PATTERN = "^%d*[%.,]?%d*$"
+
+local function ParseChance(value)
+	if (not value or value == "") then
+		return nil
 	end
+
+	return tonumber((value:gsub(",", ".")))
 end
 
-local function SearchItem(name)
-	if (name) then
-		for itemID, _ in pairs(RSConfigDB.GetAllFilteredItems()) do
-			local item = Item:CreateFromItemID(itemID)
-			item:ContinueOnItemLoad(function()
-				local itemName = item:GetItemName()
-				local itemLink = item:GetItemLink()
-				if (itemName and RSUtils.Contains(itemName,name) and itemLink) then
-					options.args.filters.args.individual.args.filteredItems.values[itemID] = itemLink
-				end
-			end)
-		end
-	else
-		LoadFilteredItems()
+local function GetChanceText(chance)
+	return chance and tostring(chance) or ""
+end
+
+-- Returns true if valid, or the error message to show
+local function ValidateChance(value, otherChance, isMin)
+	if (value == "") then
+		return true
 	end
+
+	local chance = ParseChance(value)
+	if (not chance or chance < 0 or chance > 100) then
+		return AL["LOOT_FILTER_CHANCE_RANGE_ERROR"]
+	end
+
+	if (otherChance) then
+		if (isMin and chance > otherChance) then
+			return AL["LOOT_FILTER_CHANCE_MIN_ERROR"]
+		elseif (not isMin and chance < otherChance) then
+			return AL["LOOT_FILTER_CHANCE_MAX_ERROR"]
+		end
+	end
+
+	return true
+end
+
+-- Items filtered individually (from the explorer, the tooltips or this panel) matching the search
+local function GetFilteredItems()
+	local items = {}
+	local search = private.loot_individual_filter_input
+	for itemID, _ in pairs(RSConfigDB.GetAllFilteredItems()) do
+		local itemName, itemLink, _, _, _, _, _, _, _, icon = C_Item.GetItemInfo(itemID)
+		if (itemLink) then
+			if (not search or search == "" or RSUtils.Contains(itemName, search)) then
+				items[itemID] = string.format("|T%s:16|t %s", icon or 134400, itemLink)
+			end
+		else
+			-- Not cached yet, it will be shown the next time the panel is refreshed
+			C_Item.RequestLoadItemDataByID(itemID)
+			if (not search or search == "") then
+				items[itemID] = string.format("[%s]", itemID)
+			end
+		end
+	end
+
+	return items
 end
 
 -----------------------------------------------------------------------
@@ -360,23 +396,11 @@ function RSLootOptions.GetLootOptions()
 							width = "full",
 							disabled = function() return (not RSConfigDB.IsFilteringByExplorerResults() or not RSConfigDB.IsShowingMissingAppearances()) end,
 						},
-						show_drakewatcher = {
-							order = 8,
-							type = "toggle",
-							name = AL["LOOT_EXPLORER_SHOW_MISSING_DRAKEWATCHER"],
-							desc = AL["LOOT_EXPLORER_SHOW_MISSING_DRAKEWATCHER_DESC"],
-							get = function() return RSConfigDB.IsShowingMissingDrakewatcher() end,
-							set = function(_, value)
-								RSConfigDB.SetShowingMissingDrakewatcher(value)
-							end,
-							width = "full",
-							disabled = function() return (not RSConfigDB.IsFilteringByExplorerResults()) end,
-						},
 						show_decor = {
 							order = 9,
 							type = "toggle",
 							name = AL["LOOT_EXPLORER_SHOW_MISSING_DECOR"],
-							desc = AL["LOOT_EXPLORER_SHOW_MISSING_DRAKEWATCHER_DESC"],
+							desc = AL["LOOT_EXPLORER_SHOW_MISSING_DECOR_DESC"],
 							get = function() return RSConfigDB.IsShowingMissingDecors() end,
 							set = function(_, value)
 								RSConfigDB.SetShowingMissingDecors(value)
@@ -496,9 +520,6 @@ function RSLootOptions.GetLootOptions()
 									get = function(_, value) return private.loot_individual_filter_input end,
 									set = function(_, value)
 										private.loot_individual_filter_input = value
-										-- search
-										options.args.filters.args.individual.args.filteredItems.values = {}
-										SearchItem(value)
 									end,
 									width = "full",
 									disabled = function() return (not RSConfigDB.IsDisplayingLootBar() and not RSConfigDB.IsShowingLootOnWorldMap()) end,
@@ -508,7 +529,7 @@ function RSLootOptions.GetLootOptions()
 									type = "multiselect",
 									name = AL["LOOT_FILTER_ITEM_LIST"],
 									desc = nil,
-									values = {},
+									values = function() return GetFilteredItems() end,
 									get = function(_, itemID) return RSConfigDB.GetItemFiltered(itemID) end,
 									set = function(_, itemID, value)
 										RSConfigDB.SetItemFiltered(itemID, value)
@@ -529,7 +550,7 @@ function RSLootOptions.GetLootOptions()
 									type = "select",
 									name = AL["LOOT_MIN_QUALITY"],
 									desc = AL["LOOT_MIN_QUALITY_DESC"],
-									values = private.ITEM_QUALITY,
+									values = GetColoredItemQualities(),
 									get = function() return RSConfigDB.GetLootFilterMinQuality() end,
 									set = function(_, value)
 										RSConfigDB.SetLootFilterMinQuality(value)
@@ -541,7 +562,7 @@ function RSLootOptions.GetLootOptions()
 									order = 1,
 									type = "toggle",
 									name = AL["LOOT_FILTER_NOT_EQUIPABLE"],
-									desc = AL["LOOT_FILTER_NOT_EQUIPABLE_DESC"],
+									desc = AL["LOOT_FILTER_NOT_EQUIPABLE_ITEMS_DESC"],
 									get = function() return RSConfigDB.IsFilteringLootByNotEquipableItems() end,
 									set = function(_, value)
 										RSConfigDB.SetFilteringLootByNotEquipableItems(value)
@@ -549,64 +570,44 @@ function RSLootOptions.GetLootOptions()
 									width = "full",
 									disabled = function() return (not RSConfigDB.IsDisplayingLootBar() and not RSConfigDB.IsShowingLootOnWorldMap()) end,
 								},
-								filterItemsCompletedQuest = {
-									order = 2,
-									type = "toggle",
-									name = AL["LOOT_FILTER_COMPLETED_QUEST"],
-									desc = AL["LOOT_FILTER_COMPLETED_QUEST_DESC"],
-									get = function() return RSConfigDB.IsFilteringLootByCompletedQuest() end,
-									set = function(_, value)
-										RSConfigDB.SetFilteringLootByCompletedQuest(value)
-									end,
-									width = "full",
-									disabled = function() return (not RSConfigDB.IsDisplayingLootBar() and not RSConfigDB.IsShowingLootOnWorldMap()) end,
-								},
-								filterNotMatchingClass = {
-									order = 3,
-									type = "toggle",
-									name = AL["LOOT_FILTER_NOT_MATCHING_CLASS"],
-									desc = AL["LOOT_FILTER_NOT_MATCHING_CLASS_DESC"],
-									get = function() return RSConfigDB.IsFilteringLootByNotMatchingClass() end,
-									set = function(_, value)
-										RSConfigDB.SetFilteringLootByNotMatchingClass(value)
-									end,
-									width = "full",
-									disabled = function() return (not RSConfigDB.IsDisplayingLootBar() and not RSConfigDB.IsShowingLootOnWorldMap()) end,
-								},
-								filterNotMatchingFaction = {
-									order = 4,
-									type = "toggle",
-									name = AL["LOOT_FILTER_NOT_MATCHING_FACTION"],
-									desc = AL["LOOT_FILTER_NOT_MATCHING_FACTION_DESC"],
-									get = function() return RSConfigDB.IsFilteringLootByNotMatchingFaction() end,
-									set = function(_, value)
-										RSConfigDB.SetFilteringLootByNotMatchingFaction(value)
-									end,
-									width = "full",
-									disabled = function() return (not RSConfigDB.IsDisplayingLootBar() and not RSConfigDB.IsShowingLootOnWorldMap()) end,
-								},
-								filterAnimaItems = {
+								filterNotUsable = {
 									order = 5,
 									type = "toggle",
-									name = AL["LOOT_FILTER_ANIMA_ITEMS"],
-									desc = AL["LOOT_FILTER_ANIMA_ITEMS_DESC"],
-									get = function() return RSConfigDB.IsFilteringAnimaItems() end,
+									name = AL["LOOT_FILTER_NOT_USABLE"],
+									desc = AL["LOOT_FILTER_NOT_USABLE_DESC"],
+									get = function() return RSConfigDB.IsFilteringLootByNotUsable() end,
 									set = function(_, value)
-										RSConfigDB.SetFilteringAnimaItems(value)
+										RSConfigDB.SetFilteringLootByNotUsable(value)
 									end,
 									width = "full",
 									disabled = function() return (not RSConfigDB.IsDisplayingLootBar() and not RSConfigDB.IsShowingLootOnWorldMap()) end,
 								},
-								filterNotUsableConduits = {
+								filterMinChance = {
 									order = 6,
-									type = "toggle",
-									name = AL["LOOT_FILTER_CONDUIT_ITEMS"],
-									desc = AL["LOOT_FILTER_CONDUIT_ITEMS_DESC"],
-									get = function() return RSConfigDB.IsFilteringConduitItems() end,
+									type = "input",
+									name = AL["LOOT_FILTER_CHANCE_MIN"],
+									desc = AL["LOOT_FILTER_CHANCE_DESC"],
+									pattern = CHANCE_PATTERN,
+									usage = AL["LOOT_FILTER_CHANCE_RANGE_ERROR"],
+									validate = function(_, value) return ValidateChance(value, RSConfigDB.GetLootFilterMaxChance(), true) end,
+									get = function() return GetChanceText(RSConfigDB.GetLootFilterMinChance()) end,
 									set = function(_, value)
-										RSConfigDB.SetFilteringConduitItems(value)
+										RSConfigDB.SetLootFilterMinChance(ParseChance(value))
 									end,
-									width = "full",
+									disabled = function() return (not RSConfigDB.IsDisplayingLootBar() and not RSConfigDB.IsShowingLootOnWorldMap()) end,
+								},
+								filterMaxChance = {
+									order = 7,
+									type = "input",
+									name = AL["LOOT_FILTER_CHANCE_MAX"],
+									desc = AL["LOOT_FILTER_CHANCE_DESC"],
+									pattern = CHANCE_PATTERN,
+									usage = AL["LOOT_FILTER_CHANCE_RANGE_ERROR"],
+									validate = function(_, value) return ValidateChance(value, RSConfigDB.GetLootFilterMinChance(), false) end,
+									get = function() return GetChanceText(RSConfigDB.GetLootFilterMaxChance()) end,
+									set = function(_, value)
+										RSConfigDB.SetLootFilterMaxChance(ParseChance(value))
+									end,
 									disabled = function() return (not RSConfigDB.IsDisplayingLootBar() and not RSConfigDB.IsShowingLootOnWorldMap()) end,
 								},
 							},
@@ -634,8 +635,5 @@ function RSLootOptions.GetLootOptions()
 		customItemsPosition = customItemsPosition + 1
 	end
 	
-	-- Load filtered items
-	LoadFilteredItems()
-
 	return options
 end

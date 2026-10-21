@@ -42,6 +42,7 @@ addon.settings = addon:NewModule("Settings", "AceConsole-3.0")
 if not addon.settings.gui then addon.settings.gui = {} end
 addon.settings.enabledBetaFeatures = {
     ["Guide Window v2"] = "Allow the Guide Window and Active Steps v2", --GuideWindow/addon.v2
+    ["Standby Mode"] = "Pause guide processing when addon is hidden.",
 }
 
 local function copy(t)
@@ -683,6 +684,14 @@ function addon.settings:CreateAceOptionsPanel()
                             end
                         end
                     },
+                    standbyMode = {
+                        name = L("Enable Standby Mode"),
+                        desc = L("Pause guide processing when addon is hidden."),
+                        type = "toggle",
+                        width = optionsWidth,
+                        order = 1.4,
+                        hidden = isNotAdvanced,
+                    },
                     featuresHeader = {
                         name = _G.FEATURES_LABEL,
                         type = "header",
@@ -961,7 +970,7 @@ function addon.settings:CreateAceOptionsPanel()
                         order = 6.13,
                         hidden = not (addon.inventoryManager and addon.inventoryManager.bagManager and addon.inventoryManager.bagManager:IsAvailable()),
                         disabled = function()
-                            return not self.profile.enableInventoryManager
+                            return not self.profile.enableInventoryManager or addon.IsGamePadEnabled()
                         end,
                     },
                     rightClickMod = {
@@ -975,7 +984,7 @@ function addon.settings:CreateAceOptionsPanel()
                         end,
                         disabled = function ()
                             return not self.profile.enableInventoryManager or
-                                       not self.profile.rightClickJunk
+                                       not self.profile.rightClickJunk or addon.IsGamePadEnabled()
                         end,
                         values = {
                             [1] = "CTRL",
@@ -992,7 +1001,7 @@ function addon.settings:CreateAceOptionsPanel()
                         order = 6.15,
                         hidden = not (addon.inventoryManager and addon.inventoryManager.bagManager and addon.inventoryManager.bagManager:IsAvailable()),
                         disabled = function()
-                            return not self.profile.enableInventoryManager
+                            return not self.profile.enableInventoryManager or addon.IsGamePadEnabled()
                         end,
                     },
                     maxSoulShards = {
@@ -1020,7 +1029,7 @@ function addon.settings:CreateAceOptionsPanel()
                         order = 6.17,
                         hidden = not (addon.inventoryManager and addon.inventoryManager.bagManager and addon.inventoryManager.bagManager:IsAvailable()),
                         disabled = function()
-                            return not self.profile.enableInventoryManager
+                            return not self.profile.enableInventoryManager or addon.IsGamePadEnabled()
                         end,
                         get = function()
                             return addon.inventoryManager:GetSellKeybind()
@@ -1377,7 +1386,7 @@ function addon.settings:CreateAceOptionsPanel()
                         width = "full",
                         order = 3.0,
                         hidden = function()
-                            return addon.game == "FOREVER" or not next(addon.settings.dungeons:GetDungeons())
+                            return not next(addon.settings.dungeons:GetDungeons())
                         end
                     },
                     dungeonsSetRecommended = {
@@ -1390,7 +1399,7 @@ function addon.settings:CreateAceOptionsPanel()
                             self.dungeons:SetRecommended()
                         end,
                         hidden = function()
-                            return addon.game == "FOREVER" or not next(addon.settings.dungeons:GetDungeons()) or not addon.dungeonStats
+                            return (addon.game == "FOREVER" and not addon.settings.profile.debug) or not next(addon.settings.dungeons:GetDungeons()) or not addon.dungeonStats
                         end
                     },
                     dungeonsSetAll = {
@@ -1403,8 +1412,43 @@ function addon.settings:CreateAceOptionsPanel()
                             addon.ReloadGuide()
                         end,
                         hidden = function()
-                            return addon.game == "FOREVER" or not next(addon.settings.dungeons:GetDungeons())
+                            return not next(addon.settings.dungeons:GetDungeons())
                         end
+                    },
+                    enabledDungeons = {
+                        order = 3.91,
+                        type = 'description',
+                        -- hidden = function()
+                        --     return addon.game ~= "FOREVER"
+                        -- end,
+                        name = function()
+                            local group = addon.currentGuide and addon.currentGuide.group
+                            local out = ""
+                            local active = {}
+                            if group and addon.dungeonOverride[group] then
+                                for dungeon,enabled in pairs(addon.dungeonOverride[group]) do
+                                    if enabled then
+                                        if out == "" then
+                                            out = fmt("|cfffcdc00%s - %s|r",L"Enabled Dungeons",group)
+                                        end
+                                        active[dungeon] = true
+                                        local name = addon.GetDungeonName(dungeon)
+                                        out = fmt("%s\n%s",out,name)
+                                    end
+                                end
+                                for dungeon,enabled in pairs(addon.settings.profile.dungeons) do
+                                    if enabled and not active[dungeon] then
+                                        if out == "" then
+                                            out = fmt("|cfffcdc00%s - %s|r",L"Enabled Dungeons",group)
+                                        end
+                                        local name = addon.GetDungeonName(dungeon)
+                                        out = fmt("%s\n%s",out,name)
+                                    end
+                                end
+                            end
+                            return out
+                        end,
+                        width = "full"
                     },
                     dungeons = {
                         name = _G.LFG_LIST_SELECT .. ' ' ..  _G.DUNGEONS,
@@ -1431,7 +1475,7 @@ function addon.settings:CreateAceOptionsPanel()
                             addon.ReloadGuide()
                         end,
                         hidden = function()
-                            return addon.game == "FOREVER" or not next(addon.settings.dungeons:GetDungeons())
+                            return not next(addon.settings.dungeons:GetDungeons())
                         end
                     },
                     professions = {
@@ -4393,8 +4437,15 @@ function addon.settings.dungeons:ScoreDungeons()
 end
 
 function addon.settings.dungeons:GetDungeons()
-    local dungeons = RXPCData.guideMetaData.enabledDungeons[addon.player.faction] or {}
-
+    local dungeons = CopyTable(RXPCData.guideMetaData.enabledDungeons[addon.player.faction] or {})
+    local group = addon.currentGuide and addon.currentGuide.group
+    if group and addon.currentGuide.disabledungeons then
+        return {}
+    elseif addon.dungeonOverride[group] then
+        for dungeon in pairs(addon.dungeonOverride[group]) do
+            dungeons[dungeon] = nil
+        end
+    end
     if not addon.player.hardcore then
         return dungeons
     end
@@ -4439,5 +4490,11 @@ end
 function addon.settings.dungeons:SetAll()
     for key, name in pairs(self:GetDungeons()) do
         addon.settings.profile.dungeons[key] = true
+    end
+end
+
+function addon.settings.dungeons:SetNone()
+    for key, name in pairs(self:GetDungeons()) do
+        addon.settings.profile.dungeons[key] = false
     end
 end

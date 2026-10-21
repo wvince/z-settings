@@ -43,42 +43,42 @@ function RSEntityStateHandler.SetDeadNpcByZone(npcID, mapID, loadingAddon, fromR
 
 	-- If we know for sure it remains dead
 	if (npcInfo and npcInfo.reset ~= nil and npcInfo.reset == false) then
-		RSLogger:PrintDebugMessage(string.format("NPC [%s]. Deja de ser un rare NPC.", npcID))
+		--RSLogger:PrintDebugMessage(string.format("NPC [%s]. Deja de ser un rare NPC.", npcID))
 		RSNpcDB.SetNpcKilled(npcID)
 	-- If we know for sure it remains being a rare
 	elseif (npcInfo and npcInfo.reset) then
-		RSLogger:PrintDebugMessage(string.format("NPC [%s]. Siempre es un rare NPC.", npcID))
+		--RSLogger:PrintDebugMessage(string.format("NPC [%s]. Siempre es un rare NPC.", npcID))
 	-- If we know for sure it resets with quests
 	elseif (npcInfo and npcInfo.questReset) then
-		RSLogger:PrintDebugMessage(string.format("NPC [%s]. Resetea con las misiones del mundo", npcID))
+		--RSLogger:PrintDebugMessage(string.format("NPC [%s]. Resetea con las misiones del mundo", npcID))
 		RSNpcDB.SetNpcKilled(npcID, time() + GetQuestResetTime())
 	-- If we know for sure it resets with every server restart
 	elseif (npcInfo and npcInfo.weeklyReset) then
-		RSLogger:PrintDebugMessage(string.format("NPC [%s]. Resetea con el reinicio del servidor", npcID))
+		--RSLogger:PrintDebugMessage(string.format("NPC [%s]. Resetea con el reinicio del servidor", npcID))
 		RSNpcDB.SetNpcKilled(npcID, time() + C_DateAndTime.GetSecondsUntilWeeklyReset())
 	-- If we know the exact reset timer
 	elseif (npcInfo and npcInfo.resetTimer) then
-		RSLogger:PrintDebugMessage(string.format("NPC [%s]. Resetea pasados [%s]segundos", npcID, npcInfo.resetTimer))
+		--RSLogger:PrintDebugMessage(string.format("NPC [%s]. Resetea pasados [%s]segundos", npcID, npcInfo.resetTimer))
 		RSNpcDB.SetNpcKilled(npcID, time() + npcInfo.resetTimer)
 	-- If its a world quest reseteable rare
 	elseif (RSMapDB.IsEntityInReseteableZone(npcID, mapID, alreadyFoundInfo)) then
-		RSLogger:PrintDebugMessage(string.format("NPC [%s]. Resetea con las misiones del mundo (por pertenecer a una zona reseteable)", npcID))
+		--RSLogger:PrintDebugMessage(string.format("NPC [%s]. Resetea con las misiones del mundo (por pertenecer a una zona reseteable)", npcID))
 		RSNpcDB.SetNpcKilled(npcID, time() + GetQuestResetTime())
 	-- If it wont ever be a rare anymore
 	elseif (RSMapDB.IsEntityInPermanentZone(npcID, mapID, alreadyFoundInfo)) then
-		RSLogger:PrintDebugMessage(string.format("NPC [%s]. Deja de ser un rare NPC", npcID))
+		--RSLogger:PrintDebugMessage(string.format("NPC [%s]. Deja de ser un rare NPC", npcID))
 		RSNpcDB.SetNpcKilled(npcID)
 	-- If it has an associated quest and if its completed
 	elseif (npcInfo and npcInfo.questID) then
 		for i, questID in ipairs (npcInfo.questID) do
 			if (C_QuestLog.IsQuestFlaggedCompleted(questID)) then
 				RSNpcDB.SetNpcKilled(npcID)
-				RSLogger:PrintDebugMessage(string.format("NPC [%s]. Deja de ser un rare NPC (por haber completado su mision)", npcID))
+				--RSLogger:PrintDebugMessage(string.format("NPC [%s]. Deja de ser un rare NPC (por haber completado su mision)", npcID))
 				break
 			end
 		end
 	else
-		RSLogger:PrintDebugMessage(string.format("NPC [%s]. Siempre es un rare NPC (por descarte)", npcID))
+		--RSLogger:PrintDebugMessage(string.format("NPC [%s]. Siempre es un rare NPC (por descarte)", npcID))
 	end
 
 	-- Looks for other NPCs with the same questID
@@ -90,7 +90,7 @@ function RSEntityStateHandler.SetDeadNpcByZone(npcID, mapID, loadingAddon, fromR
 					for i, questID in ipairs (internalNpcInfo.questID) do
 						if (C_QuestLog.IsQuestFlaggedCompleted(questID)) then
 							RSNpcDB.SetNpcKilled(internalNpcID, RSNpcDB.GetNpcKilledRespawnTime(npcID))
-							RSLogger:PrintDebugMessage(string.format("NPC [%s]. Deja de ser un rare NPC por compartir mision con otro rare NPC muerto [%s]", internalNpcID, npcID))
+							--RSLogger:PrintDebugMessage(string.format("NPC [%s]. Deja de ser un rare NPC por compartir mision con otro rare NPC muerto [%s]", internalNpcID, npcID))
 							RSRecentlySeenTracker.RemoveRecentlySeen(internalNpcID)
 							break
 						end
@@ -349,7 +349,7 @@ function RSEntityStateHandler.SetContainerOpen(containerID, loadingAddon, fromRe
 		
 		-- Refresh minimap
 		if (not loadingAddon) then
-			if (RSContainerDB.IsMultiZoneSpawn(containerID)) then
+			if (RSContainerDB.IsRepeatable(containerID)) then
 				if (x and y) then
 					RSMinimap.HideIcon(containerID, x, y)
 				end

@@ -6,6 +6,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Victory Rush - 1 (Elwynn Forest)
 #title Victory Rush
+
 step << Warrior
     #season 2
     #optional
@@ -29,6 +30,7 @@ step << Warrior
     .use 204806
     .itemcount 204806,1 -- Rune of Victory Rush (1)
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Warrior SoD
@@ -36,6 +38,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Victory Rush - 3 (Dun Morogh)
 #title Victory Rush
+
 step << Warrior
     #season 2
     .goto Dun Morogh,26.3,79.2,40,0
@@ -55,6 +58,7 @@ step << Warrior
     .itemcount 204806,1
     .train 403470,1
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Warrior SoD
@@ -62,6 +66,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Victory Rush - 3 (Shadowglen)
 #title Victory Rush
+
 step << Warrior
     #season 2
     .goto Teldrassil,56.8,31.7
@@ -76,6 +81,7 @@ step << Warrior
     .itemcount 204806,1
     .train 403470,1
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Warrior SoD
@@ -83,6 +89,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Chest
 #name Blood Frenzy - 10 (Elwynn Forest)
 #title Blood Frenzy
+
 step << Warrior
     #season 2
     .goto Elwynn Forest,25.5,70.1,0
@@ -110,6 +117,7 @@ step << Warrior
     .use 204441
     .itemcount 204441,1
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Warrior SoD
@@ -117,6 +125,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Chest
 #name Blood Frenzy - 10 (Dun Morogh)
 #title Blood Frenzy
+
 step << Warrior
     #season 2
     .goto Dun Morogh,53.47,47.60
@@ -133,6 +142,7 @@ step << Warrior
     .use 204441
     .itemcount 204441,1
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Warrior SoD
@@ -140,6 +150,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Chest
 #name Blood Frenzy - 10 (Teldrassil)
 #title Blood Frenzy
+
 step << Warrior
     #season 2
     .goto Teldrassil,39.8,69.6,60,0
@@ -161,6 +172,7 @@ step << Warrior
     .use 204441
     .itemcount 204441,1
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Warrior SoD
@@ -168,6 +180,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Furious Thunder - 6 (Elwynn Forest)
 #title Furious Thunder
+
 step << Warrior
     #season 2
     #completewith next
@@ -186,6 +199,7 @@ step << Warrior
     .use 204809
     .itemcount 204809,1
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Warrior SoD
@@ -193,6 +207,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Furious Thunder - 9 (Dun Morogh)
 #title Furious Thunder
+
 step << Warrior
     #season 2
     .goto 1426,31.87,38.45,0
@@ -229,6 +244,7 @@ step << Warrior
     .use 204809
     .itemcount 204809,1
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Warrior SoD
@@ -236,6 +252,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Frenzied Assault - 10 (Stormwind)
 #title Frenzied Assault
+
 step << Warrior
     #season 2
     .gossipoption 109045 >> Talk to |cRXP_FRIENDLY_Liv Bradford|r inside the Inn at the Park
@@ -252,6 +269,7 @@ step << Warrior
     .target Liv Bradford
     .mob Stuart
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Warrior SoD
@@ -259,6 +277,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Frenzied Assault - 10 (Ironforge)
 #title Frenzied Assault
+
 step << Warrior
     #season 2
     .goto Ironforge,72.512,76.942
@@ -272,6 +291,7 @@ step << Warrior
     .target Bruuk Barleybeard
     .mob Bruart
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Warrior SoD
@@ -279,6 +299,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Frenzied Assault - 10 (Teldrassil)
 #title Frenzied Assault
+
 step << Warrior
     #season 2
     .goto Teldrassil,55.619,59.787
@@ -292,6 +313,7 @@ step << Warrior
     .target Innkeeper Keldamyr
     .mob Syllart
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Warrior SoD
@@ -299,6 +321,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Helmet
 #name Endless Rage - 20 (Westfall)
 #title Endless Rage
+
 step << Warrior
     #season 2
     .goto Westfall,34.43,83.93,55,0
@@ -318,6 +341,7 @@ step << Warrior
     .use 208741
     .itemcount 208741,1
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Warrior SoD
@@ -325,6 +349,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Endless Rage - 16 (Darkshore)
 #title Endless Rage
+
 step << Warrior
     #season 2
     #completewith next
@@ -344,6 +369,7 @@ step << Warrior
     .use 208741
     .itemcount 208741,1
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Warrior SoD
@@ -351,6 +377,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Devastate - 8 (Elwynn Forest)
 #title Devastate
+
 step << Warrior
     #season 2
     >>Kill |cRXP_ENEMY_Kobold Miners|r and |cRXP_ENEMY_Kobold Tunnelers|r. Loot them for their |T134168:0|t[|cRXP_LOOT_Severed Kobold Head|r]
@@ -430,6 +457,7 @@ step << Warrior
     .use 204703
     .itemcount 204703,1
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Warrior SoD
@@ -437,6 +465,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Devastate - 6 (Teldrassil)
 #title Devastate
+
 step << Warrior
     #season 2
     >>Kill |cRXP_ENEMY_Nightsabers|r or |cRXP_ENEMY_Nightsaber Stalkers|r. Loot them for their |cRXP_LOOT_Severed Tiger Head|r
@@ -468,6 +497,7 @@ step << Warrior
     .skipgossip
     .target Delwynna
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Warrior SoD
@@ -475,6 +505,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Devastate - 6 (Dun Morogh)
 #title Devastate
+
 step << Warrior
     #season 2
     >>Kill |cRXP_ENEMY_Wendigos|r. Loot them for their |cRXP_LOOT_Severed Wendigo Paw|r
@@ -507,6 +538,7 @@ step << Warrior
     .skipgossip
     .target Junni Steelpass
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Warrior SoD
@@ -514,7 +546,10 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Victory Rush - 2 (Durotar)
 #title Victory Rush
+
+
     --Rune of Victory Rush
+
 step << Orc/Troll
     #season 2
     .goto Durotar,42.89,69.44
@@ -541,7 +576,9 @@ step << Orc/Troll
     .turnin 77588 >>Turn in A Trial of Fitness << Troll
     .turnin 77582 >>Turn in A Trial of Fitness << Orc
     .target Frang
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Warrior SoD
@@ -549,7 +586,10 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Victory Rush - 2 (Mulgore)
 #title Victory Rush
+
+
     --Rune of Victory Rush
+
 step << Tauren
     #season 2
     .goto Mulgore,44.02,76.14
@@ -574,7 +614,9 @@ step << Tauren
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Harutt|r
     .turnin 77651 >>Turn in Into the Brambles
     .target Harutt Thunderhorn
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Warrior SoD
@@ -582,7 +624,9 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Victory Rush - 2 (Tirisfal)
 #title Victory Rush
+
     --Rune of Victory Rush
+
 step << Undead
     #season 2
     .goto Tirisfal Glades,32.68,65.56
@@ -606,7 +650,9 @@ step << Undead
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Dannal|r
     .turnin 77668 >>Turn in The Lost Rune
     .target Dannal Stern
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Warrior SoD
@@ -614,7 +660,9 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Furious Thunder - 2 (Durotar)
 #title Furious Thunder
+
     --Rune of Furious Thunder
+
 step
     #season 2
     .goto Durotar,40.60,66.80
@@ -627,7 +675,9 @@ step
     .train 403476 >>Use the |T134419:0|t[|cRXP_FRIENDLY_Rune of Furious Thunder|r]
     .use 204809
     .itemcount 204809,1
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Warrior SoD
@@ -635,7 +685,10 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Furious Thunder - 10 (Tirisfal)
 #title Furious Thunder
+
+
     --Rune of Furious Thunder
+
 step
     #season 2
     .goto Tirisfal Glades,25.79,48.00
@@ -649,7 +702,9 @@ step
     .train 403476 >>Use the |T134419:0|t[|cRXP_FRIENDLY_Rune of Furious Thunder|r]
     .use 204809
     .itemcount 204809,1
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Warrior SoD
@@ -657,7 +712,10 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Frenzied Assault - 10 (Orgrimmar)
 #title Frenzied Assault
+
+
     --Rune of Frenzied Assault
+
 step
     #season 2
     #completewith next
@@ -683,7 +741,9 @@ step
     .train 425447 >>Use the |T134419:0|t[|cRXP_FRIENDLY_Rune of Frenzied Assault|r]
     .use 204716
     .itemcount 204716,1
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Warrior SoD
@@ -691,7 +751,10 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Frenzied Assault - 10 (Thunder Bluff)
 #title Frenzied Assault
+
+
     --Rune of Frenzied Assault
+
 step
     #season 2
     #completewith next
@@ -717,7 +780,9 @@ step
     .train 425447 >>Use the |T134419:0|t[|cRXP_FRIENDLY_Rune of Frenzied Assault|r]
     .use 204716
     .itemcount 204716,1
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Warrior SoD
@@ -725,7 +790,10 @@ RXPGuides.RegisterGuide([[
 #subgroup Legs
 #name Frenzied Assault - 10 (Tirisfal)
 #title Frenzied Assault
+
+
     --Rune of Frenzied Assault
+
 step
     .goto Tirisfal Glades,61.73,51.91
     .gossipoption 110750 >>Talk to |cRXP_FRIENDLY_Penny|r
@@ -751,7 +819,9 @@ step
     .train 425447 >>Use the |T134419:0|t[|cRXP_FRIENDLY_Rune of Frenzied Assault|r]
     .use 204716
     .itemcount 204716,1
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Warrior SoD
@@ -759,7 +829,10 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Devastate - 8 (Durotar)
 #title Devastate
+
+
     --Rune of Devastate
+
 step
     #season 2
     .goto Durotar,50.10,79.24,40,0
@@ -824,7 +897,9 @@ step
     .train 403475 >>Use the |T134419:0|t[|cRXP_FRIENDLY_Rune of Devastate|r]
     .use 204703
     .itemcount 204703,1
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Warrior SoD
@@ -832,7 +907,10 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Devastate - 8 (Mulgore)
 #title Devastate
+
+
     --Rune of Devastate
+
 step
     #season 2
     .goto Mulgore,53.5,73.0,90,0
@@ -906,7 +984,9 @@ step
     .train 403475 >>Use the |T134419:0|t[|cRXP_FRIENDLY_Rune of Devastate|r]
     .use 204703
     .itemcount 204703,1
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Warrior SoD
@@ -914,7 +994,10 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Devastate - 8 (Tirisfal)
 #title Devastate
+
+
     --Rune of Devastate
+
 step
     #season 2
     .goto Tirisfal Glades,58.20,58.15,50,0
@@ -983,7 +1066,9 @@ step
     .train 403475 >>Use the |T134419:0|t[|cRXP_FRIENDLY_Rune of Devastate|r]
     .use 204703
     .itemcount 204703,1
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Warrior SoD
@@ -991,7 +1076,10 @@ RXPGuides.RegisterGuide([[
 #subgroup Chest
 #name Blood Frenzy - 8 (Durotar)
 #title Blood Frenzy
+
+
     --Rune of Blood Frenzy
+
 step
     #season 2
     .goto Durotar,56.10,21.61,0
@@ -1015,7 +1103,9 @@ step
     .train 403474 >>Use the |T134419:0|t[|cRXP_FRIENDLY_Rune of Blood Frenzy|r]
     .use 204441
     .itemcount 204441,1
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Warrior SoD
@@ -1023,7 +1113,10 @@ RXPGuides.RegisterGuide([[
 #subgroup Chest
 #name Blood Frenzy - 8 (Mulgore)
 #title Blood Frenzy
+
+
 --Rune of Blood Frenzy
+
 step
     #season 2
     .goto Mulgore,37.38,56.58,0
@@ -1045,7 +1138,9 @@ step
     .train 403474 >>Use the |T134419:0|t[|cRXP_FRIENDLY_Rune of Blood Frenzy|r]
     .use 204441
     .itemcount 204441,1
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Warrior SoD
@@ -1053,7 +1148,10 @@ RXPGuides.RegisterGuide([[
 #subgroup Chest
 #name Blood Frenzy - 8 (Tirisfal)
 #title Blood Frenzy
+
+
     --Rune of Blood Frenzy
+
 step
     #season 2
     .goto Tirisfal Glades,79.25,65.02
@@ -1067,7 +1165,9 @@ step
     .train 403474 >>Use the |T134419:0|t[|cRXP_FRIENDLY_Rune of Blood Frenzy|r]
     .use 204441
     .itemcount 204441,1
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Warrior SoD
@@ -1075,6 +1175,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Quick Strike - 12 (Loch Modan)
 #title Quick Strike
+
 step << Warrior
     .goto Loch Modan,33.2,73.8
     >>Kill |cRXP_ENEMY_Troggs|r. Loot them for a |cRXP_LOOT_Skull-Shaped Geode|r
@@ -1098,6 +1199,7 @@ step << Warrior
     .use 208778
     .itemcount 208778,1
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Warrior SoD
@@ -1105,7 +1207,10 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Endless Rage - 15 (The Barrens)
 #title Endless Rage
+
+
     --Rune of Endless Rage
+
 step
     #season 2
     .goto The Barrens,52.27,31.08,
@@ -1134,7 +1239,9 @@ step
     .train 403489 >>|cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of Endless Rage|r] |cRXP_WARN_to train|r |T132347:0|t[Endless Rage]
     .use 208741
     .itemcount 208741,1
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Warrior SoD
@@ -1142,7 +1249,10 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Endless Rage - 15 (Silverpine Forest)
 #title Endless Rage
+
+
     --Rune of Endless Rage
+
 step
     #season 2
     #completewith next
@@ -1161,7 +1271,9 @@ step
     .train 403489 >>|cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of Endless Rage|r] |cRXP_WARN_to train|r |T132347:0|t[Endless Rage]
     .use 208741
     .itemcount 208741,1
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Alliance Warrior SoD
@@ -1169,6 +1281,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Gloves
 #name Quick Strike - 20 (Darkshore)
 #title Quick Strike
+
 step << Warrior
     .goto 1439,44.081,20.739
     >>Loot the |T135129:0|t[Gnarled Harpoon] in the eye of the skeleton
@@ -1200,6 +1313,7 @@ step << Warrior
     .use 208778
     .itemcount 208778,1
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Warrior SoD
@@ -1207,6 +1321,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Belt
 #name Blood Surge - 40 (Azeroth)
 #title Blood Surge
+
 step
     .train 416004,1
     #completewith SpiceBlend
@@ -1344,6 +1459,7 @@ step
     .train 416004 >>|cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of Blood Surge|r] |cRXP_WARN_to train|r |T236306:0|t[Blood Surge]
     .use 213103
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Warrior SoD
@@ -1351,7 +1467,9 @@ RXPGuides.RegisterGuide([[
 #subgroup Belt
 #name Focused Rage - 35 (Arathi Highlands)
 #title Focused Rage
+
 -- Focused Rage
+
 step
     .train 409163,1
     #completewith WitherbarkCave
@@ -1395,6 +1513,7 @@ step
     .train 409163 >> |cRXP_WARN_Use the|r |T134419:0|t[|cRXP_LOOT_Rune of Focused Rage|r] |cRXP_WARN_to train|r |T132345:0|t[Focused Rage]
     .use 213109
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Warrior SoD
@@ -1402,7 +1521,9 @@ RXPGuides.RegisterGuide([[
 #subgroup Boots
 #name Intervene - 24 (Thousand Needles)
 #title Intervene
+
 -- Intervene
+
 step
     #optional
     .train 403472,1
@@ -1466,6 +1587,7 @@ step
     .train 403472 >>|cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of Intervention|r] |cRXP_WARN_to train|r |T132365:0|t[Intervene]
     .use 213111
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Warrior SoD
@@ -1473,7 +1595,9 @@ RXPGuides.RegisterGuide([[
 #subgroup Boots
 #name Rallying Cry - 40 (Badlands)
 #title Rallying Cry
+
 -- Rallying Cry
+
 step
     .train 426491,1
     #completewith next
@@ -1507,6 +1631,8 @@ step
     .train 426491 >> |cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of the Commander|r] |cRXP_WARN_to learn|r |T132339:0|t[Rallying Cry]
     .use 213110
 ]])
+
+
 RXPGuides.RegisterGuide([[
 #classic
 << Warrior SoD
@@ -1514,6 +1640,8 @@ RXPGuides.RegisterGuide([[
 #subgroup Bracers
 #title Rampage
 #name Rampage - 43 (Feralas)
+
+
 step
     #completewith next
     .zone Feralas >>Travel to Feralas
@@ -1529,7 +1657,9 @@ step
 step
     .train 427081 >> |cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of the Unbridled|r] |cRXP_WARN_to learn|r |T132352:0|t[Rampage]
     .use 220682
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Warrior SoD
@@ -1537,6 +1667,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Bracers
 #title Wrecking Crew
 #name Wrecking Crew - 40 (The Hinterlands)
+
 step
     #completewith next
     .zone The Hinterlands >>Travel to The Hinterlands
@@ -1565,6 +1696,7 @@ step
     .train 427084 >> |cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of Demolition|r] |cRXP_WARN_to learn|r |T132364:0|t[Wrecking Crew]
     .use 220913
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Warrior SoD
@@ -1572,6 +1704,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Helmet
 #title Taste for Blood
 #name Taste for Blood - 50 (Searing Gorge)
+
 step
     #completewith SlagPits
     .zone Searing Gorge >>Travel to The Searing Gorge
@@ -1639,6 +1772,7 @@ step
     .use 221267
     .itemcount 221267,1
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Warrior SoD
@@ -1646,6 +1780,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Helmet
 #title Vigilance
 #name Vigilance - 46 (Feralas)
+
 step
     #completewith next
     .zone Feralas >>Travel to Feralas
@@ -1669,6 +1804,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Boots
 #title Gladiator Stance
 #name Gladiator Stance - 45 (Tanaris & Azshara)
+
 step
     #completewith theOldChamp
     +|cRXP_WARN_In order to unlock|r |T236541:0|t[Gladiator Stance] |cRXP_WARN_you need to have defeated the two wandering swordsman who reward the|r |T132334:0|t[Blood Frenzy] and |T132339:0|t[Rallying Cry] |cRXP_WARN_runes. Make sure you have done that before continuing. Use their respective rune guides if you're unsure where to find them|r
@@ -1727,6 +1863,7 @@ step
     .train 416002 >>|cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of the Gladiator|r] |cRXP_WARN_to learn|r |T236541:0|t[Gladiator Stance]
     .use 220164
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Warrior SoD
@@ -1734,6 +1871,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Cloak
 #title Fresh Meat
 #name Fresh Meat - 55 (Burning Steppes)
+
 step
     #completewith next
     .zone Burning Steppes >>Travel to Burning Steppes
@@ -1758,6 +1896,7 @@ step
     .train 440492 >>|cRXP_WARN_Use the|r |T133747:0|t[|cRXP_LOOT_Rune of the First Warrior|r] |cRXP_WARN_to learn|r |T237516:0|t[Fresh Meat]
     .use 226680
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Warrior SoD
@@ -1765,6 +1904,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Cloak
 #title Sudden Death
 #name Sudden Death - 57 (Silithus)
+
 step
     #completewith next
     .zone Silithus >>Travel to Silithus
@@ -1799,6 +1939,7 @@ step
     .train 440494 >>|cRXP_WARN_Use the|r |T133739:0|t[|cRXP_LOOT_Timeless Wanderer's Insights|r] |cRXP_WARN_to learn|r |T132346:0|t[Sudden Death]
     .use 226679
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 << Warrior SoD
@@ -1806,6 +1947,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Cloak
 #title Shockwave
 #name Shockwave - 60 (Azeroth)
+
 step
     #completewith next
     .zone Tanaris >>Travel to Tanaris

@@ -303,14 +303,6 @@ function RSConfigDB.SetScanningWhileOnTaxi(value)
 	private.db.general.scanOnTaxi = value
 end
 
-function RSConfigDB.IsScanningWhileOnRacingQuest()
-	return private.db.general.scanOnRacingQuest
-end
-
-function RSConfigDB.SetScanningWhileOnRacingQuest(value)
-	private.db.general.scanOnRacingQuest = value
-end
-
 function RSConfigDB.IsScanningWhileOnPetBattle()
 	return private.db.general.scanOnPetBattle
 end
@@ -333,6 +325,46 @@ end
 
 function RSConfigDB.SetScanningWithMacro(value)
 	private.db.general.scanWithMacro = value
+end
+
+function RSConfigDB.IsScanningWithMacroPerChar()
+	return private.db.general.scanWithMacroPerChar
+end
+
+function RSConfigDB.SetScanningWithMacroPerChar(value)
+	private.db.general.scanWithMacroPerChar = value
+end
+
+function RSConfigDB.IsScanningSoftInteract()
+	return private.db.general.scanSoftInteract
+end
+
+function RSConfigDB.SetScanningSoftInteract(value)
+	private.db.general.scanSoftInteract = value
+end
+
+function RSConfigDB.IsScanningClassSkills()
+	return private.db.general.scanClassSkills
+end
+
+function RSConfigDB.SetScanningClassSkills(value)
+	private.db.general.scanClassSkills = value
+end
+
+function RSConfigDB.IsPingingTarget()
+	return private.db.general.pingTarget
+end
+
+function RSConfigDB.SetPingingTarget(value)
+	private.db.general.pingTarget = value
+end
+
+function RSConfigDB.GetOriginalSoftInteractCVars()
+	return private.db.general.originalSoftInteractCVars
+end
+
+function RSConfigDB.SetOriginalSoftInteractCVars(value)
+	private.db.general.originalSoftInteractCVars = value
 end
 
 function RSConfigDB.IsIgnoringCompletedEntities()
@@ -844,14 +876,6 @@ function RSConfigDB.FilterAllContainers(routines, routineTextOutput)
 	table.insert(routines, filterAllContainersRoutine)
 end
 
-function RSConfigDB.IsShowingGarrisonCache()
-	return private.db.general.scanGarrison
-end
-
-function RSConfigDB.SetShowingGarrisonCache(value)
-	private.db.general.scanGarrison = value
-end
-
 function RSConfigDB.IsShowingAlreadyOpenedContainers()
 	return private.db.map.displayAlreadyOpenedContainersIcons
 end
@@ -1225,18 +1249,6 @@ function RSConfigDB.GetDefaultZoneFilter()
 end
 
 ---============================================================================
--- Dragon glyphs filters
----============================================================================
-
-function RSConfigDB.IsShowingDragonGlyphs()
-	return private.db.map.displayDragonGlyphsIcons
-end
-
-function RSConfigDB.SetShowingDragonGlyphs(value)
-	private.db.map.displayDragonGlyphsIcons = value
-end
-
----============================================================================
 -- Minimap
 ---============================================================================
 
@@ -1364,6 +1376,23 @@ function RSConfigDB.SetItemFiltered(itemID, value)
 	end
 end
 
+-- Drop chance range to show the loot (nil means no limit)
+function RSConfigDB.GetLootFilterMinChance()
+	return private.db.loot.filterMinChance
+end
+
+function RSConfigDB.SetLootFilterMinChance(value)
+	private.db.loot.filterMinChance = value
+end
+
+function RSConfigDB.GetLootFilterMaxChance()
+	return private.db.loot.filterMaxChance
+end
+
+function RSConfigDB.SetLootFilterMaxChance(value)
+	private.db.loot.filterMaxChance = value
+end
+
 function RSConfigDB.GetLootFilterMinQuality()
 	return private.db.loot.lootMinQuality
 end
@@ -1386,14 +1415,6 @@ function RSConfigDB.GetLootFilterByCategory(itemClassID, itemSubClassID)
 	return nil
 end
 
-function RSConfigDB.IsFilteringLootByCompletedQuest()
-	return private.db.loot.filterItemsCompletedQuest
-end
-
-function RSConfigDB.SetFilteringLootByCompletedQuest(value)
-	private.db.loot.filterItemsCompletedQuest = value
-end
-
 function RSConfigDB.IsFilteringLootByNotEquipableItems()
 	return private.db.loot.filterNotEquipableItems
 end
@@ -1402,36 +1423,12 @@ function RSConfigDB.SetFilteringLootByNotEquipableItems(value)
 	private.db.loot.filterNotEquipableItems = value
 end
 
-function RSConfigDB.IsFilteringLootByNotMatchingClass()
-	return private.db.loot.filterNotMatchingClass
+function RSConfigDB.IsFilteringLootByNotUsable()
+	return private.db.loot.filterNotUsable
 end
 
-function RSConfigDB.SetFilteringLootByNotMatchingClass(value)
-	private.db.loot.filterNotMatchingClass = value
-end
-
-function RSConfigDB.IsFilteringLootByNotMatchingFaction()
-	return private.db.loot.filterNotMatchingFaction
-end
-
-function RSConfigDB.SetFilteringLootByNotMatchingFaction(value)
-	private.db.loot.filterNotMatchingFaction = value
-end
-
-function RSConfigDB.IsFilteringAnimaItems()
-	return private.db.loot.filterAnimaItems
-end
-
-function RSConfigDB.SetFilteringAnimaItems(value)
-	private.db.loot.filterAnimaItems = value
-end
-
-function RSConfigDB.IsFilteringConduitItems()
-	return private.db.loot.filterConduitItems
-end
-
-function RSConfigDB.SetFilteringConduitItems(value)
-	private.db.loot.filterConduitItems = value
+function RSConfigDB.SetFilteringLootByNotUsable(value)
+	private.db.loot.filterNotUsable = value
 end
 
 function RSConfigDB.IsFilteringByExplorerResults()
@@ -1480,14 +1477,6 @@ end
 
 function RSConfigDB.SetShowingMissingClassAppearances(value)
 	private.db.loot.showingMissingClassAppearances = value
-end
-
-function RSConfigDB.IsShowingMissingDrakewatcher()
-	return private.db.loot.showingMissingDrakewatcher
-end
-
-function RSConfigDB.SetShowingMissingDrakewatcher(value)
-	private.db.loot.showingMissingDrakewatcher = value
 end
 
 function RSConfigDB.IsShowingMissingDecors()
@@ -1576,14 +1565,6 @@ function RSConfigDB.IsSearchingClassAppearances()
 	return private.db.collections.searchingClassAppearances
 end
 
-function RSConfigDB.SetSearchingDrakewatcher(value)
-	private.db.collections.searchingDrakewatcher = value
-end
-
-function RSConfigDB.IsSearchingDrakewatcher()
-	return private.db.collections.searchingDrakewatcher
-end
-
 function RSConfigDB.SetSearchingDecors(value)
 	private.db.collections.searchingDecors = value
 end
@@ -1608,12 +1589,36 @@ function RSConfigDB.IsShowFiltered()
 	return private.db.collections.showFiltered
 end
 
+function RSConfigDB.SetIgnoreMissingCollectibles(value)
+	private.db.collections.ignoreMissingCollectibles = value
+end
+
+function RSConfigDB.IsIgnoreMissingCollectibles()
+	return private.db.collections.ignoreMissingCollectibles
+end
+
 function RSConfigDB.SetShowWithoutCollectibles(value)
 	private.db.collections.showWithoutCollectibles = value
 end
 
 function RSConfigDB.IsShowWithoutCollectibles()
 	return private.db.collections.showWithoutCollectibles
+end
+
+function RSConfigDB.SetShowNpcs(value)
+	private.db.collections.showNpcs = value
+end
+
+function RSConfigDB.IsShowNpcs()
+	return private.db.collections.showNpcs
+end
+
+function RSConfigDB.SetShowContainers(value)
+	private.db.collections.showContainers = value
+end
+
+function RSConfigDB.IsShowContainers()
+	return private.db.collections.showContainers
 end
 
 function RSConfigDB.SetSearchingCustom(groupKey, value)
@@ -1638,6 +1643,96 @@ end
 
 function RSConfigDB.IsShowDead()
 	return private.db.collections.showDead
+end
+
+-- Explorer loot list filters. Only the hidden values are saved
+function RSConfigDB.SetExplorerLootQualityHidden(quality, hidden)
+	if (not private.db.collections.lootHiddenQualities) then
+		private.db.collections.lootHiddenQualities = {}
+	end
+
+	private.db.collections.lootHiddenQualities[quality] = hidden and true or nil
+end
+
+function RSConfigDB.IsExplorerLootQualityHidden(quality)
+	return private.db.collections.lootHiddenQualities ~= nil and private.db.collections.lootHiddenQualities[quality] ~= nil
+end
+
+function RSConfigDB.SetExplorerLootHideNonUpgrades(value)
+	private.db.collections.lootHideNonUpgrades = value
+end
+
+function RSConfigDB.IsExplorerLootHideNonUpgrades()
+	return private.db.collections.lootHideNonUpgrades
+end
+
+function RSConfigDB.SetExplorerLootCollapsed(value)
+	private.db.collections.lootCollapsed = value
+end
+
+function RSConfigDB.IsExplorerLootCollapsed()
+	return private.db.collections.lootCollapsed
+end
+
+function RSConfigDB.SetExplorerLootOnlyEquipable(value)
+	private.db.collections.lootOnlyEquipable = value
+end
+
+function RSConfigDB.IsExplorerLootOnlyEquipable()
+	return private.db.collections.lootOnlyEquipable
+end
+
+function RSConfigDB.SetExplorerLootOnlyUsable(value)
+	private.db.collections.lootOnlyUsable = value
+end
+
+function RSConfigDB.IsExplorerLootOnlyUsable()
+	return private.db.collections.lootOnlyUsable
+end
+
+function RSConfigDB.SetExplorerLootOnlyMyLevel(value)
+	private.db.collections.lootOnlyMyLevel = value
+end
+
+function RSConfigDB.IsExplorerLootOnlyMyLevel()
+	return private.db.collections.lootOnlyMyLevel
+end
+
+function RSConfigDB.SetExplorerLootShowFiltered(value)
+	private.db.collections.lootShowFiltered = value
+end
+
+function RSConfigDB.IsExplorerLootShowFiltered()
+	return private.db.collections.lootShowFiltered
+end
+
+-- Drop chance range (nil means no limit)
+function RSConfigDB.SetExplorerLootMinChance(value)
+	private.db.collections.lootMinChance = value
+end
+
+function RSConfigDB.GetExplorerLootMinChance()
+	return private.db.collections.lootMinChance
+end
+
+function RSConfigDB.SetExplorerLootMaxChance(value)
+	private.db.collections.lootMaxChance = value
+end
+
+function RSConfigDB.GetExplorerLootMaxChance()
+	return private.db.collections.lootMaxChance
+end
+
+function RSConfigDB.SetExplorerLootCategoryHidden(key, hidden)
+	if (not private.db.collections.lootHiddenCategories) then
+		private.db.collections.lootHiddenCategories = {}
+	end
+
+	private.db.collections.lootHiddenCategories[key] = hidden and true or nil
+end
+
+function RSConfigDB.IsExplorerLootCategoryHidden(key)
+	return private.db.collections.lootHiddenCategories ~= nil and private.db.collections.lootHiddenCategories[key] ~= nil
 end
 
 function RSConfigDB.SetExplorerContinentMapID(value)
@@ -1677,8 +1772,10 @@ function RSConfigDB.ResetLootFilters()
 	
 	-- Custom filters
 	RSConfigDB.SetFilteringByExplorerResults(false)
-	RSConfigDB.SetFilteringLootByNotMatchingClass(false)
-	RSConfigDB.SetFilteringLootByNotMatchingFaction(true)
+	RSConfigDB.SetLootFilterMinChance(nil)
+	RSConfigDB.SetLootFilterMaxChance(nil)
+	RSConfigDB.SetFilteringLootByNotEquipableItems(false)
+	RSConfigDB.SetFilteringLootByNotUsable(false)
 	RSConfigDB.SetFilteringByExplorerResults(false)
 end
 
@@ -1916,6 +2013,14 @@ end
 
 function RSConfigDB.SetShowingTooltipsSeen(value)
 	private.db.map.tooltipsSeen = value
+end
+
+function RSConfigDB.IsShowingTooltipsRespawn()
+	return private.db.map.tooltipsRespawn
+end
+
+function RSConfigDB.SetShowingTooltipsRespawn(value)
+	private.db.map.tooltipsRespawn = value
 end
 
 function RSConfigDB.IsShowingTooltipsState()

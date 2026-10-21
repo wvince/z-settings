@@ -12,8 +12,10 @@ end
 local mod	= DBM:NewMod("Gehennas", "DBM-Raids-Vanilla", catID)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20260920050230")
-mod:DisableHardcodedOptions()
+mod:SetRevision("20261019224112")
+if DBM:IsForever() then
+	mod:EnableGenericTrash()
+end
 mod:SetCreatureID(DBM:IsSeasonal("SeasonOfDiscovery") and 228431 or 12259)--, 11661
 mod:SetEncounterID(665)
 mod:SetModelID(13030)
@@ -22,8 +24,7 @@ mod:SetZone(409)
 
 mod:RegisterCombat("combat")
 if DBM:IsRestricted() then
-	--do stuff
-	--mod:AddAuraSoundOption(372820, true, 372820, 1, 2, "watchfeet", 8, 0)
+	mod:AddAuraSoundOption(19717, true, 19717, 1, 2, "watchfeet", 8, 0)
 else
 
 	mod:RegisterEventsInCombat(
@@ -42,7 +43,7 @@ else
 	local warnFist			= mod:NewTargetAnnounce(20277, 2, nil, false, 2)
 	local warnGuardDied		= mod:NewAnnounce("WarnGuardDied", 1, "132093")
 
-	local specWarnGTFO	= mod:NewSpecialWarningGTFO(19717, nil, nil, nil, 1, 8, nil, nil, "watchfeet")
+	local specWarnGTFO		= mod:NewSpecialWarningGTFO(19717, nil, nil, nil, 1, 8, nil, nil, "watchfeet")
 
 	local timerCurseCD	= mod:NewVarTimer("v25.9-35.6", 19716, nil, "RemoveCurse|Healer", nil, 5, nil, DBM_COMMON_L.HEALER_ICON..DBM_COMMON_L.CURSE_ICON)
 	local timerRoF		= mod:NewCDTimer(4.8, 19717, nil, false, nil, 3)

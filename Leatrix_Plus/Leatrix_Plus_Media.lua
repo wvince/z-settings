@@ -1164,6 +1164,7 @@
 		"|cffffd800", "|cffffd800" .. L["World of Warcraft"],
 		"cinematics/logo.mp3#625988#27",
 		"cinematics/wow_intro.mp3#625564#170",
+		"cinematics/movie_1098/movie_1098_audio_8510709.mp3#8510709#230",
 	}) -- movie.dbc
 
 	Zn(L["Various"], L["Various"], L["Credits"], {"|cffffd800" .. L["Various"] .. ": " .. L["Credits"], prefol,
@@ -1250,6 +1251,7 @@
 	Zn(L["Movies"], L["Movies"], L["World of Warcraft"], {"|cffffd800" .. L["Movies"] .. ": " .. L["World of Warcraft"], prefol,
 		L["Ten Years of Warcraft"] .. " |r(1)",
 		L["World of Warcraft"] .. " |r(2)",
+		L["New Horizons"] .. " |r(1098)",
 	})
 
 	----------------------------------------------------------------------

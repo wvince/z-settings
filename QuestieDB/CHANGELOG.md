@@ -1,11 +1,11 @@
-# QuestieDB 1.0.5
+# QuestieDB 1.0.6
 
-### New features
+### General fixes
 
-- Add Forever base data ([Logonz](https://github.com/Questie/QuestieDB/commit/f521c36eb72a57d7f205a61ee212ad0ca9f51ed9))
+- Show the new dungeon quest icons on the entrance locations ([Cabro](https://github.com/Questie/QuestieDB/commit/75a388e2b73f156eac4684b743c20aef56ed6d9d))
 
-### Quest fixes
+### Database fixes
 
-- Quest fixes for Zephras Isle ([Cheeq](https://github.com/Questie/QuestieDB/commit/a40148644581f35e714217728c0a3469bdf22c13))
+- [Forever] refresh base data from October 10 snapshot ([Logonz](https://github.com/Questie/QuestieDB/commit/2700bb230f4ac2b20aeaaad1cbea305655c7a1a1))
 
-[All changes since v1.0.4](https://github.com/Questie/QuestieDB/compare/v1.0.4..e0a6eaa86f181ac99262e34126bcd2ed1a1712d6)
+[All changes since v1.0.5](https://github.com/Questie/QuestieDB/compare/v1.0.5..36ca1ca86f6c1838de479c7c7452eb0a57d5c135)

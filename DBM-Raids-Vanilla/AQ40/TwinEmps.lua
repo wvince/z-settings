@@ -9,8 +9,10 @@ end
 local mod	= DBM:NewMod("TwinEmpsAQ", "DBM-Raids-Vanilla", catID)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20260920054026")
-mod:DisableHardcodedOptions()
+mod:SetRevision("20261019224112")
+if DBM:IsForever() then
+	mod:EnableGenericTrash()
+end
 mod:SetCreatureID(15276, 15275)
 mod:SetEncounterID(715)
 mod:SetZone(531)

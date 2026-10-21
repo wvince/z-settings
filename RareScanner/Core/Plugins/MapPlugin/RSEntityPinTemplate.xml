@@ -3,7 +3,7 @@
 
   <Script file="RSEntityPinMixin.lua"/>
   
-  <Frame name="RSEntityPinTemplate" mixin="RSEntityPinMixin" virtual="true">
+  <Button name="RSEntityPinTemplate" mixin="RSEntityPinMixin" virtual="true">
 		<Size>
 			<AbsDimension x="18" y="18"/>
 		</Size>
@@ -63,6 +63,6 @@
 		    <OnEnter method="OnMouseEnter"/>
 		    <OnLeave method="OnMouseLeave"/>
 		</Scripts>
-	</Frame>
+	</Button>
   
 </Ui>

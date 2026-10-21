@@ -5603,6 +5603,7 @@ function addon.functions.buy(self, ...)
         element.text = text
         return element
     end
+    if addon.IsGamePadEnabled() then return end
 
     local event = ...
     local element = self.element
@@ -5741,6 +5742,12 @@ function addon.functions.skipgossip(self, text, ...)
 
 end
 
+function addon.CloseGossip()
+    if addon.IsGamePadEnabled() then return end
+
+    _G.GossipFrame:Hide()
+end
+
 function addon.functions.gossip(self, text, npc, length, flags)
     if type(self) == "string" then
         npc = tonumber(npc)
@@ -5802,7 +5809,7 @@ function addon.functions.gossip(self, text, npc, length, flags)
             end
         end
         element.level = -1
-        _G.GossipFrame:Hide()
+        addon.CloseGossip()
     end
 end
 
@@ -7616,6 +7623,32 @@ function addon.functions.dungeon(self, text, instance)
     end
 end
 
+function addon.functions.enabledungeon(self, text, instance)
+    if type(self) == "string" then -- on parse
+        local enabled = true
+        if instance and instance:sub(1,1) == "!" then
+            instance = instance:sub(2,-1)
+            enabled = false
+        end
+
+        local name, tag = addon.GetDungeonName(instance)
+        local guide = addon.guide
+
+        local group = guide.group
+        if not addon.dungeonOverride[group] then
+            addon.dungeonOverride[group] = {}
+        end
+        if group and tag then
+            addon.dungeonOverride[group][tag] = enabled
+        end
+
+        if text and text ~= "" then
+            return {textOnly = true, text = text}
+        end
+
+    end
+end
+
 addon.professions = {}
 function addon.functions.profession(self, text, instance)
     if type(self) == "string" then -- on parse
@@ -8235,7 +8268,7 @@ function addon.functions.isQuestOffered(self, text, npc, ...)
     if event == "PLAYER_INTERACTION_MANAGER_FRAME_HIDE" then
         element.name = nil
         element.currentNPC = nil
-        _G.GossipFrame:Hide()
+        addon.CloseGossip()
     end
 end
 

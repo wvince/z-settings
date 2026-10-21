@@ -1,4 +1,19 @@
-﻿1.60.20 - 10th October 2026
+﻿1.60.25 - 21st October 2026
+- Removed the 'Use English language' option now that the addon has a language dropdown menu.
+
+1.60.24 - 20th October 2026
+- Added a language dropdown menu ('Settings') so you can choose which language you want the addon to use.
+- To use 'Simple map frame' with ElvUI, you need to disable the ElvUI World Map skin. 
+- Updated points of interest and translations.
+
+1.60.23 - 14th October 2026
+- Fixed a minor issue which caused the M key to always open the map without the quest log.
+
+1.60.21 - 14th October 2026
+- The 'Simple map frame' option now has a quest search box and the option is enabled by default once again.
+- Updated 'Show points of interest'.
+
+1.60.20 - 10th October 2026
 - Added a new option 'Hide blackout frame'.  If checked, the blackout frame will be hidden.
 
 1.60.19 - 7th October 2026

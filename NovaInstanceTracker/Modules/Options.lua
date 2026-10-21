@@ -1042,15 +1042,16 @@ end
 
 function NIT:checkNewVersion()
 	--NIT.db.global.versions = {}; --To test.
-	local newVersionNotes = 2.17;
+	local newVersionNotes = 2.31;
 	if (NIT.version and NIT.version == newVersionNotes) then
 		if (not NIT.db.global.versions[NIT.version]) then
-			--if (NIT.isMOP) then
+			if (NIT.isForever) then
 				local notes = {
-					"Fixed an issue with the wrong xp per hour being displayed while still inside a dungeon.",
+					"Adjusted instances per hour limit to 10 in Forever.",
+					"Added support for the addon compartment button above the minimap, this means you can turn off the normal minimap icon and access it there instead if you like.",
 				};
 				loadNewVersionFrame(NIT.version, notes, "Nova Instance Tracker", "Interface\\AddOns\\NovaInstanceTracker\\Media\\portal", 30, 200);
-			--end
+			end
 			--Wipe old data.
 			NIT.db.global.versions = {};
 			--Set this version has been loaded before.

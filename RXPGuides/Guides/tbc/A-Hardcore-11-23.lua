@@ -8,6 +8,7 @@ RXPGuides.RegisterGuide([[
 #name 12-14 Darkshore
 #displayname 11-14 Darkshore << NightElf
 #next 14-20 Bloodmyst Isle
+
 step
 #optional
     .isOnQuest 291
@@ -611,6 +612,7 @@ step
     .mob Moonkin
     .skill cooking,10,1 --XX Shows if cooking skill is <10
     .skill cooking,<1,1 -- shows if cooking is >1
+
 step << Druid
     #completewith next
     .goto Darkshore,42.97,45.47,15,0
@@ -626,6 +628,7 @@ step << Druid
     .complete 6001,1 --Defeat Lunaclaw (x1)
     .mob Lunaclaw
     .target Lunaclaw Spirit
+
 step << !Draenei !Warlock
     #completewith CliffspringRiverSample
     >>Kill |cRXP_ENEMY_Rabid Thistle Bears|r
@@ -1167,6 +1170,7 @@ step << !Draenei
     .zone Azuremyst Isle >> Take the boat to Azuremyst Isle
     .zoneskip Bloodmyst Isle
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -1175,6 +1179,7 @@ RXPGuides.RegisterGuide([[
 #subgroup RXP Survival Guide 1-20
 #name 14-20 Bloodmyst Isle
 #next 20-21 Darkshore
+
 step << Druid
     .goto Azuremyst Isle,24.450,54.556
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Shalannius|r
@@ -2654,6 +2659,7 @@ step
     .goto Bloodmyst Isle,61.173,49.639
     >>Click the |cRXP_PICK_Mound of Dirt|r on the ground
     .turnin 9561 >> Turn in Nolkai's Words
+
  -- skipping this section if they are already level 20
 step
     #completewith next
@@ -3282,6 +3288,8 @@ step << !NightElf Hunter/Rogue
     .target Vesprystus
     .zoneskip Teldrassil,1
 ]])
+
+
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -3290,6 +3298,7 @@ RXPGuides.RegisterGuide([[
 #subgroup RXP Survival Guide 20-32
 #name 20-21 Darkshore
 #next 21-23 Ashenvale
+
 step
     .goto Darkshore,37.04,44.13
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Shaussiy|r
@@ -3349,6 +3358,7 @@ step << Warlock
     .goto StormwindClassic,39.834,54.360
     .zone Darkshore>> Ghetto Hearth to Darkshore. To do this, enter The Stockades, then copy paste the link below into chat. Wait out the 1 minute countdown
     .link /run InviteUnit("aa");C_Timer.After(1,function() LeaveParty() end) >> CLICK HERE
+
 --Continued below is .dungeon DM only
 step
 .dungeon DM
@@ -4161,6 +4171,8 @@ step
     .cooldown item,6948,>2,1
     .bindlocation 442,1
     .subzoneskip 442
+
+
 --accepting BFD quests in Darnassus
 step
 .dungeon BFD
@@ -4201,6 +4213,7 @@ step
     .fly Darkshore >> Fly to Darkshore
     .target Vesprystus
     .zoneskip Teldrassil,1
+
 step
     .goto Darkshore,36.097,44.932
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gubber Blump|r
@@ -4824,6 +4837,7 @@ step
     .accept 970 >> Accept The Tower of Althalaxx
     .target Delgren the Purifier
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -4832,6 +4846,7 @@ RXPGuides.RegisterGuide([[
 #subgroup RXP Survival Guide 20-32
 #name 21-23 Ashenvale
 #next 23-24 Wetlands
+
 step
     .goto Ashenvale,26.19,38.69
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Delgren the Purifier|r
@@ -5295,6 +5310,7 @@ step
 	.target Talen
     .goto Ashenvale,14.79,31.29
     .turnin 1009 >> Turn in Ruuzel
+
 step
 .dungeon !BFD
     #completewith next
@@ -5315,6 +5331,7 @@ step
     .mob Fallenroot Rogue
     .mob Fallenroot Satyr
     .isOnQuest 1275
+
 step
 .dungeon BFD
     .goto Ashenvale,15.5,19.0,0
@@ -5428,6 +5445,7 @@ step << !Druid
     .zone Darkshore>> Ghetto Hearth to Darkshore. To do this, enter Blackfathom Deeps, then copy paste the link below into chat. Wait out the 1 minute countdown
     .link /run InviteUnit("aa");C_Timer.After(1,function() LeaveParty() end) >> CLICK HERE
     .subzoneskip 2797,1 -- BFD (inside and outside instance)
+
 step
     .isQuestComplete 4740
     .goto Darkshore,37.70,43.39
@@ -5577,6 +5595,8 @@ step
 	.target Pelturas Whitemoon
     .goto Ashenvale,37.36,51.79
     .turnin 1034 >> Turn in The Ruins of Stardust
+
+
 --Stonetalon section. skipping if 24 or not already in Stonetalon Mountains
 step
     .goto Ashenvale,42.50,71.70
@@ -5810,6 +5830,7 @@ step << Warlock
     .goto 1440/1,164.900,3826.200
     >>Head upstairs in the house and loot the |cRXP_PICK_Wooden Figurine|r on the table
     .complete 65602,1 --Wooden Figurine
+
 step
     #completewith next
     >>Kill a few |cRXP_ENEMY_Foulweald Warriors|r and |cRXP_ENEMY_Foulweald Totemics|r before heading south toward the |cRXP_ENEMY_Water Elementals|r

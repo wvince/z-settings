@@ -11,7 +11,6 @@ local RSConfigDB = private.ImportLib("RareScannerConfigDB")
 local RSGeneralDB = private.ImportLib("RareScannerGeneralDB")
 local RSMapDB = private.ImportLib("RareScannerMapDB")
 local RSNpcDB = private.ImportLib("RareScannerNpcDB")
-local RSDragonGlyphDB = private.ImportLib("RareScannerDragonGlyphDB")
 local RSContainerDB = private.ImportLib("RareScannerContainerDB")
 local RSCollectionsDB = private.ImportLib("RareScannerCollectionsDB")
 local RSAchievementDB = private.ImportLib("RareScannerAchievementDB")
@@ -22,6 +21,7 @@ local RSMinimap = private.ImportLib("RareScannerMinimap")
 local RSEntityStateHandler = private.ImportLib("RareScannerEntityStateHandler")
 local RareScannerBlizzardMapProvider
 local RSMacro = private.ImportLib("RareScannerMacro")
+local RSMinimapTracking = private.ImportLib("RareScannerMinimapTracking")
 
 -- RareScanner internal libraries
 local RSConstants = private.ImportLib("RareScannerConstants")
@@ -82,15 +82,34 @@ local function HandleEntityWithoutVignette(rareScannerButton, unitID, trackingSy
 			local x, y = RSNpcDB.GetBestInternalNpcCoordinates(npcID, mapID)
 			rareScannerButton:SimulateRareFound(npcID, unitGuid, nameplateUnitName, x, y, RSConstants.NPC_VIGNETTE, trackingSystem)
 		end
-	elseif (unitType == "Object") then
+	elseif (unitType == "Object" or unitType == "GameObject") then
 		local containerID = entityID and tonumber(entityID) or nil
+		if (not containerID) then
+			return
+		end
+
 		local containerName = UnitName(unitID)
 		local containerDbName = RSContainerDB.GetContainerName(containerID)
 		-- If the container didn't have a vignette this is the last chance to get the name
-		if (RSContainerDB.GetInternalContainerInfo(containerID) and (containerDbName or (not issecretvalue(containerName) and containerDbName ~= containerName))) then
-			if (containerName) then
-				RSContainerDB.SetContainerName(containerName)
+		if (containerName and not issecretvalue(containerName) and containerName ~= UNKNOWNOBJECT and containerDbName ~= containerName) then
+			RSContainerDB.SetContainerName(containerID, containerName)
+		end
+		
+		-- If it's a supported container and not completed/opened
+		if (RSGeneralDB.GetAlreadyFoundEntity(containerID, RSConstants.CONTAINER_VIGNETTE) or RSContainerDB.GetInternalContainerInfo(containerID)) then
+			-- Don't trigger if it's already opened and user ignores completed entities
+			if (RSConfigDB.IsIgnoringCompletedEntities() and RSContainerDB.IsContainerOpened(containerID)) then
+				return
 			end
+			
+			local mapID = C_Map.GetBestMapForUnit("player")
+			if (not mapID) then
+				return
+			end
+			
+			local x, y = RSContainerDB.GetBestInternalContainerCoordinates(containerID, mapID)
+			local finalContainerName = (containerName and not issecretvalue(containerName) and containerName ~= UNKNOWNOBJECT) and containerName or containerDbName or AL["CONTAINER"]
+			rareScannerButton:SimulateRareFound(containerID, unitGuid, finalContainerName, x, y, RSConstants.CONTAINER_VIGNETTE, trackingSystem)
 		end
 	end
 end
@@ -217,6 +236,24 @@ local function OnPlayerTargetChanged(rareScannerButton)
 				end
 			end
 		end
+	end
+end
+
+---============================================================================
+-- Event: PLAYER_SOFT_INTERACT_CHANGED
+-- Fired when soft interact unit changes
+---============================================================================
+
+local function OnPlayerSoftInteractChanged(rareScannerButton)
+	if (not RSConfigDB.IsScanningSoftInteract()) then
+		return
+	end
+
+	local unitExists = UnitExists("softinteract")
+	local unitIsPlayer = UnitIsUnit("player", "softinteract")
+	local unitIsDead = UnitIsDead("softinteract")
+	if (not issecretvalue(unitExists) and unitExists and not issecretvalue(unitIsPlayer) and not unitIsPlayer and not issecretvalue(unitIsDead) and not unitIsDead) then
+		HandleEntityWithoutVignette(rareScannerButton, "softinteract", RSConstants.TRACKING_SYSTEM.SOFT_INTERACT)
 	end
 end
 
@@ -507,19 +544,6 @@ local function OnHouseDecorAddedToChest(decorGUID, decorID)
 	end)
 end
 
----============================================================================
--- Event: ACHIEVEMENT_EARNED
--- Fired when a new achievement is earned
----============================================================================
-
-local function OnAchievementEarned(achievementID)
-	if (achievementID and RSDragonGlyphDB.GetInternalDragonGlyphInfo(achievementID)) then
-		RSLogger:PrintDebugMessage(string.format("Logro de glifo [%s]. Completado.", achievementID))
-		RSDragonGlyphDB.SetDragonGlyphCollected(achievementID)
-		RSMinimap.HideIcon(achievementID)
-	end
-end
-
 local function OnAchievementCriteriaEarned(achievementID)
 	-- It doesn't update inmediately
 	C_Timer.After(0.2, function() 
@@ -550,15 +574,6 @@ local function OnAchievementCriteriaEarned(achievementID)
 							end
 						end
 					end
-				elseif (RSDragonGlyphDB.IsDragonGlyph(achievementID)) then
-			   		for glyphID, info in pairs (private.DRAGON_GLYPHS) do
-						if (info.parent and info.parent == achievementID and info.criteria == i and not RSDragonGlyphDB.GetDragonGlyphCollected(glyphID)) then
-							RSLogger:PrintDebugMessage(string.format("Glifo con criteria [%s][%s]. Completado.", achievementID, glyphID))
-							RSDragonGlyphDB.SetDragonGlyphCollected(glyphID)
-							RSMinimap.HideIcon(glyphID)
-							refresh = true
-						end
-					end
 				end
 			end
 		end
@@ -580,8 +595,6 @@ local function OnCriteriaEarned(parentAchievementID, description)
 		RSLogger:PrintDebugMessage(string.format("Criteria del logro [%s][%s]. Completado.", parentAchievementID, description))
 		if (RSUtils.Contains(private.ACHIEVEMENT_WITH_CRITERIA, parentAchievementID)) then
 			OnAchievementCriteriaEarned(parentAchievementID)
-		elseif (RSDragonGlyphDB.IsDragonGlyph(parentAchievementID)) then
-			OnAchievementCriteriaEarned(parentAchievementID) 
 		end
 	end
 end
@@ -594,11 +607,6 @@ end
 local function OnUnitSpellcastSucceeded(unitTarget, castGUID, spellID)
 	if (not issecretvalue(spellID) and spellID) then
 		--RSLogger:PrintDebugMessage(string.format("Hechizo [%s]. Completado.", spellID))
-		-- Drakewatcher
-		RSCollectionsDB.RemoveNotCollectedDrakewatcher(spellID, function()
-			RSExplorerFrame:Refresh()
-		end)
-		
 		-- Achievements
 		if (private.ACHIEVEMENT_SPELL_IDS[spellID]) then
 			OnAchievementCriteriaEarned(private.ACHIEVEMENT_SPELL_IDS[spellID])
@@ -639,7 +647,51 @@ local function OnPlayerLogin(rareScannerButton)
 	-- Init macro
 	RSMacro.CreateMacro()
 	
+	-- Apply Soft Interact CVars if enabled
+	if (RSConfigDB.IsScanningSoftInteract()) then
+		RSEventHandler.UpdateSoftInteractCVars(true)
+	end
+	
 	rareScannerButton:UnregisterEvent("PLAYER_LOGIN")
+end
+
+function RSEventHandler.UpdateSoftInteractCVars(enable)
+	if (enable) then
+		-- Save original CVars if not already saved
+		if (not RSConfigDB.GetOriginalSoftInteractCVars()) then
+			local originalCVars = {
+				softTargetInteract = C_CVar.GetCVar("softTargetInteract"),
+				SoftTargetInteractArc = C_CVar.GetCVar("SoftTargetInteractArc"),
+				SoftTargetInteractRange = C_CVar.GetCVar("SoftTargetInteractRange"),
+			}
+
+			RSConfigDB.SetOriginalSoftInteractCVars(originalCVars)
+		end
+
+		C_CVar.SetCVar("softTargetInteract", "3")
+		C_CVar.SetCVar("SoftTargetInteractArc", "2")
+		C_CVar.SetCVar("SoftTargetInteractRange", "30")
+	else
+		-- Restore original CVars if previously saved
+		local originalCVars = RSConfigDB.GetOriginalSoftInteractCVars()
+		if (originalCVars and type(originalCVars) == "table") then
+			if (originalCVars.softTargetInteract) then
+				C_CVar.SetCVar("softTargetInteract", originalCVars.softTargetInteract)
+			end
+
+			if (originalCVars.SoftTargetInteractArc) then
+				C_CVar.SetCVar("SoftTargetInteractArc", originalCVars.SoftTargetInteractArc)
+			end
+
+			if (originalCVars.SoftTargetInteractRange) then
+				C_CVar.SetCVar("SoftTargetInteractRange", originalCVars.SoftTargetInteractRange)
+			end
+
+			RSConfigDB.SetOriginalSoftInteractCVars(false)
+		else
+			C_CVar.SetCVar("softTargetInteract", "0")
+		end
+	end
 end
 
 ---============================================================================
@@ -683,6 +735,18 @@ end
 ---============================================================================
 
 local function OnPlayerEnteringWorld(rareScannerButton)
+	-- Ensure Soft Interact CVars are active if the option is enabled by default
+	if (RSConfigDB.IsScanningSoftInteract()) then
+		RSEventHandler.UpdateSoftInteractCVars(true)
+	end
+
+	-- Start or stop class skills minimap tracking depending on user option
+	if (RSConfigDB.IsScanningClassSkills()) then
+		RSMinimapTracking.Start()
+	else
+		RSMinimapTracking.Stop()
+	end
+
 	if (not RSConfigDB.IsAutohidingInIntances()) then
 		return
 	end
@@ -819,6 +883,8 @@ local function HandleEvent(rareScannerButton, event, ...)
 		OnPlayerRegenEnabled(rareScannerButton)
 	elseif (event == "PLAYER_TARGET_CHANGED") then
 		OnPlayerTargetChanged(rareScannerButton)
+	elseif (event == "PLAYER_SOFT_INTERACT_CHANGED") then
+		OnPlayerSoftInteractChanged(rareScannerButton)
 	elseif (event == "LOOT_OPENED") then
 		OnLootOpened()
 	elseif (event == "CHAT_MSG_MONSTER_YELL") then
@@ -844,8 +910,6 @@ local function HandleEvent(rareScannerButton, event, ...)
 		OnNewToyAdded(...)
 	elseif (event == "TRANSMOG_COLLECTION_UPDATED") then
 		OnTransmogCollectionUpdated()
-	elseif (event == "ACHIEVEMENT_EARNED") then
-		OnAchievementEarned(...)
 	elseif (event == "CRITERIA_EARNED") then
 		OnCriteriaEarned(...)
 	elseif (event == "UNIT_SPELLCAST_SUCCEEDED") then
@@ -884,6 +948,7 @@ function RSEventHandler.RegisterEvents(rareScannerButton, addon)
 	rareScannerButton:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
 	rareScannerButton:RegisterEvent("PLAYER_REGEN_ENABLED")
 	rareScannerButton:RegisterEvent("PLAYER_TARGET_CHANGED")
+	rareScannerButton:RegisterEvent("PLAYER_SOFT_INTERACT_CHANGED")
 	rareScannerButton:RegisterEvent("LOOT_OPENED")
 	rareScannerButton:RegisterEvent("CINEMATIC_START")
 	rareScannerButton:RegisterEvent("CINEMATIC_STOP")
@@ -895,7 +960,6 @@ function RSEventHandler.RegisterEvents(rareScannerButton, addon)
 	rareScannerButton:RegisterEvent("NEW_PET_ADDED")
 	rareScannerButton:RegisterEvent("NEW_TOY_ADDED")
 	rareScannerButton:RegisterEvent("TRANSMOG_COLLECTION_UPDATED")
-	rareScannerButton:RegisterEvent("ACHIEVEMENT_EARNED")
 	rareScannerButton:RegisterEvent("CRITERIA_EARNED")
 	rareScannerButton:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 	rareScannerButton:RegisterEvent("PET_BATTLE_CLOSE")

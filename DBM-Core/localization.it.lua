@@ -147,6 +147,7 @@ L.SEC_FMT	= "%s sec"
 
 L.GENERIC_WARNING_OTHERS	= "e un altro"
 L.GENERIC_WARNING_OTHERS2	= "e %d altri"
+L.GENERIC_TRASH_TARGET	= "%s: %s"
 L.GENERIC_WARNING_BERSERK	= "Furia tra %s %s"
 L.GENERIC_TIMER_BERSERK		= "Furia"
 L.OPTION_TIMER_BERSERK		= "Visualizza Temporizzatore $spell:26662"
@@ -243,6 +244,32 @@ L.PIZZA_ERROR_USAGE		= "Uso: /dbm [broadcast] timer <time> <text>"
 L.MINIMAP_TOOLTIP_HEADER	= L.DEADLY_BOSS_MODS -- (Identico all'Inglese)
 L.MINIMAP_TOOLTIP_FOOTER	= "Tieni premuto Shift per trascinare liberamente"
 
+L.RANGE_TEST_READY				= "Test della portata degli oggetti (%s): richiesta dei dati per %d oggetti. Mantieni l'unità selezionata e resta fuori dal combattimento."
+L.RANGE_TEST_INVALID			= "Il test della portata degli oggetti richiede un'unità amichevole o ostile viva e visibile e deve essere eseguito fuori dal combattimento."
+L.RANGE_TEST_UNSUPPORTED		= "Test della portata degli oggetti: le API per la portata o la cache degli oggetti non sono disponibili su questo client."
+L.RANGE_TEST_ABORTED			= "Test della portata degli oggetti annullato: l'unità è cambiata, non è più disponibile oppure è iniziato un combattimento/caricamento."
+L.RANGE_TEST_PASS				= "%d iarde: oggetto %d (%s), IsItemInRange=%s%s"
+L.RANGE_TEST_FAIL				= "%d iarde: nessun oggetto utilizzabile (nil con dati in cache: %d, errori/timeout della cache: %d)."
+L.RANGE_TEST_INCOMPLETE		= "%d iarde: incompleto (nil con dati in cache: %d, errori/timeout della cache: %d)."
+L.RANGE_TEST_PARTIAL			= " (non è stato possibile memorizzare nella cache i candidati precedenti)"
+L.RANGE_TEST_HEADER				= "Risultati della portata degli oggetti di DBM (%s). Copia questa stringa; le portate includono +3 iarde."
+L.RANGE_TEST_NODATA				= "Nessun test della portata degli oggetti completato è disponibile. Esegui prima DBM:TestRanges."
+L.RANGE_TEST_DONE				= "Test della portata degli oggetti completato: %d superati, %d falliti, %d incompleti. Usa DBM:ShowRangeTestResults() per copiare i risultati."
+L.RANGE_TEST_SELF				= "Un test su te stesso non dimostra che questi oggetti funzionino su un altro giocatore."
+L.RANGE_DISTANCE_NOCANDIDATES	= "Esegui DBM:TestRanges e attendi oggetti utilizzabili prima di misurarne le distanze."
+L.RANGE_DISTANCE_INVALID		= "La calibrazione richiede un'altra unità viva e visibile, fuori dal combattimento e in mappe senza restrizioni. Si consiglia un giocatore del gruppo/incursione all'aperto."
+L.RANGE_DISTANCE_UNAVAILABLE	= "Calibrazione: letture verificate e non segrete di UnitDistanceSquared o API di portata degli oggetti non disponibili. Prova un giocatore del gruppo/incursione all'aperto."
+L.RANGE_DISTANCE_READY		= "Misurazione di %d oggetti (tolleranza +/-0,5 iarde). L'altro giocatore deve restare fermo; allontanati e torna lentamente attraversando i limiti. Ferma/esporta con DBM:StopRangeDistances(true)."
+L.RANGE_DISTANCE_REACQUIRE	= "Seleziona di nuovo il bersaglio originale per continuare la calibrazione della portata."
+L.RANGE_DISTANCE_ABORTED		= "Calibrazione interrotta: unità, combattimento, caricamento, restrizioni o disponibilità della distanza cambiati. Dati parziali conservati; nessun risultato superato."
+L.RANGE_DISTANCE_NODATA		= "Nessuna calibrazione fermata disponibile. Esegui DBM:TestRangeDistances e poi DBM:StopRangeDistances."
+L.RANGE_DISTANCE_HEADER		= "Calibrazione delle distanze DBM. Copia questa stringa; le portate previste includono +3 iarde, con tolleranza di +/-0,5 iarde."
+L.RANGE_DISTANCE_ROW			= "%d iarde: oggetto %d (%s), %s; true più lontano=%s, false più vicino=%s; true/false=%d/%d, discrepanze=%d, non disponibili=%d%s"
+L.RANGE_DISTANCE_PASS		= "SUPERATO"
+L.RANGE_DISTANCE_FAIL		= "FALLITO"
+L.RANGE_DISTANCE_INCOMPLETE	= "INCOMPLETO (limite poco osservato, letture contraddittorie, campioni non disponibili o prova interrotta)"
+L.RANGE_DISTANCE_DONE			= "Calibrazione fermata: %d superati, %d falliti, %d incompleti. Usa DBM:ShowRangeDistanceResults() per copiare i risultati."
+
 L.RANGECHECK_HEADER				= "Distanziometro (%dm)"
 L.RANGECHECK_HEADERT			= "Distanziometro (%dm-%dP)"
 L.RANGECHECK_RHEADER			= "Distanziometro Inverso (%dD)"
@@ -267,6 +294,9 @@ L.RANGECHECK_IN_RANGE_TEXT		= "%d vicini" -- Text based doesn't need (%dyd), esp
 L.RANGERADAR_IN_RANGE_TEXTONE	= "%s (%0.1fm)" -- One target
 
 L.INFOFRAME_TITLE			= L.DBM .. " Riquadro Info"
+L.INFOFRAME_BOSS_DISTANCE			= "Distanza dei boss"
+L.INFOFRAME_BOSS_DISTANCE_RANGE		= "%dm - %dm"
+L.INFOFRAME_BOSS_DISTANCE_OVER		= "> %dm"
 L.INFOFRAME_SHOW_SELF		= "Visualizza sempre la tua forza"		-- Always show your own power value even if you are below the threshold
 L.INFOFRAME_SETLINES		= "Imposta linee massime"
 L.INFOFRAME_SETSTRATA		= "Imposta livello del riquadro"
@@ -399,6 +429,7 @@ L.AUTO_ANNOUNCE_OPTIONS.moveto			= "Mostra avvisi per muoverti da qualcuno o qua
 
 L.AUTO_SPEC_WARN_TEXTS.spell			= "%s!"
 L.AUTO_SPEC_WARN_TEXTS.ends				= "%s terminata"
+L.AUTO_SPEC_WARN_TEXTS.endtarget		= "%s terminata: >%%s<"
 L.AUTO_SPEC_WARN_TEXTS.fades			= "%s svanita"
 L.AUTO_SPEC_WARN_TEXTS.soon				= "%s a breve"
 L.AUTO_SPEC_WARN_TEXTS.sooncount		= "%s (%%s) a breve"
@@ -418,7 +449,6 @@ L.AUTO_SPEC_WARN_TEXTS.blizztarget		= "%s (%%s) su >%%s< "
 L.AUTO_SPEC_WARN_TEXTS.blizzyou			= "%s (%%s) su di te"
 L.AUTO_SPEC_WARN_TEXTS.defensive		= "%s - difensivi"
 L.AUTO_SPEC_WARN_TEXTS.taunt			= "%s su >%%s< - tauntalo subito"
-L.AUTO_SPEC_WARN_TEXTS.tauntsecret		= "%s su %%s - tauntalo subito"
 L.AUTO_SPEC_WARN_TEXTS.close			= "%s su >%%s< vicino a te"
 L.AUTO_SPEC_WARN_TEXTS.move				= "%s - spostati"
 L.AUTO_SPEC_WARN_TEXTS.keepmove			= "%s - continua a muoverti"
@@ -450,6 +480,7 @@ L.AUTO_SPEC_WARN_TEXTS.targetchange	= "Cambio Bersaglio - passa a %%s"
 -- Auto-generated Special Warning Localizations
 L.AUTO_SPEC_WARN_OPTIONS.spell			= "Mostra avviso speciale per $spell:%s"
 L.AUTO_SPEC_WARN_OPTIONS.ends			= "Mostra avviso speciale al termine di $spell:%s"
+L.AUTO_SPEC_WARN_OPTIONS.endtarget		= "Mostra avviso speciale (con bersaglio) al termine di $spell:%s"
 L.AUTO_SPEC_WARN_OPTIONS.fades			= "Mostra avviso speciale allo svanire di $spell:%s"
 L.AUTO_SPEC_WARN_OPTIONS.soon			= "Mostra preavviso speciale per $spell:%s"
 L.AUTO_SPEC_WARN_OPTIONS.sooncount		= "Mostra preavviso speciale (con conteggio) per $spell:%s"
@@ -720,7 +751,6 @@ L.DUOS		= "Duo"
 --L.KEYSTONE_NAMES[542] = 'DOME' -- Eco-Dome Al'dani
 
 -- Tests
-L.DBM_TAINTED_BY_TESTS	= "DBM è stato usato in modalità test con distorsione temporale nella sessione corrente; si consiglia di ricaricare l'interfaccia prima di usare DBM in un vero combattimento con i boss. Tutto dovrebbe comunque funzionare come previsto, ma senza garanzie!"
 
 -- Boss tooltip
 L.TOOLTIP_DBM			= L.DBM .. " info"

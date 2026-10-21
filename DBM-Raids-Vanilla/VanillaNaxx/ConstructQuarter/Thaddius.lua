@@ -9,9 +9,11 @@ else
 	mod.statTypes = "normal"
 end
 
-mod:SetRevision("20260917064253")
+mod:SetRevision("20261019224112")
+if DBM:IsForever() then
+	mod:EnableGenericTrash()
+end
 mod:SetMinSyncRevision(20260618000000) -- 2026, June 18th
-mod:DisableHardcodedOptions()
 mod:SetCreatureID(15928)
 mod:SetEncounterID(1120)
 mod:SetModelID(16137)
@@ -45,9 +47,9 @@ else
 
 	local timerEnrage			= mod:NewBerserkTimer(300)
 	local timerNextShift		= mod:NewVarTimer("v25.9-35.7", 28089, nil, nil, nil, 2, nil, DBM_COMMON_L.DEADLY_ICON)
-	local timerShiftCast		= mod:NewCastTimer(3, 28089, nil, nil, nil, 2)
+	local timerShiftCast		= mod:NewCastTimer(3, 28089, nil, nil, nil, 2, nil, DBM_COMMON_L.DEADLY_ICON)
 	local timerThrow			= mod:NewNextTimer(21, 28338, nil, nil, nil, 5, nil, DBM_COMMON_L.TANK_ICON)
-	local timerPhase2			= mod:NewStageCountTimer("v11.3-16")
+	local timerPhase2			= mod:NewStageCountTimer("v11.3-16.3")
 
 	mod:AddInfoFrameOption()
 

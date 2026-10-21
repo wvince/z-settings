@@ -1392,123 +1392,6 @@ function RSCollectionsDB.RemoveNotCollectedAppearance(appearanceID, callback) --
 end
 
 ---============================================================================
--- Drakewatcher manuscripts
----============================================================================
-
-local function UpdateNotCollectedDrakewatchers(routines, routineTextOutput)
-	private.dbglobal.not_colleted_drakewatchers = {}
-	
-	-- Query
-	local notCollectedDrakewatcherRoutine = RSRoutines.LoopRoutineNew()
-	notCollectedDrakewatcherRoutine:Init(
-		function() return private.DRAKEWATCHER_QUESTS end,
-		function(context, itemID, questIDs)
-			for _, questID in ipairs(questIDs) do
-				if (not C_QuestLog.IsQuestFlaggedCompleted(questID)) then
-					private.dbglobal.not_colleted_drakewatchers[itemID] = true
-					context.counter = (context.counter or 0) + 1
-				end
-			end
-		end, 
-		function(context)	
-			RSLogger:PrintDebugMessage(string.format("UpdateNotCollectedDrakewatchers. [%s no conseguidos].", context.counter or 0))		
-			if (routineTextOutput) then
-				routineTextOutput:SetText(string.format(AL["EXPLORER_MISSING_DRAKEWATCHER"], context.counter or 0))
-			end
-		end
-	)
-	table.insert(routines, notCollectedDrakewatcherRoutine)
-end
-
-local function GetNotCollectedDrakewatchers()
-	return private.dbglobal.not_colleted_drakewatchers
-end
-
-local function CheckUpdateDrakewatcher(itemID, entityID, source, checkedItems)
-	-- If cached use it
-	if (checkedItems[RSConstants.ITEM_TYPE.DRAKEWATCHER][itemID]) then
-		UpdateEntityCollection(itemID, entityID, source, RSConstants.ITEM_TYPE.DRAKEWATCHER)
-		return true
-	else
-		local notCollectedDrakewatchers = GetNotCollectedDrakewatchers()
-		if (notCollectedDrakewatchers and notCollectedDrakewatchers[itemID]) then
-			UpdateEntityCollection(itemID, entityID, source, RSConstants.ITEM_TYPE.DRAKEWATCHER)
-			checkedItems[RSConstants.ITEM_TYPE.DRAKEWATCHER][itemID] = true
-			return true
-		end
-	
-		return false
-	end
-end
-
-function RSCollectionsDB.RemoveNotCollectedDrakewatcher(spellID, callback) --UNIT_SPELLCAST_SUCCEEDED
-	local notCollectedDrakewatchers = GetNotCollectedDrakewatchers()
-	if (spellID and notCollectedDrakewatchers and private.DRAKEWATCHER_SPELLS[spellID]) then		
-		-- Drop missing drakewatcher manuscript
-		local itemID = private.DRAKEWATCHER_SPELLS[spellID]
-		if (notCollectedDrakewatchers[itemID]) then
-			notCollectedDrakewatchers[itemID] = nil
-			RSLogger:PrintDebugMessage(string.format("RemoveNotCollectedDrakewatcher[%s]: Eliminado Manuscrito de dracovigía conseguido.", itemID))
-		end
-		
-		-- Update filters
-		local allEntitiesCollectionsLoot = RSCollectionsDB.GetAllEntitiesCollectionsLoot()
-		if (not allEntitiesCollectionsLoot) then
-			return
-		end
-		
-		local refresh = false
-		for source, entities in pairs (allEntitiesCollectionsLoot) do
-			for entityID, itemTypes in pairs (entities) do
-				local lootList = itemTypes[RSConstants.ITEM_TYPE.DRAKEWATCHER]
-				if (lootList) then
-					for i = #lootList, 1, -1 do
-						if (lootList[i] == itemID) then
-							if (#lootList == 1) then
-								RSLogger:PrintDebugMessage(string.format("RemoveNotCollectedDrakewatcher[%s]: Eliminado coleccionable de la lista de la entidad [%s]. No tiene mas manuscritos.", itemID, entityID))
-								itemTypes[RSConstants.ITEM_TYPE.DRAKEWATCHER] = nil
-							else
-								RSLogger:PrintDebugMessage(string.format("RemoveNotCollectedDrakewatcher[%s]: Eliminado coleccionable de la lista de la entidad [%s].", itemID, entityID))
-								table.remove(lootList, i)
-							end
-							
-							-- Check if the entity doesn't have more collections
-							if (RSUtils.GetTableLength(itemTypes) == 0) then
-								entities[entityID] = nil
-								
-								-- Filter
-								if (RSConfigDB.IsAutoFilteringOnCollect()) then
-									if (source == RSConstants.ITEM_SOURCE.NPC) then
-										RSConfigDB.SetNpcFiltered(entityID)
-										RSLogger:PrintDebugMessage(string.format("RemoveNotCollectedDrakewatcher[%s]: Filtrado NPC [%s] por no disponer de mas coleccionables.", itemID, entityID))
-										if (RSNpcDB.GetNpcName(entityID)) then
-											RSLogger:PrintMessage(string.format(AL["EXPLORER_AUTOFILTER"], RSNpcDB.GetNpcName(entityID)))
-										end
-									elseif (source == RSConstants.ITEM_SOURCE.CONTAINER) then
-										RSConfigDB.SetContainerFiltered(entityID)
-										RSLogger:PrintDebugMessage(string.format("RemoveNotCollectedDrakewatcher[%s]: Filtrado Contenedor [%s] por no disponer de mas coleccionables.", itemID, entityID))
-										if (RSContainerDB.GetContainerName(entityID)) then
-											RSLogger:PrintMessage(string.format(AL["EXPLORER_AUTOFILTER"], RSContainerDB.GetContainerName(entityID)))
-										end
-									end
-								end
-							end
-							
-							refresh = true
-							break
-						end
-					end
-				end
-			end
-		end
-		
-		if (refresh and callback) then
-			callback()
-		end
-    end
-end
-
----============================================================================
 -- Custom items
 ---============================================================================
 
@@ -1713,7 +1596,6 @@ function RSCollectionsDB.UpdateEntityCollectibles(entityID, items, source)
 	checkedItems[RSConstants.ITEM_TYPE.TOY] = {}
 	checkedItems[RSConstants.ITEM_TYPE.PET] = {}
 	checkedItems[RSConstants.ITEM_TYPE.MOUNT] = {}
-	checkedItems[RSConstants.ITEM_TYPE.DRAKEWATCHER] = {}
 	
 	local customGroupKeys = {}
 	for groupKey, _ in pairs(RSCollectionsDB.GetItemGroups()) do
@@ -1727,44 +1609,36 @@ function RSCollectionsDB.UpdateEntityCollectibles(entityID, items, source)
 			local isToy = checkedItems[RSConstants.ITEM_TYPE.TOY][itemID]
 			local isPet = checkedItems[RSConstants.ITEM_TYPE.PET][itemID]
 			local isMount = checkedItems[RSConstants.ITEM_TYPE.MOUNT][itemID]
-			local isDrake = checkedItems[RSConstants.ITEM_TYPE.DRAKEWATCHER][itemID]
 			local isAppearance = checkedItems[RSConstants.ITEM_TYPE.APPEARANCE][itemID]
 
 			-- Check if appearance
-			if (not isToy and not isPet and not isMount and not isDrake) then
+			if (not isToy and not isPet and not isMount) then
 				if (CheckUpdateAppearance(itemID, entityID, source, checkedItems)) then
 					isAppearance = true
 				end
 			end
 			
 			-- Check if toy
-			if (not isAppearance and not isPet and not isMount and not isDrake) then
+			if (not isAppearance and not isPet and not isMount) then
 				if (CheckUpdateToy(itemID, entityID, source, checkedItems)) then
 					isToy = true
 				end
 			end
 					
 			-- Check if pet
-			if (not isAppearance and not isToy and not isMount and not isDrake) then
+			if (not isAppearance and not isToy and not isMount) then
 				if (CheckUpdatePet(itemID, entityID, source, checkedItems)) then
 					isPet = true
 				end
 			end
 			
 			-- Check if mount
-			if (not isAppearance and not isToy and not isPet and not isDrake) then
+			if (not isAppearance and not isToy and not isPet) then
 				if (CheckUpdateMount(itemID, entityID, source, checkedItems)) then
 					isMount = true
 				end
 			end
 			
-			-- Check if drakewatcher manuscript
-			if (not isAppearance and not isToy and not isPet and not isMount) then
-				if (CheckUpdateDrakewatcher(itemID, entityID, source, checkedItems)) then
-					isDrake = true
-				end
-			end
-	
 			-- Check if custom item
 			CheckUpdateCustom(itemID, entityID, source, checkedItems, customGroupKeys)
 			
@@ -1772,8 +1646,7 @@ function RSCollectionsDB.UpdateEntityCollectibles(entityID, items, source)
 			if (not isAppearance and 
 				not isPet and 
 				not isToy and 
-				not isMount and 
-				not isDrake and 
+				not isMount and
 				not RSUtils.ContainsKeyValue(checkedItems, customGroupKeys, itemID)) then
 				
 				checkedItems[RSConstants.ITEM_TYPE.UNKNOWN][itemID] = true
@@ -1795,44 +1668,36 @@ local function CheckUpdateCollectibles(checkedItems, customGroupKeys, getter, so
 					local isToy = checkedItems[RSConstants.ITEM_TYPE.TOY][itemID]
 					local isPet = checkedItems[RSConstants.ITEM_TYPE.PET][itemID]
 					local isMount = checkedItems[RSConstants.ITEM_TYPE.MOUNT][itemID]
-					local isDrake = checkedItems[RSConstants.ITEM_TYPE.DRAKEWATCHER][itemID]
 					local isAppearance = checkedItems[RSConstants.ITEM_TYPE.APPEARANCE][itemID]
 
 					-- Check if appearance
-					if (not isToy and not isPet and not isMount and not isDrake) then
+					if (not isToy and not isPet and not isMount) then
 						if (CheckUpdateAppearance(itemID, entityID, source, checkedItems)) then
 							isAppearance = true
 						end
 					end
 					
 					-- Check if toy
-					if (not isAppearance and not isPet and not isMount and not isDrake) then
+					if (not isAppearance and not isPet and not isMount) then
 						if (CheckUpdateToy(itemID, entityID, source, checkedItems)) then
 							isToy = true
 						end
 					end
 							
 					-- Check if pet
-					if (not isAppearance and not isToy and not isMount and not isDrake) then
+					if (not isAppearance and not isToy and not isMount) then
 						if (CheckUpdatePet(itemID, entityID, source, checkedItems)) then
 							isPet = true
 						end
 					end
 					
 					-- Check if mount
-					if (not isAppearance and not isToy and not isPet and not isDrake) then
+					if (not isAppearance and not isToy and not isPet) then
 						if (CheckUpdateMount(itemID, entityID, source, checkedItems)) then
 							isMount = true
 						end
 					end
 					
-					-- Check if drakewatcher manuscript
-					if (not isAppearance and not isToy and not isPet and not isMount) then
-						if (CheckUpdateDrakewatcher(itemID, entityID, source, checkedItems)) then
-							isDrake = true
-						end
-					end
-			
 					-- Check if custom item
 					CheckUpdateCustom(itemID, entityID, source, checkedItems, customGroupKeys)
 
@@ -1841,8 +1706,7 @@ local function CheckUpdateCollectibles(checkedItems, customGroupKeys, getter, so
 					if (not isAppearance and 
 						not isPet and 
 						not isToy and 
-						not isMount and 
-						not isDrake and 
+						not isMount and
 						not RSUtils.ContainsKeyValue(checkedItems, customGroupKeys, itemID)) then
 						checkedItems[RSConstants.ITEM_TYPE.UNKNOWN][itemID] = true
 					end
@@ -1881,7 +1745,6 @@ local function UpdateEntitiesCollections(callback, routineTextOutput, manualScan
 	checkedItems[RSConstants.ITEM_TYPE.TOY] = {}
 	checkedItems[RSConstants.ITEM_TYPE.PET] = {}
 	checkedItems[RSConstants.ITEM_TYPE.MOUNT] = {}
-	checkedItems[RSConstants.ITEM_TYPE.DRAKEWATCHER] = {}
 
 	local customGroupKeys = {}
 	for groupKey, _ in pairs(RSCollectionsDB.GetItemGroups()) do
@@ -1939,7 +1802,6 @@ local function LoadNotCollectedItems(callback, routineTextOutput, manualScan)
 	UpdateNotCollectedPetIDs(routines, routineTextOutput)
 	UpdateNotCollectedMountIDs(routines, routineTextOutput)
 	UpdateNotCollectedAppearanceItemIDs(routines, routineTextOutput)
-	--UpdateNotCollectedDrakewatchers(routines, routineTextOutput)
 	
 	-- Launch all the routines in order
 	local chainRoutines = RSRoutines.ChainLoopRoutineNew()
@@ -2030,9 +1892,6 @@ function RSCollectionsDB.ApplyFilters(filters, callback)
 						removeFilter = true
 					end
 				end
-				if (not removeFilter and filters[RSConstants.EXPLORER_FILTER_DROP_DRAKEWATCHER] and collectionsLoot[npcID] and RSUtils.GetTableLength(collectionsLoot[npcID][RSConstants.ITEM_TYPE.DRAKEWATCHER]) > 0) then
-					removeFilter = true
-				end
 				if (not removeFilter and filters[RSConstants.EXPLORER_FILTER_ACHIEVEMENT_CRITERIA] and npcInfo.achievementID) then			
 					if (RSAchievementDB.IsNotCompletedAchievementCriteria(npcID, npcInfo.achievementID, npcInfo.questID, npcInfo.criteria)) then
 						removeFilter = true
@@ -2095,9 +1954,6 @@ function RSCollectionsDB.ApplyFilters(filters, callback)
 					else
 						removeFilter = true
 					end
-				end
-				if (not removeFilter and filters[RSConstants.EXPLORER_FILTER_DROP_DRAKEWATCHER] and collectionsLoot[containerID] and RSUtils.GetTableLength(collectionsLoot[containerID][RSConstants.ITEM_TYPE.DRAKEWATCHER]) > 0) then
-					removeFilter = true
 				end
 				if (not removeFilter and filters[RSConstants.EXPLORER_FILTER_ACHIEVEMENT_CRITERIA] and containerInfo.achievementID) then			
 					-- If quest completed then the achievement criteria is completed too
@@ -2183,11 +2039,6 @@ function RSCollectionsDB.GetEntityCollectionsLoot(entityID, type)
 				else
 					items = RSUtils.JoinTables(items, entityCollectionsLoot[RSConstants.ITEM_TYPE.APPEARANCE])
 				end
-			end
-			
-			-- If drakewatcher manuscripts
-			if (RSConfigDB.IsShowingMissingDrakewatcher() and entityCollectionsLoot[RSConstants.ITEM_TYPE.DRAKEWATCHER]) then
-				items = RSUtils.JoinTables(items, entityCollectionsLoot[RSConstants.ITEM_TYPE.DRAKEWATCHER])
 			end
 			
 			-- If custom items

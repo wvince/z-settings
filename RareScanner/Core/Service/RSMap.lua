@@ -27,7 +27,6 @@ local RSNpcPOI = private.ImportLib("RareScannerNpcPOI")
 local RSContainerPOI = private.ImportLib("RareScannerContainerPOI")
 local RSEventPOI = private.ImportLib("RareScannerEventPOI")
 local RSGroupPOI = private.ImportLib("RareScannerGroupPOI")
-local RSDragonGlyphPOI = private.ImportLib("RareScannerDragonGlyphPOI")
 local RSRecentlySeenTracker = private.ImportLib("RareScannerRecentlySeenTracker")
 
 
@@ -97,32 +96,9 @@ end
 
 local MapPOIs = {}
 
-local function GetMapDragonGlyphsPOIs(mapID)
-	-- Skip if not showing dragon glyphs
-	if (not RSConfigDB.IsShowingDragonGlyphs()) then
-		return
-	end
-
-	-- Add icons
-	local dragonGlyphsPOIs = RSDragonGlyphPOI.GetDragonGlyphPOIs(mapID)
-	if (RSUtils.GetTableLength(dragonGlyphsPOIs) > 0) then
-		for _, POI in ipairs (dragonGlyphsPOIs) do
-			tinsert(MapPOIs,POI)
-		end
-	end
-end
-
 local questTitles = {}
 
-function RSMap.GetMapPOIs(mapID, onWorldMap, onMiniMap)
-	-- Clear previous list
-	wipe(MapPOIs)
-
-	-- Skip if zone filtered
-	if (RSConfigDB.IsZoneFiltered(mapID) or RSConfigDB.IsZoneFilteredOnlyWorldmap(mapID)) then
-		return
-	end
-
+local function RefreshQuestTitles(mapID)
 	-- Extract world quests in the area.
 	local questsOnMap = C_TaskQuest.GetQuestsOnMap(mapID)
 	wipe(questTitles)
@@ -134,6 +110,18 @@ function RSMap.GetMapPOIs(mapID, onWorldMap, onMiniMap)
 			end
 		end
 	end
+end
+
+function RSMap.GetMapPOIs(mapID, onWorldMap, onMiniMap)
+	-- Clear previous list
+	wipe(MapPOIs)
+
+	-- Skip if zone filtered
+	if (RSConfigDB.IsZoneFiltered(mapID) or RSConfigDB.IsZoneFilteredOnlyWorldmap(mapID)) then
+		return
+	end
+
+	RefreshQuestTitles(mapID)
 
 	-- Extract ingame vignettes
 	local vignetteGUIDs = C_VignetteInfo.GetVignettes();
@@ -237,6 +225,7 @@ function RSMap.GetMapPOIs(mapID, onWorldMap, onMiniMap)
 							end
 							
 							if (not alreadyAdded) then
+								POI.isRecentlySeenSpot = true
 								tinsert(MapPOIs,POI)
 							end
 						end
@@ -246,15 +235,32 @@ function RSMap.GetMapPOIs(mapID, onWorldMap, onMiniMap)
 		end
 	end
 	
-	-- Add dragon glyphs POIs
-	GetMapDragonGlyphsPOIs(mapID)
-
 	-- Create groups if the pins go in the worldmap
 	if (onWorldMap) then
 		return CreateGroups(MapPOIs)
 	end
 
 	return MapPOIs
+end
+
+-- POI of a single entity with the same filters as GetMapPOIs
+function RSMap.GetMapEntityPOI(entityID, mapID, onWorldMap, onMiniMap)
+	-- Skip if zone filtered
+	if (RSConfigDB.IsZoneFiltered(mapID) or RSConfigDB.IsZoneFilteredOnlyWorldmap(mapID)) then
+		return
+	end
+
+	RefreshQuestTitles(mapID)
+	local vignetteGUIDs = C_VignetteInfo.GetVignettes();
+	local areaPOIs = GetAreaPOIsForPlayerByMapIDCached(mapID);
+
+	if (RSNpcDB.GetInternalNpcInfoByMapID(entityID, mapID)) then
+		return RSNpcPOI.GetMapNpcPOI(entityID, mapID, questTitles, vignetteGUIDs, areaPOIs, onWorldMap, onMiniMap)
+	elseif (RSContainerDB.GetInternalContainerInfoByMapID(entityID, mapID)) then
+		return RSContainerPOI.GetMapContainerPOI(entityID, mapID, vignetteGUIDs, areaPOIs, onWorldMap, onMiniMap)
+	elseif (RSEventDB.GetInternalEventInfoByMapID(entityID, mapID)) then
+		return RSEventPOI.GetMapEventPOI(entityID, mapID, vignetteGUIDs, areaPOIs, onWorldMap, onMiniMap)
+	end
 end
 
 function RSMap.GetWorldMapPOI(objectGUID, vignetteInfo, mapID)

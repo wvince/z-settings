@@ -18,8 +18,10 @@ else
 	mod.statTypes = "normal"
 end
 
-mod:SetRevision("20260920054026")
-mod:DisableHardcodedOptions()
+mod:SetRevision("20261019224112")
+if DBM:IsForever() then
+	mod:EnableGenericTrash()
+end
 mod:SetCreatureID(13020)
 mod:SetEncounterID(611)
 mod:SetZone(469)

@@ -15,6 +15,7 @@ local RSGeneralDB = private.ImportLib("RareScannerGeneralDB")
 -- RareScanner internal libraries
 local RSConstants = private.ImportLib("RareScannerConstants")
 local RSUtils = private.ImportLib("RareScannerUtils")
+local RSTextTags = private.ImportLib("RareScannerTextTags")
 
 ---============================================================================
 -- Guide auxiliar functions
@@ -73,11 +74,10 @@ function RSGuidePOI.GetGuidePOI(entityID, pinType, guideInfo)
 	POI.y = guideInfo.y
 
 	-- Comment
-	local comment
-	if (guideInfo.comment) then
-		comment = guideInfo.comment
-	else
-		comment = GetComment(pinType)
+	local comment = guideInfo.comment or GetComment(pinType)
+	local parsedComment = nil
+	if (comment) then
+		parsedComment = RSTextTags.ParseText(comment)
 	end
 
 	-- Item
@@ -87,9 +87,10 @@ function RSGuidePOI.GetGuidePOI(entityID, pinType, guideInfo)
 	end
 
 	-- Tooltip
-	if (comment or itemName) then
+	if (parsedComment or itemName) then
 		POI.tooltip = {}
-		POI.tooltip.comment = comment
+		POI.tooltip.comment = parsedComment
+		POI.tooltip.rawComment = comment
 		POI.tooltip.title = itemName
 	end
 

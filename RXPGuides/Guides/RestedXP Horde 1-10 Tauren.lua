@@ -1,5 +1,6 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #tbc
@@ -11,6 +12,7 @@ RXPGuides.RegisterGuide([[
 #groupid RXP-SRGCE-H1
 #defaultfor Tauren
 #next 6-10 Mulgore
+
 step << !Tauren
     #completewith next
     +|cRXP_WARN_You have selected a guide meant for Tauren. We do not recommend doing this zone due to there being race-gated quests for Tauren only. It is recommended you choose the same starter zone that you start in|r
@@ -268,6 +270,7 @@ step
 >>Talk to |cRXP_FRIENDLY_Antur Fallow|r
     .accept 1656 >>Accept A Task Unfinished
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -279,6 +282,8 @@ RXPGuides.RegisterGuide([[
 #defaultfor Tauren
 #next 10-12 Eversong Woods << !Warrior !Shaman
 #next 10-13 Mulgore << Warrior/Shaman
+
+
 step
 	.goto Mulgore,46.5,55.5
     .xp 5+2395 >>Grind mobs til you're 2395+/2800xp en route to town
@@ -1126,6 +1131,7 @@ step << Druid/Hunter
 step << Druid/Hunter
     .zone Silvermoon City >>Arrive at Silvermoon City
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk

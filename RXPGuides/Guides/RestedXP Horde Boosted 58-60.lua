@@ -1,5 +1,6 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #tbc
@@ -15,8 +16,10 @@ step << !Druid !Paladin
 step << Druid
     .turnin 64047 >>Turn in A New Beginning
 	.accept 64049 >>Accept Tools for Survival
+
 step << !Druid !Paladin
     .accept 64048 >>Accept Tools for Survival
+
 step << !Paladin
 	#sticky
 	#completewith next
@@ -27,12 +30,15 @@ step << !Druid !Paladin
 step << Druid
     .complete 64049,1 --1/1 Open the Survival Kit (1)
     .complete 64049,2 --1/1 Equip a Weapon (1)
+
 step << !Druid !Paladin
     .turnin 64048 >>Turn in Tools for Survival
     .accept 64050 >>Accept Combat Training
+
 step << Druid
     .turnin 64049 >>Turn in Tools for Survival
     .accept 64051 >>Accept Combat Training
+
 step << Warrior
     .train 11581 >> Learn Thunder Clap.
 step << Rogue
@@ -54,10 +60,12 @@ step << Druid
     .train 9853 >> Learn Entangling Roots
 step << Mage
     .train 22783 >> Learn Mage Armor
+
 step << !Druid !Paladin
 	.complete 64050,1 --1/1 Train a Spell (1)
 step << Druid
     .complete 64051,1 --1/1 Train a Spell (1)
+
 step << !Druid !Paladin
     .turnin 64050 >>Turn in Combat Training
     .accept 64052 >>Accept Talented
@@ -71,6 +79,7 @@ step << !Druid !Paladin
 step << Druid
 	>>Spec into any talent build you want to play while leveling.
     .complete 64053,1 --1/1 Spend a Talent Point (1)
+
 step << !Druid !Paladin
     .turnin 64052 >>Turn in Talented
 step << Druid
@@ -81,8 +90,11 @@ step << !Druid !Paladin
 step << Druid
 	#label druidboost
 	.accept 64217 >> Accept The Dark Portal
+
 step << Druid
+
     .fly Orgrimmar >>Fly to Orgrimmar
+
 step << Mage
     .goto Orgrimmar,38.7,85.5
     >>Run up to the 2nd floor to train Teleport & Portal to Orgrimmar
@@ -151,6 +163,7 @@ step
 >>Talk to |cRXP_FRIENDLY_High Executor Derrington|r
     .accept 5098 >>Accept All Along the Watchtowers
     .accept 5228 >>Accept The Scourge Cauldrons
+
 step
     .goto Tirisfal Glades,83.0,71.9
 .target Shadow Priestess Vandis
@@ -184,11 +197,14 @@ step
     .turnin 5230 >>Turn in Return to the Bulwark
 .target Shadow Priestess Vandis
     .accept 5231 >>Accept Target: Dalson's Tears
+
+
 step
     .goto Western Plaguelands,39.5,67.0
 .target Chromie
 >>Talk to |cRXP_FRIENDLY_Chromie|r
     .accept 4971 >>Accept A Matter of Time
+
 step
 	#sticky
 	#completewith wplbf
@@ -305,6 +321,8 @@ step
     .turnin 5232 >>Turn in Return to the Bulwark
 .target Shadow Priestess Vandis
     .accept 5233 >>Accept Target: Writhing Haunt
+
+
 step
     .goto Western Plaguelands,39.5,66.8
 >>Talk to |cRXP_FRIENDLY_Chromie|r
@@ -464,9 +482,14 @@ step
 step
 	>>Finish gathering 20 Minion's Scourgestones from mobs in the zone.
 	.collect 12840,20
+
+
+
+
 step <<!Paladin
     #completewith next
     .hs >>Hearth to Light's Hope Chapel
+
 step
 	.goto Eastern Plaguelands,81.4,59.8
 .target Duke Nicholas Zverenhoff
@@ -483,6 +506,7 @@ step
 .target Carlin Redpath
 >>Talk to |cRXP_FRIENDLY_Carlin Redpath|r
     .turnin 5211 >>Turn in Defenders of Darrowshire
+
 step
     .goto Eastern Plaguelands,80.2,57.0
     .fly Undercity >>Fly to Undercity
@@ -569,6 +593,7 @@ step
     .goto Western Plaguelands,43.4,69.6
 	>> Look for the correct book. The correct book will be WHITE only on the pages when you hover over it. Not half gray/half white.
     .complete 5154,1 --Annals of Darrowshire (1)
+
 step
     .goto Western Plaguelands,53.7,64.6
 .target Mulgris Deepriver

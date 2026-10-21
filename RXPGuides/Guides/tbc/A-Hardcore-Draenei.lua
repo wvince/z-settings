@@ -8,6 +8,7 @@ RXPGuides.RegisterGuide([[
 #subgroup RXP Survival Guide 1-20
 #name 1-12 Azuremyst Isle
 #next 12-14 Darkshore
+
 step
     .goto Azuremyst Isle,82.96,43.88
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Megelon|r
@@ -285,7 +286,10 @@ step << Hunter
 	.turnin 9288 >> Turn in Hunter Training
     .train 1978 >>Train |T132204:0|t[Serpent Sting]
     .target Keilnei
+
+
 --xx
+
 step << Priest
 	.goto Azuremyst Isle,79.254,50.887
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ryosh|r
@@ -293,7 +297,10 @@ step << Priest
     .collect 159,10 --Collect Refreshing Spring Water (x15)
     .target Ryosh
     .xp >5,1
+
 --xx
+
+
 step << Shaman/Hunter
 	#completewith next
 	.goto Azuremyst Isle,79.188,50.928

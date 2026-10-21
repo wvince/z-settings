@@ -123,17 +123,22 @@ end
 function QuestieQuest:ToggleNotes(showIcons)
     Questie.Debug(Questie.DEBUG_DEVELOP, "[QuestieQuest:ToggleNotes] showIcons:", showIcons)
 
-    ThreadLib.ThreadInstant(function()
-        QuestieQuest:GetAllQuestIds() -- add notes that weren't added from previous hidden state
-
-        if showIcons then
-            QuestieQuest:ShowQuestIcons()
-            _QuestieQuest:ShowManualIcons()
-        else
-            QuestieQuest:HideQuestIcons()
-            _QuestieQuest:HideManualIcons()
+    ThreadLib.ThreadCallbackInstant(
+        function()
+            QuestieQuest:GetAllQuestIds() -- add notes that weren't added from previous hidden state
+        end,
+        function()
+            ThreadLib.ThreadInstant(function()
+                if showIcons then
+                    QuestieQuest:ShowQuestIcons()
+                    _QuestieQuest:ShowManualIcons()
+                else
+                    QuestieQuest:HideQuestIcons()
+                    _QuestieQuest:HideManualIcons()
+                end
+            end)
         end
-    end)
+    )
 end
 
 ---Updates all quest icons to ensure they are correctly shown/hidden
@@ -141,15 +146,20 @@ end
 function QuestieQuest.ToggleQuestNotes(showIcons)
     Questie.Debug(Questie.DEBUG_DEVELOP, "[QuestieQuest.ToggleQuestNotes] showIcons:", showIcons)
 
-    ThreadLib.ThreadInstant(function()
-        QuestieQuest:GetAllQuestIds() -- add notes that weren't added from previous hidden state
-
-        if showIcons then
-            QuestieQuest:ShowQuestIcons()
-        else
-            QuestieQuest:HideQuestIcons()
+    ThreadLib.ThreadCallbackInstant(
+        function()
+            QuestieQuest:GetAllQuestIds() -- add notes that weren't added from previous hidden state
+        end,
+        function()
+            ThreadLib.ThreadInstant(function()
+                if showIcons then
+                    QuestieQuest:ShowQuestIcons()
+                else
+                    QuestieQuest:HideQuestIcons()
+                end
+            end)
         end
-    end)
+    )
 end
 
 --- Shows all quest icons. Needs to be called from a coroutine.
@@ -1211,18 +1221,26 @@ _DrawObjectiveIcons = function(questId, iconsToDraw, objective, maxPerType)
             break
         end
 
+        local dungeonLocation = ZoneDB:GetDungeonLocation(icon.zone)
         local zoneKey = icon.UiMapID
-        if (not alreadyPlacedByZone[zoneKey]) then
+        -- A no-map dungeon uses its entrance map before UiMap-keyed indexing.
+        if not zoneKey and icon.x == -1 and icon.y == -1 then
+            local entrance = dungeonLocation and dungeonLocation[1]
+            zoneKey = entrance and ZoneDB:GetUiMapIdByAreaId(entrance[1])
+        end
+        if not zoneKey then
+            Questie.Warning("[QuestieQuest] Cannot draw quest", questId, "target", icon.data.ObjectiveTargetId,
+                "area", icon.zone, "missing dungeon entrance or UiMap mapping")
+        elseif (not alreadyPlacedByZone[zoneKey]) then
             alreadyPlacedByZone[zoneKey] = {}
         end
 
         local coords = {icon.x, icon.y}
-        if _HasProperDistanceToAlreadyPlacedObjectives(coords, alreadyPlacedByZone[zoneKey]) then
+        if zoneKey and _HasProperDistanceToAlreadyPlacedObjectives(coords, alreadyPlacedByZone[zoneKey]) then
             local spawnsMapRefs = objective.AlreadySpawned[icon.AlreadySpawnedId].mapRefs
             local spawnsMinimapRefs = objective.AlreadySpawned[icon.AlreadySpawnedId].minimapRefs
 
             local x, y = icon.x, icon.y
-            local dungeonLocation = ZoneDB:GetDungeonLocation(icon.zone)
 
             if dungeonLocation and x == -1 and y == -1 then
                 if dungeonLocation[2] then -- We have more than 1 instance entrance (e.g. Blackrock dungeons)

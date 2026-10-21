@@ -65,6 +65,7 @@
 				["0.43:0.93:0.41:0.75:0.56:0.70:0.58:0.65"] = 373, -- Booty Bay, Sentinel Hill, Lakeshire, Morgan's Vigil
 				["0.43:0.93:0.43:0.67:0.58:0.65"] = 363, -- Booty Bay, Stormwind, Morgan's Vigil
 				["0.43:0.93:0.43:0.67:0.58:0.65:0.51:0.57"] = 454, -- Booty Bay, Stormwind, Morgan's Vigil, Thorium Point
+				["0.43:0.93:0.51:0.75:0.56:0.70:0.68:0.68"] = 362, -- Booty Bay, Darkshire, Lakeshire, Farholde Keep
 
 				-- Alliance: Chillwind Camp (Western Plaguelands)
 				["0.52:0.22:0.51:0.49:0.43:0.67:0.43:0.93"] = 662, -- Chillwind Camp, Ironforge, Stormwind, Booty Bay
@@ -137,7 +138,7 @@
 				["0.51:0.49:0.52:0.22"] = 294, -- Ironforge, Chillwind Camp
 				["0.51:0.49:0.70:0.16"] = 349, -- Ironforge, Light's Hope Chapel
 				["0.51:0.49:0.43:0.67:0.51:0.75"] = 313, -- Ironforge, Stormwind, Darkshire
-				["0.51:0.49:0.43:0.67:0.56:0.70"] = 310, -- Ironforge, Stormwind, Lakeshire
+				["0.51:0.49:0.43:0.67:0.56:0.70"] = 312, -- Ironforge, Stormwind, Lakeshire (some report 333)
 				["0.51:0.49:0.43:0.67:0.58:0.65"] = 354, -- Ironforge, Stormwind, Morgan's Vigil
 				["0.51:0.49:0.59:0.52:0.68:0.68"] = 283, -- Ironforge, Thelsamar, Farholde Keep
 
@@ -174,6 +175,7 @@
 				["0.56:0.70:0.68:0.68:0.59:0.52:0.57:0.32:0.48:0.30"] = 553, -- Lakeshire, Farholde Keep, Thelsamar, Refuge Pointe, Southshore
 				["0.56:0.70:0.68:0.68:0.59:0.52"] = 305, -- Lakeshire, Farholde Keep, Thelsamar
 				["0.56:0.70:0.68:0.68:0.59:0.52:0.49:0.44:0.48:0.30"] = 556, -- Lakeshire, Farholde Keep, Thelsamar, Menethil Harbor, Southshore
+				["0.56:0.70:0.68:0.68:0.59:0.52:0.57:0.32"] = 467, -- Lakeshire, Farholde Keep, Thelsamar, Refuge Pointe
 
 				-- Alliance: Light's Hope Chapel (Eastern Plaguelands)
 				["0.70:0.16:0.51:0.49:0.43:0.67:0.43:0.93"] = 771, -- Light's Hope Chapel, Ironforge, Stormwind, Booty Bay
@@ -256,6 +258,7 @@
 				["0.58:0.65:0.43:0.67:0.43:0.93"] = 382, -- Morgan's Vigil, Stormwind, Booty Bay
 				["0.58:0.65:0.43:0.67:0.51:0.49:0.70:0.16"] = 701, -- Morgan's Vigil, Stormwind, Ironforge, Light's Hope Chapel
 				["0.58:0.65:0.56:0.70:0.41:0.75:0.43:0.93"] = 378, -- Morgan's Vigil, Lakeshire, Sentinel Hill, Booty Bay
+				["0.58:0.65:0.68:0.68:0.59:0.52"] = 304, -- Morgan's Vigil, Farholde Keep, Thelsamar
 
 				-- Alliance: Nethergarde Keep (Blasted Lands)
 				["0.61:0.78:0.51:0.75:0.43:0.93"] = 260, -- Nethergarde Keep, Darkshire, Booty Bay
@@ -287,6 +290,8 @@
 				["0.61:0.78:0.43:0.67:0.51:0.49:0.49:0.44"] = 518, -- Nethergarde Keep, Stormwind, Ironforge, Menethil Harbor
 				["0.61:0.78:0.43:0.67:0.51:0.49"] = 434, -- Nethergarde Keep, Stormwind, Ironforge
 				["0.61:0.78:0.43:0.67:0.56:0.70"] = 288, -- Nethergarde Keep, Stormwind, Lakeshire
+				["0.61:0.78:0.51:0.75:0.56:0.70:0.68:0.68"] = 282, -- Nethergarde Keep, Darkshire, Lakeshire, Farholde Keep
+				["0.61:0.78:0.51:0.75:0.56:0.70:0.68:0.68:0.59:0.52"] = 454, -- Nethergarde Keep, Darkshire, Lakeshire, Farholde Keep, Thelsamar
 
 				-- Alliance: Refuge Pointe (Arathi Highlands)
 				["0.57:0.32:0.49:0.44:0.51:0.49:0.43:0.67:0.43:0.93"] = 614, -- Refuge Pointe, Menethil Harbor, Ironforge, Stormwind, Booty Bay
@@ -410,6 +415,7 @@
 				["0.59:0.52:0.51:0.49:0.43:0.67:0.58:0.65"] = 422, -- Thelsamar, Ironforge, Stormwind, Morgans Wacht
 				["0.59:0.52:0.51:0.49:0.52:0.22"] = 355, -- Thelsamar, Ironforge, Chillwind Camp
 				["0.59:0.52:0.68:0.68:0.56:0.70"] = 315, -- Thelsamar, Farholde Keep, Lakeshire
+				["0.59:0.52:0.68:0.68"] = 185, -- Thelsamar, Farholde Keep
 
 				-- Alliance: Thorium Point (Searing Gorge)
 				["0.51:0.57:0.58:0.65:0.56:0.70:0.51:0.75:0.43:0.93"] = 350, -- Thorium Point, Morgan's Vigil, Lakeshire, Darkshire, Booty Bay
@@ -1072,6 +1078,11 @@
 				["0.68:0.68:0.56:0.70:0.43:0.67"] = 244, -- Farholde Keep, Lakeshire, Stormwind
 				["0.68:0.68:0.56:0.70:0.51:0.75"] = 191, -- Farholde Keep, Lakeshire, Darkshire
 				["0.68:0.68:0.59:0.52"] = 174, -- Farholde Keep, Thelsamar
+				["0.68:0.68:0.59:0.52:0.51:0.49"] = 282, -- Farholde Keep, Thelsamar, Ironforge
+				["0.68:0.68:0.59:0.52:0.57:0.32"] = 336, -- Farholde Keep, Thelsamar, Refuge Pointe
+
+				-- Summit of Eternity
+				["0.59:0.30:0.57:0.33:0.65:0.23:0.61:0.40:0.61:0.55:0.64:0.67"] = 357, -- Summit of Eternity, Tainted Foothills, Everlook, Talrendis Point, Ratchet, Theramore
 
 			},
 

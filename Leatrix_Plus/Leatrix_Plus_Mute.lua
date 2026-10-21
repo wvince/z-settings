@@ -23,14 +23,28 @@
 		-- General
 		----------------------------------------------------------------------
 
-		-- Chimes (sound/doodad/)
+		-- Chimes
 		["MuteChimes"] = {
+			-- sound/doodad
 			"belltollalliance.ogg#566564",
 			"belltollhorde.ogg#565853",
 			"belltollnightelf.ogg#566558",
 			"belltolltribal.ogg#566027",
 			"kharazahnbelltoll.ogg#566254",
 			"dwarfhorn.ogg#566064",
+			-- sound/spell/bbshot_aurastart_oneshot_ (SKIT:6594 and SKIT:283025)
+			"6697923.ogg#6697923",
+			-- sound/spell/finaltoll_impact_oneshot_ (SKIT:6594 and SKIT:283025)
+			"6697919.ogg#6697919",
+			"6697921.ogg#6697921",
+			"6697925.ogg#6697925",
+			"6697927.ogg#6697927",
+			-- sound/spell/finaltoll_impact_oneshot_ (SKIT:283026 and SKIT:319809)
+			"6697929.ogg#6697929",
+			"6697931.ogg#6697931",
+			"6697933.ogg#6697933",
+			"6697935.ogg#6697935",
+			"6697937.ogg#6697937",
 		},
 
 		-- Fizzle (sound/spells/fizzle/)

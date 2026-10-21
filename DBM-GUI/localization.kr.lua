@@ -40,6 +40,10 @@ L.Tools_Duration					= "지속시간"
 L.Tools_Message						= "타이머 메시지"
 
 L.TabCategory_CURRENT_SEASON		= "현재 시즌"
+L.CurrentSeasonProfileInfo		= "현재 시즌은 서로 다른 확장팩 카테고리의 던전을 묶어 놓은 것으로, 각자 별도의 프로필을 가지고 있습니다. 던전 설정을 가져오기, 내보내기, 복사, 삭제 또는 초기화하려면 속해있는 확장팩 카테고리를 %s에서 선택하세요. 이 작업은 현재 시즌 던전뿐 아니라 해당 카테고리의 전체 모듈에 적용됩니다."
+L.CurrentSeasonProfileCategories	= "포함되는 확장팩 카테고리:"
+L.CurrentSeasonCoreProfileInfo		= "%s|1은;는; 핵심 프로필을 사용하며 %s > %s에서 관리합니다."
+L.TabCategory_FOREVER				= "포에버"
 
 L.TabCategory_OTHER					= "기타 모드"
 L.TabCategory_AFFIXES				= "어픽스"
@@ -144,6 +148,41 @@ L.NoDescription						= "이 능력에 대한 설명이 없습니다"
 L.CustomOptions						= "이 카테고리엔 주문이나 도감(journal) ID가 없는 능력이나 이벤트에 대한 사용자 정의 설정이 모여있습니다. 이 설정들은 WeakAuras 제작에 사용자 정의 ID를 사용하기 좋도록 모아놓은 것입니다."
 
 --
+
+-- Panel: Common Trash
+L.GenericTrashForeverDungeonDescription = "일반 주문 시전 경고이며 기본적으로 던전의 모든 레벨 일반몹에 활성화됩니다. 보스 경고는 공통 경고 사용이 명시적으로 등록된 보스 모듈이 활성 상태이고 사용 설정이 켜져 있어야 합니다. 던전과 공격대 설정은 독립되어 있으며 핵심 설정 프로필에 저장됩니다. 일반 경고 효과음을 사용합니다. 내가 선택한 대상에는 경고 도배 방지가 적용되지 않습니다."
+L.GenericTrashForeverRaidDescription	= "일반 주문 시전 경고이며 기본적으로 공격대의 모든 레벨 일반몹에 활성화됩니다. 보스 경고는 공통 경고 사용이 명시적으로 등록된 보스 모듈이 활성 상태이고 사용 설정이 켜져 있어야 합니다. 던전과 공격대 설정은 독립되어 있으며 핵심 설정 프로필에 저장됩니다. 일반 경고 효과음을 사용합니다. 내가 선택한 대상에는 경고 도배 방지가 적용되지 않습니다."
+L.GenericTrashForeverEnabled		= "모든 던전에서 활성화"
+L.GenericTrashForeverRaids			= "모든 공격대에서 활성화"
+L.GenericTrashStandardCast			= "일반몹 시전"
+L.GenericTrashElite					= "정예몹 시전"
+L.GenericTrashEliteFilter			= "정예몹"
+L.GenericTrashStandardMobs			= "일반몹"
+L.GenericTrashTitle					= "일반몹 공통"
+L.GenericTrashDungeonDescription	= "던전 일반몹 경고입니다. 보스 경고는 공통 경고 사용이 명시적으로 등록된 보스 모듈이 활성 상태이고 사용 설정이 켜져 있어야 합니다. 본 서버에서는 내 레벨보다 3 낮은 적부터 2 높은 적 또는 보스 레벨 적을 지원합니다. 일반몹은 상대 레벨 -3~0, 부관은 +1/+2 또는 보스 레벨(-1)입니다. 던전 설정은 독립되어 있으며 핵심 설정 프로필에 저장됩니다. 일반 경고 효과음을 사용합니다. 내가 선택한 대상에는 경고 도배 방지가 적용되지 않습니다."
+L.GenericTrashRaidDescription		= "공격대 일반몹 경고입니다. 보스 경고는 공통 경고 사용이 명시적으로 등록된 보스 모듈이 활성 상태이고 사용 설정이 켜져 있어야 합니다. 본 서버에서는 내 레벨보다 3 낮은 적부터 2 높은 적 또는 보스 레벨 적을 지원하며, 조건에 맞는 모든 적에 일반몹 설정을 적용합니다. 공격대 설정은 독립되어 있으며 핵심 설정 프로필에 저장됩니다. 일반 경고 효과음을 사용합니다. 내가 선택한 대상에는 경고 도배 방지가 적용되지 않습니다."
+L.GenericTrashDelveDescription		= "구렁 일반몹 경고입니다. 보스 경고는 공통 경고 사용이 명시적으로 등록된 보스 모듈이 활성 상태이고 사용 설정이 켜져 있어야 합니다. 내 레벨보다 3 낮은 적부터 2 높은 적 또는 보스 레벨 적을 지원합니다. 일반몹은 상대 레벨 -3~0, 부관은 +1/+2 또는 보스 레벨(-1)입니다. 구렁 설정은 독립되어 있으며 핵심 설정 프로필에 저장됩니다. 일반 경고 효과음을 사용합니다. 내가 선택한 대상에는 경고 도배 방지가 적용되지 않습니다."
+L.GenericTrashRaidCast				= "적 시전"
+L.GenericTrashRaidFilter				= "몹"
+L.GenericTrashEnabled				= "공통 일반몹 경고 활성화"
+L.GenericTrashAllDungeons			= "모든 던전에서도 활성화 (모든 난이도)"
+L.GenericTrashDelves					= "구렁에서 활성화"
+L.GenericTrashRaids					= "모든 공격대에서 활성화 (모든 난이도)"
+L.GenericTrashCast					= "일반몹 시전"
+L.GenericTrashLieutenant			= "부관 시전"
+L.GenericTrashChannel				= "적 정신 집중"
+L.GenericTrashShowTargets			= "주문 대상 표시"
+L.GenericTrashStandardFilter		= "일반몹"
+L.GenericTrashLieutenantFilter		= "부관"
+L.GenericTrashNonEliteFilter			= "비정예 몹"
+L.GenericTrashFilterOff				= "끄기"
+L.GenericTrashFilterTarget			= "내 대상만"
+L.GenericTrashFilterAll				= "모든 유닛: 메시지와 효과음"
+L.GenericTrashFilterSoundsTarget	= "모든 유닛: 메시지 / 내 대상만: 효과음"
+L.GenericTrashThrottleType			= "경고 도배 방지"
+L.GenericTrashThrottleBoth			= "메시지와 효과음"
+L.GenericTrashThrottleSounds		= "효과음만"
+L.GenericTrashThrottleDuration		= "도배 방지 시간 (초)"
 
 -- Panel: Auto Logging
 L.Panel_AutoLogging					= "자동 기록"
@@ -270,7 +309,7 @@ L.WarningIconLeft 					= "왼쪽에 아이콘 표시"
 L.WarningIconRight 					= "오른쪽에 아이콘 표시"
 L.WarningIconChat 					= "대화창에 아이콘 표시"
 L.WarningAlphabetical				= "이름 순으로 정렬"
-L.Warn_Duration						= "알림 지속시간초"
+L.Warn_Duration						= "알림 지속시간"
 L.None								= "없음"
 L.Random							= "무작위"
 L.Outline							= "외곽선"
@@ -615,7 +654,7 @@ L.DontShowPTNoID					= "같은 지역에 없는 사용자가 보낸 DBM 풀링 �
 L.DontShowPT						= "풀링/휴식 타이머 표시 안함"
 L.DontShowPTText					= "풀링/휴식 알림 텍스트 표시 안함"
 L.DontPlayPTCountdown				= "풀링/휴식/사용자 지정 초읽기 전구간 음성 재생 안함"
-L.PT_Threshold						= "풀링/휴식/사용자 지정 타이머 초읽기 음성 재생 안함초 까지"
+L.PT_Threshold						= "풀링/휴식/사용자 지정 타이머 초읽기 기준"
 
 -- Panel: Reduce Information
 L.Panel_ReducedInformation			= "정보량 줄이기"
@@ -663,6 +702,7 @@ L.DisableMusic						= "보스 전투 중 배경음악 음량 비활성화 (참�
 L.Area_HideBlizzard					= "그 외 성가신 블리자드 기본 UI 요소 비활성화 및 숨김"
 L.HideBossEmoteFrame				= "보스 전투 중 보스 경고 숨기기"
 L.HideWatchFrame					= "추적중인 업적이 없고 신화+ 난이도가 아니라면 보스 전투시 퀘스트 추적 프레임 숨기기"
+L.DebugOnlyNote						= " (디버그 전용)"
 L.HideQuestTooltips					= "보스 전투 중 툴팁에서 퀘스트 목표 숨기기"--Currently hidden (NYI)
 L.HideBlizzardTimeline				= "보스 전투 중 블리자드 기본 공격대 타임라인 숨기기"
 
@@ -741,6 +781,7 @@ L.AuraStackFontColor				= "중첩 글꼴 색상"
 L.AuraShowStacks						= "중첩 텍스트 표시"
 L.AuraShowDispelBorder				= "해제 속성 테두리 표시"
 L.AuraShowCooldownSwipe				= "쿨타임 회전 표시"
+L.AuraShowGlow						= "오라가 활성화된 동안 아이콘 반짝임"
 L.AuraSortOrder						= "오라 정렬 순서"
 L.AuraSortDefault					= "기본 블리자드식 정렬"
 L.AuraSortShortDurationFirst		= "짧은 지속 시간 우선"
@@ -775,67 +816,10 @@ L.FontHeight	= 16
 
 
 -- Testing
-L.DevPanel							= "개발 및 테스트"
-L.DevPanelArea						= "개발 및 테스트 UI"
-L.DevPanelExplanation				= "DBM이 의도한 대로 작동하고 있는지 전투 로그를 재생해서 검증하는 개발 및 테스트 UI입니다." -- Test UI panel under options
-L.DevModPanelExplanation			= [[본 모듈의 개발 및 시험장에 오신 것을 환영합니다.
-이곳에선 보스 전투 로그를 재생해서 해당 모듈이 어떻게 작동하는지 관찰하고 DBM 콜백들의 통합을 테스트합니다. 통합과 콜백에 관한 자세한 사항은 DBM-Test/README.md를 참고하시기 바랍니다. DBM에서 제공하는 여러 레이드의 예제 로그가 있으며 Transcriptor로 작성된 로그를 가져올 수도 있습니다.
-]] -- Playground mode in mods
 
-L.TimewarpSetting					= "시간 흐름: %dx"
-L.TimewarpDynamic					= "시간 흐름: 동적 (가장 빠름)"
-L.TestSupportArea					= "모듈 로딩 설정"
-L.ModNotLoadedWithTests				= "경고: 이 모듈은 현재 완전한 테스트가 가능하게 로딩되지 않았습니다. 이 모듈이 UnitHealth()나 UnitName()같은 API 함수를 직접 호출할 경우 제대로 작동하지 않을 것입니다. 유닛의 생명력, 자원, 대상과 관련된 함수에서 자주 발생합니다."
-L.ModLoadedWithTests				= "모듈이 완전한 테스트가 가능하도록 로딩되지 않았습니다. 애드온에서 최소 1개 이상의 모듈은 테스트 모드를 활성화해야 합니다."
-L.AlwaysLoadModWithTests			= "이 모듈을 항상 완전한 테스트가 가능하도록 로드 (로딩 속도 약간 느려짐)"
-L.ModLoadRequiresReload				= ", UI 재시작 필요" -- Appended to L.AlwaysLoadModWithTests
-L.TestSelectArea					= "데이터 테스트" -- Title of the UI area
-L.SelectPerspective					= "로그 관점 (플레이어로 가정)"
-L.ImportTranscriptor				= "Transcriptor 로그 가져오기"
-L.ImportTranscriptorHeader			= [[
-아래 상자의 아무곳이나 붙여넣으면 Transcriptor 로그를 가져올 수 있습니다. 붙여넣기 속도는 대략 2 MiB/s 정도 되며, 이는 아주 큰 용량의 로그 파일을 붙여넣기하면 수 초 가량 게임이 멈춘다는 뜻입니다.
-우측의 가져오기 버튼으로 Transcriptor의 저장된 데이터 중에서 현재 세션만 가져올 수도 있습니다.]]
-L.PasteLogHere						= (IsMacClient() and "Cmd-V" or "Ctrl-V") .. "를 눌러서 이곳에 로그를 붙여넣기 하세요."
-L.LogPasted							= "%.2f MiB를 %.1f초간 붙여넣었습니다. (%.2f MiB/s)"
-L.ImportLocalTranscriptor			= "현재 Transcriptor\n세션 붙여넣기"
-L.NoLocalTranscriptor				= "로컬 Transcriptor 데이터를 찾을 수 없습니다."
-L.LocalImportDone					= "Transcriptor에서 로그 %d개 보스 전투 %d개를 가져왔습니다."
-L.Parsing							= "분석중..."
-L.SelectLogDropdown					= "보스 전투 선택"
-L.CreateTest						= "테스트 작성"
-L.ExportTest						= "테스트 내보내기"
-L.ExportedTest						= "테스트 케이스를 %d줄 내보냈습니다. (%.1f%% 걸러짐)"
-L.ExportedTestFailedAnon			= "경고: 로그 익명화에 실패했으며 %d개의 익명화가 안된 문자열이 있습니다. (대화창에 세부 내역과 출력)"
-L.ExportTestFailedNonAnonString		= "경고: 문자열 %q 익명화되지 않은 것으로 보입니다."
-L.CreatedTest						= "%d개의 이벤트로 테스트를 %.1f초에 걸쳐 작성했습니다."
-L.NoLogsFound						= "Transcriptor 가져오기에 로그 데이터가 들어있지 않습니다."
-L.NoTestDataAvailable				= "사용 가능한 테스트 데이터 없음"
-L.TestDataLoading					= "테스트 로딩 중..."
-L.NoLogSelected						= "테스트 작성 실패: 선택한 로그가 없습니다."
-L.LogAlreadyImported				= "테스트 작성 실패: 이미 가져온 것입니다."
 
-L.RewriteAllToYou					= "모든 플레이어를 동시에"
-L.RealModOptionsBelow				= "아래의 모듈 설정은 시험장 모드와 실제 설정간의 동기화에 관한 것입니다."
 L.Test								= "테스트"
-L.Tests								= "테스트"
-L.AllTests							= "모든 테스트"
-L.RunTest							= "테스트 실행"
-L.RunTestShort						= "실행" -- Same intend as RunTest, but a smaller button
-L.StopTest							= "테스트 중지"
-L.StopTests							= "테스트 중지"
-L.RunAllTests						= "모든 테스트 실행"
-L.Queued							= "대기중"
-L.Running							= "실행중"
-L.Failed							= "실패"
-L.ShowReport						= "보고서 보기"
-L.ShowErrors						= "오류 보기"
-L.TestModEntry						= "[시험장] %s"
-L.EnterTestMode						= "시험장 모드"
-L.SkipPhase							= "다음 단계로 넘어가기"
 
-L.AnonymizeTest						= "플레이어 이름과 GUID 익명 처리"
-L.ShowThisTestEverywhere			= "모든 모드에 이 테스트 표시"
-L.SaveThisTest						= "이 테스트 기록을 계속해서 저장"
 
 L.BossModTColor						= "바 색상"
 L.BossModCVoice						= "초읽기 음성"

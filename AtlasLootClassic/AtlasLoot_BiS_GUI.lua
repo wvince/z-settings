@@ -275,7 +275,7 @@ local function CreateBiSToggleFrame()
             -- 1. Honor
             local honorAmount = 0
             if C_CurrencyInfo and C_CurrencyInfo.GetCurrencyInfo then
-                local info = C_CurrencyInfo.GetCurrencyInfo(1901)
+                local info = C_CurrencyInfo.GetCurrencyInfo(1792) or C_CurrencyInfo.GetCurrencyInfo(1901)
                 if info then honorAmount = info.quantity or info.totalEarned or 0 end
             end
             honorText:SetText("Honor: " .. honorAmount)

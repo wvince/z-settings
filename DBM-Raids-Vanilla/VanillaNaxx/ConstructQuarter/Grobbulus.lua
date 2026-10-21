@@ -7,8 +7,10 @@ else
 	mod.statTypes = "normal"
 end
 
-mod:SetRevision("20260920054026")
-mod:DisableHardcodedOptions()
+mod:SetRevision("20261019224112")
+if DBM:IsForever() then
+	mod:EnableGenericTrash()
+end
 mod:SetCreatureID(15931)
 mod:SetEncounterID(1111)
 mod:SetUsedIcons(1, 2, 3, 4)
@@ -58,7 +60,7 @@ else
 
 	function mod:OnCombatStart()
 		table.wipe(mutateIcons)
-		enrageTimer:Start(720)
+		enrageTimer:Start()
 	end
 
 	function mod:OnCombatEnd()

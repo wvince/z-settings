@@ -1,0 +1,2 @@
+-reup due to "The currently installed file for this addon is corrupted. Please reinstall the addon."
+-"but since version 1.1.9 the addon extracts into the root interface folder as files only. The .zips no longer contain a folder structure so the addon is breaking when manually installed or via the curseforge app." -> manual update to restore file structure

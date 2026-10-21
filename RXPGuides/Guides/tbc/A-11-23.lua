@@ -13,6 +13,7 @@ RXPGuides.RegisterGuide([[
 #subgroup RestedXP Alliance 1-20
 #defaultfor Human/NightElf/Dwarf/Gnome !Warlock
 #next 14-20 Bloodmyst
+
 step << !NightElf
     #optional
     .abandon 6392 >> Abandon Return to Brock. You won't turn this in
@@ -850,6 +851,7 @@ step
     .goto 1439,36.621,45.596
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gwennyth Bly'Leggonde|r
     .turnin 4722 >> Turn in Beached Sea Turtle
+
     --TODO: ADD ids for all the other turn ins (survival guide)
     .target Gwennyth Bly'Leggonde
     .isOnQuest 4722
@@ -885,6 +887,7 @@ step << Draenei
     .hs >> Hearth to Bloodmyst Isle
     .zoneskip Bloodmyst Isle
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -896,6 +899,7 @@ RXPGuides.RegisterGuide([[
 #defaultfor !Draenei
 #next 20-21 Darkshore;21-23 Ashenvale << !Warlock
 #next 20-23 Darkshore/Ashenvale << Warlock
+
 step << Druid
     .goto Azuremyst Isle,24.450,54.556
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Shalannius|r
@@ -3451,6 +3455,7 @@ step << !Warlock
     .zone Ashenvale >> Travel south to Ashenvale
     .goto Ashenvale,29.7,13.6
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -3462,6 +3467,7 @@ RXPGuides.RegisterGuide([[
 #subgroup RestedXP Alliance 20-32
 #defaultfor !Draenei
 #next 21-23 Ashenvale
+
 step
     .goto Darkshore,36.097,44.932
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gubber Blump|r
@@ -4058,6 +4064,7 @@ step
     .zone Ashenvale >> Travel south to Ashenvale
     .goto Ashenvale,29.7,13.6
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -4068,6 +4075,7 @@ RXPGuides.RegisterGuide([[
 #subgroup RestedXP Alliance 20-32
 #defaultfor !Draenei
 #next 23-24 Wetlands;24-27 Redridge/Duskwood
+
 step
 #xprate <1.5
     .goto Ashenvale,26.19,38.69
@@ -4988,6 +4996,7 @@ step << NightElf/Draenei
     .goto Ironforge,76.61,51.28,10,0
     .zone Stormwind City >> Take the tram to Stormwind
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -4997,6 +5006,7 @@ RXPGuides.RegisterGuide([[
 #name 20-23 Darkshore/Ashenvale
 #subgroup RestedXP Alliance 20-32
 #next 23-24 Wetlands;24-27 Redridge/Duskwood
+
 step
     .isQuestAvailable 1716
     .isNotOnQuest 1716

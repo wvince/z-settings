@@ -8,13 +8,16 @@ local RSConstants = private.NewLib("RareScannerConstants")
 -- Locales
 local AL = LibStub("AceLocale-3.0"):GetLocale("RareScanner");
 
+-- RareScanner general libraries
+local RSTextTags = private.ImportLib("RareScannerTextTags")
+
 ---============================================================================
 -- DEBUG MODE
 ---============================================================================
 
 RSConstants.DEBUG_MODE = false
 RSConstants.DEBUG_ATLAS_VIGNETTE = false
-RSConstants.DEBUG_SHOW_COMPLETED_GLYPHS = false
+
 
 -- Use this constant to logger information about an specific entity while
 -- displaying on the map. This is handy to find bugs in the POI filters
@@ -29,8 +32,8 @@ RSConstants.LOOT_ITEM_ID = nil
 -- Current versions
 ---============================================================================
 
-RSConstants.CURRENT_DB_VERSION = 7
-RSConstants.CURRENT_LOOT_DB_VERSION = 4
+RSConstants.CURRENT_DB_VERSION = 8
+RSConstants.CURRENT_LOOT_DB_VERSION = 8
 
 ---============================================================================
 -- Current maps (newer)
@@ -61,10 +64,20 @@ RSConstants.EVENTS = {
 -- Mini events
 ---============================================================================
 
+RSConstants.FACTION_LIBRARIAN_MINIEVENT = 1
+
 -- Minievents that will have an option to filter/unfilter the icons from the worldmap
 RSConstants.MINIEVENTS_WORLDMAP_FILTERS = {
-
+	[RSConstants.FACTION_LIBRARIAN_MINIEVENT] = { active = true, containers = true, mapIDs = {1413,1416,1417,1418,1419,1420,1421,1422,1423,1425,1427,1428,1429,1431,1432,1434,1435,1436,1437,1439,1441,1442,1443,1444,1445,1446,1447,1448,1452,1455,2521}, atlas = "Class", text = AL["MAP_MENU_SHOW_FACTION_LIBRARIAN_CONTAINERS"] };
 }
+
+if (RSTextTags) then
+	for _, minieventData in pairs (RSConstants.MINIEVENTS_WORLDMAP_FILTERS) do
+		if (minieventData.text) then
+			minieventData.text = RSTextTags.ParseText(minieventData.text)
+		end
+	end
+end
 
 ---============================================================================
 -- Timers
@@ -98,7 +111,6 @@ RSConstants.ITEM_TYPE = {
 	TOY = 2,
 	PET = 3,
 	MOUNT = 4,
-	DRAKEWATCHER = 5,
 	CUSTOM = "c%s"
 }
 
@@ -135,7 +147,10 @@ RSConstants.TRACKING_SYSTEM = {
 	NAMEPLATE_MOUSEOVER = 2,
 	UNIT_TARGET = 3,
 	CHAT_EMOTE = 4,
-	AURA = 5
+	AURA = 5,
+	TOAST_EVENT = 6,
+	SOFT_INTERACT = 7,
+	CLASS_SKILL_TRACKING = 8
 }
 
 ---============================================================================
@@ -150,13 +165,16 @@ RSConstants.PROFILE_DEFAULTS = {
 			scanContainers = true,
 			scanEvents = true,
 			scanChatAlerts = true,
-			scanGarrison = false,
 			scanInstances = false,
 			scanOnTaxi = true,
 			scanOnPetBattle = true,
-			scanOnRacingQuest = true,
 			scanWorldmapVignette = true,
 			scanWithMacro = true,
+			scanWithMacroPerChar = false,
+			scanSoftInteract = false,
+			scanClassSkills = true,
+			pingTarget = false,
+			originalSoftInteractCVars = false,
 			autoHideButtonInstances = false,
 			ignoreCompletedEntities = true,
 			showMaker = true,
@@ -222,12 +240,20 @@ RSConstants.PROFILE_DEFAULTS = {
 			searchingToys = true,
 			searchingAppearances = true,
 			searchingClassAppearances = true,
-			searchingDrakewatcher = true,
 			searchingDecors = true,
 			searchingMissingAchievementCriteria = true,
 			showFiltered = true,
 			showDead = true,
 			showWithoutCollectibles = false,
+			ignoreMissingCollectibles = false,
+			showNpcs = true,
+			lootHideNonUpgrades = false,
+			lootOnlyEquipable = false,
+			lootCollapsed = false,
+			lootOnlyUsable = false,
+			lootOnlyMyLevel = false,
+			lootShowFiltered = true,
+			showContainers = true,
 			lockingMap = false
 		},
 		map = {
@@ -255,7 +281,6 @@ RSConstants.PROFILE_DEFAULTS = {
 			disableLastSeenFilter = false,
 			displayFriendlyNpcIcons = false,
 			displayOldNotDiscoveredMapIcons = true,
-			displayDragonGlyphsIcons = true,
 			displayAlreadyCompletedEventIcons = false,
 			supportMapIcons = true,
 			displayFilteredIngameMapIcons = true,
@@ -279,6 +304,7 @@ RSConstants.PROFILE_DEFAULTS = {
 			tooltipsState = true,
 			tooltipsCounters = true,
 			tooltipsSeen = true,
+			tooltipsRespawn = false,
 			tooltipsCommands = true,
 			tooltipsExtraInfo = true,
 			tooltipsFilterState = true,
@@ -316,19 +342,14 @@ RSConstants.PROFILE_DEFAULTS = {
 			displayLootOnMap = true,
 			lootTooltipPosition = "ANCHOR_LEFT",
 			lootMinQuality = 0,
-			filterItemsCompletedQuest = true,
 			filterNotEquipableItems = false,
-			filterNotMatchingClass = false,
-			filterNotMatchingFaction = true,
-			filterAnimaItems = true,
-			filterConduitItems = true,
+			filterNotUsable = false,
 			filterByExplorerResults = false,
 			showingMissingMounts = true,
 			showingMissingPets = true,
 			showingMissingToys = true,
 			showingMissingAppearances = true,
 			showingMissingClassAppearances = true,
-			showingMissingDrakewatcher = true,
 			showingMissingDecors = true,
 			numItems = 10,
 			numItemsPerRow = 10,
@@ -409,7 +430,6 @@ RSConstants.CMD_TOGGLE_TREASURES_ALERTS = "tta"
 RSConstants.CMD_TOGGLE_FILTER_REPEATABLE_TREASURES = "frt"
 RSConstants.CMD_TOGGLE_SCANNING_WORLD_MAP_VIGNETTES = "swmv"
 RSConstants.CMD_TOMTOM_WAYPOINT = "waypoint"
-RSConstants.CMD_TOGGLE_DRAGON_GLYPHS = "tdg"
 RSConstants.CMD_OPEN_EXPLORER = "explorer"
 RSConstants.CMD_RECENTLY_SEEN = "rseen"
 RSConstants.CMD_IMPORT = "import"
@@ -448,7 +468,6 @@ RSConstants.EVENT_HORN = "minimap-genericevent-hornicon-small"
 -- SpellIDs
 ---============================================================================
 
-RSConstants.RACING_SPELL_ID = 369968
 
 ---============================================================================
 -- MapIDS
@@ -463,6 +482,8 @@ RSConstants.AZEROTH = 947
 RSConstants.MAPS_WITHOUT_WARBAND_REPUTATION = { }
 RSConstants.CONTINENTS_WARBAND_REPUTATION = { }
 RSConstants.MAPS_TRACK_EVENT_HORNS = { }
+RSConstants.INSTANCE_CONTINENTS = { 9997 } -- Dungeons and raids
+RSConstants.EXPLORER_OWN_SECTION_CONTINENTS = { 9997 } -- Dungeons
 
 ---============================================================================
 -- Entity IDs
@@ -499,6 +520,8 @@ RSConstants.EVENTS_WITH_NPC_VIGNETTE = { }
 RSConstants.NPCS_WITH_MULTIPLE_SPAWNS = { }
 RSConstants.IGNORED_TRACKING_SYSTEMS_NOT_VIGNETTE = { }
 RSConstants.CONTAINERS_BATTERED_CHESTS = {106318,106319,2843,2849}
+RSConstants.CONTAINERS_LIBRARIAN_FACTIONS = {386691,386759,405879,407566,408014,409496,409501,409562,409692,409700,409711,409717,409731,409735,410299,421526,423895,423896,423897,423898,423899,423900}
+RSConstants.CONTAINERS_SOLID_CHESTS = {2852,2855,153454,2850,153453,4149,2857,153451}
 
 ---============================================================================
 -- Custom NPCs
@@ -526,6 +549,9 @@ RSConstants.ETERNAL_COLLECTED = -1
 ---============================================================================
 
 RSConstants.TEXTURE_PATH = "Interface\\AddOns\\RareScanner\\Media\\Icons\\%s.blp"
+RSConstants.DUNGEON_MAP_TEXTURE_PATH = "Interface\\AddOns\\RareScanner\\Media\\DungeonMaps\\%s.blp"
+RSConstants.DUNGEON_MAP_MAX_SIZE = 0.8 -- part of the explorer map that the dungeon maps can fill
+RSConstants.DUNGEON_MAP_MAX_SCALE = 2 -- the small dungeon maps aren't enlarged more than this
 RSConstants.GROUP_TOP_TEXTURE_FILE = "GroupT"
 RSConstants.GROUP_RIGHT_TEXTURE_FILE = "GroupR"
 RSConstants.GROUP_LEFT_TEXTURE_FILE = "GroupL"
@@ -558,7 +584,6 @@ RSConstants.GUIDE_STEP6_FILE = "Number6"
 RSConstants.GUIDE_STEP7_FILE = "Number7"
 RSConstants.GUIDE_STEP8_FILE = "Number8"
 RSConstants.GUIDE_STEP9_FILE = "Number9"
-RSConstants.DRAGON_GLYFH_FILE = "DragonGlyphSmall"
 RSConstants.PROFFESION_ICON_ATLAS = "Professions-Crafting-Orders-Icon"
 RSConstants.ACHIEVEMENT_ICON_ATLAS = "UI-Achievement-Shield-2"
 RSConstants.PRIMAL_STORM_ICON_ATLAS = "ElementalStorm-Lesser-Water"
@@ -638,7 +663,6 @@ RSConstants.GUIDE_STEP6_TEXTURE = string.format(RSConstants.TEXTURE_PATH, RSCons
 RSConstants.GUIDE_STEP7_TEXTURE = string.format(RSConstants.TEXTURE_PATH, RSConstants.GUIDE_STEP7_FILE);
 RSConstants.GUIDE_STEP8_TEXTURE = string.format(RSConstants.TEXTURE_PATH, RSConstants.GUIDE_STEP8_FILE);
 RSConstants.GUIDE_STEP9_TEXTURE = string.format(RSConstants.TEXTURE_PATH, RSConstants.GUIDE_STEP9_FILE);
-RSConstants.DRAGON_GLYPH_TEXTURE = string.format(RSConstants.TEXTURE_PATH, RSConstants.DRAGON_GLYFH_FILE);
 
 ---============================================================================
 -- Guide constants
@@ -678,13 +702,15 @@ RSConstants.EXPLORER_FILTER_DROP_PETS = 2
 RSConstants.EXPLORER_FILTER_DROP_TOYS = 3
 RSConstants.EXPLORER_FILTER_DROP_APPEARANCES = 4
 RSConstants.EXPLORER_FILTER_DROP_CLASS_APPEARANCES = 10
-RSConstants.EXPLORER_FILTER_DROP_DRAKEWATCHER = 9
 RSConstants.EXPLORER_FILTER_DROP_DECOR = 11
 RSConstants.EXPLORER_FILTER_DROP_CUSTOM = "c%s"
 RSConstants.EXPLORER_FILTER_ACHIEVEMENT_CRITERIA = 5
 RSConstants.EXPLORER_FILTER_DEAD = 6
 RSConstants.EXPLORER_FILTER_FILTERED = 7
 RSConstants.EXPLORER_FILTER_WITHOUT_COLLECTIBLES = 8
+RSConstants.EXPLORER_FILTER_IGNORE_COLLECTIBLES = 14
+RSConstants.EXPLORER_FILTER_TYPE_NPC = 12
+RSConstants.EXPLORER_FILTER_TYPE_CONTAINER = 13
 
 ---============================================================================
 -- Others
@@ -693,6 +719,7 @@ RSConstants.EXPLORER_FILTER_WITHOUT_COLLECTIBLES = 8
 RSConstants.RAID_WARNING_SHOWING_TIME = 3
 RSConstants.MINIMUM_DISTANCE_PINS_WORLD_MAP = 0.005
 RSConstants.TOOLTIP_MAX_WIDTH = 300
+RSConstants.NPC_BOSS_LEVEL = -1 -- NPCs without level (bosses)
 RSConstants.TOOLTIP_MIN_WIDTH = 100
 
 ---============================================================================

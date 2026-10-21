@@ -73,6 +73,10 @@ local hideFocusToTName
 local classColorLevelText
 local centerNames
 local playerFrameOCD
+local function OCDTweaksOn()
+    do return false end
+    return BetterBlizzFramesDB.playerFrameOCD
+end
 local playerFrameOCDTextureBypass
 local hidePlayerName
 local hidePetName
@@ -148,7 +152,7 @@ function BBF.UpdateUserTargetSettings()
     classColorLevelText = BetterBlizzFramesDB.classColorTargetNames and BetterBlizzFramesDB.classColorLevelText
     centerNames = BetterBlizzFramesDB.centerNames or BetterBlizzFramesDB.classicFrames or BetterBlizzFramesDB.noPortraitModes
     forceCenterNameSetting = BetterBlizzFramesDB.classicFrames or BetterBlizzFramesDB.noPortraitModes
-    playerFrameOCD = BetterBlizzFramesDB.playerFrameOCD and not BetterBlizzFramesDB.playerFrameOCDTextureBypass
+    playerFrameOCD = OCDTweaksOn() and not BetterBlizzFramesDB.playerFrameOCDTextureBypass
     playerFrameOCDTextureBypass = BetterBlizzFramesDB.playerFrameOCDTextureBypass
     hidePlayerName = BetterBlizzFramesDB.hidePlayerName
     hidePetName = BetterBlizzFramesDB.hidePetName
@@ -241,14 +245,11 @@ local function CenterPlayerSpec()
     local healthBar = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HealthBarsContainer
     local noPortrait = BBF.HasNoPortrait("player")
     local forceCenter = NameCenterForced("player")
-    if BetterBlizzFramesDB.playerFrameOCD and not BetterBlizzFramesDB.playerFrameOCDTextureBypass and not forceCenter then
+    if OCDTweaksOn() and not BetterBlizzFramesDB.playerFrameOCDTextureBypass and not forceCenter then
         return "TOP", healthBar, "TOP", 0, 14.5, "CENTER"
     end
-    local xPos = forceCenter and 1.5 or 0
-    if noPortrait then
-        xPos = xPos - 1
-    end
-    local yPos = noPortrait and 14 or forceCenter and 7.5 or BetterBlizzFramesDB.symmetricPlayerFrame and 15 or 14.5
+    local xPos = noPortrait and 0.5 or 0
+    local yPos = noPortrait and 14 or forceCenter and 10.5 or BetterBlizzFramesDB.symmetricPlayerFrame and 15 or 14.5
     if BetterBlizzFramesDB.classicFrames and BetterBlizzFramesDB.bigPlayerHealthbar then
         yPos = yPos - 10
     end
@@ -260,13 +261,13 @@ local function CenterXSpec(healthBar, ToT, pet, unit)
     local forceCenter = NameCenterForced(unit)
     local justify = (BetterBlizzFramesDB.classicFrames and ToT) and "LEFT" or "CENTER"
     local xPos = (pet and noPortrait and 16) or (ToT and noPortrait and 0) or (ToT and (forceCenter and 8 or -2)) or (forceCenter and 0) or noPortrait and -1 or -0.5
-    local yPos = (noPortrait and ((pet and 2) or 13)) or ((pet and forceCenter) and 2 or pet and 2) or ToT and (forceCenter and -18 or 12) or (forceCenter and 6.3 or 14)
+    local yPos = (noPortrait and ((pet and 2) or 13)) or ((pet and forceCenter) and 2 or pet and 2) or ToT and (forceCenter and -18 or 12) or (forceCenter and 10 or 14)
     if ToT and noPortrait then
         xPos = xPos -1
     elseif noPortrait and not pet then
         xPos = xPos - 1
     elseif BetterBlizzFramesDB.classicFrames and not ToT and not pet then
-        xPos = xPos - 1
+        xPos = 2.5
     end
     if pet and noPortrait then
         local petX, petY = 1.5, 22
@@ -318,7 +319,7 @@ local function GetBaseNameSpec(frame)
         return point, relativeTo, relativePoint, xPos, yPos, mirrored and "RIGHT" or justify
     end
     if mirrored then
-        return "TOPRIGHT", frame.TargetFrameContent.TargetFrameContentMain.ReputationColor, "TOPRIGHT", -12, db.playerFrameOCD and -2.5 or -1, "RIGHT"
+        return "TOPRIGHT", frame.TargetFrameContent.TargetFrameContentMain.ReputationColor, "TOPRIGHT", -12, OCDTweaksOn() and -2.5 or -1, "RIGHT"
     end
 end
 
@@ -438,7 +439,7 @@ local function ApplyNameLayout(frame)
         end
         local left = justify == "RIGHT" and extra or justify == "CENTER" and extra / 2 or 0
         local right = extra - left
-        if db and db.playerFrameOCD and (frame == TargetFrame or frame == FocusFrame) then
+        if db and OCDTweaksOn() and (frame == TargetFrame or frame == FocusFrame) then
             dy = dy - 1.5
         end
         if multiLine then
@@ -593,6 +594,9 @@ local function GetSpecID(unit)
                 local arenaUnit = "arena" .. i
                 if UnitIsUnit(unit, arenaUnit) then
                     local specID = GetArenaOpponentSpec and GetArenaOpponentSpec(i)
+                    if issecretvalue(specID) then
+                        return nil, i
+                    end
                     if specID then
                         return specID
                     end
@@ -647,11 +651,11 @@ local function IsSpecHealer(unit)
     end
 
     -- Use cached spec ID if available
-    local specID = GetSpecID(unit)
+    local specID, secretIndex = GetSpecID(unit)
 
     -- If no valid spec ID found, return false
     if not specID then
-        return false
+        return false, secretIndex
     end
 
     -- Check if spec is a healer (direct lookup)
@@ -659,24 +663,65 @@ local function IsSpecHealer(unit)
 end
 BBF.IsSpecHealer = IsSpecHealer
 
+local arenaSpecSecret
+function BBF.IsArenaSpecSecret()
+    if arenaSpecSecret == nil then
+        arenaSpecSecret = (UnitFrameUtil and UnitFrameUtil.GetArenaOpponentSpecDisplayInfo) and true or false
+    end
+    return arenaSpecSecret
+end
+
+BBF.SupportsHiddenClassTint = BBF.IsArenaSpecSecret
+
+function BBF.ArenaEnemyNote(text)
+    if not BBF.IsArenaSpecSecret() then return text end
+    return text .. "\n\n|cffff8000" .. BBF.L["Not_Available_On_Arena_Enemies"] .. "|r"
+end
+
+function BBF.ArenaOpponentHasSpec(arenaIndex)
+    return arenaIndex <= GetNumArenaOpponentSpecs()
+end
+
+local secretRoleElements = {}
+function BBF.SetSecretArenaRoleTexture(texture, arenaIndex, textureMap)
+    secretRoleElements.roleIcon = texture
+    UnitFrameUtil.UpdateArenaOpponentSpecDisplay(secretRoleElements, arenaIndex, textureMap)
+    secretRoleElements.roleIcon = nil
+end
+
+local secretSpecElements = {}
+function BBF.SetSecretArenaSpecIcon(texture, arenaIndex)
+    secretSpecElements.specPortrait = texture
+    UnitFrameUtil.UpdateArenaOpponentSpecDisplay(secretSpecElements, arenaIndex)
+    secretSpecElements.specPortrait = nil
+end
+
 local function GetSpecName(unit)
-    local specID = GetSpecID(unit)
-    return specID and (shortArenaSpecName and specIDToNameShort[specID] or specIDToName[specID]) or nil
+    local specID, secretIndex = GetSpecID(unit)
+    if secretIndex then
+        if not BBF.ArenaOpponentHasSpec(secretIndex) then return nil, false end
+        return UnitFrameUtil.GetArenaOpponentSpecDisplayInfo(secretIndex).specName, true
+    end
+    local specName = specID and (shortArenaSpecName and specIDToNameShort[specID] or specIDToName[specID]) or nil
+    return specName, specName ~= nil
 end
 
 local function ShowLastNameOnlyNpc(frame, name)
-    --if not name then return end
-    return name
-    -- local creatureType = frame.unit and UnitCreatureType(frame.unit)
-    -- if creatureType == "Totem" then
-    --     -- Use first word (e.g., "Stoneclaw" from "Stoneclaw Totem")
-    --     local firstWord = name:match("^[^%s%-]+")
-    --     return firstWord
-    -- else
-    --     -- Use last word (e.g., "Guardian" from "Frostwolf Guardian")
-    --     local lastWord = name:match("([^%s]+)$")
-    --     return lastWord
-    -- end
+    if issecretvalue(name) or not name then return name end
+    local creatureType, creatureTypeID
+    if frame.unit then
+        creatureType, creatureTypeID = UnitCreatureType(frame.unit)
+    end
+    if issecretvalue(creatureType) then return name end
+    if creatureTypeID == 11 or creatureType == "Totem" then
+        -- Use first word (e.g., "Stoneclaw" from "Stoneclaw Totem")
+        local firstWord = name:match("^[^%s%-]+")
+        return firstWord
+    else
+        -- Use last word (e.g., "Guardian" from "Frostwolf Guardian")
+        local lastWord = name:match("([^%s]+)$")
+        return lastWord
+    end
 end
 
 local function GetNameWithoutRealm(frame)
@@ -1510,6 +1555,37 @@ end
 local LSM = LibStub("LibSharedMedia-3.0")
 local oldChatFont = nil
 
+local combatTextFonts = {
+    ["SystemFont_World"] = true,
+    ["SystemFont_World_ThickOutline"] = true,
+    ["CombatTextFont"] = true,
+    ["CombatTextFontOutline"] = true,
+}
+
+local function HookCombatTextScaling()
+    if BBF.combatTextScalingHooked or not Enum.FontStringScaleAnimationMode then return end
+    if not CombatText then
+        if not BBF.combatTextScalingFrame then
+            BBF.combatTextScalingFrame = CreateFrame("Frame")
+            BBF.combatTextScalingFrame:RegisterEvent("ADDON_LOADED")
+            BBF.combatTextScalingFrame:SetScript("OnEvent", function(self, _, addon)
+                if addon ~= "Blizzard_CombatText" then return end
+                self:UnregisterEvent("ADDON_LOADED")
+                HookCombatTextScaling()
+            end)
+        end
+        return
+    end
+    if not CombatText.InitializeFontString then return end
+    hooksecurefunc(CombatText, "InitializeFontString", function(_, fontString)
+        local db = BetterBlizzFramesDB
+        if db.changeAllFontsIngame and not db.allFontsIgnoreSCT then
+            fontString:SetScaleAnimationMode(Enum.FontStringScaleAnimationMode.Vertex)
+        end
+    end)
+    BBF.combatTextScalingHooked = true
+end
+
 function BBF.SetCustomFonts()
     local db = BetterBlizzFramesDB
 
@@ -1544,12 +1620,17 @@ function BBF.SetCustomFonts()
                 ["SystemFont_LargeNamePlateFixed"] = 14,
                 ["SystemFont_LargeNamePlate"] = 14,
                 ["SystemFont_NamePlate"] = 12,
+                ["SystemFont_World"] = 64,
+                ["SystemFont_World_ThickOutline"] = 64,
+                ["CombatTextFont"] = 64,
+                ["CombatTextFontOutline"] = 64,
             }
+            local ignoreCombatText = db.allFontsIgnoreSCT
 
             local fontObjectNames = GetFonts()
             for index, fontObjectName in ipairs(fontObjectNames) do
                 local FontObject = _G[fontObjectName]
-                if FontObject then
+                if FontObject and not (ignoreCombatText and combatTextFonts[fontObjectName]) then
                     local _, size, style = FontObject:GetFont()
 
                     if forcedFontSizes[fontObjectName] then
@@ -1608,6 +1689,9 @@ function BBF.SetCustomFonts()
         end
 
         SetAllFonts()
+        if not db.allFontsIgnoreSCT then
+            HookCombatTextScaling()
+        end
     end
 
     if db.changePartyFrameFont then
@@ -1788,7 +1872,7 @@ end
 
 local function SetArenaNameUnitFrame(frame, unit, textObject, tot)
     local unitID = GetArenaUnitName(unit)
-    local specName = GetSpecName(unit)
+    local specName, hasSpec = GetSpecName(unit)
     local nameText
 
     local UnitChecker = tot and UnitIsProbablyUnit or UnitIsUnit
@@ -1800,10 +1884,10 @@ local function SetArenaNameUnitFrame(frame, unit, textObject, tot)
         nameText = unitID -- Show "Party 1" or "Party 2"
     else
         -- Construct the nameText based on specName and unitID settings
-        if specName and showSpecName and showArenaID and unitID then
+        if hasSpec and showSpecName and showArenaID and unitID then
             local arenaNumber = string.match(unitID, "%d+")
             nameText = specName .. " " .. (arenaNumber or "")
-        elseif specName and showSpecName then
+        elseif hasSpec and showSpecName then
             nameText = specName
         elseif showArenaID and unitID then
             nameText = unitID
@@ -1813,7 +1897,7 @@ local function SetArenaNameUnitFrame(frame, unit, textObject, tot)
     end
 
     -- Update the text object with the nameText if available
-    if nameText then
+    if issecretvalue(nameText) or nameText then
         textObject:SetText(nameText)
         if classColorTargetNames or customColorTargetNames then
             ClassColorName(frame.bbfName, unit)

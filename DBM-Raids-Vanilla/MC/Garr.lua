@@ -12,8 +12,10 @@ end
 local mod	= DBM:NewMod("Garr-Classic", "DBM-Raids-Vanilla", catID)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20260920050230")
-mod:DisableHardcodedOptions()
+mod:SetRevision("20261019224112")
+if DBM:IsForever() then
+	mod:EnableGenericTrash()
+end
 if DBM:IsSeasonal("SeasonOfDiscovery") then
 	mod:SetCreatureID(228432, 228834)
 else

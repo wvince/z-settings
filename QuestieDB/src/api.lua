@@ -63,6 +63,19 @@ LibQuestieDB.Enum.factionRaceMasks = {
   Horde = raceKeys.ALL_HORDE,
 }
 
+-- Same selection as correction compat: the flavor's own table, else its rules flavor's table.
+local flavor = LibQuestieDB.flavor
+local byExpansion = LibQuestieDB.Enum.byExpansion
+
+---@param name string The named constants table to return.
+---@return table<string, integer> Active provider flavor's named constants, or the rules flavor's if the active flavor lacks them.
+local function activeConstants(name)
+  return byExpansion[flavor.expansion][name] or byExpansion[flavor.rules][name]
+end
+
+LibQuestieDB.Enum.classKeys = activeConstants("classKeys")
+LibQuestieDB.Enum.npcFlags = activeConstants("npcFlags")
+
 --------------------------------------------------------------------------------------------
 -- Contract
 --------------------------------------------------------------------------------------------

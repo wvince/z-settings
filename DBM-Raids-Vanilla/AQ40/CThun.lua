@@ -8,8 +8,10 @@ else--retail or wrath classic and later
 end
 local mod	= DBM:NewMod("CThun", "DBM-Raids-Vanilla", catID)
 local L		= mod:GetLocalizedStrings()
-mod:SetRevision("20260920054026")
-mod:DisableHardcodedOptions()
+mod:SetRevision("20261019224112")
+if DBM:IsForever() then
+	mod:EnableGenericTrash()
+end
 mod:SetCreatureID(15589, 15727)
 mod:SetEncounterID(717)
 mod:SetHotfixNoticeRev(20200823000000)--2020, 8, 23
@@ -35,13 +37,13 @@ else
 	local specWarnWeakened			= mod:NewSpecialWarning("SpecWarnWeakened", nil, nil, nil, 2, 2, nil, "132212", nil, nil, "targetchange")
 	local specWarnEyeBeam			= mod:NewSpecialWarningYou(26134, nil, nil, nil, 1, 2, nil, nil, "targetyou")
 	local yellEyeBeam				= mod:NewYell(26134)
-	local timerDarkGlareCD			= mod:NewNextTimer(86, 26029)
-	local timerDarkGlare			= mod:NewBuffActiveTimer(39, 26029)
+	local timerDarkGlareCD			= mod:NewNextTimer(86, 26029, nil, nil, nil, nil, nil, DBM_COMMON_L.DEADLY_ICON)
+	local timerDarkGlare			= mod:NewBuffActiveTimer(39, 26029, nil, nil, nil, nil, nil, DBM_COMMON_L.DEADLY_ICON)
 	local timerEyeTentacle			= mod:NewTimer(45, "TimerEyeTentacle", 126, nil, nil, 1)
 	local timerGiantEyeTentacle		= mod:NewTimer(60, "TimerGiantEyeTentacle", 126, nil, nil, 1)
 	local timerClawTentacle			= mod:NewTimer(8, "TimerClawTentacle", 26391, nil, nil, 1) -- every 8 seconds
 	local timerGiantClawTentacle	= mod:NewTimer(60, "TimerGiantClawTentacle", 26391, nil, nil, 1)
-	local timerWeakened				= mod:NewTimer(45, "TimerWeakened", "132212")
+	local timerWeakened				= mod:NewTimer(45, "TimerWeakened", "132212", nil, nil, nil, DBM_COMMON_L.DAMAGE_ICON)
 	mod:AddSetIconOption("SetIconOnEyeBeam", 26134, true, 0, {1})
 	mod:AddInfoFrameOption(26476, true)
 	local firstBossMod = DBM:GetModByName("AQ40Trash")
@@ -167,9 +169,6 @@ else
 	function mod:SPELL_AURA_APPLIED(args)
 		if args:IsSpell(26476) then
 			--I'm aware debuff stacks, but it's a context that doesn't matter to this mod
-			if not playersInStomach[args.destName] then
-				self:TestTrace("EnterStomach", args.destName)
-			end
 			playersInStomach[args.destName] = true
 			if self.Options.InfoFrame and not DBM.InfoFrame:IsShown() then
 				DBM.InfoFrame:SetHeader(L.Stomach)
@@ -181,7 +180,6 @@ else
 	function mod:SPELL_AURA_REMOVED(args)
 		if args:IsSpell(26476) then
 			playersInStomach[args.destName] = nil
-			self:TestTrace("LeaveStomach", args.destName)
 		end
 	end
 	function mod:UNIT_DIED(args)
@@ -189,6 +187,7 @@ else
 		if cid == 15589 then
 			self:SetStage(2)
 			warnPhase:Show(DBM_CORE_L.AUTO_ANNOUNCE_TEXTS.stage:format(2))
+			timerDarkGlare:Stop()
 			timerDarkGlareCD:Stop()
 			timerEyeTentacle:Stop()
 			timerClawTentacle:Stop() -- Claw Tentacle never respawns in phase2

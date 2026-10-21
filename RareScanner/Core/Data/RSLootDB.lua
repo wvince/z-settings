@@ -8,30 +8,6 @@ local RSUtils = private.ImportLib("RareScannerUtils")
 
 
 ---============================================================================
--- QuestIDs database
----============================================================================
-
-function RSLootDB.GetAssociatedQuestIDs(itemID)
-	if (itemID) then
-		return private.LOOT_QUEST_IDS[itemID]
-	end
-
-	return nil
-end
-
----============================================================================
--- Conduits database
----============================================================================
-
-function RSLootDB.GetConduitInfo(itemID)
-	if (itemID) then
-		return private.CONDUITS[itemID]
-	end
-
-	return nil
-end
-
----============================================================================
 -- Collections
 ---============================================================================
 

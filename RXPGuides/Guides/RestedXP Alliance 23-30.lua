@@ -1,5 +1,6 @@
 local faction = UnitFactionGroup("player")
 if faction == "Horde" then return end
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #tbc
@@ -11,6 +12,7 @@ RXPGuides.RegisterGuide([[
 #groupid RXP-SRGCE-A1
 #next 24-27 Redridge/Duskwood
 #xprate <1.5
+
 step << Warrior tbc
     #sticky
     #completewith exit1
@@ -250,6 +252,7 @@ step
     #completewith endofcrocc
 	>> Kill Young Wetlands Crocolisks between quests. Loot them for their Skin
     .complete 484,1 --Collect Young Crocolisk Skin (x4)
+
 step
     #label exit1
     .goto Wetlands,14.1,41.5,70,0
@@ -439,6 +442,7 @@ step
     >> Hearth if your hearthstone is set to Stormwind
     .fly Stormwind >> Fly to Stormwind City
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -1354,7 +1358,9 @@ step << Hunter
 	.goto StormwindClassic,61.7,15.4
 	.trainer >> Train your class spells
 --????
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -1365,6 +1371,7 @@ RXPGuides.RegisterGuide([[
 #groupid RXP-SRGCE-A1
 #next 30-32 Duskwood/STV
 #xprate <1.5
+
 step << skip
     .goto StormwindClassic,60.5,12.3,40,0
     .goto StormwindClassic,60.5,12.3,0
@@ -1930,6 +1937,7 @@ step
 .target Grand Mason Marblesten
     .accept 689 >> Accept A King's Tribute
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -2666,6 +2674,7 @@ step << Warlock
 -->>Talk to |cRXP_FRIENDLY_Gakin the Darkbinder|r
     .accept 1798 >>Accept Seeking Strahad
 	.trainer >> Train your class spells
+
 step << Shaman wotlk
     .goto StormwindNew,21.8,56.2
     .zone Darkshore >> Take the boat to Darkshore
@@ -2747,6 +2756,7 @@ step << Shaman wotlk
 	>>This will give you a 1 hour-long buff giving 40% movespeed and 30% attack speed. Be careful to not AFK with it
 step << Shaman wotlk
     .hs >> Hearth to Stormwind
+
 step << Human Paladin
     .goto StormwindClassic,38.6,26.7
 >>Talk to |cRXP_FRIENDLY_Gazin Tenorm|r
@@ -3014,7 +3024,10 @@ step << Shaman tbc
 step << Shaman tbc
     .hs >> Hearth to Wetlands
 ]])
+
 --1.5x guides:
+
+
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -3666,6 +3679,7 @@ step << Warlock
 -->>Talk to |cRXP_FRIENDLY_Gakin the Darkbinder|r
     .accept 1798 >>Accept Seeking Strahad
 	.trainer >> Train your class spells
+
 step << Shaman wotlk
     .goto StormwindNew,21.8,56.2
     .zone Darkshore >> Take the boat to Darkshore
@@ -3747,6 +3761,7 @@ step << Shaman wotlk
 	>>This will give you a 1 hour-long buff giving 40% movespeed and 30% attack speed. Be careful to not AFK with it
 step << Shaman wotlk
     .hs >> Hearth to Stormwind
+
 step << Human Paladin
     .goto StormwindClassic,38.6,26.7
 >>Talk to |cRXP_FRIENDLY_Gazin Tenorm|r
@@ -3963,7 +3978,10 @@ step << Gnome !Warlock wotlk
 	.goto Dun Morogh,49.2,48.1
 	.money <5.00
 	.skill riding,75 >> Head to Dun Morogh, train riding and purchase your mount.
+
 ]])
+
+
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -3974,6 +3992,7 @@ RXPGuides.RegisterGuide([[
 #name 30-32 Hillsbrad
 #next RestedXP Alliance 32-47\32-33 Shimmering Flats
 #xprate >1.3
+
 step
     .goto Wetlands,10.8,59.6
 .target First Mate Fitzsimmons

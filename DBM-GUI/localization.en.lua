@@ -27,6 +27,7 @@ L.Tools_LatencyCheck				= "Latency Check"
 L.Tools_DurabilityCheck				= "Durability Check"
 L.Tools_KeystoneCheck				= "Keystone Check"
 L.Tools_GearCheck					= "Gear Check"
+L.Tools_ConsumablesCheck			= "Consumables Check"
 
 L.Tools_BreakTimer					= "Start Break Timer"
 L.Tools_PizzaTimer					= "Start Generic Timer"
@@ -37,11 +38,17 @@ L.Tools_KeystoneArea				= "Keystones"
 L.Tools_ShowKeystoneOnComplete		= "Auto show Keystone frame when a Mythic+ run is completed"
 L.Tools_AddChallengeTeleports		= "Add teleports to Challenges UI"
 L.Tools_OverrideKeystoneSlash		= "Override slash commands for Keystone frame (/keystone, /keys, and /key)\n(Note: DBM will attempt to never override any of these for other addons if this isn't checked. However DBM will register these if any of them are unused)"
+L.Tools_ConsumablesArea				= "Consumables Check"
+L.Tools_ShowConsumablesOnReadyCheck	= "Auto show Consumables Check frame when a ready check is started"
 
 L.Tools_Duration					= "Duration"
 L.Tools_Message						= "Timer Message"
 
 L.TabCategory_CURRENT_SEASON		= "Current Season"
+L.CurrentSeasonProfileInfo		= "Current Season groups dungeons from different expansion categories, each with its own profiles. To import, export, copy, delete, or reset dungeon settings, select the corresponding expansion category under %s. These actions affect that category's entire module, not just its current-season dungeons."
+L.CurrentSeasonProfileCategories	= "Included expansion categories:"
+L.CurrentSeasonCoreProfileInfo	= "%s uses your core profile, managed under %s > %s."
+L.TabCategory_FOREVER				= "Forever"
 
 L.TabCategory_OTHER					= "Other Mods"
 L.TabCategory_AFFIXES				= "Affixes"
@@ -147,6 +154,41 @@ L.NoDescription						= "This ability has no description"
 L.CustomOptions						= "This category contains custom options for an ability or event that has no spell or journal ID of it's own. These options have been grouped together using a custom manual ID for the ease of creating WeakAuras"
 
 --
+
+-- Panel: Common Trash
+L.GenericTrashForeverDungeonDescription = "Generic cast warnings, enabled by default for dungeon trash of all levels. Boss alerts require an active, enabled boss module explicitly enrolled for generic warnings. Dungeon and raid settings are independent and saved in core profiles. Uses the normal warning sound. Your selected target bypasses throttling."
+L.GenericTrashForeverRaidDescription = "Generic cast warnings, enabled by default for raid trash of all levels. Boss alerts require an active, enabled boss module explicitly enrolled for generic warnings. Dungeon and raid settings are independent and saved in core profiles. Uses the normal warning sound. Your selected target bypasses throttling."
+L.GenericTrashForeverEnabled		= "Enable in all dungeons"
+L.GenericTrashForeverRaids			= "Enable in all raids"
+L.GenericTrashStandardCast			= "Standard mob casts"
+L.GenericTrashElite					= "Elite mob casts"
+L.GenericTrashEliteFilter			= "Elite mobs"
+L.GenericTrashStandardMobs			= "Standard mobs"
+L.GenericTrashTitle					= "Common Trash"
+L.GenericTrashDungeonDescription	= "Dungeon trash warnings; boss alerts require an active, enabled boss module explicitly enrolled for generic warnings. On Retail, enemies from 3 levels below to 2 above you, or boss level: Standard at -3 to 0; Lieutenants at +1/+2 or boss level (-1). Dungeon settings are independent and saved in core profiles. Uses the normal warning sound. Your target bypasses throttling."
+L.GenericTrashRaidDescription		= "Raid trash warnings; boss alerts require an active, enabled boss module explicitly enrolled for generic warnings. On Retail, enemies from 3 levels below to 2 above you, or boss level; all admitted enemies use Standard settings. Raid settings are independent and saved in core profiles. Uses the normal warning sound. Your target bypasses throttling."
+L.GenericTrashDelveDescription		= "Delve trash warnings; boss alerts require an active, enabled boss module explicitly enrolled for generic warnings. Enemies from 3 levels below to 2 above you, or boss level: Standard at -3 to 0; Lieutenants at +1/+2 or boss level (-1). Delve settings are independent and saved in core profiles. Uses the normal warning sound. Your target bypasses throttling."
+L.GenericTrashRaidCast				= "Enemy casts"
+L.GenericTrashRaidFilter			= "Mobs"
+L.GenericTrashEnabled				= "Enable common trash warnings"
+L.GenericTrashAllDungeons			= "Also enable in all dungeons (all difficulties)"
+L.GenericTrashDelves				= "Enable in delves"
+L.GenericTrashRaids					= "Enable in all raids (all difficulties)"
+L.GenericTrashCast					= "Standard trash casts"
+L.GenericTrashLieutenant			= "Lieutenant trash casts"
+L.GenericTrashChannel				= "Enemy channels"
+L.GenericTrashShowTargets			= "Show spell targets"
+L.GenericTrashStandardFilter		= "Standard mobs"
+L.GenericTrashLieutenantFilter		= "Lieutenants"
+L.GenericTrashNonEliteFilter		= "Non-elite mobs"
+L.GenericTrashFilterOff				= "Off"
+L.GenericTrashFilterTarget			= "Your target only"
+L.GenericTrashFilterAll				= "All units: messages and sounds"
+L.GenericTrashFilterSoundsTarget	= "All units: messages; your target only: sounds"
+L.GenericTrashThrottleType			= "Throttle"
+L.GenericTrashThrottleBoth			= "Messages and sounds"
+L.GenericTrashThrottleSounds		= "Sounds only"
+L.GenericTrashThrottleDuration		= "Throttle duration (seconds)"
 
 -- Panel: Auto Logging
 L.Panel_AutoLogging					= "Auto Logging"
@@ -671,6 +713,7 @@ L.DisableMusic						= "Disable music channel during boss fights (Note: If enable
 L.Area_HideBlizzard					= "Disable & Hide other Blizzard Annoyances"
 L.HideBossEmoteFrame				= "Hide Blizzard Raid Warnings during boss fights"
 L.HideWatchFrame					= "Hide watch (objectives) frame during boss fights if no achievements are being tracked and if not in a Mythic+"
+L.DebugOnlyNote						= " (Debug Only)"
 L.HideQuestTooltips					= "Hide quest objectives from tooltips during boss fights"--Currently hidden (NYI)
 L.HideBlizzardTimeline				= "Hide the Blizzard Raid Timeline during boss fights"
 
@@ -753,6 +796,7 @@ L.AuraStackFontColor				= "Stack font color"
 L.AuraShowStacks					= "Show stack text"
 L.AuraShowDispelBorder				= "Show dispel border"
 L.AuraShowCooldownSwipe				= "Show cooldown swipe"
+L.AuraShowGlow						= "Glow icons while auras are active"
 L.AuraSortOrder					= "Aura sort order"
 L.AuraSortDefault					= "Default Blizzard sorting"
 L.AuraSortShortDurationFirst		= "Short duration first"
@@ -787,68 +831,10 @@ L.FontHeight	= 16 -- OPTIONAL
 
 
 -- Testing
-L.DevPanel							= "Development & Testing"
-L.DevPanelArea						= "Development and Testing UI"
-L.DevPanelExplanation				= "This is a development and testing UI which validates that DBM is working as expected by playing back combat logs." -- Test UI panel under options
-L.DevModPanelExplanation			= [[Welcome to the development and testing playground for this mod.
-You can play back logs of boss fights here to see how the mod behaves and to test integrations with DBM callbacks. See DBM-Test/README.md for more details on integrations and callbacks. DBM comes with example logs for many raids, but you can also import your own logs from Transcriptor.
-]] -- Playground mode in mods
 
-L.TimewarpSetting					= "Time warp: %dx"
-L.TimewarpDynamic					= "Time warp: dynamic (fastest)"
-L.TestSupportArea					= "Mod loading options"
-L.ModNotLoadedWithTests				= "Warning: This mod is currently not loaded with full test support. If the mod directly calls API functions such as UnitHealth() or UnitName() these will not work correctly. This is often the case for functions related to unit health, power, or targets."
-L.ModLoadedWithTests				= "Mod is currently loaded with test support because at least one mod in the addon has tests enabled."
-L.AlwaysLoadModWithTests			= "Always load this mod with full test support (slows down loading slightly)"
-L.ModLoadRequiresReload				= ", requires UI reload to take effect" -- Appended to L.AlwaysLoadModWithTests
-L.TestSelectArea					= "Test data" -- Title of the UI area
-L.SelectTestLog						= L.TestSelectArea -- Title for the dropdown to select a  specific test
-L.SelectPerspective					= "Log perspective (simulated player)"
-L.ImportTranscriptor				= "Import Transcriptor log"
-L.ImportTranscriptorHeader			= [[
-Import a Transcriptor log by pasting it anywhere in the edit box below. Pasting speed is roughly 2 MiB/s, this means your game will freeze for several seconds when pasting very large log files.
-You can also import the current Transcriptor session from Transcriptor's saved variables with the import button to the right.]]
-L.PasteLogHere						= "Press " .. (IsMacClient() and "Cmd-V" or "Ctrl-V") .. " to paste a log here."
-L.LogPasted							= "Pasted %.2f MiB in %.1f seconds (%.2f MiB/s)."
-L.ImportLocalTranscriptor			= "Import current\nTranscriptor session"
-L.NoLocalTranscriptor				= "Could not find local Transcriptor data."
-L.LocalImportDone					= "Imported %d logs with %d encounters from Transcriptor."
-L.Parsing							= "Parsing..."
-L.SelectLogDropdown					= "Select encounter"
-L.CreateTest						= "Create Test"
-L.ExportTest						= "Export Test"
-L.ExportedTest						= "Exported test case with %d lines (%.1f%% filtered)."
-L.ExportedTestFailedAnon			= "WARNING: Log anonymization failed, %d non-anonymized strings found (details in chat frame and output)."
-L.ExportTestFailedNonAnonString		= "WARNING: String %q looks non-anonymized."
-L.CreatedTest						= "Created test with %d events in %.1f seconds."
-L.NoLogsFound						= "Transcriptor import contains no log data."
-L.NoTestDataAvailable				= "No test data available"
-L.TestDataLoading					= "Loading tests..."
-L.NoLogSelected						= "Test creation failed: No log selected."
-L.LogAlreadyImported				= "Test creation failed: Test already imported."
 
-L.RewriteAllToYou					= "All players at the same time"
-L.RealModOptionsBelow				= "Mod options below are synced between playground mode and your real settings."
 L.Test								= "Test"
-L.Tests								= "Tests"
-L.AllTests							= "All tests"
-L.RunTest							= "Run test"
-L.RunTestShort						= "Run" -- Same intend as RunTest, but a smaller button
-L.StopTest							= "Stop test"
-L.StopTests							= "Stop tests"
-L.RunAllTests						= "Run all tests"
-L.Queued							= "Queued"
-L.Running							= "Running"
-L.Failed							= "Failed"
-L.ShowReport						= "Show report"
-L.ShowErrors						= "Show errors"
-L.TestModEntry						= "[Playground] %s"
-L.EnterTestMode						= "Playground mode"
-L.SkipPhase							= "Skip to next phase"
 
-L.AnonymizeTest						= "Anonymize player names and GUIDs"
-L.ShowThisTestEverywhere			= "Show this test for all mods"
-L.SaveThisTest						= "Save this test log persistently"
 
 L.BossModTColor						= "Bar Color"
 L.BossModCVoice						= "Countdown Voice"

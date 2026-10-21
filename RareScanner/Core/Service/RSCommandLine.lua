@@ -24,6 +24,7 @@ local RSCustomNpcs = private.ImportLib("RareScannerCustomNpcs")
 local RSProvider = private.ImportLib("RareScannerProvider")
 local RSMinimap = private.ImportLib("RareScannerMinimap")
 local RSRoute = private.ImportLib("RareScannerRoute")
+local RSMinimapTracking = private.ImportLib("RareScannerMinimapTracking")
 
 ---============================================================================
 -- Command line options
@@ -32,23 +33,39 @@ local RSRoute = private.ImportLib("RareScannerRoute")
 local RARESCANNER_CMD = "rarescanner"
 local RARESCANNERS_CMD = "rs"
 
+local function PrintHelpSection(titleKey)
+	print("|cFF888888-----  |cFFFFFFFF"..AL[titleKey].."  |cFF888888-----")
+end
+
+local function PrintHelpCommand(command, descriptionKey, argument)
+	local argumentText = argument and (" |cFFFFFFFB"..argument) or ""
+	print("|cFFFBFF00   /"..RARESCANNERS_CMD.." "..command..argumentText.." |cFF00FFFB"..AL[descriptionKey])
+end
+
 function RSCommandLine.PrintHelp()
 	print("|cFFFBFF00"..AL["CMD_HELP1"])
-	print("|cFFFBFF00   /"..RARESCANNERS_CMD.." "..RSConstants.CMD_OPEN_EXPLORER.." |cFF00FFFB"..AL["CMD_HELP12"])
-	print("|cFFFBFF00   /"..RARESCANNERS_CMD.." "..RSConstants.CMD_TOGGLE_MAP_ICONS.." |cFF00FFFB"..AL["CMD_HELP2"])
-	print("|cFFFBFF00   /"..RARESCANNERS_CMD.." "..RSConstants.CMD_TOGGLE_EVENTS.." |cFF00FFFB"..AL["CMD_HELP3"])
-	print("|cFFFBFF00   /"..RARESCANNERS_CMD.." "..RSConstants.CMD_TOGGLE_TREASURES.." |cFF00FFFB"..AL["CMD_HELP4"])
-	print("|cFFFBFF00   /"..RARESCANNERS_CMD.." "..RSConstants.CMD_TOGGLE_RARES.." |cFF00FFFB"..AL["CMD_HELP5"])
-	print("|cFFFBFF00   /"..RARESCANNERS_CMD.." "..RSConstants.CMD_TOGGLE_DRAGON_GLYPHS.." |cFF00FFFB"..AL["CMD_HELP11"])
-	print("|cFFFBFF00   /"..RARESCANNERS_CMD.." "..RSConstants.CMD_TOGGLE_ALERTS.." |cFF00FFFB"..AL["CMD_HELP6"])
-	print("|cFFFBFF00   /"..RARESCANNERS_CMD.." "..RSConstants.CMD_TOGGLE_EVENTS_ALERTS.." |cFF00FFFB"..AL["CMD_HELP7"])
-	print("|cFFFBFF00   /"..RARESCANNERS_CMD.." "..RSConstants.CMD_TOGGLE_TREASURES_ALERTS.." |cFF00FFFB"..AL["CMD_HELP8"])
-	print("|cFFFBFF00   /"..RARESCANNERS_CMD.." "..RSConstants.CMD_TOGGLE_RARES_ALERTS.." |cFF00FFFB"..AL["CMD_HELP9"])
-	print("|cFFFBFF00   /"..RARESCANNERS_CMD.." "..RSConstants.CMD_TOGGLE_SCANNING_WORLD_MAP_VIGNETTES.." |cFF00FFFB"..AL["CMD_HELP10"])
-	print("|cFFFBFF00   /"..RARESCANNERS_CMD.." "..RSConstants.CMD_TOGGLE_FILTER_REPEATABLE_TREASURES.." |cFF00FFFB"..AL["CMD_HELP14"])
-	print("|cFFFBFF00   /"..RARESCANNERS_CMD.." "..RSConstants.CMD_IMPORT.." |cFFFFFFFBstring".." |cFF00FFFB"..AL["CMD_HELP13"])
-	print("|cFFFBFF00   /"..RARESCANNERS_CMD.." "..RSConstants.CMD_ROUTE.." |cFF00FFFB"..AL["CMD_HELP15"])
-	print("|cFFFBFF00   /"..RARESCANNERS_CMD.." "..RSConstants.CMD_ROUTE_CANCEL.." |cFF00FFFB"..AL["CMD_HELP16"])
+
+	PrintHelpSection("CMD_HELP_SECTION_GENERAL")
+	PrintHelpCommand(RSConstants.CMD_OPEN_EXPLORER, "CMD_HELP12")
+	PrintHelpCommand(RSConstants.CMD_IMPORT, "CMD_HELP13", "string")
+
+	PrintHelpSection("CMD_HELP_SECTION_MAP")
+	PrintHelpCommand(RSConstants.CMD_TOGGLE_MAP_ICONS, "CMD_HELP2")
+	PrintHelpCommand(RSConstants.CMD_TOGGLE_EVENTS, "CMD_HELP3")
+	PrintHelpCommand(RSConstants.CMD_TOGGLE_TREASURES, "CMD_HELP4")
+	PrintHelpCommand(RSConstants.CMD_TOGGLE_RARES, "CMD_HELP5")
+	PrintHelpCommand(RSConstants.CMD_TOGGLE_FILTER_REPEATABLE_TREASURES, "CMD_HELP14")
+
+	PrintHelpSection("CMD_HELP_SECTION_ALERTS")
+	PrintHelpCommand(RSConstants.CMD_TOGGLE_ALERTS, "CMD_HELP6")
+	PrintHelpCommand(RSConstants.CMD_TOGGLE_EVENTS_ALERTS, "CMD_HELP7")
+	PrintHelpCommand(RSConstants.CMD_TOGGLE_TREASURES_ALERTS, "CMD_HELP8")
+	PrintHelpCommand(RSConstants.CMD_TOGGLE_RARES_ALERTS, "CMD_HELP9")
+	PrintHelpCommand(RSConstants.CMD_TOGGLE_SCANNING_WORLD_MAP_VIGNETTES, "CMD_HELP10")
+
+	PrintHelpSection("CMD_HELP_SECTION_ROUTES")
+	PrintHelpCommand(RSConstants.CMD_ROUTE, "CMD_HELP15")
+	PrintHelpCommand(RSConstants.CMD_ROUTE_CANCEL, "CMD_HELP16")
 end
 
 function RSCommandLine.SlashCommand(command, ...)
@@ -96,9 +113,6 @@ function RSCommandLine.SlashCommand(command, ...)
 	elseif (RSUtils.Contains(command, RSConstants.CMD_RECENTLY_SEEN)) then
 		local _, entityID, mapID, x, y = strsplit(";", command)
 		RSRecentlySeenTracker.AddPendingAnimation(tonumber(entityID), mapID, x, y, true)
-	elseif (command == RSConstants.CMD_TOGGLE_DRAGON_GLYPHS) then
-		RSCommandLine.CmdToggleDragonGlyphs()
-		refreshMap = true
 	elseif (command == RSConstants.CMD_OPEN_EXPLORER) then
 		RSExplorerFrame:Show()
 	elseif (RSUtils.Contains(command, RSConstants.CMD_IMPORT)) then
@@ -115,6 +129,9 @@ function RSCommandLine.SlashCommand(command, ...)
 					-- Refresh the options panel
 					private.refreshCustomNpcs = true
 					LibStub("AceConfigRegistry-3.0"):NotifyChange("RareScanner Custom NPCs")
+
+					-- Invalidate minimap tracking cache
+					RSMinimapTracking.ResetCache()
 				end
 			end)
 		end
@@ -237,16 +254,6 @@ function RSCommandLine.CmdToggleScanningWorldmapVignettes()
 	else
 		private.db.general.scanWorldmapVignette = true
 		RSLogger:PrintMessage(AL["CMD_ENABLE_SCANNING_WORLDMAP_VIGNETTES"])
-	end
-end
-
-function RSCommandLine.CmdToggleDragonGlyphs()
-	if (private.db.map.displayDragonGlyphsIcons) then
-		private.db.map.displayDragonGlyphsIcons = false
-		RSLogger:PrintMessage(AL["CMD_HIDE_DRAGON_GLYPHS"])
-	else
-		private.db.map.displayDragonGlyphsIcons = true
-		RSLogger:PrintMessage(AL["CMD_SHOW_DRAGON_GLYPHS"])
 	end
 end
 

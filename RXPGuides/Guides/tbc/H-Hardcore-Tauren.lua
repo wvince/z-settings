@@ -9,6 +9,8 @@ RXPGuides.RegisterGuide([[
 #subgroup RXP TBC Survival Guide 1-30
 #defaultfor Tauren
 #next 6-12 Mulgore
+
+
 step << !Tauren
     #completewith next
     .goto Mulgore,44.92,77.12
@@ -435,7 +437,9 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Antur|r
     .accept 1656 >>Accept A Task Unfinished
     .target Antur Fallow
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -446,6 +450,7 @@ RXPGuides.RegisterGuide([[
 #subgroup RXP TBC Survival Guide 1-30
 #defaultfor Tauren
 #next 12-14 Ghostlands
+
 step
 	#completewith BloodhoofHome
     .subzone 222 >> Run to Bloodhoof Village
@@ -2638,4 +2643,5 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Rathis|r
     .accept 9152 >> Accept Tomber's Supplies
     .target Rathis Tomber
+
 ]])

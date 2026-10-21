@@ -37,12 +37,6 @@
 		return C_CVar.GetCVar(cvar) ~= nil
 	end
 
--- Restart The Graphics Engine So Pending HDR Changes Are Picked Up
-	local function RestartGraphicsEngine()
-		if type(RestartGx) ~= "function" then return end
-		RestartGx()
-	end
-
 -- Build The Interface Options Panel
 	local function BuildPanel()
 		local Panel    = InterfacePanelLib:RegisterAddon("HDRTuner")
@@ -159,16 +153,9 @@
 			})
 		end
 
-		-- Graphics Engine
-		Panel:CreateHeader({ Category = Category, Name = "Graphics Engine" })
-		Panel:CreateButton({
-			Category   = Category,
-			Name       = "Apply Changes",
-			ButtonText = "Restart Graphics Engine",
-			OnClick    = RestartGraphicsEngine,
-			Tooltip    = "Restarts the graphics engine so the HDR settings above take effect. The screen will go black for a moment.",
-			SearchTags = { "restart", "graphics", "gx", "apply" },
-		})
+		-- Slash Command
+		SLASH_HDRTUNER1 = "/hdt"
+		SlashCmdList["HDRTUNER"] = function() Panel:Open() end
 	end
 
 -- OnEvent Function

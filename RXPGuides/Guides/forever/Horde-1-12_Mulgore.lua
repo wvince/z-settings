@@ -1,9 +1,11 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
+
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
-#era/som--h
+#disabledungeons
 << Horde
 #name 1-6 Mulgore
 #version 11
@@ -12,6 +14,7 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-H1
 #defaultfor Tauren
 #next 6-12 Mulgore;6-13 Mulgore
+
 step << !Tauren
     #completewith next
     .goto 1412/1,-259.85,-2914.28--c:Mulgore,44.92,77.12
@@ -105,6 +108,13 @@ step
     .target Chief Hawkwind
 step << Shaman
     .goto 1412/1,-216.18,-2926.26--c:Mulgore,44.07,77.47
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Marjak|r
+    .vendor >> Vendor trash. Sell your weapon if it gives you enough money for a |T135139:0|t[Short Staff] (1s 02c). You'll come back later if you don't have enough yet
+    .itemStat 16,QUALITY,<7
+    .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<1.9
+    .target Marjak Keenblade
+step << Shaman
+    .goto 1412/1,-216.18,-2926.26--c:Mulgore,44.07,77.47
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|cRXP_BUY_Talk to|r |cRXP_FRIENDLY_Marjak Keenblade|r|cRXP_BUY_. Buy a|r |T135139:0|t[Short Staff] |cRXP_BUY_from him|r
     .collect 2132,1,750,1 --Collect Short Staff (1)
     .money <0.0102
@@ -119,6 +129,20 @@ step << Shaman
     .itemcount 2132,1
     .itemStat 16,QUALITY,<7
     .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<1.9
+step
+    #completewith next
+    >>Kill |cRXP_ENEMY_Mountain Cougars|r. Loot them for their |cRXP_LOOT_Pelts|r
+    .complete 750,1 --Mountain Cougar Pelt (10)
+    .mob Mountain Cougar
+step
+    #label RitesoftheEarthmother
+    .goto 1412/1,-139.63,-3430.08--c:Mulgore,42.58,92.18
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Seer Graytongue|r
+    >>|cRXP_WARN_This starts a 10-minute timed quest|r
+    .turnin 755 >>Turn in Rites of the Earthmother
+    .accept 757 >>Accept Rite of Strength
+    .accept 95805 >>Accept Grace of An'she and Mu'sha
+    .target Seer Graytongue
 step
     #loop
     .goto 1412/1,-243.41,-3384.87,0--c:Mulgore,44.60,90.86
@@ -136,15 +160,6 @@ step
     >>Kill |cRXP_ENEMY_Mountain Cougars|r. Loot them for their |cRXP_LOOT_Pelts|r
     .complete 750,1 --Mountain Cougar Pelt (10)
     .mob Mountain Cougar
-step
-    #label RitesoftheEarthmother
-    .goto 1412/1,-139.63,-3430.08--c:Mulgore,42.58,92.18
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Seer Graytongue|r
-    >>|cRXP_WARN_This starts a 10-minute timed quest|r
-    .turnin 755 >>Turn in Rites of the Earthmother
-    .accept 757 >>Accept Rite of Strength
-    .accept 95805 >>Accept Grace of An'she and Mu'sha
-    .target Seer Graytongue
 step
     #loop
 	.goto 1412/1,-292.73,-3285.20,40,0--c:Mulgore,45.56,87.95
@@ -231,6 +246,13 @@ step << Shaman
     .turnin 3093 >>Turn in Rune-Inscribed Note
     .train 8042 >>Train |T136026:0|t[Earth Shock]
     .target Meela Dawnstrider
+step << Druid
+    .goto 1412/1,-279.37,-2893.73--c:Mulgore,45.30,76.52
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kawnie Softbreeze|r
+    >>|cRXP_BUY_Buy|r |T132794:0|t[Refreshing Spring Water] |cRXP_BUY_from her|r
+	.collect 159,5,383,1 --Collect Refreshing Spring Water (10)
+    .target Kawnie Softbreeze
+    .money <0.0025
 step
     #completewith next
     >>Kill |cRXP_ENEMY_Battleboars|r. Loot them for their |cRXP_LOOT_Flanks|r and |cRXP_LOOT_Snouts|r
@@ -447,10 +469,13 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Antur Fallow|r
     .accept 1656 >>Accept A Task Unfinished
     .target Antur Fallow
+
 ]])
+
+
 RXPGuides.RegisterGuide([[
 #forever
-#era/som--h
+#disabledungeons
 << Horde
 #name 6-12 Mulgore
 #version 11
@@ -459,6 +484,8 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-H1
 #defaultfor Tauren
 #next 12-17 The Barrens
+
+
 step
 	#softcore
 	#completewith BloodhoofHome
@@ -492,13 +519,13 @@ step
 step
     #softcore
     .goto 1412/1,-408.900,-2179.800
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Yaw Sharpmane|r 
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Yaw Sharpmane|r
     .accept 96130 >>Accept Chakuyak
     .target Yaw Sharpmane
 step
     #softcore
     .goto 1412/1,-430.600,-2097.600
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ahab Wheathoof|r 
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ahab Wheathoof|r
     .accept 99411 >>Accept Kyle's Gone Missing!
     .target Ahab Wheathoof
 step
@@ -621,13 +648,13 @@ step
 step
     #hardcore
     .goto 1412/1,-408.900,-2179.800
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Yaw Sharpmane|r 
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Yaw Sharpmane|r
     .accept 96130 >>Accept Chakuyak
     .target Yaw Sharpmane
 step
     #hardcore
     .goto 1412/1,-430.600,-2097.600
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ahab Wheathoof|r 
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ahab Wheathoof|r
     .accept 99411 >>Accept Kyle's Gone Missing!
     .target Ahab Wheathoof
 step
@@ -637,7 +664,7 @@ step
     .target Harken Windtotem
 step
     .goto 1412/1,-496.200,-2347.900
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Krang Stonehoof|r 
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Krang Stonehoof|r
     .accept 99108 >>Accept Sparring Match
     .target Krang Stonehoof
 step
@@ -904,6 +931,7 @@ step
     .train 2550 >>Train Cooking
     .turnin 96661 >>Turn in Camping 101: Cooking
     .target Pyall Silentstride
+    .money <0.01
 step
     #label Vision
     .goto 1412/1,-405.75,-2243.32--c:Mulgore,47.76,57.53
@@ -914,7 +942,7 @@ step
     .target Zarlman Two-Moons
 step
     .goto 1412/1,-430.600,-2097.600
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ahab Wheathoof|r 
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ahab Wheathoof|r
     .turnin 99411 >>Turn in Kyle's Gone Missing!
     .target Ahab Wheathoof
     .isQuestComplete 99411
@@ -1001,6 +1029,38 @@ step << Tauren
     .mob +Prairie Stalker
     .complete 756,2 --Cougar Claws (6)
     .mob +Flatland Cougar
+step
+    #softcore
+	#completewith Escort1
+    .deathskip >> Die and respawn at the |cRXP_FRIENDLY_Spirit Healer|r
+step << Hunter
+    #softcore
+    .goto 1412/1,-408.32,-2180.30--c:Mulgore,47.81,55.69
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Yaw|r
+    .train 5116 >> Train your class spells
+    .target Yaw Sharpmane
+    .xp <8,1
+step << Druid
+    #softcore
+    .goto 1412/1,-442.74,-2315.59--c:Mulgore,48.48,59.64
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gennia|r
+    .train 5186 >>Train your class spells
+    .target Gennia Runetotem
+    .xp <8,1
+step << Warrior
+    #softcore
+    .goto 1412/1,-496.17,-2347.78--c:Mulgore,49.52,60.58
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Krang|r
+    .train 284 >> Train your class spells
+    .target Krang Stonehoof
+    .xp <8,1
+step << Shaman
+    #softcore
+    .goto 1412/1,-437.61,-2298.80--c:Mulgore,48.38,59.15
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Narm|r
+    .train 8044 >> Train your class spells
+    .target Narm Skychaser
+    .xp <8,1
 step
     .goto 1412/1,54.800,-2442.200
     >>Kill |cRXP_ENEMY_Chakuyak|r. Loot it for its |cRXP_LOOT_Pelt|r
@@ -1164,6 +1224,12 @@ step
     .vendor >> Vendor trash and repair
     .target Harant Ironbrace
 step
+    .goto 1412/1,-285.000,-2263.400
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Pyall|r
+    .train 2550 >>Train Cooking
+    .turnin 96661 >>Turn in Camping 101: Cooking
+    .target Pyall Silentstride
+step
     .goto 1412/1,-392.500,-2318.500
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Brave Wildrunner|r
     >>|cRXP_WARN_He patrols around a bit|r
@@ -1243,7 +1309,7 @@ step
     .unitscan Kyle the Frenzied
 step
     .goto 1412/1,-430.600,-2097.600
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ahab Wheathoof|r 
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ahab Wheathoof|r
     .turnin 99411 >>Turn in Kyle's Gone Missing!
     .target Ahab Wheathoof
 step
@@ -1310,7 +1376,7 @@ step
 step
     .goto 1456/1,104.500,-1308.400
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Boarton Shadetotem|
-    >>|cRXP_WARN_He is|r |T132320:0|t[Stealthed] 
+    >>|cRXP_WARN_He is|r |T132320:0|t[Stealthed]
     .accept 76156 >>Accept Stalk With The Earthmother
     .target Boarton Shadetotem
 step
@@ -1913,7 +1979,7 @@ step << Druid
 step
     .goto 1456/1,104.500,-1308.400
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Boarton Shadetotem|r
-    >>|cRXP_WARN_He is|r |T132320:0|t[Stealthed] 
+    >>|cRXP_WARN_He is|r |T132320:0|t[Stealthed]
     .turnin 76156 >>Turn in Stalk With The Earthmother
     .accept 76160 >>Accept Stalk With The Earthmother
     .target Boarton Shadetotem
@@ -2469,4 +2535,5 @@ step << Warrior
     .turnin 1498 >>Turn in Path of Defense
     .accept 1502 >>Accept Thun'grim Firegaze
     .target Uzzek
+
 ]])

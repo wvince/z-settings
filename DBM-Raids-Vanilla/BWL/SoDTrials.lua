@@ -4,8 +4,7 @@ local mod	= DBM:NewMod("SoDBWLTrials", "DBM-Raids-Vanilla", 5)
 local L		= mod:GetLocalizedStrings()
 local CL	= DBM_COMMON_L
 
-mod:SetRevision("20260917064253")
-mod:DisableHardcodedOptions()
+mod:SetRevision("20261019224112")
 mod:SetZone(469)
 mod.isTrashMod = true
 mod.isTrashModBossFightAllowed = true
@@ -161,7 +160,7 @@ else
 		end
 	end
 
-	-- fixme: custom event handlers are ugly, especially for test integraiton
+	-- fixme: custom event handlers are ugly
 	-- but i don't trust the zone check in the event handler to always handle this correctly, it may depend on event handler order
 	local f = CreateFrame("Frame")
 	f:RegisterEvent("LOADING_SCREEN_DISABLED")
@@ -171,7 +170,6 @@ else
 		end
 	end
 	f:SetScript("OnEvent", handler)
-	DBM:RegisterCallback("DBMTest_Event", function(_, ...) handler(f, ...) end)
 
 	function mod:SPELL_AURA_APPLIED(args)
 		if args:IsSpell(466357) then -- Blue Trial bomb --> gather

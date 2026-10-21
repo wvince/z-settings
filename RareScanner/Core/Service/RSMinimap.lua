@@ -26,6 +26,7 @@ local RSGuideDB = private.ImportLib("RareScannerGuideDB")
 
 -- RareScanner services
 local RSMap = private.ImportLib("RareScannerMap")
+local RSRecentlySeenTracker = private.ImportLib("RareScannerRecentlySeenTracker")
 local RSNpcPOI = private.ImportLib("RareScannerNpcPOI")
 local RSContainerPOI = private.ImportLib("RareScannerContainerPOI")
 local RSEventPOI = private.ImportLib("RareScannerEventPOI")
@@ -184,6 +185,16 @@ function RSMinimap.RefreshAllData(forzed)
 	end
 end
 
+-- Copy of the found info with the coordinates of the pin, without changing the database
+local function GetPinFoundInfo(alreadyFoundInfo, POI)
+	local pinFoundInfo = {}
+	RSUtils.CloneTable(alreadyFoundInfo, pinFoundInfo)
+	pinFoundInfo.mapID = POI.mapID
+	pinFoundInfo.coordX = POI.x
+	pinFoundInfo.coordY = POI.y
+	return pinFoundInfo
+end
+
 function RSMinimap.RefreshEntityState(entityID)
 	if (pinFramesPool) then
 		local pinExists = false
@@ -192,14 +203,14 @@ function RSMinimap.RefreshEntityState(entityID)
 			if (POI.entityID == entityID) then
 				pinExists = true
 				HBD_Pins:RemoveMinimapIcon(RSMinimap, pin)
+				local isRecentlySeenSpot = POI.isRecentlySeenSpot
 				
 				local isFiltered = false
 				if (POI.isNpc) then
-					-- If the entity spawns in multiple places use the POIs coordinates
+					-- If it is one of the spots of an entity that spawns in multiple places use the POIs coordinates
 					local alreadyFoundInfo = RSGeneralDB.GetAlreadyFoundEntity(entityID, RSConstants.NPC_VIGNETTE)
-					if (alreadyFoundInfo and RSNpcDB.IsMultiZoneSpawn(entityID)) then
-						alreadyFoundInfo.coordX = POI.x
-						alreadyFoundInfo.coordY = POI.y
+					if (alreadyFoundInfo and isRecentlySeenSpot) then
+						alreadyFoundInfo = GetPinFoundInfo(alreadyFoundInfo, POI)
 					end
 					
 					POI = RSNpcPOI.GetNpcPOI(entityID, POI.mapID, RSNpcDB.GetInternalNpcInfo(entityID), alreadyFoundInfo)
@@ -207,11 +218,10 @@ function RSMinimap.RefreshEntityState(entityID)
 						isFiltered = true
 					end
 				elseif (POI.isContainer) then
-					-- If the entity spawns in multiple places use the POIs coordinates
+					-- If it is one of the spots of an entity that spawns in multiple places use the POIs coordinates
 					local alreadyFoundInfo = RSGeneralDB.GetAlreadyFoundEntity(entityID, RSConstants.CONTAINER_VIGNETTE)
-					if (alreadyFoundInfo and RSContainerDB.IsMultiZoneSpawn(entityID)) then
-						alreadyFoundInfo.coordX = POI.x
-						alreadyFoundInfo.coordY = POI.y
+					if (alreadyFoundInfo and isRecentlySeenSpot) then
+						alreadyFoundInfo = GetPinFoundInfo(alreadyFoundInfo, POI)
 					end
 					
 					POI = RSContainerPOI.GetContainerPOI(entityID, POI.mapID, RSContainerDB.GetInternalContainerInfo(entityID), alreadyFoundInfo)
@@ -226,11 +236,19 @@ function RSMinimap.RefreshEntityState(entityID)
 					end
 				end
 				
+				-- The spots of the entities that spawn in multiple places are only shown while they are recently seen, like in the world map
+				if (isRecentlySeenSpot and not RSRecentlySeenTracker.IsRecentlySeen(entityID, POI.x, POI.y)) then
+					isFiltered = true
+				-- Without coordinates in the map of the pin it can't be shown
+				elseif (not POI.x or not POI.y) then
+					isFiltered = true
+				end
+				
 				if (isFiltered) then
-					RSLogger:PrintDebugMessage(string.format("RSMinimap.RefreshEntityState[RELEASED][%s,x=%s,y=%s]", entityID, POI.x, POI.y))
+					RSLogger:PrintDebugMessage(string.format("RSMinimap.RefreshEntityState[RELEASED][%s,x=%s,y=%s]", entityID, tostring(POI.x), tostring(POI.y)))
 					pinFramesPool:Release(pin)
 				else
-					RSLogger:PrintDebugMessage(string.format("RSMinimap.RefreshEntityState[ADDED][%s,x=%s,y=%s]", entityID, POI.x, POI.y))
+					RSLogger:PrintDebugMessage(string.format("RSMinimap.RefreshEntityState[ADDED][%s,x=%s,y=%s]", entityID, tostring(POI.x), tostring(POI.y)))
 					pin.Texture:SetTexture(POI.Texture)
 					pin.Texture:SetScale(RSConfigDB.GetIconsMinimapScale())
 					pin.IconTexture:SetAtlas(POI.iconAtlas)
@@ -241,7 +259,7 @@ function RSMinimap.RefreshEntityState(entityID)
 				end
 				
 				-- If the entity spawns in multiple places keep checking the rest of entities in the list
-				if (not RSNpcDB.IsMultiZoneSpawn(entityID) and not RSContainerDB.IsMultiZoneSpawn(entityID)) then
+				if (not RSNpcDB.IsMultiZoneSpawn(entityID) and not RSContainerDB.IsRepeatable(entityID)) then
 					break
 				end
 			end
@@ -258,25 +276,8 @@ function RSMinimap.RefreshEntityState(entityID)
 				end
 			end
 	
-			local POI
-			if (RSNpcDB.GetInternalNpcInfoByMapID(entityID, previousMapID)) then
-				POI = RSNpcPOI.GetNpcPOI(entityID, previousMapID, RSNpcDB.GetInternalNpcInfo(entityID), RSGeneralDB.GetAlreadyFoundEntity(entityID))
-				if (POI.isDead and not RSConfigDB.IsShowingAlreadyKilledNpcs()) then
-					return
-				end
-			elseif (RSContainerDB.GetInternalContainerInfoByMapID(entityID, previousMapID)) then
-				POI = RSContainerPOI.GetContainerPOI(entityID, previousMapID, RSContainerDB.GetInternalContainerInfo(entityID), RSGeneralDB.GetAlreadyFoundEntity(entityID))
-				if (POI.isOpened and not RSConfigDB.IsShowingAlreadyOpenedContainers()) then
-					return
-				end
-			elseif (RSEventDB.GetInternalEventInfoByMapID(entityID, previousMapID)) then
-				POI = RSEventPOI.GetEventPOI(entityID, previousMapID, RSEventDB.GetInternalEventInfo(entityID), RSGeneralDB.GetAlreadyFoundEntity(entityID))
-				if (POI.isCompleted and not RSConfigDB.IsShowingCompletedEvents()) then
-					return
-				end
-			end
-			
-			AddMinimapPin(POI)
+			-- Same filters as when the minimap is refreshed
+			AddMinimapPin(RSMap.GetMapEntityPOI(entityID, previousMapID, false, true))
 		end
 	end
 end
@@ -286,7 +287,7 @@ function RSMinimap.HideIcon(entityID, x, y)
 		for pin in pinFramesPool:EnumerateActive() do
 			local POI = pin.POI
 			if (x ~= nil and y ~= nil) then
-				if (POI.entityID == entityID and tostring(POI.x) == x and tostring(POI.y) == y) then
+				if (POI.entityID == entityID and POI.x == x and POI.y == y) then
 					HBD_Pins:RemoveMinimapIcon(RSMinimap, pin)
 					pinFramesPool:Release(pin)
 					break

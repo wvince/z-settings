@@ -14,6 +14,7 @@ local RSConfigDB = private.ImportLib("RareScannerConfigDB")
 local RSUtils = private.ImportLib("RareScannerUtils")
 local RSMinimap = private.ImportLib("RareScannerMinimap")
 local RSTooltip = private.ImportLib("RareScannerTooltip")
+local RSTextTags = private.ImportLib("RareScannerTextTags")
 
 RSGuideMixin = CreateFromMixins(RSPinMixin);
 
@@ -87,7 +88,15 @@ function RSGuideMixin:OnMouseEnter()
 		end
 
 		if (self.POI.tooltip.comment) then
-			GameTooltip_AddNormalLine(RSTooltip.Tooltip, self.POI.tooltip.comment);
+			local rawComment = self.POI.tooltip.rawComment or self.POI.tooltip.comment
+			local comment = RSTextTags.ParseText(rawComment, function(newComment)
+				if (newComment and self:IsMouseOver() and RSTooltip.Tooltip:IsShown()) then
+					self.POI.tooltip.comment = newComment
+					self:OnMouseEnter()
+				end
+			end)
+			self.POI.tooltip.comment = comment
+			GameTooltip_AddNormalLine(RSTooltip.Tooltip, comment);
 		end
 
 		RSTooltip.Tooltip:Show()

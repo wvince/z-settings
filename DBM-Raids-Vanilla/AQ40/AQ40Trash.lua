@@ -9,8 +9,7 @@ end
 local mod	= DBM:NewMod("AQ40Trash", "DBM-Raids-Vanilla", catID)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20260920050230")
-mod:DisableHardcodedOptions()
+mod:SetRevision("20261019224112")
 --mod:SetModelID(47785)
 mod:SetMinSyncRevision(20200710000000)--2020, 7, 10
 mod:SetZone(531) -- Important to keep to not double trigger shared IDs with AQ20
@@ -440,7 +439,6 @@ else
 		if not mobInfo.abilities[ability] then
 			mobInfo.abilities[ability] = true
 			mobInfo.sortedAbilities[#mobInfo.sortedAbilities + 1] = trashAbilitiesLocalized[ability] or ability
-			self:TestTrace("DetectAbility", guid, name, ability)
 			DBM:Debug(("TrackTrashAbility %s %s %s"):format(guid, name, ability), 1)
 		end
 		self:ShowInfoFrame()
@@ -449,7 +447,6 @@ else
 	function mod:RemoveTrackTrashAbilityMob(guid)
 		if mobs[guid] then
 			deadMobs[guid] = GetTime()
-			self:TestTrace("StopTracking", guid)
 		end
 		mobs[guid] = nil
 	end

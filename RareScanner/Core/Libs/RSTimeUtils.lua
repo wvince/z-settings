@@ -172,3 +172,25 @@ function RSTimeUtils.MinutesToSeconds(minutes)
 		return 0
 	end
 end
+
+function RSTimeUtils.FormatShortDuration(seconds)
+	if (not seconds or seconds <= 0) then return "0s" end
+	local hours = math.floor(seconds / 3600)
+	local minutes = math.floor((seconds % 3600) / 60)
+	local secs = seconds % 60
+	if (hours > 0) then
+		if (minutes > 0) then
+			return string.format("%dh %dm", hours, minutes)
+		else
+			return string.format("%dh", hours)
+		end
+	elseif (minutes > 0) then
+		if (secs > 0) then
+			return string.format("%dm %ds", minutes, secs)
+		else
+			return string.format("%dm", minutes)
+		end
+	else
+		return string.format("%ds", secs)
+	end
+end

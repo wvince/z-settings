@@ -3,8 +3,7 @@ if not DBM:IsSeasonal("SeasonOfDiscovery") then return end
 local mod	= DBM:NewMod("MechanicalMenagerieSoD", "DBM-Raids-Vanilla", 9)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20260917064253")
-mod:DisableHardcodedOptions()
+mod:SetRevision("20261019224112")
 mod:SetCreatureID(218245, 218244, 218243, 218242)--https://www.wowhead.com/classic/npc=218344/explosive-egg
 mod:SetEncounterID(2935)
 mod:SetBossHPInfoToHighest()

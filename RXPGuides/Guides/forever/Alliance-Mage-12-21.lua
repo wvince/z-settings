@@ -1,8 +1,10 @@
 local faction = UnitFactionGroup("player")
 if faction == "Horde" then return end
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 12-18 Darkshore Mage AoE
 #version 1
@@ -10,6 +12,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Speedrun Guide Mage
 #defaultfor Alliance Mage
 #next 18-21 Redridge Mage AoE
+
 step
     #completewith next
     .goto 1439/1,533.23,6399.77
@@ -794,8 +797,10 @@ step
     .goto 1429/0,-1637.62,-9642.89,125,0
     .zone Redridge Mountains >> Run all the way east to Redridge Mountains. Sort out your keybinds en route, making sure you have your spells comfortably on your bars
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 18-21 Redridge Mage AoE
 #version 1
@@ -803,6 +808,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Speedrun Guide Mage
 #defaultfor Alliance Mage
 #next 21-22 Duskwood Mage AoE
+
 step
     #sticky
     #completewith Gnolls

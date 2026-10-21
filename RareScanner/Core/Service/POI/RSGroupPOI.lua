@@ -51,6 +51,8 @@ local function GetContainerLeftTexture(POI)
 		return RSConstants.GROUP_RED_CONTAINER_L_TEXTURE
 	elseif (RSUtils.Contains(POI.Texture, RSConstants.NORMAL_CONTAINER_TEXTURE_FILE)) then
 		return RSConstants.GROUP_NORMAL_CONTAINER_L_TEXTURE
+	elseif (RSUtils.Contains(POI.Texture, RSConstants.LIGHT_GREEN_CONTAINER_TEXTURE_FILE)) then
+		return RSConstants.GROUP_LIGHT_GREEN_CONTAINER_L_TEXTURE
 	elseif (RSUtils.Contains(POI.Texture, RSConstants.BLUE_CONTAINER_TEXTURE_FILE)) then
 		return RSConstants.GROUP_BLUE_CONTAINER_L_TEXTURE
 	end
@@ -63,6 +65,8 @@ local function GetContainerRightTexture(POI)
 		return RSConstants.GROUP_RED_CONTAINER_R_TEXTURE
 	elseif (RSUtils.Contains(POI.Texture, RSConstants.NORMAL_CONTAINER_TEXTURE_FILE)) then
 		return RSConstants.GROUP_NORMAL_CONTAINER_R_TEXTURE
+	elseif (RSUtils.Contains(POI.Texture, RSConstants.LIGHT_GREEN_CONTAINER_TEXTURE_FILE)) then
+		return RSConstants.GROUP_LIGHT_GREEN_CONTAINER_R_TEXTURE
 	elseif (RSUtils.Contains(POI.Texture, RSConstants.BLUE_CONTAINER_TEXTURE_FILE)) then
 		return RSConstants.GROUP_BLUE_CONTAINER_R_TEXTURE
 	end
@@ -75,6 +79,8 @@ local function GetContainerTopTexture(POI)
 		return RSConstants.GROUP_RED_CONTAINER_T_TEXTURE
 	elseif (RSUtils.Contains(POI.Texture, RSConstants.NORMAL_CONTAINER_TEXTURE_FILE)) then
 		return RSConstants.GROUP_NORMAL_CONTAINER_T_TEXTURE
+	elseif (RSUtils.Contains(POI.Texture, RSConstants.LIGHT_GREEN_CONTAINER_TEXTURE_FILE)) then
+		return RSConstants.GROUP_LIGHT_GREEN_CONTAINER_T_TEXTURE
 	elseif (RSUtils.Contains(POI.Texture, RSConstants.BLUE_CONTAINER_TEXTURE_FILE)) then
 		return RSConstants.GROUP_BLUE_CONTAINER_T_TEXTURE
 	end

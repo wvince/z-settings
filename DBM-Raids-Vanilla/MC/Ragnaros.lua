@@ -12,8 +12,10 @@ end
 local mod	= DBM:NewMod("Ragnaros-Classic", "DBM-Raids-Vanilla", catID)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20260920054026")
-mod:DisableHardcodedOptions()
+mod:SetRevision("20261019224112")
+if DBM:IsForever() then
+	mod:EnableGenericTrash()
+end
 mod:SetCreatureID(DBM:IsSeasonal("SeasonOfDiscovery") and 228438 or 11502)
 mod:SetEncounterID(672)
 mod:SetHotfixNoticeRev(20240724000000)
@@ -23,6 +25,7 @@ mod:SetZone(409)
 mod:RegisterCombat("combat")
 if DBM:IsRestricted() then
 	mod:SetModelID(11121)
+	--TODO, add aura sound for 461062 if it's used in forever
 else
 
 	mod:RegisterEvents(

@@ -1,8 +1,10 @@
 local faction = UnitFactionGroup("player")
 if faction == "Horde" then return end
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Human Mage
 #name 1-10 Elwynn Forest Mage AoE
 #version 1
@@ -807,8 +809,10 @@ step
 step
     .goto 1426/0,-2354.62,-4898.20,25 >>Go through the tunnel to Loch Modan
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Gnome Mage
 #name 1-10 Dun Morogh Mage AoE
 #version 1
@@ -1456,8 +1460,10 @@ step
 .target Mountaineer Barleybrew
     .accept 414 >> Accept Stout to Kadrell
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 10-12 Loch Modan Mage AoE
 #version 1
@@ -1891,3 +1897,4 @@ step
     #label Darkshore1
     .zone Darkshore >>Get onto the boat when it comes. Take it to Darkshore. Start conjuring as much level 5 water as possible
 ]])
+

@@ -146,7 +146,7 @@ local function SearchContainerByZoneID(mapID, containerName, isContinentZone)
 	end
 	
 	if (mapID) then
-		local containerIDsWithNames = RSContainerDB.GetActiveContainerIDsWithNamesByMapID(mapID)
+		local containerIDsWithNames = RSContainerDB.GetActiveContainerIDsWithNamesByMapID(mapID, true)
 		if (RSUtils.GetTableLength(containerIDsWithNames) > 0) then
 			for containerID, name in pairs(containerIDsWithNames) do
 				if (not containerName or RSUtils.Contains(name, containerName)) then

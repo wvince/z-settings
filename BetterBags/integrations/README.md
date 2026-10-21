@@ -55,8 +55,8 @@ Integrates with Masque for custom button skinning.
 
 **Features:**
 - Custom button skins for item buttons
-- Separate groups for Backpack and Bank
-- Respects theme DisableMasque setting
+- Separate groups for Backpack, Bank and BetterBags Next's Vendor
+- Respects the theme's `Masque = false` (`Sonata:UsesMasque()`), taking buttons out of their groups when such a theme is applied
 - Dynamic button registration/removal
 - Blend mode fixes for proper display
 
@@ -69,13 +69,17 @@ Integrates with Masque for custom button skinning.
 **Groups:**
 - `BetterBags/Backpack` - All backpack item buttons
 - `BetterBags/Bank` - All bank item buttons
+- `BetterBags/Vendor` - BetterBags Next's vendor buttons (`next/vendorbutton.lua`): their square
+  button, with its parts named (`Icon`, `IconBorder`, `Count`, `Highlight`), as an `Item` button
 
 **Event Handlers:**
 - `item/NewButton` - Register new item buttons
-- `item/Updated` - Update button registration
-- `item/Clearing` - Remove button from group
+- `item/Updated` - Update button registration (sent by a full button draw; a redraw whose inputs are unchanged is skipped and sends nothing)
+- `item/Clearing` - Not handled: a released item button stays in its group (buttons exist for the whole session; its next draw re-skins it)
 - `bagbutton/Updated` - Register bag slot buttons
 - `bagbutton/Clearing` - Remove bag slot buttons
+- `vendor/NewButton` - Register a new vendor button (sent once per button; vendor buttons are reused,
+  and a theme that uses Masque adds back the ones a theme without it took out)
 
 **Methods:**
 | Method | Description | Parameters | Returns |
@@ -179,7 +183,7 @@ Integrations are automatic and require no configuration:
 While there's no built-in disable option, integrations can be prevented by:
 - Not installing the third-party addon
 - Disabling the third-party addon
-- For Masque: Using a theme with `DisableMasque = true`
+- For Masque: Using a theme with `Masque = false`
 
 ## Adding New Integrations
 
@@ -264,7 +268,7 @@ masque:ReapplyBlend(button)
 3. **Performance**: Cache addon references, avoid repeated lookups
 4. **User Feedback**: Print confirmation when integration loads
 5. **Combat Safety**: Defer updates during combat when needed
-6. **Theme Respect**: Honor theme settings (e.g., DisableMasque)
+6. **Theme Respect**: Honor theme settings (e.g., `Masque = false`)
 7. **Graceful Degradation**: Continue working if integration fails
 
 ## Troubleshooting
@@ -278,7 +282,7 @@ masque:ReapplyBlend(button)
 
 ### Masque Skins Not Applying
 
-- Ensure theme doesn't have `DisableMasque = true`
+- Ensure the theme doesn't set `Masque = false`
 - Check Masque group settings in Masque config
 - Try `/reload` to refresh skin application
 

@@ -1,8 +1,10 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Horde
 #name 1-6 Durotar
 #version 11
@@ -11,6 +13,7 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-H1
 #defaultfor Troll/Orc
 #next 6-10 Durotar
+
 step << !Orc !Troll
     #completewith next
     +|cRXP_WARN_You have selected a guide meant for Orcs and Trolls. You should choose the same starter zone that you start in|r
@@ -283,10 +286,12 @@ step
     .accept 3084 >>Accept Rune-Inscribed Tablet << Troll Shaman
     .accept 3085 >>Accept Hallowed Tablet << Troll Priest
     .accept 3086 >>Accept Glyphic Tablet << Troll Mage
+    .accept 98575 >>Accept Tainted Tablet << Troll Warlock
     .accept 3087 >>Accept Etched Parchment << Orc Hunter
     .accept 3088 >>Accept Encrypted Parchment << Orc Rogue
     .accept 3089 >>Accept Rune-Inscribed Parchment << Orc Shaman
     .accept 3090 >>Accept Tainted Parchment << Orc Warlock
+    .accept 98576 >>Accept Glyphic Parchment << Orc Mage
     .turnin 804,1 >>Turn in Sarkoth << Shaman
     .turnin 804 >>Turn in Sarkoth << !Shaman
     .target Gornek
@@ -310,11 +315,16 @@ step << Rogue
     .turnin 3083 >>Turn in Encrypted Tablet << Troll Rogue
     .turnin 3088 >>Turn in Encrypted Parchment << Orc Rogue
     .target Rwag
-step << skip
+step
+    #optional
     .goto 1411/1,-4102.400,-588.900
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kzan Thornslash|r in the back of the cave
     .turnin 97279 >>Turn in Wayward Weapons
     .target Kzan Thornslash
+    .isQuestComplete 97279
+step
+    #optional
+    .abandon 97279 >>Abandon Wayward Weapons
 step << Shaman
     .goto 1411/1,-4102.600,-588.800
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kzan|r
@@ -349,7 +359,8 @@ step << Warlock
     #label Nartok2
     .goto 1411/1,-4111.87,-607.00
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Nartok|r
-    .turnin 3090 >>Turn in Tainted Parchment
+    .turnin 3090 >>Turn in Tainted Parchment << Orc Warlock
+    .turnin 98575 >>Turn in Tainted Tablet << Troll Warlock
     .train 172 >> Train |T136118:0|t[Corruption]
     .target Nartok
 step
@@ -380,7 +391,8 @@ step << Mage
     #requires Galgar
     .goto 1411/1,-4210.22,-625.33
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mai'ah|r
-    .turnin 3086 >>Turn in Glyphic Tablet << Troll
+    .turnin 3086 >>Turn in Glyphic Tablet << Troll Mage
+    .turnin 98576 >>Turn in Glyphic Parchment << Orc Mage
     .train 1459 >> Train |T135932:0|t[Arcane Intellect]
     .target Mai'ah
 step << !Warlock
@@ -1080,8 +1092,10 @@ step
     .goto 1411/1,-4600.96,-603.82,25 >>Exit the Valley of Trials
     .isOnQuest 805
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Horde
 #name 6-10 Durotar
 #version 11
@@ -1090,6 +1104,7 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-H1
 #defaultfor Troll/Orc
 #next 10-12 Durotar
+
 step
     .goto 1411/1,-4715.17,-599.240
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ukor|r
@@ -1136,13 +1151,13 @@ step
     .goto 1411/1,-4939.89,-793.12,8 >> Enter the big hut
 step << !Rogue !Warrior
     .goto 1411/1,-4960.000,-791.300
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Pa'zula|r 
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Pa'zula|r
     >>|cRXP_WARN_This will unlock a quest. Skip this step if you already have 2 professions|r
     .train 7411 >> Train |T136244:0|t[Enchanting]
     .target Pa'zula
 step << !Rogue !Warrior
     .goto 1411/1,-4960.000,-791.300
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Pa'zula|r 
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Pa'zula|r
     .accept 96873 >>Accept A Pain in the Neck
     .target Pa'zula
     .skill enchanting,<1,1
@@ -2828,7 +2843,6 @@ step << Hunter/Shaman
     #completewith next
     .goto 1454/1,-4367.46,1405.44,50,0
     .zone Orgrimmar >> Enter Orgrimmar
-    .zoneskip Orgrimmar
 step << Hunter/Shaman
     .goto 1454/1,-4460.600,1584.300,10,0
     .goto 1454/1,-4460.000,1598.600
@@ -2850,7 +2864,7 @@ step << Hunter/Shaman
     .isOnQuest 96877
 step << Hunter/Shaman
     .goto 1454/1,-4466.800,1954.800
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kor'geld|r 
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kor'geld|r
     .accept 97242 >>Accept Yelmak's Medley
     .target Kor'geld
 step << Hunter/Shaman
@@ -2933,7 +2947,7 @@ step << Hunter/Shaman
     .target Migi
 step << Hunter/Shaman
     .goto 1454/1,-4205.800,2007.800
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thra|r 
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thra|r
     .accept 97326 >>Accept Rocks to Rests
     .target Thra
 step << Hunter/Shaman
@@ -3073,8 +3087,10 @@ step << Rogue
     .train 674 >> Train your class spells
     .target Kaplak
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Horde
 #name 10-12 Durotar
 #version 11
@@ -3084,6 +3100,8 @@ RXPGuides.RegisterGuide([[
 #defaultfor Troll/Orc
 #next 10-12 Tirisfal (Orc/Troll) << !Hunter !Shaman !Tauren !Skyborne
 #next 12-17 The Barrens << Orc Hunter/Troll Hunter/Orc Shaman/Troll Shaman
+
+
 step << Shaman/Hunter
     .goto 1411/1,-4648.55,271.43
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Takrin|r
@@ -3135,7 +3153,6 @@ step << Shaman
 step << skip --Shaman
     #completewith MargozTurnIn
     .deathskip >> Die and respawn at the |cRXP_FRIENDLY_Spirit Healer|r
-    --TODO: Re-add deathskip after ress timer fix
 step << Shaman
     .goto 1411/1,-5061.700,201.700
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Heglan Shadeeye|r
@@ -3243,7 +3260,7 @@ step << skip
     #completewith SecuringLinesTurnIn
     .deathskip >> Die and respawn at the |cRXP_FRIENDLY_Spirit Healer|r
 step
-    --#hardcore
+    #hardcore
     #completewith next
     .goto 1411/1,-4804.53,830.5,60,0
     .goto 1411/1,-4698.78,842.48,60,0
@@ -3459,7 +3476,7 @@ step
     .isOnQuest 96877
 step
     .goto 1454/1,-4466.800,1954.800
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kor'geld|r 
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kor'geld|r
     .accept 97242 >>Accept Yelmak's Medley
     .target Kor'geld
 step
@@ -3514,7 +3531,7 @@ step
     .target Migi
 step
     .goto 1454/1,-4205.800,2007.800
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thra|r 
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thra|r
     .accept 97326 >>Accept Rocks to Rests
     .target Thra
 step
@@ -3535,6 +3552,12 @@ step << !Shaman !Hunter
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Nazgrel|r
     .turnin 831 >>Turn in The Admiral's Orders
     .target Nazgrel
+step << !Shaman !Hunter
+    .goto 1454/1,-4125.79,1920.10
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thrall|r
+    .accept 5726 >>Accept Hidden Enemies
+    .target Thrall
+    .dungeon RFC
 step << Shaman/Hunter
     .goto 1454/1,-4125.79,1920.10
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thrall|r
@@ -3671,7 +3694,26 @@ step << Shaman/Hunter
     >>|cRXP_WARN_Loot the|r |T134095:0|t[Flawed Power Stone] |cRXP_WARN_next to|r |cRXP_FRIENDLY_Ak'Zeloth|r|cRXP_WARN_. This item has a 30 minute timer, so be sure to be quick|r
     .turnin 926 >>Turn in Flawed Power Stone
     .isOnQuest 924
-step << Rogue/Mage/Priest/Warlock/Warrior
+step << !Shaman !Hunter
+    #loop
+    .goto 1411/1,-4805.59,1495.67,0
+    .goto 1411/1,-4855.82,1498.84,15,0
+    .goto 1411/1,-4833.08,1494.96,15,0
+    .goto 1411/1,-4805.59,1495.67,15,0
+    .goto 1411/1,-4784.44,1535.85,15,0
+    .goto 1411/1,-4750.60,1531.62,15,0
+    .goto 1411/1,-4734.21,1505.54,15,0
+    .goto 1411/1,-4693.49,1519.64,15,0
+    .goto 1411/1,-4679.75,1501.31,15,0
+    .goto 1411/1,-4684.50,1466.06,15,0
+    .goto 1411/1,-4805.59,1495.67,15,0
+    >>Kill |cRXP_ENEMY_Burning Blade Orcs|r. Loot them for a |cRXP_LOOT_Lieutenant's Insignia|r
+    .complete 5726,1 --Lieutenant's Insignia (1)
+    .mob Burning Blade Fanatic
+    .mob Burning Blade Apprentice
+    .dungeon RFC
+    .isOnQuest 5726
+step << !Shaman !Hunter
     #label ZeptoUC1
     .goto 1411/1,-4648.55,1321.88,40 >>Go up the Zeppelin Tower
     .zone Tirisfal Glades >>Take the Zeppelin to Tirisfal Glades
@@ -3681,8 +3723,11 @@ step
     #optional
     .abandon 816 >>Abandon Lost But Not Forgotten
 ]])
+
+
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Horde
 #name 10-12 Tirisfal (Orc/Troll)
 #version 11
@@ -3691,6 +3736,7 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-H1
 #defaultfor !Hunter !Shaman !Tauren !Skyborne !Undead
 #next 12-14 Silverpine Forest << !Hunter !Shaman !Tauren !Skyborne !Undead
+
 step
     #completewith DeliverytoSPF
     .goto 1420/0,253.4,2234.85,80 >> Travel to Brill
@@ -4133,7 +4179,7 @@ step << Warrior
     .abandon 1821 >> Abandon Agamand Heirlooms
 step
     #optional
-    .abandon 375 >>Abandon The Chill of Death 
+    .abandon 375 >>Abandon The Chill of Death
 step
     #label LeaveUndercity3
     .goto 1458/0,419.89,1627.54,50,0

@@ -1,14 +1,18 @@
 local faction = UnitFactionGroup("player")
 if faction == "Horde" then return end
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Human Mage
 #name 1-10 ADV Elwynn Forest Human Mage AoE
 #version 2
 #group RestedXP ADV AoE Alliance Mage
 #defaultfor Human Mage
 #next 10-11 ADV Dun Morogh Human Mage AoE
+
+
 step << !Human Mage
     #season 2
     #completewith next
@@ -1138,14 +1142,17 @@ step
     .goto 1426/0,-1145.04,-5504.30
     .zone Dun Morogh >> Exit Ironforge
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Human Mage
 #name 10-11 ADV Dun Morogh Human Mage AoE
 #version 2
 #group RestedXP ADV AoE Alliance Mage
 #defaultfor Human Mage
 #next 10-12 ADV Darkshore 1 Mage AoE
+
 step
     #completewith Rudra
     #label Dirt
@@ -1427,14 +1434,18 @@ step << skip
     .zone Dun Morogh >>|cRXP_WARN_Position your character until it looks like they're floating on the edge of the metal railing. Logout skip to Dun Morogh|r
     .isOnQuest 416
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Gnome Mage
 #name 1-10 ADV Dun Morogh Gnome Mage AoE
 #version 2
 #group RestedXP ADV AoE Alliance Mage
 #defaultfor Gnome Mage
 #next 10-12 ADV Darkshore 1 Mage AoE
+
+
 step << !Gnome Mage
     #season 2
     #completewith next
@@ -2983,14 +2994,17 @@ step << skip
     .zone Dun Morogh >>|cRXP_WARN_Jump on top of the Candles on the table. Logout skip to Dun Morogh|r
     .isOnQuest 416
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 10-12 ADV Darkshore 1 Mage AoE
 #version 2
 #group RestedXP ADV AoE Alliance Mage
 #defaultfor Human Mage/Gnome Mage
 #next 12-14 ADV Loch Modan Mage AoE
+
 step
     #completewith DeathlessSkip
     .goto 1455/0,-833.45,-5021.400,20,0
@@ -3537,14 +3551,17 @@ step
     .fly Thelsamar >> Fly to Thelsamar
     .target Gryth Thurden
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 10-12 LAUNCH ADV Darkshore 1 Mage AoE
 #version 2
 #group RestedXP ADV AoE Alliance Mage
 #defaultfor none
 #next 12-14 ADV Loch Modan Mage AoE
+
 --VV Make this an alternative route that must be manually selected
 step
     #completewith next
@@ -4102,8 +4119,10 @@ step
     .fly Thelsamar >> Fly to Thelsamar
     .target Gryth Thurden
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 12-14 ADV Loch Modan Mage AoE
 #version 2
@@ -4880,15 +4899,19 @@ step
     .hs >> |cRXP_WARN_Hearthstone BATCH from Stormwind to Auberdine|r
     .target Innkeeper Allison
     .zoneskip Darkshore
+
 ]])
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 14-16 ADV Darkshore 2 Mage AoE
 #version 2
 #group RestedXP ADV AoE Alliance Mage
 #defaultfor Human Mage/Gnome Mage
 #next 16-18 ADV Westfall Mage AoE
+
+
 step
     #completewith DeepO
     +|cRXP_WARN_Save any |T132917:0|t[Light Feathers] you get for later|r
@@ -5526,14 +5549,17 @@ step
     .target Innkeeper Shaussiy
     .zoneskip Stormwind City
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 16-18 ADV Westfall Mage AoE
 #version 2
 #group RestedXP ADV AoE Alliance Mage
 #defaultfor Human Mage/Gnome Mage
 #next 18-20 ADV Darkshore 3 Mage AoE
+
 step
     #completewith JenneaT
     +|cRXP_WARN_NOTE: You need 12 stacks of each cloth (|r|T132911:0|t[Wool Cloth]|cRXP_WARN_,|r |T132905:0|t[Silk Cloth]|cRXP_WARN_,|r |T132892:0|t[Mageweave Cloth]|cRXP_WARN_,|r and |T132903:0|t[Runecloth]|cRXP_WARN_) to do the cloth turnins later. You'll get these naturally as you level|r
@@ -6254,14 +6280,17 @@ step
     .target Innkeeper Allison
     .zoneskip Darkshore
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 18-20 ADV Darkshore 3 Mage AoE
 #version 2
 #group RestedXP ADV AoE Alliance Mage
 #defaultfor Human Mage/Gnome Mage
 #next 20-22 ADV Redridge 1 Mage AoE
+
 step
     .goto 1439/1,529.30,6415.93
     >>Talk to |cRXP_FRIENDLY_Taldan|r
@@ -7028,15 +7057,19 @@ step
     .turnin 741,3 >>Turn in The Absent Minded Prospector
     .accept 942 >>Accept The Absent Minded Prospector
     .target Chief Archaeologist Greywhisker
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 20-22 ADV Redridge 1 Mage AoE
 #version 2
 #group RestedXP ADV AoE Alliance Mage
 #defaultfor Human Mage/Gnome Mage
 #next 22-26 ADV Wetlands 1 Mage AoE
+
 step
     #completewith next
     .hs >> Hearth to Stormwind City

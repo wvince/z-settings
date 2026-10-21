@@ -17,8 +17,10 @@ if DBM:IsSeasonal("SeasonOfDiscovery") then
 else
 	mod.statTypes = "normal"
 end
-mod:SetRevision("20260920054026")
-mod:DisableHardcodedOptions()
+mod:SetRevision("20261019224112")
+if DBM:IsForever() then
+	mod:EnableGenericTrash()
+end
 mod:SetCreatureID(11583)
 mod:SetEncounterID(617)
 mod:SetHotfixNoticeRev(20200310000000)--2020, Mar, 10th
@@ -48,7 +50,7 @@ else
 	local specwarnShadowCommand	= mod:NewSpecialWarningTarget(22667, nil, nil, 2, 1, 2, nil, nil, "findmc")
 	local specwarnVeilShadow	= mod:NewSpecialWarningDispel(22687, "RemoveCurse", nil, nil, 1, 2, nil, nil, "dispelnow")
 	local specwarnClassCall		= mod:NewSpecialWarning("specwarnClassCall", nil, nil, nil, 1, 2, nil, nil, nil, nil, "targetyou")
-	local timerPhase2			= mod:NewStageCountTimer("v14.2-17.6")
+	local timerPhase2			= mod:NewStageCountTimer("v14.2-17.7")
 	local timerClassCall 		= mod:NewTimer(30, "TimerClassCall", nil, nil, nil, 5)
 	local timerFearCD			= mod:NewVarTimer("v27-90.1", 22686, nil, nil, nil, 2)
 	local timerShadowFlameCD	= mod:NewVarTimer("v8.1-37.2", 22539, nil, false)

@@ -541,6 +541,8 @@ local function GetCastbarSize(castBar)
         return BetterBlizzFramesDB.targetCastBarWidth, BetterBlizzFramesDB.targetCastBarHeight
     elseif castBar == FocusFrameSpellBar then
         return BetterBlizzFramesDB.focusCastBarWidth, BetterBlizzFramesDB.focusCastBarHeight
+    elseif castBar.unitType == "pet" then
+        return BetterBlizzFramesDB.petCastBarWidth, BetterBlizzFramesDB.petCastBarHeight
     end
     return BetterBlizzFramesDB.partyCastBarWidth, BetterBlizzFramesDB.partyCastBarHeight
 end
@@ -637,6 +639,7 @@ end
 
 function BBF.ClassicCastbar(castBar, unitType)
     local isParty = unitType == "party"
+    local isPet = unitType == "pet"
     local isPlayer = unitType == "player"
     local isTargets = unitType == "target" or unitType == "focus"
 
@@ -684,7 +687,10 @@ function BBF.ClassicCastbar(castBar, unitType)
     -- castBar.BorderShield:SetTexture(311862)
     -- castBar.BorderShield:SetSize(196, 56)
 
-    if not isParty then
+    if isPet then
+        castBar.iconXPos = 0
+        castBar.iconYPos = 0
+    elseif not isParty then
         local unit = castBar.unit == "pet" and "player" or castBar.unit
         castBar.iconXPos = BetterBlizzFramesDB[unit.."CastbarIconXPos"]
         castBar.iconYPos = BetterBlizzFramesDB[unit.."CastbarIconYPos"]
@@ -853,7 +859,7 @@ local function SpellBarStart(spellbar, unit, channeling)
         classicStyle = BetterBlizzFramesDB.classicCastbarsParty
     else -- pet
         showIcon = BetterBlizzFramesDB.showPetCastBarIcon
-        classicStyle = false
+        classicStyle = BetterBlizzFramesDB.classicCastbars
     end
 
     local name, _, texture, castID, notInterruptible
@@ -1123,6 +1129,27 @@ function BBF.UpdatePetCastbar()
             petSpellBar.Text:SetPoint("CENTER", petSpellBar, "BOTTOM", 0, -5.5)
         end
 
+        if BetterBlizzFramesDB.classicCastbars then
+            BBF.ClassicCastbar(petSpellBar, "pet")
+            if BetterBlizzFramesDB.darkModeUi and BetterBlizzFramesDB.darkModeCastbars then
+                local castbarBorder = BetterBlizzFramesDB.darkModeColor + 0.1
+                petSpellBar.Border:SetVertexColor(castbarBorder, castbarBorder, castbarBorder)
+            end
+            petSpellBar.Text:SetWidth(width)
+            petSpellBar.TextBorder:SetAlpha(0)
+
+            if BetterBlizzFramesDB.petCastBarTestMode then
+                petSpellBar:SetStatusBarTexture(classicCastbarTexture)
+                if recolorCastbars then
+                    petSpellBar:SetStatusBarColor(castbarColors.standard[1], castbarColors.standard[2], castbarColors.standard[3], 1)
+                else
+                    petSpellBar:SetStatusBarColor(1, 0.7, 0, 1)
+                end
+                petSpellBar.Background:SetTexture(classicCastbarTexture)
+                petSpellBar.Background:SetVertexColor(0, 0, 0, 0.6)
+            end
+        end
+
         local petFrame = PetFrame
         if petFrame then
             local petDetachCastbar = BetterBlizzFramesDB.petDetachCastbar
@@ -1282,6 +1309,7 @@ function BBF.CreateCastbars()
             spellBars[i] = spellbar
             UpdateCustomSpellBarTexture(spellbar)
         end
+        BBF.StylePartyCastBarTimers()
         BBF.UpdateCastbars()
         BBF.DarkModeCastbars()
         castBarsCreated = true
@@ -1467,6 +1495,7 @@ function BBF.partyCastBarTestMode()
                     spellbar.FakeTimer:SetPoint("LEFT", spellbar, "RIGHT", 3, 0)
                     spellbar.FakeTimer:SetTextColor(1, 1, 1, 1)
                 end
+                BBF.StylePartyCastBarTimers()
                 spellbar.FakeTimer:Show()
             else
                 if spellbar.FakeTimer then
@@ -1576,31 +1605,37 @@ CastBarFrame:SetScript("OnEvent", function(self, event, ...)
     C_Timer.After(0.1, RosterUpdateCastbars)
 end)
 
+local function CastBarTimerKey(bar)
+    if bar == PlayerCastingBarFrame or bar == PetCastingBarFrame then
+        return "playerCastBarTimer"
+    elseif bar == TargetFrameSpellBar then
+        return "targetCastBarTimer"
+    elseif bar == FocusFrameSpellBar then
+        return "focusCastBarTimer"
+    end
+end
+
+local function StyleCastBarTimer(bar, key, timer)
+    local db = BetterBlizzFramesDB
+    timer = timer or bar.Timer
+    local size, yPos = 12, 0
+    timer:SetFont("Fonts\\FRIZQT__.TTF", db[key .. "Size"] or size, "OUTLINE")
+    timer:SetWidth(0)
+    timer:ClearAllPoints()
+    timer:SetPoint(db[key .. "Anchor"] or "LEFT", bar, db[key .. "RelativeAnchor"] or "RIGHT",
+        db[key .. "XPos"] or 3, db[key .. "YPos"] or yPos)
+end
+
 -- Hook into the OnUpdate, OnShow, and OnHide scripts for the spell bar
 local function CastBarTimer(bar)
-    local castBarSetting = nil
-    if bar == PlayerCastingBarFrame or bar == PetCastingBarFrame then
-        castBarSetting = BetterBlizzFramesDB.playerCastBarTimer
-    elseif bar == TargetFrameSpellBar then
-        castBarSetting = BetterBlizzFramesDB.targetCastBarTimer
-    elseif bar == FocusFrameSpellBar then
-        castBarSetting = BetterBlizzFramesDB.focusCastBarTimer
-    end
+    local key = CastBarTimerKey(bar)
+    if not key then return end
+    local castBarSetting = BetterBlizzFramesDB[key]
     if castBarSetting and not bar.Timer then
         bar.Timer = bar:CreateFontString(nil, "OVERLAY")
-        bar.Timer:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
     end
     if not bar.Timer then return end
-    bar.Timer:ClearAllPoints()
-    if bar == PlayerCastingBarFrame or bar == PetCastingBarFrame then
-        if BetterBlizzFramesDB.playerCastBarTimerCentered then
-            bar.Timer:SetPoint("CENTER", bar, "CENTER", 0, 0)
-        else
-            bar.Timer:SetPoint("LEFT", bar, "RIGHT", 3, -0)
-        end
-    else
-        bar.Timer:SetPoint("LEFT", bar, "RIGHT", 3, -0)
-    end
+    StyleCastBarTimer(bar, key)
     if not castBarSetting then
         bar.Timer:Hide()
     else
@@ -1613,7 +1648,23 @@ local function CastBarTimer(bar)
     bar.isHooked = true
 end
 
+function BBF.StylePartyCastBarTimers()
+    for i = 1, 5 do
+        local spellbar = spellBars[i]
+        if spellbar then
+            if spellbar.Timer then
+                StyleCastBarTimer(spellbar, "partyCastBarTimer")
+            end
+            if spellbar.FakeTimer then
+                StyleCastBarTimer(spellbar, "partyCastBarTimer", spellbar.FakeTimer)
+                spellbar.FakeTimer:SetText("1.8")
+            end
+        end
+    end
+end
+
 function BBF.CastBarTimerCaller()
+    BBF.StylePartyCastBarTimers()
     CastBarTimer(PlayerCastingBarFrame)
     CastBarTimer(PetCastingBarFrame)
     CastBarTimer(TargetFrameSpellBar)
@@ -1645,7 +1696,14 @@ end
 
 local function PlayerCastingBarFrameMiscAdjustments()
     if BetterBlizzFramesDB.disableCastbarTweaks then return end
-    PlayerCastingBarFrame:SetScale(BetterBlizzFramesDB.playerCastBarScale or 1)
+    local scale = BetterBlizzFramesDB.playerCastBarScale or 1
+    if PlayerCastingBarFrame:GetScale() ~= scale then
+        if InCombatLockdown() then
+            BBF.RunAfterCombat(PlayerCastingBarFrameMiscAdjustments)
+        else
+            PlayerCastingBarFrame:SetScale(scale)
+        end
+    end
     local w = BetterBlizzFramesDB.playerCastBarWidth
     local maskRatio = 256 / 208
 
@@ -1928,6 +1986,9 @@ function BBF.ChangeCastbarSizes()
     if BetterBlizzFramesDB.classicCastbars then
         BBF.ClassicCastbar(TargetFrameSpellBar, "target")
         BBF.ClassicCastbar(FocusFrameSpellBar, "focus")
+        if spellBars["pet"] then
+            BBF.UpdatePetCastbar()
+        end
     end
     if BetterBlizzFramesDB.classicCastbarsPlayer then
         BBF.ClassicCastbar(PlayerCastingBarFrame, "player")
@@ -2017,21 +2078,26 @@ local TARGET_TEXT_ANCHORS = {
     CENTER = { "CENTER", "CENTER" },
 }
 
+local function OutsideKey(castBar)
+    return castBar == PlayerCastingBarFrame and "castBarTargetTextPlayerOutside" or "castBarTargetTextOutside"
+end
+
 local function ApplyTargetTextSettings(castBar)
     local text = castBar and castBar.bbfTargetText
     if not text then return end
 
     local db = BetterBlizzFramesDB
-    local placement = TARGET_TEXT_ANCHORS[db.castBarTargetTextOutsideAnchor or "BOTTOM"]
+    local key = OutsideKey(castBar)
+    local placement = TARGET_TEXT_ANCHORS[db[key .. "Anchor"] or "BOTTOM"]
         or TARGET_TEXT_ANCHORS.BOTTOM
 
     text:ClearAllPoints()
     text:SetPoint(placement[1], castBar, placement[2],
-        db.castBarTargetTextOutsideXPos or 0, db.castBarTargetTextOutsideYPos or 0)
+        db[key .. "XPos"] or 0, db[key .. "YPos"] or 0)
 
     local font, _, flags = text:GetFont()
     if font then
-        text:SetFont(font, db.castBarTargetTextOutsideSize or 10, flags)
+        text:SetFont(font, db[key .. "Size"] or 10, flags)
     end
 end
 
@@ -2047,14 +2113,27 @@ local function TargetTextHiddenForUnit(unit)
     return BetterBlizzFramesDB.castBarTargetTextHideOnNpcs and unit and not UnitIsPlayer(unit)
 end
 
+local function IsSelfCast(unit)
+    if not PlayerIsSpellTarget then return end
+    local isSelf = PlayerIsSpellTarget(unit)
+    if issecretvalue and issecretvalue(isSelf) then return end
+    return isSelf
+end
+
 function BBF.CastbarTargetTextCaller()
     local db = BetterBlizzFramesDB
 
-    for _, castBar in ipairs({ TargetFrameSpellBar, FocusFrameSpellBar }) do
-        if db.castBarTargetText and db.castBarTargetTextOutside then
+    if db.castBarTargetText and db.castBarTargetTextPlayer then
+        BBF.CastbarTargetText(PlayerCastingBarFrame)
+    end
+
+    for _, castBar in ipairs({ TargetFrameSpellBar, FocusFrameSpellBar, PlayerCastingBarFrame }) do
+        local isPlayerBar = castBar == PlayerCastingBarFrame
+        local enabled = db.castBarTargetText and (not isPlayerBar or db.castBarTargetTextPlayer)
+        if enabled and db[OutsideKey(castBar)] then
             GetOutsideTargetText(castBar)
             ApplyTargetTextSettings(castBar)
-            if TargetTextHiddenForUnit(castBar.unit) then
+            if not isPlayerBar and TargetTextHiddenForUnit(castBar.unit) then
                 castBar.bbfTargetText:SetText("")
             end
         elseif castBar.bbfTargetText then
@@ -2064,14 +2143,28 @@ function BBF.CastbarTargetTextCaller()
 end
 
 function BBF.CastbarTargetText(castBar)
-    if BetterBlizzFramesDB.castBarTargetTextOutside then
+    if castBar.bbfTargetTextHooked then return end
+    castBar.bbfTargetTextHooked = true
+
+    local isPlayerBar = castBar == PlayerCastingBarFrame
+    local key = OutsideKey(castBar)
+
+    if BetterBlizzFramesDB[key] then
         GetOutsideTargetText(castBar)
     end
 
     castBar:HookScript("OnEvent", function(self, event)
         if not CastStartEvents[event] then return end
 
-        local outside = BetterBlizzFramesDB.castBarTargetTextOutside
+        local db = BetterBlizzFramesDB
+        if isPlayerBar and not db.castBarTargetTextPlayer then
+            if self.bbfTargetText then
+                self.bbfTargetText:SetText("")
+            end
+            return
+        end
+
+        local outside = db[key]
         local spell = UnitCastingInfo(self.unit) or UnitChannelInfo(self.unit)
         if not spell then
             if outside and self.bbfTargetText then
@@ -2082,7 +2175,11 @@ function BBF.CastbarTargetText(castBar)
 
         local name, class = GetCastbarTargetName(self.unit)
         local coloredName = GetColoredTargetString(name, class)
-        if TargetTextHiddenForUnit(self.unit) then
+        if isPlayerBar then
+            if IsSelfCast(self.unit) then
+                coloredName = nil
+            end
+        elseif TargetTextHiddenForUnit(self.unit) then
             coloredName = nil
         end
 
@@ -2137,6 +2234,9 @@ function BBF.HookCastbars()
     if BetterBlizzFramesDB.castBarTargetText then
         BBF.CastbarTargetText(TargetFrameSpellBar)
         BBF.CastbarTargetText(FocusFrameSpellBar)
+        if BetterBlizzFramesDB.castBarTargetTextPlayer then
+            BBF.CastbarTargetText(PlayerCastingBarFrame)
+        end
     end
 
     if BetterBlizzFramesDB.castBarTargetHighlight then

@@ -4,6 +4,7 @@ RXPGuides.RegisterGuide([[
 #version 1
 #group +Tol Barad
 #name Tol Barad Daily Quests
+
 step << Horde
     #optional
     -- Peninsula quests
@@ -40,6 +41,7 @@ step << Horde
     .convertquest 28162,28658
     .convertquest 28118,28661
     .convertquest 28223,28669
+
 step
     #completewith next
     .zone 84 >> Travel to Stormwind << Alliance

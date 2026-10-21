@@ -12,8 +12,10 @@ end
 local mod	= DBM:NewMod("Geddon", "DBM-Raids-Vanilla", catID)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20260920050230")
-mod:DisableHardcodedOptions()
+mod:SetRevision("20261019224112")
+if DBM:IsForever() then
+	mod:EnableGenericTrash()
+end
 mod:SetCreatureID(DBM:IsSeasonal("SeasonOfDiscovery") and 228433 or 12056)
 mod:SetEncounterID(668)
 mod:SetModelID(12129)
@@ -22,8 +24,8 @@ mod:SetZone(409)
 
 mod:RegisterCombat("combat")
 if DBM:IsRestricted() then
-	--do stuff
-	--mod:AddAuraSoundOption(372820, true, 372820, 1, 2, "watchfeet", 8, 0)
+	mod:AddAuraSoundOption(20475, true, 20475, 1, 1, "bombyou", 12, 0)--TODO, add SoD spellids?
+	mod:AddAuraSoundOption(19659, "ManaUser", 19659, 1, 1, "debuffyou", 17, 0)
 else
 	if DBM:IsSeasonal("SeasonOfDiscovery") then
 		mod:SetUsedIcons(8, 7, 6)
@@ -32,7 +34,7 @@ else
 	end
 	mod:RegisterEventsInCombat(
 		"SPELL_AURA_APPLIED 20475 19659 461090 461105 462402 465725",
-		"SPELL_AURA_REMOVED 20475 461090 461105 462402 465725",
+		"SPELL_AURA_REMOVED 20475 19659 461090 461105 462402 465725",
 		"SPELL_CAST_SUCCESS 19695 19659 20478 20475 461090 461105 462402 461110 461121 465725 461087"
 	)
 
@@ -46,7 +48,7 @@ else
 	local warnBomb			= mod:NewTargetNoFilterAnnounce(20475, 4)
 
 	local specWarnArma		= mod:NewSpecialWarningSpell(20478)
-	local specWarnIgnite	= mod:NewSpecialWarningDispel(19659, "RemoveMagic", nil, nil, 1, 2, nil, nil, "helpdispel")
+	local specWarnIgnite	= mod:NewSpecialWarningDispel(19659, "RemoveMagic", nil, nil, 1, 2, nil, nil, "dispelnow")
 	local specWarnInferno	= mod:NewSpecialWarningRun(19695, "Melee", nil, nil, 4, 2, nil, nil, "aesoon")
 	local specWarnBomb		= mod:NewSpecialWarningYou(20475, nil, nil, nil, 3, 2, nil, nil, "bombyou")
 	local yellBomb			= mod:NewYell(20475)
@@ -58,6 +60,41 @@ else
 	local timerBombCD        = mod:NewVarTimer("v11.3-30.1", 20475, nil, nil, nil, 3)
 	local timerBomb          = mod:NewTargetTimer(8, 20475, nil, nil, nil, 5, nil, DBM_COMMON_L.HEALER_ICON)
 	local timerArmageddon    = mod:NewCastTimer(8, 20478, nil, nil, nil, 2, nil, DBM_COMMON_L.DEADLY_ICON, nil, nil, nil, nil, nil, nil, nil, true)
+
+	mod:AddInfoFrameOption(19659, "RemoveMagic")
+
+	local igniteTargets = {}
+	-- Ignite Mana can debuff all classes, but only these are worth tracking for the info frame
+	local relevantClasses = {
+		PRIEST = true,
+		MAGE = true,
+		WARLOCK = true,
+		PALADIN = true,
+		SHAMAN = true,
+		DRUID = true,
+	}
+	local function isIgniteRelevant(args)
+		local uId = DBM:GetRaidUnitIdByGuid(args.destGUID)
+		if uId then
+			local class = mod:UnitClass(uId)
+			return not class or relevantClasses[class] ~= nil
+		end
+		return true--Assume relevant if we can't look the target up (defaults to old behavior)
+	end
+	local updateIgniteFrame
+	do
+		local twipe = table.wipe
+		local lines, sortedLines = {}, {}
+		updateIgniteFrame = function()
+			twipe(lines)
+			twipe(sortedLines)
+			for name in pairs(igniteTargets) do
+				sortedLines[#sortedLines + 1] = name
+				lines[name] = ""
+			end
+			return lines, sortedLines
+		end
+	end
 
 	mod:AddSetIconOption("SetIconOnBombTarget", 20475, false, 0, {8, 7, 6}) -- up to 3 bombs on heat level 3 (TODO: confirm)
 
@@ -85,16 +122,32 @@ else
 	end
 
 	function mod:OnCombatStart()
+		table.wipe(igniteTargets)
 		timerIgniteManaCD:Start("v6.3-27.5")
 		timerInfernoCD:Start("v11.3-33.4")
 		timerBombCD:Start("v11.3-30.7")
 	end
 
 	function mod:OnCombatEnd()
+		table.wipe(igniteTargets)
 		if DBM:UnitDebuff("player", 20475) then
 			specWarnBomb:Show()
 			specWarnBomb:Play("bombyou")
 			yellBomb:Yell()
+		end
+	end
+
+	local function UpdateIgniteFrame()
+		if not mod.Options.InfoFrame then return end
+		if next(igniteTargets) then
+			if not DBM.InfoFrame:IsShown() then
+				DBM.InfoFrame:SetHeader(DBM:GetSpellInfo(19659))
+				DBM.InfoFrame:Show(20, "function", updateIgniteFrame)
+			else
+				DBM.InfoFrame:UpdateTable(updateIgniteFrame)
+			end
+		else
+			DBM.InfoFrame:Hide()
 		end
 	end
 
@@ -116,9 +169,13 @@ else
 				end
 			end
 			warnBomb:CombinedShow(0.1, args.destName)
-		elseif args:IsSpell(19659) and self:CheckDispelFilter("magic") then
-			specWarnIgnite:CombinedShow(0.3, args.destName)
-			specWarnIgnite:ScheduleVoice(0.3, "helpdispel")
+		elseif args:IsSpell(19659) and args:IsDestTypePlayer() and isIgniteRelevant(args) then
+			igniteTargets[args.destName] = true
+			UpdateIgniteFrame()
+			if self.Options.SpecWarn19659dispel then
+				specWarnIgnite:CombinedShow(0.5, args.destName)
+				specWarnIgnite:ScheduleVoice(0.5, "dispelnow")
+			end
 		end
 	end
 
@@ -131,6 +188,9 @@ else
 			if args:IsPlayer() then
 				yellBombFades:Cancel()
 			end
+		elseif args:IsSpell(19659) and args:IsDestTypePlayer() then
+			igniteTargets[args.destName] = nil
+			UpdateIgniteFrame()
 		end
 	end
 
@@ -145,6 +205,9 @@ else
 			timerInferno:Start()
 			timerInfernoCD:Start()
 		elseif args:IsSpell(19659) then
+			if not self.Options.SpecWarn19659dispel then
+				warnIgnite:Show()
+			end
 			timerIgniteManaCD:Start()
 		elseif args:IsSpell(20478, 461121) then
 			specWarnArma:Show()

@@ -38,7 +38,12 @@ function RSMacro.SetIsMoving(value)
 end
 
 function RSMacro.IsAvailableMacroSlot()
-	return GetNumMacros() < 119
+	local numAccount, numCharacter = GetNumMacros()
+	if (RSConfigDB.IsScanningWithMacroPerChar()) then
+		return numCharacter < (_G.MAX_CHARACTER_MACROS or 30)
+	else
+		return numAccount < (_G.MAX_ACCOUNT_MACROS or 120)
+	end
 end
 
 function RSMacro.CreateMacro()
@@ -51,19 +56,18 @@ function RSMacro.CreateMacro()
 	end
 	
 	if (not GetMacroInfo(RSConstants.RARESCANNER_MACRO_NAME)) then
-        CreateMacro(RSConstants.RARESCANNER_MACRO_NAME, GetFileIDFromPath(RSConstants.RARESCANNER_MACRO_ICON), "")
-        RSLogger:PrintMessage(string.format(AL["ENABLE_SCAN_MACRO_CREATED"], RSConstants.RARESCANNER_MACRO_NAME, string.format("|T%s:14|t", RSConstants.RARESCANNER_MACRO_ICON)))
-    end
+		local perChar = RSConfigDB.IsScanningWithMacroPerChar()
+		CreateMacro(RSConstants.RARESCANNER_MACRO_NAME, GetFileIDFromPath(RSConstants.RARESCANNER_MACRO_ICON), "", perChar)
+		RSLogger:PrintMessage(string.format(AL["ENABLE_SCAN_MACRO_CREATED"], RSConstants.RARESCANNER_MACRO_NAME, string.format("|T%s:14|t", RSConstants.RARESCANNER_MACRO_ICON)))
+	end
 end
 
 function RSMacro.DeleteMacro()	
-	if (not GetMacroInfo(RSConstants.RARESCANNER_MACRO_NAME)) then
-		return
-    end
-    
 	if (not InCombatLockdown()) then
-   		DeleteMacro(RSConstants.RARESCANNER_MACRO_NAME)
-   	end
+		while (GetMacroInfo(RSConstants.RARESCANNER_MACRO_NAME)) do
+			DeleteMacro(RSConstants.RARESCANNER_MACRO_NAME)
+		end
+	end
 end
 
 ---============================================================================

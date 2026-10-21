@@ -9,6 +9,7 @@ local ADDON_NAME, private = ...
 -- RareScanner libraries
 local RSConstants = private.ImportLib("RareScannerConstants")
 local RSUtils = private.ImportLib("RareScannerUtils")
+local RSTextTags = private.ImportLib("RareScannerTextTags")
 
 -- RareScanner database libraries
 local RSConfigDB = private.ImportLib("RareScannerConfigDB")
@@ -198,11 +199,12 @@ function RSWorldMapButtonMixin:SetupMenu()
 		
 		for minieventID, minieventData in pairs (RSConstants.MINIEVENTS_WORLDMAP_FILTERS) do
 			if (minieventData.npcs and RSUtils.Contains(minieventData.mapIDs, mapID)) then
+				local eventText = RSTextTags.ParseText(minieventData.text)
 				local text
 				if (minieventData.atlas) then
-					text = "|A:"..minieventData.atlas..":18:18::::|a "..minieventData.text
+					text = "|A:"..minieventData.atlas..":18:18::::|a "..eventText
 				else
-					text = "|T"..minieventData.texture..":18:18::::|a "..minieventData.text
+					text = "|T"..minieventData.texture..":18:18::::|a "..eventText
 				end
 				
 				local npcsMinievents = npcsSubmenu:CreateCheckbox(text, 
@@ -488,11 +490,12 @@ function RSWorldMapButtonMixin:SetupMenu()
 	
 		for minieventID, minieventData in pairs (RSConstants.MINIEVENTS_WORLDMAP_FILTERS) do
 			if (minieventData.containers and RSUtils.Contains(minieventData.mapIDs, mapID)) then
+				local eventText = RSTextTags.ParseText(minieventData.text)
 				local text
 				if (minieventData.atlas) then
-					text = "|A:"..minieventData.atlas..":18:18::::|a "..minieventData.text
+					text = "|A:"..minieventData.atlas..":18:18::::|a "..eventText
 				else
-					text = "|T"..minieventData.texture..":18:18::::|a "..minieventData.text
+					text = "|T"..minieventData.texture..":18:18::::|a "..eventText
 				end
 				
 				local containerMinievent = containersSubmenu:CreateCheckbox(text, 
@@ -547,7 +550,7 @@ function RSWorldMapButtonMixin:SetupMenu()
 					end
 				end)
 				
-			local containersRepeatableFilter = containersSubmenu:CreateCheckbox(AL["MAP_MENU_FILTER_CONTAINERS_REPEATABLE"], function() return RSConfigDB.IsRepeatableContainerFilterEnabled() end, 
+			local containersRepeatableFilter = containersSubmenu:CreateCheckbox("|T"..RSConstants.LIGHT_GREEN_CONTAINER_TEXTURE..":18:18:::::0:32:0:32|t "..AL["MAP_MENU_FILTER_CONTAINERS_REPEATABLE"], function() return RSConfigDB.IsRepeatableContainerFilterEnabled() end, 
 				function()
 					if (RSConfigDB.IsRepeatableContainerFilterEnabled()) then
 						RSConfigDB.SetRepeatableContainerFilterEnabled(false)
@@ -585,16 +588,19 @@ function RSWorldMapButtonMixin:SetupMenu()
 	
 			for _, containerID in ipairs (RSUtils.GetSortedKeysByValue(containerIDsWithNames, function(a, b) return a < b end)) do
 				local containerName = containerIDsWithNames[containerID]
+				local containerInfo = RSContainerDB.GetInternalContainerInfo(containerID)
 				local text
 				if (RSContainerDB.IsContainerOpened(containerID)) then
 					text = "|T"..RSConstants.BLUE_CONTAINER_TEXTURE..":18:18:::::0:32:0:32|t "
 				elseif (RSGeneralDB.GetAlreadyFoundEntity(containerID, RSConstants.CONTAINER_VIGNETTE)) then
-					text = "|T"..RSConstants.NORMAL_CONTAINER_TEXTURE..":18:18:::::0:32:0:32|t "
+					if (containerInfo and containerInfo.repeatable and not containerInfo.prof) then
+						text = "|T"..RSConstants.LIGHT_GREEN_CONTAINER_TEXTURE..":18:18:::::0:32:0:32|t "
+					else
+						text = "|T"..RSConstants.NORMAL_CONTAINER_TEXTURE..":18:18:::::0:32:0:32|t "
+					end
 				else
 					text = "|T"..RSConstants.RED_CONTAINER_TEXTURE..":18:18:::::0:32:0:32|t "
 				end
-				
-				local containerInfo = RSContainerDB.GetInternalContainerInfo(containerID)
 				if (containerInfo) then
 					if (containerInfo and containerInfo.prof) then
 						text = text.."|A:"..RSConstants.PROFFESION_ICON_ATLAS..":18:18::::|a "..containerName
@@ -754,18 +760,6 @@ function RSWorldMapButtonMixin:SetupMenu()
 			end
 		end
 	    
-	    -- Others
-	   	local othersSubmenu = rootDescription:CreateButton("|TInterface\\AddOns\\RareScanner\\Media\\Icons\\DragonGlyphSmall:18:18:::::0:32:0:32|t "..AL["MAP_MENU_OTHERS"])
-	   	othersSubmenu:CreateCheckbox("|TInterface\\AddOns\\RareScanner\\Media\\Icons\\DragonGlyphSmall:18:18:::::0:32:0:32|t "..AL["MAP_MENU_SHOW_DRAGON_GLYPHS"], 
-	   		function() return RSConfigDB.IsShowingDragonGlyphs() end, 
-			function()
-	    		if (RSConfigDB.IsShowingDragonGlyphs()) then
-					RSConfigDB.SetShowingDragonGlyphs(false)
-				else
-					RSConfigDB.SetShowingDragonGlyphs(true)
-				end
-			end)
-			
 		-- Not discovered old expansions
 	 	rootDescription:CreateCheckbox(AL["MAP_MENU_SHOW_NOT_DISCOVERED_OLD"], 
 	    	function() return RSConfigDB.IsShowingOldNotDiscoveredMapIcons() end,
@@ -778,7 +772,21 @@ function RSWorldMapButtonMixin:SetupMenu()
 			end)
 			
 		-- Filter zone
-		local mapIDsWithNames = RSMapDB.GetActiveMapIDsWithNamesByMapID(mapID)
+		local mapIDsWithNames = RSMapDB.GetActiveMapIDsWithNamesByMapID(mapID, true)
+
+		-- Filtering a map filters every map inside it
+		local function SetMapFiltered(filteredMapID, filtered)
+			local filteredMapIDs = RSMapDB.GetSubMapIDs(filteredMapID)
+			tinsert(filteredMapIDs, filteredMapID)
+			for _, id in ipairs(filteredMapIDs) do
+				if (filtered) then
+					RSConfigDB.SetZoneFiltered(id)
+				else
+					RSConfigDB.DeleteZoneFiltered(id)
+				end
+			end
+		end
+
 		if (RSUtils.GetTableLength(mapIDsWithNames) > 0) then
 			rootDescription:CreateDivider()
 			rootDescription:CreateTitle(AL["MAP_MENU_FILTER"])
@@ -797,14 +805,8 @@ function RSWorldMapButtonMixin:SetupMenu()
     				end
     			end
     			
-    			if (anySelected) then
-    				for mapID, _ in pairs (mapIDsWithNames) do
-	    				RSConfigDB.DeleteZoneFiltered(mapID)
-	    			end
-    			else
-    				for mapID, _ in pairs (mapIDsWithNames) do
-	    				RSConfigDB.SetZoneFiltered(mapID)
-	    			end
+    			for mapID, _ in pairs (mapIDsWithNames) do
+    				SetMapFiltered(mapID, not anySelected)
     			end
     
 				return MenuResponse.Refresh;
@@ -815,11 +817,7 @@ function RSWorldMapButtonMixin:SetupMenu()
 				local eventFilter = mapsFilterSubmenu:CreateCheckbox(mapName, 
 		    		function() return RSConfigDB.GetZoneFiltered(mapID) == nil end, 
 					function()
-						if (RSConfigDB.GetZoneFiltered(mapID)) then
-							RSConfigDB.DeleteZoneFiltered(mapID)
-						else
-							RSConfigDB.SetZoneFiltered(mapID)
-						end
+						SetMapFiltered(mapID, not RSConfigDB.GetZoneFiltered(mapID))
 					end)
 			end
 		end

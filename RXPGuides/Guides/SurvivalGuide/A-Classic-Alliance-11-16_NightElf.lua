@@ -10,6 +10,7 @@ RXPGuides.RegisterGuide([[
 #subgroup RXP Survival Guide 1-20
 #next 13-13 Loch Modan (Night Elf)
 #defaultfor NightElf
+
 step << NightElf
     .goto Teldrassil,56.25,92.44
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Nessa Shadowsong|r
@@ -530,6 +531,7 @@ step
     .zoneskip Ironforge
     .zoneskip Westfall
 ]])
+
 RXPGuides.RegisterGuide([[
 #hardcore
 #classic
@@ -541,6 +543,7 @@ RXPGuides.RegisterGuide([[
 #subgroup RXP Survival Guide 1-20
 #next 13-15 Westfall
 #defaultfor NightElf
+
 step
     .goto 1415,44.720,49.200,60,0 -- Wetlands to Westfall Swim
     .goto 1415,43.162,49.946,60,0

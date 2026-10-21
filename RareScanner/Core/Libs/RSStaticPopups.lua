@@ -88,12 +88,6 @@ LibDialog:Register(RSConstants.APPLY_COLLECTIONS_LOOT_FILTERS, {
 					RSConfigDB.SetShowingMissingClassAppearances(false)
 				end
 				
-				if (self.data.filters[RSConstants.EXPLORER_FILTER_DROP_DRAKEWATCHER]) then
-					RSConfigDB.SetShowingMissingDrakewatcher(true)
-				else
-					RSConfigDB.SetShowingMissingDrakewatcher(false)
-				end
-				
 				for groupKey, _ in pairs(RSCollectionsDB.GetItemGroups()) do
 					if (self.data.filters[string.format(RSConstants.EXPLORER_FILTER_DROP_CUSTOM, groupKey)]) then
 						RSConfigDB.SetShowingCustomItems(groupKey, true)

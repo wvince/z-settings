@@ -2,8 +2,7 @@ if not DBM:IsSeasonal("SeasonOfDiscovery") then return end
 local mod	= DBM:NewMod("SoD_NaxxHardmode", "DBM-Raids-Vanilla", 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20260917064253")
-mod:DisableHardcodedOptions()
+mod:SetRevision("20261019224112")
 mod.isTrashMod = true
 mod.isTrashModBossFightAllowed = true
 mod:SetZone(533)
@@ -110,12 +109,8 @@ else
 
 	function mod:DoEmote(emote, isGuess)
 		self:AntiSpam(5, "MarchingOrders") -- This prevents the special warning fallback from triggering
-		if DBM.Test.testRunning then
-			self:TestTrace("DoEmote", emote)
-		else
-			DoEmote(emote)
-			self:Schedule(0.2, DoEmote, emote)
-		end
+		DoEmote(emote)
+		self:Schedule(0.2, DoEmote, emote)
 		self:UnscheduleMethod("OrderFallback")
 		self:ScheduleMethod(0.5, "OrderFallback", emote)
 		if isGuess then

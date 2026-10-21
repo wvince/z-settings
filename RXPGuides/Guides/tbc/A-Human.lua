@@ -10,6 +10,7 @@ RXPGuides.RegisterGuide([[
 #defaultfor Human
 #next 12-14 Loch Modan;12-14 Darkshore << Warlock
 #next 11-12 Loch Modan;12-14 Darkshore << !Warlock
+
 step << !Human
     #sticky
     #completewith next
@@ -2361,8 +2362,10 @@ step
     .target Auctioneer Buckler
     .train 2550,1 -- skips if cooking is trained (Apprentice)
     .train 3102,1 -- skips if cooking is trained (Journeyman)
+
 --
 --
+
 step
 #xprate <1.5
     .goto Ironforge,18.14,51.45
@@ -2518,8 +2521,10 @@ step
 #xprate <1.5
     .goto Dun Morogh,84.4,31.1,25 >>Go through the tunnel to Loch Modan
     .zoneskip Loch Modan
+
 --
 --
+
 step
 #xprate >1.49
     .goto 1426,53.042,35.383
@@ -2669,6 +2674,7 @@ step
     .goto 1437,4.370,56.762
     .zone Darkshore >> Take the boat to Darkshore
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -2682,6 +2688,7 @@ RXPGuides.RegisterGuide([[
 #defaultfor Human
 #next 14-14 Darkshore << Warlock
 #next 12-14 Darkshore << !Warlock
+
 step
     #completewith next
     .goto Loch Modan,24.134,18.208
@@ -3283,6 +3290,7 @@ step
     .goto 1437,4.370,56.762
     .zone Darkshore >> Take the boat to Darkshore
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -3294,6 +3302,7 @@ RXPGuides.RegisterGuide([[
 #subgroup RestedXP Alliance 1-20
 #defaultfor Human Warlock
 #next 14-20 Bloodmyst
+
 step
     #optional
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gubber Blump|r

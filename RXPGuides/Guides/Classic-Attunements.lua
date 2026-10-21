@@ -2,10 +2,13 @@ local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
+
 << Alliance
 #group RestedXP Endgame Guides
 #subgroup Attunements
 #name Onyxia Attunement (A)
+
+
 step
     #completewith next
     .zone Burning Steppes>>|cRXP_WARN_Travel to|r |cFFfa9602Burning Steppes|r
@@ -331,14 +334,17 @@ step
     >>|cRXP_WARN_Be careful! DO NOT step on the blue circle in front of |cRXP_FRIENDLY_Haleh|r. This will teleport you into the cave with an elite dragon and you could DIE|r
     .turnin 6502 >>Turn in Drakefire Amulet
     .target Haleh
+
 ]])
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
+
 << Horde
 #group RestedXP Endgame Guides
 #subgroup Attunements
 #name Onyxia Attunement (H)
+
 step
     #completewith next
     .subzone 340 >>Travel to Kargath in |cFFfa9602Badlands|r
@@ -776,13 +782,19 @@ step
     >>|cRXP_WARN_He despawns once he reaches The Twin Colossals in |cFFfa9602Feralas|r. After a 5 minute timer he respawns at the |cFFfa9602Stonetalon/Desolace border|r
     .turnin 6602 >>Turn in Blood of the Black Dragon Champion
     .unitscan Rexxar
+
 ]])
+
+
+
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
+
 #subgroup Attunements
 #group RestedXP Endgame Guides
 #name Molten Core Attunement
+
 step
     #completewith next
     .subzone 254 >>Travel to |cFFfa9602Blackrock Mountain|r
@@ -816,13 +828,19 @@ step
     .turnin 7848 >>Turn in Attunement to the Core
     .target Lothos Riftwaker
     .isQuestComplete 7848
+
 ]])
+
+
+
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
+
 #group RestedXP Endgame Guides
 #subgroup Attunements
 #name Blackwing Lair Attunement
+
 step
     #completewith next
     .subzone 254 >>Travel to |cFFfa9602Blackrock Mountain|r
@@ -855,13 +873,19 @@ step
 step
     >>Click |cRXP_PICK_Drakkisath's Brand|r in the final room of Upper Blackrock Spire behind |cRXP_ENEMY_General Drakkisath|r
     .turnin 7761 >>Turn in Blackhand's Command
+
 ]])
+
+
+
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
+
 #group RestedXP Endgame Guides
 #subgroup Keys
 #name Upper Blackrock Spire Key
+
 step
     #completewith next
     .subzone 254 >>Travel to |cFFfa9602Blackrock Mountain|r
@@ -940,14 +964,20 @@ step
     .turnin 4743 >>Turn in Seal of Ascension
     .target Scarshield Infiltrator
     .target Vaelan
+
 ]])
+
+
+
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
+
 << Alliance
 #group RestedXP Endgame Guides
 #subgroup Keys
 #name Scholomance Key (A)
+
 step
     #sticky
     #label ThoriumBars
@@ -1193,14 +1223,21 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Alchemist Arbington|r
     .turnin 5505 >>Turn in The Key to Scholomance
     .target Alchemist Arbington
+
 ]])
+
+
+
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
+
 << Horde
 #group RestedXP Endgame Guides
 #subgroup Keys
 #name Scholomance Key (H)
+
+
 step
     #sticky
     #label ThoriumBars
@@ -1445,13 +1482,18 @@ step
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Dithers|r
     .turnin 5511 >>Turn in The Key to Scholomance
 	.target Apothecary Dithers
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
+
 #group RestedXP Endgame Guides
 #subgroup Keys
 #name Blackrock Depths Key
+
+
 step
     #completewith next
     .subzone 254 >>Travel to |cFFfa9602Blackrock Mountain|r
@@ -1503,13 +1545,18 @@ step
     >>Click the |cRXP_PICK_Monument of Franclorn Forgewright|r
     .turnin 3802 >> Turn in Dark Iron Legacy
     .isQuestComplete 3802
+
     ]])
+
+
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
+
 #group RestedXP Endgame Guides
 #subgroup Keys
 #name Dire Maul Key
+
 step
     #completewith next
     .zone Feralas >>Travel to |cFFfa9602Feralas|r
@@ -1528,13 +1575,17 @@ step
     >>Kill |cRXP_ENEMY_Pusillin|r once he becomes hostile. Loot him for the |T134244:0|t[|cRXP_LOOT_Crescent Key|r]
     .collect 18249,1 --Crescent Key
     .unitscan Pusillin
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
+
 #group RestedXP Endgame Guides
 #name Naxxramas Attunement
 #subgroup Attunements
+
 step
     >>|cRXP_BUY_Collect the following items|r:
     >>Five |T134135:0|t[|cRXP_FRIENDLY_Arcane Crystals|r]
@@ -1596,14 +1647,19 @@ step
     .target Archmage Angela Dosantos
     .reputation 529,exalted,<0,1 --Exalted AD
     .isQuestAvailable 9123 --The Dread Citadel - Naxxramas
+
 ]])
+
+
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
+
 #group RestedXP Endgame Guides
 #name Demon Fall Canyon Attunement
 #subgroup Attunements
 <<sod
+
 step
     #completewith next
     .subzone 2479 >>Travel to Emerald Sanctuary in |cFFfa9602Felwood|r
@@ -1642,4 +1698,5 @@ step
     .turnin 84384 >> Turn in Demonic Deceptions
     .target Shadowtooth Emissary
     .itemcount 228172,<1 --Only shows if you don't have the trinket
+
 ]])

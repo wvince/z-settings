@@ -1,8 +1,10 @@
 local mod	= DBM:NewMod("OnyxiaVanilla", "DBM-Raids-Vanilla", 7)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20260920054026")
-mod:DisableHardcodedOptions()
+mod:SetRevision("20261019224112")
+if DBM:IsForever() then
+	mod:EnableGenericTrash()
+end
 mod:SetCreatureID(10184)
 mod:SetEncounterID(1084)
 mod:SetUsedIcons(8)
@@ -13,6 +15,7 @@ mod:SetZone(249)
 mod:RegisterCombat("combat_yell", L.YellP1)
 if DBM:IsRestricted() then
 	mod:SetModelID(8570)
+	--TODO, since fireball is all she casts when airborn, we may still be able to do secret target announce messages using UNIT_SPELLCAST_START
 else
 
 	--[[

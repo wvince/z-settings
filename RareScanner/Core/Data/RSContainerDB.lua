@@ -116,8 +116,8 @@ function RSContainerDB.GetAllInternalContainerInfo()
 	return private.CONTAINER_INFO
 end
 
-function RSContainerDB.GetContainerIDsByMapID(mapID)
-	return RSMapDB.GetEntitiesByMapID(mapID, RSConstants.MAP_ENTITY_CONTAINER)
+function RSContainerDB.GetContainerIDsByMapID(mapID, includeSubmaps)
+	return RSMapDB.GetEntitiesByMapID(mapID, RSConstants.MAP_ENTITY_CONTAINER, includeSubmaps)
 end
 
 function RSContainerDB.GetInternalContainerInfo(containerID)
@@ -188,6 +188,59 @@ function RSContainerDB.GetInternalContainerCoordinates(containerID, mapID)
 	return nil
 end
 
+function RSContainerDB.GetBestInternalContainerCoordinates(containerID, mapID)
+	-- Locates players coordinates based in the mapID where it was found
+	local playerMapPosition = C_Map.GetPlayerMapPosition(mapID, "player")
+	local playerx, playery
+	if (playerMapPosition) then
+		playerx, playery = playerMapPosition:GetXY()
+		
+		-- Locates players coordinates based in the best map
+		if (not playerx or not playery) then
+			local playerMapID = C_Map.GetBestMapForUnit("player")
+			playerMapPosition = C_Map.GetPlayerMapPosition(playerMapID, "player")
+			if (playerMapPosition) then
+				playerx, playery = playerMapPosition:GetXY()
+				mapID = playerMapID
+			end
+		end
+	end
+	
+	-- Locates closest container coordinates to the players
+	if (playerx and playery) then
+		local overlay = RSContainerDB.GetInternalContainerOverlay(containerID, mapID)
+		if (overlay) then
+			local distances = {}
+			local coords = {}
+			for _, coordinates in ipairs (overlay) do
+				local xo, yo = strsplit("-", coordinates)
+				local distance = RSUtils.DistanceBetweenCoords(playerx, RSUtils.FixCoord(xo), playery, RSUtils.FixCoord(yo));
+				if (distance >= 0 and distance <= 0.02) then
+					tinsert(distances, distance)
+					coords[distance] = {}
+					coords[distance].x = xo
+					coords[distance].y = yo
+				end
+			end
+			
+			-- Get the smallest
+			if (RSUtils.GetTableLength(distances) > 0) then
+				local minDistance = min(unpack(distances))
+				return coords[minDistance].x, coords[minDistance].y
+			end
+		end
+	end
+	
+	-- Locates internal coordinates
+	local x, y = RSContainerDB.GetInternalContainerCoordinates(containerID, mapID)
+	if (x and y) then
+		return x, y
+	-- Otherwise returns players coordinates
+	else
+		return playerx, playery
+	end
+end
+
 function RSContainerDB.GetInternalContainerOverlay(containerID, mapID)
 	if (containerID and mapID) then
 		local containerInfo = RSContainerDB.GetInternalContainerInfoByMapID(containerID, mapID)
@@ -252,6 +305,14 @@ end
 -- Container Loot internal database
 ----- Stores Container loot included with the addon
 ---============================================================================
+
+function RSContainerDB.GetContainerLootChance(containerID)
+	if (containerID and private.CONTAINER_LOOT_CHANCE) then
+		return private.CONTAINER_LOOT_CHANCE[containerID]
+	end
+
+	return nil
+end
 
 function RSContainerDB.GetContainerLoot(containerID)
 	if (containerID) then
@@ -402,16 +463,19 @@ function RSContainerDB.GetContainerName(containerID)
 		elseif (AL[string.format("CONTAINER_%s", containerID)] ~= string.format("CONTAINER_%s", containerID)) then
 			return AL[string.format("CONTAINER_%s", containerID)]
 		elseif (RSUtils.Contains(RSConstants.CONTAINERS_BATTERED_CHESTS, containerID)) then
-			private.dbglobal.object_names[GetLocale()][containerID] = AL["CONTAINERS_BATTERED_CHEST"]
-			return AL["CONTAINERS_BATTERED_CHEST"]
+			private.dbglobal.object_names[GetLocale()][containerID] = AL["CONTAINERS_BATTERED_CHESTS"]
+			return AL["CONTAINERS_BATTERED_CHESTS"]
+		elseif (RSUtils.Contains(RSConstants.CONTAINERS_SOLID_CHESTS, containerID)) then
+			private.dbglobal.object_names[GetLocale()][containerID] = AL["CONTAINERS_SOLID_CHESTS"]
+			return AL["CONTAINERS_SOLID_CHESTS"]
 		end
 	end
 
 	return nil
 end
 
-function RSContainerDB.GetActiveContainerIDsWithNamesByMapID(mapID)
-	local containerIDs = RSContainerDB.GetContainerIDsByMapID(mapID)
+function RSContainerDB.GetActiveContainerIDsWithNamesByMapID(mapID, includeSubmaps)
+	local containerIDs = RSContainerDB.GetContainerIDsByMapID(mapID, includeSubmaps)
 	local containerIDsWithNames = nil
 	
 	if (RSUtils.GetTableLength(containerIDs) > 0) then
@@ -464,7 +528,7 @@ end
 -- Containers with multi spawn spots
 ---============================================================================
 
-function RSContainerDB.IsMultiZoneSpawn(containerID)
+function RSContainerDB.IsRepeatable(containerID)
 	local containerInfo = RSContainerDB.GetInternalContainerInfo(containerID)
 	if (containerInfo and containerInfo.repeatable) then
 		return true

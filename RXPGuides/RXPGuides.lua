@@ -223,6 +223,7 @@ addon.RXPGuides = RXPGuides
 _G.RXPGuides = RXPGuides
 
 addon.guideCache = {}
+addon.dungeonOverride = {}
 addon.questQueryList = {}
 addon.itemQueryList = {}
 addon.questAccept = {}
@@ -573,9 +574,11 @@ local spellRequest = {}
 local trainerUpdate = 0
 
 local function ProcessSpells(names, rank)
-    if gameVersion > 90000 or not addon.defaultSpellList then return end
-
-    if addon.game == "FOREVER" and ClassTrainerFrame and ClassTrainerFrame.TitleContainer and ClassTrainerFrame.TitleContainer.TitleText:GetText() == UnitName("pet") then
+	local gt = GetTime()
+    local forever = WOW_PROJECT_ID == WOW_PROJECT_CAMELOT
+    if gameVersion > 90000 or not addon.defaultSpellList or busy == gt then return end
+	busy = gt
+    if forever and ClassTrainerFrame and ClassTrainerFrame.TitleContainer and ClassTrainerFrame.TitleContainer.TitleText:GetText() == UnitName("pet") then
         return
     end
 
@@ -583,6 +586,7 @@ local function ProcessSpells(names, rank)
     local level = UnitLevel("player")
     local entries = {race, addon.player.class}
     local hcserver = C_GameRules and C_GameRules.IsHardcoreActive and C_GameRules.IsHardcoreActive()
+	local spellsToBuy = {}
     for _, entry in pairs(entries) do
         if addon.defaultSpellList[entry] then
             for spellLvl, spells in pairs(addon.defaultSpellList[entry]) do
@@ -600,7 +604,7 @@ local function ProcessSpells(names, rank)
                             local sRank = GetSpellSubtext(spellId)
                             for id, name in pairs(names) do
                                 if sName == name and sRank == rank[id] then
-                                    BuyTrainerService(id)
+                                    table.insert(spellsToBuy,id)
                                 end
                             end
                         end
@@ -609,6 +613,22 @@ local function ProcessSpells(names, rank)
             end
         end
     end
+	table.sort(spellsToBuy)
+	local lastId,start,finish,step
+	if forever then
+        --This has to be traversed from back to front, since buying a spell at the top will reorder the list
+		start,finish,step = #spellsToBuy,1,-1
+	else
+		start,finish,step = 1,#spellsToBuy,1
+	end
+	for i = start,finish,step do
+		local id = spellsToBuy[i]
+		if id ~= lastId then
+			BuyTrainerService(id)
+			--print(id,names[id],rank[id])
+		end
+		lastId = id
+	end
 end
 
 local function OnTrainer()
@@ -1362,6 +1382,10 @@ local function LoadCache(guide)
                                     currentGuideName)
                 if g then
                     addon.SaveGuideProgress(g, startStep, startStepId)
+                    -- if WOW_PROJECT_ID == WOW_PROJECT_CAMELOT then
+                    --     --TODO: Fix the dungeon selection for Camelot
+                    --     addon.settings.dungeons:SetNone()
+                    -- end
                     addon:LoadGuide(g, true)
                     currentGuideGroup = nil
                     currentGuideName = nil
@@ -2056,6 +2080,9 @@ local updateStepIndex = 0
 
 function addon.LegacyUpdateLoop()
     -- NewTicker calls function every updateFrequency, making diff/updateTick/tickRate logic obsolete
+    local profile = addon.settings.profile
+    if profile.standbyMode and not profile.showEnabled then return end
+
     if updateError then
         errorCount = errorCount + 1
     end
@@ -2500,12 +2527,17 @@ end
 function addon.IsStepShown(step,...)
     local isShown = true
     local ignoreEntry = {}
+    local args = {}
     for _,entry in pairs({...}) do
-        ignoreEntry[entry] = true
+        if type(entry) == "string" then
+            ignoreEntry[entry] = true
+        else
+            table.insert(args,entry)
+        end
     end
     for name,check in pairs(addon.stepLogic) do
         if not ignoreEntry[name] then
-            isShown = isShown and check(step)
+            isShown = isShown and check(step,unpack(args))
         end
     end
     return isShown
@@ -2659,14 +2691,30 @@ function addon.stepLogic.LevelCheck(step)
     if level <= maxLevel then return true end
 end
 
-function addon.stepLogic.DungeonCheck(step)
+function addon.stepLogic.DungeonCheck(step,guide)
     if step.disabled then return false end
     local dungeon = step.dungeon
     local dskip = step.dungeonskip
     --print(dungeon,dskip)
-    if dskip and addon.settings.profile.dungeons[dskip] then
+    local function IsDungeonEnabled(tag)
+        local key
+        if guide then
+            key = guide.group
+        else
+            key = addon.currentGuide and addon.currentGuide.group
+        end
+        local dungeonOverride = addon.dungeonOverride[key]
+        if dungeonOverride and dungeonOverride[tag] ~= nil then
+            return dungeonOverride[tag]
+        elseif guide and guide.disabledungeons then
+            return false
+        else
+            return addon.settings.profile.dungeons[tag]
+        end
+    end
+    if dskip and IsDungeonEnabled(dskip) then
         return false
-    elseif dungeon and dungeon ~= dskip and addon.settings.profile.dungeons[dungeon] then
+    elseif dungeon and dungeon ~= dskip and IsDungeonEnabled(dungeon) then
         return true
     elseif not dungeon then
         return true

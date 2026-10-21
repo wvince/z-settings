@@ -12,8 +12,10 @@ end
 local mod	= DBM:NewMod("EdgeOfMadness", "DBM-Raids-Vanilla", catID)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20260920050230")
-mod:DisableHardcodedOptions()
+mod:SetRevision("20261019224112")
+if DBM:IsForever() then
+	mod:EnableGenericTrash()
+end
 mod:SetCreatureID(15083)
 mod:SetEncounterID(788)
 mod:SetZone(309)

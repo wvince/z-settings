@@ -45,10 +45,6 @@ function RSLootTooltip.HandleInputEvents(button, itemLink, itemClassID, itemSubC
 			RSConfigDB.SetItemFiltered(itemID, false)
 			RSLogger:PrintMessage(string.format(AL["LOOT_INDIVIDUAL_NOT_FILTERED"], itemLink))
 		end
-		-- Refresh options panel (if its being initialized)
-		if (private.loadFilteredItems) then
-			private.loadFilteredItems()
-		end
 	end
 end
 
@@ -86,10 +82,15 @@ local function AddTSMInfo(tooltip, source, itemLink, itemID, separatorAdded)
 	end	
 end
 
-function RSLootTooltip.AddRareScannerInformation(tooltip, itemLink, itemID, itemClassID, itemSubClassID)
+function RSLootTooltip.AddRareScannerInformation(tooltip, itemLink, itemID, itemClassID, itemSubClassID, dropChance)
 	-- Adds transmog unknown appearance message if the game doesnt add it
 	if (not RSTooltipScanners.ScanLoot(itemLink, TRANSMOGRIFY_TOOLTIP_APPEARANCE_UNKNOWN) and RSCollectionsDB.IsNotcollectedAppearance(itemID)) then
 		GameTooltip_AddColoredLine(tooltip, TRANSMOGRIFY_TOOLTIP_APPEARANCE_UNKNOWN, LIGHTBLUE_FONT_COLOR);
+	end
+
+	-- Adds the drop chance, just after the data of the item itself
+	if (dropChance and dropChance > 0) then
+		tooltip:AddLine(string.format("%s: %s", RSUtils.TextColor(AL["LOOT_DROP_CHANCE"], "FFFF00"), dropChance.."%"))
 	end
 	
 	-- Adds TSM price

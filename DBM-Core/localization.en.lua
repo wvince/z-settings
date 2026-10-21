@@ -150,6 +150,7 @@ L.SEC_FMT								= "%s sec"
 
 L.GENERIC_WARNING_OTHERS				= "and one other"
 L.GENERIC_WARNING_OTHERS2				= "and %d others"
+L.GENERIC_TRASH_TARGET					= "%s: %s"
 L.GENERIC_WARNING_BERSERK				= "Berserk in %s %s"
 L.GENERIC_TIMER_BERSERK					= "Berserk"
 L.OPTION_TIMER_BERSERK					= "Show timer for $spell:26662"
@@ -235,6 +236,32 @@ L.PIZZA_ERROR_USAGE						= "Usage: /dbm [broadcast] timer <time> <text>. <time> 
 L.MINIMAP_TOOLTIP_HEADER				= L.DEADLY_BOSS_MODS --Technically redundant -- OPTIONAL
 L.MINIMAP_TOOLTIP_FOOTER				= "Hold shift and drag to move"
 
+L.RANGE_TEST_READY						= "Item range test (%s): requesting data for %d items. Keep the unit selected and stay out of combat."
+L.RANGE_TEST_INVALID					= "Item range test requires a living, visible friendly or hostile unit and must run out of combat."
+L.RANGE_TEST_UNSUPPORTED				= "Item range test: item range or item cache APIs are unavailable on this client."
+L.RANGE_TEST_ABORTED					= "Item range test canceled: the unit changed, became unavailable, or combat/loading began."
+L.RANGE_TEST_PASS						= "%d yards: item %d (%s), IsItemInRange=%s%s"
+L.RANGE_TEST_FAIL						= "%d yards: no usable item (cached nil: %d, cache failures/timeouts: %d)."
+L.RANGE_TEST_INCOMPLETE					= "%d yards: incomplete (cached nil: %d, cache failures/timeouts: %d)."
+L.RANGE_TEST_PARTIAL					= " (earlier candidates could not be cached)"
+L.RANGE_TEST_HEADER						= "DBM item range results (%s). Copy this string; ranges include +3 yards."
+L.RANGE_TEST_NODATA						= "No completed item range test is available. Run DBM:TestRanges first."
+L.RANGE_TEST_DONE						= "Item range test complete: %d passed, %d failed, %d incomplete. Use DBM:ShowRangeTestResults() to copy results."
+L.RANGE_TEST_SELF						= "Testing yourself does not establish that these items work on another player."
+L.RANGE_DISTANCE_NOCANDIDATES			= "Run DBM:TestRanges first and wait for usable items before measuring their distances."
+L.RANGE_DISTANCE_INVALID				= "Distance calibration requires another living, visible unit, outside combat and unrestricted maps. A party/raid player outdoors is recommended."
+L.RANGE_DISTANCE_UNAVAILABLE			= "Distance calibration: checked, non-secret UnitDistanceSquared readings or item range APIs are unavailable. Try a party/raid player outdoors."
+L.RANGE_DISTANCE_READY					= "Measuring %d items (tolerance +/-0.5 yards). Keep the other player still; walk slowly outward and back through the boundaries. Stop/export with DBM:StopRangeDistances(true)."
+L.RANGE_DISTANCE_REACQUIRE				= "Please reacquire your original target to continue range calibration."
+L.RANGE_DISTANCE_ABORTED				= "Distance calibration aborted: unit, combat, loading, restrictions, or distance availability changed. Partial evidence retained; no PASS results."
+L.RANGE_DISTANCE_NODATA					= "No stopped distance calibration is available. Run DBM:TestRangeDistances, then DBM:StopRangeDistances."
+L.RANGE_DISTANCE_HEADER					= "DBM distance calibration. Copy this string; expected ranges include +3 yards, with +/-0.5 yards tolerance."
+L.RANGE_DISTANCE_ROW					= "%d yards: item %d (%s), %s; farthest true=%s, nearest false=%s; true/false=%d/%d, mismatches=%d, unavailable=%d%s"
+L.RANGE_DISTANCE_PASS					= "PASS"
+L.RANGE_DISTANCE_FAIL					= "FAIL"
+L.RANGE_DISTANCE_INCOMPLETE				= "INCOMPLETE (insufficient boundary coverage, contradictory readings, unavailable samples, or aborted run)"
+L.RANGE_DISTANCE_DONE					= "Distance calibration stopped: %d passed, %d failed, %d incomplete. Use DBM:ShowRangeDistanceResults() to copy results."
+
 L.RANGECHECK_HEADER						= "Range Check (%dy)"
 L.RANGECHECK_HEADERT					= "Range Check (%dy-%dP)"
 L.RANGECHECK_RHEADER					= "R-Range Check (%dy)"
@@ -259,6 +286,9 @@ L.RANGECHECK_IN_RANGE_TEXT				= "%d in range"--Text based doesn't need (%dyd), e
 L.RANGERADAR_IN_RANGE_TEXTONE			= "%s (%0.1fy)"--One target
 
 L.INFOFRAME_TITLE						= "DBM Info Frame"
+L.INFOFRAME_BOSS_DISTANCE				= "Boss Distance"
+L.INFOFRAME_BOSS_DISTANCE_RANGE			= GetLocale() == "enUS" and "%dy - %dy" or "%dm - %dm"
+L.INFOFRAME_BOSS_DISTANCE_OVER			= GetLocale() == "enUS" and "> %dy" or "> %dm"
 L.INFOFRAME_SHOW_SELF					= "Always show your power"		-- Always show your own power value even if you are below the threshold
 L.INFOFRAME_SETLINES					= "Set max lines"
 L.INFOFRAME_SETCOLS						= "Set max columns"
@@ -285,6 +315,7 @@ L.SLASHCMD_HELP							= {
 	"/dbm key: Performs M+ keystone and rating checks on party/guild and shortcuts to dungeon teleports. (alias: key, keys, keystone)",
 	"/dbm lag: Performs a raid-wide latency check.",
 	"/dbm durability: Performs a raid-wide durability check.",
+	"/dbm consumables: Performs a raid-wide consumables check (alias: cons, consumes).",
 	"/dbm brez: Shows the battle resurrection timer frame for positioning.",
 	"/dbm help2: Shows additional slash commands"
 }
@@ -410,6 +441,7 @@ L.AUTO_ANNOUNCE_OPTIONS = {
 L.AUTO_SPEC_WARN_TEXTS = {
 	spell								= "%s!", -- OPTIONAL
 	ends								= "%s ended",
+	endtarget							= "%s ended: >%%s<",
 	fades								= "%s faded",
 	soon								= "%s soon",
 	sooncount							= "%s (%%s) soon",
@@ -430,7 +462,6 @@ L.AUTO_SPEC_WARN_TEXTS = {
 	link								= "%s linked with >%%s<",
 	defensive							= "%s - defensive",
 	taunt								= "%s on >%%s< - taunt now",
-	tauntsecret							= "%s on %%s - taunt now",
 	close								= "%s on >%%s< near you",
 	move								= "%s - move away",
 	keepmove							= "%s - keep moving",
@@ -466,6 +497,7 @@ L.AUTO_SPEC_WARN_TEXTS = {
 L.AUTO_SPEC_WARN_OPTIONS = {
 	spell 								= "Show special announce for $spell:%s",
 	ends 								= "Show special announce when $spell:%s has ended",
+	endtarget							= "Show special announce when $spell:%s has ended (with target)",
 	fades 								= "Show special announce when $spell:%s has faded",
 	soon 								= "Show pre-special announce for $spell:%s",
 	sooncount							= "Show pre-special announce (with count) for $spell:%s",
@@ -740,6 +772,18 @@ L.KEYSTONES_HEADER						= L.DBM.. " - Keystones"
 L.GEAR_HEADER							= L.DBM.. " - Gear Check Results"
 L.GEAR_MISSING_GEMS						= "Missing Gems"
 L.GEAR_MISSING_ENCHANTS					= "Missing Enchants"
+L.GEAR_DURABILITY						= "Dur %"
+L.GEAR_BROKEN							= "Broken"
+L.RAIDCHECKS_TAB_CONSUMABLES			= "Consumables"
+L.RAIDCHECKS_TAB_GEAR					= "Gear"
+L.RAIDCHECKS_TAB_LATENCY				= "Latency"
+L.CONSUMABLES_HEADER					= L.DBM.. " - Consumables Check"
+L.CONSUMABLES_FLASK						= "Flask"
+L.CONSUMABLES_FOOD						= "Food"
+L.CONSUMABLES_WEAPON					= "Weapon"
+L.CONSUMABLES_HS						= "HS"
+L.CONSUMABLES_RUNE						= "Rune"
+L.CONSUMABLES_NA						= "N/A"
 L.BREZ_HEADER							= "Battle Res"
 
 L.OVERRIDE_ACTIVATED					= "Configuration overrides have been activated for this encounter by RL"
@@ -777,7 +821,6 @@ L.DBM_INSTALL_PACKAGE_MOP		= "Mist of Pandaria package"
 L.DBM_INSTALL_PACKAGE_DUNGEON	= "Dungeons, Delves, Challenges, and Events package"
 
 -- Tests
-L.DBM_TAINTED_BY_TESTS			= "DBM was used in test mode with time warping in the current session, it is recommended to reload your UI prior to using DBM in a real boss fight. Everything should still work as expected, but no gurantees!"
 
 -- Boss tooltip
 L.TOOLTIP_DBM					= L.DBM .. " info"

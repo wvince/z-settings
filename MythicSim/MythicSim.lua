@@ -136,7 +136,6 @@ local function build_export_frame()
     f:EnableMouse(true)
     f:RegisterForDrag("LeftButton")
     f:SetScript("OnDragStart", f.StartMoving)
-    f:SetScript("OnDragStop", f.StopMovingOrSizing)
     f:Hide()
 
     -- Title: the template gives us a TitleBg strip at the top; anchor
@@ -184,6 +183,25 @@ local function build_export_frame()
     scroll:SetScrollChild(edit)
     f.edit = edit
 
+    -- Focus goes when the player clicks the game world. The text keeps
+    -- its selection look, so a click anywhere on the window (the box, the
+    -- empty space under short text, the frame itself) takes focus back and
+    -- selects everything again: nothing here is meant to be edited, so
+    -- select-all beats placing a cursor.
+    local function reselect()
+        edit:SetFocus()
+        edit:HighlightText()
+    end
+    edit:SetScript("OnEditFocusGained", function(self) self:HighlightText() end)
+    edit:SetScript("OnMouseUp", reselect)
+    scroll:EnableMouse(true)
+    scroll:SetScript("OnMouseUp", reselect)
+    f:SetScript("OnMouseUp", reselect)
+    f:SetScript("OnDragStop", function(self)
+        self:StopMovingOrSizing()
+        reselect()
+    end)
+
     return f
 end
 
@@ -195,11 +213,16 @@ local function show_export_window(title_text, payload, hint_text)
     end
     export_frame.titleText:SetText(title_text or "MythicSim Export")
     export_frame.hint:SetText(hint_text or LINK_HINT)
+    -- Show before focusing: an edit box inside a hidden frame cannot take
+    -- keyboard focus. The text still looks selected without it, but Ctrl-C
+    -- then falls through to the game's C binding and opens the character
+    -- sheet instead of copying.
+    export_frame:Show()
+    export_frame.edit:SetWidth(export_frame.scroll:GetWidth())
     export_frame.edit.mythicsimOriginal = payload
     export_frame.edit:SetText(payload)
-    export_frame.edit:HighlightText()
     export_frame.edit:SetFocus()
-    export_frame:Show()
+    export_frame.edit:HighlightText()
 end
 ns.show_export_window = show_export_window
 

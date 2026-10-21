@@ -12,8 +12,10 @@ end
 local mod	= DBM:NewMod("Majordomo", "DBM-Raids-Vanilla", catID)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20260920050230")
-mod:DisableHardcodedOptions()
+mod:SetRevision("20261019224112")
+if DBM:IsForever() then
+	mod:EnableGenericTrash()
+end
 if DBM:IsSeasonal("SeasonOfDiscovery") then
 	mod:SetCreatureID(228437, 228836, 228837)
 else
@@ -26,7 +28,7 @@ mod:SetZone(409)
 
 mod:RegisterCombat("combat")
 if DBM:IsRestricted() then
-	--do stuff
+	--Maybe do 20534 if it has aura icon at all, even if it's for a split second
 	--mod:AddAuraSoundOption(372820, true, 372820, 1, 2, "watchfeet", 8, 0)
 else
 

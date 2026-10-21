@@ -12,8 +12,10 @@ end
 local mod	= DBM:NewMod("Lucifron", "DBM-Raids-Vanilla", catID)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20260920050230")
-mod:DisableHardcodedOptions()
+mod:SetRevision("20261019224112")
+if DBM:IsForever() then
+	mod:EnableGenericTrash()
+end
 mod:SetCreatureID(DBM:IsSeasonal("SeasonOfDiscovery") and 228429 or 12118)--, 12119
 mod:SetEncounterID(663)
 mod:SetModelID(13031)
@@ -23,8 +25,7 @@ mod:SetZone(409)
 
 mod:RegisterCombat("combat")
 if DBM:IsRestricted() then
-	--do stuff
-	--mod:AddAuraSoundOption(372820, true, 372820, 1, 2, "watchfeet", 8, 0)
+	mod:AddAuraSoundOption(20604, true, 20604, 1, 1, "findmc", 2, 0)
 else
 
 	mod:RegisterEventsInCombat(
@@ -133,12 +134,12 @@ else
 		if args:IsSpell(19702, 460931) and args:IsDestTypePlayer() then
 			doomTargets[args.destName] = true
 			UpdateDoomFrame()
-			if self.Options.SpecWarn19702dispel and self:AntiSpam(3, 1) then
+			if self.Options.SpecWarn19702dispel then
 				specWarnDoom:CombinedShow(0.5, args.destName)
 				specWarnDoom:ScheduleVoice(0.5, "dispelnow")
 			end
 		elseif args:IsSpell(19703, 460932) and args:IsDestTypePlayer() then
-			if self.Options.SpecWarn19703dispel and self:AntiSpam(3, 2) then
+			if self.Options.SpecWarn19703dispel then
 				specWarnCurse:CombinedShow(0.5, args.destName)
 				specWarnCurse:ScheduleVoice(0.5, "dispelnow")
 			end
@@ -152,7 +153,7 @@ else
 		if args:IsSpell(19702, 460931) and args:IsDestTypePlayer() then
 			doomTargets[args.destName] = nil
 			UpdateDoomFrame()
-		elseif args:IsSpell(20604) and args:IsDestTypePlayer() then
+		elseif args:IsSpell(20604) then
 			timerMC:Stop(args.destName)
 			if self.Options.SetIconOnMC then
 				self:SetIcon(args.destName, 0)

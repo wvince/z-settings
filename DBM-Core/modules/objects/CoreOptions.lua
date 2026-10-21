@@ -194,6 +194,55 @@ DBM.DefaultOptions = {
 	FilterDispel = true,
 	FilterCrowdControl = true,
 	FilterTrashWarnings2 = true,
+	-- Generic trash warnings (core profile).
+	GenericTrashDungeonEnabled = true,
+	GenericTrashDungeonAllDungeons = false,
+	GenericTrashDungeonCast = true,
+	GenericTrashDungeonLieutenant = true,
+	GenericTrashDungeonChannel = false,
+	GenericTrashDungeonShowTargets = true,
+	GenericTrashDungeonStandardFilter = "target",
+	GenericTrashDungeonLieutenantFilter = "all",
+	GenericTrashDungeonNonEliteFilter = "off",
+	GenericTrashDungeonThrottleType = "both",
+	GenericTrashDungeonThrottleDuration = 3,
+	GenericTrashRaidEnabled = true,
+	GenericTrashRaidCast = true,
+	GenericTrashRaidChannel = false,
+	GenericTrashRaidShowTargets = true,
+	GenericTrashRaidStandardFilter = "target",
+	GenericTrashRaidNonEliteFilter = "off",
+	GenericTrashRaidThrottleType = "both",
+	GenericTrashRaidThrottleDuration = 3,
+	GenericTrashDelveEnabled = true,
+	GenericTrashDelveCast = true,
+	GenericTrashDelveLieutenant = true,
+	GenericTrashDelveChannel = false,
+	GenericTrashDelveShowTargets = true,
+	GenericTrashDelveStandardFilter = "target",
+	GenericTrashDelveLieutenantFilter = "all",
+	GenericTrashDelveNonEliteFilter = "target",
+	GenericTrashDelveThrottleType = "both",
+	GenericTrashDelveThrottleDuration = 3,
+	-- Forever uses classification, not level, including during boss encounters.
+	GenericTrashForeverDungeonEnabled = true,
+	GenericTrashForeverDungeonCast = true,
+	GenericTrashForeverDungeonElite = true,
+	GenericTrashForeverDungeonChannel = false,
+	GenericTrashForeverDungeonShowTargets = true,
+	GenericTrashForeverDungeonStandardFilter = "target",
+	GenericTrashForeverDungeonEliteFilter = "target",
+	GenericTrashForeverDungeonThrottleType = "both",
+	GenericTrashForeverDungeonThrottleDuration = 3,
+	GenericTrashForeverRaidEnabled = true,
+	GenericTrashForeverRaidCast = true,
+	GenericTrashForeverRaidElite = true,
+	GenericTrashForeverRaidChannel = false,
+	GenericTrashForeverRaidShowTargets = true,
+	GenericTrashForeverRaidStandardFilter = "target",
+	GenericTrashForeverRaidEliteFilter = "target",
+	GenericTrashForeverRaidThrottleType = "both",
+	GenericTrashForeverRaidThrottleDuration = 3,
 	FilterVoidFormSay2 = false,
 	AutologBosses = false,
 	AdvancedAutologBosses = false,
@@ -310,10 +359,8 @@ DBM.DefaultOptions = {
 	ArrowPosX = 0,
 	ArrowPosY = -150,
 	ArrowPoint = "TOP",
-	GearPosition = {"RIGHT", -150, 0},
-	DurabilityPosition = {"RIGHT", -150, 0},
-	LatencyPosition = {"RIGHT", -150, 0},
 	KeystonesPosition = {"LEFT", 30, 0},
+	RaidChecksPosition = {"CENTER", 0, 170},
 	-- global boss mod settings (overrides mod-specific settings for some options)
 	DontShowBossAnnounces = false,
 	DontShowTargetAnnouncements = true,
@@ -380,6 +427,7 @@ DBM.DefaultOptions = {
 	ShowKeystoneOnComplete = true,
 	AddChallengeTeleports = true,
 	OverrideKeystoneSlash = false,
+	ShowConsumablesOnReadyCheck = false,
 	BrezFont = "standardFont",
 	BrezFontSize = 18,
 	BattleRezPosition = {"TOPLEFT", 214, -29},
@@ -443,6 +491,7 @@ DBM.DefaultOptions = {
 	PrivateAurasPlayerStackYOffset = 1,
 	PrivateAurasPlayerShowStacks = true,
 	PrivateAurasPlayerShowDispelBorder = true,
+	PrivateAurasPlayerShowAuraGlow = false,
 	PrivateAurasShowCooldownSwipe = true,
 	PrivateAurasBossOrRoleAurasOnly = false,
 	PrivateAurasPlayerAnchor = "CENTER",--NYI
@@ -474,6 +523,7 @@ DBM.DefaultOptions = {
 	PrivateAurasCoTankStackYOffset = 1,
 	PrivateAurasCoTankShowStacks = true,
 	PrivateAurasCoTankShowDispelBorder = true,
+	PrivateAurasCoTankShowAuraGlow = false,
 	PrivateAurasCoTankAnchor = "CENTER",--NYI
 	PrivateAurasCoTankRelativeTo = "CENTER",--NYI
 	PrivateAurasCoTankXOffset = -196,--Partial (drag and drop only, no UI slider/editbox)
@@ -602,6 +652,9 @@ function DBM:RepositionFrames()
 	-- rearrange position
 	self:UpdateWarningOptions()
 	self:UpdateSpecialWarningOptions()
+	if self.UpdateGenericTrashOptions then
+		self:UpdateGenericTrashOptions()
+	end
 	if self.TextTimers then
 		self.TextTimers:SyncOptions()
 	end
@@ -707,7 +760,6 @@ function DBM:LoadModOptions(modId, inCombat, first)
 		---@class DBMMod
 		local mod = self:GetModByName(id)
 		modInstance = mod
-		mod.showTestUI = DBM_ModsToLoadWithFullTestSupport.bossModsWithTests[id]
 		-- migrate old option
 		if _G[oldSavedVarsName] and _G[oldSavedVarsName][id] then
 			self:Debug("LoadModOptions: Found old options, importing", 2)

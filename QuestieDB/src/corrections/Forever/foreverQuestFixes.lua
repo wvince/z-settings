@@ -14,6 +14,8 @@ local l10n = QuestieLoader:ImportModule("l10n")
 
 QuestieCorrections.itemObjectiveFirst[92682] = true
 QuestieCorrections.killCreditObjectiveFirst[94489] = true
+QuestieCorrections.itemObjectiveFirst[97277] = true
+QuestieCorrections.itemObjectiveFirst[97485] = true
 
 -- Static Corrections: shared by all characters and folded in during Generation.
 function ForeverQuestFixes:Load()

@@ -15,6 +15,8 @@ local RSConfigDB = private.ImportLib("RareScannerConfigDB")
 
 -- RareScanner services
 local RSMacro = private.ImportLib("RareScannerMacro")
+local RSEventHandler = private.ImportLib("RareScannerEventHandler")
+local RSMinimapTracking = private.ImportLib("RareScannerMinimapTracking")
 
 -- RareScanner internal libraries
 local RSConstants = private.ImportLib("RareScannerConstants")
@@ -94,7 +96,7 @@ function RSGeneralOptions.GetGeneralOptions()
 			desc = AL["options"],
 			args = {
 				rescanTimer = {
-					order = 0,
+					order = 1,
 					type = "range",
 					name = AL["RESCAN_TIMER"],
 					desc = AL["RESCAN_TIMER_DESC"],
@@ -109,7 +111,7 @@ function RSGeneralOptions.GetGeneralOptions()
 					width = "full",
 				},
 				scanRares = {
-					order = 1,
+					order = 2,
 					name = AL["ENABLE_SCAN_RARES"],
 					desc = AL["ENABLE_SCAN_RARES_DESC"],
 					type = "toggle",
@@ -120,7 +122,7 @@ function RSGeneralOptions.GetGeneralOptions()
 					width = "full",
 				},
 				scanContainers = {
-					order = 2,
+					order = 3,
 					name = AL["ENABLE_SCAN_CONTAINERS"],
 					desc = AL["ENABLE_SCAN_CONTAINERS_DESC"],
 					type = "toggle",
@@ -131,7 +133,7 @@ function RSGeneralOptions.GetGeneralOptions()
 					width = "full",
 				},
 				scanEvents = {
-					order = 3,
+					order = 4,
 					name = AL["ENABLE_SCAN_EVENTS"],
 					desc = AL["ENABLE_SCAN_EVENTS_DESC"],
 					type = "toggle",
@@ -142,7 +144,7 @@ function RSGeneralOptions.GetGeneralOptions()
 					width = "full",
 				},
 				scanChatAlerts = {
-					order = 4,
+					order = 5,
 					name = AL["ENABLE_SCAN_CHAT"],
 					desc = AL["ENABLE_SCAN_CHAT_DESC"],
 					type = "toggle",
@@ -152,19 +154,8 @@ function RSGeneralOptions.GetGeneralOptions()
 					end,
 					width = "full",
 				},
-				scanGarrison = {
-					order = 5,
-					name = AL["ENABLE_SCAN_GARRISON_CHEST"],
-					desc = AL["ENABLE_SCAN_GARRISON_CHEST_DESC"],
-					type = "toggle",
-					get = function() return RSConfigDB.IsShowingGarrisonCache() end,
-					set = function(_, value)
-						RSConfigDB.SetShowingGarrisonCache(value)
-					end,
-					width = "full",
-				},
 				scanInstances = {
-					order = 6,
+					order = 7,
 					name = AL["ENABLE_SCAN_IN_INSTANCE"],
 					desc = AL["ENABLE_SCAN_IN_INSTANCE_DESC"],
 					type = "toggle",
@@ -175,7 +166,7 @@ function RSGeneralOptions.GetGeneralOptions()
 					width = "full",
 				},
 				scanOnTaxi = {
-					order = 7,
+					order = 8,
 					name = AL["ENABLE_SCAN_ON_TAXI"],
 					desc = AL["ENABLE_SCAN_ON_TAXI_DESC"],
 					type = "toggle",
@@ -185,19 +176,8 @@ function RSGeneralOptions.GetGeneralOptions()
 					end,
 					width = "full",
 				},
-				scanOnRacingQuest = {
-					order = 8,
-					name = AL["ENABLE_SCAN_ON_RACING_QUEST"],
-					desc = AL["ENABLE_SCAN_ON_RACING_QUEST_DESC"],
-					type = "toggle",
-					get = function() return RSConfigDB.IsScanningWhileOnRacingQuest() end,
-					set = function(_, value)
-						RSConfigDB.SetScanningWhileOnRacingQuest(value)
-					end,
-					width = "full",
-				},
 				scanOnPetBattle = {
-					order = 9,
+					order = 10,
 					name = AL["ENABLE_SCAN_ON_PET_BATTLE"],
 					desc = AL["ENABLE_SCAN_ON_PET_BATTLE_DESC"],
 					type = "toggle",
@@ -207,43 +187,8 @@ function RSGeneralOptions.GetGeneralOptions()
 					end,
 					width = "full",
 				},
-				scanWorldMapVignettes = {
-					order = 10,
-					name = AL["ENABLE_SCAN_WORLDMAP_VIGNETTES"],
-					desc = AL["ENABLE_SCAN_WORLDMAP_VIGNETTES_DESC"],
-					type = "toggle",
-					get = function() return RSConfigDB.IsScanningWorldMapVignettes() end,
-					set = function(_, value)
-						RSConfigDB.SetScanningWorldMapVignettes(value)
-					end,
-					width = "full",
-				},
-				scanWithMacro = {
-					order = 11,
-					name = AL["ENABLE_SCAN_MACRO"],
-					desc = AL["ENABLE_SCAN_MACRO_DESC"],
-					type = "toggle",
-					get = function() return RSConfigDB.IsScanningWithMacro() end,
-					set = function(_, value)
-						RSConfigDB.SetScanningWithMacro(value)
-						if (value) then
-							RSMacro.CreateMacro()
-						else
-							RSMacro.DeleteMacro()
-						end
-					end,
-					validate = function(_, value)
-						-- Check numer of macros
-						if (not RSMacro.IsAvailableMacroSlot()) then
-							return AL["ENABLE_SCAN_MACRO_ERROR"]
-						end
-						
-						return true
-					end,
-					width = "full",
-				},
 				ignoreCompletedEntities = {
-					order = 12,
+					order = 11,
 					name = AL["IGNORE_SCAN_COMPLETED_ENTITIES"],
 					desc = AL["IGNORE_SCAN_COMPLETED_ENTITIES_DESC"],
 					type = "toggle",
@@ -254,7 +199,7 @@ function RSGeneralOptions.GetGeneralOptions()
 					width = "full",
 				},
 				autoHideButtonInstances = {
-					order = 13,
+					order = 12,
 					name = AL["AUTOHIDE_BUTTON_INSTANCES"],
 					desc = AL["AUTOHIDE_BUTTON_INSTANCES_DESC"],
 					type = "toggle",
@@ -265,7 +210,7 @@ function RSGeneralOptions.GetGeneralOptions()
 					width = "full",
 				},
 				showMaker = {
-					order = 14,
+					order = 13,
 					name = AL["ENABLE_MARKER"],
 					desc = AL["ENABLE_MARKER_DESC"],
 					type = "toggle",
@@ -276,7 +221,7 @@ function RSGeneralOptions.GetGeneralOptions()
 					width = "full",
 				},
 				marker = {
-					order = 15,
+					order = 14,
 					type = "select",
 					dialogControl = 'RS_Markers',
 					name = AL["MARKER"],
@@ -289,13 +234,126 @@ function RSGeneralOptions.GetGeneralOptions()
 					width = "normal",
 					disabled = function() return not RSConfigDB.IsDisplayingMarkerOnTarget() end,
 				},
-				separatorWaypoints = {
+				pingTarget = {
+					order = 15,
+					name = AL["ENABLE_PING"],
+					desc = AL["ENABLE_PING_DESC"],
+					type = "toggle",
+					get = function() return RSConfigDB.IsPingingTarget() end,
+					set = function(_, value)
+						RSConfigDB.SetPingingTarget(value)
+					end,
+					width = "full",
+				},
+				separatorTrackingSystems = {
 					order = 16,
+					type = "header",
+					name = AL["TRACKING_SYSTEMS"],
+				},
+				scanWorldMapVignettes = {
+					order = 17,
+					name = AL["ENABLE_SCAN_WORLDMAP_VIGNETTES"],
+					desc = AL["ENABLE_SCAN_WORLDMAP_VIGNETTES_DESC"],
+					type = "toggle",
+					get = function() return RSConfigDB.IsScanningWorldMapVignettes() end,
+					set = function(_, value)
+						RSConfigDB.SetScanningWorldMapVignettes(value)
+					end,
+					width = "full",
+				},
+				scanSoftInteract = {
+					order = 18,
+					name = AL["ENABLE_SCAN_SOFT_INTERACT"],
+					desc = AL["ENABLE_SCAN_SOFT_INTERACT_DESC"],
+					type = "toggle",
+					get = function() return RSConfigDB.IsScanningSoftInteract() end,
+					set = function(_, value)
+						RSConfigDB.SetScanningSoftInteract(value)
+						RSEventHandler.UpdateSoftInteractCVars(value)
+					end,
+					width = "full",
+				},
+				scanClassSkills = {
+					order = 19,
+					name = AL["ENABLE_SCAN_CLASS_SKILLS"],
+					desc = AL["ENABLE_SCAN_CLASS_SKILLS_DESC"],
+					type = "toggle",
+					get = function() return RSConfigDB.IsScanningClassSkills() end,
+					set = function(_, value)
+						RSConfigDB.SetScanningClassSkills(value)
+						if (value) then
+							RSMinimapTracking.Start()
+						else
+							RSMinimapTracking.Stop()
+						end
+					end,
+					width = "full",
+					-- Not compatible with retail (yet/hopefully)
+					disabled = function() return WOW_PROJECT_ID == WOW_PROJECT_MAINLINE end,
+				},
+				scanWithMacro = {
+					order = 20,
+					name = AL["ENABLE_SCAN_MACRO"],
+					desc = AL["ENABLE_SCAN_MACRO_DESC"],
+					type = "toggle",
+					get = function() return RSConfigDB.IsScanningWithMacro() end,
+					set = function(_, value)
+						RSConfigDB.SetScanningWithMacro(value)
+						if (value) then
+							RSMacro.CreateMacro()
+						else
+							RSConfigDB.SetScanningWithMacroPerChar(false)
+							RSMacro.DeleteMacro()
+						end
+					end,
+					validate = function(_, value)
+						-- Check numer of macros
+						if (value and not RSMacro.IsAvailableMacroSlot()) then
+							return AL["ENABLE_SCAN_MACRO_ERROR"]
+						end
+						
+						return true
+					end,
+					width = "full",
+				},
+				scanWithMacroPerChar = {
+					order = 21,
+					name = AL["ENABLE_SCAN_MACRO_PER_CHAR"],
+					desc = AL["ENABLE_SCAN_MACRO_PER_CHAR_DESC"],
+					type = "toggle",
+					get = function() return RSConfigDB.IsScanningWithMacroPerChar() end,
+					set = function(_, value)
+						RSConfigDB.SetScanningWithMacroPerChar(value)
+						if (RSConfigDB.IsScanningWithMacro()) then
+							RSMacro.DeleteMacro()
+							RSMacro.CreateMacro()
+							RSMacro.UpdateMacro(true)
+						end
+					end,
+					validate = function(_, value)
+						if (value and RSConfigDB.IsScanningWithMacro()) then
+							local _, numPerChar = GetNumMacros()
+							if (numPerChar >= (_G.MAX_CHARACTER_MACROS or 30)) then
+								return AL["ENABLE_SCAN_MACRO_ERROR"]
+							end
+						elseif (not value and RSConfigDB.IsScanningWithMacro()) then
+							local numAccount = GetNumMacros()
+							if (numAccount >= (_G.MAX_ACCOUNT_MACROS or 120)) then
+								return AL["ENABLE_SCAN_MACRO_ERROR"]
+							end
+						end
+						return true
+					end,
+					width = "full",
+					disabled = function() return not RSConfigDB.IsScanningWithMacro() end,
+				},
+				separatorWaypoints = {
+					order = 22,
 					type = "header",
 					name = AL["INGAME_WAYPOINTS"],
 				},
 				enableWaypointsSupport = {
-					order = 17,
+					order = 23,
 					name = AL["ENABLE_WAYPOINTS_SUPPORT"],
 					desc = AL["ENABLE_WAYPOINTS_SUPPORT_DESC"],
 					type = "toggle",
@@ -309,7 +367,7 @@ function RSGeneralOptions.GetGeneralOptions()
 					width = "full",
 				},
 				autoWaypoints = {
-					order = 18,
+					order = 24,
 					name = AL["ENABLE_AUTO_WAYPOINTS"],
 					desc = AL["ENABLE_AUTO_WAYPOINTS_DESC"],
 					type = "toggle",
@@ -321,12 +379,12 @@ function RSGeneralOptions.GetGeneralOptions()
 					disabled = function() return not RSConfigDB.IsWaypointsSupportEnabled() end,
 				},
 				separatorTomtomWaypoints = {
-					order = 19,
+					order = 25,
 					type = "header",
 					name = AL["TOMTOM_WAYPOINTS"],
 				},
 				enableTomtomSupport = {
-					order = 20,
+					order = 26,
 					name = AL["ENABLE_TOMTOM_SUPPORT"],
 					desc = AL["ENABLE_TOMTOM_SUPPORT_DESC"],
 					type = "toggle",
@@ -341,7 +399,7 @@ function RSGeneralOptions.GetGeneralOptions()
 					disabled = function() return not TomTom end,
 				},
 				autoTomtomWaypoints = {
-					order = 21,
+					order = 27,
 					name = AL["ENABLE_AUTO_TOMTOM_WAYPOINTS"],
 					desc = AL["ENABLE_AUTO_TOMTOM_WAYPOINTS_DESC"],
 					type = "toggle",
@@ -353,7 +411,7 @@ function RSGeneralOptions.GetGeneralOptions()
 					disabled = function() return not RSConfigDB.IsTomtomSupportEnabled() end,
 				},
 				showTomtomMinimapIcon = {
-					order = 22,
+					order = 28,
 					name = AL["SHOW_TOMTOM_MINIMAP_ICON"],
 					desc = AL["SHOW_TOMTOM_MINIMAP_ICON_DESC"],
 					type = "toggle",
@@ -365,7 +423,7 @@ function RSGeneralOptions.GetGeneralOptions()
 					disabled = function() return not TomTom end,
 				},
 				showTomtomWorldmapIcon = {
-					order = 23,
+					order = 29,
 					name = AL["SHOW_TOMTOM_WORLDMAP_ICON"],
 					desc = AL["SHOW_TOMTOM_WORLDMAP_ICON_DESC"],
 					type = "toggle",
@@ -377,12 +435,12 @@ function RSGeneralOptions.GetGeneralOptions()
 					disabled = function() return not TomTom end,
 				},
 				separatorWaypointUIWaypoints = {
-					order = 24,
+					order = 30,
 					type = "header",
 					name = AL["WAYPOINTUI_WAYPOINTS"],
 				},
 				enableWaypointUISupport = {
-					order = 25,
+					order = 31,
 					name = AL["ENABLE_WAYPOINTUI_SUPPORT"],
 					desc = AL["ENABLE_WAYPOINTUI_SUPPORT_DESC"],
 					type = "toggle",
@@ -397,7 +455,7 @@ function RSGeneralOptions.GetGeneralOptions()
 					disabled = function() return not WaypointUIAPI end,
 				},
 				autoWaypointUIWaypoints = {
-					order = 26,
+					order = 32,
 					name = AL["ENABLE_AUTO_TOMTOM_WAYPOINTS"],
 					desc = AL["ENABLE_AUTO_TOMTOM_WAYPOINTS_DESC"],
 					type = "toggle",

@@ -1,8 +1,10 @@
 local faction = UnitFactionGroup("player")
 if faction == "Horde" then return end
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 #season 0,1
 << Alliance
 #name 1-6 Northshire
@@ -12,6 +14,8 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-A1
 #defaultfor Human
 #next 6-11 Elwynn Forest
+
+
 step << !Human
     #completewith next
     +You have selected a guide meant for Humans. You should choose the same starter zone that you start in
@@ -221,6 +225,7 @@ step
     .accept 3105 >> Accept Tainted Letter << Human Warlock
     .accept 92479 >>Accept A Scribbled Letter << Human Hunter
     .target Marshal McBride
+
 step << Warlock
     .goto 1429/0,-136.52,-8933.53
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Deputy Willem|r outside
@@ -233,6 +238,8 @@ step << Warlock
     .accept 1598 >> Accept The Stolen Tome
     .train 348 >> Train |T135817:0|t[Immolate]
     .target Drusilla La Salle
+
+
 step << Warlock
     #hardcore
 --   .goto 1429/0,-300.65,-8964.94,60,0
@@ -263,6 +270,7 @@ step << Warlock
     #completewith next
     .cast 688 >> |cRXP_WARN_Cast|r |T136218:0|t[Summon Imp]
     .usespell 688
+
 step
     #completewith next
     >>Kill |cRXP_ENEMY_Kobolds|r. Loot them for their |cRXP_LOOT_Stolen Books|r
@@ -291,7 +299,12 @@ step
     >>Kill |cRXP_ENEMY_Kobold Workers|r
     .complete 15,1 --Kill Kobold Worker (x10)
     .mob Kobold Worker
+
 ----Start of 1x train section----
+
+
+
+
 step
     #label xp3
     #loop
@@ -338,6 +351,7 @@ step
     .turnin 15 >> Turn in Investigate Echo Ridge
     .accept 21 >> Accept Skirmish at Echo Ridge
     .target Marshal McBride
+
 step
     .isQuestComplete 91743
     .goto 1429/0,-186.12,-8874.91
@@ -351,6 +365,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Brother Paxton|r
     .accept 91745 >>Accept Mining Consultant
     .target Brother Paxton
+
 step << Mage
     #optional
     #completewith next
@@ -417,7 +432,14 @@ step << Warlock
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Drusilla La Salle|r
     .train 172 >>Train |T136118:0|t[Corruption]
     .target Drusilla La Salle
+
+
+
 ----End of 1x train section----
+
+
+
+
 step
     #season 0,1
     #loop
@@ -553,6 +575,7 @@ step
     >>Kill |cRXP_ENEMY_Shinyfinder Narf|r. Loot him for the |cRXP_LOOT_Sack of "Picture" Books|r
     .complete 91752,1 --|1/1 Sack of "Picture" Books
     .target Shinyfinder Narf
+
 step
     .goto 1429/0,-224.02,-8850.30
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Milly Osworth|r
@@ -738,7 +761,7 @@ step
     #completewith RnR
     .isOnQuest 91772
     .goto 1429/0,-46.00,-9044.61,5 >>Click the green |cRXP_PICK_Kobold Tracks|r on the ground as you travel toward Goldshire
-    .use 247970 
+    .use 247970
     .complete 91772,1 -- Followed Kobold Tracks 6/6
     .disablecheckbox
 step
@@ -748,8 +771,11 @@ step
     .accept 2158 >> Accept Rest and Relaxation
     .target Falkhaan Isenstrider
 ]])
+
+
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 #season 0,1
 #version 1
 << Alliance
@@ -760,6 +786,7 @@ RXPGuides.RegisterGuide([[
 #displayname 6-13 Elwynn Forest << SoD
 #next 11-13 Loch Modan
 #defaultfor Human
+
 step << skip -- removing for now for camp fire buff/questline
     #season 0,1 << Rogue
     #softcore
@@ -767,6 +794,7 @@ step << skip -- removing for now for camp fire buff/questline
     .deathskip >> Die and respawn at the |cRXP_FRIENDLY_Spirit Healer|r
     .target Spirit Healer
     .subzoneskip 87
+
 step
     #completewith CampQuest
     .isOnQuest 91772
@@ -791,6 +819,7 @@ step
     +|cRXP_WARN_Use the|r |T4625105:0|t[Mining for Dummies] |cRXP_WARN_to raise your|r |T136248:0|t[Mining] |cRXP_WARN_skill by 2 or to train|r |T136248:0|t[Mining] |cRXP_WARN_if you don't already have two professions|r
     .itemcount 247840,1 -- Mining for Dummies
     .use 247840
+
 step
     #label CampQuest
     .goto 1429/0,-22.99,-9404.71
@@ -803,6 +832,7 @@ step
     >>|cRXP_WARN_Type "/sit" in chat and wait for one minute around the campfire|r
     .complete 95998,1 -- /sit emote in chat 1/1
     .complete 95998,2 -- Gain boosted rest buff 1/1
+
 step
     .goto 1429/0,-22.99,-9404.71
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Sam Sarsaparilla|r
@@ -827,13 +857,17 @@ step
     .accept 97923 >> Accept Camping 101: Mining
     .target Sam Sarsaparilla
     .skill mining,<1,1 -- shows if mining is >1
+
 --Add turnins for skinning/herb/mining later
+
 step
     .goto 1429/0,-22.99,-9404.71
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Sam Sarsaparilla|r
     .turnin 95998 >> Turn in The Great Outdoors
     .accept 96626 >> Accept Camping 101: Cooking
     .target Sam Sarsaparilla
+
+
 step
     .isOnQuest 91772
     #loop
@@ -844,6 +878,7 @@ step
     >>Click the green |cRXP_PICK_Kobold Tracks|r on the ground
     .use 247970 >> |cRXP_WARN_Use the|r |T132995:0|t[Kobold Tracking Kit] |cRXP_WARN_to track them on your minimap|r
     .complete 91772,1 -- Followed Kobold Tracks 6/6
+
 step << Warrior/Rogue/Paladin
     .goto 1429/0,87.87,-9456.65
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Smith Argus|r
@@ -947,6 +982,7 @@ step
     .turnin 2158,2 >> Turn in Rest and Relaxation << !Rogue !Warrior
     .home >> Set your Hearthstone to Goldshire
     .target Innkeeper Farley
+
 step
     .goto 1429/0,-5.63,-9467.21
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tomas|r
@@ -1145,10 +1181,8 @@ step << Warrior/Paladin/Rogue
     #optional
     #label RoughStone1
     #completewith NecklaceStart
-    >>Kill |cRXP_ENEMY_Kobold Tunnelers|r and |cRXP_ENEMY_Kobold Miners|r. Open |cRXP_PICK_Battered Chests|r. Loot them for their |T135232:0|t|cRXP_LOOT_[Rough Stones]|r << Warrior/Rogue
-    >>Kill |cRXP_ENEMY_Kobold Tunnelers|r and |cRXP_ENEMY_Kobold Miners|r. Open |cRXP_PICK_Battered Chests|r. Loot them for their |T135232:0|t|cRXP_LOOT_[Rough Stones]|r and |T132889:0|t|cRXP_LOOT_[Linen Cloth]|r << Paladin
+    >>Kill |cRXP_ENEMY_Kobold Tunnelers|r and |cRXP_ENEMY_Kobold Miners|r. Open |cRXP_PICK_Battered Chests|r. Loot them for their |T135232:0|t|cRXP_LOOT_[Rough Stones]|r
     .collect 2835,1 --Rough Stone (1+)
-    .collect 2589,1 << Paladin --Linen Cloth (1+)
     .itemcount 2862,<1 << Rogue/Warrior --Rough Sharpening Stone (<1)
     .itemcount 3239,<1 << Paladin --Rough Weightstone (<1)
     .train 2018,3 --Blacksmithing Trained
@@ -1158,17 +1192,15 @@ step << Warrior/Paladin/Rogue
     #label RoughStoneCraft1
     #completewith NecklaceStart
     +|T136241:0|t[Blacksmith] |cRXP_WARN_the|r |T135232:0|t|cRXP_LOOT_[Rough Stones]|r |cRXP_WARN_into|r |T135248:0|t[Rough Sharpening Stones] << Warrior/Rogue
-    +|T136241:0|t[Blacksmith] |cRXP_WARN_the|r |T135232:0|t|cRXP_LOOT_[Rough Stones]|r |cRXP_WARN_and|r |T132889:0|t|cRXP_LOOT_[Linen Cloth]|r |cRXP_WARN_into|r |T135255:0|t[Rough Weightstones] << Paladin
+    +|T136241:0|t[Blacksmith] |cRXP_WARN_the|r |T135232:0|t|cRXP_LOOT_[Rough Stones]|r |cRXP_WARN_into|r |T135255:0|t[Rough Weightstones] << Paladin
     .collect 2862,5 << Rogue/Warrior --Rough Sharpening Stone (5)
     .disablecheckbox
     .collect 3239,5 << Paladin --Rough Weightstone (5)
     .disablecheckbox << Paladin
     .collect 2835,5 --Rough Stone (5)
     .disablecheckbox
-    .collect 2589,1 << Paladin --Linen Cloth (1+)
     .disablecheckbox << Paladin
     .itemcount 2835,1 --Rough Stone (1+)
-    .itemcount 2589,1 << Paladin --Linen Cloth (1+)
     .usespell 2018
     .train 2018,3
 step << Warrior/Paladin/Rogue
@@ -1230,10 +1262,8 @@ step << Warrior/Paladin/Rogue
     #optional
     #label RoughStone2
     #completewith Lovers
-    >>Kill |cRXP_ENEMY_Kobold Tunnelers|r and |cRXP_ENEMY_Kobold Miners|r. Open |cRXP_PICK_Battered Chests|r. Loot them for their |T135232:0|t|cRXP_LOOT_[Rough Stones]|r << Warrior/Rogue
-    >>Kill |cRXP_ENEMY_Kobold Tunnelers|r and |cRXP_ENEMY_Kobold Miners|r. Open |cRXP_PICK_Battered Chests|r. Loot them for their |T135232:0|t|cRXP_LOOT_[Rough Stones]|r and |T132889:0|t|cRXP_LOOT_[Linen Cloth]|r << Paladin
+    >>Kill |cRXP_ENEMY_Kobold Tunnelers|r and |cRXP_ENEMY_Kobold Miners|r. Open |cRXP_PICK_Battered Chests|r. Loot them for their |T135232:0|t|cRXP_LOOT_[Rough Stones]|r
     .collect 2835,1 --Rough Stone (1+)
-    .collect 2589,1 << Paladin --Linen Cloth (1+)
     .itemcount 2862,<1 << Rogue/Warrior --Rough Sharpening Stone (<1)
     .itemcount 3239,<1 << Paladin --Rough Weightstone (<1)
     .train 2018,3 --Blacksmithing Trained
@@ -1243,17 +1273,14 @@ step << Warrior/Paladin/Rogue
     #label RoughStoneCraft2
     #completewith Lovers
     +|T136241:0|t[Blacksmith] |cRXP_WARN_the|r |T135232:0|t|cRXP_LOOT_[Rough Stones]|r |cRXP_WARN_into|r |T135248:0|t[Rough Sharpening Stones] << Warrior/Rogue
-    +|T136241:0|t[Blacksmith] |cRXP_WARN_the|r |T135232:0|t|cRXP_LOOT_[Rough Stones]|r |cRXP_WARN_and|r |T132889:0|t|cRXP_LOOT_[Linen Cloth]|r |cRXP_WARN_into|r |T135255:0|t[Rough Weightstones] << Paladin
+    +|T136241:0|t[Blacksmith] |cRXP_WARN_the|r |T135232:0|t|cRXP_LOOT_[Rough Stones]|r |cRXP_WARN_into|r |T135255:0|t[Rough Weightstones] << Paladin
     .collect 2862,5 << Rogue/Warrior --Rough Sharpening Stone (5)
     .disablecheckbox
     .collect 3239,5 << Paladin --Rough Weightstone (5)
     .disablecheckbox << Paladin
     .collect 2835,5 --Rough Stone (5)
     .disablecheckbox
-    .collect 2589,1 << Paladin --Linen Cloth (1+)
-    .disablecheckbox << Paladin
     .itemcount 2835,1 --Rough Stone (1+)
-    .itemcount 2589,1 << Paladin --Linen Cloth (1+)
     .usespell 2018
     .train 2018,3
 step << Warrior/Paladin/Rogue
@@ -1315,10 +1342,8 @@ step << Warrior/Paladin/Rogue
     #optional
     #label RoughStone3
     #completewith Exchange
-    >>Kill |cRXP_ENEMY_Kobold Tunnelers|r and |cRXP_ENEMY_Kobold Miners|r. Open |cRXP_PICK_Battered Chests|r. Loot them for their |T135232:0|t|cRXP_LOOT_[Rough Stones]|r << Warrior/Rogue
-    >>Kill |cRXP_ENEMY_Kobold Tunnelers|r and |cRXP_ENEMY_Kobold Miners|r. Open |cRXP_PICK_Battered Chests|r. Loot them for their |T135232:0|t|cRXP_LOOT_[Rough Stones]|r and |T132889:0|t|cRXP_LOOT_[Linen Cloth]|r << Paladin
+    >>Kill |cRXP_ENEMY_Kobold Tunnelers|r and |cRXP_ENEMY_Kobold Miners|r. Open |cRXP_PICK_Battered Chests|r. Loot them for their |T135232:0|t|cRXP_LOOT_[Rough Stones]|r
     .collect 2835,1 --Rough Stone (1+)
-    .collect 2589,1 << Paladin --Linen Cloth (1+)
     .itemcount 2862,<1 << Rogue/Warrior --Rough Sharpening Stone (<1)
     .itemcount 3239,<1 << Paladin --Rough Weightstone (<1)
     .train 2018,3 --Blacksmithing Trained
@@ -1329,17 +1354,14 @@ step << Warrior/Paladin/Rogue
     #label RoughStoneCraft3
     #completewith Exchange
     +|T136241:0|t[Blacksmith] |cRXP_WARN_the|r |T135232:0|t|cRXP_LOOT_[Rough Stones]|r |cRXP_WARN_into|r |T135248:0|t[Rough Sharpening Stones] << Warrior/Rogue
-    +|T136241:0|t[Blacksmith] |cRXP_WARN_the|r |T135232:0|t|cRXP_LOOT_[Rough Stones]|r |cRXP_WARN_and|r |T132889:0|t|cRXP_LOOT_[Linen Cloth]|r |cRXP_WARN_into|r |T135255:0|t[Rough Weightstones] << Paladin
+    +|T136241:0|t[Blacksmith] |cRXP_WARN_the|r |T135232:0|t|cRXP_LOOT_[Rough Stones]|r |cRXP_WARN_into|r |T135255:0|t[Rough Weightstones] << Paladin
     .collect 2862,5 << Rogue/Warrior --Rough Sharpening Stone (5)
     .disablecheckbox
     .collect 3239,5 << Paladin --Rough Weightstone (5)
     .disablecheckbox << Paladin
     .collect 2835,5 --Rough Stone (5)
     .disablecheckbox
-    .collect 2589,1 << Paladin --Linen Cloth (1+)
-    .disablecheckbox << Paladin
     .itemcount 2835,1 --Rough Stone (1+)
-    .itemcount 2589,1 << Paladin --Linen Cloth (1+)
     .usespell 2018
     .train 2018,3
     .subzoneskip 87 --Goldshire
@@ -1717,6 +1739,8 @@ step
 --  .skill cooking,<10,1
     .skill cooking,50,1 --XX Shows if cooking skill is between 1-50
     .subzoneskip 54
+
+
 step
     .goto 1429,47.5,62.2
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Jason Mathers|r
@@ -1828,14 +1852,13 @@ step
     .turnin 99128 >> Turn in Slimy Menace
     .accept 99129 >> Accept A Man About a Murloc
     .target Jason Mathers
+
 step << Warrior/Paladin/Rogue
     #optional
     #label RoughStone4
     #completewith JasperlodeExplore
-    >>Kill |cRXP_ENEMY_Kobold Miners|r. Open |cRXP_PICK_Battered Chests|r. Loot them for their |T135232:0|t|cRXP_LOOT_[Rough Stones]|r << Warrior/Rogue
-    >>Kill |cRXP_ENEMY_Kobold Miners|r. Open |cRXP_PICK_Battered Chests|r. Loot them for their |T135232:0|t|cRXP_LOOT_[Rough Stones]|r and |T132889:0|t|cRXP_LOOT_[Linen Cloth]|r << Paladin
+    >>Kill |cRXP_ENEMY_Kobold Miners|r. Open |cRXP_PICK_Battered Chests|r. Loot them for their |T135232:0|t|cRXP_LOOT_[Rough Stones]|r
     .collect 2835,1 --Rough Stone (1+)
-    .collect 2589,1 << Paladin --Linen Cloth (1+)
     .itemcount 2862,<1 << Rogue/Warrior --Rough Sharpening Stone (<1)
     .itemcount 3239,<1 << Paladin --Rough Weightstone (<1)
     .train 2018,3 --Blacksmithing Trained
@@ -1846,17 +1869,14 @@ step << Warrior/Paladin/Rogue
     #label RoughStoneCraft4
     #completewith JasperlodeExplore
     +|T136241:0|t[Blacksmith] |cRXP_WARN_the|r |T135232:0|t|cRXP_LOOT_[Rough Stones]|r |cRXP_WARN_into|r |T135248:0|t[Rough Sharpening Stones] << Warrior/Rogue
-    +|T136241:0|t[Blacksmith] |cRXP_WARN_the|r |T135232:0|t|cRXP_LOOT_[Rough Stones]|r |cRXP_WARN_and|r |T132889:0|t|cRXP_LOOT_[Linen Cloth]|r |cRXP_WARN_into|r |T135255:0|t[Rough Weightstones] << Paladin
+    +|T136241:0|t[Blacksmith] |cRXP_WARN_the|r |T135232:0|t|cRXP_LOOT_[Rough Stones]|r |cRXP_WARN_into|r |T135255:0|t[Rough Weightstones] << Paladin
     .collect 2862,5 << Rogue/Warrior --Rough Sharpening Stone (5)
     .disablecheckbox
     .collect 3239,5 << Paladin --Rough Weightstone (5)
     .disablecheckbox << Paladin
     .collect 2835,5 --Rough Stone (5)
     .disablecheckbox
-    .collect 2589,1 << Paladin --Linen Cloth (1+)
-    .disablecheckbox << Paladin
     .itemcount 2835,1 --Rough Stone (1+)
-    .itemcount 2589,1 << Paladin --Linen Cloth (1+)
     .usespell 2018
     .train 2018,3
 step << Warrior/Paladin/Rogue
@@ -1923,10 +1943,8 @@ step << Warrior/Paladin/Rogue
     #optional
     #label RoughStone5
     #completewith Find
-    >>Kill |cRXP_ENEMY_Kobold Miners|r. Open |cRXP_PICK_Battered Chests|r. Loot them for their |T135232:0|t|cRXP_LOOT_[Rough Stones]|r << Warrior/Rogue
-    >>Kill |cRXP_ENEMY_Kobold Miners|r. Open |cRXP_PICK_Battered Chests|r. Loot them for their |T135232:0|t|cRXP_LOOT_[Rough Stones]|r and |T132889:0|t|cRXP_LOOT_[Linen Cloth]|r << Paladin
+    >>Kill |cRXP_ENEMY_Kobold Miners|r. Open |cRXP_PICK_Battered Chests|r. Loot them for their |T135232:0|t|cRXP_LOOT_[Rough Stones]|r
     .collect 2835,1 --Rough Stone (1+)
-    .collect 2589,1 << Paladin --Linen Cloth (1+)
     .itemcount 2862,<1 << Rogue/Warrior --Rough Sharpening Stone (<1)
     .itemcount 3239,<1 << Paladin --Rough Weightstone (<1)
     .train 2018,3 --Blacksmithing Trained
@@ -1938,17 +1956,14 @@ step << Warrior/Paladin/Rogue
     #label RoughStoneCraft5
     #completewith Find
     +|T136241:0|t[Blacksmith] |cRXP_WARN_the|r |T135232:0|t|cRXP_LOOT_[Rough Stones]|r |cRXP_WARN_into|r |T135248:0|t[Rough Sharpening Stones] << Warrior/Rogue
-    +|T136241:0|t[Blacksmith] |cRXP_WARN_the|r |T135232:0|t|cRXP_LOOT_[Rough Stones]|r |cRXP_WARN_and|r |T132889:0|t|cRXP_LOOT_[Linen Cloth]|r |cRXP_WARN_into|r |T135255:0|t[Rough Weightstones] << Paladin
+    +|T136241:0|t[Blacksmith] |cRXP_WARN_the|r |T135232:0|t|cRXP_LOOT_[Rough Stones]|r |cRXP_WARN_into|r |T135255:0|t[Rough Weightstones] << Paladin
     .collect 2862,5 << Rogue/Warrior --Rough Sharpening Stone (5)
     .disablecheckbox
     .collect 3239,5 << Paladin --Rough Weightstone (5)
     .disablecheckbox << Paladin
     .collect 2835,5 --Rough Stone (5)
     .disablecheckbox
-    .collect 2589,1 << Paladin --Linen Cloth (1+)
-    .disablecheckbox << Paladin
     .itemcount 2835,1 --Rough Stone (1+)
-    .itemcount 2589,1 << Paladin --Linen Cloth (1+)
     .usespell 2018
     .train 2018,3
     .subzoneskip 54,1
@@ -2267,6 +2282,7 @@ step
     .mob +Prowler
     .complete 52,2 --Kill Young Forest Bear (x5)
     .mob +Young Forest Bear
+
 step
     .goto 1429/0,-1119.7708,-9603.7687
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ormin Pelford|r
@@ -2311,6 +2327,7 @@ step
     .mob +Prowler
     .complete 52,2 --Kill Young Forest Bear (x5)
     .mob +Young Forest Bear
+
 step
     #completewith Level9Grind << Warlock/Warrior/Rogue
     #completewith DefiasBandits << !Warlock !Warrior !Rogue
@@ -2689,7 +2706,7 @@ step << Priest
     #requires GoldshireVendor
     .goto 1429/0,33.14,-9460.75
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Priestess Josetta|r
-    .accept 5635 >> Accept Desperate Prayer
+    .accept 94774 >> Accept Divine Grace
     .trainer >> Train your class spells
     .target Priestess Josetta
     .xp <10,1
@@ -2715,6 +2732,7 @@ step << !Warlock
     #completewith PrincessFinish
     #optional
     .abandon 59 >> Abandon Cloth and Leather Armor
+
 step
     .goto 1429/0,72.81,-9496.23--c:Elwynn Forest,42.140,67.254
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Remy "Two Times"|r
@@ -2722,6 +2740,7 @@ step
     --.accept 99130 >> Accept An Enticing Offer
     .target Remy "Two Times"
     --skipping the follow up. terrible drop rates/respawn times
+
 step << skip
     >>Loot the |cRXP_PICK_Duskweed Petals|r at the farms in Elwynn Forest
     >>Kill |cRXP_ENEMY_Stonetusk Boars|r. Loot them for their |cRXP_LOOT_Vials of Animal Blood|r
@@ -2739,6 +2758,9 @@ sstep << skip
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Jason Mathers|r
     .turnin 99131 >> Turn in Baited for Success
     .target Jason Mathers
+
+
+
 step
     #optional
     #label BoarMeatCooking3
@@ -2996,9 +3018,9 @@ step
     #season 0,1 << Paladin
     .goto 1453/0,625.48,-8857.76
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Morgan Pestle|r
-    .turnin 61,1 >> Turn in Shipment to Stormwind
-    >>|cRXP_WARN_We choose the|r |T132383:0|t[Explosive Rockets] |cRXP_WARN_as the reward. It deals decent damage, and can be used for "Split pulling" which is incredibly useful|r
-    .link https://www.youtube.com/watch?v=H-IwZ6P-ldY >> |cRXP_WARN_Click here for video reference on "Split pulling". It is a short video and invaluable to learn|r
+    .turnin 61 >> Turn in Shipment to Stormwind
+    -->>|cRXP_WARN_We choose the|r |T132383:0|t[Explosive Rockets] |cRXP_WARN_as the reward. It deals decent damage, and can be used for "Split pulling" which is incredibly useful|r
+    --.link https://www.youtube.com/watch?v=H-IwZ6P-ldY >> |cRXP_WARN_Click here for video reference on "Split pulling". It is a short video and invaluable to learn|r
     .target Morgan Pestle
 step << Rogue
     .goto 1453/0,596.43,-8831.70
@@ -3139,6 +3161,8 @@ step << Hunter
     .equip 18,2507 >> |cRXP_WARN_Equip the|r |T135489:0|t[Laminated Recurve Bow]
     .use 2507
     .itemcount 2507,1 --Hornwood Recurve Bow (1)
+
+
 ----Warlock Elwynn Voidwalker Section Start----
 step << Warlock
     #optional
@@ -3383,7 +3407,10 @@ step << Warlock
     .target Gakin the Darkbinder
     .goto 1453/0,1041.54,-8983.29
     .turnin 1689 >> Turn in The Binding
+
+
 ----Warlock Elwynn Voidwalker Section End----
+
 step << Rogue
     #xprate <1.59
     .goto 1453/0,377.47,-8752.39
@@ -3472,20 +3499,11 @@ step << Priest
     #completewith Prayer
     .goto 1453/0,809.52,-8579.22,20 >> Enter the Stormwind Cathedral
 step << Priest
-    #optional
     .goto 1453/0,862.89,-8519.61
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_High Priestess Laurena|r
-    .turnin 5635 >> Turn in Desperate Prayer
-    .train 8092 >> Train your class spells
+    .turnin -94774 >> Turn in Divine Grace
+    .trainer >> Train your class spells
     .target High Priestess Laurena
-    .isOnQuest 5635
-step << Priest
-    .goto 1453/0,862.89,-8519.61
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_High Priestess Laurena|r
-    .turnin 5634 >> Turn in Desperate Prayer
-    .train 8092 >> Train your class spells
-    .target High Priestess Laurena
-    .train 13908,1
 step << Priest
     #optional
     #label Prayer
@@ -3778,7 +3796,7 @@ step
 --logout skip - remove if logout skips re-added
 step
     .goto 1426/0,-682.300,-5489.000
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Beldin Steelgrill::1376|r 
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Beldin Steelgrill::1376|r
     .target Beldin Steelgrill::1376
     .accept 96408 >>Accept A Visitor to Dun Morogh
 step
@@ -3946,11 +3964,17 @@ step
     .goto 1426/0,-1679.89,-5728.88,40,0
     .goto 1426/0,-1675.95,-5597.22,25,0
     .goto 1426/0,-1679.89,-5728.88
-    >>Kill |cRXP_ENEMY_Rockjaw Skullthumpers|r and |cRXP_ENEMY_Rockjaw Bonesnappers|r inside the cave
+    >>Kill |cRXP_ENEMY_Rockjaw Skullthumpers|r and |cRXP_ENEMY_Rockjaw Bonesnappers|r inside the cave. Loot them for the |T132621:0|t[|cRXP_LOOT_Empty Powder Keg|r]
+    .use 268548 >> |cRXP_WARN_Use the|r |T132621:0|t[|cRXP_LOOT_Empty Powder Keg|r] |cRXP_WARN_to start the quest|r
+    >>|cRXP_WARN_NOTE: This item has a low drop rate. Skip this step if you do not find it|r
     .complete 432,1 --Kill Rockjaw Skullthumper (x6)
     .mob +Rockjaw Skullthumper
     .complete 433,1 --Kill Rockjaw Bonesnapper (x10)
     .mob +Rockjaw Bonesnapper
+    .collect 268548,1,95213,1 -- Empty Powder Keg (1)
+    .disablecheckbox
+    .accept 95213 >> Accept Stolen Blasting Powder
+    .disablecheckbox
 step
     #label QuarryEnd
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Foreman Stonebrow|r and |cRXP_FRIENDLY_Senator Mehr Stonehallow|r
@@ -3960,12 +3984,32 @@ step
     .turnin 433 >> Turn in The Public Servant
     .goto 1426/0,-1579.96,-5714.73
     .target +Senator Mehr Stonehallow
+step
+    .isOnQuest 95213
+    .goto 1426/0,-1606.02,-5676.35
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Quarrymaster Thesten|r
+    .turnin 95213 >> Turn in Stolen Blasting Powder
+    .accept 95214 >> Accept Stolen Blasting Powder
+    .target Quarrymaster Thesten
+step
+    #optional
+    .isQuestTurnedIn 95213
+    .goto 1426/0,-1606.02,-5676.35
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Quarrymaster Thesten|r
+    .accept 95214 >> Accept Stolen Blasting Powder
+    .target Quarrymaster Thesten
 step << !Warrior !Rogue !Paladin !Hunter
     .goto 1426/0,-1577.16,-5671.20
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kazan Mogosh|r
     .vendor >> |cRXP_BUY_Buy up to 20|r |T132815:0|t[Ice Cold Milk] |cRXP_BUY_from him|r
     .target Kazan Mogosh
     .xp >15,1
+step
+    .isOnQuest 95214
+    #completewith SpyMap
+    >>Kill |cRXP_ENEMY_Rockjaw Ambushers|r. Loot them for their |cRXP_LOOT_Stolen Blasting Powder|r
+    .complete 95214,1 -- Stolen Blasting Powder (16)
+    .mob Rockjaw Ambusher
 step
     #completewith OII
     >>Kill |cRXP_ENEMY_Rockjaw Ambushers|r. Loot them for the |T132621:0|t[|cRXP_LOOT_Empty Powder Keg|r]
@@ -3975,6 +4019,7 @@ step
     .accept 95213 >> Accept Stolen Blasting Powder
     .mob Rockjaw Ambusher
 step
+    #label SpyMap
     .goto 1426/0,-2009.87,-5860.22,40,0
     .goto 1426/0,-2034.49,-5922.60
     >>Kill |cRXP_ENEMY_Dark Iron Spies|r. Loot them for the |T237385:0|t[|cRXP_LOOT_Dark Iron Map|r]
@@ -3983,6 +4028,24 @@ step
     .collect 274268,1,96391,1 -- Dark Iron Map (1)
     .accept 96391 >> Accept Underground Map
     .mob Dark Iron Spy
+step
+    .isOnQuest 95214
+    #loop
+    .goto 1426/0,-1881.82,-5735.45,50,0
+    .goto 1426/0,-1832.57,-5571.28,50,0
+    .goto 1426/0,-1724.22,-5636.95,50,0
+    .goto 1426/0,-1881.82,-5735.45,0
+    .goto 1426/0,-1832.57,-5571.28,0
+    .goto 1426/0,-1724.22,-5636.95,0
+    >>Kill |cRXP_ENEMY_Rockjaw Ambushers|r. Loot them for their |cRXP_LOOT_Stolen Blasting Powder|r
+    .complete 95214,1 -- Stolen Blasting Powder (16)
+    .mob Rockjaw Ambusher
+step
+    .isQuestComplete 95214
+    .goto 1426/0,-1606.02,-5676.35
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Quarrymaster Thesten|r
+    .turnin 95214 >> Turn in Stolen Blasting Powder
+    .target Quarrymaster Thesten
 step
     #label OII
     .goto 1426/0,-1394.24,-5797.83
@@ -4057,8 +4120,10 @@ step
     .goto 1426/0,-2354.62,-4898.20,25 >>Go through the tunnel to Loch Modan
     .zoneskip Loch Modan
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 #season 0,1
 #version 1
 << Alliance
@@ -4070,6 +4135,7 @@ RXPGuides.RegisterGuide([[
 #next 13-15 Westfall << !Hunter
 #next 14-16 Darkshore << Hunter
 #defaultfor Human
+
 step -- dont delete
     #label NormalRouteStart
 step
@@ -4519,6 +4585,7 @@ step
     .turnin 224 >> Turn in In Defense of the King's Lands
     .target Mountaineer Cobbleflint
     .isQuestComplete 224
+
 step << Warlock
     #optional
     #completewith next
@@ -4530,6 +4597,7 @@ step << Warlock
     .goto 1432/0,-2747.60,-5530.540
     .xp 14 >>Grind to 14
     >>|cRXP_WARN_Fly to Ironforge and skip this step if you're planning on running the Hall of Thanes dungeon in Ironforge|r
+
 step << !Warrior
     #optional
     .goto 1432/0,-2747.60,-5530.540
@@ -4537,6 +4605,7 @@ step << !Warrior
     .cooldown item,6948,<1
     .mob Stonesplinter Trogg
     .mob Stonesplinter Scout
+
 step << Human Warrior -- flying IF to train thrown before going westfall/darkshore
     #completewith next
     #optional
@@ -4558,13 +4627,13 @@ step << Human Warrior
     .trainer >> Train your class spells
     .target Bilban Tosslespanner
     .zoneskip Ironforge,1
-step -- dont delete
-    #label NormalRouteEnd
+
 step
     .hs >> Hearth to Stormwind City
     .zoneskip Stormwind City
     .zoneskip Darkshore
     .zoneskip Westfall
+
 step << Hunter
     .goto 1453/0,596.400,-8831.700
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thurman Mullby|r
@@ -4613,10 +4682,9 @@ step << Warlock/Mage/Rogue/Priest/Warrior/Paladin
     #optional
     .goto 1453/0,613.0,-8796.03
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Woo Ping|r
-    .trainer >>Train 1h Swords and Staves << Warlock/Mage
-    .trainer >>Train 1h Swords << Rogue
-    .trainer >>Train Staves << Priest
-    .trainer >>Train 2h Swords << Warrior/Paladin
+    .train 201 >>Train 1h Swords << Warlock/Mage/Rogue
+    .train 227 >>Train Staves << Warlock/Mage/Priest
+    .train 202 >>Train 2h Swords << Warrior/Paladin
     .target Woo Ping
 step
     .isOnQuest 6261
@@ -4787,6 +4855,10 @@ step << Rogue
     .itemcount 2027,1
     .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<8.7
     .xp <14,1
+
+step -- dont delete
+    #label NormalRouteEnd
+
 --Hunter going Darkshore, rest Westfall
 step << Hunter
     .goto 1453/0,765.700,-8804.000
@@ -4801,7 +4873,7 @@ step << Hunter
     .target Gilbert Gray::267118
     .accept 95065 >>Accept Fishin' Time
     .turnin 95065 >>Turn in Fishin' Time
-step << Hunter
+step << Hunter skip
     #optional
     #requires DockTravel
     #label DarkshoreCook1
@@ -4815,7 +4887,7 @@ step << Hunter
     .itemcount 4470,1 --Simple Wood (1+)
     .itemcount 4471,1 --Flint and Tinder (1)
     .skill cooking,50,1 --XX Shows if cooking skill is <50
-step << Hunter
+step << Hunter skip
     #optional
     #requires DarkshoreCook1
     #label DarkshoreCook2
@@ -4829,7 +4901,7 @@ step << Hunter
     .itemcount 4470,1 --Simple Wood (1+)
     .itemcount 4471,1 --Flint and Tinder (1)
     .skill cooking,50,1 --XX Shows if cooking skill is <50
-step << Hunter
+step << Hunter skip
     #optional
     #requires DarkshoreCook2
     #label DarkshoreCook3
@@ -4843,7 +4915,7 @@ step << Hunter
     .itemcount 4470,1 --Simple Wood (1+)
     .itemcount 4471,1 --Flint and Tinder (1)
     .skill cooking,50,1 --XX Shows if cooking skill is <50
-step << Hunter
+step << Hunter skip
     #optional
     #requires DarkshoreCook3
     #label DarkshoreCook4
@@ -4858,7 +4930,7 @@ step << Hunter
     .itemcount 2672,1 --Stringy Wolf Meat (1+)
     .itemcount 4471,1 --Flint and Tinder (1)
     .skill cooking,50,1
-step << Hunter
+step << Hunter skip
     #optional
     #requires DarkshoreCook4
     #label DarkshoreCook5
@@ -4871,7 +4943,7 @@ step << Hunter
     .itemcount 2672,1 --Stringy Wolf Meat (1)
     .itemcount 4471,1 --Flint and Tinder (1)
     .skill cooking,50,1
-step << Hunter
+step << Hunter skip
     #optional
     #requires DarkshoreCook5
     #label DarkshoreCook6

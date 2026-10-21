@@ -1,8 +1,7 @@
 # DBM - Vanilla and Season of Discovery
 
-## [r830](https://github.com/DeadlyBossMods/DBM-Vanilla/tree/r830) (2026-09-20)
-[Full Changelog](https://github.com/DeadlyBossMods/DBM-Vanilla/compare/r829...r830) [Previous Releases](https://github.com/DeadlyBossMods/DBM-Vanilla/releases)
+## [r833](https://github.com/DeadlyBossMods/DBM-Vanilla/tree/r833) (2026-10-19)
+[Full Changelog](https://github.com/DeadlyBossMods/DBM-Vanilla/compare/r832...r833) [Previous Releases](https://github.com/DeadlyBossMods/DBM-Vanilla/releases)
 
-- tweaks  
-- World Boss add IsRestricted() (#578)  
-- Add missing models (world boss excluded) (#577)  
+- Remove DisableHardcodedOptions from vanilla modules. again. Not sure what script or user readded them, but they are removed again.  
+    Enable GenericTrash on bosses in forever  

@@ -23,14 +23,14 @@
 ## Category-zhCN: 战团藏品
 ## Category-zhTW: 戰隊收藏
 ## Author: maqjav, Maciza-Tyrande
-## Version: 1.60.1.b8
+## Version: 1.60.1.b14
 ## SavedVariables: RareScannerDB
 ## X-Category: Achievements, Map, Miscellaneous
 ## X-Credits: maqjav, Maciza-Tyrande
-## X-Date: Oct. 10, 2026
+## X-Date: Oct. 21, 2026
 ## X-Email: maqjav@gmail.com
 ## X-License: All Rights Reserved
-## X-Localizations: enUS, enGB, deDE, esES, esMX, frFR, ruRU, itIT, ptBR, koKR, zhCN, zhTW
+## X-Localizations: enUS, deDE, esES, esMX, frFR, ruRU, itIT, ptBR, koKR, zhCN, zhTW
 ## AddonCompartmentFunc: RareScanner_OnAddonCompartmentClick
 ## AddonCompartmentFuncOnEnter: RareScanner_OnAddonCompartmentEnter
 ## AddonCompartmentFuncOnLeave: RareScanner_OnAddonCompartmentLeave

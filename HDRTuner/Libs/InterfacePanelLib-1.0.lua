@@ -198,12 +198,24 @@
 --
 --      Indent      (boolean)   Indent the row (visually nests it under the row above).
 --      Parent      (initializer) Another widget's initializer; this row indents and greys out unless the parent
---                              checkbox is checked (Blizzard's standard dependency behavior).
+--                              checkbox is checked. (Implemented as Indent + a modify predicate, NOT Blizzard's
+--                              SetParentInitializer — see TAINT WARNING. The child row keeps the normal font size.)
 --      ParentPredicate (function) Optional custom predicate for Parent (default: parent checkbox is true).
 --      ShownIf     (function)  Row is only shown while this returns true.
 --      EnabledIf   (function)  Row is only interactable while this returns true.
 --      Section     (handle)    A section handle from CreateExpandableSection; the row hides while collapsed.
---      SearchTags  (table)     Extra strings the options search box should match, e.g. { "cache", "memory" }.
+--      SearchTags  (table)     IGNORED since v3 (see TAINT WARNING). Kept so existing calls don't error.
+--
+--      TAINT WARNING (12.1+): the Options search box loops over every addon's initializers without protection.
+--      Anything that search reads which addon code wrote taints that search, and the Social panel's Discord row then
+--      throws ADDON_ACTION_FORBIDDEN for C_Discord.IsUserOAuthed() (Stanzilla/WoWUIBugs#873). What the library does
+--      about it:
+--        * Search tags are only ever added by Blizzard's secure registration path (a setting's own Name), never by
+--          addon code. So Buttons, CheckboxSlider rows, and SearchTags don't add keywords: buttons and checkbox+slider
+--          rows don't appear in search; checkbox+button rows are still found by their checkbox Name.
+--        * Parent is emulated (the search reads initializer.parentInitializer on every matching row).
+--        * STILL UNSAFE, avoid where possible: ShownIf and Section. The search calls every row's shown-predicates,
+--          so an addon predicate taints EVERY search. Prefer EnabledIf (greys the row; the search never calls it).
 --
 --
 --  FORMATTERS (sliders and dropdowns)
@@ -226,7 +238,9 @@
 -- LIBRARY INITIALIZATION (version-guarded so embedded copies coexist; newest version wins)
 --=====================================================================================================================
 
-local LIBRARY_ID, LIBRARY_VERSION = "InterfacePanelLib-1.0", 1
+-- 2: CreateButton no longer taints Options search.
+-- 3: CheckboxSlider / CheckboxButton / SearchTags / Parent no longer taint Options search.
+local LIBRARY_ID, LIBRARY_VERSION = "InterfacePanelLib-1.0", 3
 
 local globalEnv = _G or getfenv(0)
 local existing = globalEnv[LIBRARY_ID]
@@ -442,11 +456,7 @@ end
 
 -- Apply layout/behavior options shared by every row: Indent, Parent, ShownIf, EnabledIf, Section, SearchTags.
 local function ApplyInitializerOptions(initializer, Options)
-    if Options.SearchTags then
-        for _, tag in ipairs(Options.SearchTags) do
-            initializer:AddSearchTags(tag)
-        end
-    end
+    -- Options.SearchTags is deliberately ignored: AddSearchTags from addon code taints the Options search.
     if Options.ShownIf then
         initializer:AddShownPredicate(Options.ShownIf)
     end
@@ -454,7 +464,20 @@ local function ApplyInitializerOptions(initializer, Options)
         initializer:AddModifyPredicate(Options.EnabledIf)
     end
     if Options.Parent then
-        initializer:SetParentInitializer(Options.Parent, Options.ParentPredicate)
+        -- Emulated instead of SetParentInitializer: the search reads initializer.parentInitializer on matching
+        -- rows, and ours would be addon-written (tainted). Modify predicates are only read when the row itself is
+        -- initialized, inside Blizzard's per-row protection. Any setting change repaints the list, so this
+        -- re-evaluates live when the parent is toggled.
+        local parent = Options.Parent
+        local predicate = Options.ParentPredicate or function()
+            local data = parent.data
+            local setting = data and (data.setting or data.cbSetting)
+            return setting ~= nil and setting:GetValue() == true
+        end
+        initializer:AddModifyPredicate(predicate)
+        if initializer.Indent then
+            initializer:Indent()
+        end
     end
     if Options.Section and Options.Section.AddChild then
         Options.Section:AddChild(initializer)
@@ -1032,10 +1055,20 @@ function PanelHandle:CreateCheckboxSlider(Options)
     local SliderOptions = Settings.CreateSliderOptions(Options.Slider.Min, Options.Slider.Max, Options.Slider.Step or 1)
     SliderOptions:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right, BuildValueFormatter(Options.Slider))
 
-    local Initializer = CreateSettingsCheckboxSliderInitializer(
-        CheckboxSetting, Options.Checkbox.Name, Options.Checkbox.Tooltip,
-        SliderSetting, SliderOptions, Options.Slider.Name, Options.Slider.Tooltip
-    )
+    -- Same data/template as Blizzard's CreateSettingsCheckboxSliderInitializer, minus its trailing
+    -- initializer:AddSearchTags(cbLabel, sliderLabel): run from addon code, that taints the Options search.
+    -- Cost: this row doesn't appear in search results.
+    local Initializer = Settings.CreateSettingInitializer("SettingsCheckboxSliderControlTemplate", {
+        name          = Options.Checkbox.Name,
+        tooltip       = Options.Checkbox.Tooltip,
+        cbSetting     = CheckboxSetting,
+        cbLabel       = Options.Checkbox.Name,
+        cbTooltip     = Options.Checkbox.Tooltip,
+        sliderSetting = SliderSetting,
+        sliderOptions = SliderOptions,
+        sliderLabel   = Options.Slider.Name,
+        sliderTooltip = Options.Slider.Tooltip,
+    })
     GetLayout(self, Options.Category):AddInitializer(Initializer)
     ApplyInitializerOptions(Initializer, Options)
 
@@ -1145,10 +1178,15 @@ function PanelHandle:CreateCheckboxButton(Options)
 
     local Setting, key = RegisterSetting("CreateCheckboxButton", self, Options, VarType.Boolean)
 
-    local Initializer = CreateSettingsCheckboxWithButtonInitializer(
-        Setting, Options.ButtonText, Options.OnClick,
-        Options.OnEvaluateState, Options.ClickRequiresSet or false, Options.Tooltip
-    )
+    -- Same as Blizzard's CreateSettingsCheckboxWithButtonInitializer, minus its trailing
+    -- initializer:AddSearchTags(buttonText), which taints the Options search when run from addon code. The checkbox
+    -- Name is still tagged by Blizzard's secure registration, so the row stays searchable by Name.
+    local data = Settings.CreateSettingInitializerData(Setting, nil, Options.Tooltip)
+    data.buttonText       = Options.ButtonText
+    data.OnButtonClick    = Options.OnClick
+    data.OnEvaluateState  = Options.OnEvaluateState
+    data.clickRequiresSet = Options.ClickRequiresSet or false
+    local Initializer = Settings.CreateSettingInitializer("SettingsCheckboxWithButtonControlTemplate", data)
     GetLayout(self, Options.Category):AddInitializer(Initializer)
     ApplyInitializerOptions(Initializer, Options)
 
@@ -1188,8 +1226,12 @@ function PanelHandle:CreateButton(Options)
         IPLError("CreateButton", "'Category', 'Name', 'ButtonText', and 'OnClick' are required.")
     end
 
-    -- Blizzard asserts the addSearchTags argument is non-nil; default to searchable.
-    local Initializer = CreateSettingsButtonInitializer(Options.Name, Options.ButtonText, Options.OnClick, Options.Tooltip, true)
+    -- Blizzard asserts addSearchTags is non-nil. Pass false: when true, CreateSettingsButtonInitializer calls
+    -- AddSearchTags from OUR (insecure) execution, creating initializer.searchTags as a tainted table. The Options
+    -- search box scans every initializer's searchTags in an unprotected loop, so reading ours taints the whole
+    -- search, and the rebuilt result list then trips ADDON_ACTION_FORBIDDEN on the Social panel's Discord row
+    -- (C_Discord.IsUserOAuthed, protected since 12.1). Cost: button rows don't appear in Options search results.
+    local Initializer = CreateSettingsButtonInitializer(Options.Name, Options.ButtonText, Options.OnClick, Options.Tooltip, false)
     GetLayout(self, Options.Category):AddInitializer(Initializer)
     ApplyInitializerOptions(Initializer, Options)
 

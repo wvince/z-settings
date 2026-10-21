@@ -1105,6 +1105,7 @@ data["Gnomeregan"] = {
 				{ 1, 9445 }, -- Grubbis Paws
 				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
 				{ 17, 274043 }, -- Irradiated Shield
+				{ 18, 274042 }, -- Skullduggery Belt
 			},
 		},
 		{ -- GnViscousFallout
@@ -1356,11 +1357,12 @@ data["RazorfenKraul"] = {
 }
 
 data["ScarletMonasteryGraveyard"] = {
-	name = C_Map.GetAreaInfo(796) .. LTNX,
+	--name = C_Map.GetAreaInfo(796) .. LTNX,
 	MapID = 796,
 	InstanceID = 189,
 	SubAreaIDs = { 21379, 24000, 23805 },
-	name = C_Map.GetAreaInfo(796).." - "..AL["Graveyard"],
+	--name = C_Map.GetAreaInfo(796).." - "..AL["Graveyard"],
+	name = C_Map.GetAreaInfo(796).." - "..AL["Graveyard"] .. LTNX,
 	AtlasModule = ATLAS_MODULE_NAME,
 	AtlasMapID = "ScarletMonastery",
 	AtlasMapFile = { "CL_SMGraveyard", "CL_ScarletMonasteryEnt" },
@@ -1501,11 +1503,12 @@ data["ScarletMonasteryGraveyard"] = {
 }
 
 data["ScarletMonasteryLibrary"] = {
-	name = C_Map.GetAreaInfo(796) .. LTNX,
+	--name = C_Map.GetAreaInfo(796) .. LTNX,
 	MapID = 796,
 	InstanceID = 189,
 	SubAreaIDs = { 21426, 21444, 21420 },
-	name = C_Map.GetAreaInfo(796).." - "..AL["Library"],
+	--name = C_Map.GetAreaInfo(796).." - "..AL["Library"] .. LTNX,
+	name = C_Map.GetAreaInfo(796).." - "..AL["Library"] .. LTNX,
 	AtlasModule = ATLAS_MODULE_NAME,
 	AtlasMapID = "ScarletMonastery",
 	AtlasMapFile = { "CL_SMLibrary", "CL_ScarletMonasteryEnt" },
@@ -7438,8 +7441,8 @@ data["ExcavationSiteWetlands"] = {
 	},
 }
 
-data["CityOfDalaran"] = {
-	name = "City of Dalaran",
+data["TheCityOfDalaran"] = {
+	name = "City of Dalaran" .. LTNX,
 	ContentType = FOREVER_DUNGEON_CONTENT,
 	LoadDifficulty = NORMAL_DIFF,
 	LevelRange = { 24, 28, 33 },
@@ -7447,47 +7450,70 @@ data["CityOfDalaran"] = {
 		{ -- Boss 1: Atrexis the Grave Knight
 			name = "Atrexis the Grave Knight",
 			[NORMAL_DIFF] = {
-				-- No drops discovered yet
+				{ 1, 273032 }, -- Bonebinder's Signet (finger)
+				{ 2, 273033 }, -- Gravespike Repeater (ranged, crossbow)
+				{ 3, 273036 }, -- Graveweave Bindings (wrist, cloth)
 			},
 		},
 		{ -- Boss 2: Arcane Anomaly
 			name = "Arcane Anomaly",
 			[NORMAL_DIFF] = {
-				-- No drops discovered yet
+				{ 1, 273031 }, -- Runemender's Seal (finger)
+				{ 2, 273034 }, -- Ephemeral Grips (hands, cloth)
+				{ 3, 273035 }, -- Mana-Warped Chain Shirt (chest, mail)
 			},
 		},
 		{ -- Boss 3: Arcanic Enigma
 			name = "Arcanic Enigma",
 			[NORMAL_DIFF] = {
-				-- No drops discovered yet
+				{ 1, 273043 }, -- Wand of Mana Concentration (ranged, wand)
+				{ 2, 273044 }, -- Violet Sorcerer's Robes (chest, cloth)
+				{ 3, 273045 }, -- Drape of Shifting Energy (back, cloth)
 			},
 		},
 		{ -- Boss 4: Unstable Sentinel
 			name = "Unstable Sentinel",
 			[NORMAL_DIFF] = {
-				-- No drops discovered yet
+				{ 1, 273046 }, -- Guardian's Dualblade (two-hand, axe)
+				{ 2, 273047 }, -- Unstable Crystalline Shoulderpads (shoulder, leather)
+				{ 3, 273048 }, -- Refractory Scaleguards (legs, mail)
 			},
 		},
-		{ -- Boss 5: Fel Ancient
+		{ -- Boss 5: Mana Devourer
+			name = "Mana Devourer",
+			[NORMAL_DIFF] = {
+				{ 1, 273040 }, -- Spine of the Devourer (two-hand, staff)
+				{ 2, 273041 }, -- Slitherwrap Girdle (waist, leather)
+				{ 3, 273042 }, -- Manascale Treads (feet, mail)
+			},
+		},
+		{ -- Boss 6: Fel Ancient
 			name = "Fel Ancient",
 			[NORMAL_DIFF] = {
-				-- No drops discovered yet
+				{ 1, 273037 }, -- Felbough Arm (two-hand, polearm)
+				{ 2, 273038 }, -- Garb of Fallen Felbark (chest, leather)
+				{ 3, 273039 }, -- Blightleaf Rope (waist, cloth)
 			},
 		},
-		{ -- Boss 6: Lyn the Ignored
+		{ -- Boss 7: Lyn the Ignored
 			name = "Lyn the Ignored",
 			[NORMAL_DIFF] = {
-				-- No drops discovered yet
+				{ 1, 273053 }, -- Tendonscraper Dagger (main hand, dagger)
+				{ 2, 273054 }, -- Cartilage Shapers (hands, leather)
+				{ 3, 273055 }, -- Bonepile Gaze (off hand, shield)
 			},
 		},
-		{ -- Boss 7: Shade of the Archmage
+		{ -- Boss 8: Shade of the Archmage
 			name = "Shade of the Archmage",
 			[NORMAL_DIFF] = {
-				-- No drops discovered yet
+				{ 1, 273049 }, -- Archmagister's Faceted Pendant (neck)
+				{ 2, 273051 }, -- Violet Sorcerer's Mantle (shoulder, cloth)
+				{ 3, 273052 }, -- Ponderous Orb (held in off-hand)
 			},
 		},
 	},
 }
+
 
 data["TheDrownedCity"] = {
 	name = "The Drowned City",

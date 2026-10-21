@@ -1,8 +1,10 @@
 local faction = UnitFactionGroup("player")
 if faction == "Horde" then return end
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 #season 0,1
 #version 1
 << Alliance
@@ -12,6 +14,7 @@ RXPGuides.RegisterGuide([[
 #name 1-5 Coldridge Valley
 #next 5-11 Dun Morogh
 #defaultfor Dwarf/Gnome
+
 step << !Gnome !Dwarf
     #completewith next
     +You have selected a guide meant for Gnomes and Dwarves. You should choose the same starter zone that you start in
@@ -84,6 +87,7 @@ step << Warrior/Warlock
     #requires WarriorHS
     #completewith WolfMeat
 	.destroy 6948 >> Delete the |T134414:0|t[Hearthstone] from your bags, as it's no longer needed
+
 step
     #label WolfMeat
     .goto 1426,29.529,73.286,0
@@ -151,6 +155,7 @@ step
     .accept 98574 >>Accept Hallowed Memorandum << Gnome Priest
     .accept 98581 >>Accept Archaic Rune << Dwarf Shaman
     .target Sten Stoutarm
+
 step << Warlock
     #season 0,1
     #optional
@@ -221,6 +226,7 @@ step << Warlock
     .turnin -3115 >> Turn in Tainted Memorandum
     .target Alamar Grimm
 --XX Warlock Imp Quest End. Return to normal
+
 step
 #season 0,1
     #label Talin
@@ -257,6 +263,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Talin Keeneye|r
     .turnin 183 >> Turn in The Boar Hunter
     .target Talin Keeneye
+
 step << Paladin/Warlock/Shaman
     #loop
     .goto 1426,23.595,72.462,0
@@ -507,6 +514,7 @@ step << !Paladin !Warlock !Hunter !Shaman
     .accept 3365 >> Accept Bring Back the Mug
     .target Durnan Furcutter
     .isQuestAvailable 317
+
 step << Mage
     #season 0,1
     .goto 1426/0,388.17,-6056.10
@@ -638,8 +646,10 @@ step
     .subzoneskip 800,1
     .isOnQuest 2160
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 #season 0,1
 #version 1
 << Alliance
@@ -649,6 +659,7 @@ RXPGuides.RegisterGuide([[
 #name 5-11 Dun Morogh
 #next 11-12 Elwynn (Dwarf/Gnome);11-12 Voidwalker Quest;12-14 Loch Modan (Dwarf/Gnome);11-13 Loch Modan (Hunter)
 #defaultfor Dwarf/Gnome
+
 step
     #optional
     #label BoarMeatQuest
@@ -739,7 +750,7 @@ step
     .target Tannok Frosthammer
 step
     .goto 1426/0,-529.600,-5590.600
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Maxan Anvol::1226|r 
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Maxan Anvol::1226|r
     .target Maxan Anvol::1226
     .accept 5625 >> Accept Garments of the Light << Priest
     .accept 99158 >>Accept Dawn in the Mountains
@@ -919,7 +930,7 @@ step << Shaman
     .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<4.20
 step
     .goto 1426/0,-431.000,-5582.400
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tognus Flintfire::1241|r 
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tognus Flintfire::1241|r
     .target Tognus Flintfire::1241
     .accept 98321 >>Accept Flintfire's Shipment
 step
@@ -982,7 +993,7 @@ step
     .mob +Crag Boar
 step
     #completewith next
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mountaineer Gretchen::271546|r 
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mountaineer Gretchen::271546|r
     .target Mountaineer Gretchen::271546
     .turnin 98322 >>Turn in Secure the Mountain
     .accept 98319 >>Accept Secure the Mountain
@@ -993,7 +1004,7 @@ step
     .complete 5541,1 --Collect Rumbleshot's Ammo (x1)
 step
     .goto 1426/0,-371.400,-5746.900
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mountaineer Gretchen::271546|r 
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mountaineer Gretchen::271546|r
     .target Mountaineer Gretchen::271546
     .turnin 98322 >>Turn in Secure the Mountain
     .accept 98319 >>Accept Secure the Mountain
@@ -1106,7 +1117,7 @@ step
     .xp 7 >> Grind to 7
 step
     .goto 1426/0,-501.500,-5643.900
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Senir Whitebeard::1252|r 
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Senir Whitebeard::1252|r
     .target Senir Whitebeard::1252
     .accept 287 >>Accept Frostmane Hold
 step
@@ -1302,12 +1313,14 @@ step
     >>Kill |cRXP_ENEMY_Frostmane Headhunters|r inside the cave
     .complete 287,1 --Kill Frostmane Headhunter (x5)
     .mob Frostmane Headhunter
+
 step
     #hardcore
     #completewith Distracting
     .goto 1426/0,-531.23,-5601.59
     .subzone 131 >> Return to Kharanos
 --XX if they don't somehow meet xp gate by Kharanos then wcyd
+
 step
     #softcore
     #completewith next
@@ -1394,6 +1407,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ragnar Thunderbrew|r outside
     .turnin 384 >> Turn in Beer Basted Boar Ribs
     .target Ragnar Thunderbrew
+
 --Alternative path now for Hunters to hit 10 fast for pet quest
 step << Hunter
     .goto 1426/0,-1041.000,-5350.600
@@ -1436,10 +1450,10 @@ step << Hunter
     .turnin 314 >> Turn in Protecting the Herd
     .target Rudra Amberstill
 step << Hunter
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Senator Mehr Stonehallow|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Foreman Stonebrow|r
     .accept 432 >> Accept Those Blasted Troggs!
-    .goto 1426/0,-1580.000,-5714.700
-    .target Senator Mehr Stonehallow
+    .goto 1426/0,-1600.30,-5726.590
+    .target Foreman Stonebrow
 step << Hunter
     #loop
     .goto 1426,70.073,57.030,0
@@ -1451,14 +1465,34 @@ step << Hunter
     .waypoint 1426,67.687,60.059,45,0
     .waypoint 1426,68.958,59.357,45,0
     .waypoint 1426,70.475,59.420,45,0
-    >>Kill |cRXP_ENEMY_Rockjaw Skullthumpers|r outside the mine
+    >>Kill |cRXP_ENEMY_Rockjaw Skullthumpers|r outside the mine. Loot them for the |T132621:0|t[|cRXP_LOOT_Empty Powder Keg|r]
+    .use 268548 >> |cRXP_WARN_Use the|r |T132621:0|t[|cRXP_LOOT_Empty Powder Keg|r] |cRXP_WARN_to start the quest|r
+    >>|cRXP_WARN_NOTE: This item has a low drop rate. Skip this step if you do not find it|r
     .complete 432,1 --Kill Rockjaw Skullthumper (x6)
+    .collect 268548,1,95213,1 -- Empty Powder Keg (1)
+    .disablecheckbox
+    .accept 95213 >> Accept Stolen Blasting Powder
+    .disablecheckbox
     .mob Rockjaw Skullthumper
 step << Hunter
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Senator Mehr Stonehallow|r
+    .isOnQuest 95213
+    .goto 1426/0,-1606.02,-5676.35
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Quarrymaster Thesten|r
+    .turnin 95213 >> Turn in Stolen Blasting Powder
+    .accept 95214 >> Accept Stolen Blasting Powder
+    .target Quarrymaster Thesten
+step << Hunter
+    #optional
+    .isQuestTurnedIn 95213
+    .goto 1426/0,-1606.02,-5676.35
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Quarrymaster Thesten|r
+    .accept 95214 >> Accept Stolen Blasting Powder
+    .target Quarrymaster Thesten
+step << Hunter
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Foreman Stonebrow|r
     .turnin 432 >> Turn in Those Blasted Troggs!
-    .target Senator Mehr Stonehallow
-    .goto 1426/0,-1580.000,-5714.700
+    .target Foreman Stonebrow
+    .goto 1426/0,-1600.30,-5726.590
 step << Hunter
     .goto 1426/0,-2197.02,-5279.07,45,0
     .goto 1426/0,-2329.60,-5163.76
@@ -1673,7 +1707,7 @@ step << Hunter
     .accept 6086 >>Accept Training the Beast
 step
     .goto 1426/0,-682.300,-5489.000
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Beldin Steelgrill::1376|r 
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Beldin Steelgrill::1376|r
     .target Beldin Steelgrill::1376
     .accept 96408 >>Accept A Visitor to Dun Morogh
 step << Warrior
@@ -1872,13 +1906,21 @@ step << !Hunter
 --XX Mud slappers instead
 step
     #label QuarryStart
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Senator Mehr Stonehallow|r and |cRXP_FRIENDLY_Foreman Stonebrow|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Senator Mehr Stonehallow|r and |cRXP_FRIENDLY_Foreman Stonebrow|r << !Hunter
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Senator Mehr Stonehallow|r << Hunter
     .accept 433 >> Accept The Public Servant
     .target +Senator Mehr Stonehallow
     .goto 1426/0,-1579.96,-5714.73
-    .accept 432 >> Accept Those Blasted Troggs!
-    .goto 1426/0,-1600.30,-5726.590
-    .target +Foreman Stonebrow
+    .accept 432 >> Accept Those Blasted Troggs! << !Hunter
+    .goto 1426/0,-1600.30,-5726.590 << !Hunter
+    .target +Foreman Stonebrow << !Hunter
+step
+    #completewith RockjawBonesnappers
+    >>Loot the |cRXP_ENEMY_Rockjaw Skullthumpers|r and |cRXP_ENEMY_Rockjaw Bonesnappers|r for the |T132621:0|t[|cRXP_LOOT_Empty Powder Keg|r]
+    .use 268548 >> |cRXP_WARN_Use the|r |T132621:0|t[|cRXP_LOOT_Empty Powder Keg|r] |cRXP_WARN_to start the quest|r
+    >>|cRXP_WARN_NOTE: This item has a low drop rate. Skip this step if you do not find it|r
+    .collect 268548,1,95213,1 -- Empty Powder Keg (1)
+    .accept 95213 >> Accept Stolen Blasting Powder
 step
     #sticky
     #label Skullthumpers
@@ -1901,6 +1943,7 @@ step
     .goto 1426,70.750,56.219,20 >>Enter the Gol'Bolar Quarry Mine
     .isOnQuest 433
 step
+    #label RockjawBonesnappers
     #loop
     .goto 1426,70.750,56.219,0
     .goto 1426,71.344,51.873,0
@@ -1925,13 +1968,28 @@ step
     #requires Skullthumpers
 --XXREQ Placeholder invis step until multiple requires per step
 step
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Foreman Stonebrow|r and |cRXP_FRIENDLY_Senator Mehr Stonehallow|r
-    .turnin 432 >> Turn in Those Blasted Troggs!
-    .target +Senator Mehr Stonehallow
-    .goto 1426/0,-1600.30,-5726.590
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Senator Mehr Stonehallow|r and |cRXP_FRIENDLY_Foreman Stonebrow|r << !Hunter
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Senator Mehr Stonehallow|r << Hunter
     .turnin 433 >> Turn in The Public Servant
     .goto 1426/0,-1579.96,-5714.73
-    .target +Foreman Stonebrow  
+    .target +Senator Mehr Stonehallow
+    .turnin 432 >> Turn in Those Blasted Troggs! << !Hunter
+    .goto 1426/0,-1600.30,-5726.590 << !Hunter
+    .target +Foreman Stonebrow << !Hunter
+step
+    .isOnQuest 95213
+    .goto 1426/0,-1606.02,-5676.35
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Quarrymaster Thesten|r
+    .turnin 95213 >> Turn in Stolen Blasting Powder
+    .accept 95214 >> Accept Stolen Blasting Powder
+    .target Quarrymaster Thesten
+step
+    #optional
+    .isQuestTurnedIn 95213
+    .goto 1426/0,-1606.02,-5676.35
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Quarrymaster Thesten|r
+    .accept 95214 >> Accept Stolen Blasting Powder
+    .target Quarrymaster Thesten
 step
     #optional
     #label BoarMeatDunMorogh3
@@ -1965,6 +2023,12 @@ step
 --  .skill cooking,<10,1
     .skill cooking,50,1 --XX Shows if cooking skill is between 1-50
 step
+    .isOnQuest 95214
+    #completewith SpyMap
+    >>Kill |cRXP_ENEMY_Rockjaw Ambushers|r. Loot them for their |cRXP_LOOT_Stolen Blasting Powder|r
+    .complete 95214,1 -- Stolen Blasting Powder (16)
+    .mob Rockjaw Ambusher
+step
     #completewith OII
     >>Kill |cRXP_ENEMY_Rockjaw Ambushers|r. Loot them for the |T132621:0|t[|cRXP_LOOT_Empty Powder Keg|r]
     .use 268548 >> |cRXP_WARN_Use the|r |T132621:0|t[|cRXP_LOOT_Empty Powder Keg|r] |cRXP_WARN_to start the quest|r
@@ -1973,6 +2037,7 @@ step
     .accept 95213 >> Accept Stolen Blasting Powder
     .mob Rockjaw Ambusher
 step
+    #label SpyMap
     .goto 1426/0,-2009.87,-5860.22,40,0
     .goto 1426/0,-2034.49,-5922.60
     >>Kill |cRXP_ENEMY_Dark Iron Spies|r. Loot them for the |T237385:0|t[|cRXP_LOOT_Dark Iron Map|r]
@@ -1981,6 +2046,24 @@ step
     .collect 274268,1,96391,1 -- Dark Iron Map (1)
     .accept 96391 >> Accept Underground Map
     .mob Dark Iron Spy
+step
+    .isOnQuest 95214
+    #loop
+    .goto 1426/0,-1881.82,-5735.45,50,0
+    .goto 1426/0,-1832.57,-5571.28,50,0
+    .goto 1426/0,-1724.22,-5636.95,50,0
+    .goto 1426/0,-1881.82,-5735.45,0
+    .goto 1426/0,-1832.57,-5571.28,0
+    .goto 1426/0,-1724.22,-5636.95,0
+    >>Kill |cRXP_ENEMY_Rockjaw Ambushers|r. Loot them for their |cRXP_LOOT_Stolen Blasting Powder|r
+    .complete 95214,1 -- Stolen Blasting Powder (16)
+    .mob Rockjaw Ambusher
+step
+    .isQuestComplete 95214
+    .goto 1426/0,-1606.02,-5676.35
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Quarrymaster Thesten|r
+    .turnin 95214 >> Turn in Stolen Blasting Powder
+    .target Quarrymaster Thesten
 step
     #label OII
     .goto 1426/0,-1394.24,-5797.83
@@ -2092,7 +2175,7 @@ step << !Hunter
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Yanni Stoutheart|r
     >>|cRXP_BUY_Buy a|r |T135435:0|t[Simple Wood] |cRXP_BUY_and a|r |T135237:0|t[Flint and Tinder] |cRXP_BUY_from her|r
     >>|cRXP_BUY_Buy a|r |T133634:0|t[Small Brown Pouch] |cRXP_BUY_too from her if needed|r << !Rogue
-    >>|cRXP_WARN_This is used to make|r |T135805:0|t[Basic Campfires] |cRXP_WARN_on Boats to level your|r |T133971:0|t[Cooking] |cRXP_WARN_skill without losing time|r
+    >>|cRXP_WARN_This is used to make|r |T135805:0|t[Basic Campfires] |cRXP_WARN_while waiting for Boats to level your|r |T133971:0|t[Cooking] |cRXP_WARN_skill without losing time|r
     >>|cRXP_WARN_You need 50|r |T133971:0|t[Cooking] |cRXP_WARN_for a quest in Duskwood later|r
     .collect 4470,1 --Simple Wood (1)
     .collect 4471,1 --Flint and Tinder (1)
@@ -2282,7 +2365,7 @@ step << Dwarf/Gnome
     .target Golnir Bouldertoe
 step << Shaman
     .goto 1455/0,-1086.500,-4642.400
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Eldrun Stormbreaker::258098|r 
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Eldrun Stormbreaker::258098|r
     .target Eldrun Stormbreaker::258098
     .accept 94449 >>Accept Call of Fire
     .trainer >> Train your class spells
@@ -2381,7 +2464,7 @@ step << Hunter
     .target Regnus Thundergranite
 step << Dawrf Priest
     .goto 1455/0,-897.200,-4607.200
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_High Priest Rohan|r  
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_High Priest Rohan|r
     .turnin 5639 >> Turn in Desperate Prayer
     .trainer >> Train your class spells
     .target High Priest Rohan
@@ -2697,9 +2780,11 @@ step << Rogue
     .itemcount 851,1
     .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<6.8
 ]])
+
 RXPGuides.RegisterGuide([[
 #xprate <1.5
 #forever
+#disabledungeons
 #season 0,1
 << Alliance !Hunter
 #group RestedXP Forever Guide (A)
@@ -2710,6 +2795,7 @@ RXPGuides.RegisterGuide([[
 #defaultfor Gnome/Dwarf
 #next 12-14 Loch Modan (Dwarf/Gnome)
 --#era << !Warlock
+
 step << Warlock
     #softcore
     #optional
@@ -2810,6 +2896,7 @@ step
     .accept 88 >> Accept Princess Must Die!
     .target +Ma Stonefield
     .goto 1429/0,332.43,-9895.01--c:Elwynn Forest,34.660,84.483
+
 --
 step << skip
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ma Stonefield|r and |cRXP_FRIENDLY_"Auntie" Bernice Stonefield|r
@@ -2909,6 +2996,7 @@ step << skip
     .goto 1429/0,72.81,-9496.23--c:Elwynn Forest,42.140,67.254
     .turnin 47 >> Turn in Gold Dust Exchange
 --
+
 step
     #completewith next
     .goto 1429/0,-1032.06,-9610.23,30 >> Travel east to |cRXP_FRIENDLY_Guard Thomas|r
@@ -3356,8 +3444,10 @@ step << !Paladin
     .zoneskip Ironforge
     .zoneskip Loch Modan
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 #season 0,1
 #version 1
 << Alliance !Hunter
@@ -3367,8 +3457,7 @@ RXPGuides.RegisterGuide([[
 #name 12-14 Loch Modan (Dwarf/Gnome)
 #next 13-15 Westfall;14-16 Darkshore
 #defaultfor Gnome/Dwarf
-step -- dont delete
-    #label LochStart
+
 step << Dwarf Paladin
     #optional
     #completewith next
@@ -3610,7 +3699,7 @@ step
     .waypoint 1432/0,-2684.71,-5042.87,50,0
     .waypoint 1432/0,-2712.57,-5286.61,50,0
     >>Kill |cRXP_ENEMY_Tunnel Rats|r. Loot them for their |cRXP_LOOT_Ears|r
-    >>Kill |cRXP_ENEMY_Tunnel Rat Geomancers|r. Loot them for their |cRXP_LOOT_Fire Tar|r << Shaman 
+    >>Kill |cRXP_ENEMY_Tunnel Rat Geomancers|r. Loot them for their |cRXP_LOOT_Fire Tar|r << Shaman
     >>|cRXP_ENEMY_Tunnel Rat Geomancers|r |cRXP_WARN_are only found inside the mine|r << Shaman
     .complete 416,1 --Collect Tunnel Rat Ear (x12)
     .mob +Tunnel Rat Scout
@@ -4043,7 +4132,9 @@ step << Dwarf Paladin
     .goto 1426/0,-669.77,-5216.35,20,0--c:Dun Morogh,50.19,40.79
     .goto 1455/0,-831.39,-5028.78,40,0--c:Ironforge,14.90,87.10
     .zone Ironforge >> Return to Ironforge
+
 ----Start of <1.5x IF->Westfall Section----
+
 step << Rogue
     .goto 1455/0,-1197.27,-5041.49
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Buliwyf Stonehand|r inside
@@ -4071,7 +4162,7 @@ step << Dwarf Paladin
     .target Tiza Battleforge
 step << Shaman
     .goto 1455/0,-1086.500,-4642.400
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Eldrun Stormbreaker::258098|r 
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Eldrun Stormbreaker::258098|r
     .target Eldrun Stormbreaker::258098
     .trainer >> Train your class spells
 step << Mage/Priest/Warlock
@@ -4147,8 +4238,7 @@ step << Warrior
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Bilban Tosslespanner|r
     .trainer >> Train your class spells
     .target Bilban Tosslespanner
-step -- dont delete
-    #label LochEnd
+
 step << skip --logout skip << Warrior
     #optional
     #completewith Deeprun
@@ -4355,8 +4445,10 @@ step << Mage/Priest/Warlock
 step
     #label Fly2WF
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 #season 0,1
 #era/som--h
 #version 1
@@ -4367,6 +4459,7 @@ RXPGuides.RegisterGuide([[
 #name 11-13 Loch Modan (Hunter)
 #next 14-16 Darkshore
 #defaultfor Dwarf
+
 step -- dont delete
     #label NormalRouteStart
 step
@@ -4809,8 +4902,10 @@ step
     .target Woo Ping
     .goto 1453/0,613.0,-8796.03
     .trainer >>Train Staves
+
 step --dont delete
     #label NormalRouteEnd
+
 step
     #ah
     .goto 1453/0,660.28,-8814.55
@@ -4849,12 +4944,12 @@ step
     .target Catherine Leland
 step
     .goto 1453/0,1269.100,-8540.601
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gilbert Gray::267118|r 
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gilbert Gray::267118|r
     .target Gilbert Gray::267118
     .accept 95065 >>Accept Fishin' Time
     .turnin 95065 >>Turn in Fishin' Time
 --Hunter going Darkshore, rest Westfall
-step << Hunter
+step << Hunter skip
     #optional
     #requires DockTravel
     #label DarkshoreCook1
@@ -4868,7 +4963,7 @@ step << Hunter
     .itemcount 4470,1 --Simple Wood (1+)
     .itemcount 4471,1 --Flint and Tinder (1)
     .skill cooking,50,1 --XX Shows if cooking skill is <50
-step << Hunter
+step << Hunter skip
     #optional
     #requires DarkshoreCook1
     #label DarkshoreCook2
@@ -4882,7 +4977,7 @@ step << Hunter
     .itemcount 4470,1 --Simple Wood (1+)
     .itemcount 4471,1 --Flint and Tinder (1)
     .skill cooking,50,1 --XX Shows if cooking skill is <50
-step << Hunter
+step << Hunter skip
     #optional
     #requires DarkshoreCook2
     #label DarkshoreCook3
@@ -4896,7 +4991,7 @@ step << Hunter
     .itemcount 4470,1 --Simple Wood (1+)
     .itemcount 4471,1 --Flint and Tinder (1)
     .skill cooking,50,1 --XX Shows if cooking skill is <50
-step << Hunter
+step << Hunter skip
     #optional
     #requires DarkshoreCook3
     #label DarkshoreCook4
@@ -4911,7 +5006,7 @@ step << Hunter
     .itemcount 2672,1 --Stringy Wolf Meat (1+)
     .itemcount 4471,1 --Flint and Tinder (1)
     .skill cooking,50,1
-step << Hunter
+step << Hunter skip
     #optional
     #requires DarkshoreCook4
     #label DarkshoreCook5
@@ -4924,7 +5019,7 @@ step << Hunter
     .itemcount 2672,1 --Stringy Wolf Meat (1)
     .itemcount 4471,1 --Flint and Tinder (1)
     .skill cooking,50,1
-step << Hunter
+step << Hunter skip
     #optional
     #requires DarkshoreCook5
     #label DarkshoreCook6

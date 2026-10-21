@@ -14,7 +14,6 @@ BetterBags is a bag replacement addon for World of Warcraft, inspired by AdiBags
 It has a fresh, clean look, updated to the 2026 World of Warcraft art style.
 
 It currently includes most of the features of AdiBags and is being worked on daily.  
-One of the last major features currently missing is user selectable themes.  
 If you have any feedback, please let us know in the [Discord](https://discord.gg/a6DQuK8hV7).
 
 BetterBags currently supports the following versions of World of Warcraft:  
@@ -70,7 +69,8 @@ Classic (Era, MoP Classic, SoD, BC Anniversary, etc.)
 - Powerful recent items support with customizable duration (mark all new items as recent, flash all recent items).
 - Right-click category header to move or vendor all items currently in the category.
 - Comprehensive Search that allows you to find an item most properties of an item (`Type`, `Subtype`, `iLvl`, and many more).
-- Multiple built-in themes with plugin support for the creation of more themes.
+- Multiple built-in themes (Default, Simple Dark, Slate, Dark, Parchment, and ElvUI and GW2 UI themes when those are installed), with a declarative theme API for creating more.
+- Bags that size themselves to their items, or windows you resize by dragging their corner (Settings > Resizable Window).
 - Profiles to allow easy swapping of layouts and categories between characters.
 - Category import and export strings to easily share your categories between friends.
 - Robust plugin system allows for custom categories, configurations for user fine-tuning and even localization.
@@ -92,6 +92,7 @@ The Section Grid offers:
 - Categories can be pinned to the top, enabled, disabled or hidden at will.
 - Items within these categories can be sorted alphabetically and then by quality (or vice versa).
 - Multiple stacking options for fine-tuning your own experience.
+- Built-in categories are named after the item's type and, when turned on in the options, its subtype and expansion (for example `Armor - Plate - Classic`). A subtype named like its type is not repeated, so quest items read `Quest` rather than `Quest - Quest`.
 
 <div align="center" style="text-align:center">
 <a href="https://i.imgur.com/JLlOHxR.png" target="_blank"><img src="https://i.imgur.com/JLlOHxR.png" alt="Section Grid View in Retail."></a>
@@ -116,6 +117,16 @@ This temporary view allows you to see your bags and the items within them how th
 
 *Show Bags in Retail.*
 </div>
+
+### Dropping Items Into Your Bags
+You can drop an item anywhere on the bag or bank window, not just on an empty slot: drag it there and let go, or pick it up and left-click the window. This is the quickest way to unequip gear, by dragging it from your character panel onto your bags.
+- The item goes into the first free slot of a bag made for it (a profession bag of its kind, the reagent bag for crafting reagents, the keyring for keys on Classic Era and WoW: Forever), otherwise into the first ordinary bag, starting with your backpack. It is never put in a special bag it doesn't fit.
+- Dropping on the bank window stores the item in the bank type you are looking at (your character bank or the Warband bank), starting with the tab you have selected.
+- An item you picked up from the same window goes back where it came from.
+- If there is no room, you get the usual "Inventory is full." message and the item stays on your cursor.
+- Dropping on an item swaps with it as always, and holding Shift while dropping on a category name still adds the item to that category.
+- Items dragged from a vendor (buying) are not placed this way; drop them on a slot.
+- A refundable item dropped on the Warband bank stays on your cursor, because putting it in the Warband bank ends its refund. Drop it on a Warband bank slot if that is what you want.
 
 ### Bag Anchor
 By default, the bag and bank will grow from the bottom-left corner. Extending both up and right depending on the number of items per row and number of columns.
@@ -177,6 +188,8 @@ If you would like more glow on the action buttons (more like what AdiBags had), 
 
 ### Item Level Upgrade Arrow
 Equipment in your bags that is an item level upgrade compared to the gear you are currently wearing will have a green upgrade arrow in the top corner of the item in your bags. This lets you easily see which pieces of gear in your bags might be an upgrade, such as when you're leveling and your item level is rapidly increasing.
+
+Gear for an empty equipment slot counts as an upgrade too. An item gets no arrow if your character can't use it, isn't high enough level for it, it isn't your armor type, or it has a primary stat (Strength, Agility, Intellect) that your current specialization doesn't use. While you hold a two-handed weapon, one-handers, shields and off-hands get no arrow, and while you hold a one-hander, two-handed melee weapons get none; a one-hander is compared with your off hand only if you can dual wield. For stat-weighted upgrades, choose Pawn as the upgrade provider.
 
 <div align="center" style="text-align:center">
 <a href="https://i.imgur.com/QGjlIYX.png" target="_blank"><img src="https://i.imgur.com/QGjlIYX.png" alt="Item Level Upgrade in Retail.">  </a>
@@ -375,7 +388,7 @@ Search allows you to find items by the following indices (based on the item belo
 - `name` (name = "Tome of Unstable Power") The name of the item; the first line in the tooltip.
 - `type` (type = Armor) The type of the item. Some examples include Armor, Weapon, Consumable, and Reagent.
 - `subtype` (subtype = Miscellaneous) The subtype of the item. Some examples include Leather, Potion, Bag, and Bows. See the [Warcraft Wiki](https://warcraft.wiki.gg/wiki/ItemType) for more information regarding type and subtype.
-- `category` (category = "Gear: MW DPS") The category that the item is sorted into in BetterBags.
+- `category` (category = "Gear: MW DPS") The category that the item is sorted into in BetterBags. In a search category's query, it is the category the item has without any search category (a custom category, a gear set, or its type), so a search category is never matched through its own name or another search category's.
 - `equipmentLocation` or `slot` (slot = Trinket) The item slot that the gear is for. Examples include Head, Legs, Main-Hand, and Finger.
 - `expansion` or `exp` (expansion = DF) The expansion that the item is originally from. Shorthands are: Classic, BC, WotLK, Cata, MoP, WoD, Legion, BfA, SL, DF, TWW, Mid.
 - `equipmentSet` (equipmentSet = "MW DPS") The equipment set(s) that a piece of gear is part of.
@@ -390,7 +403,7 @@ Search allows you to find items by the following indices (based on the item belo
 - `stackCount` or `count` (stackCount = 1) The number of items in the stack for the item. **NOTE:** Currently count only takes into account the stack size of the "base" stack when using virtual stacks. For example, a virtual stack of 20, 20, and 3 to total 43 items will only be matched with either 20 or 3, not both.
 - `class` (class = 4) The numeric representation of itemType.
 - `subclass` (subclass = 0) The numeric representation of itemSubtype. See the [Warcraft Wiki](https://warcraft.wiki.gg/wiki/ItemType) for more information regarding class and subclass.
-- `bagid` (bagid = 2) The location of the bag containing the item. BagID is 0 for the main backpack, 1-4 for the bags, 5 for a reagent bag (Retail only), -1 for the main bank window, 5-10 (Classic) / 5-11 (MoP) / 6-11 (Retail) for bank bags, -1 for the bank (Classic/MoP), -2 for the keyring (Classic only), and 12-16 for warbank tabs. See the [Warcraft Wiki](https://warcraft.wiki.gg/wiki/BagID) for specifics for each version of the game.
+- `bagid` (bagid = 2) The location of the bag containing the item. BagID is 0 for the main backpack, 1-4 for the bags, 5 for a reagent bag (Retail only), -1 for the main bank window, 5-10 (Classic) / 5-11 (MoP) / 6-11 (Retail) for bank bags, -1 for the bank (Classic/MoP), -2 for the keyring (Classic), -1 for the keyring (WoW: Forever), and 12-16 for warbank tabs. See the [Warcraft Wiki](https://warcraft.wiki.gg/wiki/BagID) for specifics for each version of the game.
 - `slotid` (slotid = 11) The slot that the item is in, in the bag that contains it. Numbered from 1 to N for each bagID, where N is the size of the container.
 - `bindtype` (bindtype = 1) The binding type of the item returned by GetItemInfo(). 1 = BoP, 2 = BoE, 3 = BoU, 4 = Quest, 7 = BtA, 8 = BtW, 9 = WuE. See the [Warcraft Wiki](https://warcraft.wiki.gg/wiki/Enum.ItemBind) for specifics.
 
@@ -499,8 +512,10 @@ To create a Search Category, type in a search, then press `Enter`. Fill out the 
 </table>
 
 ## Themes
-BetterBags offers a few built-in themes and an API to allow addon authors to create their own themes.  
-BetterBags will detect if you have ElvUI or GW2 UI installed and offer an addon specific theme.
+BetterBags offers built-in themes, chosen in Settings > Theme: Default (Blizzard's look), Simple Dark, and Slate, Dark and Parchment, from BetterBags' sister addon Moonlight.  
+BetterBags will detect if you have ElvUI or GW2 UI installed and offer an addon specific theme that follows your ElvUI or GW2 UI settings.
+
+Themes are data: a theme describes how each kind of window and element looks, and BetterBags applies it to every bag, bank, dialog, panel, item button, tab, section title, search box and button. Addon authors can write their own; see [`sonata/README.md`](sonata/README.md).
 
 <table>
 	<tr>
@@ -554,13 +569,36 @@ Import and Export strings only contain category information. Set your own style 
 	</tr>
 </table>
 
+## BetterBags Next (experimental)
+An early look at a new design for your bags. Turn it on with **BetterBags Next (experimental)** in the settings, or type `/bb next`; BetterBags asks to reload the UI for it to take effect, and the same setting or command turns it off again.
+
+- Your backpack becomes a full-height panel that slides in from the right edge of the screen, and your bank its mirror image on the left, both with soft, feathered edges instead of a border.
+- Your groups become tabs down the inner side of each panel: click one to switch, right-click one to rename or delete it, and click **+** to make a new group.
+- Your categories are listed in one column, each its own row of large icons, with Recent Items first and Free Space last. The list scrolls.
+- Sections fade in as a panel opens, items glide to their new places when you sort or loot, and sparkles drift out of the window from the title.
+- Drag a category by its header to move it: the whole section comes with your cursor and the others slide out of its way. Drop it where you want it and it stays there. Drop it on a tab to move the category to that group, or (at the bank) on the other bag, or one of its tabs, to move everything in it there. Right-click a header to move the section to whatever window is open, as in the regular bags.
+- Searching, sorting, the settings button, dropping items onto the panel, cooldowns and tooltips work as they do in the regular bags.
+- In the bank, your Warbank groups are listed after your bank groups, in teal, and the top of the panel turns teal while one shows. The buttons at the top close the bank, deposit your Warbound items, sort the bank (or the Warbank, while it shows) and switch between your groups and the bank's own tabs, where you can see each tab on its own, buy tabs, and right-click a tab to change its name, icon and deposit settings. In WoW: Forever, drop a bag on a bank tab to use it.
+
+Not there yet: the backpack's Show Bags panel, currencies, the bag anchor, the bag menu, and the size and opacity settings (the panels have one size). It is an experiment and may change or go away; please report what you think.
+
+## Reporting Performance Problems
+If BetterBags makes your game stutter, you can record exactly what it was doing and send that along with your report.
+
+1. Type `/bbdb` to open the debug window and switch to the **Performance** tab.
+2. Press **Start Capture**, do whatever causes the stutter (open your bags, loot, use the abilities that lag), then press **Stop Capture**. To record the load-in itself, tick **Capture next reload** and type `/reload` instead.
+3. The capture is saved as a session in the list on the left. Select it to see a flame graph of where the time went, the slowest frames, and a summary.
+4. Log out or `/reload` so the game writes the session to `WTF/Account/<ACCOUNT>/SavedVariables/BetterBags.lua`, and attach that file to your report.
+
+Profiling is always off unless you start it, and it is never left running across a reload. Saved sessions can be deleted from the same tab.
+
 ## Plugin System
 BetterBags has a robust plugin system that allows developers to write custom categories.
 
 Plugins have the following options:
 - Custom Category API, to create new categories through the plugin.
 - Config Module API, allowing plugin authors to let users fine-tune their own experience.
-- Theme API, to allow plugins to create new themes.
+- Theme API, to allow plugins to create new themes ([`sonata/README.md`](sonata/README.md)).
 - Localization module, which allows the plugin author to localize their text.
 
 <div align="center" style="text-align:center">
@@ -579,7 +617,6 @@ The following features are under active development:
 
 These features are planned for the long term:
 - Feature parity between search categories and manual categories.
-- User customizable themes.
 - Dynamic number of columns.
 - Reagent bag markers for items in the reagent bag.
 - Faster/smoother item updates.

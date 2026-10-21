@@ -28,7 +28,6 @@ local RESET_RECENTLY_SEEN_TIMER
 
 local recently_seen_entities = {}
 local ping_animations = {}
-local VIGNETTE_ID_SEPARATOR = "-"
 
 local function InitResetRecentlySeenTimer()
 	if (RESET_RECENTLY_SEEN_TIMER) then
@@ -89,7 +88,7 @@ local function InitResetRecentlySeenTimer()
 	end)
 end
 
-function RSRecentlySeenTracker.AddRecentlySeen(entityID, atlasName, isNavigating)
+function RSRecentlySeenTracker.AddRecentlySeen(entityID, atlasName, isNavigating, mapID, x, y)
 	if (not entityID) then
 		return
 	end
@@ -104,25 +103,28 @@ function RSRecentlySeenTracker.AddRecentlySeen(entityID, atlasName, isNavigating
 	local currentTime = time()
 	
 	-- Extracts info from internal database
-	local entityInfo = RSGeneralDB.GetAlreadyFoundEntity(entityID, atlasName)
-	if (not entityInfo) then
+	if (not RSGeneralDB.GetAlreadyFoundEntity(entityID, atlasName)) then
 		return
 	end
 	
 	local shouldAnimate = false
 	
 	-- If spawning in multiple places at the same time stores also the coordinates
-	if (RSNpcDB.IsMultiZoneSpawn(entityID) or RSContainerDB.IsMultiZoneSpawn(entityID)) then
-		-- Extracts info from internal database
+	if (RSNpcDB.IsMultiZoneSpawn(entityID) or RSContainerDB.IsRepeatable(entityID)) then
+		-- Without coordinates it doesn't know which one of the spots is
+		if (not mapID or not x or not y) then
+			return
+		end
+		
 		if (not recently_seen_entities[entityID]) then
 			recently_seen_entities[entityID] = {}
 		end
 		
-		local xy = entityInfo.coordX.."_"..entityInfo.coordY
+		local xy = x.."_"..y
 		recently_seen_entities[entityID][xy] = {}
-		recently_seen_entities[entityID][xy].x = entityInfo.coordX
-		recently_seen_entities[entityID][xy].y = entityInfo.coordY
-		recently_seen_entities[entityID][xy].mapID = entityInfo.mapID
+		recently_seen_entities[entityID][xy].x = x
+		recently_seen_entities[entityID][xy].y = y
+		recently_seen_entities[entityID][xy].mapID = mapID
 		recently_seen_entities[entityID][xy].atlasName = atlasName
 		recently_seen_entities[entityID][xy].time = currentTime
 		
@@ -142,7 +144,7 @@ function RSRecentlySeenTracker.AddRecentlySeen(entityID, atlasName, isNavigating
 		if ((RSConstants.IsNpcAtlas(atlasName) and RSConfigDB.IsShowingAnimationForNpcs() and RSConfigDB.GetAnimationForNpcs() ~= RSConstants.MAP_ANIMATIONS_ON_CLICK) or 
 				(RSConstants.IsContainerAtlas(atlasName) and RSConfigDB.IsShowingAnimationForContainers() and RSConfigDB.GetAnimationForContainers() ~= RSConstants.MAP_ANIMATIONS_ON_CLICK) or
 				(RSConstants.IsEventAtlas(atlasName) and RSConfigDB.IsShowingAnimationForEvents() and RSConfigDB.GetAnimationForEvents() ~= RSConstants.MAP_ANIMATIONS_ON_CLICK)) then
-			RSRecentlySeenTracker.AddPendingAnimation(entityID, entityInfo.mapID, entityInfo.coordX, entityInfo.coordY)
+			RSRecentlySeenTracker.AddPendingAnimation(entityID, mapID, x, y)
 		end
 	end
 end
@@ -199,7 +201,7 @@ function RSRecentlySeenTracker.RemoveRecentlySeen(entityID)
 		return nil
 	end
 
-	-- Avoid hiding incorrect icons (player must be close to the container, max 20 yards)
+	-- Avoid hiding incorrect icons (player must be close to the container, max 10 yards)
 	local MAX_CONTAINER_DISTANCE_YARDS = 10
 	if (minDistance > MAX_CONTAINER_DISTANCE_YARDS) then
 		RSLogger:PrintDebugMessage(string.format("RemoveRecentlySeen[distancia=%s (yardas)] (No devuelve contenedor por no haberse encontrado uno lo suficientemente cerca)", RSUtils.Round(minDistance, 2)))
@@ -208,7 +210,7 @@ function RSRecentlySeenTracker.RemoveRecentlySeen(entityID)
 		RSLogger:PrintDebugMessage(string.format("RemoveRecentlySeen[distancia=%s (yardas)] (Encontrado como el mas cercano)", RSUtils.Round(minDistance, 2)))
 	end
 
-	local x, y = strsplit("_", bestXY)
+	local x, y = entityInfo[bestXY].x, entityInfo[bestXY].y
 	if (totalEntries == 1) then
 		RSLogger:PrintDebugMessage(string.format("RemoveRecentlySeen[%s,x=%s,y=%s] (multi/last)", entityID, x, y))
 		recently_seen_entities[entityID] = nil
@@ -291,7 +293,7 @@ function RSRecentlySeenTracker.AddPendingAnimation(entityID, mapID, x, y, refres
 	
 	--RSLogger:PrintDebugMessage(string.format("AddPendingAnimation[%s][%s][%s][%s]", entityID, mapID and mapID or "mapID", x and x or "x", y and y or "y"))
 	
-	local multiSpawn = RSNpcDB.IsMultiZoneSpawn(entityID) or RSContainerDB.IsMultiZoneSpawn(entityID)
+	local multiSpawn = RSNpcDB.IsMultiZoneSpawn(entityID) or RSContainerDB.IsRepeatable(entityID)
 	
 	if (multiSpawn and mapID and mapID ~= "" and x and y) then
 		-- In case it couldn't get the map and coordinates the first time

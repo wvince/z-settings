@@ -1,9 +1,11 @@
 local mod	= DBM:NewMod("RazuviousVanilla", "DBM-Raids-Vanilla", 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20260920050321")
+mod:SetRevision("20261019224112")
+if DBM:IsForever() then
+	mod:EnableGenericTrash()
+end
 mod:SetMinSyncRevision(20260522000000) -- 2026, May 22nd
-mod:DisableHardcodedOptions()
 mod:SetCreatureID(16061)
 mod:SetEncounterID(1113)
 mod:SetModelID(16582)
@@ -35,13 +37,14 @@ else
 
 	-- New spell ID found in logs on SoD
 	-- 1225423 (Disarm) cast by Understudies, TBD if we want to do something with that
-	local isPriest 				= select(2, UnitClass("player")) == "PRIEST"
-	local warnShoutNow			= mod:NewSpellAnnounce(29107, 4, "132352")
-	local warnShoutSoon			= mod:NewSoonAnnounce(29107, 3, "132352", "ManaUser")
-	local warnShieldWall		= mod:NewTargetNoFilterAnnounce(29061, 2, nil, "Dps")
+	local isPriest 					= select(2, UnitClass("player")) == "PRIEST"
+	local warnShoutNow				= mod:NewSpellAnnounce(29107, 4, "132352")
+	local warnShoutSoon				= mod:NewSoonAnnounce(29107, 3, "132352", "ManaUser")
+	local warnShieldWall			= mod:NewTargetNoFilterAnnounce(29061, 2, nil, "Dps")
+	local specWarnMindControlFade	= mod:NewSpecialWarningFades(10912, nil, nil, nil, 1, 2, nil, nil, "targetchange")
 
 	local timerShout			= mod:NewNextTimer(25.9, 29107, nil, "ManaUser", nil, 2, "132352", DBM_COMMON_L.DEADLY_ICON, nil, 1, 5)
-	local timerTaunt			= mod:NewCDTimer(60, 29060, nil, isPriest, nil, 5, nil, DBM_COMMON_L.TANK_ICON)
+	local timerTaunt			= mod:NewCDNPTimer(60, 29060, nil, isPriest, nil, 5, nil, DBM_COMMON_L.TANK_ICON)
 	local timerShieldWall		= mod:NewBuffActiveTimer(20, 29061, nil, "Dps", nil, 5, nil, DBM_COMMON_L.DAMAGE_ICON)
 	local timerMindExhaustionCD	= mod:NewCDNPTimer(60, 29051, nil, isPriest, nil, 5)
 
@@ -52,10 +55,12 @@ else
 	local mindExhaustionIcons = {}
 	local mindControlOwners = {}
 	local mindControlTimers = {}
+	local tauntTimers = {}
 	local addDead = {}
 
 	local mindControlIcon = "Interface\\Icons\\Spell_shadow_shadowworddominate"
 	local mindExhaustionIcon = "Interface\\Icons\\Spell_shadow_teleport"
+	local tauntIcon = "Interface\\Icons\\Spell_nature_reincarnation"
 
 	local updateInfoFrame
 	do
@@ -70,6 +75,7 @@ else
 				local mcOwner = mindControlOwners[guid]
 				local mcTimeLeft = (mindControlTimers[guid] or 0) - t
 				local exhaustionTimeLeft = (mindExhaustionTimers[guid] or 0) - t
+				local tauntTimeLeft = (tauntTimers[guid] or 0) - t
 				local icon = mindExhaustionIcons[guid]
 				local displayName = name
 				if mcOwner then
@@ -82,11 +88,23 @@ else
 				if addDead[guid] then
 					lines[key] = DEAD
 				elseif mcTimeLeft > 0 then
-					lines[key] = ("|cffff7f00%.0f|r|T%s:0|t"):format(mcTimeLeft, mindControlIcon)
+					if tauntTimeLeft > 0 then
+						lines[key] = ("|cffff7f00%.0f|r|T%s:0|t |cffffc0c0%.0f|r|T%s:0|t"):format(mcTimeLeft, mindControlIcon, tauntTimeLeft, tauntIcon)
+					else
+						lines[key] = ("|cffff7f00%.0f|r|T%s:0|t"):format(mcTimeLeft, mindControlIcon)
+					end
 				elseif exhaustionTimeLeft > 0 then
-					lines[key] = ("|cffff0000%.0f|r|T%s:0|t"):format(exhaustionTimeLeft, mindExhaustionIcon)
+					if tauntTimeLeft > 0 then
+						lines[key] = ("|cffff0000%.0f|r|T%s:0|t |cffffc0c0%.0f|r|T%s:0|t"):format(exhaustionTimeLeft, mindExhaustionIcon, tauntTimeLeft, tauntIcon)
+					else
+						lines[key] = ("|cffff0000%.0f|r|T%s:0|t"):format(exhaustionTimeLeft, mindExhaustionIcon)
+					end
 				else
-					lines[key] = ("|cff00ff00%d|r"):format(0)
+					if tauntTimeLeft > 0 then
+						lines[key] = ("|cff00ff00%d|r |cffffc0c0%.0f|r|T%s:0|t"):format(0, tauntTimeLeft, tauntIcon)
+					else
+						lines[key] = ("|cff00ff00%d|r"):format(0)
+					end
 				end
 			end
 			return lines, sortedLines
@@ -110,6 +128,7 @@ else
 		table.wipe(mindExhaustionIcons)
 		table.wipe(mindControlOwners)
 		table.wipe(mindControlTimers)
+		table.wipe(tauntTimers)
 		table.wipe(addDead)
 	end
 
@@ -158,6 +177,8 @@ else
 			local guid = args.destGUID
 			mindControlOwners[guid] = nil
 			mindControlTimers[guid] = nil
+			specWarnMindControlFade:Show()
+			specWarnMindControlFade:Play("targetchange")
 		end
 	end
 
@@ -173,9 +194,10 @@ else
 			warnShoutSoon:Schedule(20)
 		elseif args:IsSpell(29060) and args:IsPetSource() then -- Taunt
 			timerTaunt:Start(60, args.sourceGUID)
+			tauntTimers[args.sourceGUID] = GetTime() + 60
 		elseif args:IsSpell(29061) and args:IsPetSource() then -- ShieldWall
 			timerShieldWall:Start(20, args.sourceGUID)
-			warnShieldWall:Schedule(15)
+			warnShieldWall:Show(args.sourceName)
 		end
 	end
 
@@ -215,6 +237,7 @@ else
 			addDead[args.destGUID] = true
 			mindControlOwners[args.destGUID] = nil
 			mindControlTimers[args.destGUID] = nil
+			tauntTimers[args.destGUID] = nil
 		end
 	end
 end

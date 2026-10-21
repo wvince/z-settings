@@ -4,7 +4,6 @@
 	<Script file="RareScanner-esMX.lua"/>
 	<Script file="RareScanner-itIT.lua"/>
 	<Script file="RareScanner-ptBR.lua"/>
-	<Script file="RareScanner-enGB.lua"/>
 	<Script file="RareScanner-ruRU.lua"/>
 	<Script file="RareScanner-frFR.lua"/>
 	<Script file="RareScanner-deDE.lua"/>

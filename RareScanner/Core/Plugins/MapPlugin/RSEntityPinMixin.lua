@@ -173,7 +173,7 @@ function RSEntityPinMixin:ShowOverlay()
 		-- Adds the new one
 		for _, coordinates in ipairs (overlay) do
 			local x, y = strsplit("-", coordinates)
-			self:GetMap():AcquirePin("RSOverlayTemplate", RSUtils.FixCoord(x), RSUtils.FixCoord(y), r, g, b, self);
+			self:GetMap():AcquirePin("RSOverlayTemplate", RSUtils.FixCoord(x), RSUtils.FixCoord(y), r, g, b, self.groupPin and self.POI or self, self.groupPin);
 		end
 		
 		-- Adds the new one to the minimap

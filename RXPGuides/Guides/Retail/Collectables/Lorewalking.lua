@@ -8,6 +8,7 @@ RXPGuides.RegisterGuide([[
 #name a) Xal'atath
 #displayname Xal'atath
 #next ab) Ethereals
+
 step << Alliance
     .isOnQuest 90705
     .goto 84,64.24,16.10,-1
@@ -642,6 +643,8 @@ RXPGuides.RegisterGuide([[
 #name ab) Ethereals
 #displayname Ethereals
 #next ac) The Lich King
+
+
 step << Alliance
     .isOnQuest 90705
     .goto 84,64.24,16.10,-1
@@ -1059,6 +1062,10 @@ step
     .turnin 47219 >>Turn in A Vessel Made Ready
     .timer 5,Alleria Roleplay
     .target Alleria Windrunner
+
+
+
+
 -
 step
     .goto 882,37.13,52.32
@@ -1690,6 +1697,7 @@ RXPGuides.RegisterGuide([[
 #name ac) The Lich King
 #displayname The Lich King
 #next ad) The Elves of Quel'Thalas
+
 step << Alliance
     .isOnQuest 90705
     .goto 84,64.24,16.10,-1
@@ -2107,6 +2115,7 @@ RXPGuides.RegisterGuide([[
 #name ad) The Elves of Quel'Thalas
 #displayname The Elves of Quel'Thalas
 #next a) Xal'atath
+
 step << Alliance
     .isOnQuest 90705
     .goto 84,64.24,16.10,-1
@@ -2283,6 +2292,7 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Speed Leveling
 #name a) War Within Recap
 #internal
+
 step
     .goto 2112,59.55,41.46
     .accept 72560 >>Accept Climbing

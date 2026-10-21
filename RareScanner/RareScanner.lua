@@ -16,7 +16,6 @@ local LibAboutPanel = LibStub:GetLibrary("LibAboutPanel-2.0RS", true)
 local RSNpcDB = private.ImportLib("RareScannerNpcDB")
 local RSContainerDB = private.ImportLib("RareScannerContainerDB")
 local RSEventDB = private.ImportLib("RareScannerEventDB")
-local RSDragonGlyphDB = private.ImportLib("RareScannerDragonGlyphDB")
 local RSGeneralDB = private.ImportLib("RareScannerGeneralDB")
 local RSConfigDB = private.ImportLib("RareScannerConfigDB")
 local RSMapDB = private.ImportLib("RareScannerMapDB")
@@ -513,7 +512,15 @@ end
 function scanner_button:DisplayMessages(entityID, name)
 	if (name) then
 		if (RSConfigDB.IsDisplayingRaidWarning()) then
-			RaidNotice_AddMessage(RaidWarningFrame, string.format(AL["ALARM_MESSAGE"], name), ChatTypeInfo["RAID_WARNING"], RSConstants.RAID_WARNING_SHOWING_TIME)
+			-- Avoids using RaidWarningFrame directly to avoid taint
+			if (not scanner_button.raidWarningFrame) then
+				local frame = CreateFrame("Frame", "RareScannerRaidWarningFrame", UIParent, "RaidWarningFrameTemplate")
+				frame:UnregisterAllEvents()
+				frame:SetPoint("TOP", RaidWarningFrame, "TOP")
+				scanner_button.raidWarningFrame = frame
+			end
+
+			scanner_button.raidWarningFrame:AddMessage(string.format(AL["ALARM_MESSAGE"], name), ChatTypeInfo["RAID_WARNING"], RSConstants.RAID_WARNING_SHOWING_TIME)
 		end
 
 		-- Print message in chat if user wants
@@ -591,10 +598,12 @@ function scanner_button:ShowButton()
 	-- Config the macro
 	local macrotext = "/cleartarget\n/targetexact "..self.name
 	if (RSConfigDB.IsDisplayingMarkerOnTarget()) then
-		macrotext = string.format("%s\n/tm %s", macrotext, RSConfigDB.GetMarkerOnTarget())
+		macrotext = string.format("%s\n/tm 0\n/tm %s", macrotext, RSConfigDB.GetMarkerOnTarget())
 	end
-	local pingCmd = SLASH_PING1 or "/ping"
-	macrotext = string.format("%s\n%s [@target]", macrotext, pingCmd)
+	if (RSConstants.IsNpcAtlas(self.atlasName) and RSConfigDB.IsPingingTarget()) then
+		local pingCmd = SLASH_PING1 or "/ping"
+		macrotext = string.format("%s\n%s [@target]", macrotext, pingCmd)
+	end
 	
 	self:SetAttribute("macrotext", macrotext);
 		
@@ -928,7 +937,7 @@ local function RefreshDatabaseData(previousDbVersion)
 		table.insert(routines, cleanCompletedEvents)
 		RSGeneralDB.SetLastCleanDb()
 	end
-	
+		
 	-- Update entities state that are part of an achievement with criteria
 	local achievementCriteriaRoutine = RSRoutines.LoopRoutineNew()
 	achievementCriteriaRoutine:Init(
@@ -1013,10 +1022,10 @@ local function RefreshDatabaseData(previousDbVersion)
 	-- Clear previous overlay if active when closed the game
 	RSGeneralDB.RemoveAllOverlayActive()
 	
-	-- Updates dragon_glyphs_collected database to global
-	if (private.dbchar.dragon_glyphs_collected) then
-		private.dbchar.dragon_glyphs_collected = nil
-	end
+	-- The dragon glyphs are not available in this version, so the data saved by previous versions is removed
+	private.dbchar.dragon_glyphs_collected = nil
+	private.dbglobal.dragon_glyphs_collected = nil
+	private.dbglobal.dragon_glyphs_names = nil
 end
 
 local function UpdateRareNamesDB(currentDbVersion)
@@ -1142,12 +1151,17 @@ function RareScanner:InitializeDataBase()
 	private.dbchar = self.db.char
 	private.dbglobal = self.db.global
 
+	-- The telemetry is not available in this version, so the data saved by previous versions is removed
+	private.dbglobal.telemetry = nil
+	if (private.db.general) then
+		private.db.general.telemetry = nil
+	end
+
 	-- Initialize char database
 	RSGeneralDB.InitCompletedQuestDB()
 	RSNpcDB.InitNpcKilledDB()
 	RSContainerDB.InitContainerOpenedDB()
 	RSEventDB.InitEventCompletedDB()
-	RSDragonGlyphDB.InitDragonGlyphsCollectedDB()
 
 	-- Initialize global database
 	RSGeneralDB.InitItemInfoDB()
@@ -1162,7 +1176,6 @@ function RareScanner:InitializeDataBase()
 	RSContainerDB.InitContainerLootFoundDB()
 	RSContainerDB.InitContainerQuestIdFoundDB()
 	RSContainerDB.InitReseteableContainersDB()
-	RSDragonGlyphDB.InitDragonGlyphsNamesDB()
 	RSEventDB.InitEventNamesDB()
 	RSEventDB.InitEventQuestIdFoundDB()
 

@@ -164,6 +164,7 @@ local personalAuraStackXOffset
 local personalAuraStackYOffset
 local personalAuraShowStacks
 local personalAuraShowDispelBorder
+local personalAuraShowGlow
 local personalAuraSort
 
 personalAuraFontDropDown = personalAuraArea:CreateDropdown(L.FontType, Fonts, "DBM", "PrivateAurasPlayerTextFont", function(value)
@@ -264,6 +265,16 @@ personalAuraFontDropDown = personalAuraArea:CreateDropdown(L.FontType, Fonts, "D
 	personalAuraShowDispelBorder:SetPoint("TOPLEFT", personalAuraShowStacks, "TOPLEFT", 200, 0)
 	personalAuraShowDispelBorder.myheight = 0
 
+	if DBM:GetTOC() >= 120105 then
+		personalAuraShowGlow = personalAuraArea:CreateCheckButton(L.AuraShowGlow, true, nil, "PrivateAurasPlayerShowAuraGlow")
+		personalAuraShowGlow:SetScript("OnClick", function()
+			DBM.Options.PrivateAurasPlayerShowAuraGlow = not DBM.Options.PrivateAurasPlayerShowAuraGlow
+			OnAuraSettingsChange(true)
+		end)
+		personalAuraShowGlow:SetPoint("TOPLEFT", personalAuraShowDispelBorder, "TOPLEFT", 200, 0)
+		personalAuraShowGlow.myheight = 0
+	end
+
 	personalAuraStackColor = personalAuraArea:CreateColorSelect(L.AuraStackFontColor, function(_, r, g, b)
 		DBM.Options.PrivateAurasPlayerStackColor.r = r
 		DBM.Options.PrivateAurasPlayerStackColor.g = g
@@ -329,6 +340,7 @@ personalAuraReset:SetScript("OnClick", function()
 	DBM.Options.PrivateAurasPlayerStackYOffset = DBM.DefaultOptions.PrivateAurasPlayerStackYOffset
 	DBM.Options.PrivateAurasPlayerShowStacks = DBM.DefaultOptions.PrivateAurasPlayerShowStacks
 	DBM.Options.PrivateAurasPlayerShowDispelBorder = DBM.DefaultOptions.PrivateAurasPlayerShowDispelBorder
+	DBM.Options.PrivateAurasPlayerShowAuraGlow = DBM.DefaultOptions.PrivateAurasPlayerShowAuraGlow
 	DBM.Options.PrivateAurasPlayerXOffset = DBM.DefaultOptions.PrivateAurasPlayerXOffset
 	DBM.Options.PrivateAurasPlayerYOffset = DBM.DefaultOptions.PrivateAurasPlayerYOffset
 	DBM.Options.PrivateAurasPlayerAnchor = DBM.DefaultOptions.PrivateAurasPlayerAnchor
@@ -357,6 +369,7 @@ personalAuraReset:SetScript("OnClick", function()
 	personalAuraStackYOffset:SetValue(DBM.Options.PrivateAurasPlayerStackYOffset)
 	personalAuraShowStacks:SetChecked(DBM.Options.PrivateAurasPlayerShowStacks)
 	personalAuraShowDispelBorder:SetChecked(DBM.Options.PrivateAurasPlayerShowDispelBorder)
+	if personalAuraShowGlow then personalAuraShowGlow:SetChecked(DBM.Options.PrivateAurasPlayerShowAuraGlow) end
 	OnAuraSettingsChange(true)
 end)
 
@@ -440,6 +453,7 @@ local coTankAuraStackXOffset
 local coTankAuraStackYOffset
 local coTankAuraShowStacks
 local coTankAuraShowDispelBorder
+local coTankAuraShowGlow
 local coTankAuraSort
 local coTankShowName
 local coTankNameFontSize
@@ -544,6 +558,16 @@ coTankAuraFontDropDown = coTankAuraArea:CreateDropdown(L.FontType, Fonts, "DBM",
 	coTankAuraShowDispelBorder:SetPoint("TOPLEFT", coTankAuraShowStacks, "TOPLEFT", 200, 0)
 	coTankAuraShowDispelBorder.myheight = 0
 
+	if DBM:GetTOC() >= 120105 then
+		coTankAuraShowGlow = coTankAuraArea:CreateCheckButton(L.AuraShowGlow, true, nil, "PrivateAurasCoTankShowAuraGlow")
+		coTankAuraShowGlow:SetScript("OnClick", function()
+			DBM.Options.PrivateAurasCoTankShowAuraGlow = not DBM.Options.PrivateAurasCoTankShowAuraGlow
+			OnAuraSettingsChange(false)
+		end)
+		coTankAuraShowGlow:SetPoint("TOPLEFT", coTankAuraShowDispelBorder, "TOPLEFT", 200, 0)
+		coTankAuraShowGlow.myheight = 0
+	end
+
 	coTankAuraStackColor = coTankAuraArea:CreateColorSelect(L.AuraStackFontColor, function(_, r, g, b)
 		DBM.Options.PrivateAurasCoTankStackColor.r = r
 		DBM.Options.PrivateAurasCoTankStackColor.g = g
@@ -609,6 +633,7 @@ coTankAuraReset:SetScript("OnClick", function()
 	DBM.Options.PrivateAurasCoTankStackYOffset = DBM.DefaultOptions.PrivateAurasCoTankStackYOffset
 	DBM.Options.PrivateAurasCoTankShowStacks = DBM.DefaultOptions.PrivateAurasCoTankShowStacks
 	DBM.Options.PrivateAurasCoTankShowDispelBorder = DBM.DefaultOptions.PrivateAurasCoTankShowDispelBorder
+	DBM.Options.PrivateAurasCoTankShowAuraGlow = DBM.DefaultOptions.PrivateAurasCoTankShowAuraGlow
 	DBM.Options.PrivateAurasCoTankXOffset = DBM.DefaultOptions.PrivateAurasCoTankXOffset
 	DBM.Options.PrivateAurasCoTankYOffset = DBM.DefaultOptions.PrivateAurasCoTankYOffset
 	DBM.Options.PrivateAurasCoTankAnchor = DBM.DefaultOptions.PrivateAurasCoTankAnchor
@@ -640,6 +665,7 @@ coTankAuraReset:SetScript("OnClick", function()
 	coTankAuraStackYOffset:SetValue(DBM.Options.PrivateAurasCoTankStackYOffset)
 	coTankAuraShowStacks:SetChecked(DBM.Options.PrivateAurasCoTankShowStacks)
 	coTankAuraShowDispelBorder:SetChecked(DBM.Options.PrivateAurasCoTankShowDispelBorder)
+	if coTankAuraShowGlow then coTankAuraShowGlow:SetChecked(DBM.Options.PrivateAurasCoTankShowAuraGlow) end
 	OnAuraSettingsChange(false)
 end)
 
@@ -748,7 +774,7 @@ coTankSlot1Player:IsSelectedCallback(function(_, value)
 	end)
 
 coTankSlot1Player:SetPoint("TOPLEFT", coTankNameYOffset, "BOTTOMLEFT", 0, -35)
-coTankSlot1Player.myheight = 45
+coTankSlot1Player.myheight = 60
 
 
 local coTankSlot2Player = coTankAdvancedArea:CreateDropdown(L.CoTankSlot2Player, function()

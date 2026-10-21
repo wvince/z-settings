@@ -415,11 +415,11 @@ local function GetCustomNpcIDsByMapID(mapID)
 	return npcIDs
 end
 
-function RSNpcDB.GetNpcIDsByMapID(mapID, onlyWithoutVignette)
+function RSNpcDB.GetNpcIDsByMapID(mapID, onlyWithoutVignette, includeSubmaps)
 	local customNpcIDs = GetCustomNpcIDsByMapID(mapID)
 
 	-- Every NPC
-	local internalNpcIDs = RSMapDB.GetEntitiesByMapID(mapID, RSConstants.MAP_ENTITY_NPC) or {}
+	local internalNpcIDs = RSMapDB.GetEntitiesByMapID(mapID, RSConstants.MAP_ENTITY_NPC, includeSubmaps) or {}
 	if (not onlyWithoutVignette) then
 		return RSUtils.JoinTables(customNpcIDs, internalNpcIDs)
 	end
@@ -437,6 +437,68 @@ end
 function RSNpcDB.GetInternalNpcInfo(npcID)
 	if (npcID) then
 		return private.NPC_INFO[npcID]
+	end
+
+	return nil
+end
+
+---============================================================================
+-- NPC Spawn Info database
+---============================================================================
+
+function RSNpcDB.GetNpcSpawnInfo(npcID)
+	if (npcID and private.NPC_SPAWN_INFO) then
+		return private.NPC_SPAWN_INFO[npcID]
+	end
+
+	return nil
+end
+
+--- The respawn of the NPC is already known for sure, so the telemetry doesn't have to learn it
+function RSNpcDB.IsNpcSpawnFinal(npcID)
+	local spawnInfo = RSNpcDB.GetNpcSpawnInfo(npcID)
+	if (spawnInfo and spawnInfo.final) then
+		return true
+	end
+
+	return false
+end
+
+function RSNpcDB.IsNpcManualEvent(npcID)
+	local spawnInfo = RSNpcDB.GetNpcSpawnInfo(npcID)
+	if (spawnInfo and spawnInfo.event) then
+		return true
+	end
+
+	return false
+end
+
+function RSNpcDB.GetNpcRespawnRange(npcID)
+	local spawnInfo = RSNpcDB.GetNpcSpawnInfo(npcID)
+	if (spawnInfo) then
+		if (spawnInfo.exact) then
+			return spawnInfo.exact, spawnInfo.exact
+		elseif (spawnInfo.min or spawnInfo.max) then
+			return spawnInfo.min, spawnInfo.max
+		end
+	end
+
+	return nil, nil
+end
+
+function RSNpcDB.GetNpcSchedule(npcID)
+	local spawnInfo = RSNpcDB.GetNpcSpawnInfo(npcID)
+	if (spawnInfo and spawnInfo.onTime) then
+		return spawnInfo.onTime
+	end
+
+	return nil
+end
+
+function RSNpcDB.GetNpcLevel(npcID)
+	local npcInfo = RSNpcDB.GetInternalNpcInfo(npcID)
+	if (npcInfo) then
+		return npcInfo.level
 	end
 
 	return nil
@@ -660,6 +722,14 @@ function RSNpcDB.GetInteralNpcLoot(npcID)
 	return nil
 end
 
+function RSNpcDB.GetNpcLootChance(npcID)
+	if (npcID and private.NPC_LOOT_CHANCE) then
+		return private.NPC_LOOT_CHANCE[npcID]
+	end
+
+	return nil
+end
+
 function RSNpcDB.GetNpcLoot(npcID)
 	if (npcID) then
 		RSLogger:PrintDebugMessageEntityID(npcID, string.format("NPC [%s]: Obeniendo su loot.", npcID))
@@ -836,8 +906,8 @@ function RSNpcDB.GetNpcName(npcID, refresh)
 	return nil
 end
 
-function RSNpcDB.GetActiveNpcIDsWithNamesByMapID(mapID)
-	local npcIDs = RSNpcDB.GetNpcIDsByMapID(mapID)
+function RSNpcDB.GetActiveNpcIDsWithNamesByMapID(mapID, includeSubmaps)
+	local npcIDs = RSNpcDB.GetNpcIDsByMapID(mapID, nil, includeSubmaps)
 	local npcIDsWithNames = nil
 	
 	if (RSUtils.GetTableLength(npcIDs) > 0) then

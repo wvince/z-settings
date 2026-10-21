@@ -1,5 +1,6 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #tbc
@@ -11,6 +12,8 @@ RXPGuides.RegisterGuide([[
 #groupid RXP-SRGCE-H1
 #defaultfor BloodElf
 #next 6-10 Eversong Woods
+
+
 step << !BloodElf
     #completewith next
     +|cRXP_WARN_You have selected a guide meant for Blood Elves. We do not recommend doing the 1-6 zone due to there being no quests for non-Blood Elves. You should choose the same starter zone that you start in|r
@@ -629,6 +632,7 @@ step
     .goto Eversong Woods,43.62,34.88,40,0
     .xp 5+2690 >> Grind to 2690+/2800xp
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -639,6 +643,7 @@ RXPGuides.RegisterGuide([[
 #groupid RXP-SRGCE-H1
 #next 10-12 Eversong Woods << !Warrior
 #next 10-13 Durotar << Warrior
+
 step
     .goto Eversong Woods,47.26,46.31
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Jarondis|r
@@ -2638,6 +2643,7 @@ step << Warrior
     >>Loot the |cRXP_PICK_Sacks of Supplies|r on the ground
     .complete 834,1 --Sack of Supplies (5)
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -2647,6 +2653,7 @@ RXPGuides.RegisterGuide([[
 #version 1
 #group RestedXP Horde 1-30
 #groupid RXP-SRGCE-H1
+
 step << Orc Hunter/Troll Hunter
     #completewith next
     .goto Silvermoon City,62.89,31.20,20,0
@@ -3977,6 +3984,7 @@ step << Undead/BloodElf
     .abandon 8490 >>Abandon Powering our Defenses
     --VV Undead/BloodElf !Hunter
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -3986,6 +3994,7 @@ RXPGuides.RegisterGuide([[
 #version 1
 #group RestedXP Horde 1-30
 #groupid RXP-SRGCE-H1
+
 step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Dawnstrider|r and |cRXP_FRIENDLY_Thedra|r
     .turnin 9144 >> Turn in Missing in the Ghostlands
@@ -7811,6 +7820,7 @@ step
     .xp <15,1
     .xp >30,1
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -7820,6 +7830,7 @@ RXPGuides.RegisterGuide([[
 #version 1
 #group RestedXP Horde 1-30
 #groupid RXP-SRGCE-H1
+
 step << skip
     .goto Ghostlands,47.3,29.3
     .turnin -9135 >> Turn in Return to Quartermaster Lymel

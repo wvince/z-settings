@@ -1,5 +1,6 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #tbc
@@ -11,6 +12,7 @@ RXPGuides.RegisterGuide([[
 #groupid RXP-SRGCE-H1
 #defaultfor Shaman/Warrior
 #next 22-25 Hillsbrad / South Barrens;22-25 Hillsbrad Foothills JJ
+
 step << Tauren Shaman
     .goto Durotar,50.8,43.6
 .target Takrin Pathseeker

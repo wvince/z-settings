@@ -73,8 +73,8 @@ function RSEventDB.GetAllInternalEventInfo()
 	return private.EVENT_INFO
 end
 
-function RSEventDB.GetEventIDsByMapID(mapID)
-	return RSMapDB.GetEntitiesByMapID(mapID, RSConstants.MAP_ENTITY_EVENT)
+function RSEventDB.GetEventIDsByMapID(mapID, includeSubmaps)
+	return RSMapDB.GetEntitiesByMapID(mapID, RSConstants.MAP_ENTITY_EVENT, includeSubmaps)
 end
 
 function RSEventDB.GetInternalEventInfo(eventID)
@@ -252,8 +252,8 @@ function RSEventDB.GetEventName(eventID)
 	return nil
 end
 
-function RSEventDB.GetActiveEventIDsWithNamesByMapID(mapID)
-	local eventIDs = RSEventDB.GetEventIDsByMapID(mapID)
+function RSEventDB.GetActiveEventIDsWithNamesByMapID(mapID, includeSubmaps)
+	local eventIDs = RSEventDB.GetEventIDsByMapID(mapID, includeSubmaps)
 	local eventIDsWithNames = nil
 	
 	if (RSUtils.GetTableLength(eventIDs) > 0) then

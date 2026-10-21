@@ -387,7 +387,7 @@
 	</Frame>
 
 	<Frame name="RSExplorerFrame" hidden="true" inherits="RSExplorerUITemplate" mixin="RSExplorerMixin" enableMouse="true" movable="true" frameLevel="1" frameStrata="HIGH" parent="UIParent" topLevel="true">
-		<Size x="1000" y="785" />
+		<Size x="1305" y="785" />
 		<Anchors>
 			<Anchor point="CENTER" />
 		</Anchors>
@@ -431,9 +431,39 @@
 							</OnLeave>
 						</Scripts>
 					</CheckButton>
-					<Button parentKey="RestartScanningButton" inherits="SharedButtonSmallTemplate">
+					<Button parentKey="ToggleLootButton" inherits="SharedButtonSmallTemplate">
+						<Size x="34" y="28" />
 						<Anchors>
 							<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="20" y="-2" />
+						</Anchors>
+						<KeyValues>
+							<KeyValue key="atlasName" value="128-RedButton" type="string" />
+						</KeyValues>
+						<Layers>
+							<Layer level="OVERLAY">
+								<Texture parentKey="Arrow" atlas="common-icon-backarrow">
+									<Size x="10" y="16" />
+									<Anchors>
+										<Anchor point="CENTER" x="0" y="1" />
+									</Anchors>
+								</Texture>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnClick>
+								self:GetParent():GetParent():ToggleLootPanel()
+							</OnClick>
+							<OnEnter>
+								self:GetParent():GetParent():ShowTooltip(self)
+							</OnEnter>
+							<OnLeave>
+								self:GetParent():GetParent():HideTooltip(self)
+							</OnLeave>
+						</Scripts>
+					</Button>
+					<Button parentKey="RestartScanningButton" inherits="SharedButtonSmallTemplate">
+						<Anchors>
+							<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-20" y="-2" />
 						</Anchors>
 						<KeyValues>
 							<KeyValue key="atlasName" value="128-RedButton" type="string" />
@@ -463,6 +493,33 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeKey="$parent.RareNPCList" relativePoint="TOPRIGHT" x="5" y="0" />
 				</Anchors>
+			</Frame>
+			<Frame parentKey="RareLoot" hidden="true" inherits="RSExplorerRareListTemplate" mixin="RSExplorerRareLoot" name="$parentRareLoot">
+				<Size x="295" y="654" />
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.RareInfo" relativePoint="TOPRIGHT" x="5" y="0" />
+				</Anchors>
+				<Frames>
+					<CheckButton parentKey="FilterAllCheck" inherits="UICheckButtonTemplate">
+						<Size x="24" y="24" />
+						<Anchors>
+							<Anchor point="TOPLEFT" x="4" y="-3" />
+						</Anchors>
+					</CheckButton>
+					<DropdownButton parentKey="FilterDropDown" inherits="WowStyle1FilterDropdownTemplate">
+						<Size x="100" y="25" />
+						<Anchors>
+							<Anchor point="LEFT" relativeKey="$parent.FilterAllCheck" relativePoint="RIGHT" x="4" y="0" />
+						</Anchors>
+					</DropdownButton>
+					<EditBox parentKey="SearchBox" inherits="SearchBoxTemplate">
+						<Size x="0" y="22" />
+						<Anchors>
+							<Anchor point="LEFT" relativeKey="$parent.FilterDropDown" relativePoint="RIGHT" x="12" y="0" />
+							<Anchor point="RIGHT" x="-18" />
+						</Anchors>
+					</EditBox>
+				</Frames>
 			</Frame>
 			<Frame parentKey="Control" inherits="RSExplorerControlTemplate" mixin="RSExplorerControl" hidden="true" frameLevel="4">
 				<Size x="574" y="60" />

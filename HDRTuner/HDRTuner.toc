@@ -1,6 +1,6 @@
 ## Interface: 16001
 ## Title: HDR Tuner
-## Notes: HDR Tuner exposes the client's HDR console variables as sliders and checkboxes in the Interface options panel, with a button to restart the graphics engine so changes take effect.
+## Notes: Adds checkboxes, sliders and a dropdown for WoW's HDR console variables to the AddOns options. Type /hdt to open it.
 ## IconTexture: Interface\Icons\INV_Misc_Gem_Diamond_02
 ## OptionalDeps: InterfacePanelLib
 

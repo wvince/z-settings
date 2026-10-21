@@ -117,7 +117,9 @@ private.ACHIEVEMENT_ZONE_IDS = {
 	[2509] = { 63610 }; --Vaults of Atal'Utek (Midnight)
 	[2636] = { 63610, 62601 }; --Vault of Restless Bones (Midnight)
 	[2638] = { 63610 }; --Mausoleo profanado (Midnight)
-	[2613] = { 62601 }; --The underbelly
+	[2613] = { 62601 }; --The underbelly (Midnight)
+	[2647] = { 63717 }; --The labyrinth of Kindo'jan (Midnight)
+	[2648] = { 63717 }; --The labyrinth of Kindo'jan (Midnight)
 }
 
 private.ACHIEVEMENT_WITH_CRITERIA = { 
@@ -305,4 +307,5 @@ private.ACHIEVEMENT_TARGET_IDS = {
 	[63390] = { 255088, 258254, 255087, 257863, 255927 }; --Turn the Surge
 	[63610] = { 668597, 668600, 668596, 668594, 668593, 668590, 668591, 668589, 668601, 668598, 668599, 668602 }; --The Honored Dead
 	[62601] = { 263322, 263371, 263851, 263335, 263456 }; --Soft Underbelly
+	[63717] = { 676585, 659517, 676624, 676625, 676628, 676629, 676661, 676663, 676653, 676657, 676760, 676759, 676648, 676649, 676645, 676643, 676640, 676639, 676660, 676658, 676646, 676647, 676623, 676622, 676632, 676630, 676651, 676637, 676621, 676666, 676631, 676641, 676642, 676627, 676626, 676652, 676650, 676668, 676664, 676633, 676636, 676635 }; --Kindo'jan's Labyrinth Discoveries
 }

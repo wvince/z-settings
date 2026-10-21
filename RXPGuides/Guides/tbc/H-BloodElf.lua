@@ -9,6 +9,8 @@ RXPGuides.RegisterGuide([[
 #subgroup RestedXP Horde 1-30
 #defaultfor BloodElf
 #next 6-10 Eversong Woods
+
+
 step << !BloodElf
     #completewith next
     +|cRXP_WARN_You have selected a guide meant for Blood Elves. We do not recommend doing the 1-6 zone due to there being no quests for non-Blood Elves. You should choose the same starter zone that you start in|r
@@ -629,6 +631,7 @@ step
     .goto Eversong Woods,43.62,34.88,40,0
     .xp 5+2635 >> Grind to 2635+/2800xp
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -641,6 +644,7 @@ RXPGuides.RegisterGuide([[
 #version 7
 #subgroup RestedXP Horde 1-30
 #next 10-12 Eversong Woods
+
 step
     .goto Eversong Woods,47.26,46.31
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Jarondis|r
@@ -2170,7 +2174,9 @@ step << Mage
 step
     #optional
     #label Antheol2
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -2182,6 +2188,7 @@ RXPGuides.RegisterGuide([[
 #version 7
 #subgroup RestedXP Horde 1-30
 #next 12-16 Ghostlands
+
 step << Orc Hunter/Troll Hunter
     #completewith next
     .goto Silvermoon City,62.89,31.20,20,0
@@ -3478,6 +3485,7 @@ step
     #optional
     .abandon 8491 >>Abandon Pelt Collection
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -3489,6 +3497,7 @@ RXPGuides.RegisterGuide([[
 #version 7
 #subgroup RestedXP Horde 1-30
 #next 16-20 Ghostlands
+
 step << Mage
     #optional
     #completewith next
@@ -6779,7 +6788,9 @@ step
     .money <0.2000 << Paladin
     .xp <15,1
     .xp >30,1
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -6790,6 +6801,7 @@ RXPGuides.RegisterGuide([[
 #version 7
 #subgroup RestedXP Horde 1-30
 #next 20-23 Stonetalon/The Barrens
+
 step << Paladin/Warrior
     .goto Ghostlands,47.71,32.32
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Vredigar|r

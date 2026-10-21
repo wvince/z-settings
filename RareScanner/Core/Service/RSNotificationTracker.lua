@@ -63,7 +63,7 @@ function RSNotificationTracker.AddNotification(vignetteID, isNavigating, entityI
 	local currentTime = time()
 	
 	-- If not spawning in multiple places at the same time stores entityID
-	if (entityID and not RSNpcDB.IsMultiZoneSpawn(entityID) and not RSContainerDB.IsMultiZoneSpawn(entityID)) then
+	if (entityID and not RSNpcDB.IsMultiZoneSpawn(entityID) and not RSContainerDB.IsRepeatable(entityID)) then
 		current_notifications[entityID] = currentTime
 		--RSLogger:PrintDebugMessage(string.format("AddNotification[%s] at [%s]", entityID, RSTimeUtils.TimeStampToClock(currentTime)))
 	-- Otherwise vignetteID

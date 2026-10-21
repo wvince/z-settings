@@ -40,10 +40,10 @@
 				</Texture>
 			</Layer>
 			<Layer level="ARTWORK">
-				<Texture parentKey="Treasure" atlas="Mobile-TreasureIcon">
+				<Texture parentKey="Treasure" atlas="GarrMission-NeutralChest">
 					<Anchors>
-						<Anchor point="TOPLEFT" x="6" y="-4"/>
-						<Anchor point="BOTTOMRIGHT" x="4" y="6"/>
+						<Anchor point="TOPLEFT" x="0" y="-4"/>
+						<Anchor point="BOTTOMRIGHT" x="10" y="6"/>
 					</Anchors>
 				</Texture>
 			</Layer>
@@ -109,11 +109,6 @@
 				</Texture>
 			</Layer>
 			<Layer level="BACKGROUND" textureSubLevel="1">
-				<Texture parentKey="DrakewatcherTexture" file="Interface\AddOns\RareScanner\Media\Textures\DrakewatcherTexture" hidden="true">
-					<Size x="54" y="52"/>
-				</Texture>
-			</Layer>
-			<Layer level="BACKGROUND" textureSubLevel="1">
 				<Texture parentKey="AppearanceTexture" file="Interface\AddOns\RareScanner\Media\Textures\AppearanceTexture" hidden="true">
 					<Size x="54" y="52"/>
 				</Texture>
@@ -135,6 +130,12 @@
 						<Anchor point="LEFT" relativeKey="$parent.PortraitFrame" relativePoint="LEFT" x="70" y="-8"/>
 					</Anchors>
 				</FontString>
+				<Texture parentKey="StateIcon" file="Interface/PaperDollInfoFrame/UI-GearManager-LeaveItem-Opaque" hidden="true">
+					<Size x="16" y="16"/>
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" relativeKey="$parent.Name" relativePoint="TOPLEFT" x="0" y="4"/>
+					</Anchors>
+				</Texture>
 			</Layer>
 			<Layer level="BACKGROUND" textureSubLevel="2">
 				<Texture parentKey="NameBG" atlas="GarrMission_FollowerListButton" alphamode="BLEND">
@@ -165,4 +166,82 @@
 			</Anchors>
 		</HighlightTexture>
 	</Button>
+
+	<Button name="RSExplorerLootListButtonTemplate" virtual="true">
+		<Size x="270" y="36"/>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="BG" atlas="GarrMission_FollowerListButton">
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+						<Anchor point="BOTTOMRIGHT"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture parentKey="Icon">
+					<Size x="28" y="28"/>
+					<Anchors>
+						<Anchor point="LEFT" x="32" y="0"/>
+					</Anchors>
+				</Texture>
+				<FontString parentKey="Chance" inherits="GameFontHighlight" justifyH="RIGHT">
+					<Size x="40" y="0"/>
+					<Anchors>
+						<Anchor point="RIGHT" x="-8" y="0"/>
+					</Anchors>
+				</FontString>
+				<Texture parentKey="Upgrade" atlas="bags-greenarrow" hidden="true">
+					<Size x="14" y="14"/>
+					<Anchors>
+						<Anchor point="RIGHT" relativeKey="$parent.Chance" relativePoint="LEFT" x="0" y="0"/>
+					</Anchors>
+				</Texture>
+				<FontString parentKey="Name" inherits="GameFontNormal" justifyH="LEFT" maxLines="2">
+					<Anchors>
+						<Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="8" y="0"/>
+						<Anchor point="RIGHT" relativeKey="$parent.Upgrade" relativePoint="LEFT" x="-4" y="0"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<CheckButton parentKey="FilterCheck" inherits="UICheckButtonTemplate">
+				<Size x="24" y="24"/>
+				<Anchors>
+					<Anchor point="LEFT" x="4" y="0"/>
+				</Anchors>
+			</CheckButton>
+		</Frames>
+		<HighlightTexture parentKey="Highlight" atlas="GarrMission_FollowerListButton-Highlight">
+			<Anchors>
+				<Anchor point="TOPLEFT"/>
+				<Anchor point="BOTTOMRIGHT"/>
+			</Anchors>
+		</HighlightTexture>
+	</Button>
+
+	<!-- Drop chance range row used inside the loot filters menu -->
+	<Frame name="RSExplorerLootChanceFilterTemplate" virtual="true">
+		<Size x="230" y="24" />
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString parentKey="Label" inherits="GameFontHighlightSmall" justifyH="LEFT">
+					<Size x="140" y="24" />
+					<Anchors>
+						<Anchor point="LEFT" x="6" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<EditBox parentKey="Value" letters="6" inherits="InputBoxTemplate" autoFocus="false" numeric="false">
+				<Size x="50" y="20" />
+				<Anchors>
+					<Anchor point="LEFT" relativeKey="$parent.Label" relativePoint="RIGHT" x="6" />
+				</Anchors>
+				<FontString inherits="GameFontHighlightSmall" />
+			</EditBox>
+		</Frames>
+	</Frame>
 </Ui>

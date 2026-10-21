@@ -154,35 +154,11 @@ do
 			LSM:Register("sound", "Blakbyrd Alert 2", [[Interface\AddOns\DBM-Core\sounds\BlakbyrdAlerts\Alert2.ogg]])
 			LSM:Register("sound", "Blakbyrd Alert 3", [[Interface\AddOns\DBM-Core\sounds\BlakbyrdAlerts\Alert3.ogg]])
 			-- User Media
-			if DBM.Options.CustomSounds >= 1 then
-				LSM:Register("sound", "DBM: Custom 1", [[Interface\AddOns\DBM-CustomSounds\Custom1.ogg]])
+			if DBM.Options.CustomSounds > 9 then
+				DBM.Options.CustomSounds = 9
 			end
-			if DBM.Options.CustomSounds >= 2 then
-				LSM:Register("sound", "DBM: Custom 2", [[Interface\AddOns\DBM-CustomSounds\Custom2.ogg]])
-			end
-			if DBM.Options.CustomSounds >= 3 then
-				LSM:Register("sound", "DBM: Custom 3", [[Interface\AddOns\DBM-CustomSounds\Custom3.ogg]])
-			end
-			if DBM.Options.CustomSounds >= 4 then
-				LSM:Register("sound", "DBM: Custom 4", [[Interface\AddOns\DBM-CustomSounds\Custom4.ogg]])
-			end
-			if DBM.Options.CustomSounds >= 5 then
-				LSM:Register("sound", "DBM: Custom 5", [[Interface\AddOns\DBM-CustomSounds\Custom5.ogg]])
-			end
-			if DBM.Options.CustomSounds >= 6 then
-				LSM:Register("sound", "DBM: Custom 6", [[Interface\AddOns\DBM-CustomSounds\Custom6.ogg]])
-			end
-			if DBM.Options.CustomSounds >= 7 then
-				LSM:Register("sound", "DBM: Custom 7", [[Interface\AddOns\DBM-CustomSounds\Custom7.ogg]])
-			end
-			if DBM.Options.CustomSounds >= 8 then
-				LSM:Register("sound", "DBM: Custom 8", [[Interface\AddOns\DBM-CustomSounds\Custom8.ogg]])
-			end
-			if DBM.Options.CustomSounds >= 9 then
-				LSM:Register("sound", "DBM: Custom 9", [[Interface\AddOns\DBM-CustomSounds\Custom9.ogg]])
-				if DBM.Options.CustomSounds > 9 then
-					DBM.Options.CustomSounds = 9
-				end
+			for i = 1, DBM.Options.CustomSounds do
+				LSM:Register("sound", "DBM: Custom " .. i, "Interface\\AddOns\\DBM-CustomSounds\\Custom" .. i .. ".ogg")
 			end
 		end
 		-- Sort LibSharedMedia keys alphabetically (case-insensitive)
@@ -614,8 +590,6 @@ local function addOptions(mod, catpanel, v)
 	end
 end
 
-local isFirstModPanel = true
-
 local function isGTFOAbilityGroup(options)
 	if type(options) ~= "table" then
 		return false
@@ -800,26 +774,22 @@ local function importAddonProfile(addon, importTable)
 end
 
 ---@param mod DBMMod
-function DBM_GUI:CreateBossModPanel(mod, isTestView)
-	local panel = isTestView and mod.testPanel or mod.panel
+function DBM_GUI:CreateBossModPanel(mod)
+	local panel = mod.panel
 	if not panel then
 		DBM:AddMsg("Couldn't create boss mod panel for " .. mod.localization.general.name)
 		return false
 	end
 
-	local extraOffset = 0
-	if isTestView then
-		extraOffset = extraOffset + DBM_GUI:AddModTestOptionsAbove(panel, mod)
-	end
 	if not DBM:IsRestricted() then
 		local iconstat = panel.frame:CreateFontString("DBM_GUI_Mod_Icons" .. mod.localization.general.name, "ARTWORK")
-		iconstat:SetPoint("TOP", panel.frame, 0, -10 - extraOffset)
+		iconstat:SetPoint("TOP", panel.frame, 0, -10)
 		iconstat:SetFontObject(GameFontNormal)
 		iconstat:SetText(L.IconsInUse)
 		for i = 1, 8 do
 			local icon = panel.frame:CreateTexture()
 			icon:SetTexture(137009) -- "Interface\\TargetingFrame\\UI-RaidTargetingIcons.blp"
-			icon:SetPoint("TOP", panel.frame, 81 - (i * 18), -26 - extraOffset)
+			icon:SetPoint("TOP", panel.frame, 81 - (i * 18), -26)
 			icon:SetSize(16, 16)
 			if not mod.usedIcons or not mod.usedIcons[i] then
 				icon:SetAlpha(0.25)
@@ -847,23 +817,13 @@ function DBM_GUI:CreateBossModPanel(mod, isTestView)
 
 	local reset = panel:CreateButton(L.Mod_Reset, 155, 28, nil, GameFontNormalSmall)
 	reset.myheight = 40
-	reset:SetPoint("TOPRIGHT", panel.frame, "TOPRIGHT", -24, -2 - extraOffset)
+	reset:SetPoint("TOPRIGHT", panel.frame, "TOPRIGHT", -24, -2)
 	reset:SetScript("OnClick", function()
 		DBM:LoadModDefaultOption(mod)
 	end)
-	if not isTestView and not DBM:IsRestricted() then
-		local playground = panel:CreateButton(L.EnterTestMode, 155, 28, nil, GameFontNormalSmall)
-		playground.myheight = 0
-		playground:SetPoint("TOPLEFT", reset, "BOTTOMLEFT", 0, -2)
-		playground:SetScript("OnClick", function()
-			mod.showTestUI = true
-			DBM_GUI:UpdateModList()
-			DBM_GUI_OptionsFrame:LoadAndShowFrame(mod.testPanel.frame)
-		end)
-	end
 	local exportMod = panel:CreateButton(L.ButtonExportMod, 120, 20, nil, GameFontNormalSmall)
 	exportMod.myheight = 24
-	exportMod:SetPoint("TOPLEFT", panel.frame, "TOPLEFT", 8, -10 - extraOffset)
+	exportMod:SetPoint("TOPLEFT", panel.frame, "TOPLEFT", 8, -10)
 	exportMod:SetScript("OnClick", function()
 		local fullname, profileNum = DBM:GetProfileID()
 		local savedVars = _G[mod.addon.modId:gsub("-", "") .. "_AllSavedVars"]
@@ -982,12 +942,6 @@ function DBM_GUI:CreateBossModPanel(mod, isTestView)
 		end
 	end
 
-	-- For some reason the options aren't loaded in properly if the very first mod view you load is a test view
-	-- But just forcing a call to show fixes this
-	if isFirstModPanel and isTestView then
-		DBM_GUI:ShowHide(true)
-	end
-	isFirstModPanel = true
 end
 
 function DBM_GUI:CreateBossModTab(addon, panel, subtab)
@@ -1351,13 +1305,132 @@ do
 	local subTabId = 0
 
 	local currentSeasons = {}
+	local seasonCategory, seasonCategoryTab, seasonProfileText
+	local expansions = {"CLASSIC", "BC", "WOTLK", "CATA", "MOP", "WOD", "LEG", "BFA", "SHADOWLANDS", "DRAGONFLIGHT", "WARWITHIN", "MIDNIGHT"}
+
+	local function getAddonCategoryName(addon)
+		if addon.category:upper() == "FOREVER" then
+			return L.TabCategory_FOREVER
+		end
+		return _G["EXPANSION_NAME" .. (tIndexOf(expansions, addon.category:upper()) or 99) - 1] or addon.name or addon.modId
+	end
+
+	local function createGenericTrashPanel(parent, contentType, frameType, frameName)
+		local isForever = DBM:IsForever()
+		local prefix = "GenericTrash" .. (isForever and "Forever" or "") .. contentType
+		local isRaid = contentType == "Raid"
+		local panel = parent:CreateNewPanel(frameName or "GenericTrash", frameType or "PARTY", false, L.GenericTrashTitle)
+		local area = panel:CreateArea(L.GenericTrashTitle)
+		area:CreateText(L[prefix .. "Description"], nil, true)
+		local enabledLabel = isForever and (isRaid and L.GenericTrashForeverRaids or L.GenericTrashForeverEnabled) or isRaid and L.GenericTrashRaids or contentType == "Delve" and L.GenericTrashDelves or L.GenericTrashEnabled
+		area:CreateCheckButton(enabledLabel, true, nil, prefix .. "Enabled"):HookScript("OnClick", function() DBM:UpdateGenericTrashOptions() end)
+		if contentType == "Dungeon" and not isForever then
+			area:CreateCheckButton(L.GenericTrashAllDungeons, true, nil, prefix .. "AllDungeons"):HookScript("OnClick", function() DBM:UpdateGenericTrashOptions() end)
+		end
+		area:CreateCheckButton(isForever and L.GenericTrashStandardCast or isRaid and L.GenericTrashRaidCast or L.GenericTrashCast, true, nil, prefix .. "Cast"):HookScript("OnClick", function() DBM:UpdateGenericTrashOptions() end)
+		if isForever then
+			area:CreateCheckButton(L.GenericTrashElite, true, nil, prefix .. "Elite"):HookScript("OnClick", function() DBM:UpdateGenericTrashOptions() end)
+		elseif not isRaid then
+			area:CreateCheckButton(L.GenericTrashLieutenant, true, nil, prefix .. "Lieutenant"):HookScript("OnClick", function() DBM:UpdateGenericTrashOptions() end)
+		end
+		area:CreateCheckButton(L.GenericTrashChannel, true, nil, prefix .. "Channel"):HookScript("OnClick", function() DBM:UpdateGenericTrashOptions() end)
+		area:CreateCheckButton(L.GenericTrashShowTargets, true, nil, prefix .. "ShowTargets")
+		local filters = {
+			{ text = L.GenericTrashFilterTarget, value = "target" },
+			{ text = L.GenericTrashFilterSoundsTarget, value = "messagesAllSoundsTarget" },
+			{ text = L.GenericTrashFilterAll, value = "all" }
+		}
+		local customization = panel:CreateArea(L.GenericTrashThrottleType)
+		local function createDropdown(title, values, key, width, anchor)
+			key = prefix .. key
+			local dropdown = customization:CreateDropdown(title, values, "DBM", key, function(value)
+				DBM.Options[key] = value
+			end, width)
+			dropdown.myheight = 60
+			if anchor then
+				dropdown:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -35)
+			else
+				dropdown:SetPoint("TOPLEFT", customization.frame, "TOPLEFT", 10, -30)
+			end
+			return dropdown
+		end
+		local standardFilters = isForever and {{ text = L.GenericTrashFilterOff, value = "off" }, filters[1], filters[2], filters[3]} or filters
+		local lastFilter = createDropdown(isForever and L.GenericTrashStandardMobs or isRaid and L.GenericTrashRaidFilter or L.GenericTrashStandardFilter, standardFilters, "StandardFilter", 350)
+		if isForever then
+			lastFilter = createDropdown(L.GenericTrashEliteFilter, filters, "EliteFilter", 350, lastFilter)
+		elseif not isRaid then
+			lastFilter = createDropdown(L.GenericTrashLieutenantFilter, {filters[3], filters[2], filters[1]}, "LieutenantFilter", 350, lastFilter)
+		end
+		if not isForever then
+			lastFilter = createDropdown(L.GenericTrashNonEliteFilter, {
+				{ text = L.GenericTrashFilterOff, value = "off" },
+				filters[1], filters[2], filters[3]
+			}, "NonEliteFilter", 350, lastFilter)
+		end
+		local throttle = createDropdown(L.GenericTrashThrottleType, {
+			{ text = L.GenericTrashThrottleBoth, value = "both" },
+			{ text = L.GenericTrashThrottleSounds, value = "sounds" }
+		}, "ThrottleType", 350, lastFilter)
+		local durationKey = prefix .. "ThrottleDuration"
+		local function normalizeDuration(value)
+			if type(value) ~= "number" or value ~= value then
+				value = DBM.DefaultOptions[durationKey]
+			end
+			return math.min(5, math.max(1, math.floor(value * 2 + 0.5) / 2))
+		end
+		local function updateDuration(slider, value)
+			slider.value = value
+			slider:SetValue(value)
+			slider.editbox:SetText(value)
+		end
+		local duration
+		duration = customization:CreateSlider(L.GenericTrashThrottleDuration, 1, 5, 0.5, 300, normalizeDuration(DBM.Options[durationKey]), function(value)
+			value = normalizeDuration(value)
+			DBM.Options[durationKey] = value
+			updateDuration(duration, value)
+		end)
+		duration:SetPoint("TOPLEFT", throttle, "BOTTOMLEFT", 20, -35)
+		duration:SetScript("OnShow", function(self)
+			updateDuration(self, normalizeDuration(DBM.Options[durationKey]))
+		end)
+		local reset = customization:CreateButton(L.Reset, 120, 20, function()
+			for key, value in pairs(DBM.DefaultOptions) do
+				if key:find("^" .. prefix) then
+					DBM.Options[key] = value
+				end
+			end
+			DBM:UpdateGenericTrashOptions()
+			for _, section in ipairs({area, customization}) do
+				for _, control in ipairs({section.frame:GetChildren()}) do
+					local onShow = control:GetScript("OnShow")
+					if onShow then onShow(control) end
+				end
+			end
+		end)
+		reset.myheight = 35
+		reset:SetPoint("TOPLEFT", duration, "BOTTOMLEFT", -20, -35)
+		panel.frame.isLoaded = true
+		return panel
+	end
+
 	function UpdateCurrentSeason()
 		if not C_ChallengeMode or not C_ChallengeMode.GetMapTable then
 			return
 		end
-		local seasonCategory = DBM_GUI:CreateNewPanel(L.TabCategory_CURRENT_SEASON, "PARTY")
-		local seasonCategoryTab = DBM_GUI.tabs[DBM_GUI.Enums.Tabs.DUNGEONS].buttons[#DBM_GUI.tabs[DBM_GUI.Enums.Tabs.DUNGEONS].buttons]
-		local hasAnyMod = false
+		if not seasonCategory then
+			seasonCategory = DBM_GUI:CreateNewPanel(L.TabCategory_CURRENT_SEASON, "PARTY")
+			seasonCategoryTab = DBM_GUI.tabs[DBM_GUI.Enums.Tabs.DUNGEONS].buttons[#DBM_GUI.tabs[DBM_GUI.Enums.Tabs.DUNGEONS].buttons]
+			-- Give this grouping its own content instead of leaving the previous profile panel visible.
+			local area = seasonCategory:CreateArea(L.TabCategory_CURRENT_SEASON)
+			seasonProfileText = area:CreateText("", nil, true)
+			---@diagnostic disable-next-line: inject-field
+			seasonCategory.frame.isLoaded = true
+		end
+		if DBM:IsRetail() and not currentSeasons.GenericTrash then
+			currentSeasons.GenericTrash = createGenericTrashPanel(seasonCategory, "Dungeon")
+		end
+		local hasAnyMod = currentSeasons.GenericTrash ~= nil
+		local categoryNames, seenCategories = {}, {}
 		for _, challengeMap in ipairs(C_ChallengeMode.GetMapTable()) do
 			local challengeMode = challengeModeIds[challengeMap]
 			local id = challengeMode
@@ -1367,30 +1440,45 @@ do
 			if splitName and splitName ~= "" then
 				mapName = splitName
 			end
-			if not currentSeasons[mapName] then
-				local modId
-				for _, addon in ipairs(DBM.AddOns) do
-					if addon.modId ~= "DBM-Affixes" and addon.type == "PARTY" then
-						for _, mapId in ipairs(addon.mapId) do
-							if mapId == id then
-								modId = addon.modId
-								break
+			local modId
+			for _, addon in ipairs(DBM.AddOns) do
+				if addon.modId ~= "DBM-Affixes" and addon.type == "PARTY" then
+					for _, mapId in ipairs(addon.mapId) do
+						if mapId == id then
+							modId = addon.modId
+							local categoryName = getAddonCategoryName(addon)
+							if not seenCategories[categoryName] then
+								seenCategories[categoryName] = true
+								tinsert(categoryNames, categoryName)
 							end
+							break
 						end
 					end
 				end
+			end
+			if not currentSeasons[mapName] then
 				if modId then
 					currentSeasons[mapName] = seasonCategory:CreateNewPanel(mapName, "PARTY", false, nil, true, modId, true)
 					hasAnyMod = true
 				end
+			elseif currentSeasons[mapName] then
+				hasAnyMod = true
 			end
 		end
-		if not hasAnyMod then
-			seasonCategoryTab.hidden = true
+		tsort(categoryNames)
+		local profileInfo = L.CurrentSeasonProfileInfo:format(L.OTabDungeons)
+		if #categoryNames > 0 then
+			profileInfo = profileInfo .. "\n\n" .. L.CurrentSeasonProfileCategories .. "\n" .. table.concat(categoryNames, "\n")
 		end
+		if currentSeasons.GenericTrash then
+			profileInfo = profileInfo .. "\n\n" .. L.CurrentSeasonCoreProfileInfo:format(L.GenericTrashTitle, L.OTabOptions, L.Panel_Profile)
+		end
+		if seasonProfileText:GetText() ~= profileInfo then
+			seasonProfileText:SetText(profileInfo)
+			_G["DBM_GUI_OptionsFrame"]:InvalidateSearchCache(seasonCategory.frame)
+		end
+		seasonCategoryTab.hidden = not hasAnyMod
 	end
-
-    local expansions = {"CLASSIC", "BC", "WOTLK", "CATA", "MOP", "WOD", "LEG", "BFA", "SHADOWLANDS", "DRAGONFLIGHT", "WARWITHIN", "MIDNIGHT"}
 
 	function DBM_GUI:UpdateModList()
 		for _, addon in ipairs(DBM.AddOns) do
@@ -1399,10 +1487,24 @@ do
 				local customName
 				--Auto truncate Raid, Dungeon, Lair, and World boss mods to only display expansion name in list
 				if addon.type == "RAID" or addon.type == "PARTY" or addon.type == "WORLDBOSS" or addon.type == "LAIR" then
-					customName = _G["EXPANSION_NAME" .. (tIndexOf(expansions, addon.category:upper()) or 99) - 1]
+					customName = getAddonCategoryName(addon)
 				end
 				-- Create a Panel for "Naxxramas" "Eye of Eternity" ...
 				addon.panel = DBM_GUI:CreateNewPanel(addon.name or "Error: No-modId", addon.type, false, customName, true, addon.modId)
+				if DBM:IsRetail() and (addon.type == "RAID" or addon.type == "LAIR") and addon.category:upper() == "MIDNIGHT" then
+					createGenericTrashPanel(addon.panel, "Raid", "RAID", "GenericTrashRaidsPanel")
+				elseif DBM:IsRetail() and addon.modId == "DBM-Delves-Midnight" then
+					createGenericTrashPanel(addon.panel, "Delve", "SCENARIO", "GenericTrashDelvesPanel")
+				elseif DBM:IsForever() and addon.modId == "DBM-Party-Forever" then
+					createGenericTrashPanel(addon.panel, "Dungeon", "PARTY", "GenericTrashForeverDungeonsPanel")
+				elseif DBM:IsForever() and addon.modId == "DBM-Party-Vanilla" then
+					createGenericTrashPanel(addon.panel, "Dungeon", "PARTY", "GenericTrashForeverVanillaDungeonsPanel")
+				elseif DBM:IsForever() and addon.modId == "DBM-Raids-Vanilla" then
+					createGenericTrashPanel(addon.panel, "Raid", "RAID", "GenericTrashForeverVanillaRaidsPanel")
+				-- Enable when the Forever raid pack exists.
+				-- elseif DBM:IsForever() and addon.modId == "DBM-Raids-Forever" then
+				-- 	createGenericTrashPanel(addon.panel, "Raid", "RAID", "GenericTrashForeverRaidsPanel")
+				end
 
 				if not addonLoaded then
 					local autoLoadFrame = CreateFrame("Frame", nil, addon.panel.frame)
@@ -1451,14 +1553,8 @@ do
 					if mod and (not addon.subTabs or (addon.subPanels and (addon.subPanels[mod.subTab] or mod.subTab == 0))) then
 						if addon.subTabs and addon.subPanels[mod.subTab] then
 							mod.panel = mod.panel or addon.subPanels[mod.subTab]:CreateNewPanel(mod.id or "Error: DBM.Mods", addon.type, nil, mod.localization.general.name)
-							if mod.showTestUI then
-								mod.testPanel = mod.testPanel or addon.subPanels[mod.subTab]:CreateNewPanel(mod.id or "Error: DBM.Mods", addon.type, nil, L.TestModEntry:format(mod.localization.general.name), nil, nil, nil, true)
-							end
 						else
 							mod.panel = mod.panel or currentSeasons[mod.id] or addon.panel:CreateNewPanel(mod.id or "Error: DBM.Mods", addon.type, nil, mod.localization.general.name)
-							if mod.showTestUI then
-								mod.testPanel = mod.testPanel or currentSeasons[mod.id] or addon.panel:CreateNewPanel(mod.id or "Error: DBM.Mods", addon.type, nil, L.TestModEntry:format(mod.localization.general.name), nil, nil, nil, true)
-							end
 						end
 					end
 				end

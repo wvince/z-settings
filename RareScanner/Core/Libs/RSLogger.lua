@@ -54,22 +54,26 @@ function RSLogger:CreateChatFrame(name)
 	end
 end
 
-function RSLogger:PrintMessage(message)
+local function PrintHeaderMessage(self, header, message)
 	-- Cannot use RSConfigDB in this class
 	local printMessage
 	if (private.db.display.displayTimestampChatMessage) then
 		local timeStamp = LibTime.GetTimeString("LocalTime",true,true)
-		printMessage = string.format("|cFFFCD6CD[%s] |cFF00FF00[RareScanner]: |cFFFFFFFF%s", timeStamp, message)
+		printMessage = string.format("|cFFFCD6CD[%s] |cFF00FF00[%s]: |cFFFFFFFF%s", timeStamp, header, message)
 	else
-		printMessage = string.format("|cFF00FF00[RareScanner]: |cFFFFFFFF%s", message)
+		printMessage = string.format("|cFF00FF00[%s]: |cFFFFFFFF%s", header, message)
 	end
-	
+
 	-- Prints to custom chat frame or default
 	if (self.RARESCANNER_CHAT_FRAME) then
 		self.RARESCANNER_CHAT_FRAME:AddMessage(printMessage)
 	else
 		print(printMessage)
 	end
+end
+
+function RSLogger:PrintMessage(message)
+	PrintHeaderMessage(self, "RareScanner", message)
 end
 
 function RSLogger:PrintDebugMessage(message)

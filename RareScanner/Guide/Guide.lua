@@ -3051,6 +3051,148 @@ private.CONTAINER_GUIDE = {
 		[RSConstants.STEP2] = { x = 0.6642, y = 0.5725, comment = AL["NOTE_645549_2"] };
 		[RSConstants.STEP3] = { x = 0.6904, y = 0.5271, comment = AL["NOTE_645549_3"] };
 	}; --Grave of Someone Forgotten
+	["6766242647"] = {
+		[RSConstants.ENTRANCE] = { x = 0.3506, y = 0.6470 };
+	}; --Ancient Treasure
+	["6766252647"] = {
+		[RSConstants.ENTRANCE] = { x = 0.3506, y = 0.6470 };
+	}; --Ancient Treasure
+	["6766282647"] = {
+		[RSConstants.ENTRANCE..1] = { x = 0.3506, y = 0.6470 };
+		[RSConstants.ENTRANCE..2] = { x = 0.2554, y = 0.5284 };
+	}; --Ancient Treasure
+	["6766292647"] = {
+		[RSConstants.ENTRANCE..1] = { x = 0.3506, y = 0.6470 };
+		[RSConstants.ENTRANCE..2] = { x = 0.2554, y = 0.5284 };
+	}; --Ancient Treasure
+	["6766612647"] = {
+		[RSConstants.ENTRANCE] = { x = 0.5368, y = 0.6477 };
+	}; --Ancient Treasure
+	["6766632647"] = {
+		[RSConstants.ENTRANCE] = { x = 0.5368, y = 0.6477 };
+	}; --Ancient Treasure
+	["6766532647"] = {
+		[RSConstants.ENTRANCE..1] = { x = 0.5368, y = 0.6477 };
+		[RSConstants.ENTRANCE..2] = { x = 0.7400, y = 0.6282 };
+	}; --Ancient Treasure
+	["6766572647"] = {
+		[RSConstants.ENTRANCE..1] = { x = 0.5368, y = 0.6477 };
+		[RSConstants.ENTRANCE..2] = { x = 0.7400, y = 0.6282 };
+	}; --Ancient Treasure
+	["6767592647"] = {
+		[RSConstants.ENTRANCE] = { x = 0.4437, y = 0.5096 };
+	}; --Ancient Treasure
+	["6767602647"] = {
+		[RSConstants.ENTRANCE] = { x = 0.4437, y = 0.5096 };
+	}; --Ancient Treasure
+	["6766482647"] = {
+		[RSConstants.ENTRANCE..1] = { x = 0.4437, y = 0.5096 };
+		[RSConstants.ENTRANCE..2] = { x = 0.5465, y = 0.3695 };
+	}; --Ancient Treasure
+	["6766492647"] = {
+		[RSConstants.ENTRANCE..1] = { x = 0.4437, y = 0.5096 };
+		[RSConstants.ENTRANCE..2] = { x = 0.5465, y = 0.3695 };
+	}; --Ancient Treasure
+	["6766452647"] = {
+		[RSConstants.ENTRANCE..1] = { x = 0.4437, y = 0.5096 };
+		[RSConstants.ENTRANCE..2] = { x = 0.4438, y = 0.2805 };
+	}; --Ancient Treasure
+	["6766432647"] = {
+		[RSConstants.ENTRANCE..1] = { x = 0.4437, y = 0.5096 };
+		[RSConstants.ENTRANCE..2] = { x = 0.4438, y = 0.2805 };
+	}; --Ancient Treasure
+	["6766402647"] = {
+		[RSConstants.ENTRANCE..1] = { x = 0.4437, y = 0.5096 };
+		[RSConstants.ENTRANCE..2] = { x = 0.3405, y = 0.3696 };
+	}; --Ancient Treasure
+	["6766392647"] = {
+		[RSConstants.ENTRANCE..1] = { x = 0.4437, y = 0.5096 };
+		[RSConstants.ENTRANCE..2] = { x = 0.3405, y = 0.3696 };
+	}; --Ancient Treasure
+	["6766462647"] = {
+		[RSConstants.ENTRANCE..1] = { x = 0.4437, y = 0.5096 };
+		[RSConstants.ENTRANCE..2] = { x = 0.4438, y = 0.2805 };
+	}; --Ancient Treasure
+	["6766472647"] = {
+		[RSConstants.ENTRANCE..1] = { x = 0.4437, y = 0.5096 };
+		[RSConstants.ENTRANCE..2] = { x = 0.4438, y = 0.2805 };
+	}; --Ancient Treasure
+	["6766582647"] = {
+		[RSConstants.ENTRANCE..1] = { x = 0.5368, y = 0.6477 };
+		[RSConstants.ENTRANCE..2] = { x = 0.7400, y = 0.6282 };
+	}; --Ancient Treasure
+	["6766602647"] = {
+		[RSConstants.ENTRANCE..1] = { x = 0.5368, y = 0.6477 };
+		[RSConstants.ENTRANCE..2] = { x = 0.7400, y = 0.6282 };
+	}; --Ancient Treasure
+	["6766322647"] = {
+		[RSConstants.ENTRANCE..1] = { x = 0.3506, y = 0.6470 };
+		[RSConstants.ENTRANCE..2] = { x = 0.2554, y = 0.5284 };
+	}; --Ancient Treasure
+	["6766302647"] = {
+		[RSConstants.ENTRANCE..1] = { x = 0.3506, y = 0.6470 };
+		[RSConstants.ENTRANCE..2] = { x = 0.2554, y = 0.5284 };
+	}; --Ancient Treasure
+	["6766512647"] = {
+		[RSConstants.ENTRANCE..1] = { x = 0.4437, y = 0.5096 };
+		[RSConstants.ENTRANCE..2] = { x = 0.5708, y = 0.4413 };
+	}; --Ancient Treasure
+	["6766372647"] = {
+		[RSConstants.ENTRANCE..1] = { x = 0.4437, y = 0.5096 };
+		[RSConstants.ENTRANCE..2] = { x = 0.5708, y = 0.4413 };
+	}; --Ancient Treasure
+	["6766212647"] = {
+		[RSConstants.ENTRANCE..1] = { x = 0.4437, y = 0.5096 };
+		[RSConstants.ENTRANCE..2] = { x = 0.5708, y = 0.4413 };
+	}; --Ancient Treasure
+	["6766662647"] = {
+		[RSConstants.ENTRANCE..1] = { x = 0.4437, y = 0.5096 };
+		[RSConstants.ENTRANCE..2] = { x = 0.5708, y = 0.4413 };
+	}; --Ancient Treasure
+	["6766312647"] = {
+		[RSConstants.ENTRANCE..1] = { x = 0.4437, y = 0.5096 };
+		[RSConstants.ENTRANCE..2] = { x = 0.5708, y = 0.4413 };
+	}; --Ancient Treasure
+	["6766422647"] = {
+		[RSConstants.ENTRANCE..1] = { x = 0.4437, y = 0.5096 };
+		[RSConstants.ENTRANCE..2] = { x = 0.3405, y = 0.3696 };
+	}; --Ancient Treasure
+	["6766412647"] = {
+		[RSConstants.ENTRANCE..1] = { x = 0.4437, y = 0.5096 };
+		[RSConstants.ENTRANCE..2] = { x = 0.3405, y = 0.3696 };
+	}; --Ancient Treasure
+	["6766262647"] = {
+		[RSConstants.ENTRANCE] = { x = 0.3506, y = 0.6470 };
+	}; --Ancient Treasure
+	["6766272647"] = {
+		[RSConstants.ENTRANCE] = { x = 0.3506, y = 0.6470 };
+	}; --Ancient Treasure
+	["6766502647"] = {
+		[RSConstants.ENTRANCE..1] = { x = 0.4437, y = 0.5096 };
+		[RSConstants.ENTRANCE..2] = { x = 0.5465, y = 0.3695 };
+	}; --Ancient Treasure
+	["6766522647"] = {
+		[RSConstants.ENTRANCE..1] = { x = 0.4437, y = 0.5096 };
+		[RSConstants.ENTRANCE..2] = { x = 0.5465, y = 0.3695 };
+	}; --Ancient Treasure
+	["6766682647"] = {
+		[RSConstants.ENTRANCE] = { x = 0.5368, y = 0.6477 };
+	}; --Ancient Treasure
+	["6766642647"] = {
+		[RSConstants.ENTRANCE] = { x = 0.5368, y = 0.6477 };
+	}; --Ancient Treasure
+	["6766352647"] = {
+		[RSConstants.ENTRANCE..1] = { x = 0.3506, y = 0.6470 };
+		[RSConstants.ENTRANCE..2] = { x = 0.2554, y = 0.5284 };
+	}; --Ancient Treasure
+	["6766362647"] = {
+		[RSConstants.ENTRANCE..1] = { x = 0.3506, y = 0.6470 };
+		[RSConstants.ENTRANCE..2] = { x = 0.2554, y = 0.5284 };
+	}; --Ancient Treasure
+	["6766332647"] = {
+		[RSConstants.ENTRANCE..1] = { x = 0.3506, y = 0.6470 };
+		[RSConstants.ENTRANCE..2] = { x = 0.2554, y = 0.5284 };
+	}; --Ancient Treasure
 }
 
 ---============================================================================

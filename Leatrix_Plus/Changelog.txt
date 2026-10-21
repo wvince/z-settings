@@ -1,4 +1,49 @@
-﻿1.60.15 - 10th October 2026
+﻿1.60.25 - 21st October 2026
+- For 'Automate gossip' ('Automation'), updated the NPC list.
+- For 'Show info cards' ('Interface'), you can now toggle individual gear slot items and there's a new fullscreen button with a scene selection menu in the model viewer.
+- For 'Show range coloring' ('Interface'), fixed a Lua error.
+- For 'Simple addon listing' ('Settings'), fixed a situational issue which could have caused some addons to not show in the listing.
+
+1.60.21 - 20th October 2026
+- Added 'Show info cards' ('Interface').  If checked, pointing at something (such as a player, item, spell, buff, quest, etc) and pressing a keybind (you can set it in the configuration panel) will show a color-coded information card.  Pointing at a character will show information such as their average item level, talent choices, buffs and a 3D model of the character with animation slider and gear toggle button.  Pointing at something else will show useful information and a Wowhead link that you can copy with CTRL/C.  This new option replaces the web link keybind which has been removed.
+- Added a language dropdown menu ('Settings') so you can choose which language you want the addon to use.
+- For 'Enhance minimap' ('Interface'), the new mail indicator will now be better positioned.
+- Updated flight times and translations.
+
+1.60.20 -15th October 2026
+- For 'Enhance minimap' ('Interface'), 'Square minimap' will now stay square with the compass rings hidden if the minimap shape is changed by rotation or another addon (such as FarmHud).
+- For 'Mute game sounds', updated the 'Chimes' setting.
+
+1.60.19 - 14th October 2026
+- For 'Enhance minimap' ('Interface'), enabling 'Square minimap' will no longer prevent the map from being rotated.  Instead, an advisory note has been added to the option tooltp.
+
+1.60.18 - 14th October 2026
+- Added 'Show range coloring' ('Interface').  If checked, action button icons will be colored red for out of range and blue for not enough mana.
+- Added a search options box to the main configuration panel.  Search for an option, click on a result and it will show you where the option is.
+- Removed the 'Disable bag automation' option ('System') due to issues.
+
+1.60.17 - 12th October 2026
+- For 'Enhance minimap' ('Interface'), enabling 'Square minimap' will prevent 'Rotate minimap' (a setting in Edit Mode) from being applied.  You cannot have both a square minimap and rotation.
+- Reversed the changes to the 'Disable bag automation' option ('System').
+- Taint logging will be disabled for now because having it enabled causes fake errors to show up that will lead users to report and investigate problems that don't exist and are only caused by having taint logging enabled.  This is a temporary change.
+- Updated flight times.
+
+1.60.16 - 11th October 2026
+- The 'Show Wowhead links' option ('Interface') now works with the new legacy challenges panel (links are shown at the top under the legacy points progress bar).
+- For 'Show volume slider' ('Interface'), fixed the position of the slider on the character frame.
+- For 'Show player chain' ('Interface'), you can now choose both the modern chains and the classic chains.
+- For 'Enhance minimap' ('Interface'), added a visual effect dropdown menu so you can choose a visual effect for the minimap.
+- For 'Enhance tooltip' ('Interface'), tooltips will now show whatever information they can within secrets rules instead of bypassing the tooltip entirely.
+- For 'Mute custom sounds' ('System'), added a 'Sound finder' button.  You can use it to find the sound ID for any sound in the game.
+- For 'Set edit mode layout' ('Settings'), fixed a situational issue which may have caused your chosen edit mode layout to not load under certain circumstances.
+- The 'Set chat font size' option ('Chat') is now 'More chat font sizes'.  It now adds additional font sizes to the chat font size menu.
+- The 'Filter chat messages' option ('Chat') is not currently available because of an issue in the current beta.
+- The 'Disable bag automation' option ('System') now works with many more interactions and bags will no longer automatically close.  
+- For 'Media', added movie 'New Horizons'.  Watch in 'Movies' or listen in 'Various > Cinematics'.
+- For dropdown menus in the addon configuration panel, you can now use the mousewheel to cycle through the items by pointing over an open menu or a closed one.
+- Updated flight times.
+
+1.60.15 - 10th October 2026
 - Added 'Show druid power bar' ('Interface').  If checked and you are logged in with a druid, a power bar will be shown in the player frame when your character is in cat or bear form.
 - Updated flight times.
 

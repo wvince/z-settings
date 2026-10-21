@@ -5,12 +5,16 @@
 ---@field Horde integer Active provider flavor's Horde race mask.
 
 ---@class QuestieDBEnums
+---@field zoneIDs table<string, AreaId> Shared named area identities; not a map-availability or playable-content list. Read-only by contract.
 ---@field questKeys QuestieDBQuestCorrectionKeys Canonical indices and Correction-only add/remove aliases.
 ---@field npcKeys QuestieDBNpcCorrectionKeys Canonical indices and Correction-only add/remove aliases.
 ---@field itemKeys QuestieDBItemCorrectionKeys Canonical indices and Correction-only add/remove aliases.
 ---@field objectKeys QuestieDBObjectCorrectionKeys Canonical indices and Correction-only add/remove aliases.
 ---@field raceMaskById table<integer, integer?> Actual race ID to requiredRaces mask; unknown IDs return nil. Encoding, not playability; read-only by contract.
 ---@field factionRaceMasks QuestieDBFactionRaceMasks Active provider flavor faction masks; read-only by contract.
+---@field factionIDs table<string, FactionId> Shared faction IDs by name; read-only by contract.
+---@field classKeys table<string, integer> Active provider flavor's class bitmasks, including ALL_CLASSES; read-only by contract.
+---@field npcFlags table<string, integer> Active provider flavor's NPC flag bitmasks; flags a flavor lacks are absent. Read-only by contract.
 ---@field phases table<string, integer> Shared phase names to Blizzard or Questie-defined fake IDs; read-only by contract for consumers.
 
 ---@class LibQuestieDB

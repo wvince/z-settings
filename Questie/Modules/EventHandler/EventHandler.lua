@@ -54,6 +54,8 @@ local QuestgiverFrame = QuestieLoader:ImportModule("QuestgiverFrame")
 local QuestieDebugOffer = QuestieLoader:ImportModule("QuestieDebugOffer")
 ---@type AvailableQuests
 local AvailableQuests = QuestieLoader:ImportModule("AvailableQuests")
+---@type QuestieMenu
+local QuestieMenu = QuestieLoader:ImportModule("QuestieMenu")
 ---@type WatchFrameHook
 local WatchFrameHook = QuestieLoader:ImportModule("WatchFrameHook")
 ---@type AutoCompleteFrame
@@ -413,6 +415,12 @@ end
 --- Fires when a System Message (yellow text) is output to the main chat window
 ---@param message string The message value from the CHAT_MSG_SYSTEM event
 function _EventHandler:ChatMsgSystem(message)
+    if issecretvalue and issecretvalue(message) then
+        -- The text cannot identify reputation changes; check the current faction state instead.
+        _EventHandler:ChatMsgCompatFactionChange()
+        return
+    end
+
     -- When a new quest is accepted or completed quest is turned in, update the LibDataBroker text with the appropriate message
     if string.find(message, questCompletedMessage) == 1 or string.find(message, questAcceptedMessage) == 1 then
         MinimapIcon:UpdateText(message)
@@ -561,6 +569,10 @@ function _EventHandler:ChatMsgSkill()
     local isProfUpdate, isNewProfession = QuestieProfessions:Update()
     if isProfUpdate or isNewProfession then
         AvailableQuests.CalculateAndDrawAll()
+    end
+    -- Classic's AbandonSkill hook already dropped the profession, so Update() reports no change; sync either way.
+    if Questie.db.profile.townsfolkKnownProfessions then
+        QuestieMenu.RefreshKnownProfessionTrainers()
     end
 
     -- Skill based Achievement updates

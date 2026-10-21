@@ -12,8 +12,10 @@ end
 local mod	= DBM:NewMod("Sulfuron", "DBM-Raids-Vanilla", catID)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20260920050230")
-mod:DisableHardcodedOptions()
+mod:SetRevision("20261019224112")
+if DBM:IsForever() then
+	mod:EnableGenericTrash()
+end
 mod:SetCreatureID(DBM:IsSeasonal("SeasonOfDiscovery") and 228436 or 12098)--, 11662
 mod:SetEncounterID(669)
 mod:SetModelID(13030)

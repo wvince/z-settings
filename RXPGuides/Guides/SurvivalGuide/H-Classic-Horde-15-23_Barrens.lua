@@ -1,5 +1,6 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #hardcore
@@ -11,6 +12,8 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Survival Guide (H)
 #subgroup RXP Survival Guide 1-20
 #next 19-23 Stonetalon/Barrens/Ashenvale
+
+
 step << !Tauren !Hunter !Shaman
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gar'Thok|r
     .turnin 837 >>Turn in Encroachment
@@ -2103,7 +2106,9 @@ step
     .accept 6548 >> Accept Avenge My Village
     .target +Makaba Flathoof
     .goto The Barrens,35.19,27.79
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #hardcore
 #classic
@@ -2114,6 +2119,7 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Survival Guide (H)
 #subgroup RXP Survival Guide 1-20
 #next 23-25 Hillsbrad
+
 step
     #optional
     #completewith next
@@ -2857,7 +2863,7 @@ step << Rogue
     .xp <20,1
     .dungeon DM
 step << Warlock
-    .goto Undercity,48.47,45.42
+    .goto Orgrimmar,47.98,45.93
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Zevrost|r
     .train 1014 >> Train your class spells
 	.target Zevrost
@@ -2866,7 +2872,7 @@ step << Warlock
     .dungeon DM
 step << Warlock
     #optional
-    .goto Undercity,48.47,45.42
+    .goto Orgrimmar,47.98,45.93
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Zevrost|r
     .train 706 >> Train your class spells
 	.target Zevrost
@@ -5075,4 +5081,6 @@ step
     .zone Tirisfal Glades >>Take the Zeppelin to Tirisfal Glades
     .zoneskip Tirisfal Glades
     .zoneskip Undercity
+
 ]])
+

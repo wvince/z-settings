@@ -9,6 +9,7 @@ RXPGuides.RegisterGuide([[
 #subgroup RestedXP Alliance 1-20
 #defaultfor NightElf
 #next 6-11 Teldrassil
+
 step << !NightElf
     #sticky
     #completewith next
@@ -305,6 +306,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Porthannius|r
     .accept 2159 >> Accept Dolanaar Delivery
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -315,6 +317,7 @@ RXPGuides.RegisterGuide([[
 #subgroup RestedXP Alliance 1-20
 #defaultfor NightElf
 #next 12-14 Darkshore
+
 step
     .goto Teldrassil,60.5,56.3
     .target Zenn Foulhoof

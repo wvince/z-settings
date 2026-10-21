@@ -24,6 +24,7 @@ local RSUtils = private.ImportLib("RareScannerUtils")
 -- RareScanner service libraries
 local RSMap = private.ImportLib("RareScannerMap")
 local RSCustomNpcs = private.ImportLib("RareScannerCustomNpcs")
+local RSMinimapTracking = private.ImportLib("RareScannerMinimapTracking")
 
 local options
 
@@ -193,6 +194,7 @@ local function AddNewCustomNpc(npcID, group)
 						private.options_cnpcs[groupKey] = nil
 						options.args[groupKey] = nil
 						RSNpcDB.DeleteCustomNpcGroup(group)
+						RSMinimapTracking.ResetCache()
 						
 						-- Autoselects the next group available
 						if (RSUtils.GetTableLength(RSNpcDB.GetCustomNpcGroups()) == 0) then
@@ -309,6 +311,7 @@ local function AddNewCustomNpc(npcID, group)
 						
 						private.options_cnpcs[groupKey][npcKey].zone = private.options_cnpcs[groupKey][npcKey].subzone
 						RSNpcDB.SetCustomNpcInfo(npcID, private.options_cnpcs[groupKey][npcKey])
+						RSMinimapTracking.ResetCache()
 					end
 				end,
 				width = "normal",
@@ -351,6 +354,7 @@ local function AddNewCustomNpc(npcID, group)
 					end
 					
 					private.options_cnpcs[groupKey][npcKey].zone = next(private.options_cnpcs[groupKey][npcKey].zones)
+					RSMinimapTracking.ResetCache()
 				end,
 				width = 1.0,
 				disabled = function() return (next(private.options_cnpcs[groupKey][npcKey].zones) == nil) end,
@@ -370,6 +374,7 @@ local function AddNewCustomNpc(npcID, group)
 				set = function(_, value)
 					private.options_cnpcs[groupKey][npcKey].coordinates[private.options_cnpcs[groupKey][npcKey].zone] = value
 					RSNpcDB.SetCustomNpcInfo(npcID, private.options_cnpcs[groupKey][npcKey])
+					RSMinimapTracking.ResetCache()
 				end,
 				validate = function(_, value)
 					-- Skips if empty
@@ -548,6 +553,7 @@ local function AddNewCustomNpc(npcID, group)
 				confirmText = string.format(AL["CUSTOM_NPC_DELETE_NPC_CONFIRM"], RSNpcDB.GetNpcName(tonumber(npcID))),
 				func = function()
 					RSCustomNpcs.DeleteCustomNpc(npcID, options)
+					RSMinimapTracking.ResetCache()
  				end,
 				width = "normal",
 			},
@@ -734,6 +740,7 @@ function RSCustomNpcsOptions.GetCustomNpcsOptions()
 
 					-- Selects the group
 					RSACD:SelectGroup("RareScanner Custom NPCs", RSCustomNpcs.GetGroupKey(private.options_cnpcs_selectedGroup), RSCustomNpcs.GetNpcKey(value))
+					RSMinimapTracking.ResetCache()
 				end,
 				validate = function(_, value)
 					-- Check if number
@@ -824,5 +831,6 @@ RSImportNpcsFrameButton:SetScript("OnClick", function(self)
 		-- Refresh UI
 		RefresCustomNpcList()
 		RSACD:SelectGroup("RareScanner Custom NPCs")
+		RSMinimapTracking.ResetCache()
 	end)
 end)

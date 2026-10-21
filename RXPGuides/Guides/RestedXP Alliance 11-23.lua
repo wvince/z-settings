@@ -1,5 +1,6 @@
 local faction = UnitFactionGroup("player")
 if faction == "Horde" then return end
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #tbc
@@ -465,6 +466,7 @@ step
     .goto Darkshore,30.8,41.0
     .zone Azuremyst Isle >>Take the Boat to Azuremyst Isle
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -1506,7 +1508,9 @@ step
     >>Head to the docks right next to the Night Elf you just spoke with. Level first aid while waiting.
     .goto Azuremyst Isle,20.4,54.2
     .zone Darkshore >> Take the boat to Darkshore
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -1778,6 +1782,7 @@ step
 	>> Loot mushrooms around the cave, hug right and check the upper level for a Death cap. If you don't see one you'll need to go down below.
     .complete 947,1 --Collect Scaber Stalk (x5)
     .complete 947,2 --Collect Death Cap (x1)
+
 step
 #xprate <1.5
 	#sticky
@@ -1992,6 +1997,7 @@ step
     .complete 994,1 --Escort Volcor
     .isQuestTurnedIn 986
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -2339,6 +2345,8 @@ step << Draenei tbc/NightElf tbc
     .zone Stormwind City >> Use the website unstuck feature to teleport to Stormwind. This feature has a 8hr cooldown. Skip this step if you can't get it to work
     .link https://us.battle.net/support/en/help/product/wow/197/834/solution >> Click here and copy paste the link into your browser for more info
     .zoneskip Elwynn Forest
+
+
 step << skip -- Draenei tbc/NightElf tbc
 #xprate >1.499
    #completewith next
@@ -2375,6 +2383,7 @@ step << wotlk
     .goto Darkshore,32.4,43.8,0
     .zone Stormwind City >>Take the boat to Stormwind
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 << Alliance Warlock
@@ -2821,4 +2830,5 @@ step << tbc
     .zone Wetlands >>Take the boat to Wetlands
 step << wotlk
     .hs >> Hearth to Stormwind
+
 ]])

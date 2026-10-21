@@ -4,7 +4,7 @@
 ## Title: QuestieDB
 ## Notes: The database Questie consumes.
 ## Author: Code: Logonz Data: Muehe/TheCrux(BreakBB)/Drejjmit/Dyaxler/Cheeq/TechnoHunter/Yttrium/Everyone else
-## Version: 1.0.5
+## Version: 1.0.6
 ## Category: Quests
 ## Category-deDE: Quests
 ## Category-esES: Misiones
@@ -17,10 +17,10 @@
 ## Category-zhCN: 任务
 ## Category-zhTW: 任務
 ## IconTexture: Interface\AddOns\QuestieDB\icons\QuestieTDB_64x64.png
-## X-Contract-Version: 3
+## X-Contract-Version: 4
 ## X-Flavor: Mists
 ## X-Mode: baked
-## X-BUILD-COMMIT: e0a6eaa86f181ac99262e34126bcd2ed1a1712d6
+## X-BUILD-COMMIT: 36ca1ca86f6c1838de479c7c7452eb0a57d5c135
 ## X-BUILD-TIME: 2023-11-14T22:13:20Z
 
 src\config.lua
@@ -3726,7 +3726,7 @@ src\support\eraToForever.lua
 ## X-Quest-808-8: g1hFUmV0cmlldmUgTWluc2hpbmEncyBza3VsbCBmcm9tIHRoZSBjaXJjbGUgb2YgcG93ZXIgb24gdGhlIEVjaG8gSXNsZXMuQFgtQnJpbmcgaXQgdG8gTWFzdGVyIEdhZHJpbiBpbiBTZW4namluIFZpbGxhZ2Uu
 ## X-Quest-808-10: oQOBgxkTAPYA
 ## X-Quest-808-26: goIYTAWCGQISBQ==
-## X-Quest-808-S: pwFQTWluc2hpbmEncyBTa3VsbAQEBQkGGgIAA7IRDhcZQAhBcBoCAAKE
+## X-Quest-808-S: qAFQTWluc2hpbmEncyBTa3VsbAQEBQkGGgIAA7IRDhcZQAgYJBkDJUFwGgIAAoQ=
 ## X-Quest-809-3: gYEZDcE=
 ## X-Quest-809-8: gVgkU3BlYWsgd2l0aCBBaydaZWxvdGggaW4gdGhlIEJhcnJlbnMu
 ## X-Quest-809-9: glZEZXN0cm95IHRoZSBEZW1vbiBTZWVkoRGBgvtATyuFHrhR7PtANBHrhR64Ug==
@@ -3783,7 +3783,7 @@ src\support\eraToForever.lua
 ## X-Quest-823-3: gYEZDEY=
 ## X-Quest-823-8: gVgpU3BlYWsgd2l0aCBPcmduaWwgU291bHNjYXIgaW4gUmF6b3IgSGlsbC4=
 ## X-Quest-823-26: goIYTAOCGQISAw==
-## X-Quest-823-S: qAFQUmVwb3J0IHRvIE9yZ25pbAQEBQcGGgIAA7IRDhYZAyYXGUAIQXAaAgAAhA==
+## X-Quest-823-S: qQFQUmVwb3J0IHRvIE9yZ25pbAQEBQcGGgIAA7IRDhYZAyYXGUAIGCQZAyVBcBoCAACE
 ## X-Quest-824-2: gYEZMcE=
 ## X-Quest-824-3: gYEZMcA=
 ## X-Quest-824-8: gVhGQnJpbmcgdGhlIEJlZm91bGVkIFdhdGVyIEdsb2JlIHRvIEplJ25ldSBTYW5jcmVhIGluIEJsYWNrZmF0aG9tIERlZXBzLg==
@@ -3800,7 +3800,7 @@ src\support\eraToForever.lua
 ## X-Quest-826-8: hVBEZWZlYXQgWmFsYXphbmUuQFgoS2lsbCA4IFZvb2RvbyBUcm9sbHMgYW5kIDggSGV4ZWQgVHJvbGxzLkBYIEJyaW5nIFphbGF6YW5lJ3MgSGVhZCB0byBHYWRyaW4u
 ## X-Quest-826-10: g4KDGQyH9gCDGQyG9gD2gYMZEwL2AA==
 ## X-Quest-826-26: goIYTAWCGQISBQ==
-## X-Quest-826-S: pwFIWmFsYXphbmUEBAUKBhoCAAOyEQ4XGUAIQXAaAgAChA==
+## X-Quest-826-S: qAFIWmFsYXphbmUEBAUKBhoCAAOyEQ4XGUAIGCQZAyVBcBoCAAKE
 ## X-Quest-827-3: gYEZDIg=
 ## X-Quest-827-8: g1g3R2F0aGVyIFNlYXJpbmcgQ29sbGFycyBmcm9tIHRoZSBjdWx0aXN0cyBpbiBTa3VsbCBSb2NrLkBYIUJyaW5nIHRoZW0gdG8gTWFyZ296IGF0IGhpcyBjYW1wLg==
 ## X-Quest-827-10: oQOBgxkTB/YA

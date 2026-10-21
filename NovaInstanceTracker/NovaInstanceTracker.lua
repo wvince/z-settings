@@ -93,6 +93,9 @@ elseif (NIT.isWrath) then
 elseif (NIT.isTBC) then
 	NIT.hourlyLimit = 5;
 	NIT.dailyLimit = 999;
+elseif (NIT.isForever) then
+	NIT.hourlyLimit = 10;
+	NIT.dailyLimit = 999;
 else
 	--NIT.noRaidLockouts = true;
 	NIT.hourlyLimit = 5;
@@ -824,11 +827,16 @@ function SlashCmdList.NOVALUAOFFCMD(msg, editBox)
 end
 
 function NIT:debug(...)
-	if (NIT.isDebug) then
+	local data = ...;
+	if (data and NIT.isDebug) then
 		if (type(...) == "table") then
-			UIParentLoadAddOn('Blizzard_DebugTools');
-			--DevTools_Dump(...);
-    		DisplayTableInspectorWindow(...);
+			if (UIParentLoadAddOn) then
+				UIParentLoadAddOn("Blizzard_DebugTools");
+			else
+				C_AddOns.LoadAddOn("Blizzard_DebugTools");
+			end
+			--DevTools_Dump(data);
+    		DisplayTableInspectorWindow(data);
     	else
 			print("NITDebug:", ...);
 		end
@@ -1020,7 +1028,7 @@ function NIT:createBroker()
 	local data = {
 		type = "data source",
 		label = "NIT",
-		text = "Ready",
+		text = "Nova Instance Tracker",
 		icon = "Interface\\AddOns\\NovaInstanceTracker\\Media\\portal",
 		OnClick = function(self, button)
 			if (button == "LeftButton" and IsShiftKeyDown()) then
@@ -1049,7 +1057,7 @@ function NIT:createBroker()
 			GameTooltip:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
 			doUpdateMinimapButton = true;
 			NIT:updateMinimapButton(GameTooltip, self);
-			GameTooltip:Show()
+			GameTooltip:Show();
 		end,
 		OnLeave = function(self, button)
 			GameTooltip:Hide()
@@ -1068,6 +1076,53 @@ function NIT:createBroker()
 	if (frame) then
 		frame:SetFrameLevel(9);
 	end
+end
+
+if (AddonCompartmentFrame) then
+	AddonCompartmentFrame:RegisterAddon({
+		text = "Nova Instance Tracker",
+		icon = "Interface\\AddOns\\NovaInstanceTracker\\Media\\portal",
+		notCheckable = true,
+		func = function(button, menuInputData, menu)
+	     	local button = menuInputData.buttonName;
+	         if (button == "LeftButton" and IsShiftKeyDown()) then
+				NIT:openTradeLogFrame();
+			elseif (button == "LeftButton" and IsControlKeyDown()) then
+				local char = NIT.UnitName("player");
+				NIT:loadLevelLogFrame(char, NIT.realm);
+			elseif (button == "LeftButton") then
+				NIT:openInstanceLogFrame();
+			elseif (button == "RightButton" and IsShiftKeyDown()) then
+				if (InterfaceOptionsFrame and InterfaceOptionsFrame:IsShown()) then
+					InterfaceOptionsFrame:Hide();
+				elseif (SettingsPanel and SettingsPanel:IsShown()) then
+					HideUIPanel(SettingsPanel);
+				else
+					NIT:openConfig();
+				end
+			elseif (button == "RightButton") then
+				NIT:openAltsFrame();
+			elseif (button == "MiddleButton") then
+				NIT:openLockoutsFrame();
+			end
+		end,
+		funcOnEnter = function(self, menu)
+	        GameTooltip:SetOwner(self, "ANCHOR_NONE")
+			GameTooltip:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
+			doUpdateMinimapButton = true;
+			NIT:updateMinimapButton(GameTooltip, self);
+			GameTooltip:Show();
+		end,
+		funcOnLeave = function(buttonFrame, menu)
+	        GameTooltip:Hide()
+			if (GameTooltip.NITSeparator) then
+				GameTooltip.NITSeparator:Hide();
+			end
+			if (GameTooltip.NITSeparator2) then
+				GameTooltip.NITSeparator2:Hide();
+			end
+		end,
+	});
 end
 
 function NIT:updateMinimapButton(tooltip, frame)

@@ -7,9 +7,11 @@ else
 	mod.statTypes = "normal"
 end
 
-mod:SetRevision("20260917163107")
+mod:SetRevision("20261019224112")
+if DBM:IsForever() then
+	mod:EnableGenericTrash()
+end
 mod:SetMinSyncRevision(20260828000000) -- 2026, August 28th
-mod:DisableHardcodedOptions()
 mod:SetCreatureID(15954)
 mod:SetEncounterID(1117)
 mod:SetModelID(16590)
@@ -158,10 +160,10 @@ else
 	end
 
 	function mod:SPELL_AURA_APPLIED(args)
-		if args:IsSpell(29213) then
+		if args:IsSpell(29213) and args:IsDestTypePlayer() then
 			curseTargets[args.destName] = true
 			UpdateCurseFrame()
-			if self.Options.SpecWarn29213dispel and self:AntiSpam(3, 1) then
+			if self.Options.SpecWarn29213dispel then
 				specWarnCurse:CombinedShow(0.5, args.destName)
 				specWarnCurse:ScheduleVoice(0.5, "dispelnow")
 			end
@@ -169,7 +171,7 @@ else
 	end
 
 	function mod:SPELL_AURA_REMOVED(args)
-		if args:IsSpell(29213) then
+		if args:IsSpell(29213) and args:IsDestTypePlayer() then
 			curseTargets[args.destName] = nil
 			UpdateCurseFrame()
 		end

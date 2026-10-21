@@ -1,0 +1,54 @@
+## Interface: 11509
+## Version: 0.8.32
+## Title: DarkMode by |cff55d2ffD4KiR |T132115:16:16:0:0|t
+## Notes: Darkens or colors the user interface/windows
+## Notes-deDE: Verdunkelt oder färbt die Benutzeroberfläche/Fenster ein
+## Notes-esES: Oscurece o colorea la interfaz de usuario/ventanas
+## Notes-esMX: Oscurece o colorea la interfaz de usuario/ventanas
+## Notes-frFR: Assombrit ou colore l'interface utilisateur/les fenêtres
+## Notes-itIT: Scurisce o colora l'interfaccia utente/le finestre
+## Notes-koKR: 사용자 인터페이스/창을 어둡게 하거나 색을 입힙니다
+## Notes-ptBR: Escurece ou colore a interface do usuário/janelas
+## Notes-ruRU: Аддон, с помощью которого можно раскрасить интерфейс и фреймы
+## Notes-zhCN: 使用户界面/窗口变暗或改变颜色
+## Notes-zhTW: 使使用者介面/視窗變暗或改變顏色
+## Author: D4KiR |T132115:16:16:0:0|t
+## Category: UI Overhaul
+## Category-deDE: UI-Überholung
+## Category-esES: Renovación de la Interfaz de Usuario
+## Category-esMX: Renovación de la Interfaz de Usuario
+## Category-frFR: Révision de l'Interface Utilisateur
+## Category-itIT: Revisione dell'interfaccia utente
+## Category-koKR: UI 개조
+## Category-ptBR: Reformulação da Interface do Usuário
+## Category-ruRU: Переработка интерфейса
+## Category-zhCN: UI重构
+## Category-zhTW: UI重構
+## DefaultState: enabled
+## SavedVariables: DMTAB
+## SavedVariablesPerCharacter: DMTABPC
+## X-Curse-Project-ID: 812982
+## X-Wago-ID: VBNBDqKx
+## IconTexture: 136122
+
+libs\D4Lib\D4Lib.xml
+
+libs\math.lua
+libs\db.lua
+
+locale\enUS.lua
+locale\deDE.lua
+locale\esES.lua
+locale\esMX.lua
+locale\frFR.lua
+locale\itIT.lua
+locale\koKR.lua
+locale\ptBR.lua
+locale\ruRU.lua
+locale\zhCN.lua
+locale\zhTW.lua
+
+data.lua
+colors.lua
+settings.lua
+core.lua

@@ -76,6 +76,21 @@ characters already share (same account, or linked `SavedVariables` folders). Tho
 only the saved character's AceDB profile and character data move over. Addons that store characters
 another way keep this character's own entry. Saves stay on this PC and are never published.
 
+## Moving to a new game version
+
+`./move` copies this install's whole setup into another one, by default `_forever_` next to it: the
+shared addons as a git checkout, the addons git ignores, every account's addon settings (Questie's
+included) and the character saves. Run it from the old install's `AddOns`, before that install is
+removed.
+
+1. On each character to bring along: `/z save`, then log out.
+2. Start the new game version once, so its folder exists, then close every WoW window.
+3. In the old `AddOns`: `./publish` if anything changed, then `./move` (or `./move <path to install>`).
+4. In the new game, on your character: `/z copy`, pick the character, click Copy.
+
+It stops without changing anything while WoW runs or this folder holds unpublished changes. What the
+new install had goes into one `before-move-<time>` folder there; nothing is deleted.
+
 ## Publishing
 
 1. In game: `/reload`, then `/z export [note]`.
@@ -87,4 +102,4 @@ export, when a shared addon was added after the export (it names them), or when 
 folders in `.gitignore` are never shared and never ask for a re-export. `Z-Settings/ZCharacters.lua` is
 never committed.
 
-Tests: `uv run --with lupa --with pytest pytest .tests/test_zsettings.py -q`.
+Tests: `uv run --with lupa --with pytest pytest .tests -q`.

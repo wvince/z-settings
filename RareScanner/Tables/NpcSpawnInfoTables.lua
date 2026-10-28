@@ -29,4 +29,5 @@ private.NPC_SPAWN_INFO = {
 	-- [npcID] = { onTime = 30 },
 	-- [npcID] = { onTime = 0 },
 	-- [npcID] = { onTime = { hours = { 19, 21 }, minutes = { 0 } } },
+	[247032] = { event = true }
 }

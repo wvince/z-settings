@@ -70,9 +70,6 @@ local itemLoader = addon:GetModule('ItemLoader')
 ---@class Views: AceModule
 local views = addon:GetModule('Views')
 
----@class SearchCategoryConfig: AceModule
-local searchCategoryConfig = addon:GetModule('SearchCategoryConfig')
-
 ---@class Async: AceModule
 local async = addon:GetModule('Async')
 
@@ -174,6 +171,7 @@ function addon:OnInitialize()
   perfSessions:Init()
   perfSessions:StartIfArmed()
   addon:GetModule('RenderRecorder'):Init()
+  addon:GetModule('PixelAudit'):Init()
   addon:GetModule('Simulator'):Init()
   debug:Init()
   async:Init()
@@ -192,12 +190,26 @@ function addon:OnInitialize()
   search:Init()
   items:Init()
   refresh:Init()
+  addon:GetModule('Seller'):Init()
+  addon:GetModule('Automation'):Init()
+  addon:GetModule('Currencies'):Init()
 
   -- 4. Themes and Presentation Frames
   addon:GetModule('Render'):Init()
   addon:GetModule('Motion'):Init()
   addon:GetModule('Window'):Init()
   addon:GetModule('Sonata'):Init()
+  -- BetterBags Next's look, from its saved theme, before any of its panels is made.
+  addon:GetModule('SonataNext'):Init()
+  -- Its pixel grid (docs/next-pixel-perfect.md): the theme is applied again when the grid changes.
+  addon:GetModule('NextPixel'):Init()
+  -- The client's fonts its roles copy, rewritten by UI addons once the game has loaded (docs/next-gw2-theme.md).
+  addon:GetModule('SonataNext'):WatchClientFonts()
+  -- The player's Animation switches, laid over the theme in use as they change (next-themes.md §20).
+  addon:GetModule('SonataNext'):WatchAnimation()
+  -- BetterBags Next's settings window (next-settings.md §3): built the first time it opens.
+  addon:GetModule('NextSettings'):Init()
+  addon:GetModule('NextSettingsContent'):Init()
   addon:GetModule('Tabs'):Init()
   itemFrame:Init()
   sectionFrame:Init()
@@ -400,14 +412,18 @@ function addon:OnEnable()
   itemLoader:Enable()
   addon:GetModule('GuildBank'):Enable()
   refresh:Enable()
+  addon:GetModule('Seller'):Enable()
+  addon:GetModule('Automation'):Enable()
+  addon:GetModule('Currencies'):Enable()
   views:Enable()
-  searchCategoryConfig:Enable()
   async:Enable()
   form:Enable()
   addon:GetModule('ChangelogWindow'):Enable()
+  addon:GetModule('NextSettingsContent'):Enable()
 
   consoleport:Enable()
   quickfind:Enable()
+  addon:GetModule('ProfessionShoppingList'):Enable()
 
   self:SecureHook('ToggleAllBags')
   self:SecureHook('CloseSpecialWindows')

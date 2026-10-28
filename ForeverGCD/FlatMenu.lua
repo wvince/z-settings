@@ -1,5 +1,5 @@
-local _, ns = ...
--- Forever flat menu, kit 7 (15 October 2026; kit 1, 10 October). The workspace's one look for
+local addonName, ns = ...
+-- Forever flat menu, kit 8 (25 October 2026; kit 1, 10 October). The workspace's one look for
 -- dropdown lists and right-click menus (AGENTS.md, "Shared UI style"): a dark
 -- panel in a 1-pixel black edge, flat rows each in a black edge, a gold line
 -- inside the row under the mouse, a small box that fills gold for a choice
@@ -38,11 +38,11 @@ local _, ns = ...
 --
 -- A click anywhere else closes it (GLOBAL_MOUSE_DOWN, as Blizzard's menus,
 -- Blizzard_Menu/Menu.lua; the click still reaches what was under it), and so
--- does its owner hiding. Escape closes it out of combat:
--- SetPropagateKeyboardInput is restricted in combat (SimpleFrameAPIDocumentation,
--- HasRestrictions), so in combat it takes no keys and Escape reaches the game,
--- as Forever Settings' window does. Nothing here touches Blizzard's menus or
--- Blizzard's Escape handlers, and every frame is the addon's own.
+-- does its owner hiding. Escape closes it, in a fight too: out of combat the
+-- menu takes the keys, closes on Escape and passes every other key on; in
+-- combat SetPropagateKeyboardInput is restricted (SimpleFrameAPIDocumentation,
+-- HasRestrictions), so the menu takes no keys and the game's Escape closes it
+-- (kit 8, below). Nothing here touches Blizzard's menus or Escape handlers.
 --
 -- Kit 2: a slider given its default has a reset arrow at the end of its row
 -- (AGENTS.md, "Gears and quick settings"): gold while the value differs from
@@ -81,6 +81,21 @@ local _, ns = ...
 -- notch through its own set(value), gold on hover and dim at that end of the
 -- range or while the slider is disabled. Each one's tooltip, beside the menu,
 -- names the value it sets. The row keeps its width; the track is shorter.
+--
+-- Kit 8 (25 October 2026, the user: "change the flat menu master so menus
+-- close on Escape in fights"): the menu's first panel is named
+-- <AddOn>FlatMenu and listed in UISpecialFrames, the list the game's Escape
+-- hides in a fight too (CloseSpecialWindows, Blizzard_UIParentPanelManager/
+-- Shared/UIParentPanelManager.lua), as the addons' windows are; hidden that
+-- way, the menu closes as it would on a click elsewhere. In a fight one Escape
+-- closes it with every other listed window at once, and a spell being cast
+-- takes the first press (Blizzard_GameMenuEsc's Casting handler comes first).
+-- The OnKeyDown script below turns the panel's keyboard on by itself, with
+-- keys kept, so until kit 8 a menu first opened in a fight after a load held
+-- every key, Escape included, until a click closed it. In a fight its keyboard
+-- is now off (EnableKeyboard works there on this unprotected frame), and it
+-- lets go of it when a fight starts with the menu open (in client,
+-- 1.60.1.70532, 25 October 2026).
 
 local Menu = {}
 ns.FlatMenu = Menu
@@ -99,6 +114,8 @@ local POOLS = { title = "title", divider = "divider", button = "row", radio = "r
 local PAD, MIN_WIDTH, MAX_WIDTH, BAR = 3, 120, 360, 8
 local SLIDER_WIDTH, INPUT_WIDTH = 200, 200
 local CLOSE_DELAY = 0.15
+-- The first panel's name, for the game's Escape list (kit 8).
+local MENU_NAME = type(addonName) == "string" and (addonName .. "FlatMenu") or nil
 
 local state = { open = false, serial = 0, closeToken = 0, hovered = 0 }
 local panels = {}
@@ -769,7 +786,7 @@ local function ScrollTo(panel, first)
 end
 
 local function NewPanel(level)
-    local panel = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
+    local panel = CreateFrame("Frame", level == 1 and MENU_NAME or nil, UIParent, "BackdropTemplate")
     panel:Hide()
     panel:SetFrameStrata("FULLSCREEN_DIALOG")
     panel:SetFrameLevel(10 + level * 30)
@@ -815,6 +832,10 @@ local function NewPanel(level)
     bar:Hide()
     panel.bar = bar
     if level == 1 then
+        -- The game's Escape hides it in a fight (kit 8); closed as on a click
+        -- elsewhere. Close hides it too, with the menu already marked shut.
+        if MENU_NAME and type(UISpecialFrames) == "table" then table.insert(UISpecialFrames, MENU_NAME) end
+        panel:SetScript("OnHide", function() if state.open then Close() end end)
         panel:SetScript("OnKeyDown", function(self, key)
             if InCombatLockdown() then return end
             if key == "ESCAPE" then
@@ -1016,12 +1037,12 @@ function Refresh()
     end
 end
 
--- Watching for a click elsewhere, the owner hiding, and the end of combat.
+-- Watching for a click elsewhere, the owner hiding, and fights starting and
+-- ending. In a fight the keyboard is the game's, whose Escape closes the menu.
 local function Keys(on)
     local panel = panels[1]
     if not panel then return end
-    if on then
-        if InCombatLockdown() then return end
+    if on and not InCombatLockdown() then
         panel:EnableKeyboard(true)
         panel:SetPropagateKeyboardInput(true)
     else
@@ -1075,8 +1096,8 @@ local function Watch(on)
         watcher = CreateFrame("Frame")
         watcher:SetScript("OnEvent", function(_, event, button)
             if not state.open then return end
-            if event == "PLAYER_REGEN_ENABLED" then
-                Keys(true)
+            if event == "PLAYER_REGEN_ENABLED" or event == "PLAYER_REGEN_DISABLED" then
+                Keys(event == "PLAYER_REGEN_ENABLED")
                 return
             end
             if button ~= "LeftButton" and button ~= "RightButton" then return end
@@ -1095,6 +1116,7 @@ local function Watch(on)
     end
     if on then
         watcher:RegisterEvent("GLOBAL_MOUSE_DOWN")
+        watcher:RegisterEvent("PLAYER_REGEN_DISABLED")
         watcher:RegisterEvent("PLAYER_REGEN_ENABLED")
         watcher:SetScript("OnUpdate", function()
             if state.open and state.owner and not Visible(state.owner) then Close() return end
@@ -1102,6 +1124,7 @@ local function Watch(on)
         end)
     else
         watcher:UnregisterEvent("GLOBAL_MOUSE_DOWN")
+        watcher:UnregisterEvent("PLAYER_REGEN_DISABLED")
         watcher:UnregisterEvent("PLAYER_REGEN_ENABLED")
         watcher:SetScript("OnUpdate", nil)
     end

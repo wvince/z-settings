@@ -361,7 +361,7 @@ step << Rogue
     .goto Westfall,52.8,53.6
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprecht mit |cRXP_FRIENDLY_Gastwirtin Heather|r
     .target Innkeeper Heather
-    .home >> Setzt euren Ruhestein in Westfall
+    .home >> Setzt euren Ruhestein nach Westfall
 step
     >>Tötet |cRXP_ENEMY_Defias Trappers|r und |cRXP_ENEMY_Defias Smugglers|r. Plündert sie für |cRXP_LOOT_Red Leder Bandanas|r
     .goto Westfall,48.21,46.70,60,0

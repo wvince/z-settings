@@ -71,11 +71,15 @@ function QuestieTooltips:RegisterObjectiveTooltip(questId, key, objective)
 end
 
 ---@param questId number
----@param name string The name of the object or NPC the tooltip should show on
+---@param name string|nil The name of the object or NPC the tooltip should show on
 ---@param starterId number The ID of the object or NPC the tooltip should show on
 ---@param key string @Either m_<npcId> or o_<objectId>
 ---@param type string Indicates the type of quest starter; this changes icon in tooltip
+---@return string name The given name or, if it is missing, a placeholder
 function QuestieTooltips:RegisterQuestStartTooltip(questId, name, starterId, key, type)
+    -- The name is only used as a flag and registry key, a missing one must not hide the quest in the tooltip
+    name = name or ("MissingName (" .. key .. ")")
+
     if not QuestieTooltips.lookupByKey[key] then
         QuestieTooltips.lookupByKey[key] = {};
     end
@@ -90,6 +94,7 @@ function QuestieTooltips:RegisterQuestStartTooltip(questId, name, starterId, key
     };
     QuestieTooltips.lookupByKey[key][tostring(questId) .. " " .. name .. " " .. starterId] = tooltip
     tinsert(QuestieTooltips.lookupKeysByQuestId[questId], key)
+    return name
 end
 
 ---@param questId number
@@ -312,6 +317,9 @@ function QuestieTooltips.GetTooltip(key, playerZone)
             end
         end
 
+        -- The lines of the quests this starts or finishes are kept by quest, as a quest can have both, and
+        -- listed by level once all are collected: pairs walks the tooltips in no particular order.
+        local questLines = {}
         for k, tooltip in pairs(QuestieTooltips.lookupByKey[key]) do
             local questId = tooltip.questId
 
@@ -341,7 +349,8 @@ function QuestieTooltips.GetTooltip(key, playerZone)
                             questString = "|TInterface\\Addons\\Questie\\Icons\\available_object.png:14|t" .. questString
                         end
                     end
-                    tinsert(tooltipLines, questString)
+                    questLines[questId] = questLines[questId] or {}
+                    tinsert(questLines[questId], questString)
                 end
             elseif (not finishedAndUnacceptedQuests[questId]) then
                 local objective = tooltip.objective
@@ -404,6 +413,12 @@ function QuestieTooltips.GetTooltip(key, playerZone)
                 end
             end
         end
+        -- The quests this starts or finishes, by level.
+        for _, questId in ipairs(QuestieLib:SortQuestIDsByLevel(questLines, true)) do
+            for _, questString in ipairs(questLines[questId]) do
+                tinsert(tooltipLines, questString)
+            end
+        end
     end
 
     local anotherPlayer = false
@@ -413,7 +428,9 @@ function QuestieTooltips.GetTooltip(key, playerZone)
 
     local playerName = GetUnitName("player", true)
 
-    for questId, questData in pairs(tooltipData) do
+    -- Objectives of active quests, the player's and the party's, by quest level.
+    for _, questId in ipairs(QuestieLib:SortQuestIDsByLevel(tooltipData, true)) do
+        local questData = tooltipData[questId]
         local hasObjective = false
         local tempObjectives = {}
         for _, playerList in pairs(questData.objectivesText or {}) do
@@ -557,6 +574,18 @@ function QuestieTooltips:Initialize()
                     _QuestieTooltips.AddItemDataToTooltip(tooltip)
                 end
             end)
+        if Enum.TooltipDataType.Spell then
+            TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell,
+                ---@param tooltip GameTooltip
+                ---@param data table
+                ---@return nil
+                function(tooltip, data)
+                    -- data.id can be secret; it is passed on untouched for display only.
+                    if (tooltip == GameTooltip or tooltip == ItemRefTooltip) and _IsPublicTooltipTable(data) then
+                        _QuestieTooltips.AddSpellIdToTooltip(tooltip, data.id)
+                    end
+                end)
+        end
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit,
             ---@param tooltip GameTooltip
             ---@param data table
@@ -585,6 +614,18 @@ function QuestieTooltips:Initialize()
         end
         if GameTooltip:HasScript("OnTooltipSetUnit") then
             GameTooltip:HookScript("OnTooltipSetUnit", AddUnitData)
+        end
+        ---@param tooltip GameTooltip
+        ---@return nil
+        local function AddSpellId(tooltip)
+            local _, spellId = tooltip:GetSpell()
+            _QuestieTooltips.AddSpellIdToTooltip(tooltip, spellId)
+        end
+        if ItemRefTooltip:HasScript("OnTooltipSetSpell") then
+            ItemRefTooltip:HookScript("OnTooltipSetSpell", AddSpellId)
+        end
+        if GameTooltip:HasScript("OnTooltipSetSpell") then
+            GameTooltip:HookScript("OnTooltipSetSpell", AddSpellId)
         end
     end
 

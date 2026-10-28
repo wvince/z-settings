@@ -8,9 +8,9 @@ RXPGuides.RegisterGuide([[
 << Human Mage
 #name 1-10级 艾尔文森林 法师 A怪指南
 #version 1
-#group RestedXP 无限指南 (联盟)
-#subgroup 法师速通指南
-#defaultfor Human
+#group RestedXP 联盟 法师
+
+#defaultfor none Human
 #next 10-12级 洛克莫丹 法师 A怪指南
 step
     #sticky
@@ -816,9 +816,9 @@ RXPGuides.RegisterGuide([[
 << Gnome Mage
 #name 1-10级 丹莫罗 法师 A怪指南
 #version 1
-#group RestedXP 无限指南 (联盟)
-#subgroup 法师速通指南
-#defaultfor Dwarf/Gnome
+#group RestedXP 联盟 法师
+
+#defaultfor none Gnome
 #next 10-12级 洛克莫丹 法师 A怪指南
 step
     #era/som
@@ -1467,9 +1467,9 @@ RXPGuides.RegisterGuide([[
 << Alliance Mage
 #name 10-12级 洛克莫丹 法师 A怪指南
 #version 1
-#group RestedXP 无限指南 (联盟)
-#subgroup 法师速通指南
-#defaultfor Human Mage/Gnome Mage
+#group RestedXP 联盟 法师
+
+#defaultfor none Mage
 #next 12-18级 黑海岸 法师 A怪指南
 step
     #era/som

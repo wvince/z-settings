@@ -10,6 +10,7 @@ The integrations module provides seamless compatibility with popular World of Wa
   - [Masque](#masque-masquelua)
   - [Pawn](#pawn-pawnlua)
   - [SimpleItemLevel](#simpleitemlevel-simpleitemlevellua)
+  - [Profession Shopping List](#profession-shopping-list-professionshoppinglistlua)
 - [Integration Architecture](#integration-architecture)
 - [Usage](#usage)
 - [Adding New Integrations](#adding-new-integrations)
@@ -80,6 +81,10 @@ Integrates with Masque for custom button skinning.
 - `bagbutton/Clearing` - Remove bag slot buttons
 - `vendor/NewButton` - Register a new vendor button (sent once per button; vendor buttons are reused,
   and a theme that uses Masque adds back the ones a theme without it took out)
+- `vendor/Updated` - Re-skin a vendor button that styled itself again for a new pixel grid (its icon,
+  count and highlight drawn over the skin; `NextVendorButton:Fit`), adding it when it is not in the group
+- `guild/NewButton`, `guild/Updated` - Register a guild bank button, and re-skin it after every draw or
+  restyle
 
 **Methods:**
 | Method | Description | Parameters | Returns |
@@ -88,6 +93,7 @@ Integrates with Masque for custom button skinning.
 | `RemoveButtonFromGroup(group, button)` | Remove button from group | `string`, `Button` | - |
 | `IsGroupEnabled(group)` | Check if group is enabled | `string` | `boolean` |
 | `ReapplyBlend(button)` | Fix blend mode | `Button` | - |
+| `IsSkinned(button)` | Whether the button is in one of BetterBags' Masque groups (Masque places its parts; BetterBags Next's item fitter leaves them alone) | `Button` | `boolean` |
 
 ### Pawn (`pawn.lua`)
 
@@ -137,6 +143,29 @@ SimpleItemLevel.API.ItemIsUpgrade(itemLink)
 - Only activates when SimpleItemLevel is present
 - Only processes backpack items (not bank)
 - Falls back when Pawn is not available
+
+### Profession Shopping List (`professionshoppinglist.lua`)
+
+Buys what Profession Shopping List's list needs from a BetterBags Next vendor
+(`.claude/rules/profession-shopping-list.md`).
+
+**Features:**
+- A Shopping List section at the top of the vendor's Buy tab: what the list buys there, how many, and
+  what they cost
+- Docked in a green card ("Buy N items?", the total price): a double click buys it all
+
+**Key Components:**
+```lua
+-- Profession Shopping List's API
+ProfessionShoppingList:GetShoppingList() -- itemID = { required, owned }
+ProfessionShoppingList:BuyFromMerchant()
+EventRegistry "ProfessionShoppingList.OnTrackedRecipesChanged"
+```
+
+**Behavior:**
+- Only activates when Profession Shopping List has both `GetShoppingList` and `BuyFromMerchant`
+- Retries on `ADDON_LOADED` when Profession Shopping List loads after BetterBags
+- Sends `shoppingList/Changed` when the tracked recipes change
 
 ## Integration Architecture
 

@@ -4,3 +4,5 @@ SpyGodMode/
 # your saved characters, written by ./characters
 Z-Settings/ZCharacters.lua
 __pycache__/
+# browser-tool output
+.playwright-mcp/

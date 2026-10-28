@@ -3,64 +3,42 @@ if GetLocale() ~= "deDE" then return end
 RXPGuides.RegisterGuide([[
 #forever
 #version 1
-#beta
-#name 1-14 Die Insel Zephras
-#displayname 1-13 Himmelsgeborene << Alliance
-#displayname 1-12Himmelsgeborene << Horde
+#name 1-9 Zephras Isle
+#displayname 1-9 Skyborne << Alliance
+#displayname 1-9 Skyborne << Horde
 #group RestedXP Forever Dungeon Guide (A) << Alliance
 #group RestedXP Forever Dungeon Guide (A) << Horde
-#subgroup (WIP) Dungeon Guide 1-20 << Alliance
-#subgroup (WIP) Dungeon Guide 1-22 << Horde
+#subgroup Dungeon Dungeonführer 1-20 << Alliance
+#subgroup Dungeon Dungeonführer 1-22 << Horde
 #defaultfor Skyborne
-#next "Korrekter Westfall-Guide" << Alliance
+#next 9-13 Zephras Isle
 
-step
-#include RestedXP Forever Guide (A)\1-14 Die Insel Zephras
+step << Horde
+    .enabledungeon RFC
+    #include RestedXP Forever Guide (H)\1-9 Zephras Isle
+step << Alliance
+    #include RestedXP Forever Guide (A)\1-9 Zephras Isle
 ]])
 
-
---Hunter class quest chain
 RXPGuides.RegisterGuide([[
 #forever
 #version 1
-#beta
-#name Himmelsgeborene-Jäger-Klassenquests
+#name 9-13 Zephras Isle
+#displayname 9-13 Skyborne << Alliance
+#displayname 9-12 Skyborne << Horde
 #group RestedXP Forever Dungeon Guide (A) << Alliance
 #group RestedXP Forever Dungeon Guide (A) << Horde
-#internal
+#subgroup Dungeon Dungeonführer 1-20 << Alliance
+#subgroup Dungeon Dungeonführer 1-22 << Horde
+#defaultfor Skyborne
+#next 13-15 Westfall << Alliance
+#next 12-14 Silberwald << Horde !Hunter
+#next 12-16 Das Brachland << Horde Hunter
 
-step
-#include RestedXP Forever Guide (A)\Himmelsgeborene Jäger Klassenquest
+step << Horde
+    .enabledungeon RFC
+    #include RestedXP Forever Guide (H)\9-13 Zephras Isle
+step << Alliance
+    #include RestedXP Forever Guide (A)\9-13 Zephras Isle
 ]])
---Druid class quest chain
-RXPGuides.RegisterGuide([[
-#forever
-#version 1
-#beta
-#name Himmelsgeborene-Druiden-Klassenquests
-#displayname Himmelsgeborene-Druiden-Klassenquests
-#group RestedXP Forever Dungeon Guide (A) << Alliance
-#group RestedXP Forever Dungeon Guide (A) << Horde
-#defaultfor Skyborne Druid
-#internal
 
--- The Great Ursera Spirit (94006) is accepted from the Druid trainer in Valanaar.
-step
-#include RestedXP Forever Guide (A)Himmelsgeborene Druiden Klassenquest
-]])
---Random Stuff
-RXPGuides.RegisterGuide([[
-#forever
-#version 1
-#beta
-#name Zufälliges Zeug
-#group RestedXP Forever Dungeon Guide (A) << Alliance
-#group RestedXP Forever Dungeon Guide (A) << Horde
-#internal
-
-    .goto 2521,41.07,22.33 -- spirit healer thendal village
-    .goto 2521,40.23,63.82 --watchtower
-    .goto 2521,55.01,68.16 --gustberry highlands
--- step
-#include RestedXP Forever Guide (A)\Verschiedenes
-]])

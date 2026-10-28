@@ -24,8 +24,11 @@ local defaults = { schema = SCHEMA,
     -- by name and icon), their new buffs, and in duels your new debuffs on
     -- your opponent.
     casts = true, buffs = true, debuffs = true,
-    -- The plates: on or off, where the icon sits, its size and the gap.
-    plates = true, position = "left", size = 45, offset = 4,
+    -- The plates: on or off, where the icon sits, its size, the gap, and how
+    -- far up (or down, below 0) it is nudged from there (0.5.0).
+    plates = true, position = "left", size = 45, offset = 4, lift = 0,
+    -- 0.6.1: the icon fades with its plate (Plates.lua).
+    fade = true,
     -- The look: the spell's name under the icon, its text size, and how long
     -- a flash stays, in tenths of a second (1.5 s, a global cooldown).
     name = true, nameSize = 10, tenths = 15,
@@ -33,7 +36,7 @@ local defaults = { schema = SCHEMA,
     -- left corner in pixels from the middle of the screen.
     bar = false, barLocked = true, barSize = 45, barX = -20, barY = -120 }
 -- Whole numbers only, so a saved value always matches a slider notch.
-local limits = { size = { 16, 64 }, offset = { -20, 60 }, nameSize = { 8, 20 }, tenths = { 5, 40 },
+local limits = { size = { 16, 64 }, offset = { -20, 60 }, lift = { -60, 60 }, nameSize = { 8, 20 }, tenths = { 5, 40 },
     barSize = { 16, 64 }, barX = { -4000, 4000 }, barY = { -4000, 4000 } }
 local choices = { position = ns.POSITIONS }
 ns.Limits, ns.Choices = limits, choices

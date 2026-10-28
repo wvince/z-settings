@@ -1144,7 +1144,7 @@ step << Warrior/Paladin/Rogue
     #requires RoughStone1
     #label RoughStoneCraft1
     #completewith NecklaceStart
-    +|cRXP_WARN_把|r |T136241:0|t|cRXP_LOOT_[劣质的石头]|r |T135232:0|t[锻造]|cRXP_WARN_成|r |T135248:0|t[劣质磨刀石] << Warrior/Rogue
+    +|T136241:0|t[锻造]|cRXP_WARN_|r |T135232:0|t|cRXP_LOOT_[劣质的石头]|r |cRXP_WARN_制作为|r |T135248:0|t[劣质磨刀石] << Warrior/Rogue
     +|cRXP_WARN_将|r |T136241:0|t|cRXP_LOOT_[劣质的石头]|r |cRXP_WARN_与|r |T135232:0|t|cRXP_LOOT_[亚麻布]|r |T132889:0|t[锻造]|cRXP_WARN_成|r |T135255:0|t[劣质平衡石] << Paladin
     .collect 2862,5 << Rogue/Warrior --Rough Sharpening Stone (5)
     .disablecheckbox
@@ -1217,7 +1217,7 @@ step << Warrior/Paladin/Rogue
     #requires RoughStone2
     #label RoughStoneCraft2
     #completewith Lovers
-    +|cRXP_WARN_把|r |T136241:0|t|cRXP_LOOT_[劣质的石头]|r |T135232:0|t[锻造]|cRXP_WARN_成|r |T135248:0|t[劣质磨刀石] << Warrior/Rogue
+    +|T136241:0|t[锻造]|cRXP_WARN_|r |T135232:0|t|cRXP_LOOT_[劣质的石头]|r |cRXP_WARN_制作为|r |T135248:0|t[劣质磨刀石] << Warrior/Rogue
     +|cRXP_WARN_将|r |T136241:0|t|cRXP_LOOT_[劣质的石头]|r |cRXP_WARN_与|r |T135232:0|t|cRXP_LOOT_[亚麻布]|r |T132889:0|t[锻造]|cRXP_WARN_成|r |T135255:0|t[劣质平衡石] << Paladin
     .collect 2862,5 << Rogue/Warrior --Rough Sharpening Stone (5)
     .disablecheckbox
@@ -1291,7 +1291,7 @@ step << Warrior/Paladin/Rogue
     #requires RoughStone3
     #label RoughStoneCraft3
     #completewith Exchange
-    +|cRXP_WARN_把|r |T136241:0|t|cRXP_LOOT_[劣质的石头]|r |T135232:0|t[锻造]|cRXP_WARN_成|r |T135248:0|t[劣质磨刀石] << Warrior/Rogue
+    +|T136241:0|t[锻造]|cRXP_WARN_|r |T135232:0|t|cRXP_LOOT_[劣质的石头]|r |cRXP_WARN_制作为|r |T135248:0|t[劣质磨刀石] << Warrior/Rogue
     +|cRXP_WARN_将|r |T136241:0|t|cRXP_LOOT_[劣质的石头]|r |cRXP_WARN_与|r |T135232:0|t|cRXP_LOOT_[亚麻布]|r |T132889:0|t[锻造]|cRXP_WARN_成|r |T135255:0|t[劣质平衡石] << Paladin
     .collect 2862,5 << Rogue/Warrior --Rough Sharpening Stone (5)
     .disablecheckbox
@@ -1756,7 +1756,7 @@ step << Warrior/Paladin/Rogue
     #requires RoughStone4
     #label RoughStoneCraft4
     #completewith JasperlodeExplore
-    +|cRXP_WARN_把|r |T136241:0|t|cRXP_LOOT_[劣质的石头]|r |T135232:0|t[锻造]|cRXP_WARN_成|r |T135248:0|t[劣质磨刀石] << Warrior/Rogue
+    +|T136241:0|t[锻造]|cRXP_WARN_|r |T135232:0|t|cRXP_LOOT_[劣质的石头]|r |cRXP_WARN_制作为|r |T135248:0|t[劣质磨刀石] << Warrior/Rogue
     +|cRXP_WARN_将|r |T136241:0|t|cRXP_LOOT_[劣质的石头]|r |cRXP_WARN_与|r |T135232:0|t|cRXP_LOOT_[亚麻布]|r |T132889:0|t[锻造]|cRXP_WARN_成|r |T135255:0|t[劣质平衡石] << Paladin
     .collect 2862,5 << Rogue/Warrior --Rough Sharpening Stone (5)
     .disablecheckbox
@@ -1865,7 +1865,7 @@ step << Warrior/Paladin/Rogue
     #requires RoughStone5
     #label RoughStoneCraft5
     #completewith Find
-    +|cRXP_WARN_把|r |T136241:0|t|cRXP_LOOT_[劣质的石头]|r |T135232:0|t[锻造]|cRXP_WARN_成|r |T135248:0|t[劣质磨刀石] << Warrior/Rogue
+    +|T136241:0|t[锻造]|cRXP_WARN_|r |T135232:0|t|cRXP_LOOT_[劣质的石头]|r |cRXP_WARN_制作为|r |T135248:0|t[劣质磨刀石] << Warrior/Rogue
     +|cRXP_WARN_将|r |T136241:0|t|cRXP_LOOT_[劣质的石头]|r |cRXP_WARN_与|r |T135232:0|t|cRXP_LOOT_[亚麻布]|r |T132889:0|t[锻造]|cRXP_WARN_成|r |T135255:0|t[劣质平衡石] << Paladin
     .collect 2862,5 << Rogue/Warrior --Rough Sharpening Stone (5)
     .disablecheckbox

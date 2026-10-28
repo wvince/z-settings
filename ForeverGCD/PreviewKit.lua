@@ -193,7 +193,7 @@ function Kit.PlaceTooltip(tip, owner)
         tip:SetPoint("BOTTOMLEFT", owner, "TOPLEFT", 0, gap / tipScale)
     end
 end
-Kit.VERSION = 5
+Kit.VERSION = 6
 
 local WHITE = "Interface\\Buttons\\WHITE8X8"
 local GOLD = { 0.95, 0.76, 0.35 }
@@ -556,14 +556,30 @@ function Kit.New(frame, options)
         end
         tagText:SetText(off and ((name or "") .. ": not shown") or (name or ""))
         tag:SetWidth((tagText:GetStringWidth() or 60) + 8)
-        tag:ClearAllPoints()
-        local right, edge = preview.outlines[1]:GetRight(), stage:GetRight()
-        if type(right) == "number" and type(edge) == "number" and right + 4 + tag:GetWidth() > edge then
-            tag:SetPoint("BOTTOMRIGHT", preview.outlines[1], "TOPRIGHT", 0, 1)
-        else
-            tag:SetPoint("LEFT", preview.outlines[1], "RIGHT", 4, 0)
-        end
+        preview.PlaceTag()
         tag:Show()
+    end
+    -- The row's name beside the outline, or above it when there is no room.
+    -- Kit 6: above, it starts after the Editing tag (Mark) when that sits on
+    -- the same top edge, which it covered before (Forever Skin's Nameplates,
+    -- the looks' rows over the picked look, 1.60.1.70532, 25 October 2026).
+    function preview.PlaceTag()
+        local box = preview.outlines[1]
+        if not box then return end
+        tag:ClearAllPoints()
+        local right, edge = box:GetRight(), stage:GetRight()
+        if type(right) == "number" and type(edge) == "number" and right + 4 + tag:GetWidth() > edge then
+            local mark, markBox = preview.markTag, preview.markBoxes[1]
+            local top, markTop = box:GetTop(), markBox and markBox:GetTop()
+            if mark and mark:IsShown() and type(top) == "number" and type(markTop) == "number"
+                and math.abs(top - markTop) <= 6 then
+                tag:SetPoint("BOTTOMLEFT", mark, "BOTTOMRIGHT", 4, 0)
+            else
+                tag:SetPoint("BOTTOMRIGHT", box, "TOPRIGHT", 0, 1)
+            end
+        else
+            tag:SetPoint("LEFT", box, "RIGHT", 4, 0)
+        end
     end
     -- The picked thing (kit 4): a thick gold box round it, held while the
     -- samples move, with a gold tag on its top left.
@@ -610,6 +626,7 @@ function Kit.New(frame, options)
         markTag:ClearAllPoints()
         markTag:SetPoint("BOTTOMLEFT", preview.markBoxes[1], "TOPLEFT", 0, -1)
         markTag:Show()
+        if tag:IsShown() then preview.PlaceTag() end
     end
 
     -- Click a part to find its setting (kit 3). A region drawn for several

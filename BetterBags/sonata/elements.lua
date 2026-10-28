@@ -364,14 +364,57 @@ local function fontObjectFor(spec)
   return font
 end
 
+-- BetterBags Next's rounding while it is in use (docs/next-pixel-perfect.md, SetItemButtonSnap): Offset rounds
+-- an offset and Length a length to whole screen pixels on a region's grid, Text is how far a text sits past its whole
+-- pixel (a quarter pixel right and up, none for anything else), Unit names that grid (a button
+-- styled on it records it, sonataSnapUnit, so Next knows to style it again on another). Unset, every item
+-- button part is placed as its style says.
+---@alias SonataItemSnap {Offset: fun(region: ScriptRegion, units: number): number, Length: fun(region: ScriptRegion, units: number): number, Unit: fun(region: ScriptRegion): number, Text: fun(region: ScriptRegion): number}
+---@type SonataItemSnap?
+elements.itemSnap = nil
+
+-- SetItemButtonSnap sets BetterBags Next's rounding (SonataNext, while Next is in use) or clears it, and
+-- styles every item button again for it.
+---@param snap? SonataItemSnap
+function elements:SetItemButtonSnap(snap)
+  if self.itemSnap == snap then
+    return
+  end
+  self.itemSnap = snap
+  if sonata.applied then
+    sonata:restyleKind("ItemButton")
+  end
+end
+
+-- snapAnchors anchors a region again by its points, each offset rounded (itemSnap); its points are
+-- corners or edges of the item button, whose edges are on whole pixels.
+---@param region Region
+local function snapAnchors(region)
+  local snap = elements.itemSnap
+  local points = {}
+  for i = 1, region:GetNumPoints() do
+    points[i] = { region:GetPoint(i) }
+  end
+  region:ClearAllPoints()
+  local q = snap.Text(region)
+  for _, p in ipairs(points) do
+    region:SetPoint(p[1], p[2], p[3], snap.Offset(region, p[4] or 0) + q, snap.Offset(region, p[5] or 0) + q)
+  end
+end
+
 ---@param decoration ItemButton
 ---@param style table
 function elements:StyleItemButton(decoration, style)
   decoration.sonataItemStyle = style
+  local snap = self.itemSnap
+  decoration.sonataSnapUnit = snap ~= nil and snap.Unit(decoration) or nil
   local icon = decoration.icon or decoration.IconTexture
   if icon ~= nil then
     local iconStyle = withDefaults(style.Icon, ITEM_ICON)
     local inset = iconStyle.Inset or 0
+    if snap ~= nil then
+      inset = snap.Offset(icon, inset)
+    end
     icon:ClearAllPoints()
     if inset == 0 then
       icon:SetAllPoints(decoration)
@@ -389,10 +432,29 @@ function elements:StyleItemButton(decoration, style)
   })
 
   local backdrop = type(style.Backdrop) == "table" and style.Backdrop or nil
-  fill(decoration, backdrop and backdrop.Color and { Color = backdrop.Color, Inset = backdrop.Inset } or nil,
-    "fill", "BACKGROUND", -8)
+  -- A fill of a color, or of art (an atlas or a file, tinted by VertexColor).
+  local drawn = backdrop ~= nil and (backdrop.Color ~= nil or backdrop.Texture ~= nil or backdrop.Atlas ~= nil)
+  fill(decoration, drawn and { Color = backdrop.Color, Texture = backdrop.Texture, Atlas = backdrop.Atlas,
+    TexCoords = backdrop.TexCoords, VertexColor = backdrop.VertexColor, Alpha = backdrop.Alpha,
+    BlendMode = backdrop.BlendMode, Inset = backdrop.Inset } or nil, "fill", "BACKGROUND", -8)
   local bordered = backdrop ~= nil and (backdrop.BorderColor ~= nil or backdrop.EdgeSize ~= nil)
   edges(decoration, bordered and { Color = backdrop.BorderColor, EdgeSize = backdrop.EdgeSize, Inset = backdrop.BorderInset } or nil)
+  local skin = decoration.sonataSkin
+  if snap ~= nil and skin ~= nil then
+    if skin.fill ~= nil and skin.fill:IsShown() then
+      snapAnchors(skin.fill)
+    end
+    for i, edge in ipairs(skin.edges or {}) do
+      if edge:IsShown() then
+        snapAnchors(edge)
+        if i <= 2 then
+          edge:SetHeight(snap.Length(edge, edge:GetHeight()))
+        else
+          edge:SetWidth(snap.Length(edge, edge:GetWidth()))
+        end
+      end
+    end
+  end
 
   local upgrade = decoration.UpgradeIcon
   if upgrade ~= nil then
@@ -403,6 +465,10 @@ function elements:StyleItemButton(decoration, style)
       upgrade:SetTexture(spec.Texture)
     end
     upgrade:SetScale(spec.Scale or 1)
+    if snap ~= nil then
+      -- On its own grid, its scale included.
+      upgrade:SetSize(snap.Length(upgrade, upgrade:GetWidth()), snap.Length(upgrade, upgrade:GetHeight()))
+    end
   end
 
   local count = decoration.Count
@@ -410,24 +476,61 @@ function elements:StyleItemButton(decoration, style)
     local spec = withDefaults(style.Count, ITEM_COUNT)
     apply:Font(count, spec.Font)
     apply:Points(count, spec.Points, decoration)
+    if snap ~= nil then
+      snapAnchors(count)
+    end
   end
 end
 
+-- artBorder draws the icon's border in a style's border art (QualityBorder given as art), in a color at the
+-- art's Alpha.
+---@param border Texture
+---@param spec table
+---@param color SonataColor
+local function artBorder(border, spec, color)
+  if spec.Atlas ~= nil then
+    border:SetAtlas(spec.Atlas)
+  else
+    border:SetTexture(spec.Texture)
+  end
+  border:SetBlendMode(spec.BlendMode or "BLEND")
+  border:SetTexCoord(0, 1, 0, 1)
+  local r, g, b, a = apply:Color(color)
+  border:SetVertexColor(r, g, b, a * (spec.Alpha or 1))
+  border:Show()
+end
+
 -- DrawItemQuality shows an item's quality on a decoration whose style draws it (on its
--- backdrop border) and returns true; it returns false for BetterBags' own quality glow.
+-- backdrop border, or on the icon's border in the style's art) and returns true; it returns false for
+-- BetterBags' own quality glow.
 ---@param decoration ItemButton
 ---@param color? SonataColor The quality color, nil for none.
 ---@param quality? number The item's quality, for colors the style overrides.
 ---@return boolean
 function elements:DrawItemQuality(decoration, color, quality)
   local style = decoration.sonataItemStyle
-  if style == nil or style.QualityBorder ~= "Backdrop" or not hasEdges(decoration) then
+  if style == nil then
+    return false
+  end
+  local override = quality ~= nil and style.QualityColors ~= nil and style.QualityColors[quality] or nil
+  if type(style.QualityBorder) == "table" then
+    local border = decoration.IconBorder
+    if border == nil then
+      return false
+    end
+    if override or color then
+      artBorder(border, style.QualityBorder, override or color)
+    else
+      border:Hide()
+    end
+    return true
+  end
+  if style.QualityBorder ~= "Backdrop" or not hasEdges(decoration) then
     return false
   end
   if decoration.IconBorder ~= nil then
     decoration.IconBorder:Hide()
   end
-  local override = quality ~= nil and style.QualityColors ~= nil and style.QualityColors[quality] or nil
   local backdrop = type(style.Backdrop) == "table" and style.Backdrop or {}
   setEdgeColor(decoration, override or color or backdrop.BorderColor)
   return true
@@ -458,7 +561,9 @@ function elements:DrawItemQuest(decoration, questInfo)
     end
   end
   if style.QuestBorderColor ~= nil then
-    if style.QualityBorder == "Backdrop" and hasEdges(decoration) then
+    if type(style.QualityBorder) == "table" and decoration.IconBorder ~= nil then
+      artBorder(decoration.IconBorder, style.QualityBorder, style.QuestBorderColor)
+    elseif style.QualityBorder == "Backdrop" and hasEdges(decoration) then
       setEdgeColor(decoration, style.QuestBorderColor)
     elseif decoration.IconBorder ~= nil then
       local border = decoration.IconBorder

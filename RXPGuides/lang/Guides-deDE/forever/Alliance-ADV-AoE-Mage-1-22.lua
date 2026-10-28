@@ -4,11 +4,12 @@ if faction == "Horde" then return end
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Human Mage
 #name 1-10 Fortgeschrittener AoE-Guide für Mensch Magier im Wald von Elwynn
 #version 2
-#group RestedXP Forgeschrittener AoE Allianz Magier
-#defaultfor Human Mage
+#group RestedXP ADV AoE Allianz Magier
+#defaultfor none Human Mage
 #next 10-11 Fortgeschrittene AoE-Guide für Mensch Magier in Dun Morogh
 
 
@@ -1100,7 +1101,7 @@ step
     .goto 1455/0,-1036.48,-4804.50,20,0
     .goto 1455/0,-992.68,-4742.08,20,0
     .goto 1455/0,-931.8,-4627.59,20,0
-    .goto 1455/0,-928.40,-4614.51,10 >>Reisenzu |cRXP_FRIENDLY_Dink|r
+    .goto 1455/0,-928.40,-4614.51,10 >>Reist in Richtung |cRXP_FRIENDLY_Dink|r
 step
     .goto 1455/0,-928.40,-4614.51
     >>Sprich mit |cRXP_FRIENDLY_Dink|r
@@ -1144,12 +1145,13 @@ step
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Human Mage
 #name 10-11 Fortgeschrittene AoE-Guide für Mensch Magier in Dun Morogh
 #version 2
-#group RestedXP Forgeschrittener AoE Allianz Magier
-#defaultfor Human Mage
-#next 10-12 Fortgeschrittender Dunkelküste 1 Magier AoE Guide
+#group RestedXP ADV AoE Allianz Magier
+#defaultfor none Human Mage
+#next 10-12 ADV Dunkelküste 1 Magier AoE
 
 step
     #completewith Rudra
@@ -1435,12 +1437,13 @@ step << skip
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Gnome Mage
 #name 1-10 ADV Dun Morogh Gnomenmagier AoE
 #version 2
-#group RestedXP Forgeschrittener AoE Allianz Magier
-#defaultfor Gnome Mage
-#next 10-12 Fortgeschrittender Dunkelküste 1 Magier AoE Guide
+#group RestedXP ADV AoE Allianz Magier
+#defaultfor none Gnome Mage
+#next 10-12 ADV Dunkelküste 1 Magier AoE
 
 
 step << !Gnome Mage
@@ -2962,7 +2965,7 @@ step
     .goto 1455/0,-1036.48,-4804.50,20,0
     .goto 1455/0,-992.68,-4742.08,20,0
     .goto 1455/0,-931.8,-4627.59,20,0
-    .goto 1455/0,-928.40,-4614.51,10 >>Reisenzu |cRXP_FRIENDLY_Dink|r
+    .goto 1455/0,-928.40,-4614.51,10 >>Reist in Richtung |cRXP_FRIENDLY_Dink|r
 step
     .goto 1455/0,-928.40,-4614.51
     >>Sprich mit |cRXP_FRIENDLY_Dink|r
@@ -2994,11 +2997,12 @@ step << skip
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
-#name 10-12 Fortgeschrittender Dunkelküste 1 Magier AoE Guide
+#name 10-12 ADV Dunkelküste 1 Magier AoE
 #version 2
-#group RestedXP Forgeschrittener AoE Allianz Magier
-#defaultfor Human Mage/Gnome Mage
+#group RestedXP ADV AoE Allianz Magier
+#defaultfor none Mage
 #next 12-14 Fortgeschrittender Loch Modan Magier AoE Guide
 
 step
@@ -3550,11 +3554,12 @@ step
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 10-12 Starte Fortgeschrittender Dunkelküste 1 Magier AoE Guide
 #version 2
-#group RestedXP Forgeschrittener AoE Allianz Magier
-#defaultfor none
+#group RestedXP ADV AoE Allianz Magier
+#defaultfor none none
 #next 12-14 Fortgeschrittender Loch Modan Magier AoE Guide
 
 --VV Make this an alternative route that must be manually selected
@@ -4117,11 +4122,12 @@ step
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 12-14 Fortgeschrittender Loch Modan Magier AoE Guide
 #version 2
-#group RestedXP Forgeschrittener AoE Allianz Magier
-#defaultfor Human Mage/Gnome Mage
+#group RestedXP ADV AoE Allianz Magier
+#defaultfor none Mage
 #next 14-16 Fortgeschrittender Dunkelküste 2 Magier AoE Guide
 step
     #completewith next
@@ -4764,7 +4770,7 @@ step
     .goto 1453/0,758.31,-8878.78,20,0
     .goto 1453/0,810.33,-8832.44,20,0
     .goto 1453/0,827.54,-8850.19,15,0
-    .goto 1453/0,822.16,-8865.60,10 >>Reist zu |cRXP_FRIENDLY_Adair|r
+    .goto 1453/0,822.16,-8865.60,10 >>Reisen zu |cRXP_FRIENDLY_Adair|r
     .money <0.0090
 step
     .goto 1453/0,822.16,-8865.60
@@ -4883,7 +4889,7 @@ step
     #completewith next
     .goto 1453/0,662.46,-8860.76,10,0
     >>Betretet das Gasthaus
-    .goto 1453/0,673.75,-8867.93,10 >>Reisen zu |cRXP_FRIENDLY_Allison|r
+    .goto 1453/0,673.75,-8867.93,10 >>Reist zu |cRXP_FRIENDLY_Allison|r
     .target Innkeeper Allison
 step
     .goto 1453/0,673.75,-8867.93
@@ -4897,11 +4903,12 @@ step
 ]])
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 14-16 Fortgeschrittender Dunkelküste 2 Magier AoE Guide
 #version 2
-#group RestedXP Forgeschrittener AoE Allianz Magier
-#defaultfor Human Mage/Gnome Mage
+#group RestedXP ADV AoE Allianz Magier
+#defaultfor none Mage
 #next 16-18 Fortgeschrittener Westfall Magier AoE Guide
 
 
@@ -5545,11 +5552,12 @@ step
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 16-18 Fortgeschrittener Westfall Magier AoE Guide
 #version 2
-#group RestedXP Forgeschrittener AoE Allianz Magier
-#defaultfor Human Mage/Gnome Mage
+#group RestedXP ADV AoE Allianz Magier
+#defaultfor none Mage
 #next 18-20 Fortgeschrittener Dunkelküste 3 Magier AoE Guide
 
 step
@@ -6261,7 +6269,7 @@ step
     #completewith next
     .goto 1453/0,662.46,-8860.76,10,0
     >>Betretet das Gasthaus
-    .goto 1453/0,673.75,-8867.93,10 >>Reisen zu |cRXP_FRIENDLY_Allison|r
+    .goto 1453/0,673.75,-8867.93,10 >>Reist zu |cRXP_FRIENDLY_Allison|r
     .target Innkeeper Allison
 step
     .goto 1453/0,673.75,-8867.93
@@ -6275,11 +6283,12 @@ step
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 18-20 Fortgeschrittener Dunkelküste 3 Magier AoE Guide
 #version 2
-#group RestedXP Forgeschrittener AoE Allianz Magier
-#defaultfor Human Mage/Gnome Mage
+#group RestedXP ADV AoE Allianz Magier
+#defaultfor none Mage
 #next 20-22 Fortgeschrittener Rotkammgebirge 1 Magier AoE Guide
 
 step
@@ -7053,11 +7062,12 @@ step
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 20-22 Fortgeschrittener Rotkammgebirge 1 Magier AoE Guide
 #version 2
-#group RestedXP Forgeschrittener AoE Allianz Magier
-#defaultfor Human Mage/Gnome Mage
+#group RestedXP ADV AoE Allianz Magier
+#defaultfor none Mage
 #next 22-26 ADV Sumpfland 1 Magier AoE
 
 step
@@ -7174,7 +7184,7 @@ step
     .goto 1453/0,758.31,-8878.78,20,0
     .goto 1453/0,810.33,-8832.44,20,0
     .goto 1453/0,827.54,-8850.19,15,0
-    .goto 1453/0,822.16,-8865.60,10 >>Reist zu |cRXP_FRIENDLY_Adair|r
+    .goto 1453/0,822.16,-8865.60,10 >>Reisen zu |cRXP_FRIENDLY_Adair|r
 step
     .goto 1453/0,822.16,-8865.60
     >>Betretet das Gebäude
@@ -8002,7 +8012,7 @@ step
     .goto 1453/0,758.31,-8878.78,20,0
     .goto 1453/0,810.33,-8832.44,20,0
     .goto 1453/0,827.54,-8850.19,15,0
-    .goto 1453/0,822.16,-8865.60,10 >>Reist zu |cRXP_FRIENDLY_Adair|r
+    .goto 1453/0,822.16,-8865.60,10 >>Reisen zu |cRXP_FRIENDLY_Adair|r
 step
     #label AdairX
     .goto 1453/0,822.16,-8865.60

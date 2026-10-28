@@ -605,7 +605,7 @@ step
     .target Doan Karhan
 step
     #completewith next
-    .zone Ashenvale >>Reist zu Eschental
+    .zone Ashenvale >>Reist nach Eschental
 step
     .train 403938,1
     >>Tötet die |cRXP_ENEMY_Zwielicht Akolythen|r nahe beim BFD-Raideingang. Plündert sie für die |cRXP_LOOT_Soran'ruk Fragmente|r
@@ -632,7 +632,7 @@ step
     .target Doan Karhan
 step
     #completewith next
-    .zone Ashenvale >>Reist zu Eschental
+    .zone Ashenvale >>Reist nach Eschental
 step
     .train 403938,1
     .goto Ashenvale,83.07,70.56,40,0
@@ -1239,7 +1239,7 @@ step
     +|cRXP_WARN_Es wird empfohlen, zusätzliche Gruppenmitglieder zu finden, um|r |T134419:0|t[|cRXP_LOOT_Rune der Anrufung|r] |cRXP_WARN_zu erwerben, da dies Elites in Burg Stromgarde zu töten erfordert|r
 step
     .train 426443,1
-    .zone Arathi Highlands >> Reist nach Arathihochland
+    .zone Arathi Highlands >> Reist zum Arathihochland
 step
     .train 426443,1
     #completewith next
@@ -1386,7 +1386,7 @@ RXPGuides.RegisterGuide([[
 
 step
     #completewith next
-    .zone Ashenvale >> Reist zu Eschental
+    .zone Ashenvale >> Reist nach Eschental
 step
     .goto Ashenvale,93.5,38.0,100 >> Geht zum Bereich des Alptraumeinbruchs im Eschental, der auf eurer Karte markiert ist
     .train 431758,1
@@ -1604,7 +1604,7 @@ step
     .unitscan Fel Scar
     .unitscan Fel Rift
 step
-    .train 431756 >>Benutzt die |T134419:0|t[|cRXP_WARN_Rune der Teufelswache|r] |cRXP_FRIENDLY_um|r |T136216:0|t[Teufelswache beschwören] |cRXP_WARN_zu erlernen|r
+    .train 431756 >>|cRXP_WARN_Benutzt die|r |T134419:0|t[|cRXP_FRIENDLY_Rune der Teufelswache|r] |cRXP_WARN_um |r |T136216:0|t[Teufelswache beschwören] zu erlernen
     .use 221499
 
 ]])

@@ -1960,7 +1960,7 @@ step
 	.goto Dun Morogh,49.09,54.74,40,0
 	.goto Dun Morogh,49.61,54.32,40,0
 	.goto Dun Morogh,51.43,53.21,40,0
-    .xp 5+2690 >> Monter votre expérience jusqu'à 2690+/2800xp
+    .xp 5+2690 >> Montez votre expérience jusqu'à 2690+/2800xp
     .mob Young Black Bear
     .mob Crag Boar
 step
@@ -2304,7 +2304,7 @@ step
 step
     .goto Dun Morogh,47.38,52.52
     >>Parlez à |cRXP_FRIENDLY_Belm l'aubergiste|r
-    >>|cRXP_BUY_Achetez une |r|T132800:0|t[Bière au malt Rhapsody |cRXP_BUY_et une|r |T132800:0|t[Thunder Ale] |cRXP_BUY_à Belm|r
+    >>|cRXP_BUY_Achetez une |r|T132800:0|t[Bière au malt Rhapsody] |cRXP_BUY_et une|r |T132800:0|t[Thunder Ale] |cRXP_BUY_à Belm|r
     .complete 384,2 --Collect Rhapsody Malt (x1)
     .collect 2686,1,311,1 --Collect Thunder Ale (x1)
     .target Innkeeper Belm
@@ -3067,7 +3067,7 @@ step
 step
     #completewith next
     .goto Wetlands,10.80,59.80,10,0
-    .goto Wetlands,10.63,60.10,10 >>Entrez à l'intérieur de l'auberge
+    .goto Wetlands,10.63,60.10,10 >>Entrez dans l'auberge
 step
     .goto Wetlands,10.50,60.20
     >>Sautez sur le lustre en bas des escaliers
@@ -3623,7 +3623,7 @@ step
 step
     #completewith next
     .goto Wetlands,10.80,59.80,10,0
-    .goto Wetlands,10.63,60.10,10 >>Entrez à l'intérieur de l'auberge
+    .goto Wetlands,10.63,60.10,10 >>Entrez dans l'auberge
 step
     .goto Wetlands,10.50,60.20
     >>Sautez sur le lustre en bas des escaliers
@@ -4610,7 +4610,7 @@ step
     #completewith next
     .goto Loch Modan,35.25,47.74,12,0
     .goto Loch Modan,35.39,48.36,12,0
-    >>Entrez à l'intérieur de l'auberge
+    >>Entrez dans l'auberge
     .goto Loch Modan,34.828,49.283,10 >>Voyagez vers |cRXP_FRIENDLY_Vidra Poêlâtre|r
 step
     .goto Loch Modan,34.828,49.283
@@ -5562,7 +5562,7 @@ RXPGuides.RegisterGuide([[
 
 step
     #completewith JenneaT
-    +|cRXP_WARN_NOTE: Vous avez besoin de 12 stacks de chaque tissu (|r|T132911:0|t[Étoffe de laine]|cRXP_WARN_,|r |T132905:0|t[Étoffe de soie]|cRXP_WARN_,|r |T132892:0|t[Étoffe de tisse-mage]|cRXP_WARN_,|r et |T132903:0|Étoffe runique]|cRXP_WARN_) pour rendre les tissus plus tard. Vous les obtiendrez naturellement en montant de niveau|r
+    +|cRXP_WARN_NOTE: Vous avez besoin de 12 stacks de chaque tissu (|r|T132911:0|t[Étoffe de laine]|cRXP_WARN_,|r |T132905:0|t[Étoffe de soie]|cRXP_WARN_,|r |T132892:0|t[Étoffe de tisse-mage]|cRXP_WARN_,|r et |T132903:0|t[Étoffe runique]|cRXP_WARN_) pour rendre les tissus plus tard. Vous les obtiendrez naturellement en montant de niveau|r
 step << skip
     #completewith next
     .goto Stormwind City,53.53,64.63,12,0
@@ -6250,7 +6250,7 @@ step
     #label Bank3
     .goto Stormwind City,57.03,72.97
     >>Parlez à |cRXP_FRIENDLY_Newton Burnside|r
-    >>|cRXP_WARN_NOTE: Vous avez besoin de 12 stacks de chaque tissu (|r|T132911:0|t[Étoffe de laine]|cRXP_WARN_,|r |T132905:0|t[Étoffe de soie]|cRXP_WARN_,|r |T132892:0|t[Étoffe de tisse-mage]|cRXP_WARN_,|r et |T132903:0|Étoffe runique]|cRXP_WARN_) pour rendre les tissus plus tard. Vous les obtiendrez naturellement en montant de niveau|r
+    >>|cRXP_WARN_NOTE: Vous avez besoin de 12 stacks de chaque tissu (|r|T132911:0|t[Étoffe de laine]|cRXP_WARN_,|r |T132905:0|t[Étoffe de soie]|cRXP_WARN_,|r |T132892:0|t[Étoffe de tisse-mage]|cRXP_WARN_,|r et |T132903:0|t[Étoffe runique]|cRXP_WARN_) pour rendre les tissus plus tard. Vous les obtiendrez naturellement en montant de niveau|r
     .bankdeposit 2998,4371,1711,1478,1712,3012,1180,1181,3013,17056,2592,2998,1941 >> Déposez les objets suivants dans votre banque:
     >>|T133024:0|t[Tube en bronze]
     >>|T134943:0|t[Parchemins]
@@ -7097,7 +7097,7 @@ step
     #label Bank
     .goto Stormwind City,57.03,72.97
     >>Parlez à |cRXP_FRIENDLY_Newton Burnside|r
-    >>|cRXP_WARN_NOTE: Vous avez besoin de 12 stacks de chaque tissu (|r|T132911:0|t[Étoffe de laine]|cRXP_WARN_,|r |T132905:0|t[Étoffe de soie]|cRXP_WARN_,|r |T132892:0|t[Étoffe de tisse-mage]|cRXP_WARN_,|r et |T132903:0|Étoffe runique]|cRXP_WARN_) pour rendre les tissus plus tard. Vous les obtiendrez naturellement en montant de niveau|r
+    >>|cRXP_WARN_NOTE: Vous avez besoin de 12 stacks de chaque tissu (|r|T132911:0|t[Étoffe de laine]|cRXP_WARN_,|r |T132905:0|t[Étoffe de soie]|cRXP_WARN_,|r |T132892:0|t[Étoffe de tisse-mage]|cRXP_WARN_,|r et |T132903:0|t[Étoffe runique]|cRXP_WARN_) pour rendre les tissus plus tard. Vous les obtiendrez naturellement en montant de niveau|r
     .bankdeposit 17056,2592,1015,4654 >> Déposez les objets suivants dans votre banque:
     >>|T132917:0|t[Plume légère]
     >>|T132911:0|t[Étoffe de laine]
@@ -8057,7 +8057,7 @@ step
 step
     .goto Ironforge,35.93,60.13
     >>Parlez à |cRXP_FRIENDLY_Bailey Mantepierre|r
-    >>|cRXP_WARN_NOTE: Vous avez besoin de 12 stacks de chaque tissu (|r|T132911:0|t[Étoffe de laine]|cRXP_WARN_,|r |T132905:0|t[Étoffe de soie]|cRXP_WARN_,|r |T132892:0|t[Étoffe de tisse-mage]|cRXP_WARN_,|r et |T132903:0|Étoffe runique]|cRXP_WARN_) pour rendre les tissus plus tard. Vous les obtiendrez naturellement en montant de niveau|r
+    >>|cRXP_WARN_NOTE: Vous avez besoin de 12 stacks de chaque tissu (|r|T132911:0|t[Étoffe de laine]|cRXP_WARN_,|r |T132905:0|t[Étoffe de soie]|cRXP_WARN_,|r |T132892:0|t[Étoffe de tisse-mage]|cRXP_WARN_,|r et |T132903:0|t[Étoffe runique]|cRXP_WARN_) pour rendre les tissus plus tard. Vous les obtiendrez naturellement en montant de niveau|r
     .bankdeposit 17056,2592,1015,1083,2665,1922,1284 >> Déposez les objets suivants dans votre banque:
     >>|T132917:0|t[Plume légère]
     >>|T132911:0|t[Étoffe de laine]

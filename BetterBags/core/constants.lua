@@ -725,13 +725,35 @@ const.DATABASE_DEFAULTS = {
     -- opposite edges, chained "left" (the companion at the left edge, the backpack beside it) or
     -- "right" (the backpack at the right edge, the companion beside it). next.md §12.
     nextChain = "apart",
+    -- The order the player moved each BetterBags Next tab rail's tabs to, by rail ("backpack", "bank",
+    -- "bankTabs", "guild", "vendor"): tab ids, those not in it after them (docs/next-batch-2.md §5).
+    nextTabOrder = {},
+    -- BetterBags Next's Size tab (docs/next-appearance-size.md), in percent: item buttons at the theme's
+    -- icon size times nextIconScale; small panels at nextBagScale (full panels are always at 100).
+    nextIconScale = 100,
+    nextBagScale = 100,
     -- BetterBags Next's panels: "full" height on the screen's edges, or "small" movable ones
-    -- (docs/next-small-mode.md); and where each kind's small panel was left (its top left).
+    -- (docs/next-small-mode.md); where each kind's small panel was left (its top left), and the
+    -- size the player gave it with its grips (next.md §14g).
     nextSize = "full",
     nextSmallPlaces = {},
+    nextSmallSizes = {},
     -- Which small panel anchors a chained pair: "apart", "backpack" or "companion" (the one the
     -- other was dropped beside).
     nextSmallChain = "apart",
+    -- BetterBags Next's theme (SonataNext, .claude/rules/next-themes.md).
+    nextTheme = "Default",
+    -- BetterBags Next's Animation switches (Appearance > Animation, next-themes.md §20): each effect on until the player
+    -- turns it off, on any theme. These are the only names there are.
+    nextAnimation = { sparkles = true, shimmer = true, titleCloud = true, ribbon = true, braid = true, ornaments = true,
+      glitch = true, rain = true },
+    -- BetterBags Next's currencies (.claude/rules/currency.md): what is tracked, in order ({ kind, id }, a currency
+    -- or an item); how the strip at the bottom of the backpack and the tracker dragged out of it show (these are the
+    -- only names there are); whether the tracker is out, and where it was left (its top left in UIParent's units).
+    nextCurrencies = {},
+    nextCurrency = { capBars = false, gains = true, hideEmpty = true, itemsEverywhere = true, layout = "row",
+      scale = 100, background = true, hideInCombat = false, growX = "left", growY = "down" },
+    nextCurrencyTracker = { out = false },
     showBagButton = true,
     enableBankBag = true,
     showBankTabs = false,
@@ -967,8 +989,6 @@ const.DATABASE_DEFAULTS = {
       [const.BAG_KIND.BANK] = const.BAG_VIEW.SECTION_GRID,
       [const.BAG_KIND.GUILD] = const.BAG_VIEW.SECTION_GRID,
     },
-    ---@type table<string, CategoryOptions>
-    categoryOptions = {},
     ---@type table<string, CustomCategoryFilter>
     customCategoryFilters = {},
     ---@type table<string, CustomCategoryFilter>

@@ -157,7 +157,7 @@ step << Warrior/Mage/Hunter
     .train 410122 >> Utilisez la |T134419:0|t[|cRXP_FRIENDLY_Rune du Loup solitaire|r] pour apprendre |T132266:0|t[Loup solitaire] << Hunter
     .train 416086 >> Utilisez la |T134419:0|t[|cRXP_FRIENDLY_Rune de combat rapproché|r] pour apprendre |T132394:0|t[Spécialiste de la mêlée] << Hunter
     .train 440563 >> Utilisez la |T134419:0|t[|cRXP_FRIENDLY_Rune de guérilla|r] pour apprendre |T132171:0|t[Attaque éclair] << Hunter
-    .train 415423 >> Utilisez le |T133739:0|t[|cRXP_FRIENDLY_Traité sur l’aspect de la vipère] pour apprendre |T132160:0|t[Aspect de la vipère]|r] << Hunter
+    .train 415423 >> Use the |T133739:0|t[|cRXP_FRIENDLY_Treatise on Aspect of the Viper to train |T132160:0|t[Aspect of the Viper]|r] << Hunter
     .train 416009 >> Utilisez la |T134419:0|t[|cRXP_FRIENDLY_Rune de Tactiques|r] pour apprendre |T136150:0|t[Tactique démoniaque] << Warlock
     .train 425476 >> Utilisez la |T134419:0|t[|cRXP_FRIENDLY_Rune du pacte|r] pour apprendre |T237562:0|t[Pacte démoniaque] << Warlock
     .train 416015 >> Utilisez la |T134419:0|t[|cRXP_FRIENDLY_Rune d'Incinérer|r] pour apprendre |T135789:0|t[Incinérer] << Warlock
@@ -1124,7 +1124,7 @@ step
     #label BoarMeatQuest
     #completewith SenirEnd
     >>Tuez les |cRXP_ENEMY_Sangliers des rochers|r en vous dirigeant vers Kharanos. Dépouillez-les pour leur |T133970:0|t|cRXP_LOOT_[Morceaux de viande de sanglier]|r et leurs |cRXP_LOOT_Côtes de sanglier des rochers|r
-    >>Gardez tous les |cRXP_LOOT_[Chunks of Boar Meat]|r que vous récupérez pour Ravitailler le Crache-vapeur et ensuite pour monter votre niveau de [Cuisine] plus tard
+    >>Gardez tous les |cRXP_LOOT_[Chunks of Boar Meat]|r que vous obtenez pour Ravitailler le Crache-vapeur et ensuite pour monter votre niveau en [Cuisine] plus tard
     .collect 769,4,317,1 --Collect Chunk of Boar Meat (x4)
     .collect 2886,6,384,1 --Collect Crag Boar Rib (x6)
     .mob Crag Boar
@@ -1389,7 +1389,7 @@ step
     .goto Dun Morogh,48.0,49.5,75,0
     .goto Dun Morogh,48.2,46.9,75,0
     .goto Dun Morogh,43.5,52.5,75,0
-    >>Tuez |cRXP_ENEMY_Young Black Bears|r. Dépouillez-les pour leur |cRXP_LOOT_Thick Bear Fur|r
+    >>Tuez les |cRXP_ENEMY_Young Black Bears|r. Dépouillez-les pour leur |cRXP_LOOT_Thick Bear Fur|r
     >>Tuez les |cRXP_ENEMY_Crag Boars|r et les |cRXP_ENEMY_Large Crag Boars|r. Dépouillez-les pour leur |cRXP_LOOT_[Chunks of Boar Meat]|r et leur |cRXP_LOOT_Crag Boar Ribs|r
     .complete 317,2 --Collect Thick Bear Fur (x2)
     .mob +Young Black Bear
@@ -1770,7 +1770,7 @@ step << Rogue
     .goto 1426,25.540,45.374,55,0
     .goto 1426,25.950,43.930,55,0
     >>Utilisez le |T133644:0|t[Vol à la tire] sur les |cRXP_ENEMY_Gnomes lépreux|r. Récupérez le |T134269:0|t[|cRXP_LOOT_Morceau inférieur droit de carte]|r
-    >>Vous devez être en [Camouflage] pour utiliser votre [Vol à la tire]
+    >>Vous devez être en [Camouflage] pour utiliser [Vol à la tire]
     .collect 208218,1 -- Bottom-Right Map Piece (1)
     .mob Leper Gnome
     .train 398196,1
@@ -1816,7 +1816,7 @@ step << Rogue
     .waypoint 1426,24.301,50.898,30,0
     #completewith ShimmerweedCollect
     >>Utilisez |T133644:0|t[Vol à la tire] sur les |cRXP_ENEMY_Trolls Crins-de-givre|r. Récupérez le |T134327:0|t[|cRXP_LOOT_Morceau supérieur droit de carte|r]
-    >>Vous devez être en [Camouflage] pour utiliser votre [Vol à la tire]
+    >>Vous devez être en [Camouflage] pour utiliser [Vol à la tire]
     .collect 208213,1 -- Top-Right Map Piece (1)
     .mob Frostmane Seer
     .mob Frostmane Headhunter
@@ -1834,7 +1834,7 @@ step
 step
     .goto Dun Morogh,47.377,52.523
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Belm l'aubergiste|r dans l'auberge
-    >>|cRXP_BUY_Achetez-lui une|r [Bière au malt Rhapsody |cRXP_BUY_et une|r [Thunder Ale] |cRXP_BUY_|r
+    >>|cRXP_BUY_Achetez-lui une|r |T132800:0|t[Bière au malt Rhapsody] |cRXP_BUY_et une|r |T132800:0|t[Thunder Ale] |cRXP_BUY_|r
     .complete 384,2 --Collect Rhapsody Malt (x1)
     .itemcount 2886,6 --Crag Boar Rib (6)
     .target Innkeeper Belm

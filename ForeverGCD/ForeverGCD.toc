@@ -2,7 +2,7 @@
 ## Title: Forever GCD
 ## Notes: What an enemy just did, as an icon and its name over their nameplate: their casts, their new buffs and, in duels, the debuffs they put on you. /fgcd
 ## Author: Tarolg
-## Version: 0.4.0
+## Version: 0.6.2
 ## SavedVariables: ForeverGCDDB
 ## OptionalDeps: ForeverSettings
 ## X-Curse-Project-ID: 1748744
@@ -13,4 +13,5 @@ Plates.lua
 Bar.lua
 FlatMenu.lua
 PreviewKit.lua
+PageKit.lua
 Settings.lua

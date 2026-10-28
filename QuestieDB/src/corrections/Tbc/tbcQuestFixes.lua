@@ -272,6 +272,9 @@ function QuestieTBCQuestFixes:LoadFactionFixes()
         [10858] = { -- Karynaku
             [questKeys.nextQuestInChain] = 10866,
         },
+        [11392] = { -- Call the Headless Horseman
+            [questKeys.nextQuestInChain] = 11403,
+        },
     }
 
     local questFixesAlliance = {
@@ -514,6 +517,9 @@ function QuestieTBCQuestFixes:LoadFactionFixes()
         },
         [10858] = { -- Karynaku
             [questKeys.nextQuestInChain] = playerRace == "Human" and 10872 or 10866,
+        },
+        [11392] = { -- Call the Headless Horseman
+            [questKeys.nextQuestInChain] = 11242,
         },
     }
 

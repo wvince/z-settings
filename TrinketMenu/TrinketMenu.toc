@@ -3,7 +3,10 @@
 ## Notes: Quick trinket swapping, combat queue and auto-rotation for WoW Forever (Classic+).
 ## Notes-esES: Cambio rapido de abalorios, cola en combate y rotacion automatica para WoW Forever (Classic+).
 ## Author: sk0lu
-## Version: 1.2.4
+## X-License: MIT
+## IconTexture: Interface\Icons\INV_Jewelry_Talisman_01
+## AddonCompartmentFunc: ForeverTrinketMenu_OnAddonCompartmentClick
+## Version: 1.2.6
 ## SavedVariables: TrinketMenuDB
 ## OptionalDeps: LibStub, LibDataBroker-1.1, LibDBIcon-1.0
 

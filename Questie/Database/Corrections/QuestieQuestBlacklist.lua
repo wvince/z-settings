@@ -54,6 +54,7 @@ function QuestieQuestBlacklist:Load()
         [5847] = true,
         -- Special quests
         [3861] = HIDE_ON_MAP, -- CLUCK!
+        [97583] = HIDE_ON_MAP, -- WRIGGLE.
         -- World event quests
         -- Fetched from https://classic.wowhead.com/world-event-quests
         [7904] = true,
@@ -271,6 +272,9 @@ function QuestieQuestBlacklist:Load()
         [8225] = HIDE_ON_MAP,
         [8228] = HIDE_ON_MAP,
         [8229] = HIDE_ON_MAP,
+        [97065] = HIDE_ON_MAP,
+        [97066] = HIDE_ON_MAP,
+        [97067] = HIDE_ON_MAP,
         --love is in the air
         [8903] = true,
         [8904] = true,
@@ -2662,7 +2666,7 @@ function QuestieQuestBlacklist:Load()
         [1124] = Expansions.Current >= Expansions.Cata, -- Removed with cata
         [1125] = Expansions.Current >= Expansions.Cata, -- Removed with cata
         [1126] = Expansions.Current >= Expansions.Cata, -- Removed with cata
-        [1127] = Expansions.Current >= Expansions.Cata, -- Removed with cata
+        [1127] = true,
         [1128] = true, -- Not in the game
         [1129] = true, -- Not in the game
         [1130] = Expansions.Current >= Expansions.Cata, -- Removed with cata
@@ -7042,6 +7046,57 @@ function QuestieQuestBlacklist:Load()
         [13235] = false, -- The Flesh Giant Champion
         [13331] = false, -- Keeping the Alliance Blind
         [13359] = false, -- Where Dragons Fell
+
+        --- Forever quests
+        [78124] = HIDE_ON_MAP, -- Nar'thalas Almanac
+        [78127] = HIDE_ON_MAP, -- The Dalaran Digest
+        [78142] = HIDE_ON_MAP, -- Bewitchments and Glamours
+        [78143] = HIDE_ON_MAP, -- Secrets of the Dreamers
+        [78145] = HIDE_ON_MAP, -- Arcanic Systems Manual
+        [78146] = HIDE_ON_MAP, -- Goaz Scrolls
+        [78147] = HIDE_ON_MAP, -- Crimes Against Anatomy
+        [78148] = HIDE_ON_MAP, -- Runes of the Sorcerer-Kings
+        [78149] = HIDE_ON_MAP, -- Fury of the Land
+        [79091] = HIDE_ON_MAP, -- Archmage Antonidas: The Unabridged Autobiography
+        [79092] = HIDE_ON_MAP, -- Archmage Theocritus' Research Journal
+        [79093] = HIDE_ON_MAP, -- Rumi of Gnomeregan: The Collected Works
+        [79094] = HIDE_ON_MAP, -- The Lessons of Ta'zo
+        [79095] = HIDE_ON_MAP, -- The Apothecary's Metaphysical Primer
+        [79096] = HIDE_ON_MAP, -- Ataeric: On Arcane Curiosities
+        [79097] = HIDE_ON_MAP, -- Baxtan: On Destructive Magics
+        [79535] = HIDE_ON_MAP, -- Basilisks: Should Petrification be Feared?
+        [79947] = HIDE_ON_MAP, -- Geomancy: The Stone-Cold Truth
+        [79948] = HIDE_ON_MAP, -- Defensive Magics 101
+        [79949] = HIDE_ON_MAP, -- A Web of Lies: Debunking Myths and Legends
+        [79950] = HIDE_ON_MAP, -- Demons and You
+        [79951] = HIDE_ON_MAP, -- Mummies: A Guide to the Unsavory Undead
+        [79952] = HIDE_ON_MAP, -- RwlRwlRwlRwl!
+        [79953] = HIDE_ON_MAP, -- A Ludite's Guide to Caring for Your Demonic Pet
+        [81947] = HIDE_ON_MAP, -- Sanguine Sorcery
+        [81949] = HIDE_ON_MAP, -- Legends of the Tidesages
+        [81951] = HIDE_ON_MAP, -- The Liminal and the Arcane
+        [81952] = HIDE_ON_MAP, -- Everyday Etiquette
+        [81953] = HIDE_ON_MAP, -- Stonewrought Design
+        [81954] = HIDE_ON_MAP, -- Venomous Journeys
+        [81955] = HIDE_ON_MAP, -- A Mind of Metal
+        [81956] = HIDE_ON_MAP, -- Conjurer's Codex
+        [84395] = HIDE_ON_MAP, -- Undead Potatoes
+        [84396] = HIDE_ON_MAP, -- Magma or Lava?
+        [84397] = HIDE_ON_MAP, -- Northern Kalimdor - A Comprehensive Guide
+        [84398] = HIDE_ON_MAP, -- A Study of the Light
+        [84399] = HIDE_ON_MAP, -- Ka-Boom!
+        [84400] = HIDE_ON_MAP, -- The Knight and the Lady
+        [84401] = HIDE_ON_MAP, -- Scourge: Undead Menace or Misunderstood?
+        [84402] = HIDE_ON_MAP, -- Necromancy 101
+
+        [91899] = HIDE_ON_MAP, -- A Sealed Crate
+        [91900] = HIDE_ON_MAP, -- A Sealed Crate
+        [91901] = HIDE_ON_MAP, -- A Sealed Crate
+        [91904] = HIDE_ON_MAP, -- A Sealed Crate
+        [91905] = HIDE_ON_MAP, -- A Sealed Crate
+        [91906] = HIDE_ON_MAP, -- A Sealed Crate
+
+        [93928] = true, -- Of Mice and Milk
     }
 
     if Questie.IsSoD then

@@ -951,7 +951,7 @@ step << Rogue
     .goto StormwindClassic,78.67,60.13,5 >> 进入军情七处总部。向上楼朝 |cRXP_FRIENDLY_“剃刀”雷吉克|r 和 |cRXP_FRIENDLY_大师级 马迪亚斯·肖尔大师|r走去
 step << Rogue
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t 与 |cRXP_FRIENDLY_"剃刀"雷吉克|r 和 |cRXP_FRIENDLY_马迪亚斯·肖尔|r 对话
-    .accept 2281 >> 接受任务赤脊山的联络员
+    .accept 2281 >> 接受任务 赤脊山的联络员
     .target +Renzik "The Shiv"
     .goto StormwindClassic,75.76,60.35
     .accept 2360 >> 接受任务 马迪亚斯和迪菲亚盗贼
@@ -1179,7 +1179,7 @@ step << Rogue
     +|cRXP_WARN_==注意接下来的内容==|r
     >>|cRXP_WARN_按下 Esc，然后进入 → 选项 → 控制|r
     >>|cRXP_WARN_勾选 "启用交互键" 并将 "与目标互动" 绑定到一个按键|r
-    >>|cRXP_WARN_另外，建议启用敌方姓名板 (默认按键：V) 这样可以在塔内的一些拐角处看到躲在后面的敌人|r
+    >>|cRXP_WARN_另外，建议启用敌方姓名板（默认按键：V）这样可以在塔内的一些拐角处看到躲在后面的敌人|r
     .train 1856,3 -- skips step if not 22/doesnt have Vanish
 step << Rogue
     #hardcore

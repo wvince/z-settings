@@ -292,6 +292,11 @@ data["Ragefire"] = {
 				{ 1, 14149 }, -- Subterranean Cape
 				{ 2, 14148 }, -- Crystalline Cuffs
 				{ 3, 14145 }, -- Cursed Felblade
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 251361 }, -- Plans: Guard's Gloves
+				{ 18, 251362 }, -- Plans: Protector's Gloves
+				{ 19, 251363 }, -- Plans: Acolyte's Gloves
+				{ 20, 252782 }, -- Pattern: Wisdom's Leather Gloves
 			},
 		},
 		{ -- RFCJergosh
@@ -304,6 +309,9 @@ data["Ragefire"] = {
 				{ 1, 14150 }, -- Robe of Evocation
 				{ 2, 14147 }, -- Cavedweller Bracers
 				{ 3, 14151 }, -- Chanting Blade
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 251360 }, -- Plans: Veteran's Gloves
+				{ 18, 253906 }, -- Pattern: Filigreed Flame Gown
 			},
 		},
 		{ -- RFCOggleflint
@@ -317,6 +325,8 @@ data["Ragefire"] = {
 				{ 2, 272996 }, -- {FOREVER} Trogg Scepter
 				{ 3, 272998 }, -- {FOREVER} Bone Knuckles
 				{ 4, 272999 }, -- {FOREVER} Barbaric Crossbow
+				{ 16, 252781 }, -- Pattern: Stormrider's Leather Gloves
+				{ 17, 252782 }, -- Pattern: Wisdom's Leather Gloves
 			},
 		},
 		{ -- RFCBazzalan
@@ -330,6 +340,10 @@ data["Ragefire"] = {
 				{ 2, 273003 }, -- {FOREVER} Searing Dagger
 				{ 3, 273005 }, -- {FOREVER} Satyrskin Cloak
 				{ 4, 273007 }, -- {FOREVER} Chasm Walkers
+				{ 16, 252780 }, -- Pattern: Totemic Leather Gloves
+				{ 17, 252782 }, -- Pattern: Wisdom's Leather Gloves
+				{ 18, 253908 }, -- Pattern: Filigreed Shadow Gown
+				{ 19, 253910 }, -- Pattern: Filigreed Pearly Gown
 			},
 		},
 	},
@@ -360,7 +374,7 @@ data["WailingCaverns"] = {
 				{ 2, 10410 }, -- Leggings of the Fang
 				{ 4, 6465 }, -- Robe of the Moccasin
 				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
-				{ 17, 273088 }, -- {FOREVER} Snake Eye Kaleidoscope
+				--{ 17, 273088 }, -- {FOREVER} Snake Eye Kaleidoscope
 			},
 		},
 		{ -- WCLadyAnacondra
@@ -373,6 +387,8 @@ data["WailingCaverns"] = {
 				{ 1, 10412 }, -- Belt of the Fang
 				{ 3, 5404 }, -- Serpent's Shoulders
 				{ 4, 6446 }, -- Snakeskin Bag
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 273088 }, -- Snake Eye Kaleidoscope
 			},
 		},
 		{ -- WCKresh
@@ -464,6 +480,8 @@ data["WailingCaverns"] = {
 			[NORMAL_DIFF] = {
 				{ 1, 5243 }, -- Firebelcher
 				{ 3, 6632 }, -- Feyscale Cloak
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 252781 }, -- Pattern: Stormrider's Leather Gloves
 			},
 		},
 		{ -- WCTrash
@@ -500,6 +518,9 @@ data["TheDeadmines"] = {
 				{ 3, 5187 }, -- Rhahk'Zor's Hammer
 				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
 				{ 17, 273289 }, -- {FOREVER} Ogre Loincloth
+				{ 18, 251362 },	-- Plans: Protector's Gloves
+				{ 19, 251364 },	-- Plans: Crusader's Gloves
+				{ 20, 253906 },	-- Pattern: Filigreed Flame Gown
 			},
 		},
 		{ --DMMinerJohnson
@@ -525,8 +546,12 @@ data["TheDeadmines"] = {
 				{ 1, 5194 }, -- Taskmaster Axe
 				{ 3, 5195 }, -- Gold-flecked Gloves
 				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
-				{ 18, 273293 }, -- {FOREVER} Bandsaw Wristbands
 				{ 17, 285292 }, -- {FOREVER} Dull Sawblade
+				{ 18, 273293 }, -- {FOREVER} Bandsaw Wristbands
+				{ 19, 273092 },	-- Blueprint: Repair Bot
+				{ 20, 251360 },	-- Plans: Veteran's Gloves
+				{ 21, 251364 },	-- Plans: Crusader's Gloves
+				{ 22, 253902 },	-- Pattern: Filigreed Pristine Gown
 			},
 		},
 		{ --DMSneedsShredder
@@ -538,6 +563,7 @@ data["TheDeadmines"] = {
 			[NORMAL_DIFF] = {
 				{ 1, 1937 }, -- Buzz Saw
 				{ 3, 2169 }, -- Buzzer Blade
+				{ 4, 285292 },	-- Dull Sawblade
 			},
 		},
 		{ --DMGilnid
@@ -552,6 +578,13 @@ data["TheDeadmines"] = {
 				{ 3, 5199 }, -- Smelting Pants
 				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
 				{ 17, 273297 }, -- {FOREVER} Goblin Hammer
+				{ 18, 252777 },	-- Pattern: Brawler's Leather Gloves
+				{ 19, 252778 },	-- Pattern: Trapper's Leather Gloves
+				{ 20, 252780 },	-- Pattern: Totemic Leather Gloves
+				{ 21, 252782 },	-- Pattern: Wisdom's Leather Gloves
+				{ 22, 253904 },	-- Pattern: Filigreed Silky Gown
+				{ 23, 253906 },	-- Pattern: Filigreed Flame Gown
+				{ 24, 273086 },	-- Blueprint: Anvil
 			},
 		},
 		{ --DMMrSmite
@@ -567,6 +600,11 @@ data["TheDeadmines"] = {
 				{ 4, 5196 }, -- Smite's Reaver
 				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
 				{ 17, 284715 }, -- {FOREVER} First Mate Band
+				{ 18, 251362 },	-- Plans: Protector's Gloves
+				{ 19, 252779 },	-- Pattern: Defender's Leather Gloves
+				{ 20, 252780 },	-- Pattern: Totemic Leather Gloves
+				{ 21, 252781 },	-- Pattern: Stormrider's Leather Gloves
+				{ 22, 252782 },	-- Pattern: Wisdom's Leather Gloves
 			},
 		},
 		{ --DMCaptainGreenskin
@@ -593,6 +631,13 @@ data["TheDeadmines"] = {
 				{ 3, 10399 }, -- Blackened Defias Armor
 				{ 4, 5191 }, -- Cruel Barb
 				{ 6, 2874 }, -- An Unsent Letter
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 252799 },	-- Pattern: Trapper's Leather Hood
+				{ 18, 252800 },	-- Pattern: Defender's Leather Hood
+				{ 19, 252801 },	-- Pattern: Totemic Leather Hood
+				{ 20, 252803 },	-- Pattern: Wisdom's Leather Hood
+				{ 21, 253938 },	-- Pattern: Filigreed Pristine Leggings
+				{ 22, 253948 },	-- Pattern: Filigreed Shining Leggings
 			},
 		},
 		{ --DMCookie
@@ -608,6 +653,12 @@ data["TheDeadmines"] = {
 				{ 4, 8490 }, -- Cat Carrier (Siamese)
 				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
 				{ 17, 273298 }, -- {FOREVER} Lookie's Spyglass
+				{ 18, 251360 },	-- Plans: Veteran's Gloves
+				{ 19, 252778 },	-- Pattern: Trapper's Leather Gloves
+				{ 20, 252779 },	-- Pattern: Defender's Leather Gloves
+				{ 21, 253910 },	-- Pattern: Filigreed Pearly Gown
+				{ 22, 253912 },	-- Pattern: Filigreed Shining Gown
+				{ 23, 273102 },	-- Blueprint: Cookie's Feast
 			},
 		},
 		{ --DMDefiasGunpowder
@@ -623,6 +674,13 @@ data["TheDeadmines"] = {
 			ExtraList = true,
 			[NORMAL_DIFF] = {
 				{ 1, 8492 }, -- Parrot Cage (Green Wing Macaw)
+				{ 2, 10402 },	-- Blackened Defias Boots
+				{ 3, 10401 },	-- Blackened Defias Gloves
+				{ 4, 10400 },	-- Blackened Defias Leggings
+				{ 5, 1951 },	-- Blackwater Cutlass
+				{ 6, 1929 },	-- Silk-threaded Trousers
+				{ 7, 1934 },	-- Stonemason Trousers
+				{ 8, 1936 },	-- Goblin Screwdriver
 			},
 		},
 		KEYS,
@@ -663,6 +721,27 @@ data["ShadowfangKeep"] = {
 			[NORMAL_DIFF] = {
 				{ 1, 6341 }, -- Eerie Stable Lantern
 				{ 3, 932 }, -- Fel Steed Saddlebags
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 251341 }, -- Plans: Guard's Chain Shirt
+				{ 18, 251362 }, -- Plans: Protector's Gloves
+				{ 19, 251363 }, -- Plans: Acolyte's Gloves
+				{ 20, 251364 }, -- Plans: Crusader's Gloves
+				{ 21, 251381 }, -- Plans: Guard's Silvered Chain Helm
+				{ 22, 251382 }, -- Plans: Protector's Silvered Chain Helm
+				{ 23, 252781 }, -- Pattern: Stormrider's Leather Gloves
+				{ 24, 252782 }, -- Pattern: Wisdom's Leather Gloves
+				{ 25, 252799 }, -- Pattern: Trapper's Leather Hood
+				{ 26, 252801 }, -- Pattern: Totemic Leather Hood
+				{ 27, 252803 }, -- Pattern: Wisdom's Leather Hood
+				{ 28, 253902 }, -- Pattern: Filigreed Pristine Gown
+				{ 29, 253904 }, -- Pattern: Filigreed Silky Gown
+				{ 30, 253906 }, -- Pattern: Filigreed Flame Gown
+				{ 101, 253908 }, -- Pattern: Filigreed Shadow Gown
+				{ 102, 253910 }, -- Pattern: Filigreed Pearly Gown
+				{ 103, 253912 }, -- Pattern: Filigreed Shining Gown
+				{ 104, 253940 }, -- Pattern: Filigreed Silky Leggings
+				{ 105, 253946 }, -- Pattern: Filigreed Pearly Leggings
+				{ 106, 253948 }, -- Pattern: Filigreed Shining Leggings
 			},
 		},
 		{ -- SFKRazorclawtheButcher
@@ -701,9 +780,11 @@ data["ShadowfangKeep"] = {
 			AtlasMapBossID = 6,
 			[NORMAL_DIFF] = {
 				{ 1, 6320 }, -- Commander's Crest
+				{ 2, 6341 }, -- Eerie Stable Lantern
 				{ 3, 3191 }, -- Arced War Axe
 				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
 				{ 17, 273643 }, -- {FOREVER} Worgenbane Talisman
+				{ 18, 273105 }, -- Blueprint: Toxin Study
 			},
 		},
 		{ -- SFKOdotheBlindwatcher
@@ -752,6 +833,7 @@ data["ShadowfangKeep"] = {
 				{ 2, 3230 }, -- Black Wolf Bracers
 				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
 				{ 17, 273646 }, -- {FOREVER} Half-Eaten Boots
+				{ 18, 251380 }, -- Plans: Veteran's Silvered Chain Helm
 			},
 		},
 		{ -- SFKWolfMasterNandos
@@ -870,6 +952,12 @@ data["BlackfathomDeeps"] = {
 			[NORMAL_DIFF] = {
 				{ 1, 6907 }, -- Tortoise Armor
 				{ 3, 6908 }, -- Ghamoo-ra's Bind
+				{ 4, 273839 }, -- Spiked Shell Band
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 251382 }, -- Plans: Protector's Silvered Chain Helm
+				{ 18, 252801 }, -- Pattern: Totemic Leather Hood
+				{ 19, 253940 }, -- Pattern: Filigreed Silky Leggings
+				{ 20, 253942 }, -- Pattern: Filigreed Flame Leggings
 			},
 		},
 		{ -- BFDLadySarevess
@@ -882,6 +970,11 @@ data["BlackfathomDeeps"] = {
 				{ 1, 888 }, -- Naga Battle Gloves
 				{ 3, 3078 }, -- Naga Heartpiercer
 				{ 4, 11121 }, -- Darkwater Talwar
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 252798 }, -- Pattern: Brawler's Leather Hood
+				{ 18, 251382 }, -- Plans: Protector's Silvered Chain Helm
+				{ 19, 251383 }, -- Plans: Acolyte's Silvered Chain Helm
+				{ 20, 253944 }, -- Pattern: Filigreed Shadow Leggings
 			},
 		},
 		{ -- BFDGelihast
@@ -894,8 +987,20 @@ data["BlackfathomDeeps"] = {
 				{ 1, 6906 }, -- Algae Fists
 				{ 3, 6905 }, -- Reef Axe
 				{ 5, 1470 }, -- Murloc Skin Bag
+				{ 6, 252512 }, -- Brawler's Leather Helm
+				{ 7, 252513 }, -- Trapper's Leather Helm
+				{ 8, 252456 }, -- Totemic Leather Helm
+				{ 9, 252514 }, -- Stormrider's Leather Helm
+				{ 10, 252515 }, -- Wisdom's Leather Helm
 				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
 				{ 17, 273840 }, -- {FOREVER} Cursed Murloc Eye
+				{ 18, 251375 }, -- Plans: Veteran's Silvered Chain Leggings
+				{ 19, 252820 }, -- Pattern: Brawler's Leather Legguards
+				{ 20, 252821 }, -- Pattern: Trapper's Leather Legguards
+				{ 21, 252825 }, -- Pattern: Wisdom's Leather Leggings
+				{ 22, 253978 }, -- Pattern: Filigreed Silky Circlet
+				{ 23, 253980 }, -- Pattern: Filigreed Flame Circlet
+				{ 24, 273141 }, -- Blueprint: Fishing Rack
 			},
 		},
 		{ -- BFDBaronAquanis
@@ -919,8 +1024,18 @@ data["BlackfathomDeeps"] = {
 			[NORMAL_DIFF] = {
 				{ 1, 1155 }, -- Rod of the Sleepwalker
 				{ 3, 6903 }, -- Gaze Dreamer Pants
+				{ 5, 252513 }, -- Trapper's Leather Helm
+				{ 6, 252455 }, -- Defender's Leather Helm
+				{ 7, 252456 }, -- Totemic Leather Helm
+				{ 8, 252515 }, -- Wisdom's Leather Helm
 				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
 				{ 17, 273846 }, -- {FOREVER} Twilight Lord Girdle
+				{ 18, 252820 }, -- Pattern: Brawler's Leather Legguards
+				{ 19, 252821 }, -- Pattern: Trapper's Leather Legguards
+				{ 20, 252822 }, -- Pattern: Defender's Leather Kilt
+				{ 21, 252823 }, -- Pattern: Totemic Leather Leggings
+				{ 22, 252825 }, -- Pattern: Wisdom's Leather Leggings
+				{ 23, 253982 }, -- Pattern: Filigreed Shadow Circlet
 			},
 		},
 		{ -- BFDOldSerrakis
@@ -934,6 +1049,13 @@ data["BlackfathomDeeps"] = {
 				{ 1, 6901 }, -- Glowing Thresher Cape
 				{ 2, 6904 }, -- Bite of Serra'kis
 				{ 4, 6902 }, -- Bands of Serra'kis
+				{ 5, 252455 }, -- Defender's Leather Helm
+				{ 6, 252456 }, -- Totemic Leather Helm
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 251375 }, -- Plans: Veteran's Silvered Chain Leggings
+				{ 18, 252825 }, -- Pattern: Wisdom's Leather Leggings
+				{ 19, 253978 }, -- Pattern: Filigreed Silky Circlet
+				{ 20, 253982 }, -- Pattern: Filigreed Shadow Circlet
 			},
 		},
 		{ -- BFDAkumai
@@ -947,6 +1069,19 @@ data["BlackfathomDeeps"] = {
 				{ 1, 6911 }, -- Moss Cinch
 				{ 2, 6910 }, -- Leech Pants
 				{ 3, 6909 }, -- Strike of the Hydra
+				{ 4, 252512 }, -- Brawler's Leather Helm
+				{ 5, 252455 }, -- Defender's Leather Helm
+				{ 6, 252456 }, -- Totemic Leather Helm
+				{ 7, 252514 }, -- Stormrider's Leather Helm
+				{ 8, 252515 }, -- Wisdom's Leather Helm
+				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
+				{ 17, 251376 }, -- Plans: Guard's Silvered Chain Leggings
+				{ 18, 251377 }, -- Plans: Protector's Silvered Chain Leggings
+				{ 19, 251378 }, -- Plans: Acolyte's Silvered Chain Leggings
+				{ 20, 252821 }, -- Pattern: Trapper's Leather Legguards
+				{ 21, 252824 }, -- Pattern: Stormrider's Leather Kilt
+				{ 22, 253980 }, -- Pattern: Filigreed Flame Circlet
+				{ 23, 253984 }, -- Pattern: Filigreed Pearly Circlet
 			},
 		},
 		{ -- BFDAkumai
@@ -961,6 +1096,12 @@ data["BlackfathomDeeps"] = {
 				{ 2, 273841 }, -- {FOREVER} Twilight Maul
 				{ 3, 273842 }, -- {FOREVER} Treacherous Treads
 				{ 4, 273843 }, -- {FOREVER} Fallenroot Longbow
+				{ 5, 252512 }, -- Brawler's Leather Helm
+				{ 6, 252513 }, -- Trapper's Leather Helm
+				{ 7, 252455 }, -- Defender's Leather Helm
+				{ 16, 253978 }, -- Pattern: Filigreed Silky Circlet
+				{ 17, 253982 }, -- Pattern: Filigreed Shadow Circlet
+				{ 18, 251377 }, -- Plans: Protector's Silvered Chain Leggings
 			},
 		},
 		{ -- BFDTrash
@@ -978,6 +1119,7 @@ data["BlackfathomDeeps"] = {
 				{ 9,  3417 }, -- Onyx Claymore
 				{ 10, 3415 }, -- Staff of the Friar
 				{ 11, 2271 }, -- Staff of the Blessed Seer
+				{ 12, 2034 }, -- Scholarly Robes
 			},
 		},
 	},
@@ -1003,8 +1145,15 @@ data["TheStockade"] = {
 			AtlasMapBossID = 2,
 			[NORMAL_DIFF] = {
 				{ 1, 2280 }, -- Kam's Walking Stick
+				{ 3, 273807 }, -- Demolition Girdle
+				{ 4, 252512 }, -- Brawler's Leather Helm
+				{ 5, 252513 }, -- Trapper's Leather Helm
+				{ 6, 252455 }, -- Defender's Leather Helm
+				{ 7, 252515 }, -- Wisdom's Leather Helm
 				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
 				{ 17, 273808 }, -- {FOREVER} Bridgebreaker Bindings
+				{ 18, 251379 }, -- Plans: Crusader's Silvered Chain Leggings
+				{ 19, 252825 }, -- Pattern: Wisdom's Leather Leggings
 			},
 		},
 		{ -- SWStBruegalIronknuckle
@@ -1032,6 +1181,9 @@ data["TheStockade"] = {
 				{ 2, 273804 }, -- {FOREVER} Executioner Mantle
 				{ 3, 273805 }, -- {FOREVER} Blackrock Harness
 				{ 4, 273806 }, -- {FOREVER} Dark Horde Band
+				{ 16, 251380 }, -- Plans: Veteran's Silvered Chain Helm
+				{ 17, 251382 }, -- Plans: Protector's Silvered Chain Helm
+				{ 18, 253942 }, -- Pattern: Filigreed Flame Leggings
 			},
 		},
 		{ -- SWStTargorrtheDread
@@ -1045,6 +1197,9 @@ data["TheStockade"] = {
 				{ 1,  "INV_Box_01", nil, AL["Forever"],  nil },
 				{ 2, 273809 }, -- {FOREVER} Hamhock's Cleaver
 				{ 3, 273810 }, -- {FOREVER} Ogre Grips
+				{ 4, 273811 }, -- Repurposed Rack
+				{ 5, 252513 }, -- Trapper's Leather Helm
+				{ 16, 251377 }, -- Plans: Protector's Silvered Chain Leggings
 			},
 		},
 		{ -- SWStTargorrtheDread
@@ -1059,7 +1214,32 @@ data["TheStockade"] = {
 				{ 2, 273824 }, -- {FOREVER} Defias Jailbreakers
 				{ 3, 273825 }, -- {FOREVER} Red Wool Cloak
 				{ 4, 273827 }, -- {FOREVER} Debt Collector
-				{ 4, 273829 }, -- {FOREVER} Concealed Hand Crossbow
+				{ 5, 273829 }, -- {FOREVER} Concealed Hand Crossbow
+				{ 6, 252455 }, -- Defender's Leather Helm
+				{ 7, 252456 }, -- Totemic Leather Helm
+				{ 8, 252515 }, -- Wisdom's Leather Helm
+				{ 16, 252824 }, -- Pattern: Stormrider's Leather Kilt
+				{ 17, 253976 }, -- Pattern: Filigreed Pristine Circlet
+				{ 18, 253986 }, -- Pattern: Filigreed Shining Circlet
+			},
+		},
+		{ -- SWStDextrenWard
+			name = AL["Dextren Ward"],
+			npcID = 1663,
+			Level = 26,
+			AtlasMapBossID = 5,
+			[NORMAL_DIFF] = {
+				{ 1,  273820 }, -- Nightskulker Ring
+				{ 2,  273817 }, -- Graverobber's Shovel
+				{ 3,  273819 }, -- Boneslicer
+				{ 4,  252512 }, -- Brawler's Leather Helm
+				{ 5,  252456 }, -- Totemic Leather Helm
+				{ 6,  252514 }, -- Stormrider's Leather Helm
+				{ 7,  252515 }, -- Wisdom's Leather Helm
+				{ 16, 251375 }, -- Plans: Veteran's Silvered Chain Leggings
+				{ 17, 251376 }, -- Plans: Guard's Silvered Chain Leggings
+				{ 18, 252820 }, -- Pattern: Brawler's Leather Legguards
+				{ 19, 252821 }, -- Pattern: Trapper's Leather Legguards
 			},
 		},
 		{ -- SWStTrash
@@ -1144,6 +1324,7 @@ data["Gnomeregan"] = {
 				{ 3, 9450 }, -- Gnomebot Operating Boots
 				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
 				{ 17, 274068 }, -- Thermaplugg Medal of Honor
+				{ 18, 274049 }, -- Schematic: 9-60 Battery Pack
 			},
 		},
 		{ -- GnDIAmbassador
@@ -1232,9 +1413,12 @@ data["RazorfenKraul"] = {
 			AtlasMapBossID = 2,
 			[NORMAL_DIFF] = {
 				{ 1, 6681 }, -- Thornspike
+				{ 4, 252512 }, -- Brawler's Leather Helm
+				{ 5, 252455 }, -- Defender's Leather Helm
 				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
 				{ 17, 274159 }, -- Thorncursed Grips
 				{ 18, 274158 }, -- Death Prophet Spine
+				{ 19, 252820 }, -- Pattern: Brawler's Leather Legguards
 			},
 		},
 		{ -- RFKDeathSpeakerJargba
@@ -1247,6 +1431,8 @@ data["RazorfenKraul"] = {
 				{ 1, 2816 }, -- Death Speaker Scepter
 				{ 3, 6685 }, -- Death Speaker Mantle
 				{ 4, 6682 }, -- Death Speaker Robes
+				{ 5, 252512 }, -- Brawler's Leather Helm
+				{ 6, 252515 }, -- Wisdom's Leather Helm
 			},
 		},
 		{ -- RFKOverlordRamtusk
@@ -1258,8 +1444,13 @@ data["RazorfenKraul"] = {
 			[NORMAL_DIFF] = {
 				{ 1, 6687 }, -- Corpsemaker
 				{ 3, 6686 }, -- Tusken Helm
+				{ 5, 252512 }, -- Brawler's Leather Helm
+				{ 6, 252513 }, -- Trapper's Leather Helm
+				{ 7, 252515 }, -- Wisdom's Leather Helm
 				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
 				{ 17, 274161 }, -- Quillord Mail Leggings
+				{ 18, 251379 }, -- Plans: Crusader's Silvered Chain Leggings
+				{ 19, 252821 }, -- Pattern: Trapper's Leather Legguards
 			},
 		},
 		{ -- RFKRazorfenSpearhide
@@ -1281,8 +1472,12 @@ data["RazorfenKraul"] = {
 			[NORMAL_DIFF] = {
 				{ 1, 6691 }, -- Swinetusk Shank
 				{ 3, 6690 }, -- Ferine Leggings
+				{ 5, 252512 }, -- Brawler's Leather Helm
+				{ 6, 252513 }, -- Trapper's Leather Helm
+				{ 7, 252455 }, -- Defender's Leather Helm
 				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
 				{ 17, 274160 }, -- Quilrager Throwing Axe
+				{ 18, 251378 }, -- Plans: Acolyte's Silvered Chain Leggings
 			},
 		},
 		{ -- RFKBlindHunter
@@ -1308,7 +1503,12 @@ data["RazorfenKraul"] = {
 				{ 1,  6693 }, -- Agamaggan's Clutch
 				{ 2,  6694 }, -- Heart of Agamaggan
 				{ 3,  6692 }, -- Pronged Reaver
+				{ 4,  252512 }, -- Brawler's Leather Helm
+				{ 5,  252455 }, -- Defender's Leather Helm
+				{ 6,  252456 }, -- Totemic Leather Helm
+				{ 7,  252515 }, -- Wisdom's Leather Helm
 				{ 16, 17008 }, -- Small Scroll
+				{ 17, 273103 }, -- Blueprint: Arcane Salvager
 			},
 		},
 		{ -- RFKEarthcallerHalmgar
@@ -1321,6 +1521,8 @@ data["RazorfenKraul"] = {
 			[NORMAL_DIFF] = {
 				{ 1, 6689 }, -- Wind Spirit Staff
 				{ 3, 6688 }, -- Whisperwind Headdress
+				{ 4, 252455 }, -- Defender's Leather Helm
+				{ 5, 252514 }, -- Stormrider's Leather Helm
 			},
 		},
 		{ -- RFKRoogug
@@ -1335,6 +1537,7 @@ data["RazorfenKraul"] = {
 				{ 2, 274152 }, -- Roogug's Severed Head
 				{ 3, 274149 }, -- Thornweaver Drape
 				{ 4, 274155 }, -- Geomancer Headdress
+				{ 5, 252512 }, -- Brawler's Leather Helm
 			},
 		},
 		{ -- RFKTrash
@@ -1382,6 +1585,8 @@ data["ScarletMonasteryGraveyard"] = {
 			[NORMAL_DIFF] = {
 				{ 1, 7682 }, -- Torturing Poker
 				{ 3, 7683 }, -- Bloody Brass Knuckles
+				{ 5, 252513 }, -- Trapper's Leather Helm
+				{ 6, 252455 }, -- Defender's Leather Helm
 				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
 				{ 17, 274290 }, -- Painwalker Buckler
 			},
@@ -1398,6 +1603,8 @@ data["ScarletMonasteryGraveyard"] = {
 				{ 1, 7709 }, -- Blighted Leggings
 				{ 2, 7708 }, -- Necrotic Wand
 				{ 3, 7731 }, -- Ghostshard Talisman
+				{ 4, 252512 }, -- Brawler's Leather Helm
+				{ 5, 252456 }, -- Totemic Leather Helm
 			},
 		},
 		{ -- SMFallenChampion
@@ -1411,6 +1618,7 @@ data["ScarletMonasteryGraveyard"] = {
 				{ 1, 7691 }, -- Embalmed Shroud
 				{ 2, 7690 }, -- Ebon Vise
 				{ 3, 7689 }, -- Morbid Dawn
+				{ 4, 252513 }, -- Trapper's Leather Helm
 			},
 		},
 		{ -- SMIronspine
@@ -1436,8 +1644,11 @@ data["ScarletMonasteryGraveyard"] = {
 			[NORMAL_DIFF] = {
 				{ 1, 7685 }, -- Orb of the Forgotten Seer
 				{ 3, 7684 }, -- Bloodmage Mantle
+				{ 5, 252513 }, -- Trapper's Leather Helm
+				{ 6, 252455 }, -- Defender's Leather Helm
 				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
 				{ 17, 274291 }, -- Polished Skullcap
+				{ 18, 252822 }, -- Pattern: Defender's Leather Kilt
 			},
 		},
 		{ -- SMGTrash
@@ -1458,6 +1669,11 @@ data["ScarletMonasteryGraveyard"] = {
 				{ 12, 7786 }, -- Headsplitter
 				{ 13, 7753 }, -- Bloodspiller
 				{ 14, 7730 }, -- Cobalt Crusher
+				{ 16, 10328 }, -- Scarlet Chestpiece
+				{ 17, 10329 }, -- Scarlet Belt
+				{ 18, 10330 }, -- Scarlet Leggings
+				{ 19, 10331 }, -- Scarlet Gauntlets
+				{ 20, 10333 }, -- Scarlet Wristguards
 			},
 		},
 		{ -- SMScorn
@@ -1543,6 +1759,7 @@ data["ScarletMonasteryLibrary"] = {
 				{ 2, 7713 },                                           -- Illusionary Rod
 				{ 4, 7712 },                                           -- Mantle of Doan
 				{ 5, 7711 },                                           -- Robe of Doan
+				{ 8, 274294 }, -- Library Walkers
 				{ 16,  "INV_Box_01", nil, AL["Forever"],  nil },
 				{ 17, 274293 }, -- Spellsever Crossbow (ranged, crossbow)
 			},

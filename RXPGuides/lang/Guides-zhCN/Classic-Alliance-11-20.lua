@@ -2545,7 +2545,7 @@ step
     #label BoatSeaCreature
     #season 0
     .goto 1439,41.901,31.339
-    >>点击 |cRXP_PICK_搁浅的海洋生物|r
+    >>点击地上的 |cRXP_PICK_搁浅的海洋生物|r
     .accept 4723 >> 接受任务 搁浅的海洋生物
 step
     #optional
@@ -4847,7 +4847,7 @@ step << Rogue
 step << Rogue
     #xprate >1.59
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t 与 |cRXP_FRIENDLY_"剃刀"雷吉克|r 和 |cRXP_FRIENDLY_马迪亚斯·肖尔大师|r 对话
-    .accept 2281 >> 接受任务赤脊山的联络员
+    .accept 2281 >> 接受任务 赤脊山的联络员
     .goto StormwindClassic,75.76,60.35
     .target +Renzik "The Shiv"
     .accept 2360 >> 接受任务 马迪亚斯和迪菲亚盗贼
@@ -6632,7 +6632,7 @@ step << Rogue
 step << Rogue
     #xprate >1.59
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t 与 |cRXP_FRIENDLY_"剃刀"雷吉克|r 和 |cRXP_FRIENDLY_马迪亚斯·肖尔|r 对话
-    .accept 2281 >> 接受任务赤脊山的联络员
+    .accept 2281 >> 接受任务 赤脊山的联络员
     .goto StormwindClassic,75.76,60.35
     .target +Renzik "The Shiv"
     .accept 2360 >> 接受任务 马迪亚斯和迪菲亚盗贼
@@ -7723,7 +7723,7 @@ step << Mage
     #xprate >1.59
     #optional
     #completewith next
-    .cast 3561 >>施放|T135763:0|t[传送：暴风城]
+    .cast 3561 >>施放 |T135763:0|t[传送：暴风城]
     .zoneskip Stormwind City
     .dungeon DM
 step << Mage
@@ -7942,7 +7942,7 @@ step << Mage
     #xprate >1.59
     #optional
     #completewith next
-    .cast 3561 >>施放|T135763:0|t[传送：暴风城]
+    .cast 3561 >>施放 |T135763:0|t[传送：暴风城]
     .dungeon DM
 step << Mage
     #xprate >1.59
@@ -8449,7 +8449,7 @@ step << Rogue
     .goto StormwindClassic,78.67,60.13,5 >> 进入军情7处总部。上楼去找 |cRXP_FRIENDLY_"剃刀"雷吉克|r
 step << Rogue
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_"剃刀"雷吉克|r对话
-    .accept 2281 >> 接受任务赤脊山的联络员
+    .accept 2281 >> 接受任务 赤脊山的联络员
     .goto StormwindClassic,75.76,60.35
     .target Renzik "The Shiv"
 step << Warrior !NightElf
@@ -9674,7 +9674,7 @@ step << Rogue
     +|cRXP_WARN_==注意接下来的内容==|r
     >>|cRXP_WARN_按下 Esc，然后进入 → 选项 → 控制|r
     >>|cRXP_WARN_勾选 "启用交互键" 并将 "与目标互动" 绑定到一个按键|r
-    >>|cRXP_WARN_另外，建议启用敌方姓名板 (默认按键：V) 这样可以在塔内的一些拐角处看到躲在后面的敌人|r
+    >>|cRXP_WARN_另外，建议启用敌方姓名板（默认按键：V）这样可以在塔内的一些拐角处看到躲在后面的敌人|r
 step << Rogue
     .goto Westfall,68.50,70.08
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_密探吉尔妮|r 对话

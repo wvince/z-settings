@@ -4,11 +4,12 @@ if faction == "Horde" then return end
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Human Mage
 #name 1-10 ADV Bosque de Elwynn Humano Mago AoE
 #version 2
 #group RestedXP ADV AoE Alianza Mago
-#defaultfor Human Mage
+#defaultfor none Human Mage
 #next 10-11 ADV Dun Morogh Humano Mago AoE
 
 
@@ -1144,11 +1145,12 @@ step
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Human Mage
 #name 10-11 ADV Dun Morogh Humano Mago AoE
 #version 2
 #group RestedXP ADV AoE Alianza Mago
-#defaultfor Human Mage
+#defaultfor none Human Mage
 #next 10-12 ADV Costa Oscura 1 Mago AoE
 
 step
@@ -1435,11 +1437,12 @@ step << skip
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Gnome Mage
 #name 1-10 ADV Dun Morogh Gnomo Mago AoE
 #version 2
 #group RestedXP ADV AoE Alianza Mago
-#defaultfor Gnome Mage
+#defaultfor none Gnome Mage
 #next 10-12 ADV Costa Oscura 1 Mago AoE
 
 
@@ -2255,7 +2258,7 @@ step
     .goto 1426/0,151.72,-5436.670,50,0
     .goto 1426/0,-12.78,-5370.34,50,0
     >>Mata |cRXP_ENEMY_Osos zarpahelada|r, |cRXP_ENEMY_Jabalíes del risco ancianos|r y |cRXP_ENEMY_Leopardos de las nieves|r de camino hacia la Cueva. Despoja a los |cRXP_ENEMY_Jabalíes del risco ancianos|r para obtener |cRXP_LOOT_Costillas de jabalí del risco|r
-    >>|cRXP_WARN_Concéntrate en los|r |cRXP_ENEMY_Leopardos de las nieves|r
+    >>|cRXP_WARN_Enfócate en los|r |cRXP_ENEMY_Leopardos de las nieves|r
     >>|cRXP_WARN_Ten cuidado ya que los |cRXP_ENEMY_Osos zarpahelada|r lanzan|r |T135853:0|t[Garra de hielo] |cRXP_WARN_(Cuerpo a cuerpo Instantáneo: Causa 4 puntos de daño cuerpo a cuerpo adicionales), y los |cRXP_ENEMY_Jabalíes del risco ancianos|r lanzan|r |T132337:0|t[Cargar] |cRXP_WARN_(Instantáneo sobre sí mismo: Aumenta la velocidad de movimiento durante 3 segundos, causando 25-70 puntos de daño cuerpo a cuerpo al golpear. Solo se puede lanzar a distancia)|r
     .complete 319,1 --Kill Ice Claw Bear (x6)
     .mob +Ice Claw Bear
@@ -2271,7 +2274,7 @@ step
     .goto 1426/0,151.72,-5436.670,50,0
     .goto 1426/0,-12.78,-5370.34,50,0
     >>Mata |cRXP_ENEMY_Osos zarpahelada|r, |cRXP_ENEMY_Jabalíes del risco ancianos|r y |cRXP_ENEMY_Leopardos de las nieves|r de camino a la Cueva
-    >>|cRXP_WARN_Concéntrate en los|r |cRXP_ENEMY_Leopardos de las nieves|r
+    >>|cRXP_WARN_Enfócate en los|r |cRXP_ENEMY_Leopardos de las nieves|r
     >>|cRXP_WARN_Ten cuidado ya que los |cRXP_ENEMY_Osos zarpahelada|r lanzan|r |T135853:0|t[Garra de hielo] |cRXP_WARN_(Cuerpo a cuerpo Instantáneo: Causa 4 puntos de daño cuerpo a cuerpo adicionales), y los |cRXP_ENEMY_Jabalíes del risco ancianos|r lanzan|r |T132337:0|t[Cargar] |cRXP_WARN_(Instantáneo sobre sí mismo: Aumenta la velocidad de movimiento durante 3 segundos, causando 25-70 puntos de daño cuerpo a cuerpo al golpear. Solo se puede lanzar a distancia)|r
     .complete 319,1 --Kill Ice Claw Bear (x6)
     .mob +Ice Claw Bear
@@ -2994,11 +2997,12 @@ step << skip
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 10-12 ADV Costa Oscura 1 Mago AoE
 #version 2
 #group RestedXP ADV AoE Alianza Mago
-#defaultfor Human Mage/Gnome Mage
+#defaultfor none Mage
 #next 12-14 ADV Loch Modan Mago AoE
 
 step
@@ -3550,11 +3554,12 @@ step
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 10-12 LAUNCH ADV Costa Oscura 1 Mago AoE
 #version 2
 #group RestedXP ADV AoE Alianza Mago
-#defaultfor none
+#defaultfor none none
 #next 12-14 ADV Loch Modan Mago AoE
 
 --VV Make this an alternative route that must be manually selected
@@ -4117,11 +4122,12 @@ step
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 12-14 ADV Loch Modan Mago AoE
 #version 2
 #group RestedXP ADV AoE Alianza Mago
-#defaultfor Human Mage/Gnome Mage
+#defaultfor none Mage
 #next 14-16 ADV Costa Oscura 2 Mago AoE
 step
     #completewith next
@@ -4897,11 +4903,12 @@ step
 ]])
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 14-16 ADV Costa Oscura 2 Mago AoE
 #version 2
 #group RestedXP ADV AoE Alianza Mago
-#defaultfor Human Mage/Gnome Mage
+#defaultfor none Mage
 #next 16-18 ADV Páramos de Poniente Mago AoE
 
 
@@ -5545,11 +5552,12 @@ step
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 16-18 ADV Páramos de Poniente Mago AoE
 #version 2
 #group RestedXP ADV AoE Alianza Mago
-#defaultfor Human Mage/Gnome Mage
+#defaultfor none Mage
 #next 18-20 ADV Costa Oscura 3 Mago AoE
 
 step
@@ -6275,11 +6283,12 @@ step
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 18-20 ADV Costa Oscura 3 Mago AoE
 #version 2
 #group RestedXP ADV AoE Alianza Mago
-#defaultfor Human Mage/Gnome Mage
+#defaultfor none Mage
 #next 20-22 ADV Montañas Crestagrana 1 Mago AoE
 
 step
@@ -7053,11 +7062,12 @@ step
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 20-22 ADV Montañas Crestagrana 1 Mago AoE
 #version 2
 #group RestedXP ADV AoE Alianza Mago
-#defaultfor Human Mage/Gnome Mage
+#defaultfor none Mage
 #next 22-26 ADV Los Humedales 1 Mago AoE
 
 step

@@ -7,7 +7,7 @@ RXPGuides.RegisterGuide([[
 #disabledungeons
 << Horde
 #version 11
-#group RestedXP 无限指南 (部落)
+#group RestedXP 永久指南 (H)
 #subgroup 速通指南 1-22级
 --#groupid RXP-SRGCE-H1
 #defaultfor Undead
@@ -137,7 +137,7 @@ step << Warlock
     .mob 断骨骷髅
 step << Warlock
     #completewith next
-    +|cRXP_WARN_击杀 |cRXP_ENEMY_无脑的僵尸|r 和 |cRXP_ENEMY_悲惨的僵尸|r。拾取它们的掉落物，直到你获得价值 25 铜币的可出售物品(包括你的护甲)|r
+    +|cRXP_WARN_击杀 |cRXP_ENEMY_无脑的僵尸|r 和 |cRXP_ENEMY_悲惨的僵尸|r，拾取它们的掉落物，直到你获得价值 25 铜币的可出售物品(包括你的护甲)|r
     .mob 无脑的僵尸
     .mob Wretched Zombie
     .money >0.0025
@@ -711,7 +711,7 @@ RXPGuides.RegisterGuide([[
 #name 6-12级 提瑞斯法林地
 #displayname 6-13级 提瑞斯法林地 << Paladin
 #version 11
-#group RestedXP 无限指南 (部落)
+#group RestedXP 永久指南 (H)
 #subgroup 速通指南 1-22级
 --#groupid RXP-SRGCE-H1
 #defaultfor Undead
@@ -815,11 +815,12 @@ step
     --too many .mobs, will cause clutter
 step << Rogue
     .goto 1420/0,270.12,2253.23
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|cRXP_BUY_与|r |cRXP_FRIENDLY_温特斯夫人|r |cRXP_BUY_对话，并|r|cRXP_BUY_从她那里购买一把|r |T135421:0|t[增重飞斧]
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|cRXP_BUY_与|r |cRXP_FRIENDLY_温特斯夫人|r |cRXP_BUY_对话并|r|cRXP_BUY_从她那里购买一把|r |T135421:0|t[增重飞斧]
     .collect 3131,200,786,1 --Weighted Throwing Axe (200)
     .target 温特斯夫人
     .itemStat 18,QUALITY,<7
     .itemStat 18,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<2.9
+    .money <0.07
 step << Rogue
     .goto 1420/0,316.66,2227.32
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_奥利弗·德沃尔|r 对话
@@ -990,9 +991,9 @@ step << Priest/Warlock
 step
     .goto 1420/0,244.81,2269.19
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_旅店老板瑞尼|r 对话
-    .vendor >>|cRXP_BUY_Buy as much|r |T132815:0|t[Ice Cold Milk] |cRXP_BUY_from her as you can|r (NOT TRANSLATED IN :zhCN YET) << Mage/Priest/Paladin
-    .vendor >>|cRXP_BUY_Buy as much|r |T134532:0|t[Red-speckled Mushrooms] |cRXP_BUY_from her as you can|r (NOT TRANSLATED IN :zhCN YET) << Warrior/Rogue
-    .vendor >>|cRXP_BUY_Buy as much|r |T132815:0|t[Ice Cold Milk] |cRXP_BUY_and|r |T134532:0|t[Red-speckled Mushrooms] |cRXP_BUY_from her as you can|r (NOT TRANSLATED IN :zhCN YET) << Warlock
+    .vendor >>|cRXP_BUY_从她这里|r |cRXP_BUY_购买尽可能多的|r |T132815:0|t[冰镇牛奶] << Mage/Priest/Paladin
+    .vendor >>|cRXP_BUY_从她这里|r |cRXP_BUY_购买尽可能多的|r |T134532:0|t[红斑蘑菇] << Warrior/Rogue
+    .vendor >>|cRXP_BUY_从她这里|r |cRXP_BUY_购买尽可能多的|r |T132815:0|t[冰镇牛奶] |cRXP_BUY_和|r |T134532:0|t[红斑蘑菇] << Warlock
     .money <0.0125
     .target 旅店老板瑞尼
 step
@@ -1300,8 +1301,8 @@ step << Warlock
 step << Mage/Priest/Warlock
     .goto 1420/0,244.81,2269.19
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_旅店老板瑞尼|r 对话
-    .vendor >>|cRXP_BUY_Buy as much|r |T132815:0|t[Ice Cold Milk] |cRXP_BUY_from her as you can|r (NOT TRANSLATED IN :zhCN YET) << Mage/Priest
-    .vendor >>|cRXP_BUY_Buy as much|r |T132815:0|t[Ice Cold Milk] |cRXP_BUY_and|r |T134532:0|t[Red-speckled Mushrooms] |cRXP_BUY_from her as you can|r (NOT TRANSLATED IN :zhCN YET) << Warlock
+    .vendor >>|cRXP_BUY_从她这里|r |cRXP_BUY_购买尽可能多的|r |T132815:0|t[冰镇牛奶] << Mage/Priest
+    .vendor >>|cRXP_BUY_从她这里|r |cRXP_BUY_购买尽可能多的|r |T132815:0|t[冰镇牛奶] |cRXP_BUY_和|r |T134532:0|t[红斑蘑菇] << Warlock
     .money <0.0125
     .target 旅店老板瑞尼
 step
@@ -1940,6 +1941,12 @@ step
     #softcore
     #completewith FoodandWater2
     .deathskip >> 死亡并在 |cRXP_FRIENDLY_灵魂医者|r 处重生
+    .xp <10,1
+step
+    #softcore
+    #completewith FoodandWater2
+    .subzone 159 >> 返回布瑞尔
+    .xp >10,1
 step
     .goto 1420/0,403.42,2287.87
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_Dillinger|r
@@ -2241,6 +2248,7 @@ step << Rogue
     .target 纳撒尼尔·斯蒂恩维克
     .itemStat 18,QUALITY,<7
     .itemStat 18,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<6.3
+    .money <0.03
 step << Rogue
     #optional
     #completewith LogoutSkip1
@@ -2748,7 +2756,7 @@ step
     >>拾取地上和墙上的 |cRXP_PICK_低语饮剂瓶|r
     .complete 91316,1 << Paladin--|12/12 Sturdy Lumber
     .complete 95314,1 --|8/8 Bottle of Whispering Elixir
-step
+step << skip
     #softcore
     #completewith next
     .deathskip >> 死亡并在 |cRXP_FRIENDLY_灵魂医者|r 处重生
@@ -3271,7 +3279,7 @@ step
 
 
 RXPGuides.RegisterGuide([[
-#group RestedXP 无限指南 (部落)
+#group RestedXP 永久指南 (H)
 #subgroup 速通指南 1-22级
 --#groupid RXP-SRGCE-H1
 << Horde
@@ -3375,12 +3383,12 @@ step
     .turnin 435 >>交任务 护送埃兰德
     .accept 449 >>接受任务 亡灵哨兵的报告
     .target Rane Yorick
-step
+step << skip
     #softcore
     #completewith ProveyourWorth
     .deathskip >> 死亡并在 |cRXP_FRIENDLY_灵魂医者|r 处重生
 step
-    #hardcore
+    --#hardcore
     #completewith next
     .goto 1421/0,1359.66,864.19,50,0
     .goto 1421/0,1359.66,741.27,50,0
@@ -3592,12 +3600,12 @@ step
     .mob Giant Grizzled Bear
     .unitscan Old VIcejaw
     .unitscan Son of Arugal
-step
+step << skip
     #softcore
     #completewith ArugalTurnin
     .deathskip >> 死亡并在 |cRXP_FRIENDLY_灵魂医者|r 处重生
 step
-    #hardcore
+    --#hardcore
     #completewith next
     .goto 1421/0,1538.58,511.39,100,0
     .subzone 228 >>返回瑟伯切尔
@@ -3830,8 +3838,8 @@ step
     .target Shadow Priest Allister
 step
     .goto 1421/0,1579.600,461.700
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tabitha Heartweaver::250686|r (NOT TRANSLATED IN :zhCN YET)
-    .accept 92401 >>Accept A Frightened Request (NOT TRANSLATED IN :zhCN YET)
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_塔比莎·织心::250686|r 对话
+    .accept 92401 >>接受任务 惊恐的求援
     .target Tabitha Heartweaver::250686
     .xp <15,1
     .dungeon ROL
@@ -3973,7 +3981,7 @@ step
     .goto 1458,52.275,79.254,15,0
     .goto 1458,51.279,79.923,15,0
     .goto 1458,49.693,78.903,15,0
-    .goto 1458,47.951,76.171,15 >>Travel to the The Apothecarium (NOT TRANSLATED IN :zhCN YET)
+    .goto 1458,47.951,76.171,15 >>前往炼金房
 step
     .goto 1458/0,426.100,1403.600
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_马丁·费尔本|r 对话

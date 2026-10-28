@@ -35,7 +35,7 @@ local mt = {__index = bossModPrototype}
 ---@field Options table<string, any>
 ---@field DefaultOptions table<string, any>
 ---@field stats ModStats
----@field registeredUnitEvents table<string, boolean>?
+---@field registeredUnitEvents table<string, integer>?
 ---@field bossHealthUpdateTime number?
 ---@field isTrashModBossFightAllowed boolean? Used to flag a trash mod that is continue firing events during a boss fight (should be true in all M+ mods)
 ---@field respawnTime number? Time until the boss respawns after ENCOUNTER_END event
@@ -1524,9 +1524,7 @@ do
 		end
 		--In patch 12.1.5, Blizzard added a new optional field to the soundInfo table called "throttleSeconds"
 		--that allows you to limit how often the sound can be played. DBM defaults to 3 seconds.
-		if DBM:GetTOC() >= 120105 then
-			soundInfo.throttleSeconds = throttleSeconds or 3
-		end
+		soundInfo.throttleSeconds = throttleSeconds or 3
 		local auraSoundId = AddAuraSound(soundType or 0, soundInfo)
 		self.paSounds[optionId][#self.paSounds[optionId] + 1] = auraSoundId
 	end

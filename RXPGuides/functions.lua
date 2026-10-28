@@ -1309,15 +1309,17 @@ function addon.functions.daily(self, text, ...)
 
         local ids = {...}
         local err = #ids == 0
+        local questId
         for i, v in pairs(ids) do
-            local questId = tonumber(v)
-            if questId then
-                ids[i] = GetQuestId(questId)
-                addon.InsertQuestGuide(ids[i],addon.pickUpList)
-            else
+            questId = tonumber(v)
+            questId = questId and GetQuestId(questId)
+            if not questId then
                 err = true
                 break
             end
+
+            ids[i] = questId
+            addon.InsertQuestGuide(questId,addon.pickUpList)
         end
 
         if err then
@@ -1336,6 +1338,8 @@ function addon.functions.daily(self, text, ...)
         return element
     else
         local element = self.element
+        if not (element and element.ids) then return end
+
         if RXPCData.skipDailies and element.tag == "daily" then
             addon.SetElementComplete(self, true)
             return
@@ -1412,6 +1416,7 @@ function addon.functions.turnin(self, ...)
             return
         end
         local id = GetQuestId(element.questId,nil,true)
+        if not id then return end
         local isComplete = IsQuestTurnedIn(id)
 
         if step.active or element.retrieveText then
@@ -1527,15 +1532,17 @@ function addon.functions.dailyturnin(self, text, ...)
 
         local ids = {...}
         local err = #ids == 0
+        local questId
         for i, v in pairs(ids) do
-            local questId = tonumber(v)
-            if questId then
-                ids[i] = GetQuestId(questId)
-                addon.InsertQuestGuide(ids[i],addon.pickUpList)
-            else
+            questId = tonumber(v)
+            questId = questId and GetQuestId(questId)
+            if not questId then
                 err = true
                 break
             end
+
+            ids[i] = questId
+            addon.InsertQuestGuide(questId,addon.pickUpList)
         end
 
         if err then
@@ -1554,6 +1561,8 @@ function addon.functions.dailyturnin(self, text, ...)
     end
 
     local element = self.element
+    if not (element and element.ids) then return end
+
     if RXPCData.skipDailies and element.tag == "dailyturnin" then
         addon.SetElementComplete(self, true)
         return
@@ -6383,7 +6392,8 @@ function addon.functions.cooldown(self, text, cooldownType, id, remaining,
     if class == "SHAMAN" and IsPlayerSpell(556) and id == 6948 and cooldownType ==
         "item" then
         local arStart, arDuration = GetSpellCooldown(556)
-        if not addon.IsSecretValue(arStart) and not addon.IsSecretValue(arDuration) then
+        if arStart and arDuration and not addon.IsSecretValue(arStart) and
+            not addon.IsSecretValue(arDuration) then
             endTime = math.min(endTime, arStart + arDuration)
         end
     end
@@ -7079,7 +7089,7 @@ function addon.functions.collecttoy(self, ...)
     local itemID, toyName, icon, isFavorite, hasFanfare = C_ToyBox.GetToyInfo(element.id)
     local isCollected = PlayerHasToy(element.id) and C_ToyBox.IsToyUsable(element.id)
 
-    element.itemName = toyName
+    element.itemName = toyName or addon.GetItemName(element.id) or _G.TOY or L("Toy")
     if not element.textOnly then
         local current = isCollected and "1" or "0"
         if element.rawtext then
@@ -7404,7 +7414,13 @@ function addon.functions.itemStat(self, ...)
                           GetItemStats(GetInventoryItemLink("player", element.slot) or "") or {}
             local stat
             if element.stat == "QUALITY" then
-                stat = GetInventoryItemQuality("player", element.slot)
+                stat = GetInventoryItemQuality and GetInventoryItemQuality("player", element.slot)
+                if not stat then
+                    local itemID = GetInventoryItemID("player", element.slot)
+                    if itemID then
+                        _, _, stat = GetItemInfo(itemID)
+                    end
+                end
             elseif element.stat == "LEVEL" then
                 local itemID = GetInventoryItemID("player", element.slot)
                 if itemID then
@@ -8259,7 +8275,7 @@ function addon.functions.isQuestOffered(self, text, npc, ...)
                 end
             end
             if not match then
-                element.tooltipText = not element.found andL"Step skipped: Quest is not being offered"
+                element.tooltipText = not element.found and L("Step skipped: Quest is not being offered")
                 step.completed = true
                 addon.updateSteps = true
             end

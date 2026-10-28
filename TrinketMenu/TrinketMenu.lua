@@ -325,6 +325,21 @@ function addon:CreateMinimapButton()
     self.minimapButton = button
 end
 
+-- Show or hide the minimap button according to the saved option.
+function addon:ApplyMinimapVisibility()
+    pcall(function()
+        local hide = TrinketMenuDB and TrinketMenuDB.hideMinimapButton and true or false
+        local LDBIcon = LibStub and LibStub("LibDBIcon-1.0", true)
+        if LDBIcon and LDBIcon.IsRegistered and LDBIcon:IsRegistered("TrinketMenu") then
+            TrinketMenuDB.minimap = TrinketMenuDB.minimap or {}
+            TrinketMenuDB.minimap.hide = hide
+            if hide then LDBIcon:Hide("TrinketMenu") else LDBIcon:Show("TrinketMenu") end
+        elseif type(self.minimapButton) == "table" then
+            if hide then self.minimapButton:Hide() else self.minimapButton:Show() end
+        end
+    end)
+end
+
 local TOOLTIP_BACKDROP = {
     bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
     edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
@@ -519,9 +534,16 @@ function addon:ToggleAutoQueueItem(slotID, item)
     self:RefreshItemMenu()
 end
 
-function addon:CheckAutoQueue()
+function addon:CheckAutoQueue(force)
     if not TrinketMenuDB or not TrinketMenuDB.autoQueueEnabled then return end
     if not TrinketMenuDB.autoQueue then return end
+
+    local queue13, queue14 = TrinketMenuDB.autoQueue[13], TrinketMenuDB.autoQueue[14]
+    if not ((queue13 and #queue13 > 0) or (queue14 and #queue14 > 0)) then return end
+    -- Scanning every bag slot is expensive: limit it to twice a second unless a caller forces it.
+    local now = GetTime()
+    if not force and self.lastAutoCheck and (now - self.lastAutoCheck) < 0.5 then return end
+    self.lastAutoCheck = now
 
     local bagItems = GetBagTrinkets()
     local bagMap = {}
@@ -1059,7 +1081,7 @@ function addon:UpdateCooldowns()
                         Print(L("TRINKET_READY", GetItemName(itemID)))
                         self:ShowCenterAlert(itemID)
                     end
-                    if PlaySound then
+                    if PlaySound and TrinketMenuDB.soundReady ~= false then
                         pcall(PlaySound, 8959, "Master")
                     end
                 end
@@ -1581,6 +1603,7 @@ addon:SetScript("OnEvent", function(self, event)
         self:CreateWindow()
         if not TrinketMenuDB.hidden then self.window:Show() end
         self:CreateMinimapButton()
+        self:ApplyMinimapVisibility()
 
         -- Migrate legacy keybindings (FOREVERTRINKET1 / FOREVERTRINKET2 -> CLICK ForeverTrinketMenuSlot...)
         if GetBindingKey and SetBinding then
@@ -1603,8 +1626,7 @@ addon:SetScript("OnEvent", function(self, event)
             end
         end
 
-        SLASH_FOREVERTRINKETMENU1 = "/tm"
-        SLASH_FOREVERTRINKETMENU2 = "/trinketmenu"
+        SLASH_FOREVERTRINKETMENU1 = "/trinketmenu"
         SlashCmdList.FOREVERTRINKETMENU = function(msg)
             msg = (msg or ""):lower()
             local cmd, arg = msg:match("^(%S*)%s*(.-)$")
@@ -1614,7 +1636,7 @@ addon:SetScript("OnEvent", function(self, event)
                 local testID = GetInventoryItemID("player", 13) or GetInventoryItemID("player", 14) or 280766
                 self:ShowCenterAlert(testID)
                 if PlaySound then pcall(PlaySound, 8959, "Master") end
-                Print("Aviso central de prueba mostrado.")
+                Print(L("TEST_ALERT_SHOWN"))
             elseif cmd == "auto" or cmd == "autoqueue" or cmd == "queue" then
                 TrinketMenuDB.autoQueueEnabled = not TrinketMenuDB.autoQueueEnabled
                 local status = TrinketMenuDB.autoQueueEnabled and L("STATUS_ENABLED") or L("STATUS_DISABLED")
@@ -1626,35 +1648,43 @@ addon:SetScript("OnEvent", function(self, event)
                     TrinketMenuDB.scale = num
                     self:ApplyScale()
                     self:UpdateOptionsText()
-                    Print("Scale set to " .. num)
+                    Print(L("SCALE_SET", tostring(num)))
                 else
-                    Print("Usage: /tm scale 0.7 - 1.5")
+                    Print(L("SCALE_USAGE"))
                 end
             elseif cmd == "cols" or cmd == "columns" then
                 local num = tonumber(arg)
-                if num and num >= 1 and num <= 10 then
+                if num and num >= 1 and num <= 10 and num == math.floor(num) then
                     TrinketMenuDB.columns = num
                     self:RefreshItemMenu()
                     self:UpdateOptionsText()
-                    Print("Columns set to " .. num)
+                    Print(L("COLUMNS_SET", num))
                 else
-                    Print("Usage: /tm cols 1 - 8")
+                    Print(L("COLUMNS_USAGE"))
                 end
+            elseif cmd == "sound" then
+                local soundOn = TrinketMenuDB.soundReady ~= false
+                TrinketMenuDB.soundReady = not soundOn
+                Print(TrinketMenuDB.soundReady and L("SOUND_ON") or L("SOUND_OFF"))
+            elseif cmd == "minimap" then
+                TrinketMenuDB.hideMinimapButton = not (TrinketMenuDB.hideMinimapButton and true or false)
+                self:ApplyMinimapVisibility()
+                Print(TrinketMenuDB.hideMinimapButton and L("MINIMAP_BUTTON_HIDDEN") or L("MINIMAP_BUTTON_SHOWN"))
             elseif cmd == "lang" then
                 self:SetLanguage(arg)
             elseif cmd == "help" or cmd == "?" then
                 Print(L("HELP"))
-            elseif msg == "lock" or msg == "unlock" then
-                TrinketMenuDB.locked = (msg == "lock")
+            elseif cmd == "lock" or cmd == "unlock" then
+                TrinketMenuDB.locked = (cmd == "lock")
                 Print(TrinketMenuDB.locked and L("LOCKED") or L("UNLOCKED"))
                 self:UpdateLockAppearance()
                 self:UpdateOptionsText()
-            elseif msg == "border" then
+            elseif cmd == "border" then
                 TrinketMenuDB.hideFrameBorder = not (TrinketMenuDB.hideFrameBorder and true or false)
                 Print(TrinketMenuDB.hideFrameBorder and L("BORDER_HIDDEN") or L("BORDER_SHOWN"))
                 self:UpdateLockAppearance()
                 self:UpdateOptionsText()
-            elseif msg == "menuborder" then
+            elseif cmd == "menuborder" then
                 TrinketMenuDB.hideMenuBorder = not (TrinketMenuDB.hideMenuBorder and true or false)
                 Print(TrinketMenuDB.hideMenuBorder and L("MENU_BORDER_HIDDEN") or L("MENU_BORDER_SHOWN"))
                 self:UpdateLockAppearance()
@@ -1676,7 +1706,7 @@ addon:SetScript("OnEvent", function(self, event)
                 Print(L("SWAP_EXECUTED", item.name or L("ITEM_N", item.id)))
             end
         else
-            self:CheckAutoQueue()
+            self:CheckAutoQueue(true)
         end
         if self.window and self.window:IsShown() then
             self:Refresh()
@@ -1693,3 +1723,8 @@ addon:SetScript("OnEvent", function(self, event)
         end
     end
 end)
+
+-- Entry in Blizzard's AddOn compartment menu (declared in the .toc with AddonCompartmentFunc).
+function ForeverTrinketMenu_OnAddonCompartmentClick()
+    if TrinketMenuDB and addon.Toggle then addon:Toggle() end
+end

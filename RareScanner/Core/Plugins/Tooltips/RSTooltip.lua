@@ -421,7 +421,7 @@ local function AddLootTooltip(tooltip, pin, isLink)
 			return qualityA > qualityB
 		end
 
-		local chanceA, chanceB = tonumber(chances[a[1]]) or 0, tonumber(chances[b[1]]) or 0
+		local chanceA, chanceB = tonumber(chances[a[1]]) or RSConstants.LOOT_DEFAULT_DROP_CHANCE, tonumber(chances[b[1]]) or RSConstants.LOOT_DEFAULT_DROP_CHANCE
 		if (chanceA ~= chanceB) then
 			return chanceA > chanceB
 		end

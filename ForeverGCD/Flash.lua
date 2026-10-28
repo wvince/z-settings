@@ -388,7 +388,6 @@ local function RestyleAll()
     return true
 end
 ns.RestyleAll = RestyleAll
-function ns.RestylePending() return pending end
 
 -- Spots ----------------------------------------------------------------------------------
 local Spot = {}

@@ -157,6 +157,11 @@ step
     .target Sten Stoutarm
 
 step << Warlock
+    .goto 1426,25.077,75.711
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Grelin Whitebeard|r
+    .accept 182 >> Accept The Troll Cave
+    .target Grelin Whitebeard
+step << Warlock
     #season 0,1
     #optional
     #requires FrostmaneC1
@@ -209,6 +214,7 @@ step << Warlock
     #label BeginningsHS
     #completewith BeginningsEnd
     .deathskip >> Die and respawn at the |cRXP_FRIENDLY_Spirit Healer|r
+    >>|cRXP_WARN_Ensure your subzone is Coldridge Valley when you die! Otherwise you will be sent to the Kharanos graveyard|r
     .target Spirit Healer
 step << Warlock
     #season 0,1
@@ -281,7 +287,7 @@ step
     .goto 1426,25.077,75.711
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Grelin Whitebeard|r
     .turnin 234 >> Turn in Coldridge Valley Mail Delivery
-    .accept 182 >> Accept The Troll Cave
+    .accept 182 >> Accept The Troll Cave << !Warlock
     .target Grelin Whitebeard
 step << Hunter
     #completewith next
@@ -2802,7 +2808,7 @@ step << Warlock
     #completewith next
     +|cRXP_WARN_Cast|r |T136126:0|t[Life Tap] |cRXP_WARN_repeatedly until you have <10% health while on the way to|r |cRXP_FRIENDLY_Dungar Longdrink|r
 step
-    .goto 1453/0,490.03,-8835.82
+    .goto 1453/0,484.200,-8832.500
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Dungar Longdrink|r
     .fp Stormwind >> Get the Stormwind City flight path
     .target Dungar Longdrink
@@ -3196,7 +3202,8 @@ step
     .fp Redridge Mountains >> Get the Redridge Mountains flight path
     .fly Stormwind >> Fly to Stormwind
     .target Ariena Stormfeather
-step << skip
+step
+    .isOnQuest 61
     .goto 1453/0,625.48,-8857.76
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Morgan Pestle|r
     .turnin 61,1 >> Turn in Shipment to Stormwind
@@ -3674,7 +3681,6 @@ step
     .subzoneskip 149 --Silver Stream Mine
 step
     .goto 1432/0,-3146.73,-4837.02
-    #arrowtext |cRXP_WARN_10 minute timer to turn in quest!|r
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Norric Lochthane|r
     >>|cRXP_WARN_Ensure to turn this in before the 10 minute expiry on the|r |T1387609:0|t[Jar of Snow]
     .turnin 86667 >> Turn in Snowbound
@@ -4747,7 +4753,6 @@ step
     .complete 86667,1 -- Jar of Snow 1/1
 step
     .goto 1432/0,-3146.73,-4837.02
-    #arrowtext |cRXP_WARN_10 minute timer to turn in quest!|r
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Norric Lochthane|r
     >>|cRXP_WARN_Ensure to turn this in before the 10 minute expiry on the|r |T1387609:0|t[Jar of Snow]
     .turnin 86667 >> Turn in Snowbound
@@ -4954,7 +4959,7 @@ step << Hunter skip
     #requires DockTravel
     #label DarkshoreCook1
     #completewith DarkshoreBoat
-    >>|cRXP_WARN_On the Boat if it just arrived or on the dock if the boat just left:|r
+    >>|cRXP_WARN_While waiting for the Boat on the dock:|r
     .cast 818 >>|cRXP_WARN_Create a|r |T135805:0|t[Basic Campfire] |cRXP_WARN_(in your Profession Book)|r
     .usespell 818
     .zoneskip Darkshore
@@ -4968,7 +4973,7 @@ step << Hunter skip
     #requires DarkshoreCook1
     #label DarkshoreCook2
     #completewith DarkshoreBoat
-    >>|cRXP_WARN_On the Boat if it just arrived or on the dock if the boat just left:|r
+    >>|cRXP_WARN_While waiting for the Boat on the dock:|r
     .cast 818 >>|cRXP_WARN_Create a|r |T135805:0|t[Basic Campfire] |cRXP_WARN_(in your Profession Book)|r
     .usespell 818
     .zoneskip Darkshore
@@ -4982,7 +4987,7 @@ step << Hunter skip
     #requires DarkshoreCook2
     #label DarkshoreCook3
     #completewith DarkshoreBoat
-    >>|cRXP_WARN_On the Boat if it just arrived or on the dock if the boat just left:|r
+    >>|cRXP_WARN_While waiting for the Boat on the dock:|r
     .cast 818 >>|cRXP_WARN_Create a|r |T135805:0|t[Basic Campfire] |cRXP_WARN_(in your Profession Book)|r
     .usespell 818
     .zoneskip Darkshore

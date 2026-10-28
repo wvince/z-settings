@@ -30,6 +30,9 @@ local style = addon:GetModule('NextStyle')
 ---@class NextPanel: AceModule
 local nextPanel = addon:GetModule('NextPanel')
 
+---@class NextMenuButtonModule: AceModule
+local nextMenuButton = addon:GetModule('NextMenuButton')
+
 ---@class NextGuildButton: AceModule
 local guildButton = addon:GetModule('NextGuildButton')
 
@@ -38,6 +41,12 @@ local sectionFrame = addon:GetModule('SectionFrame')
 
 ---@class NextDrag: AceModule
 local nextDrag = addon:GetModule('NextDrag')
+
+---@class NextPixel: AceModule
+local pixel = addon:GetModule('NextPixel')
+
+-- The footer's gold, 16 tall: its text centered in it by the font's height (docs/next-pixel-perfect.md).
+local MONEY_WIDTH, MONEY_HEIGHT = 200, 16
 
 -- NextGuildBank is BetterBags Next's guild bank (guild-bank.md §5): a panel on the left, as the
 -- bank's, that stands in for Blizzard's guild bank frame while BetterBags Next is on. It shows every
@@ -67,8 +76,8 @@ local DIALOGS = { "GUILDBANK_DEPOSIT", "GUILDBANK_WITHDRAW", "CONFIRM_BUY_GUILDB
 ---@class NextGuildBankPanel: NextPanelFrame
 ---@field closeButton Button
 ---@field settingsButton Button
----@field depositButton Button
----@field withdrawButton Button
+---@field depositGoldButton Button
+---@field withdrawGoldButton Button
 ---@field shownTab? number The container of the tab shown by itself, nil while every tab shows.
 ---@field closeRequested boolean It asked the guild bank to close.
 ---@field wipeWhenHidden boolean The visit ended while the panel slid out: let go of its buttons once hidden.
@@ -92,7 +101,7 @@ function nextGuildBank:Create(ctx)
   g.closeRequested = false
   g.wipeWhenHidden = false
   g.content:SetButtonSource(guildButton)
-  g:paintWash(style.Color.GuildWash)
+  g:SetWash("Guild", true)
   self.panel = g
   return g
 end
@@ -174,24 +183,23 @@ end
 ---@return NextHeaderButton[]
 function guildProto:GetHeaderButtons()
   return {
-    { key = "closeButton", atlas = "uitools-icon-close", tooltip = L:G("Close"),
-      onClick = function(ctx) self:Hide(ctx) end },
-    { key = "settingsButton", atlas = "uitools-icon-settings", tooltip = L:G("Open Options Screen"),
+    { key = "closeButton", tooltip = L:G("Close"), onClick = function(ctx) self:Hide(ctx) end },
+    { key = "settingsButton", tooltip = L:G("Open Options Screen"), menuLast = true,
       onClick = function(ctx) events:SendMessage(ctx, "config/Open") end },
-    { key = "depositButton", texture = "Interface\\Icons\\INV_Misc_Coin_01", tooltip = L:G("Deposit Gold"),
-      onClick = function() guildBank:DepositMoney() end },
-    { key = "withdrawButton", texture = "Interface\\Icons\\INV_Misc_Coin_02",
-      tooltipFunc = function() self:WithdrawTooltip() end, onClick = function() guildBank:WithdrawMoney() end },
+    { key = "depositGoldButton", tooltip = L:G("Deposit Gold"), onClick = function() guildBank:DepositMoney() end },
+    { key = "withdrawGoldButton", tooltipFunc = function() self:WithdrawTooltip() end, label = L:G("Withdraw Gold"),
+      menuTooltip = function() return self:WithdrawText() end,
+      onClick = function() guildBank:WithdrawMoney() end },
   }
 end
 
--- WithdrawTooltip tells how much gold the player may take today: what the guild allows them, at most
--- what the guild has (GetGuildBankWithdrawMoney is -1 for the guild leader: the whole balance).
-function guildProto:WithdrawTooltip()
-  GameTooltip:SetText(L:G("Withdraw Gold"), 1, 1, 1, 1, true)
+-- WithdrawLines tells how much gold the player may take today: what the guild allows them, at most what the guild has
+-- (GetGuildBankWithdrawMoney is -1 for the guild leader: the whole balance), or that they may take none; each line
+-- { text, r, g, b }.
+---@return table[]
+function guildProto:WithdrawLines()
   if not CanWithdrawGuildBankMoney() then
-    GameTooltip:AddLine(L:G("You may not withdraw gold from this guild bank"), 1, 0.25, 0.25, true)
-    return
+    return { { L:G("You may not withdraw gold from this guild bank"), 1, 0.25, 0.25 } }
   end
   local amount, funds = GetGuildBankWithdrawMoney(), GetGuildBankMoney()
   if amount == -1 then
@@ -199,34 +207,57 @@ function guildProto:WithdrawTooltip()
   else
     amount = math.min(amount, funds)
   end
-  GameTooltip:AddLine(L:G("You may withdraw up to ") .. C_CurrencyInfo.GetCoinTextureString(amount), 0.8, 0.8, 0.8, true)
+  return { { L:G("You may withdraw up to ") .. C_CurrencyInfo.GetCoinTextureString(amount), 0.8, 0.8, 0.8 } }
+end
+
+-- WithdrawTooltip is the withdraw gold button's tooltip: its name, then WithdrawLines.
+function guildProto:WithdrawTooltip()
+  GameTooltip:SetText(L:G("Withdraw Gold"), 1, 1, 1, 1, true)
+  for _, line in ipairs(self:WithdrawLines()) do
+    GameTooltip:AddLine(line[1], line[2], line[3], line[4], true)
+  end
+end
+
+-- WithdrawText is WithdrawLines as the bag button's menu entry's tooltip (Header.Buttons.Menu).
+---@return string
+function guildProto:WithdrawText()
+  return nextMenuButton:Text(self:WithdrawLines())
 end
 
 -- CreateMoney makes the footer's gold: the guild's.
 ---@return table
 function guildProto:CreateMoney()
   local frame = CreateFrame("Frame")
-  frame:SetSize(200, 16)
-  local text = frame:CreateFontString(nil, "OVERLAY")
-  text:SetFontObject(style:Font("Footer"))
-  text:SetPoint("LEFT", frame, "LEFT", 0, 0)
-  return {
+  local text = style:CreateText(frame, style.Theme.Footer.MoneyFont)
+  local money = {
     frame = frame,
     text = text,
     Update = function()
       text:SetText(C_CurrencyInfo.GetCoinTextureString(GetGuildBankMoney() or 0))
     end,
   }
+  -- Placed by its owner (styleFooter, on the panel's grid): by its top left, in whole pixels.
+  money.Place = function()
+    pixel:Size(frame, MONEY_WIDTH, MONEY_HEIGHT)
+    local _, fontHeight = text:GetFont()
+    text:ClearAllPoints()
+    pixel:Point(text, "TOPLEFT", frame, "TOPLEFT", 0, -pixel:Floor(frame, (frame:GetHeight() - (fontHeight or 0)) / 2))
+  end
+  return money
 end
 
 -- UpdateHeader enables what the player may do: withdrawing gold only for a member who may.
 function guildProto:UpdateHeader()
-  local enabled = CanWithdrawGuildBankMoney() and true or false
-  self.withdrawButton:SetEnabled(enabled)
-  self.withdrawButton.icon:SetDesaturated(not enabled)
+  self:SetHeaderButtonEnabled(self.withdrawGoldButton, CanWithdrawGuildBankMoney() and true or false)
 end
 
 ---@return number
+-- TabOrderKey saves the order of the guild's tabs.
+---@return string
+function guildProto:TabOrderKey()
+  return "guild"
+end
+
 function guildProto:GetCurrentTabID()
   return self.shownTab or const.GUILD_BANK_ALL_TAB
 end
@@ -277,27 +308,31 @@ end
 -- RefreshTabs lists All Tabs, then every tab the player can view, then "+" while the guild leader can
 -- buy one, and selects the one shown.
 function guildProto:RefreshTabs()
-  local entries = { { id = const.GUILD_BANK_ALL_TAB, name = L:G("All Tabs") } }
-  local first = true
+  local entries = { { id = const.GUILD_BANK_ALL_TAB, name = L:G("All Tabs"), block = "all" } }
+  local tabs = {}
   for _, info in ipairs(guildBank:Tabs()) do
     if info.viewable then
-      table.insert(entries, {
+      table.insert(tabs, {
         id = info.container,
         name = info.name,
         icon = info.icon,
-        accent = style.Color.Guild,
-        gap = first and style.TAB_GROUP_GAP or nil,
+        accent = "Guild",
+        block = "guild",
         tooltip = function()
           self:ShowTabTooltip(info)
         end,
       })
-      first = false
     end
+  end
+  for i, entry in ipairs(self:OrderedTabs(tabs)) do
+    entry.gap = i == 1 and style.TAB_GROUP_GAP or nil
+    table.insert(entries, entry)
   end
   if guildBank:CanBuyTab() then
     table.insert(entries, {
       id = 0,
       name = "+",
+      fixed = true,
       tooltip = { L:G("Buy a Guild Bank Tab"), L:G("Click to buy the guild's next tab") },
     })
   end
@@ -434,7 +469,7 @@ function guildProto:OnShowing(ctx)
     self.shownTab = container
   end
   self:useView()
-  self:SetWash("GuildWash")
+  self:SetWash("Guild")
   self:RefreshTabs()
   self:updateTitle()
   self:UpdateHeader()
@@ -528,7 +563,7 @@ end
 -- Refresh recalculates the guild bank from what was last read (nothing while it is closed).
 ---@param ctx Context
 function guildProto:Refresh(ctx)
-  events:SendMessage(ctx, 'bags/Rederive', { guild = true })
+  events:SendMessage(ctx, 'bags/Rederive', { guild = true, categoriesUnchanged = true })
 end
 
 -- DepositTab is the tab a section dropped on the guild bank goes into: the tab shown by itself, else

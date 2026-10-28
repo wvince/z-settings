@@ -33,7 +33,7 @@ RSConstants.LOOT_ITEM_ID = nil
 ---============================================================================
 
 RSConstants.CURRENT_DB_VERSION = 8
-RSConstants.CURRENT_LOOT_DB_VERSION = 8
+RSConstants.CURRENT_LOOT_DB_VERSION = 9
 
 ---============================================================================
 -- Current maps (newer)
@@ -720,6 +720,7 @@ RSConstants.RAID_WARNING_SHOWING_TIME = 3
 RSConstants.MINIMUM_DISTANCE_PINS_WORLD_MAP = 0.005
 RSConstants.TOOLTIP_MAX_WIDTH = 300
 RSConstants.NPC_BOSS_LEVEL = -1 -- NPCs without level (bosses)
+RSConstants.LOOT_DEFAULT_DROP_CHANCE = 0.1 -- Drop chance (%) of the items without a known one
 RSConstants.TOOLTIP_MIN_WIDTH = 100
 
 ---============================================================================

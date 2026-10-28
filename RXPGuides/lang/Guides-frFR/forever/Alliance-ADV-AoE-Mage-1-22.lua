@@ -4,11 +4,12 @@ if faction == "Horde" then return end
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Human Mage
 #name 1-10 Forêt d'Elwynn Humain Mage AoE Avancé
 #version 2
 #group RestedXP Alliance Mage AoE Avancé
-#defaultfor Human Mage
+#defaultfor none Human Mage
 #next 1-11 Dun Morogh Humain Mage AoE Avancé
 
 
@@ -1144,11 +1145,12 @@ step
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Human Mage
 #name 1-11 Dun Morogh Humain Mage AoE Avancé
 #version 2
 #group RestedXP Alliance Mage AoE Avancé
-#defaultfor Human Mage
+#defaultfor none Human Mage
 #next 10-12 Sombrivage 1 Mage AoE Avancé
 
 step
@@ -1435,11 +1437,12 @@ step << skip
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Gnome Mage
 #name 1-10 Dun Morogh Gnome Mage AoE Avancé
 #version 2
 #group RestedXP Alliance Mage AoE Avancé
-#defaultfor Gnome Mage
+#defaultfor none Gnome Mage
 #next 10-12 Sombrivage 1 Mage AoE Avancé
 
 
@@ -1957,7 +1960,7 @@ step
 	.goto 1426/0,-615.60,-5674.38,40,0
 	.goto 1426/0,-641.21,-5660.59,40,0
 	.goto 1426/0,-730.84,-5624.15,40,0
-    .xp 5+2690 >> Monter votre expérience jusqu'à 2690+/2800xp
+    .xp 5+2690 >> Montez votre expérience jusqu'à 2690+/2800xp
     .mob Young Black Bear
     .mob Crag Boar
 step
@@ -2301,7 +2304,7 @@ step
 step
     .goto 1426/0,-531.38,-5601.49
     >>Parlez à |cRXP_FRIENDLY_Belm l'aubergiste|r
-    >>|cRXP_BUY_Achetez une |r|T132800:0|t[Bière au malt Rhapsody |cRXP_BUY_et une|r |T132800:0|t[Thunder Ale] |cRXP_BUY_à Belm|r
+    >>|cRXP_BUY_Achetez une |r|T132800:0|t[Bière au malt Rhapsody] |cRXP_BUY_et une|r |T132800:0|t[Thunder Ale] |cRXP_BUY_à Belm|r
     .complete 384,2 --Collect Rhapsody Malt (x1)
     .collect 2686,1,311,1 --Collect Thunder Ale (x1)
     .target Innkeeper Belm
@@ -2994,11 +2997,12 @@ step << skip
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 10-12 Sombrivage 1 Mage AoE Avancé
 #version 2
 #group RestedXP Alliance Mage AoE Avancé
-#defaultfor Human Mage/Gnome Mage
+#defaultfor none Mage
 #next 12-14 Loch Modan Mage AoE Avancé
 
 step
@@ -3550,11 +3554,12 @@ step
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 10-12 Sombrivage 1 Mage AoE Nouveau serveur Avancé
 #version 2
 #group RestedXP Alliance Mage AoE Avancé
-#defaultfor none
+#defaultfor none none
 #next 12-14 Loch Modan Mage AoE Avancé
 
 --VV Make this an alternative route that must be manually selected
@@ -4117,11 +4122,12 @@ step
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 12-14 Loch Modan Mage AoE Avancé
 #version 2
 #group RestedXP Alliance Mage AoE Avancé
-#defaultfor Human Mage/Gnome Mage
+#defaultfor none Mage
 #next 14-16 Sombrivage 2 Mage AoE Avancé
 step
     #completewith next
@@ -4897,11 +4903,12 @@ step
 ]])
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 14-16 Sombrivage 2 Mage AoE Avancé
 #version 2
 #group RestedXP Alliance Mage AoE Avancé
-#defaultfor Human Mage/Gnome Mage
+#defaultfor none Mage
 #next 16-18 Marche de l'Ouest Mage AoE Avancé
 
 
@@ -5545,16 +5552,17 @@ step
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 16-18 Marche de l'Ouest Mage AoE Avancé
 #version 2
 #group RestedXP Alliance Mage AoE Avancé
-#defaultfor Human Mage/Gnome Mage
+#defaultfor none Mage
 #next 18-20 Sombrivage 3 Mage AoE Avancé
 
 step
     #completewith JenneaT
-    +|cRXP_WARN_NOTE: Vous avez besoin de 12 stacks de chaque tissu (|r|T132911:0|t[Étoffe de laine]|cRXP_WARN_,|r |T132905:0|t[Étoffe de soie]|cRXP_WARN_,|r |T132892:0|t[Étoffe de tisse-mage]|cRXP_WARN_,|r et |T132903:0|Étoffe runique]|cRXP_WARN_) pour rendre les tissus plus tard. Vous les obtiendrez naturellement en montant de niveau|r
+    +|cRXP_WARN_NOTE: Vous avez besoin de 12 stacks de chaque tissu (|r|T132911:0|t[Étoffe de laine]|cRXP_WARN_,|r |T132905:0|t[Étoffe de soie]|cRXP_WARN_,|r |T132892:0|t[Étoffe de tisse-mage]|cRXP_WARN_,|r et |T132903:0|t[Étoffe runique]|cRXP_WARN_) pour rendre les tissus plus tard. Vous les obtiendrez naturellement en montant de niveau|r
 step << skip
     #completewith next
     .goto 1453/0,661.38,-8858.16,12,0
@@ -6242,7 +6250,7 @@ step
     #label Bank3
     .goto 1453/0,614.33,-8932.92
     >>Parlez à |cRXP_FRIENDLY_Newton Burnside|r
-    >>|cRXP_WARN_NOTE: Vous avez besoin de 12 stacks de chaque tissu (|r|T132911:0|t[Étoffe de laine]|cRXP_WARN_,|r |T132905:0|t[Étoffe de soie]|cRXP_WARN_,|r |T132892:0|t[Étoffe de tisse-mage]|cRXP_WARN_,|r et |T132903:0|Étoffe runique]|cRXP_WARN_) pour rendre les tissus plus tard. Vous les obtiendrez naturellement en montant de niveau|r
+    >>|cRXP_WARN_NOTE: Vous avez besoin de 12 stacks de chaque tissu (|r|T132911:0|t[Étoffe de laine]|cRXP_WARN_,|r |T132905:0|t[Étoffe de soie]|cRXP_WARN_,|r |T132892:0|t[Étoffe de tisse-mage]|cRXP_WARN_,|r et |T132903:0|t[Étoffe runique]|cRXP_WARN_) pour rendre les tissus plus tard. Vous les obtiendrez naturellement en montant de niveau|r
     .bankdeposit 2998,4371,1711,1478,1712,3012,1180,1181,3013,17056,2592,2998,1941 >> Déposez les objets suivants dans votre banque:
     >>|T133024:0|t[Tube en bronze]
     >>|T134943:0|t[Parchemins]
@@ -6275,11 +6283,12 @@ step
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 18-20 Sombrivage 3 Mage AoE Avancé
 #version 2
 #group RestedXP Alliance Mage AoE Avancé
-#defaultfor Human Mage/Gnome Mage
+#defaultfor none Mage
 #next 20-22 Carmines 1 Mage AoE Avancé
 
 step
@@ -7053,11 +7062,12 @@ step
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 << Alliance Mage
 #name 20-22 Carmines 1 Mage AoE Avancé
 #version 2
 #group RestedXP Alliance Mage AoE Avancé
-#defaultfor Human Mage/Gnome Mage
+#defaultfor none Mage
 #next 22-26 Les Paluns 1 Mage AoE Avancé
 
 step
@@ -7087,7 +7097,7 @@ step
     #label Bank
     .goto 1453/0,614.33,-8932.92
     >>Parlez à |cRXP_FRIENDLY_Newton Burnside|r
-    >>|cRXP_WARN_NOTE: Vous avez besoin de 12 stacks de chaque tissu (|r|T132911:0|t[Étoffe de laine]|cRXP_WARN_,|r |T132905:0|t[Étoffe de soie]|cRXP_WARN_,|r |T132892:0|t[Étoffe de tisse-mage]|cRXP_WARN_,|r et |T132903:0|Étoffe runique]|cRXP_WARN_) pour rendre les tissus plus tard. Vous les obtiendrez naturellement en montant de niveau|r
+    >>|cRXP_WARN_NOTE: Vous avez besoin de 12 stacks de chaque tissu (|r|T132911:0|t[Étoffe de laine]|cRXP_WARN_,|r |T132905:0|t[Étoffe de soie]|cRXP_WARN_,|r |T132892:0|t[Étoffe de tisse-mage]|cRXP_WARN_,|r et |T132903:0|t[Étoffe runique]|cRXP_WARN_) pour rendre les tissus plus tard. Vous les obtiendrez naturellement en montant de niveau|r
     .bankdeposit 17056,2592,1015,4654 >> Déposez les objets suivants dans votre banque:
     >>|T132917:0|t[Plume légère]
     >>|T132911:0|t[Étoffe de laine]
@@ -8047,7 +8057,7 @@ step
 step
     .goto 1455/0,-997.66,-4886.49
     >>Parlez à |cRXP_FRIENDLY_Bailey Mantepierre|r
-    >>|cRXP_WARN_NOTE: Vous avez besoin de 12 stacks de chaque tissu (|r|T132911:0|t[Étoffe de laine]|cRXP_WARN_,|r |T132905:0|t[Étoffe de soie]|cRXP_WARN_,|r |T132892:0|t[Étoffe de tisse-mage]|cRXP_WARN_,|r et |T132903:0|Étoffe runique]|cRXP_WARN_) pour rendre les tissus plus tard. Vous les obtiendrez naturellement en montant de niveau|r
+    >>|cRXP_WARN_NOTE: Vous avez besoin de 12 stacks de chaque tissu (|r|T132911:0|t[Étoffe de laine]|cRXP_WARN_,|r |T132905:0|t[Étoffe de soie]|cRXP_WARN_,|r |T132892:0|t[Étoffe de tisse-mage]|cRXP_WARN_,|r et |T132903:0|t[Étoffe runique]|cRXP_WARN_) pour rendre les tissus plus tard. Vous les obtiendrez naturellement en montant de niveau|r
     .bankdeposit 17056,2592,1015,1083,2665,1922,1284 >> Déposez les objets suivants dans votre banque:
     >>|T132917:0|t[Plume légère]
     >>|T132911:0|t[Étoffe de laine]

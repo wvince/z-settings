@@ -43,40 +43,117 @@ end
 local function Region(object)
     if type(object) == "table" and type(object.GetObjectType) == "function" then return object end
 end
+-- The badge counts only while it has a place: a plate addon that clears
+-- its points would take a Right icon to the middle of the plate (a player's
+-- report, 20 October 2026); then the bar's own edge is used. Where the badge
+-- hangs cannot be read: on 1.60.1.70450 (22 October 2026, desktop) GCD
+-- 0.4.1's GetPoint on it errored ("Can't measure restricted regions") and
+-- no icon was placed, while GetNumPoints read plainly.
+local function Placed(level)
+    local count = level:GetNumPoints()
+    if not Public(count) or type(count) ~= "number" then return true end
+    return count > 0
+end
 local function Anchors(plate)
     local unitFrame = Region(plate.UnitFrame)
     local container = unitFrame and Region(unitFrame.HealthBarsContainer)
     local health = container and (Region(container.healthBar) or container)
     local level = unitFrame and Region(unitFrame.PlayerLevelDiffFrame)
+    if level and health and not Placed(level) then level = nil end
     return health or plate, level or health or plate
 end
 
 -- Puts a spot's frame above its plate's health bar, or at its left or
 -- right with the icon centred on the bar, so it sits beside the plate.
+-- Up/down then nudges it, for plate addons that draw their own bar away
+-- from Blizzard's (a player on Luna's plates, 22 October 2026).
 local function Place(frame, plate)
     local gap, position, size = ns.Get("offset"), ns.Get("position"), ns.Get("size")
+    local lift = ns.Get("lift") or 0
     local health, right = Anchors(plate)
     frame:ClearAllPoints()
     if position == "left" then
-        frame:SetPoint("TOPRIGHT", health, "LEFT", -gap, size / 2)
+        frame:SetPoint("TOPRIGHT", health, "LEFT", -gap, size / 2 + lift)
     elseif position == "right" then
-        frame:SetPoint("TOPLEFT", right, "RIGHT", gap, size / 2)
+        frame:SetPoint("TOPLEFT", right, "RIGHT", gap, size / 2 + lift)
     else
-        frame:SetPoint("BOTTOM", health, "TOP", 0, gap)
+        frame:SetPoint("BOTTOM", health, "TOP", 0, gap + lift)
     end
 end
 ns.PlaceSpot = Place
+
+-- 0.6.1 Fade (a player's request): the game fades a plate's drawing below
+-- the plate frame the spot hangs from (far away, behind a wall), so the
+-- spot alone stayed at full opacity. Its alpha becomes the health bar's
+-- drawn opacity over the plate's, capped at 1, so it ends up drawn as the
+-- bar is. A secret answer (both are SecretReturnsForAspect Alpha,
+-- SimpleFrameAPIDocumentation.lua), 0 or less (a plate addon hiding
+-- Blizzard's plate by its alpha), or no bar of its own gives 1. No event
+-- says a plate faded, so one watcher looks every 0.05 s, only while a spot
+-- is attached. Nothing here measures where a plate's parts sit (0.4.1).
+-- GetEffectiveAlpha also has RequiresScriptObjectAlphaAccess, which
+-- returns with an error where access is denied; Forever Diagnostics 0.22
+-- read it on plates' unit frames in battlegrounds without one
+-- (1.60.1.70374). Should it error, `reading` stays set: the next tick
+-- turns Fade off for the session and says so once, instead of an error
+-- every 0.05 s.
+local FADE_EVERY = 0.05
+local fader = CreateFrame("Frame")
+local fadeWait, reading, fadeBroken = 0, false, false
+local function Broken()
+    if reading then
+        reading, fadeBroken = false, true
+        fader:SetScript("OnUpdate", nil)
+        print("Forever GCD: this build would not let the addon read a nameplate's opacity, so icons stay at full opacity until you reload (Fade).")
+    end
+    return fadeBroken
+end
+local function FadeAlpha(record)
+    if Broken() or ns.Get("fade") ~= true or not record.plate then return 1 end
+    local health = Anchors(record.plate)
+    if health == record.plate then return 1 end
+    reading = true
+    local drawn, plateDrawn = health:GetEffectiveAlpha(), record.plate:GetEffectiveAlpha()
+    reading = false
+    if not ns.Number(drawn) or not ns.Number(plateDrawn) or drawn <= 0 or plateDrawn <= 0 then return 1 end
+    return math.min(1, drawn / plateDrawn)
+end
+local function Fade(record) record.spot.frame:SetAlpha(FadeAlpha(record)) end
+local function FadeAll()
+    for _, record in pairs(records) do Fade(record) end
+end
+local function FadeTick(_, elapsed)
+    if Broken() then return FadeAll() end
+    fadeWait = fadeWait - (elapsed or 0)
+    if fadeWait > 0 then return end
+    fadeWait = FADE_EVERY
+    FadeAll()
+end
+-- The watcher runs only while a spot is attached and Fade is on.
+local function Watch()
+    local wanted = not Broken() and ns.Get("fade") == true and next(records) ~= nil
+    if wanted and not fader:GetScript("OnUpdate") then
+        fadeWait = FADE_EVERY
+        fader:SetScript("OnUpdate", FadeTick)
+    elseif not wanted and fader:GetScript("OnUpdate") then
+        fader:SetScript("OnUpdate", nil)
+    end
+end
+-- For the tests: whether the watcher runs.
+function ns.FadeWatching() return fader:GetScript("OnUpdate") ~= nil end
 
 local function Detach(unit)
     local record = records[unit]
     if not record then return end
     records[unit] = nil
     record.spot:Stop()
+    record.spot.frame:SetAlpha(1)
     record.spot.frame:Hide()
     record.spot.frame:ClearAllPoints()
     record.spot.frame:SetParent(UIParent)
     record.plate = nil
     pool[#pool + 1] = record
+    Watch()
 end
 
 local function Attach(unit)
@@ -94,7 +171,16 @@ local function Attach(unit)
     Place(frame, plate)
     frame:Show()
     records[unit] = record
+    Watch()
+    Fade(record)
     record.spot:Follow(unit, unit == opponent, true)
+    -- Once more on the next frame: a plate addon that moves the level badge
+    -- on the same NAME_PLATE_UNIT_ADDED may run after this one.
+    if C_Timer and C_Timer.After then
+        C_Timer.After(0, function()
+            if records[unit] == record and record.plate == plate then Place(frame, plate) end
+        end)
+    end
 end
 
 -- Which plate is your opponent's, then every spot told whether it is.
@@ -133,7 +219,6 @@ local function RecheckAll()
     for unit in pairs(present) do Recheck(unit) end
     FindOpponent()
 end
-ns.PlatesRecheck = RecheckAll
 
 events:SetScript("OnEvent", function(_, event, unit)
     if event == "UNIT_FACTION" then
@@ -230,13 +315,16 @@ function ns.PlateRecord(unit) return records[unit] end
 
 -- After settings changed: plates on or off, what flashes, the place and size.
 local FOLLOW_KEYS = { casts = true, buffs = true, debuffs = true }
-local PLACE_KEYS = { position = true, offset = true, size = true, name = true, nameSize = true, tenths = true }
+local PLACE_KEYS = { position = true, offset = true, lift = true, size = true, name = true, nameSize = true, tenths = true }
 function ns.PlatesApply(keys)
     for _, key in ipairs(keys) do
         if key == "plates" then
             Enable(ns.Get("plates") == true)
         elseif FOLLOW_KEYS[key] then
             for unit, record in pairs(records) do record.spot:Follow(unit, unit == opponent, false) end
+        elseif key == "fade" then
+            FadeAll()
+            Watch()
         elseif PLACE_KEYS[key] then
             for _, record in pairs(records) do
                 record.spot:Style(ns.Get("size"))

@@ -7345,7 +7345,7 @@ step
     #completewith next
     #requires Dawn2
     .goto Duskwood,73.79,45.98,20,0
-    .goto Duskwood,74.01,45.36,10 >>进入旅馆
+    .goto Duskwood,74.01,45.36,10 >>进入旅店
 step
     #requires Dawn2
     .goto Duskwood,73.81,44.02

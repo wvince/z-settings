@@ -571,7 +571,7 @@ function RSLootOptions.GetLootOptions()
 									disabled = function() return (not RSConfigDB.IsDisplayingLootBar() and not RSConfigDB.IsShowingLootOnWorldMap()) end,
 								},
 								filterNotUsable = {
-									order = 5,
+									order = 2,
 									type = "toggle",
 									name = AL["LOOT_FILTER_NOT_USABLE"],
 									desc = AL["LOOT_FILTER_NOT_USABLE_DESC"],
@@ -583,7 +583,7 @@ function RSLootOptions.GetLootOptions()
 									disabled = function() return (not RSConfigDB.IsDisplayingLootBar() and not RSConfigDB.IsShowingLootOnWorldMap()) end,
 								},
 								filterMinChance = {
-									order = 6,
+									order = 5,
 									type = "input",
 									name = AL["LOOT_FILTER_CHANCE_MIN"],
 									desc = AL["LOOT_FILTER_CHANCE_DESC"],
@@ -597,7 +597,7 @@ function RSLootOptions.GetLootOptions()
 									disabled = function() return (not RSConfigDB.IsDisplayingLootBar() and not RSConfigDB.IsShowingLootOnWorldMap()) end,
 								},
 								filterMaxChance = {
-									order = 7,
+									order = 6,
 									type = "input",
 									name = AL["LOOT_FILTER_CHANCE_MAX"],
 									desc = AL["LOOT_FILTER_CHANCE_DESC"],

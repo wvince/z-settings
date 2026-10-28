@@ -8,9 +8,9 @@ RXPGuides.RegisterGuide([[
 << Alliance Mage
 #name 12-18级 黑海岸 法师 A怪指南
 #version 1
-#group RestedXP 无限指南 (联盟)
-#subgroup 法师速通指南
-#defaultfor Alliance Mage
+#group RestedXP 联盟 法师
+
+#defaultfor none Alliance Mage
 #next 18-21级 赤脊山 法师 A怪指南
 
 step
@@ -804,9 +804,9 @@ RXPGuides.RegisterGuide([[
 << Alliance Mage
 #name 18-21级 赤脊山 法师 A怪指南
 #version 1
-#group RestedXP 无限指南 (联盟)
-#subgroup 法师速通指南
-#defaultfor Alliance Mage
+#group RestedXP 联盟 法师
+
+#defaultfor none Alliance Mage
 #next 21-22级 暮色森林 法师 A怪指南
 
 step

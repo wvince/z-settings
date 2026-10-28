@@ -68,12 +68,12 @@ function RSLoot.IsFiltered(entityID, itemID, itemLink, itemRarity, itemEquipLoc,
 		return true
 	end
 
-	-- Drop chance filter (items without a known drop chance count as 0%)
+	-- Drop chance filter (items without a known drop chance count as the default one)
 	local minChance = RSConfigDB.GetLootFilterMinChance()
 	local maxChance = RSConfigDB.GetLootFilterMaxChance()
 	if (minChance or maxChance) then
 		local chances = RSNpcDB.GetNpcLootChance(entityID) or RSContainerDB.GetContainerLootChance(entityID)
-		local chance = tonumber(chances and chances[itemID]) or 0
+		local chance = tonumber(chances and chances[itemID]) or RSConstants.LOOT_DEFAULT_DROP_CHANCE
 		if ((minChance and chance < minChance) or (maxChance and chance > maxChance)) then
 			RSLogger:PrintDebugMessageItemID(itemID, string.format("Item [%s]. Filtrado por su probabilidad de drop.", itemID))
 			return true
@@ -85,7 +85,7 @@ function RSLoot.IsFiltered(entityID, itemID, itemLink, itemRarity, itemEquipLoc,
 		RSLogger:PrintDebugMessageItemID(itemID, string.format("Item [%s]. Filtrado por no ser equipable.", itemID))
 		return true;
 	end
-	
+
 	-- Usable filter (any requirement not met except the level, like class, faction, profession, reputation, armor or weapon type...)
 	if (RSConfigDB.IsFilteringLootByNotUsable() and not RSTooltipScanners.GetItemRestrictions(itemID).isUsable) then
 		RSLogger:PrintDebugMessageItemID(itemID, string.format("Item [%s]. Filtrado por no poder usarlo.", itemID))

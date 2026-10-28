@@ -9,7 +9,7 @@ RXPGuides.RegisterGuide([[
 << Horde
 #name 1-6级 莫高雷
 #version 11
-#group RestedXP 无限指南 (部落)
+#group RestedXP 永久指南 (H)
 #subgroup 速通指南 1-22级
 --#groupid RXP-SRGCE-H1
 #defaultfor Tauren
@@ -108,8 +108,8 @@ step
     .target 鹰风酋长
 step << Shaman
     .goto 1412/1,-216.18,-2926.26--c:Mulgore,44.07,77.47
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Marjak|r (NOT TRANSLATED IN :zhCN YET)
-    .vendor >> Vendor trash. Sell your weapon if it gives you enough money for a |T135139:0|t[Short Staff] (1s 02c). You'll come back later if you don't have enough yet (NOT TRANSLATED IN :zhCN YET)
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_马沙克·利刃|r 对话
+    .vendor >> 把垃圾卖店。如果卖掉武器能凑够钱购买一把 |T135139:0|t[学徒法杖] （1银2铜），就把它卖了。要是钱还不够，以后再回来买
     .itemStat 16,QUALITY,<7
     .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<1.9
     .target 马沙克·利刃
@@ -380,7 +380,7 @@ step
     .target 卫兵维萨罗·风羽
 step
     .goto 1412/1,-279.37,-2893.73--c:Mulgore,45.30,76.52
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kawnie Softbreeze|r (NOT TRANSLATED IN :zhCN YET)
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_卡文尼·柔风|r 对话
     .vendor >> 把垃圾物品卖给商人
     .target 卡文尼·柔风
 step
@@ -479,7 +479,7 @@ RXPGuides.RegisterGuide([[
 << Horde
 #name 6-12级 莫高雷
 #version 11
-#group RestedXP 无限指南 (部落)
+#group RestedXP 永久指南 (H)
 #subgroup 速通指南 1-22级
 --#groupid RXP-SRGCE-H1
 #defaultfor Tauren
@@ -1225,9 +1225,9 @@ step
     .target 哈兰特·铁枝
 step
     .goto 1412/1,-285.000,-2263.400
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Pyall|r (NOT TRANSLATED IN :zhCN YET)
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_派尔|r 对话
     .train 2550 >>学习烹饪
-    .turnin 96661 >>Turn in Camping 101: Cooking (NOT TRANSLATED IN :zhCN YET)
+    .turnin 96661 >>交任务 露营基础：烹饪
     .target Pyall Silentstride
 step
     .goto 1412/1,-392.500,-2318.500
@@ -1945,12 +1945,12 @@ step
     .turnin 765 >>交任务 菲兹普罗克主管
     .turnin 98424 >>交任务 菲兹普罗克的笔记板
 	.unitscan 摩林·云行者
-step << Tauren
+step << skip -- Tauren
     #softcore
 	#completewith Thunderhorn2
     .deathskip >> 死亡并在 |cRXP_FRIENDLY_灵魂医者|r 处重生
 step << Tauren
-    #hardcore
+    --#hardcore
     #completewith Thunderhorn2
     .subzone 222 >>前往血蹄村
 step

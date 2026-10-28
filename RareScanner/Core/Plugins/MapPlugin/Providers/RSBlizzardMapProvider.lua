@@ -82,7 +82,6 @@ local function PlayPinAnimation(pin, entityID, mapID, x, y, forced)
         s2:SetDuration(0.75)
         s2:SetOrder(1)
         
-        -- Callback para controlar loops reutilizando datos de la animacion actual sin fugas de closure
         ag:SetScript("OnLoop", function(self)
             self.loops = (self.loops or 0) + 1
             if (self.loops >= 3) then
@@ -240,13 +239,17 @@ local function OnPinMouseDown(pin, button)
 				RareScannerDataProviderMixin:ShowGuideLayer(pin.POI.entityID, pin.POI.mapID, pin)
 			end
 	        
-	        -- Refresca minimapa de forma segura
 	        RSMinimap.RefreshAllData(true)
 	    end
 	end)
 end
 
 local function OnPinReleased(pin)
+	-- Never touch the pins that are not ours
+	if (not activeVignettePins[pin]) then
+		return
+	end
+
 	pin:SetAlpha(1)
     pin.POI = nil
 
@@ -268,57 +271,63 @@ local function AcquirePin(pin)
     local entityID = GetEntityID(pin)
     if not entityID then return end
 
-    if (IsPinFiltered(entityID) and not RSConfigDB.IsShowingFilteredIngameMapIcons()) then
+	local map = pin.GetMap and pin:GetMap()
+	local mapID = map and map:GetMapID() or (type(activeVignettePins[pin]) == "number" and activeVignettePins[pin])
+
+	local POI
+	local x, y
+	-- VignettePinBaseMixin
+	if (pin.GetObjectGUID) then
+    	POI = RSMap.GetWorldMapPOI(pin:GetObjectGUID(), pin.vignetteInfo, mapID)
+    	if (pin.GetPosition) then
+    		x, y = pin:GetPosition()
+    	end
+    -- AreaPOIPinMixin
+    elseif (pin.poiInfo) then
+    	local objectGUID = string.format("a-a-a-a-a-%s-%s", pin.poiInfo.areaPoiID, time())
+    	local fakePoiInfo = {
+    		atlasName = pin.poiInfo.atlasName,
+    		name = pin.poiInfo.name,
+    		type = "",
+    	}
+    	POI = RSMap.GetWorldMapPOI(objectGUID, fakePoiInfo, mapID)
+    	if (pin.poiInfo.position) then
+    		x, y = pin.poiInfo.position:GetXY()
+    	elseif (pin.GetPosition) then
+    		x, y = pin:GetPosition()
+    	end
+    end
+
+    local filtered = IsPinFiltered(entityID) and not RSConfigDB.IsShowingFilteredIngameMapIcons()
+
+    -- The ID of an area POI is not an entity ID, so it only counts if the POI is known (it could match one of our entities)
+    if (not POI and not pin.GetObjectGUID) then
+    	return
+    end
+
+    if (filtered) then
+        activeVignettePins[pin] = mapID or true
         HidePin(pin)
-    else        
-		local map = pin.GetMap and pin:GetMap()
-		local mapID = map and map:GetMapID() or (type(activeVignettePins[pin]) == "number" and activeVignettePins[pin])
-		
-		local POI
-		local x, y
-		-- VignettePinBaseMixin
-		if (pin.GetObjectGUID) then
-        	POI = RSMap.GetWorldMapPOI(pin:GetObjectGUID(), pin.vignetteInfo, mapID)
-        	if (pin.GetPosition) then
-        		x, y = pin:GetPosition()
+    elseif (POI) then
+        pin.POI = POI
+        activeVignettePins[pin] = mapID or true
+
+        ShowPin(pin)
+
+        local forceAnimation = pin.POI.name and RSGeneralDB.GetWorldMapTextFilter() and RSUtils.Contains(pin.POI.name, RSGeneralDB.GetWorldMapTextFilter())
+        PlayPinAnimation(pin, entityID, mapID, x, y, forceAnimation)
+
+        if (not pin.RSHooksInstalled) then
+        	if (not pin.hasTooltip) then
+        		pin:EnableMouseMotion(true);
         	end
-        -- AreaPOIPinMixin
-        elseif (pin.poiInfo) then
-        	local objectGUID = string.format("a-a-a-a-a-%s-%s", pin.poiInfo.areaPoiID, time())
-        	local fakePoiInfo = {
-        		atlasName = pin.poiInfo.atlasName,
-        		name = pin.poiInfo.name,
-        		type = "",
-        	}
-        	POI = RSMap.GetWorldMapPOI(objectGUID, fakePoiInfo, mapID)
-        	if (pin.poiInfo.position) then
-        		x, y = pin.poiInfo.position:GetXY()
-        	elseif (pin.GetPosition) then
-        		x, y = pin:GetPosition()
-        	end
+
+            pin:HookScript("OnEnter", OnPinMouseEnter)
+            pin:HookScript("OnLeave", OnPinMouseLeave)
+            pin:HookScript("OnMouseDown", OnPinMouseDown)
+
+            pin.RSHooksInstalled = true
         end
-        
-        if (POI) then
-	        pin.POI = POI
-	        activeVignettePins[pin] = mapID or true
-	        	        
-	        ShowPin(pin)
-	        
-	        local forceAnimation = pin.POI.name and RSGeneralDB.GetWorldMapTextFilter() and RSUtils.Contains(pin.POI.name, RSGeneralDB.GetWorldMapTextFilter())
-	        PlayPinAnimation(pin, entityID, mapID, x, y, forceAnimation)
-	
-	        if (not pin.RSHooksInstalled) then
-	        	if (not pin.hasTooltip) then
-	        		pin:EnableMouseMotion(true);
-	        	end
-	        	
-	            pin:HookScript("OnEnter", OnPinMouseEnter)
-	            pin:HookScript("OnLeave", OnPinMouseLeave)
-	            pin:HookScript("OnMouseDown", OnPinMouseDown)
-	            
-	            pin.RSHooksInstalled = true
-	        end
-		end
     end
 end
 

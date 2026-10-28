@@ -15,6 +15,9 @@ local const = addon:GetModule('Constants')
 ---@class Sonata: AceModule
 local sonata = addon:GetModule('Sonata')
 
+---@class Texels: AceModule
+local texels = addon:GetModule('Texels')
+
 ---@class MasqueTheme: AceModule
 ---@field groups table<string, MasqueGroup>
 local masque = addon:NewModule('Masque')
@@ -85,6 +88,8 @@ function masque:OnEnable()
       self.added[decoration] = group
     end
     self:ReapplyBlend(decoration)
+    -- Masque makes and draws a skin's textures as it skins a button (texture-sharpening.md).
+    texels:Unsharpen(decoration)
   end
 
   events:RegisterMessage('item/NewButton', function(_, item, decoration)
@@ -107,11 +112,42 @@ function masque:OnEnable()
     local group = self.groups["Vendor"]
     group:AddButton(b.button, b:MasqueRegions(), "Item")
     self.added[b.button] = group
+    texels:Unsharpen(b.button)
   end
 
   events:RegisterMessage('vendor/NewButton', function(_, b)
     self.vendorButtons[b] = true
     skinVendor(b)
+  end)
+
+  -- A card restyles itself on a grid it was not styled for (NextVendorButton:Fit), drawing its icon,
+  -- count and highlight over the skin: skinned again, so Masque's skin goes last, as after a theme.
+  events:RegisterMessage('vendor/Updated', function(_, b)
+    if not sonata:UsesMasque() then return end
+    local group = self.groups["Vendor"]
+    if self.added[b.button] == group then
+      group:ReSkin(b.button)
+      texels:Unsharpen(b.button)
+    else
+      skinVendor(b)
+    end
+  end)
+
+  -- A BetterBags Next theme can resize them (its icons and price row, next-themes.md §6), and Masque
+  -- sizes a skin to the button when it skins it (Masque 12.1.0 Core.lua UpdateScale), so each Next
+  -- theme applied skins them again. (Bag item buttons re-skin on item/Updated: a resized one draws in
+  -- full, itemProto:SetSize.)
+  events:RegisterMessage('sonata/NextThemeChanged', function()
+    if not sonata:UsesMasque() then return end
+    local group = self.groups["Vendor"]
+    for b in pairs(self.vendorButtons) do
+      if self.added[b.button] == group then
+        group:ReSkin(b.button)
+        texels:Unsharpen(b.button)
+      else
+        skinVendor(b)
+      end
+    end
   end)
 
   -- BetterBags Next's guild bank buttons (next/guildbutton.lua) are Blizzard's own item buttons, made
@@ -133,6 +169,7 @@ function masque:OnEnable()
       self.added[b.button] = group
     end
     self:ReapplyBlend(b.button)
+    texels:Unsharpen(b.button)
   end
 
   events:RegisterMessage('guild/NewButton', function(_, b)
@@ -179,6 +216,7 @@ function masque:OnEnable()
     local group = bag.kind == const.BAG_KIND.BANK and self.groups["Bank"] or self.groups["Backpack"]
     group:AddButton(bag.frame)
     bag.frame.IconBorder:SetBlendMode("BLEND")
+    texels:Unsharpen(bag.frame)
   end)
 
   events:RegisterMessage('bagbutton/Clearing', function(_, bag)
@@ -191,6 +229,15 @@ function masque:OnEnable()
   print("BetterBags: Masque integration enabled.")
 end
 
+-- IsSkinned says whether Masque places a button's parts: the button is in one of BetterBags' Masque groups.
+-- A group turned off in Masque's options places them too, with Masque's base skin (Masque 12.1.0
+-- Core/Group.lua, __Disable). BetterBags Next's item fitter leaves those parts to Masque (next/itemfit.lua).
+---@param button Frame
+---@return boolean
+function masque:IsSkinned(button)
+  return self.added ~= nil and self.added[button] ~= nil
+end
+
 ---@param button Button|ItemButton
 function masque:ReapplyBlend(button)
   local blend = button.IconBorder:GetBlendMode()
@@ -201,9 +248,14 @@ function masque:ReapplyBlend(button)
   end
 end
 
+-- OnSkinChange is Masque's callback once it has skinned a group again for an option changed (a skin chosen, the
+-- group turned off or on, reset: Core/Group.lua __FireCB). Its Buttons map each button to its regions.
 ---@param group MasqueGroup
 function masque:OnSkinChange(group)
   for _, button in pairs(group.Buttons) do
     self:ReapplyBlend(button)
+  end
+  for button in pairs(group.Buttons) do
+    texels:Unsharpen(button)
   end
 end

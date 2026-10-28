@@ -12,7 +12,7 @@ does two things:
 Requires [Git for Windows](https://git-scm.com/download/win) and collaborator access.
 
 1. Close WoW.
-2. In `World of Warcraft\_classic_beta_\Interface`, rename `AddOns` to `AddOns-old`.
+2. In `World of Warcraft\_forever_\Interface`, rename `AddOns` to `AddOns-old`.
 3. From `Interface`, run `git clone https://github.com/wvince/z-settings.git AddOns`.
 4. Optional: copy personal addons from `AddOns-old` into `AddOns`.
 5. Start WoW, click Apply in the popup and press the key right of Tab (QWERTY or Belgian AZERTY).
@@ -75,21 +75,6 @@ Save right before copying: everything comes from the save, except addon settings
 characters already share (same account, or linked `SavedVariables` folders). Those stay as they are, and
 only the saved character's AceDB profile and character data move over. Addons that store characters
 another way keep this character's own entry. Saves stay on this PC and are never published.
-
-## Moving to a new game version
-
-`./move` copies this install's whole setup into another one, by default `_forever_` next to it: the
-shared addons as a git checkout, the addons git ignores, every account's addon settings (Questie's
-included) and the character saves. Run it from the old install's `AddOns`, before that install is
-removed.
-
-1. On each character to bring along: `/z save`, then log out.
-2. Start the new game version once, so its folder exists, then close every WoW window.
-3. In the old `AddOns`: `./publish` if anything changed, then `./move` (or `./move <path to install>`).
-4. In the new game, on your character: `/z copy`, pick the character, click Copy.
-
-It stops without changing anything while WoW runs or this folder holds unpublished changes. What the
-new install had goes into one `before-move-<time>` folder there; nothing is deleted.
 
 ## Publishing
 

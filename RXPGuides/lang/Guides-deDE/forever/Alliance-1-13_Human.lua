@@ -4,6 +4,7 @@ if faction == "Horde" then return end
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 #season 0,1
 << Alliance
 #name 1-6 Nordhain
@@ -760,7 +761,7 @@ step
     #completewith RnR
     .isOnQuest 91772
     .goto 1429/0,-46.00,-9044.61,5 >>Klickt die grünen |cRXP_PICK_Koboldspuren|r auf dem Boden , während ihr nach Goldhain reist
-    .use 247970 
+    .use 247970
     .complete 91772,1 -- Followed Kobold Tracks 6/6
     .disablecheckbox
 step
@@ -774,6 +775,7 @@ step
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 #season 0,1
 #version 1
 << Alliance
@@ -1179,10 +1181,8 @@ step << Warrior/Paladin/Rogue
     #optional
     #label RoughStone1
     #completewith NecklaceStart
-    >>Tötet |cRXP_ENEMY_Koboldtunnelgräber|r und |cRXP_ENEMY_Koboldminenarbeiter|r. Öffnen |cRXP_PICK_Ramponierte Truhe|r. Plündert sie für |T135232:0|t|cRXP_LOOT_[Rauer Stein]|r << Warrior/Rogue
-    >>Tötet |cRXP_ENEMY_Koboldtunnelgräber|r und |cRXP_ENEMY_Kobold Miners|r. Öffnen |cRXP_PICK_Ramponierte Truhe|r. Plündert sie für |T135232:0|t|cRXP_LOOT_[Rauer Stein]|r und |T132889:0|t|cRXP_LOOT_[Leinenstoff]|r << Paladin
+    >>Tötet |cRXP_ENEMY_Koboldtunnelgräber|r und |cRXP_ENEMY_Koboldminenarbeiter|r. Öffnen |cRXP_PICK_Ramponierte Truhe|r. Plündert sie für |T135232:0|t|cRXP_LOOT_[Rauer Stein]|r
     .collect 2835,1 --Rough Stone (1+)
-    .collect 2589,1 << Paladin --Linen Cloth (1+)
     .itemcount 2862,<1 << Rogue/Warrior --Rough Sharpening Stone (<1)
     .itemcount 3239,<1 << Paladin --Rough Weightstone (<1)
     .train 2018,3 --Blacksmithing Trained
@@ -1192,17 +1192,15 @@ step << Warrior/Paladin/Rogue
     #label RoughStoneCraft1
     #completewith NecklaceStart
     +|T136241:0|t[Schmiedet] |cRXP_WARN_den|r |T135232:0|t|cRXP_LOOT_[Rauer Stein]|r |cRXP_WARN_zu|r |T135248:0|t[Rauer Wetzstein] << Warrior/Rogue
-    +|T136241:0|t[Schmiede] |cRXP_WARN_den|r |T135232:0|t|cRXP_LOOT_[Rauer Stein]|r |cRXP_WARN_und|r |T132889:0|t|cRXP_LOOT_[Leinenstoff]|r |cRXP_WARN_zu|r |T135255:0|t[Rauer Wetzstein] << Paladin
+    +|T136241:0|t[Schmiede] |cRXP_WARN_den|r |T135232:0|t|cRXP_LOOT_[Rauen Stein]|r |cRXP_WARN_in|r |T135255:0|t[Rauer Gewichtsstein] << Paladin
     .collect 2862,5 << Rogue/Warrior --Rough Sharpening Stone (5)
     .disablecheckbox
     .collect 3239,5 << Paladin --Rough Weightstone (5)
     .disablecheckbox << Paladin
     .collect 2835,5 --Rough Stone (5)
     .disablecheckbox
-    .collect 2589,1 << Paladin --Linen Cloth (1+)
     .disablecheckbox << Paladin
     .itemcount 2835,1 --Rough Stone (1+)
-    .itemcount 2589,1 << Paladin --Linen Cloth (1+)
     .usespell 2018
     .train 2018,3
 step << Warrior/Paladin/Rogue
@@ -1264,10 +1262,8 @@ step << Warrior/Paladin/Rogue
     #optional
     #label RoughStone2
     #completewith Lovers
-    >>Tötet |cRXP_ENEMY_Koboldtunnelgräber|r und |cRXP_ENEMY_Koboldminenarbeiter|r. Öffnen |cRXP_PICK_Ramponierte Truhe|r. Plündert sie für |T135232:0|t|cRXP_LOOT_[Rauer Stein]|r << Warrior/Rogue
-    >>Tötet |cRXP_ENEMY_Koboldtunnelgräber|r und |cRXP_ENEMY_Kobold Miners|r. Öffnen |cRXP_PICK_Ramponierte Truhe|r. Plündert sie für |T135232:0|t|cRXP_LOOT_[Rauer Stein]|r und |T132889:0|t|cRXP_LOOT_[Leinenstoff]|r << Paladin
+    >>Tötet |cRXP_ENEMY_Koboldtunnelgräber|r und |cRXP_ENEMY_Koboldminenarbeiter|r. Öffnen |cRXP_PICK_Ramponierte Truhe|r. Plündert sie für |T135232:0|t|cRXP_LOOT_[Rauer Stein]|r
     .collect 2835,1 --Rough Stone (1+)
-    .collect 2589,1 << Paladin --Linen Cloth (1+)
     .itemcount 2862,<1 << Rogue/Warrior --Rough Sharpening Stone (<1)
     .itemcount 3239,<1 << Paladin --Rough Weightstone (<1)
     .train 2018,3 --Blacksmithing Trained
@@ -1277,17 +1273,14 @@ step << Warrior/Paladin/Rogue
     #label RoughStoneCraft2
     #completewith Lovers
     +|T136241:0|t[Schmiedet] |cRXP_WARN_den|r |T135232:0|t|cRXP_LOOT_[Rauer Stein]|r |cRXP_WARN_zu|r |T135248:0|t[Rauer Wetzstein] << Warrior/Rogue
-    +|T136241:0|t[Schmiede] |cRXP_WARN_den|r |T135232:0|t|cRXP_LOOT_[Rauer Stein]|r |cRXP_WARN_und|r |T132889:0|t|cRXP_LOOT_[Leinenstoff]|r |cRXP_WARN_zu|r |T135255:0|t[Rauer Wetzstein] << Paladin
+    +|T136241:0|t[Schmiede] |cRXP_WARN_den|r |T135232:0|t|cRXP_LOOT_[Rauen Stein]|r |cRXP_WARN_in|r |T135255:0|t[Rauer Gewichtsstein] << Paladin
     .collect 2862,5 << Rogue/Warrior --Rough Sharpening Stone (5)
     .disablecheckbox
     .collect 3239,5 << Paladin --Rough Weightstone (5)
     .disablecheckbox << Paladin
     .collect 2835,5 --Rough Stone (5)
     .disablecheckbox
-    .collect 2589,1 << Paladin --Linen Cloth (1+)
-    .disablecheckbox << Paladin
     .itemcount 2835,1 --Rough Stone (1+)
-    .itemcount 2589,1 << Paladin --Linen Cloth (1+)
     .usespell 2018
     .train 2018,3
 step << Warrior/Paladin/Rogue
@@ -1349,10 +1342,8 @@ step << Warrior/Paladin/Rogue
     #optional
     #label RoughStone3
     #completewith Exchange
-    >>Tötet |cRXP_ENEMY_Koboldtunnelgräber|r und |cRXP_ENEMY_Koboldminenarbeiter|r. Öffnen |cRXP_PICK_Ramponierte Truhe|r. Plündert sie für |T135232:0|t|cRXP_LOOT_[Rauer Stein]|r << Warrior/Rogue
-    >>Tötet |cRXP_ENEMY_Koboldtunnelgräber|r und |cRXP_ENEMY_Kobold Miners|r. Öffnen |cRXP_PICK_Ramponierte Truhe|r. Plündert sie für |T135232:0|t|cRXP_LOOT_[Rauer Stein]|r und |T132889:0|t|cRXP_LOOT_[Leinenstoff]|r << Paladin
+    >>Tötet |cRXP_ENEMY_Koboldtunnelgräber|r und |cRXP_ENEMY_Koboldminenarbeiter|r. Öffnen |cRXP_PICK_Ramponierte Truhe|r. Plündert sie für |T135232:0|t|cRXP_LOOT_[Rauer Stein]|r
     .collect 2835,1 --Rough Stone (1+)
-    .collect 2589,1 << Paladin --Linen Cloth (1+)
     .itemcount 2862,<1 << Rogue/Warrior --Rough Sharpening Stone (<1)
     .itemcount 3239,<1 << Paladin --Rough Weightstone (<1)
     .train 2018,3 --Blacksmithing Trained
@@ -1363,17 +1354,14 @@ step << Warrior/Paladin/Rogue
     #label RoughStoneCraft3
     #completewith Exchange
     +|T136241:0|t[Schmiedet] |cRXP_WARN_den|r |T135232:0|t|cRXP_LOOT_[Rauer Stein]|r |cRXP_WARN_zu|r |T135248:0|t[Rauer Wetzstein] << Warrior/Rogue
-    +|T136241:0|t[Schmiede] |cRXP_WARN_den|r |T135232:0|t|cRXP_LOOT_[Rauer Stein]|r |cRXP_WARN_und|r |T132889:0|t|cRXP_LOOT_[Leinenstoff]|r |cRXP_WARN_zu|r |T135255:0|t[Rauer Wetzstein] << Paladin
+    +|T136241:0|t[Schmiede] |cRXP_WARN_den|r |T135232:0|t|cRXP_LOOT_[Rauen Stein]|r |cRXP_WARN_in|r |T135255:0|t[Rauer Gewichtsstein] << Paladin
     .collect 2862,5 << Rogue/Warrior --Rough Sharpening Stone (5)
     .disablecheckbox
     .collect 3239,5 << Paladin --Rough Weightstone (5)
     .disablecheckbox << Paladin
     .collect 2835,5 --Rough Stone (5)
     .disablecheckbox
-    .collect 2589,1 << Paladin --Linen Cloth (1+)
-    .disablecheckbox << Paladin
     .itemcount 2835,1 --Rough Stone (1+)
-    .itemcount 2589,1 << Paladin --Linen Cloth (1+)
     .usespell 2018
     .train 2018,3
     .subzoneskip 87 --Goldshire
@@ -1869,10 +1857,8 @@ step << Warrior/Paladin/Rogue
     #optional
     #label RoughStone4
     #completewith JasperlodeExplore
-    >>Tötet |cRXP_ENEMY_Koboltminenarbeiter|r. Öffnet |cRXP_PICK_Ramponierte Truhe|r. Plündert sie für |T135232:0|t|cRXP_LOOT_[Rauer Stein]|r << Warrior/Rogue
-    >>Tötet |cRXP_ENEMY_Koboltminenarbeiter|r. Öffnet |cRXP_PICK_Ramponierte Truhe|r. Plündert sie für |T135232:0|t|cRXP_LOOT_[Rauer Stein]|r und |T132889:0|t|cRXP_LOOT_[Leinenstoff]|r << Paladin
+    >>Tötet |cRXP_ENEMY_Koboltminenarbeiter|r. Öffnet |cRXP_PICK_Ramponierte Truhe|r. Plündert sie für |T135232:0|t|cRXP_LOOT_[Rauer Stein]|r
     .collect 2835,1 --Rough Stone (1+)
-    .collect 2589,1 << Paladin --Linen Cloth (1+)
     .itemcount 2862,<1 << Rogue/Warrior --Rough Sharpening Stone (<1)
     .itemcount 3239,<1 << Paladin --Rough Weightstone (<1)
     .train 2018,3 --Blacksmithing Trained
@@ -1883,17 +1869,14 @@ step << Warrior/Paladin/Rogue
     #label RoughStoneCraft4
     #completewith JasperlodeExplore
     +|T136241:0|t[Schmiedet] |cRXP_WARN_den|r |T135232:0|t|cRXP_LOOT_[Rauer Stein]|r |cRXP_WARN_zu|r |T135248:0|t[Rauer Wetzstein] << Warrior/Rogue
-    +|T136241:0|t[Schmiede] |cRXP_WARN_den|r |T135232:0|t|cRXP_LOOT_[Rauer Stein]|r |cRXP_WARN_und|r |T132889:0|t|cRXP_LOOT_[Leinenstoff]|r |cRXP_WARN_zu|r |T135255:0|t[Rauer Wetzstein] << Paladin
+    +|T136241:0|t[Schmiede] |cRXP_WARN_den|r |T135232:0|t|cRXP_LOOT_[Rauen Stein]|r |cRXP_WARN_in|r |T135255:0|t[Rauer Gewichtsstein] << Paladin
     .collect 2862,5 << Rogue/Warrior --Rough Sharpening Stone (5)
     .disablecheckbox
     .collect 3239,5 << Paladin --Rough Weightstone (5)
     .disablecheckbox << Paladin
     .collect 2835,5 --Rough Stone (5)
     .disablecheckbox
-    .collect 2589,1 << Paladin --Linen Cloth (1+)
-    .disablecheckbox << Paladin
     .itemcount 2835,1 --Rough Stone (1+)
-    .itemcount 2589,1 << Paladin --Linen Cloth (1+)
     .usespell 2018
     .train 2018,3
 step << Warrior/Paladin/Rogue
@@ -1960,10 +1943,8 @@ step << Warrior/Paladin/Rogue
     #optional
     #label RoughStone5
     #completewith Find
-    >>Tötet |cRXP_ENEMY_Koboltminenarbeiter|r. Öffnet |cRXP_PICK_Ramponierte Truhe|r. Plündert sie für |T135232:0|t|cRXP_LOOT_[Rauer Stein]|r << Warrior/Rogue
-    >>Tötet |cRXP_ENEMY_Koboltminenarbeiter|r. Öffnet |cRXP_PICK_Ramponierte Truhe|r. Plündert sie für |T135232:0|t|cRXP_LOOT_[Rauer Stein]|r und |T132889:0|t|cRXP_LOOT_[Leinenstoff]|r << Paladin
+    >>Tötet |cRXP_ENEMY_Koboltminenarbeiter|r. Öffnet |cRXP_PICK_Ramponierte Truhe|r. Plündert sie für |T135232:0|t|cRXP_LOOT_[Rauer Stein]|r
     .collect 2835,1 --Rough Stone (1+)
-    .collect 2589,1 << Paladin --Linen Cloth (1+)
     .itemcount 2862,<1 << Rogue/Warrior --Rough Sharpening Stone (<1)
     .itemcount 3239,<1 << Paladin --Rough Weightstone (<1)
     .train 2018,3 --Blacksmithing Trained
@@ -1975,17 +1956,14 @@ step << Warrior/Paladin/Rogue
     #label RoughStoneCraft5
     #completewith Find
     +|T136241:0|t[Schmiedet] |cRXP_WARN_den|r |T135232:0|t|cRXP_LOOT_[Rauer Stein]|r |cRXP_WARN_zu|r |T135248:0|t[Rauer Wetzstein] << Warrior/Rogue
-    +|T136241:0|t[Schmiede] |cRXP_WARN_den|r |T135232:0|t|cRXP_LOOT_[Rauer Stein]|r |cRXP_WARN_und|r |T132889:0|t|cRXP_LOOT_[Leinenstoff]|r |cRXP_WARN_zu|r |T135255:0|t[Rauer Wetzstein] << Paladin
+    +|T136241:0|t[Schmiede] |cRXP_WARN_den|r |T135232:0|t|cRXP_LOOT_[Rauen Stein]|r |cRXP_WARN_in|r |T135255:0|t[Rauer Gewichtsstein] << Paladin
     .collect 2862,5 << Rogue/Warrior --Rough Sharpening Stone (5)
     .disablecheckbox
     .collect 3239,5 << Paladin --Rough Weightstone (5)
     .disablecheckbox << Paladin
     .collect 2835,5 --Rough Stone (5)
     .disablecheckbox
-    .collect 2589,1 << Paladin --Linen Cloth (1+)
-    .disablecheckbox << Paladin
     .itemcount 2835,1 --Rough Stone (1+)
-    .itemcount 2589,1 << Paladin --Linen Cloth (1+)
     .usespell 2018
     .train 2018,3
     .subzoneskip 54,1
@@ -2728,7 +2706,7 @@ step << Priest
     #requires GoldshireVendor
     .goto 1429/0,33.14,-9460.75
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Priesterin Josetta|r
-    .accept 5635 >> Akzeptiert die Quest Verzweifeltes Gebet
+    .accept 94774 >> Akzeptiert die Quest Göttliche Anmut
     .trainer >> Trainiere deine Klassenfähigkeiten
     .target Priestess Josetta
     .xp <10,1
@@ -3040,7 +3018,7 @@ step
     #season 0,1 << Paladin
     .goto 1453/0,625.48,-8857.76
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Morgan Pestle|r
-    .turnin 61,1 >> Gebt die Quest Lieferung nach Sturmwind ab
+    .turnin 61 >> Gebt die Quest Lieferung nach Sturmwind ab
     >>|cRXP_WARN_Wir wählen die|r |T132383:0|t[Explosiv Raketen] |cRXP_WARN_als Belohnung. Sie verursachen ordentlichen Schaden und können für "Split-Pulls" genutzt werden, was unglaublich nützlich ist|r
     .link https://www.youtube.com/watch?v=H-IwZ6P-ldY >> |cRXP_WARN_Klickt hier für eine Videoreferenz zu "Split-Pulling". Es ist ein kurzes Video und äußerst lehrreich|r
     .target Morgan Pestle
@@ -3521,20 +3499,11 @@ step << Priest
     #completewith Prayer
     .goto 1453/0,809.52,-8579.22,20 >> Betretet die Kathedrale von Sturmwind
 step << Priest
-    #optional
     .goto 1453/0,862.89,-8519.61
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Hohepriesterin Laurena|r
-    .turnin 5635 >> Gebt die Quest Verzweifeltes Gebet ab
-    .train 8092 >> Trainiere deine Klassenfähigkeiten
+    .turnin -94774 >> Gebt die Quest Göttliche Anmut ab
+    .trainer >> Trainiere deine Klassenfähigkeiten
     .target High Priestess Laurena
-    .isOnQuest 5635
-step << Priest
-    .goto 1453/0,862.89,-8519.61
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Hohepriesterin Laurena|r
-    .turnin 5634 >> Gebt die Quest Verzweifeltes Gebet ab
-    .train 8092 >> Trainiere deine Klassenfähigkeiten
-    .target High Priestess Laurena
-    .train 13908,1
 step << Priest
     #optional
     #label Prayer
@@ -3573,7 +3542,7 @@ step << skip
     #optional
     #label TramCook1
     #completewith TramEnd
-    >>|cRXP_WARN_Geht auf die Tiefenbahn wenn sie ankommt:|r
+    >>|cRXP_WARN_Auf der Tiefenbahn, wenn sie ankommt:|r
     .cast 818 >>|cRXP_WARN_Erstellt eine|r |T135805:0|t[Einfaches Lagerfeuer] |cRXP_WARN_(unter dem Allgemeinen-Reiter eures Zauberbuches)|r
     .usespell 818
     .zoneskip Ironforge
@@ -3587,7 +3556,7 @@ step << skip
     #requires TramCook1
     #label TramCook2
     #completewith TramEnd
-    >>|cRXP_WARN_Geht auf die Tiefenbahn wenn sie ankommt:|r
+    >>|cRXP_WARN_Auf der Tiefenbahn, wenn sie ankommt:|r
     .cast 818 >>|cRXP_WARN_Erstellt eine|r |T135805:0|t[Einfaches Lagerfeuer] |cRXP_WARN_(unter dem Allgemeinen-Reiter eures Zauberbuches)|r
     .usespell 818
     .zoneskip Ironforge
@@ -3601,7 +3570,7 @@ step << skip
     #requires TramCook2
     #label TramCook3
     #completewith TramEnd
-    >>|cRXP_WARN_Geht auf die Tiefenbahn wenn sie ankommt:|r
+    >>|cRXP_WARN_Auf der Tiefenbahn, wenn sie ankommt:|r
     .cast 818 >>|cRXP_WARN_Erstellt eine|r |T135805:0|t[Einfaches Lagerfeuer] |cRXP_WARN_(unter dem Allgemeinen-Reiter eures Zauberbuches)|r
     .usespell 818
     .zoneskip Ironforge
@@ -3679,7 +3648,7 @@ step << Warrior
     #optional
     #completewith next
     .goto 1455,67.400,84.909,15,0
-    .goto 1455/0,-1234.65,-5035.67,12 >> Reise in Richtung |cRXP_FRIENDLY_Bilban Tosslespanner|r
+    .goto 1455/0,-1234.65,-5035.67,12 >> Reist in Richtung |cRXP_FRIENDLY_Bilban Tosslespanner|r
 step << Warrior
     .goto 1455/0,-1234.65,-5035.67
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Bilban Tosslespanner|r
@@ -3753,8 +3722,8 @@ step << Mage/Paladin
     .goto 1455/0,-992.68,-4742.08,20,0
     .goto 1455/0,-928.40,-4635.61,20,0 << Paladin
     .goto 1455/0,-931.8,-4627.59,20,0 << Mage
-    .goto 1455/0,-928.40,-4614.51,12 >>Reisenzu |cRXP_FRIENDLY_Dink|r << Mage
-    .goto 1455/0,-896.47,-4601.65,12 >>Reist zu |cRXP_FRIENDLY_Brandur Ironhammer|r << Paladin
+    .goto 1455/0,-928.40,-4614.51,12 >>Reist in Richtung |cRXP_FRIENDLY_Dink|r << Mage
+    .goto 1455/0,-896.47,-4601.65,12 >>Reisen zu |cRXP_FRIENDLY_Brandur Ironhammer|r << Paladin
 step << Mage
     .goto 1455/0,-928.40,-4614.51
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprecht mit |cRXP_FRIENDLY_Dink|r innerhalb
@@ -3827,7 +3796,7 @@ step
 --logout skip - remove if logout skips re-added
 step
     .goto 1426/0,-682.300,-5489.000
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprecht mit |cRXP_FRIENDLY_Beldin Steelgrill::1376|r 
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprecht mit |cRXP_FRIENDLY_Beldin Steelgrill::1376|r
     .target Beldin Steelgrill::1376
     .accept 96408 >>Akzeptiert die Quest Ein Besucher in Dun Morogh
 step
@@ -3995,11 +3964,17 @@ step
     .goto 1426/0,-1679.89,-5728.88,40,0
     .goto 1426/0,-1675.95,-5597.22,25,0
     .goto 1426/0,-1679.89,-5728.88
-    >>Tötet |cRXP_ENEMY_Schädelhauer der Felsenkiefer|r und |cRXP_ENEMY_Knochenknacker der Felsenkiefer|r in der Höhle
+    >>Tötet |cRXP_ENEMY_Schädelhauer der Felsenkiefer|r und |cRXP_ENEMY_Knochenknacker der Felsenkiefer|r in der Höhle. Plündert sie für |T132621:0|t[|cRXP_LOOT_Leeres Pulverfass|r]
+    .use 268548 >> |cRXP_WARN_Benutzt das|r |T132621:0|t[|cRXP_LOOT_Leeres Pulverfass|r] |cRXP_WARN_um die Quest zu starten|r
+    >>|cRXP_WARN_HINWEIS: Dieser Gegenstand hat eine niedrige Drop-Rate. Überspringt diesen Schritt, wenn ihr es nicht findet|r
     .complete 432,1 --Kill Rockjaw Skullthumper (x6)
     .mob +Rockjaw Skullthumper
     .complete 433,1 --Kill Rockjaw Bonesnapper (x10)
     .mob +Rockjaw Bonesnapper
+    .collect 268548,1,95213,1 -- Empty Powder Keg (1)
+    .disablecheckbox
+    .accept 95213 >> Akzeptiert die Quest Gestohlenes Sprengpulver
+    .disablecheckbox
 step
     #label QuarryEnd
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprecht mit |cRXP_FRIENDLY_Großknecht Stonebrow|r und |cRXP_FRIENDLY_Senator Mehr Stonehallow|r
@@ -4009,12 +3984,32 @@ step
     .turnin 433 >> Gebt die Quest Im Dienste des Volkes ab
     .goto 1426/0,-1579.96,-5714.73
     .target +Senator Mehr Stonehallow
+step
+    .isOnQuest 95213
+    .goto 1426/0,-1606.02,-5676.35
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprecht mit |cRXP_FRIENDLY_Steinbruchmeister Thesten|r
+    .turnin 95213 >> Gebt die Quest Gestohlenes Sprengpulver ab
+    .accept 95214 >> Akzeptiert die Quest Gestohlenes Sprengpulver
+    .target Quarrymaster Thesten
+step
+    #optional
+    .isQuestTurnedIn 95213
+    .goto 1426/0,-1606.02,-5676.35
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprecht mit |cRXP_FRIENDLY_Steinbruchmeister Thesten|r
+    .accept 95214 >> Akzeptiert die Quest Gestohlenes Sprengpulver
+    .target Quarrymaster Thesten
 step << !Warrior !Rogue !Paladin !Hunter
     .goto 1426/0,-1577.16,-5671.20
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprecht mit |cRXP_FRIENDLY_Kazan Mogosh|r
     .vendor >> |cRXP_BUY_Kauft bis zu 20|r |T132815:0|t[Eiskalte Milch] |cRXP_BUY_von ihm|r
     .target Kazan Mogosh
     .xp >15,1
+step
+    .isOnQuest 95214
+    #completewith SpyMap
+    >>Tötet |cRXP_ENEMY_Wegelagerer der Felsenkiefer|r. Plündert sie für |cRXP_LOOT_Gestohlenes Sprengpulver|r
+    .complete 95214,1 -- Stolen Blasting Powder (16)
+    .mob Rockjaw Ambusher
 step
     #completewith OII
     >>Tötet |cRXP_ENEMY_Wegelagerer der Felsenkiefer|r. Plündert sie für |T132621:0|t[|cRXP_LOOT_Leeres Pulverfass|r]
@@ -4024,6 +4019,7 @@ step
     .accept 95213 >> Akzeptiert die Quest Gestohlenes Sprengpulver
     .mob Rockjaw Ambusher
 step
+    #label SpyMap
     .goto 1426/0,-2009.87,-5860.22,40,0
     .goto 1426/0,-2034.49,-5922.60
     >>Tötet |cRXP_ENEMY_Spion der Dunkeleisenzwerge|r. Plündert sie für |T237385:0|t[|cRXP_LOOT_Dunkeleisenkarte |r]
@@ -4032,6 +4028,24 @@ step
     .collect 274268,1,96391,1 -- Dark Iron Map (1)
     .accept 96391 >> Akzeptiert die Quest Karte des Untergrunds
     .mob Dark Iron Spy
+step
+    .isOnQuest 95214
+    #loop
+    .goto 1426/0,-1881.82,-5735.45,50,0
+    .goto 1426/0,-1832.57,-5571.28,50,0
+    .goto 1426/0,-1724.22,-5636.95,50,0
+    .goto 1426/0,-1881.82,-5735.45,0
+    .goto 1426/0,-1832.57,-5571.28,0
+    .goto 1426/0,-1724.22,-5636.95,0
+    >>Tötet |cRXP_ENEMY_Wegelagerer der Felsenkiefer|r. Plündert sie für |cRXP_LOOT_Gestohlenes Sprengpulver|r
+    .complete 95214,1 -- Stolen Blasting Powder (16)
+    .mob Rockjaw Ambusher
+step
+    .isQuestComplete 95214
+    .goto 1426/0,-1606.02,-5676.35
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprecht mit |cRXP_FRIENDLY_Steinbruchmeister Thesten|r
+    .turnin 95214 >> Gebt die Quest Gestohlenes Sprengpulver ab
+    .target Quarrymaster Thesten
 step
     #label OII
     .goto 1426/0,-1394.24,-5797.83
@@ -4097,7 +4111,7 @@ step
 step << Rogue
     #optional
     #completewith next
-    +|cRXP_WARN_Legt|r |T135641:0|t[Handwerkerdolch] |cRXP_WARN_in eurer Nebenhand an|r
+    +|cRXP_WARN_Legt den|r |T135641:0|t[Handwerkerdolch] |cRXP_WARN_in eurer Nebenhand an|r
     .use 2218
     .itemcount 2218,1
     .itemStat 17,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<6.8
@@ -4109,6 +4123,7 @@ step
 
 RXPGuides.RegisterGuide([[
 #forever
+#disabledungeons
 #season 0,1
 #version 1
 << Alliance
@@ -4613,9 +4628,6 @@ step << Human Warrior
     .target Bilban Tosslespanner
     .zoneskip Ironforge,1
 
-step -- dont delete
-    #label NormalRouteEnd
-
 step
     .hs >> Ruhestein nach Sturmwind
     .zoneskip Stormwind City
@@ -4670,10 +4682,9 @@ step << Warlock/Mage/Rogue/Priest/Warrior/Paladin
     #optional
     .goto 1453/0,613.0,-8796.03
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Woo Ping|r
-    .trainer >>Erlerne 1h Schwerter und Stäbe << Warlock/Mage
-    .trainer >>Erlernt 1h Schwerter << Rogue
-    .trainer >>Erlernt Stäbe << Priest
-    .trainer >>Erlernt 2h Schwerter << Warrior/Paladin
+    .train 201 >>Erlernt 1h Schwerter << Warlock/Mage/Rogue
+    .train 227 >>Erlernt Stäbe << Warlock/Mage/Priest
+    .train 202 >>Erlernt 2h Schwerter << Warrior/Paladin
     .target Woo Ping
 step
     .isOnQuest 6261
@@ -4845,6 +4856,9 @@ step << Rogue
     .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<8.7
     .xp <14,1
 
+step -- dont delete
+    #label NormalRouteEnd
+
 --Hunter going Darkshore, rest Westfall
 step << Hunter
     .goto 1453/0,765.700,-8804.000
@@ -4859,12 +4873,12 @@ step << Hunter
     .target Gilbert Gray::267118
     .accept 95065 >>Akzeptiert die Quest Zeit zu fischen
     .turnin 95065 >>Gebt die Quest Zeit zu fischen ab
-step << Hunter
+step << Hunter skip
     #optional
     #requires DockTravel
     #label DarkshoreCook1
     #completewith DarkshoreBoat
-    >>|cRXP_WARN_Auf dem Boot, wenn es gerade angekommen ist, oder am Dock, wenn das Boot gerade abgefahren ist:|r
+    >>|cRXP_WARN_Während des Wartens auf das Boot am Dock:|r
     .cast 818 >>|cRXP_WARN_Erstellt ein|r |T135805:0|t[Einfaches Lagerfeuer] |cRXP_WARN_(in eurem Berufe-Buch)|r
     .usespell 818
     .zoneskip Darkshore
@@ -4873,12 +4887,12 @@ step << Hunter
     .itemcount 4470,1 --Simple Wood (1+)
     .itemcount 4471,1 --Flint and Tinder (1)
     .skill cooking,50,1 --XX Shows if cooking skill is <50
-step << Hunter
+step << Hunter skip
     #optional
     #requires DarkshoreCook1
     #label DarkshoreCook2
     #completewith DarkshoreBoat
-    >>|cRXP_WARN_Auf dem Boot, wenn es gerade angekommen ist, oder am Dock, wenn das Boot gerade abgefahren ist:|r
+    >>|cRXP_WARN_Während des Wartens auf das Boot am Dock:|r
     .cast 818 >>|cRXP_WARN_Erstellt ein|r |T135805:0|t[Einfaches Lagerfeuer] |cRXP_WARN_(in eurem Berufe-Buch)|r
     .usespell 818
     .zoneskip Darkshore
@@ -4887,12 +4901,12 @@ step << Hunter
     .itemcount 4470,1 --Simple Wood (1+)
     .itemcount 4471,1 --Flint and Tinder (1)
     .skill cooking,50,1 --XX Shows if cooking skill is <50
-step << Hunter
+step << Hunter skip
     #optional
     #requires DarkshoreCook2
     #label DarkshoreCook3
     #completewith DarkshoreBoat
-    >>|cRXP_WARN_Auf dem Boot, wenn es gerade angekommen ist, oder am Dock, wenn das Boot gerade abgefahren ist:|r
+    >>|cRXP_WARN_Während des Wartens auf das Boot am Dock:|r
     .cast 818 >>|cRXP_WARN_Erstellt ein|r |T135805:0|t[Einfaches Lagerfeuer] |cRXP_WARN_(in eurem Berufe-Buch)|r
     .usespell 818
     .zoneskip Darkshore
@@ -4901,7 +4915,7 @@ step << Hunter
     .itemcount 4470,1 --Simple Wood (1+)
     .itemcount 4471,1 --Flint and Tinder (1)
     .skill cooking,50,1 --XX Shows if cooking skill is <50
-step << Hunter
+step << Hunter skip
     #optional
     #requires DarkshoreCook3
     #label DarkshoreCook4
@@ -4916,7 +4930,7 @@ step << Hunter
     .itemcount 2672,1 --Stringy Wolf Meat (1+)
     .itemcount 4471,1 --Flint and Tinder (1)
     .skill cooking,50,1
-step << Hunter
+step << Hunter skip
     #optional
     #requires DarkshoreCook4
     #label DarkshoreCook5
@@ -4929,7 +4943,7 @@ step << Hunter
     .itemcount 2672,1 --Stringy Wolf Meat (1)
     .itemcount 4471,1 --Flint and Tinder (1)
     .skill cooking,50,1
-step << Hunter
+step << Hunter skip
     #optional
     #requires DarkshoreCook5
     #label DarkshoreCook6

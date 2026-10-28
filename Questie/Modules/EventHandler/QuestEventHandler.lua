@@ -73,19 +73,24 @@ local QUEST_LOG_RETRY_MAX_DELAY = 320 -- seconds; 20, 40, 80, 160, then 320
 local questLogRetryDelay = MARKER_EVENT_TIMEFRAME
 
 -- QUEST_LOG_UPDATE can fire every second and the combat queue does not drain in combat.
--- Keep at most one queued rebuild; it reads current data when it runs.
+-- Keep at most one queued update; it reads current data when it runs.
 local trackerUpdateQueued = false
+local trackerUpdateForced = false
 
----Queues one tracker rebuild unless one is already waiting in the combat queue.
-local function _QueueTrackerUpdate()
+---Queues one tracker update unless one is already waiting in the combat queue.
+---@param onlyIfChanged boolean? See QuestieTracker:Update. A forced request sharing the queued update keeps it forced.
+local function _QueueTrackerUpdate(onlyIfChanged)
+    trackerUpdateForced = trackerUpdateForced or not onlyIfChanged
     if trackerUpdateQueued then
         return
     end
     trackerUpdateQueued = true
     QuestieCombatQueue:Queue(function()
-        -- Clear first so events during the rebuild can queue the next one.
+        local forced = trackerUpdateForced
+        -- Clear first so events during the update can queue the next one.
         trackerUpdateQueued = false
-        QuestieTracker:Update()
+        trackerUpdateForced = false
+        QuestieTracker:Update(not forced)
     end)
 end
 
@@ -359,6 +364,14 @@ end
 function QuestEventHandler.QuestTurnedIn(questId, xpReward, moneyReward)
     Questie.Debug(Questie.DEBUG_DEVELOP, "[Quest Event] QUEST_TURNED_IN", xpReward, moneyReward, questId)
 
+    if questLog[questId] and questLog[questId].lateTurnInExpected then
+        -- The late event of a quest MarkQuestAsAbandoned found flagged completed and turned in already. Running it
+        -- again would repeat the Journey entry and the announcement. Only that turn-in is skipped, once: a later one
+        -- of the same quest is real, e.g. a repeatable turned in without being accepted.
+        questLog[questId] = nil
+        return
+    end
+
     if questLog[questId] and questLog[questId].timer then
         -- Cancel the timer so the quest is not marked as abandoned
         questLog[questId].timer:Cancel()
@@ -424,6 +437,9 @@ function QuestEventHandler.QuestRemoved(questId)
     -- was abandoned
     questLog[questId] = {
         state = QUEST_LOG_STATES.QUEST_REMOVED,
+        -- Kept when QUEST_TURNED_IN comes after: the quest has left the game's log, so a scan finding it there again
+        -- has found a new acceptance.
+        leftLog = true,
         timer = C_Timer.NewTicker(1, function()
             _QuestEventHandler:MarkQuestAsAbandoned(questId)
         end, 1)
@@ -434,6 +450,16 @@ end
 function _QuestEventHandler:MarkQuestAsAbandoned(questId)
     Questie.Debug(Questie.DEBUG_DEVELOP, "QuestEventHandler:MarkQuestAsAbandoned")
     if questLog[questId] and questLog[questId].state == QUEST_LOG_STATES.QUEST_REMOVED then
+        -- Forever can report QUEST_TURNED_IN seconds or a minute after QUEST_REMOVED, or not at all. The server flags a
+        -- turned-in quest completed by QUEST_REMOVED; an abandoned one stays unflagged. A quest Questie already counts
+        -- as complete cannot be told apart by the flag, so it keeps the abandon path.
+        if QuestieCompat.IsQuestFlaggedCompleted(questId) and not Questie.db.char.complete[questId] then
+            Questie.Debug(Questie.DEBUG_INFO, "Quest:", questId, "is flagged completed: turned in")
+            QuestEventHandler.QuestTurnedIn(questId)
+            questLog[questId].lateTurnInExpected = true
+            return
+        end
+
         Questie.Debug(Questie.DEBUG_INFO, "Quest:", questId, "was abandoned")
 
         QuestLogCache.RemoveQuest(questId)
@@ -470,15 +496,15 @@ function QuestEventHandler.QuestLogUpdate()
         _QuestEventHandler:UpdateAllQuests(true)
     end
 
-    -- Native membership and loading titles can change even when no objective scan is needed.
-
     -- Don't update tracker if we're in a pet battle
     if Expansions.Current >= Expansions.MoP and Questie.db.profile.hideTrackerInPetBattles and C_PetBattles and C_PetBattles.IsInBattle() then
         Questie.Debug(Questie.DEBUG_DEVELOP, "[Quest Event] Skipped tracker update - in pet battle")
         return
     end
 
-    _QueueTrackerUpdate()
+    -- Native membership and loading titles can change even when no objective scan is needed.
+    -- The tracker compares its quest data and skips the layout when nothing changed.
+    _QueueTrackerUpdate(true)
 end
 
 --- Fires whenever a quest objective progressed
@@ -501,6 +527,15 @@ function QuestEventHandler.QuestAutoComplete(questId)
     if Questie.db.profile.trackerEnabled then
         QuestieCombatQueue:Queue(WatchFrameHook.Hide)
         AutoCompleteFrame.ShowAutoComplete(questId)
+    end
+end
+
+--- Fires for any achievement or quest criteria progress, hundreds of times per session. Criteria-tree objectives,
+--- e.g. Forever's duel and emote quests, progress with only this event and QUEST_LOG_UPDATE. It is a marker only while
+--- such an objective is unfinished, so other sessions do not rescan the quest log more often.
+function QuestEventHandler.CriteriaUpdate()
+    if QuestLogCache.HasUnfinishedCriteriaObjective() then
+        lastMarkerQuestEventTime = GetTime()
     end
 end
 
@@ -553,7 +588,27 @@ function _QuestEventHandler:UpdateAllQuests(doRetryWithoutChanges)
         end
     end
 
-    local cacheMiss, changes = QuestLogCache.CheckForChanges(questIdsToCheck)
+    local cacheMiss, changes, _, questIdsUnlisted = QuestLogCache.CheckForChanges(questIdsToCheck)
+    -- A quest can join the game's log without a QUEST_ACCEPTED Questie saw: the server's quest log arrived after
+    -- startup filled the cache, or the accept fired before the event was registered. Adopt it as at login, without a
+    -- Journey entry or announcement: Questie cannot tell a missed accept from a quest the log already had.
+    -- A quest turned in after its QUEST_REMOVED keeps its entry, e.g. for a late QUEST_TURNED_IN, and can be adopted
+    -- too. Between a QUEST_TURNED_IN and its QUEST_REMOVED the quest is still in the log: it is not adopted again.
+    local adopted = {}
+    for questId in pairs(questIdsUnlisted or {}) do
+        local entry = questLog[questId]
+        if not entry or (entry.state == QUEST_LOG_STATES.QUEST_TURNED_IN and entry.leftLog) then
+            adopted[questId] = true
+        end
+    end
+    if next(adopted) then
+        QuestEventHandler.InitQuestLogStates(adopted)
+        local adoptedCacheMiss, adoptedChanges = QuestLogCache.CheckForChanges(adopted)
+        cacheMiss = cacheMiss or adoptedCacheMiss
+        for questId, objIds in pairs(adoptedChanges) do
+            changes[questId] = objIds
+        end
+    end
     -- A successful accepted-quest scan does not mean pending accepts are ready. Keep the fallback for either
     -- case; otherwise a new quest could remain title-only forever if Blizzard sends no further event.
     if cacheMiss or pendingAccept then
@@ -564,25 +619,22 @@ function _QuestEventHandler:UpdateAllQuests(doRetryWithoutChanges)
 
     if next(changes) then
         for questId, objIds in pairs(changes) do
-            if (not QuestiePlayer.currentQuestlog[questId]) then
-                -- If quests are not in the cache right after login (e.g. the API is really slow), they are not added to the player's quest log.
-                -- We then add them to the player's quest log so they can be updated.
-                local quest = QuestieDB.GetQuest(questId)
-                if not (Questie.IsSoD or Questie.IsForever) then
-                    if quest then
-                        Questie.Debug(Questie.DEBUG_INFO, "Quest:", questId, "is not in the player's quest log, but is in the questLog of QuestEventHandler")
-                        QuestiePlayer.currentQuestlog[questId] = quest
-                    else
-                        Questie.Error("Quest", questId, "is not in the player's quest log and not in the QuestDB. Please report this on Github or Discord!")
-                    end
-                end
-            end
-
             Questie.Debug(Questie.DEBUG_INFO, "Quest:", questId, "will be updated")
             QuestieQuest:SetObjectivesDirty(questId)
 
             QuestieNameplate:UpdateNameplate()
-            QuestieQuest:UpdateQuest(questId)
+            if QuestiePlayer.currentQuestlog[questId] then
+                QuestLifecycle:UpdateQuest(questId)
+            elseif QuestieDB.GetQuest(questId) then
+                -- Not in the player's quest log: adopted above, or not in the cache right after login (e.g. the API is
+                -- really slow). AdoptQuest adds and draws it as at login, completion included, so no UpdateQuest here.
+                Questie.Debug(Questie.DEBUG_INFO, "Quest:", questId, "is not in the player's quest log, but is in the questLog of QuestEventHandler")
+                QuestLifecycle:AdoptQuest(questId)
+                -- The local player now has this quest, so stop drawing it as a party member's objective.
+                QuestiePartyObjectives:ScheduleUpdate(questId)
+            elseif not (Questie.IsSoD or Questie.IsForever) then
+                Questie.Error("Quest", questId, "is not in the player's quest log and not in the QuestDB. Please report this on Github or Discord!")
+            end
             QuestieTracker.UpdateQuestLines(questId)
 
             QuestieAPI.PropagateQuestUpdate(questId, objIds, QuestieAPI.Enums.QuestUpdateTriggerReason.QUEST_UPDATED)

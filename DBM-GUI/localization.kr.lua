@@ -3,6 +3,7 @@ if GetLocale() ~= "koKR" then return end
 if not DBM_GUI_L then DBM_GUI_L = {} end
 local L = DBM_GUI_L
 
+L.MainFrame							= "Deadly Boss Mods" -- OPTIONAL
 L.TranslationByPrefix				= "번역: "
 L.TranslationBy 					= "Elnarfim"
 L.Website							= "최신 소식/업데이트 정보는 MysticalOS를 팔로우하면 볼 수 있습니다. |cFF73C2FBhttps://allmylinks.com/mysticalos|r 보내주신 성원에 감사드립니다!"
@@ -25,6 +26,7 @@ L.Tools_LatencyCheck				= "지연시간 검사"
 L.Tools_DurabilityCheck				= "내구도 검사"
 L.Tools_KeystoneCheck				= "쐐기돌 확인"
 L.Tools_GearCheck					= "장비 검사"
+L.Tools_ConsumablesCheck			= "소모품 검사"
 
 L.Tools_BreakTimer					= "휴식 타이머 시작"
 L.Tools_PizzaTimer					= "일반 타이머 시작"
@@ -35,6 +37,8 @@ L.Tools_KeystoneArea				= "쐐기돌"
 L.Tools_ShowKeystoneOnComplete		= "신화+가 완료되면 쐐기돌 창 자동 표시"
 L.Tools_AddChallengeTeleports		= "평점 UI에 순간이동 주문 추가"
 L.Tools_OverrideKeystoneSlash		= "쐐기돌 프레임 슬래시 명령어(/keystone, /keys, /key) 독점 사용\n(알림: 이 옵션을 체크하지 않으면 DBM은 다른 애드온보다 우선해서 명령어에 할당을 시도하지 않습니다. 그러나 다른 애드온 중에 해당 명령어를 사용하는 것이 없다면 DBM이 일단 등록은 해놓을 것입니다)"
+L.Tools_ConsumablesArea				= "소모품 검사"
+L.Tools_ShowConsumablesOnReadyCheck	= "전투 준비 확인이 시작되면 소모품 검사 프레임을 자동으로 표시"
 
 L.Tools_Duration					= "지속시간"
 L.Tools_Message						= "타이머 메시지"
@@ -150,8 +154,8 @@ L.CustomOptions						= "이 카테고리엔 주문이나 도감(journal) ID가 �
 --
 
 -- Panel: Common Trash
-L.GenericTrashForeverDungeonDescription = "일반 주문 시전 경고이며 기본적으로 던전의 모든 레벨 일반몹에 활성화됩니다. 보스 경고는 공통 경고 사용이 명시적으로 등록된 보스 모듈이 활성 상태이고 사용 설정이 켜져 있어야 합니다. 던전과 공격대 설정은 독립되어 있으며 핵심 설정 프로필에 저장됩니다. 일반 경고 효과음을 사용합니다. 내가 선택한 대상에는 경고 도배 방지가 적용되지 않습니다."
-L.GenericTrashForeverRaidDescription	= "일반 주문 시전 경고이며 기본적으로 공격대의 모든 레벨 일반몹에 활성화됩니다. 보스 경고는 공통 경고 사용이 명시적으로 등록된 보스 모듈이 활성 상태이고 사용 설정이 켜져 있어야 합니다. 던전과 공격대 설정은 독립되어 있으며 핵심 설정 프로필에 저장됩니다. 일반 경고 효과음을 사용합니다. 내가 선택한 대상에는 경고 도배 방지가 적용되지 않습니다."
+L.GenericTrashForeverDungeonDescription = "일반 주문 시전 경고이며 기본적으로 모든 레벨의 던전 일반몹에서 활성화됩니다. 보스 경고에는 활성화된 보스 모듈이 필요하며 일반 경고가 명백히 등록되어 있어야 합니다. 던전과 공격대 설정은 개별적이며 따로 핵심 설정 프로필에 저장됩니다. 일반 경고 효과음을 사용합니다. 내가 선택한 대상에는 경고 도배 방지가 적용되지 않습니다."
+L.GenericTrashForeverRaidDescription	= "일반 주문 시전 경고이며 기본적으로 모든 레벨의 공격대 일반몹에서 활성화됩니다. 보스 경고에는 활성화된 보스 모듈이 필요하며 일반 경고가 명백히 등록되어 있어야 합니다. 던전과 공격대 설정은 개별적이며 따로 핵심 설정 프로필에 저장됩니다. 일반 경고 효과음을 사용합니다. 내가 선택한 대상에는 경고 도배 방지가 적용되지 않습니다."
 L.GenericTrashForeverEnabled		= "모든 던전에서 활성화"
 L.GenericTrashForeverRaids			= "모든 공격대에서 활성화"
 L.GenericTrashStandardCast			= "일반몹 시전"
@@ -159,9 +163,9 @@ L.GenericTrashElite					= "정예몹 시전"
 L.GenericTrashEliteFilter			= "정예몹"
 L.GenericTrashStandardMobs			= "일반몹"
 L.GenericTrashTitle					= "일반몹 공통"
-L.GenericTrashDungeonDescription	= "던전 일반몹 경고입니다. 보스 경고는 공통 경고 사용이 명시적으로 등록된 보스 모듈이 활성 상태이고 사용 설정이 켜져 있어야 합니다. 본 서버에서는 내 레벨보다 3 낮은 적부터 2 높은 적 또는 보스 레벨 적을 지원합니다. 일반몹은 상대 레벨 -3~0, 부관은 +1/+2 또는 보스 레벨(-1)입니다. 던전 설정은 독립되어 있으며 핵심 설정 프로필에 저장됩니다. 일반 경고 효과음을 사용합니다. 내가 선택한 대상에는 경고 도배 방지가 적용되지 않습니다."
-L.GenericTrashRaidDescription		= "공격대 일반몹 경고입니다. 보스 경고는 공통 경고 사용이 명시적으로 등록된 보스 모듈이 활성 상태이고 사용 설정이 켜져 있어야 합니다. 본 서버에서는 내 레벨보다 3 낮은 적부터 2 높은 적 또는 보스 레벨 적을 지원하며, 조건에 맞는 모든 적에 일반몹 설정을 적용합니다. 공격대 설정은 독립되어 있으며 핵심 설정 프로필에 저장됩니다. 일반 경고 효과음을 사용합니다. 내가 선택한 대상에는 경고 도배 방지가 적용되지 않습니다."
-L.GenericTrashDelveDescription		= "구렁 일반몹 경고입니다. 보스 경고는 공통 경고 사용이 명시적으로 등록된 보스 모듈이 활성 상태이고 사용 설정이 켜져 있어야 합니다. 내 레벨보다 3 낮은 적부터 2 높은 적 또는 보스 레벨 적을 지원합니다. 일반몹은 상대 레벨 -3~0, 부관은 +1/+2 또는 보스 레벨(-1)입니다. 구렁 설정은 독립되어 있으며 핵심 설정 프로필에 저장됩니다. 일반 경고 효과음을 사용합니다. 내가 선택한 대상에는 경고 도배 방지가 적용되지 않습니다."
+L.GenericTrashDungeonDescription	= "던전 일반몹 경고로 보스 경고엔 활성화된 보스 모듈이 필요하며 일반 경고가 명백히 등록되어 있어야 합니다. 본섭에선 나보다 3이하부터 2이상 레벨의 적 또는 보스 레벨이 해당됩니다. 일반 등급은 -3부터 0까지, 부관은 +1/+2, 보스 레벨은 (-1)입니다. 던전 설정은 독립되어 있으며 핵심 설정 프로필에 저장됩니다. 일반 경고 효과음을 사용합니다. 내가 선택한 대상에는 경고 도배 방지가 적용되지 않습니다."
+L.GenericTrashRaidDescription		= "공격대 일반몹 경고로 보스 경고엔 활성화된 보스 모듈이 필요하며 일반 경고가 명백히 등록되어 있어야 합니다. 본섭에선 나보다 3이하부터 2이상 레벨의 적 또는 보스 레벨이 해당됩니다. 조건에 맞는 모든 적은 일반 등급 설정을 사용합니다. 공격대 설정은 독립되어 있으며 핵심 설정 프로필에 저장됩니다. 일반 경고 효과음을 사용합니다. 내가 선택한 대상에는 경고 도배 방지가 적용되지 않습니다."
+L.GenericTrashDelveDescription		= "구렁 일반몹 경고로 보스 경고엔 활성화된 보스 모듈이 필요하며 일반 경고가 명백히 등록되어 있어야 합니다. 나보다 3이하부터 2이상 레벨의 적 또는 보스 레벨이 해당됩니다. 일반 등급은 -3부터 0까지, 부관은 +1/+2, 보스 레벨은 (-1)입니다. 구렁 설정은 독립되어 있으며 핵심 설정 프로필에 저장됩니다. 일반 경고 효과음을 사용합니다. 내가 선택한 대상에는 경고 도배 방지가 적용되지 않습니다."
 L.GenericTrashRaidCast				= "적 시전"
 L.GenericTrashRaidFilter				= "몹"
 L.GenericTrashEnabled				= "공통 일반몹 경고 활성화"
@@ -432,8 +436,11 @@ L.ReplacesAnnounce					= "알림 효과음 바꾸기 (참고: 페이즈 변경�
 L.ReplacesSADefault					= "기본 특수 알림 효과음 바꾸기 (사용자가 직접 지정한 효과음은 절대 바뀌지 않습니다)"
 L.Area_VoicePackAdvOptions			= "음성팩 고급 설정"
 L.Area_VPLearnMore					= "음성팩에 대한 정보 및 관련 설정 사용법 알아보기"
+L.VPLearnMore						= "|cFF73C2FBhttps://github.com/DeadlyBossMods/DBM-Retail/wiki/%5BGuide%5D-DBM-&-Voicepacks#2022-update|r" -- OPTIONAL
 L.Area_BrowseOtherVP				= "Curse에 올라와있는 다른 음성팩 보기"
+L.BrowseOtherVPs					= "|cFF73C2FBhttps://www.curseforge.com/wow/addons/search?search=dbm+voice|r" -- OPTIONAL
 L.Area_BrowseOtherCT				= "Curse에 올라와있는 카운트다운 팩 보기"
+L.BrowseOtherCTs					= "|cFF73C2FBhttps://www.curseforge.com/wow/addons/search?search=dbm+count+pack|r" -- OPTIONAL
 
 -- Panel: Event Sounds
 L.Panel_EventSounds					= "이벤트 효과음 (승리, 전멸, 기타)"
@@ -640,7 +647,6 @@ L.Area_SpamFilter_Misc				= "기타"
 L.SpamBlockNoSetIcon				= "대상에 공격대 징표를 자동으로 설정하지 않음"
 L.SpamBlockNoRangeFrame				= "거리 창을 자동으로 표시 안함"
 L.SpamBlockNoInfoFrame				= "정보 창을 자동으로 표시 안함"
-L.SpamBlockNoHudMap					= "HUD 표시 안함"
 L.SpamBlockNoYells					= "말풍선 알림 사용 안함"
 L.SpamBlockNoNoteSync				= "메모 공유 수락 안함"
 L.SpamBlockAutoGossip				= "NPC 대화 자동 수락 안함"

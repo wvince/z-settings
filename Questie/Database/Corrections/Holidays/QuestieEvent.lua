@@ -651,6 +651,14 @@ QuestieEvent.eventDateCorrections = {
             endHour = 10,
             endMinute = 0
         },
+        ["Hallow's End"] = { -- WARNING THIS DATE VARIES!!!!
+            startDate = "18/10",
+            startHour = 4, -- was active at 05:35 ingame, assuming 4 is start hour
+            startMinute = 0,
+            endDate = "1/11",
+            endHour = 4,
+            endMinute = 0,
+        },
     },
     ["TBC"] = {
         ["Noblegarden"] = { -- WARNING THIS DATE VARIES!!!! -- One day event, on the actual day of Easter.

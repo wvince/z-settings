@@ -18,11 +18,14 @@ local question = addon:GetModule('Question')
 ---@class Render: AceModule
 local render = addon:GetModule('Render')
 
----@class NextStyle: AceModule
-local style = addon:GetModule('NextStyle')
+---@class Texels: AceModule
+local texels = addon:GetModule('Texels')
 
 ---@class NextPanel: AceModule
 local nextPanel = addon:GetModule('NextPanel')
+
+---@class NextMenuButtonModule: AceModule
+local nextMenuButton = addon:GetModule('NextMenuButton')
 
 ---@class NextMerchant: AceModule
 local merchant = addon:GetModule('NextMerchant')
@@ -33,8 +36,23 @@ local vendorButton = addon:GetModule('NextVendorButton')
 ---@class NextDrag: AceModule
 local nextDrag = addon:GetModule('NextDrag')
 
+---@class NextDock: AceModule
+local nextDock = addon:GetModule('NextDock')
+
 ---@class SectionFrame: AceModule
 local sectionFrame = addon:GetModule('SectionFrame')
+
+---@class NextStyle: AceModule
+local style = addon:GetModule('NextStyle')
+
+---@class Automation: AceModule
+local automation = addon:GetModule('Automation')
+
+---@class Seller: AceModule
+local seller = addon:GetModule('Seller')
+
+---@class Context: AceModule
+local context = addon:GetModule('Context')
 
 -- NextVendor is BetterBags Next's vendor (next.md §10): a panel on the left, as the bank's, that
 -- stands in for Blizzard's merchant frame while BetterBags Next is on. It shows what the vendor
@@ -50,14 +68,9 @@ local sectionFrame = addon:GetModule('SectionFrame')
 local nextVendor = addon:NewModule('NextVendor')
 
 local TAB_BUY, TAB_BUYBACK, TAB_REPAIR = 1, 2, 3
--- How many times Classic's Sell Junk sells what junk is left, a moment apart (items lock while they
--- sell; GW2_UI sells the same way).
-local SELL_ROUNDS = 3
-local SELL_DELAY = 0.2
 -- How many items sold buyback keeps (Blizzard's BUYBACK_ITEMS_PER_PAGE); a section sale of more
 -- asks first.
 local BUYBACK_KEEPS = 12
-local REPAIR_ICONS = "Interface\\MerchantFrame\\UI-Merchant-RepairIcons"
 -- Blizzard's merchant purchase prompts, closed when the vendor closes (MerchantFrame_OnHide).
 local PROMPTS = { "CONFIRM_PURCHASE_TOKEN_ITEM", "CONFIRM_PURCHASE_ITEM_DELAYED", "CONFIRM_REFUND_TOKEN_ITEM",
   "CONFIRM_REFUND_MAX_HONOR", "CONFIRM_REFUND_MAX_ARENA_POINTS" }
@@ -73,7 +86,26 @@ local PROMPTS = { "CONFIRM_PURCHASE_TOKEN_ITEM", "CONFIRM_PURCHASE_ITEM_DELAYED"
 ---@field atMerchant boolean A vendor is open (MERCHANT_SHOW to MERCHANT_CLOSED).
 ---@field closeRequested boolean It asked the vendor to close.
 ---@field buttons table<string, NextVendorButtonFrame> This draw's buttons, by key.
+---@field offered table<string, boolean> The backpack categories docked in it this visit (OfferAutomation).
+---@field toBuy NextVendorPurchase[] What the shopping list buys here, as last drawn (profession-shopping-list.md).
+---@field listOffered boolean Its Shopping List was docked in it this visit (OfferShoppingList).
 local vendorProto = nextPanel:Extend({}, 'NextVendorPanel')
+-- A vendor's name can be any length: it is cut short to the room its header buttons leave at either
+-- size (FitTitle).
+vendorProto.fitsTitle = true
+
+-- shoppingList is the Profession Shopping List integration (integrations/professionshoppinglist.lua,
+-- which loads after this file).
+---@return ProfessionShoppingListIntegration
+local function shoppingList()
+  return addon:GetModule('ProfessionShoppingList')
+end
+
+-- shoppingListName names the section of what a shopping list buys here.
+---@return string
+local function shoppingListName()
+  return L:G("Shopping List")
+end
 
 -- mainline is whether the client runs Blizzard's retail merchant frame (retail and WoW: Forever).
 ---@return boolean
@@ -101,7 +133,10 @@ function nextVendor:Create(ctx)
   v.atMerchant = false
   v.closeRequested = false
   v.buttons = {}
-  v.content:SetCellHeight(style.ICON + style.VENDOR_PRICE)
+  v.offered = {}
+  v.toBuy = {}
+  v.listOffered = false
+  v.content:SetCards(true)
   nextDrag:RegisterSeller(v)
   self.panel = v
   return v
@@ -140,26 +175,23 @@ end
 
 ---@return NextHeaderButton[]
 function vendorProto:GetHeaderButtons()
-  local m = mainline()
   local buttons = {
-    { key = "closeButton", atlas = "uitools-icon-close", tooltip = L:G("Close"),
-      onClick = function(ctx) self:Hide(ctx) end },
-    { key = "settingsButton", atlas = "uitools-icon-settings", tooltip = L:G("Open Options Screen"),
+    { key = "closeButton", tooltip = L:G("Close"), onClick = function(ctx) self:Hide(ctx) end },
+    { key = "settingsButton", tooltip = L:G("Open Options Screen"), menuLast = true,
       onClick = function(ctx) events:SendMessage(ctx, "config/Open") end },
   }
-  if m and SetMerchantFilter ~= nil and MenuUtil ~= nil then
-    table.insert(buttons, { key = "filterButton", atlas = "ui-questtrackerbutton-filter",
-      tooltip = L:G("Filter what the vendor shows"), onClick = function() self:OpenFilter() end })
+  if mainline() and SetMerchantFilter ~= nil and MenuUtil ~= nil then
+    table.insert(buttons, { key = "filterButton", tooltip = L:G("Filter what the vendor shows"), label = L:G("Filter"),
+      onClick = function() self:OpenFilter() end })
   end
-  table.insert(buttons, { key = "sellJunkButton", atlas = m and "SpellIcon-256x256-SellJunk" or nil,
-    texture = not m and "Interface\\Icons\\INV_Misc_Coin_02" or nil, tooltip = L:G("Sell all junk"),
+  table.insert(buttons, { key = "sellJunkButton", tooltip = L:G("Sell all junk"), label = L:G("Sell Junk"),
     onClick = function() self:SellJunk() end })
-  table.insert(buttons, { key = "repairAllButton", atlas = m and "SpellIcon-256x256-RepairAll" or nil,
-    texture = not m and REPAIR_ICONS or nil, texCoords = not m and { 0.28125, 0.5625, 0, 0.5625 } or nil,
-    tooltipFunc = function() self:RepairTooltip(false) end, onClick = function() self:RepairAll(false) end })
-  table.insert(buttons, { key = "guildRepairButton", atlas = m and "SpellIcon-256x256-RepairAllGuild" or nil,
-    texture = not m and REPAIR_ICONS or nil, texCoords = not m and { 0.5625, 0.84375, 0, 0.5625 } or nil,
-    tooltipFunc = function() self:RepairTooltip(true) end, onClick = function() self:RepairAll(true) end })
+  table.insert(buttons, { key = "repairAllButton", tooltipFunc = function() self:RepairTooltip(false) end,
+    label = L:G("Repair All"), menuTooltip = function() return self:RepairText(false) end,
+    onClick = function() self:RepairAll(false) end })
+  table.insert(buttons, { key = "guildRepairButton", tooltipFunc = function() self:RepairTooltip(true) end,
+    label = L:G("Repair With Guild Funds"), menuTooltip = function() return self:RepairText(true) end,
+    onClick = function() self:RepairAll(true) end })
   return buttons
 end
 
@@ -219,34 +251,12 @@ function vendorProto:UpdateHeader()
   local _, anything = GetRepairAllCost()
   self.repairAllButton:SetShown(canRepair)
   self.guildRepairButton:SetShown(canRepair and CanGuildBankRepair())
-  self:setEnabled(self.repairAllButton, anything)
-  self:setEnabled(self.guildRepairButton, anything)
-  self:setEnabled(self.sellJunkButton, merchant:NumJunk() > 0)
+  self:SetHeaderButtonEnabled(self.repairAllButton, anything)
+  self:SetHeaderButtonEnabled(self.guildRepairButton, anything)
+  self:SetHeaderButtonEnabled(self.sellJunkButton, merchant:NumJunk() > 0)
+  -- The vendor's name (any length) stays on one line in the room right of the shown header buttons,
+  -- cut short rather than over them (FitTitle, which laying the header out runs).
   self:LayoutHeader()
-  self:fitTitle()
-end
-
--- fitTitle keeps the vendor's name (any length) on one line in the room right of the shown header
--- buttons, cut short rather than over them.
----@private
-function vendorProto:fitTitle()
-  local shown = 0
-  for _, button in ipairs(self.headerButtons) do
-    if button:IsShown() then
-      shown = shown + 1
-    end
-  end
-  local buttons = shown * 22 + math.max(0, shown - 1) * 8
-  self.title:SetWordWrap(false)
-  self.title:SetWidth(style.BODY_WIDTH - (style.PAD + 4) - (style.PAD + buttons) - 12)
-end
-
----@private
----@param button Button
----@param enabled boolean
-function vendorProto:setEnabled(button, enabled)
-  button:SetEnabled(enabled and true or false)
-  button.icon:SetDesaturated(not enabled)
 end
 
 -- RefreshTabs lists Buy and Buyback, and Repair at a vendor that repairs.
@@ -255,7 +265,7 @@ function vendorProto:RefreshTabs()
   if CanMerchantRepair() then
     table.insert(entries, { id = TAB_REPAIR, name = L:G("Repair") })
   end
-  self.tabs:SetTabs(entries)
+  self.tabs:SetTabs(self:OrderedTabs(entries))
   self.tabs:Select(self.tab)
   self.tabs.frame:Show()
 end
@@ -271,6 +281,12 @@ function vendorProto:OnTabClicked(ctx, id, button)
   self.tabs:Select(id, true)
   self.tabChanged = true
   self:Draw(ctx)
+end
+
+-- TabOrderKey saves the order of the vendor's tabs.
+---@return string
+function vendorProto:TabOrderKey()
+  return "vendor"
 end
 
 ---@return number
@@ -297,6 +313,8 @@ end
 function vendorProto:OnMerchantShow(ctx)
   self.atMerchant = true
   self.closeRequested = false
+  self.offered = {}
+  self.listOffered = false
   if ResetSetMerchantFilter then
     ResetSetMerchantFilter()
   end
@@ -309,6 +327,7 @@ end
 function vendorProto:OnMerchantClosed(ctx)
   self.atMerchant = false
   self.closeRequested = false
+  nextDock:SendBackBorrowed(self)
   ResetCursor()
   for _, which in ipairs(PROMPTS) do
     StaticPopup_Hide(which)
@@ -385,15 +404,50 @@ function vendorProto:button(key, previous)
   return b
 end
 
--- buildBuy builds the Buy tab: the vendor's items in the backpack's categories, and the player's
--- gold and the vendor's currencies for the footer.
+-- shoppingListOf builds the Shopping List (profession-shopping-list.md): what Profession Shopping List's
+-- list buys here (NextMerchant:ToBuy), each item showing how many and what they cost; nil without
+-- Profession Shopping List or with nothing on the list here. It also says which of the merchant's items
+-- it holds: they are in it, not in their categories.
+---@private
+---@param list NextVendorItem[]
+---@param previous table<string, NextVendorButtonFrame>
+---@return NextCanvasSection? section, table<number, boolean> listed
+function vendorProto:shoppingListOf(list, previous)
+  self.toBuy = merchant:ToBuy(list, shoppingList():Needs())
+  local listed = {}
+  if #self.toBuy == 0 then
+    return nil, listed
+  end
+  local buttons = {}
+  for _, purchase in ipairs(self.toBuy) do
+    listed[purchase.item.index] = true
+    local b = self:button("vendor:" .. purchase.item.index, previous)
+    b:SetBuy(purchase.item, purchase.quantity)
+    table.insert(buttons, b)
+  end
+  return { name = shoppingListName(), buttons = buttons }, listed
+end
+
+-- buildBuy builds the Buy tab: the Shopping List first, then the rest of the vendor's items in the
+-- backpack's categories, and the player's gold and the vendor's currencies for the footer.
 ---@private
 ---@param ctx Context
 ---@param previous table<string, NextVendorButtonFrame>
 ---@return NextCanvasSection[] sections, string footer, string empty
 function vendorProto:buildBuy(ctx, previous)
   local sections = {}
-  for _, s in ipairs(merchant:BuildSections(merchant:ReadItems(ctx))) do
+  local list = merchant:ReadItems(ctx)
+  local shopping, listed = self:shoppingListOf(list, previous)
+  if shopping then
+    table.insert(sections, shopping)
+  end
+  local rest = {}
+  for _, item in ipairs(list) do
+    if not listed[item.index] then
+      table.insert(rest, item)
+    end
+  end
+  for _, s in ipairs(merchant:BuildSections(rest)) do
     local buttons = {}
     for _, item in ipairs(s.items) do
       local b = self:button("vendor:" .. item.index, previous)
@@ -485,14 +539,28 @@ function vendorProto:Draw(ctx, _, callback)
   else
     sections, footer, empty = self:buildBuy(ctx, previous)
   end
+  local shown = #sections
+  -- The Shopping List waiting in the dock stays bound on the other tabs, held out of their columns, so
+  -- its card waits whichever tab shows, as a backpack section's does.
+  if self.tab ~= TAB_BUY and nextDock:EntryOf(self, shoppingListName()) ~= nil then
+    local shopping = self:shoppingListOf(merchant:ReadItems(ctx), previous)
+    if shopping then
+      table.insert(sections, 1, shopping)
+    end
+  end
   self.content:BindSections(sections)
+  -- Docked before the layout places it, the Shopping List is seated in its card at once, never shown in
+  -- the column first (asked: it showed in the list "for a split second then slides to the buy frame").
+  self:OfferShoppingList(ctx)
   for _, b in pairs(previous) do
     b:Release()
   end
   render:RenderNow(self.root, { ctx = ctx })
+  -- Its cards too, styled and skinned as they are laid out (texture-sharpening.md).
+  texels:Unsharpen(self.frame)
   self.freeText:SetText(footer)
   self.emptyText:SetText(empty)
-  self.emptyText:SetShown(#sections == 0)
+  self.emptyText:SetShown(shown == 0)
   if not self.opening then
     self.content:Cascade(self.tabChanged)
   end
@@ -503,10 +571,11 @@ function vendorProto:Draw(ctx, _, callback)
   end
 end
 
--- Wipe lets go of every button and section.
+-- Wipe lets go of every button and section, and sends back what waits in its dock.
 ---@param ctx Context
 function vendorProto:Wipe(ctx)
   local _ = ctx
+  nextDock:PanelHidden(self)
   self.content:Release()
   for _, b in pairs(self.buttons) do
     b:Release()
@@ -514,17 +583,260 @@ function vendorProto:Wipe(ctx)
   self.buttons = {}
 end
 
--- SellCursorItem sells the item on the cursor, as dropping it on Blizzard's merchant frame does
--- (its OnMouseUp): Blizzard asks first about a refundable item.
+-- OfferAutomation docks in the vendor (NextDock), while both the vendor (shown only at a merchant) and
+-- the backpack show, each backpack category that waits for the player (automation.md §4): one whose sale
+-- Auto Sell confirms (Confirm Auto Sell on) and that holds items to sell, or one holding items to
+-- destroy. Its section flies over and waits there as a section dragged onto the vendor does (the same
+-- dock, CLAUDE.md "UI Consistency" 5), in the backpack's order, each once a visit (one sent back stays
+-- back). A category with no section in the backpack's view (on another tab, or only in Recent Items) is
+-- not offered, and no sale is where the merchant buys nothing (Automation:MerchantBuys). It returns how
+-- many it docked.
+---@param ctx Context
+---@return number
+function vendorProto:OfferAutomation(ctx)
+  local backpack = addon.Bags and addon.Bags.Backpack
+  if not self:IsShown() or self.closing or backpack == nil or backpack.content == nil
+    or not backpack:IsShown() or backpack.closing then
+    return 0
+  end
+  local canvas, docked = backpack.content, 0
+  local buys = automation:MerchantBuys()
+  for _, section in ipairs(canvas.order) do
+    if section.kind == "category" and not self.offered[section.name] and not canvas:IsAway(section)
+      and not canvas:IsLeaving(section) then
+      local items = nextDrag:SectionItems(section)
+      local phase
+      if buys and #automation:SaleOffer(ctx, items) > 0 then
+        phase = "confirm"
+      elseif #automation:DestroyLeft(ctx, items) > 0 then
+        phase = "destroy"
+      end
+      if phase then
+        self.offered[section.name] = true
+        nextDock:Add(self, { section = section, source = backpack,
+          offer = self:SectionOffer(section, { automation = true, phase = phase }) })
+        docked = docked + 1
+      end
+    end
+  end
+  return docked
+end
+
+-- OfferShoppingList docks the Shopping List in the vendor (NextDock, profession-shopping-list.md), once a
+-- visit, from the draw that first binds it (on Buy), before it is laid out, so it is in its card from
+-- the start, the vendor opening or not; never as the vendor closes. It is bought with a double click. It
+-- returns whether it docked it.
+---@param ctx Context
+---@return boolean
+function vendorProto:OfferShoppingList(ctx)
+  local _ = ctx
+  if self.listOffered or self.closing then
+    return false
+  end
+  local section = self.content.byName[shoppingListName()]
+  if section == nil then
+    return false
+  end
+  self.listOffered = true
+  -- Seated at once: a section reused from the last visit is still anchored where its column left it, and
+  -- would fly from there (reported: "the items slide in from the background into the card").
+  nextDock:Add(self, { section = section, source = self, offer = self:ShoppingListOffer(), atOnce = true })
+  return true
+end
+
+-- ShoppingListOffer is what the Shopping List waits in the vendor's dock for (NextDockOffer): its card
+-- says how many items it buys and what they cost in all (NextMerchant:TotalOf), read from what was last
+-- drawn, and glows in the theme's buy color (Dock.BuyColor). A double click buys them through
+-- Profession Shopping List (BuyFromMerchant buys what the section shows, ToBuy), and the section flies
+-- into the backpack, where the items go (nowhere while the backpack is closed); once the vendor is
+-- closing it goes back. A right click sends it back to the top of Buy.
+---@return NextDockOffer
+function vendorProto:ShoppingListOffer()
+  local offer = {}
+  offer.text = function()
+    local n = #self.toBuy
+    local price, costs = merchant:TotalOf(self.toBuy)
+    return format(n == 1 and L:G("Buy %d item?") or L:G("Buy %d items?"), n),
+      format(L:G("Total: %s"), vendorButton:PriceText(price, costs)),
+      L:G("Double-click to buy · Right-click to cancel")
+  end
+  offer.color = function()
+    return style.Theme.Dock.BuyColor
+  end
+  offer.confirm = function()
+    if self.closing or not self.atMerchant then
+      return "back"
+    end
+    shoppingList():Buy()
+    return "moved"
+  end
+  offer.destination = function()
+    local backpack = addon.Bags.Backpack
+    if not backpack:IsShown() then
+      return nil
+    end
+    return backpack.scroll.frame
+  end
+  return offer
+end
+
+-- SaleOffer is what a backpack section dragged onto the vendor waits in its dock for (NextDrag docks it,
+-- NextSeller): its sale (SectionOffer).
+---@param section NextSection
+---@return NextDockOffer
+function vendorProto:SaleOffer(section)
+  return self:SectionOffer(section, {})
+end
+
+-- SectionOffer is what a backpack section waiting in the vendor's dock is for (NextDockOffer), read from
+-- its section's items as they are each time. A sale: of a dragged section, what of it the vendor buys
+-- (SaleOf), sold as it docks when buyback keeps all of it, else once double-clicked; of a category Auto
+-- Sell offers (automation), what it sells (Automation:SaleOffer), once double-clicked. The seller sells
+-- it one item at a time while the card says how far it is; once it ends the section flies into the
+-- vendor, or goes back to the backpack with what the merchant did not take (refused items stay in the
+-- bags until a merchant buys them; asked). Then, for a category, what is left to destroy, glowing in the
+-- theme's destroy color, one item per click (Automation:DestroyNext; a double click is two clicks,
+-- OnDoubleClick blocking the second OnClick, warcraft.wiki.gg). A right click stops what is left of a
+-- sale (cancel).
+---@param section NextSection
+---@param opts {automation?: boolean, phase?: "confirm"|"destroy"}
+---@return NextDockOffer
+function vendorProto:SectionOffer(section, opts)
+  local function items()
+    return nextDrag:SectionItems(section)
+  end
+  local function ctxOf()
+    return context:New('NextVendor_Offer')
+  end
+  local function saleOf(ctx)
+    if not opts.automation then
+      return self:SaleOf(items())
+    end
+    local sale = {}
+    for _, entry in ipairs(automation:SaleOffer(ctx, items())) do
+      table.insert(sale, entry.data)
+    end
+    return sale
+  end
+  local phase = opts.phase
+  if phase == nil then
+    phase = #saleOf(ctxOf()) > BUYBACK_KEEPS and "confirm" or "selling"
+  end
+  local offer, job, total, entry = {}, nil, 0, nil
+  local function destroyLeft(ctx)
+    return opts.automation and #automation:DestroyLeft(ctx, items()) > 0
+  end
+  -- after says what follows a sale: what is left to destroy, else the section goes.
+  local function after(sold)
+    if destroyLeft(ctxOf()) then
+      phase = "destroy"
+      return "stay"
+    end
+    if sold == nil or sold.unsold > 0 then
+      return "back"
+    end
+    return "moved"
+  end
+  local function start(ctx)
+    local sale = saleOf(ctx)
+    if #sale == 0 or self.closing or not self.atMerchant then
+      return false
+    end
+    phase, total = "selling", #sale
+    job = seller:Sell(sale, {
+      stillOpen = function() return self.atMerchant end,
+      onProgress = function()
+        if entry then
+          nextDock:Refresh(entry)
+        end
+      end,
+      onDone = function(done)
+        if entry then
+          nextDock:Answer(entry, after(done))
+        end
+      end,
+    })
+    return true
+  end
+  local function destroyOne(ctx)
+    automation:DestroyNext(ctx, items())
+    if #automation:DestroyLeft(ctx, items()) > 0 then
+      return "stay"
+    end
+    return "moved"
+  end
+  offer.docked = function(e)
+    entry = e
+    if phase == "selling" and not start(ctxOf()) then
+      nextDock:Answer(e, "back")
+    end
+  end
+  offer.text = function()
+    local ctx = ctxOf()
+    if phase == "selling" then
+      local left = job and seller:Left(job) or 0
+      return format(L:G("Selling %d of %d..."), total - left, total), L:G("One item at a time, as the merchant takes them."),
+        L:G("Right-click to stop")
+    end
+    if phase == "confirm" then
+      local n = #saleOf(ctx)
+      return format(n == 1 and L:G("Sell %d item?") or L:G("Sell %d items?"), n),
+        n > BUYBACK_KEEPS and format(L:G("Only the last %d items sold can be bought back."), BUYBACK_KEEPS)
+          or L:G("You can buy them back."),
+        L:G("Double-click to sell · Right-click to cancel")
+    end
+    local n = #automation:DestroyLeft(ctx, items())
+    return format(n == 1 and L:G("Destroy %d item") or L:G("Destroy %d items"), n), L:G("No merchant buys these."),
+      L:G("Click to destroy next · Right-click to cancel")
+  end
+  offer.color = function()
+    return phase == "destroy" and style.Theme.Dock.DestroyColor or nil
+  end
+  offer.confirm = function(ctx)
+    if phase == "destroy" then
+      return destroyOne(ctx)
+    end
+    if phase ~= "confirm" then
+      return nil
+    end
+    if start(ctx) then
+      return "stay"
+    end
+    return after(nil)
+  end
+  offer.click = function(ctx)
+    if phase == "destroy" then
+      return destroyOne(ctx)
+    end
+    return nil
+  end
+  -- A sale already ended is no longer selling: cancelling it does nothing (Seller:Cancel).
+  offer.cancel = function()
+    local running = job
+    job = nil
+    if running then
+      seller:Cancel(running)
+    end
+  end
+  offer.tooltip = function(owner)
+    if phase ~= "destroy" then
+      return
+    end
+    local next = automation:DestroyLeft(ctxOf(), items())[1]
+    if next == nil then
+      return
+    end
+    GameTooltip:SetOwner(owner, "ANCHOR_TOP")
+    GameTooltip:SetBagItem(next.data.bagid, next.data.slotid)
+    GameTooltip:AddLine(L:G("Click to destroy it."), style:RGBA(style.Theme.Dock.DestroyColor))
+    GameTooltip:Show()
+  end
+  return offer
+end
+
+-- SellCursorItem sells the item on the cursor (NextMerchant:SellCursorItem).
 function vendorProto:SellCursorItem()
-  if not CursorHasItem() then
-    return
-  end
-  if MerchantFrame and MerchantFrame.refundItem
-    and ContainerFrame_GetExtendedPriceString(MerchantFrame.refundItem, MerchantFrame.refundItemEquipped) then
-    return
-  end
-  PickupMerchantItem(0)
+  merchant:SellCursorItem()
 end
 
 ---@return string
@@ -567,8 +879,9 @@ end
 
 -- SaleOf returns what of a backpack section dropped on the vendor sells: every item and every pile
 -- its virtual stack hides (sectionFrame:WithStacks, what Move Categories sells), in the backpack's
--- bags, once each, leaving out what the vendor does not buy (hasNoValue) and refundable purchases,
--- which Blizzard asks about before refunding them (ContainerFrame_GetExtendedPriceString).
+-- bags, once each, leaving out what the vendor does not buy (hasNoValue), refundable purchases,
+-- which Blizzard asks about before refunding them (ContainerFrame_GetExtendedPriceString), and what
+-- this merchant refused (Seller:Refuses: it stays in the bags until a merchant buys it).
 ---@param list ItemData[]
 ---@return ItemData[]
 function vendorProto:SaleOf(list)
@@ -579,7 +892,8 @@ function vendorProto:SaleOf(list)
     if not seen[key] and const.BACKPACK_BAGS[bag] ~= nil then
       seen[key] = true
       local info = C_Container.GetContainerItemInfo(bag, slot)
-      if info and not info.hasNoValue and not C_Item.CanBeRefunded(ItemLocation:CreateFromBagAndSlot(bag, slot)) then
+      if info and not info.hasNoValue and not C_Item.CanBeRefunded(ItemLocation:CreateFromBagAndSlot(bag, slot))
+        and not seller:Refuses(data) then
         table.insert(sale, data)
       end
     end
@@ -587,33 +901,9 @@ function vendorProto:SaleOf(list)
   return sale
 end
 
--- Sell sells a section's sale while the vendor is open: at once when buyback can keep all of it, or
--- once confirmed. Unconfirmed past that it sells nothing and returns "confirm" with what to confirm
--- with: NextDrag docks the section in the vendor with that text until a double click confirms it.
----@param ctx Context
----@param sale ItemData[]
----@param confirmed? boolean
----@return string result "sold" or "confirm"
----@return NextConfirmation? confirmation
-function vendorProto:Sell(ctx, sale, confirmed)
-  local _ = ctx
-  local slots = {}
-  for _, data in ipairs(sale) do
-    table.insert(slots, { bag = data.bagid, slot = data.slotid })
-  end
-  if not confirmed and #slots > BUYBACK_KEEPS then
-    return "confirm", {
-      title = format(L:G("Sell %d items?"), #slots),
-      warning = format(L:G("Only the last %d items sold can be bought back."), BUYBACK_KEEPS),
-      hint = L:G("Double-click to sell · Right-click to cancel"),
-    }
-  end
-  merchant:SellSlots(slots, function() return self.atMerchant end)
-  return "sold"
-end
-
 -- SellJunk sells the junk in the bags: through Blizzard's own Sell All Junk where the client has
--- it (its confirmation included), else after asking, a few rounds a moment apart.
+-- it (its confirmation included), else after asking, through the seller, one item at a time while the
+-- vendor is open.
 function vendorProto:SellJunk()
   if merchant:HasSellAllJunk() then
     merchant:SellAllJunk()
@@ -625,25 +915,9 @@ function vendorProto:SellJunk()
   end
   question:YesNo(L:G("Sell Junk"),
     format(L:G("Sell %d junk items? Only the last 12 items sold can be bought back."), n),
-    function() self:sellJunkRound(SELL_ROUNDS) end, function() end)
-end
-
----@private
----@param rounds number
-function vendorProto:sellJunkRound(rounds)
-  if not self.atMerchant then
-    return
-  end
-  local slots = merchant:JunkSlots()
-  if #slots == 0 then
-    return
-  end
-  merchant:SellSlots(slots, function() return self.atMerchant end)
-  if rounds > 1 then
-    C_Timer.After(SELL_DELAY, function()
-      self:sellJunkRound(rounds - 1)
-    end)
-  end
+    function()
+      seller:Sell(merchant:JunkSlots(), { stillOpen = function() return self.atMerchant end })
+    end, function() end)
 end
 
 -- RepairAll repairs everything, from the guild bank with guild, as Blizzard's repair buttons do.
@@ -657,16 +931,16 @@ function vendorProto:RepairAll(guild)
   GameTooltip:Hide()
 end
 
--- RepairTooltip tells what repairing everything costs, and who pays: the player's money, or the
--- guild's up to what the player may withdraw (Blizzard's repair buttons' tooltips).
+-- RepairLines tells what repairing everything costs, and who pays: the player's money, or the guild's up to what the
+-- player may withdraw (Blizzard's repair buttons' tooltips); each line { text, r, g, b }.
 ---@param guild boolean
-function vendorProto:RepairTooltip(guild)
+---@return table[]
+function vendorProto:RepairLines(guild)
   local cost, canRepair = GetRepairAllCost()
   if not canRepair or cost <= 0 then
-    GameTooltip:AddLine(L:G("Nothing needs repair"), 1, 1, 1)
-    return
+    return { { L:G("Nothing needs repair"), 1, 1, 1 } }
   end
-  GameTooltip:AddLine(L:G("Repair all: ") .. C_CurrencyInfo.GetCoinTextureString(cost), 1, 1, 1)
+  local lines = { { L:G("Repair all: ") .. C_CurrencyInfo.GetCoinTextureString(cost), 1, 1, 1 } }
   if guild then
     local amount = GetGuildBankWithdrawMoney()
     local funds = GetGuildBankMoney()
@@ -675,14 +949,31 @@ function vendorProto:RepairTooltip(guild)
     else
       amount = math.min(amount, funds)
     end
-    GameTooltip:AddLine(L:G("The guild pays up to ") .. C_CurrencyInfo.GetCoinTextureString(amount), 0.8, 0.8, 0.8)
+    table.insert(lines, { L:G("The guild pays up to ") .. C_CurrencyInfo.GetCoinTextureString(amount), 0.8, 0.8, 0.8 })
   elseif cost > GetMoney() then
-    GameTooltip:AddLine(L:G("You do not have enough money"), 1, 0.25, 0.25)
+    table.insert(lines, { L:G("You do not have enough money"), 1, 0.25, 0.25 })
+  end
+  return lines
+end
+
+-- RepairTooltip is a repair button's tooltip: RepairLines.
+---@param guild boolean
+function vendorProto:RepairTooltip(guild)
+  for _, line in ipairs(self:RepairLines(guild)) do
+    GameTooltip:AddLine(line[1], line[2], line[3], line[4])
   end
 end
 
+-- RepairText is RepairLines as the bag button's menu entry's tooltip (Header.Buttons.Menu).
+---@param guild boolean
+---@return string
+function vendorProto:RepairText(guild)
+  return nextMenuButton:Text(self:RepairLines(guild))
+end
+
 -- OpenFilter opens Blizzard's merchant filters as a menu (MerchantFrame_OnLoad's): each spec, the
--- class, Bind on Equip, everything.
+-- class, Bind on Equip, everything; from the filter button, or from the bag button when the theme puts the header's
+-- row in its menu (the filter button is not seen then).
 function vendorProto:OpenFilter()
   local function isSelected(filter)
     return GetMerchantFilter() == filter
@@ -690,7 +981,8 @@ function vendorProto:OpenFilter()
   local function setSelected(filter)
     SetMerchantFilter(filter)
   end
-  MenuUtil.CreateContextMenu(self.filterButton, function(_, root)
+  local owner = self.filterButton:IsVisible() and self.filterButton or self.menuButton.frame
+  MenuUtil.CreateContextMenu(owner, function(_, root)
     root:SetTag("MENU_MERCHANT_FRAME")
     for index = 1, GetNumSpecializations() do
       local _, name = C_SpecializationInfo.GetSpecializationInfo(index)
@@ -724,4 +1016,11 @@ function vendorProto:WatchKind()
   events:BucketEvent("GET_ITEM_INFO_RECEIVED", function(ctx) self:Refresh(ctx) end, function()
     return self.frame:IsShown()
   end)
+  -- What waits for the player (OfferAutomation): once the backpack or the vendor has slid in, when the
+  -- backpack draws again, and when a category's automation changes.
+  for _, message in ipairs({ "next/PanelShown", "bags/Draw/Backpack/Done", "automation/Changed", "categories/Changed" }) do
+    events:RegisterMessage(message, function(ctx) self:OfferAutomation(ctx) end)
+  end
+  -- The Shopping List follows the list (it is offered as a draw binds it, OfferShoppingList).
+  events:RegisterMessage("shoppingList/Changed", function(ctx) self:Refresh(ctx) end)
 end

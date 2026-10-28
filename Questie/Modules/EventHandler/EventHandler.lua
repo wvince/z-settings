@@ -83,11 +83,11 @@ function EventHandler:RegisterEarlyEvents()
             questPOIHandled = true
         end
 
-        if Expansions.Current >= Expansions.MoP then
-            QuestieCombatQueue:Queue(function()
-                QuestieTracker:Update()
-            end)
-        end
+        -- Instance changes need a layout even when quests are unchanged, which quest-log checks skip:
+        -- the Challenge Mode keystone after login, and the proximity sort restarting after leaving an instance.
+        QuestieCombatQueue:Queue(function()
+            QuestieTracker:Update()
+        end)
     end)
 end
 
@@ -201,8 +201,14 @@ function EventHandler:RegisterLateEvents()
     Questie:RegisterEvent("QUEST_AUTOCOMPLETE", function(_, questId) QuestEventHandler.QuestAutoComplete(questId) end)
     Questie:RegisterEvent("UNIT_QUEST_LOG_CHANGED", function(_, unitTarget) QuestEventHandler.UnitQuestLogChanged(unitTarget) end)
     Questie:RegisterEvent("CURRENCY_DISPLAY_UPDATE", QuestEventHandler.CurrencyDisplayUpdate)
+    Questie:RegisterEvent("CRITERIA_UPDATE", QuestEventHandler.CriteriaUpdate)
     Questie:RegisterEvent("PLAYER_INTERACTION_MANAGER_FRAME_HIDE", function(_, eventType) QuestEventHandler.PlayerInteractionManagerFrameHide(eventType) end)
 
+    -- The client's quest data is stale from PLAYER_LEAVING_WORLD on, and whether LOADING_SCREEN_ENABLED comes before
+    -- or after it is not known: either one protects the cache.
+    Questie:RegisterEvent("PLAYER_LEAVING_WORLD", function()
+        QuestLogCache.OnLoadingScreenEnabled()
+    end)
     Questie:RegisterEvent("LOADING_SCREEN_ENABLED", function()
         QuestLogCache.OnLoadingScreenEnabled()
     end)

@@ -7,6 +7,7 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Endgame Guides
 #subgroup Zutrittsvoraussetzungen
 #name Onyxias Zutrittsvoraussetzungen (A)
+#guideKind attunement
 
 
 step
@@ -148,7 +149,7 @@ step
     .isQuestTurnedIn 4182
     #completewith next
     .goto Eastern Kingdoms,48.07,62.42
-    .subzone 1584,2 >>Betretet Schwarzfelstiefen
+    .subzone 1584,2 >>Schwarzfelstiefen betreten
     >>|cRXP_WARN_Stellt sicher, dass ihr eine Gruppe parat habt|r
 step
     .isQuestTurnedIn 4182
@@ -163,7 +164,7 @@ step
 step
     .isQuestTurnedIn 4182
     .goto Burning Steppes,84.744,69.015
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Marschall Maxwell|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Marshal Maxwell|r
     >>|cRXP_WARN_Die Questreihe macht hier Pause, bis ihr|r |T134331:0|t[Eine zusammengeknüllte Notiz] |cRXP_WARN_in der BRD findet|r
     .turnin 4242 >> Gebt die Quest Verlorene Hoffnung ab
     .target Marshal Maxwell
@@ -174,7 +175,7 @@ step
     .isQuestTurnedIn 4242
     .goto Eastern Kingdoms,48.07,62.42
     #completewith next
-    .subzone 1584,2 >>Betretet Schwarzfelstiefen
+    .subzone 1584,2 >>Schwarzfelstiefen betreten
 step
     .isQuestTurnedIn 4242
     >>Tötet |cRXP_ENEMY_Zwerge|r in BRD. Plündert sie für |T134331:0|t[Eine zusammengeknüllte Notiz]
@@ -190,7 +191,7 @@ step
     .accept 4282 >> Akzeptiert die Quest Ein Funken Hoffnung
 step
     .isQuestTurnedIn 4264
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Marschall Windsor|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Marshal Windsor|r
     .accept 4282 >> Akzeptiert die Quest Ein Funken Hoffnung
 step
     .isOnQuest 4282
@@ -344,6 +345,7 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Endgame Guides
 #subgroup Zutrittsvoraussetzungen
 #name Onyxias Zutrittsvoraussetzungen (H)
+#guideKind attunement
 
 step
     #completewith next
@@ -794,6 +796,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Zutrittsvoraussetzungen
 #group RestedXP Endgame Guides
 #name Geschmolzener Kern Zutrittsvoraussetzung
+#guideKind attunement
 
 step
     #completewith next
@@ -806,7 +809,7 @@ step
 step
     #completewith next
     .goto Eastern Kingdoms,48.07,62.42
-    .subzone 1584,2 >>Betretet Schwarzfelstiefen
+    .subzone 1584,2 >>Schwarzfelstiefen betreten
     >>|cRXP_WARN_Stellt sicher, dass ihr eine Gruppe parat habt|r
 step
     #softcore
@@ -840,6 +843,7 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Endgame Guides
 #subgroup Zutrittsvoraussetzungen
 #name Pechschwingenhort Zutrittsvorraussetzungen
+#guideKind attunement
 
 step
     #completewith next
@@ -885,6 +889,8 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Endgame Guides
 #subgroup Schlüssel
 #name Schlüssel der Obere Schwarzfelsspitze
+#guideKind key
+#guideIcon rxp-icon-ring
 
 step
     #completewith next
@@ -977,6 +983,8 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Endgame Guides
 #subgroup Schlüssel
 #name Scholomance Schlüssel (A)
+#guideKind key
+#guideIcon rxp-icon-key-2
 
 step
     #sticky
@@ -1236,6 +1244,8 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Endgame Guides
 #subgroup Schlüssel
 #name Scholomance Schlüssel (H)
+#guideKind key
+#guideIcon rxp-icon-key-2
 
 
 step
@@ -1492,6 +1502,8 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Endgame Guides
 #subgroup Schlüssel
 #name Schwarzfelstiefen Schlüssel
+#guideKind key
+#guideIcon rxp-icon-key-3
 
 
 step
@@ -1532,7 +1544,7 @@ step
     #hardcoreserver
     #completewith next
     .goto Eastern Kingdoms,48.07,62.42
-    .subzone 1584,2 >>Betretet Schwarzfelstiefen
+    .subzone 1584,2 >>Schwarzfelstiefen betreten
     >>|cRXP_WARN_Stellt sicher, dass ihr eine Gruppe parat habt|r
 step
     >>Tötet |cRXP_ENEMY_Fineous Darkvire|r. Plündert ihn für |cRXP_LOOT_Ironfel|r
@@ -1542,7 +1554,7 @@ step
     .isOnQuest 3802
 step
     >>Lauf zurück zur Location über dem Ring des Gesetzes
-    >>Zwickt |cRXP_PICK_Denkmal für Franclorn Forgewright|r
+    >>Klickt das |cRXP_PICK_Denkmal für Franclorn Forgewright|r
     .turnin 3802 >> Gebt die Quest Dunkeleisenerbe ab
     .isQuestComplete 3802
 
@@ -1556,6 +1568,8 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Endgame Guides
 #subgroup Schlüssel
 #name Düsterbruch Schlüssel
+#guideKind key
+
 
 step
     #completewith next
@@ -1584,6 +1598,7 @@ RXPGuides.RegisterGuide([[
 
 #group RestedXP Endgame Guides
 #name Naxxramas-Zugangsberechtigung
+#guideKind attunement
 #subgroup Zutrittsvoraussetzungen
 
 step
@@ -1611,7 +1626,7 @@ step
     .isQuestAvailable 9122 --The Dread Citadel - Naxxramas
 step
     #completewith AttuneComplete
-    .zone Eastern Plaguelands >>Reist in die |cFFfa9602Östlichen Pestländer|r
+    .zone Eastern Plaguelands >>Reist in die |cFFfa9602Die Östlichen Pestländer|r
 step
     #optional
     .reputation 529,honored >>Erlangt einen Wohlwollenden Ruf bei der Argentumdämmerung
@@ -1657,6 +1672,7 @@ RXPGuides.RegisterGuide([[
 
 #group RestedXP Endgame Guides
 #name Demon Fall Canyon Zugangsberechtigung
+#guideKind attunement
 #subgroup Zutrittsvoraussetzungen
 <<sod
 

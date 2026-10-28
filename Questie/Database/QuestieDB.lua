@@ -398,6 +398,7 @@ function QuestieDB:GetItem(itemId)
                 sources[#sources + 1] = {
                     Id = npcId,
                     Type = "monster",
+                    Vendor = true,
                 }
             end
         end
@@ -1032,6 +1033,31 @@ function QuestieDB.IsDoableVerbose(questId, debugPrint, returnText, returnBrief)
         end
     end
 
+    -- Check if this quest has a quest that disables it while in quest log
+    local disabledByQuest = QuestieDB.QueryQuestSingle(questId, "disabledByQuest")
+    if disabledByQuest and disabledByQuest ~= 0 then
+        -- Check the disabling quest is active
+        if currentQuestlog[disabledByQuest] then
+            if returnText and returnBrief then
+                return l10n("Unavailable")..l10n(": ")..l10n("Disabling quest is active"), true, DoableStates.DISABLED_BY
+            elseif returnText and not returnBrief then
+                return "Disabling quest " .. disabledByQuest .. " is in the quest log for quest " .. questId, true, DoableStates.DISABLED_BY
+            end
+        end
+    end
+
+    -- Check if this quest is visible until you turn in a certain quest
+    local availableUntilCompleted = QuestieDB.QueryQuestSingle(questId, "availableUntilCompleted")
+    if availableUntilCompleted and availableUntilCompleted ~= 0 then
+        if completedQuests[availableUntilCompleted] then
+            if returnText and returnBrief then
+                return l10n("Unavailable")..l10n(": ")..l10n("Disabling quest already turned in"), true, DoableStates.DISABLING_QUEST_COMPLETED
+            elseif returnText and not returnBrief then
+                return "Quest " .. questId .. " is not available because " .. availableUntilCompleted .. " has been turned in", true, DoableStates.DISABLING_QUEST_COMPLETED
+            end
+        end
+    end
+
     -- Check if a quest which is exclusive to the current has already been completed or accepted
     -- If yes the current quest can't be accepted
     local ExclusiveQuestGroup = QuestieDB.QueryQuestSingle(questId, "exclusiveTo")
@@ -1200,6 +1226,31 @@ function QuestieDB.IsDoableVerbose(questId, debugPrint, returnText, returnBrief)
     -- Check the preQuestSingle field where just one of the required quests has to be complete for a quest to show up
     local preQuestSingle = QuestieDB.QueryQuestSingle(questId, "preQuestSingle")
     if preQuestSingle then
+        -- Edge case where the one prequest is not doable (locked out by an exclusive quest), so this quest is completely unavailable
+        if #preQuestSingle == 1 and not completedQuests[preQuestSingle[1]] then
+            ---@type QuestId[]?
+            local preQuestSingleExclusives = QuestieDB.QueryQuestSingle(preQuestSingle[1], "exclusiveTo")
+            if preQuestSingleExclusives then
+                for preQuestSingleExclusivesIndex=1, #preQuestSingleExclusives do
+                    if completedQuests[preQuestSingleExclusives[preQuestSingleExclusivesIndex]] then
+                        local msg = "Quest " .. questId .. " is unavailable because exclusive quest " .. preQuestSingleExclusives[preQuestSingleExclusivesIndex] .. " is completed"
+                        if returnText and returnBrief then
+                            return l10n("Unavailable")..l10n(": ")..l10n("Exclusive quest completed"), true, DoableStates.EXCLUSIVE_COMPLETED
+                        elseif returnText and not returnBrief then
+                            return msg, true, DoableStates.EXCLUSIVE_COMPLETED
+                        end
+                    elseif currentQuestlog[preQuestSingleExclusives[preQuestSingleExclusivesIndex]] then
+                        local msg = "Quest " .. questId .. " is unavailable because exclusive quest " .. preQuestSingleExclusives[preQuestSingleExclusivesIndex] .. " is in the quest log"
+                        if returnText and returnBrief then
+                            return l10n("Unavailable")..l10n(": ")..l10n("Exclusive quest in quest log"), true, DoableStates.EXCLUSIVE_IN_QUEST_LOG
+                        elseif returnText and not returnBrief then
+                            return msg, true, DoableStates.EXCLUSIVE_IN_QUEST_LOG
+                        end
+                    end
+                end
+            end
+        end
+
         local isPreQuestSingleFulfilled = QuestieDB:IsPreQuestSingleFulfilled(preQuestSingle)
         if not isPreQuestSingleFulfilled then
             local msg = "Pre-quest requirement not fulfilled for quest " .. questId
@@ -1296,37 +1347,12 @@ function QuestieDB.IsDoableVerbose(questId, debugPrint, returnText, returnBrief)
         end
     end
 
-    -- Check if this quest has a quest that disables it while in quest log
-    local disabledByQuest = QuestieDB.QueryQuestSingle(questId, "disabledByQuest")
-    if disabledByQuest and disabledByQuest ~= 0 then
-        -- Check the disabling quest is active
-        if currentQuestlog[disabledByQuest] then
-            if returnText and returnBrief then
-                return l10n("Unavailable")..l10n(": ")..l10n("Disabling quest is active"), true, DoableStates.DISABLED_BY
-            elseif returnText and not returnBrief then
-                return "Disabling quest " .. disabledByQuest .. " is in the quest log for quest " .. questId, true, DoableStates.DISABLED_BY
-            end
-        end
-    end
-
     -- Daily quest not active (based on ShouldBeHidden)
     if DailyQuests.ShouldBeHidden(questId, completedQuests, currentQuestlog) then
         if returnText and returnBrief then
             return l10n("Unavailable")..l10n(": ")..l10n("Daily quest not active"), true, DoableStates.INACTIVE_DAILY
         elseif returnText then
             return "Daily quest " .. questId .. " is not active", true, DoableStates.INACTIVE_DAILY
-        end
-    end
-
-    -- Check if this quest is visible until you turn in a certain quest
-    local availableUntilCompleted = QuestieDB.QueryQuestSingle(questId, "availableUntilCompleted")
-    if availableUntilCompleted and availableUntilCompleted ~= 0 then
-        if completedQuests[availableUntilCompleted] then
-            if returnText and returnBrief then
-                return l10n("Unavailable")..l10n(": ")..l10n("Disabling quest already turned in"), true, DoableStates.DISABLING_QUEST_COMPLETED
-            elseif returnText and not returnBrief then
-                return "Quest " .. questId .. " is not available because " .. availableUntilCompleted .. " has been turned in", true, DoableStates.DISABLING_QUEST_COMPLETED
-            end
         end
     end
 

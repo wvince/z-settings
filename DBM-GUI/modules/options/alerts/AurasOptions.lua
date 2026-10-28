@@ -265,15 +265,13 @@ personalAuraFontDropDown = personalAuraArea:CreateDropdown(L.FontType, Fonts, "D
 	personalAuraShowDispelBorder:SetPoint("TOPLEFT", personalAuraShowStacks, "TOPLEFT", 200, 0)
 	personalAuraShowDispelBorder.myheight = 0
 
-	if DBM:GetTOC() >= 120105 then
-		personalAuraShowGlow = personalAuraArea:CreateCheckButton(L.AuraShowGlow, true, nil, "PrivateAurasPlayerShowAuraGlow")
-		personalAuraShowGlow:SetScript("OnClick", function()
-			DBM.Options.PrivateAurasPlayerShowAuraGlow = not DBM.Options.PrivateAurasPlayerShowAuraGlow
-			OnAuraSettingsChange(true)
-		end)
-		personalAuraShowGlow:SetPoint("TOPLEFT", personalAuraShowDispelBorder, "TOPLEFT", 200, 0)
-		personalAuraShowGlow.myheight = 0
-	end
+	personalAuraShowGlow = personalAuraArea:CreateCheckButton(L.AuraShowGlow, true, nil, "PrivateAurasPlayerShowAuraGlow")
+	personalAuraShowGlow:SetScript("OnClick", function()
+		DBM.Options.PrivateAurasPlayerShowAuraGlow = not DBM.Options.PrivateAurasPlayerShowAuraGlow
+		OnAuraSettingsChange(true)
+	end)
+	personalAuraShowGlow:SetPoint("TOPLEFT", personalAuraShowDispelBorder, "TOPLEFT", 200, 0)
+	personalAuraShowGlow.myheight = 0
 
 	personalAuraStackColor = personalAuraArea:CreateColorSelect(L.AuraStackFontColor, function(_, r, g, b)
 		DBM.Options.PrivateAurasPlayerStackColor.r = r
@@ -382,6 +380,7 @@ local coTankAuraVisibility = coTankAuraArea:CreateDropdown(L.CoTankVisibility, c
 	DBM.Options.PrivateAurasCoTankEnabled3 = value
 	OnAuraSettingsChange(false)
 end)
+
 coTankAuraVisibility:SetPoint("TOPLEFT", coTankAuraArea.frame, "TOPLEFT", 15, -35)
 coTankAuraVisibility.myheight = 90
 local coTankAuraSecond	= coTankAuraArea:CreateCheckButton(L.ShowSecondCoTank, true, nil, "PrivateAurasCoTankShowSecond")
@@ -558,15 +557,13 @@ coTankAuraFontDropDown = coTankAuraArea:CreateDropdown(L.FontType, Fonts, "DBM",
 	coTankAuraShowDispelBorder:SetPoint("TOPLEFT", coTankAuraShowStacks, "TOPLEFT", 200, 0)
 	coTankAuraShowDispelBorder.myheight = 0
 
-	if DBM:GetTOC() >= 120105 then
-		coTankAuraShowGlow = coTankAuraArea:CreateCheckButton(L.AuraShowGlow, true, nil, "PrivateAurasCoTankShowAuraGlow")
-		coTankAuraShowGlow:SetScript("OnClick", function()
-			DBM.Options.PrivateAurasCoTankShowAuraGlow = not DBM.Options.PrivateAurasCoTankShowAuraGlow
-			OnAuraSettingsChange(false)
-		end)
-		coTankAuraShowGlow:SetPoint("TOPLEFT", coTankAuraShowDispelBorder, "TOPLEFT", 200, 0)
-		coTankAuraShowGlow.myheight = 0
-	end
+	coTankAuraShowGlow = coTankAuraArea:CreateCheckButton(L.AuraShowGlow, true, nil, "PrivateAurasCoTankShowAuraGlow")
+	coTankAuraShowGlow:SetScript("OnClick", function()
+		DBM.Options.PrivateAurasCoTankShowAuraGlow = not DBM.Options.PrivateAurasCoTankShowAuraGlow
+		OnAuraSettingsChange(false)
+	end)
+	coTankAuraShowGlow:SetPoint("TOPLEFT", coTankAuraShowDispelBorder, "TOPLEFT", 200, 0)
+	coTankAuraShowGlow.myheight = 0
 
 	coTankAuraStackColor = coTankAuraArea:CreateColorSelect(L.AuraStackFontColor, function(_, r, g, b)
 		DBM.Options.PrivateAurasCoTankStackColor.r = r
@@ -827,4 +824,35 @@ coTankAdvancedReset:SetScript("OnClick", function()
 		coTankSlot2Player:RefreshLazyValues()
 		coTankSlot2Player:SetSelectedValue(DBM.Options.PrivateAurasCoTankSlot2Player)
 	OnAuraSettingsChange(false)
+end)
+
+coTankAdvancedArea.frame:HookScript("OnShow", function()
+	coTankNameFontSize:SetValueSilent(DBM.Options.PrivateAurasCoTankNameFontSize)
+	coTankNameXOffset:SetValueSilent(DBM.Options.PrivateAurasCoTankNameXOffset)
+	coTankNameYOffset:SetValueSilent(DBM.Options.PrivateAurasCoTankNameYOffset)
+end)
+
+local sliders = {
+	{personalSpacing, "PrivateAurasPlayerSpacing2"}, {personalAuraIconScale, "PrivateAurasPlayerWidth"},
+	{personalAuraMaxIcons, "PrivateAurasPlayerLimit"}, {personalAuraIconZoom, "PrivateAurasPlayerIconZoom", 100},
+	{personalAuraDurationFontSize, "PrivateAurasPlayerDurationFontSize"}, {personalAuraDecimalThreshold, "PrivateAurasPlayerDecimalThreshold"},
+	{personalAuraDurationEmphasizeThreshold, "PrivateAurasPlayerDurationEmphasizeThreshold"}, {personalAuraStackFontSize, "PrivateAurasPlayerStackFontSize"},
+	{personalAuraStackXOffset, "PrivateAurasPlayerStackXOffset"}, {personalAuraStackYOffset, "PrivateAurasPlayerStackYOffset"},
+	{coTankSpacing, "PrivateAurasCoTankSpacing2"}, {coTankIconScale, "PrivateAurasCoTankWidth"},
+	{coTankAuraMaxIcons, "PrivateAurasCoTankLimit"}, {coTankAuraIconZoom, "PrivateAurasCoTankIconZoom", 100},
+	{coTankAuraDurationFontSize, "PrivateAurasCoTankDurationFontSize"}, {coTankAuraDecimalThreshold, "PrivateAurasCoTankDecimalThreshold"},
+	{coTankAuraDurationEmphasizeThreshold, "PrivateAurasCoTankDurationEmphasizeThreshold"}, {coTankAuraStackFontSize, "PrivateAurasCoTankStackFontSize"},
+	{coTankAuraStackXOffset, "PrivateAurasCoTankStackXOffset"}, {coTankAuraStackYOffset, "PrivateAurasCoTankStackYOffset"},
+}
+local colors = {
+	{personalAuraDurationColor, "PrivateAurasPlayerDurationColor"}, {personalAuraDurationEmphasizeColor, "PrivateAurasPlayerDurationEmphasizeColor"},
+	{personalAuraStackColor, "PrivateAurasPlayerStackColor"}, {coTankAuraDurationColor, "PrivateAurasCoTankDurationColor"},
+	{coTankAuraDurationEmphasizeColor, "PrivateAurasCoTankDurationEmphasizeColor"}, {coTankAuraStackColor, "PrivateAurasCoTankStackColor"},
+}
+auraPanel.frame:HookScript("OnShow", function()
+	for _, entry in ipairs(sliders) do entry[1]:SetValueSilent(DBM.Options[entry[2]] * (entry[3] or 1)) end
+	for _, entry in ipairs(colors) do
+		local color = DBM.Options[entry[2]]
+		entry[1]:SetColorRGB(color.r, color.g, color.b)
+	end
 end)

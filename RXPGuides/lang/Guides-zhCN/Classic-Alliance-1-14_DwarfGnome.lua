@@ -1936,7 +1936,7 @@ step
     .goto 1426,41.100,48.927,40,0
     >>击杀 |cRXP_ENEMY_雪怪|r 和 |cRXP_ENEMY_雪怪幼崽|r。拾取他们的 |cRXP_LOOT_雪怪的鬃毛|r
     >>|cRXP_WARN_记得留意|r |T134566:0|t[铜矿] |cRXP_WARN_它可产出|r |T135232:0|t|cRXP_LOOT_[劣质的石头]|r |cRXP_WARN_并让你制造出|r |T135248:0|t[劣质磨刀石] << Warrior/Rogue
-    >>|cRXP_WARN_Remember to keep an eye out for|r |T134566:0|t[Copper Veins] |cRXP_WARN_which yield|r |T135232:0|t|cRXP_LOOT_[劣质的石头]|r |cRXP_WARN_so you can craft|r |T135255:0|t[Rough Weightstones] << Paladin
+    >>|cRXP_WARN_记得留意|r |T134566:0|t[铜矿] |cRXP_WARN_它可产出|r |T135232:0|t|cRXP_LOOT_[劣质的石头]|r |cRXP_WARN_并让你制造出|r |T135255:0|t[劣质平衡石] << Paladin
     .complete 313,1 --Collect Wendigo Mane (x8)
     .mob 雪怪
     .mob 雪怪幼崽

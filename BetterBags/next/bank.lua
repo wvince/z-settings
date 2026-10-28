@@ -36,6 +36,9 @@ local style = addon:GetModule('NextStyle')
 ---@class NextPanel: AceModule
 local nextPanel = addon:GetModule('NextPanel')
 
+---@class NextPixel: AceModule
+local pixel = addon:GetModule('NextPixel')
+
 -- NextBank is BetterBagsNext's bank (next.md §6): the backpack's panel mirrored on the left of the
 -- screen (next/panel.lua). It does what the classic retail, WoW: Forever and Classic banks do,
 -- reusing their code wherever it is not drawing: the groups and the Warbank, Blizzard's bank tabs
@@ -100,23 +103,21 @@ end
 ---@return NextHeaderButton[]
 function bankProto:GetHeaderButtons()
   local buttons = {
-    { key = "closeButton", atlas = "uitools-icon-close", tooltip = L:G("Close"),
-      onClick = function(ctx) self:Hide(ctx) end },
-    { key = "settingsButton", atlas = "uitools-icon-settings", tooltip = L:G("Open Options Screen"),
+    { key = "closeButton", tooltip = L:G("Close"), onClick = function(ctx) self:Hide(ctx) end },
+    { key = "settingsButton", tooltip = L:G("Open Options Screen"), menuLast = true,
       onClick = function(ctx) events:SendMessage(ctx, "config/Open") end },
   }
   if addon.isRetail then
-    table.insert(buttons, { key = "bankTabsButton", texture = EMPTY_BAG_SLOT_TEXTURE,
-      tooltip = L:G("Switch between your groups and the bank's own tabs"),
+    table.insert(buttons, { key = "bankTabsButton", tooltip = L:G("Switch between your groups and the bank's own tabs"),
+      label = L:G("Show Bank Tabs"), checked = function() return database:GetShowBankTabs() and true or false end,
       onClick = function(ctx) self:ToggleBankTabs(ctx) end })
   end
   if addon.hasWarbank then
-    table.insert(buttons, { key = "depositButton", atlas = "warbands-icon", tooltip = L:G("Deposit Warbank Items"),
+    table.insert(buttons, { key = "depositButton", tooltip = L:G("Deposit Warbank Items"),
       onClick = function() C_Bank.AutoDepositItemsIntoBank(Enum.BankType.Account) end })
   end
   if (C_Container and C_Container.SortBankBags) or _G.SortBankBags then
-    table.insert(buttons, { key = "sortButton", atlas = "bags-button-autosort-up", tooltip = L:G("Sort Bank"),
-      onClick = function(ctx) self:Sort(ctx) end })
+    table.insert(buttons, { key = "sortButton", tooltip = L:G("Sort Bank"), onClick = function(ctx) self:Sort(ctx) end })
   end
   return buttons
 end
@@ -142,19 +143,47 @@ function bankProto:BuildPurchaseBankButton()
     "BankPanelPurchaseButtonScriptTemplate, UIPanelButtonTemplate")
   button:SetAttribute("overrideBankType", Enum.BankType.Character)
   button:SetText(L:G("Purchase Bank"))
-  button:SetSize(button:GetTextWidth() + 40, 26)
-  button:SetPoint("CENTER", self.scroll.frame, "CENTER", 0, 0)
   button:SetFrameLevel(self.scroll.frame:GetFrameLevel() + 10)
   button:Hide()
   self.purchaseBankButton = button
+  addon.HookScript(self.scroll.frame, "OnSizeChanged", function() self:placePurchaseBankButton() end)
+  self:placePurchaseBankButton()
+end
+
+-- placePurchaseBankButton puts the Purchase Bank button in the middle of the content by its top left, in
+-- whole pixels (docs/next-pixel-perfect.md): its size, and the parts of its template (UIPanelButtonTemplate:
+-- its 12-unit end pieces, its text at its middle) rounded in place. It keeps its template, scripts and all.
+---@private
+function bankProto:placePurchaseBankButton()
+  local button, area = self.purchaseBankButton, self.scroll.frame
+  pixel:Size(button, pixel:Ceil(button, button:GetTextWidth()) + 40, 26)
+  local width, height = button:GetWidth(), button:GetHeight()
+  button:ClearAllPoints()
+  pixel:Center(button, area, area:GetWidth(), area:GetHeight(), width, height)
+  if button.Left ~= nil and button.Right ~= nil then
+    pixel:Width(button.Left, 12)
+    pixel:Width(button.Right, 12)
+  end
+  local text = button:GetFontString()
+  if text ~= nil then
+    text:ClearAllPoints()
+    pixel:Row(text, "TOPLEFT", button, pixel:Middle(button, width, pixel:Ceil(button, text:GetStringWidth())), height)
+  end
 end
 
 -- UpdatePurchaseBankButton shows the Purchase Bank button by the classic bank's rule
--- (bank.proto:NeedsBankPurchase).
+-- (bank.proto:NeedsBankPurchase), in the middle of the content as it is now.
 function bankProto:UpdatePurchaseBankButton()
   if self.purchaseBankButton then
     self.helper:UpdatePurchaseBankButton()
+    self:placePurchaseBankButton()
   end
+end
+
+-- TabOrderKey saves the order of the bank's group tabs and, apart, of Blizzard's bank tabs.
+---@return string
+function bankProto:TabOrderKey()
+  return self:InTabMode() and "bankTabs" or "bank"
 end
 
 -- InTabMode is whether the bank shows Blizzard's bank tabs (the classic bank's Show Bags) rather
@@ -250,16 +279,16 @@ function bankProto:RefreshTabs()
   local bank, warbank = {}, {}
   for id, group in pairs(groups:GetAllGroups(self.kind)) do
     if isWarbankGroup(group) then
-      table.insert(warbank, { id = id, name = group.name, accent = style.Color.Warbank, atlas = "warbands-icon" })
+      table.insert(warbank, { id = id, name = group.name, accent = "Warbank", atlas = "warbands-icon", block = "warbank" })
     else
-      table.insert(bank, { id = id, name = group.name })
+      table.insert(bank, { id = id, name = group.name, block = "bank" })
     end
   end
   local byID = function(a, b) return a.id < b.id end
   table.sort(bank, byID)
   table.sort(warbank, byID)
-  local entries = bank
-  for i, entry in ipairs(warbank) do
+  local entries = self:OrderedTabs(bank)
+  for i, entry in ipairs(self:OrderedTabs(warbank)) do
     if i == 1 and #bank > 0 then
       entry.gap = style.TAB_GROUP_GAP
     end
@@ -268,6 +297,7 @@ function bankProto:RefreshTabs()
   table.insert(entries, {
     id = 0,
     name = "+",
+    fixed = true,
     tooltip = { L:G("Create New Group Tab"), L:G("Click to create a new group tab for organizing your items.") },
   })
   self.tabs:SetTabs(entries)
@@ -336,26 +366,31 @@ function bankProto:ListBankTabs()
   local entries = {}
   local slots = bankSlots()
   local function add(bankType, purchaseID, purchaseTitle, gap)
-    for i, t in ipairs(self:PurchasedTabs(bankType)) do
-      local warbank = bankType == Enum.BankType.Account
-      table.insert(entries, {
+    local warbank = bankType == Enum.BankType.Account
+    local tabs = {}
+    for _, t in ipairs(self:PurchasedTabs(bankType)) do
+      table.insert(tabs, {
         id = t.ID,
         name = t.name,
         icon = self:tabIcon(bankType, t),
-        accent = warbank and style.Color.Warbank or nil,
-        gap = i == 1 and gap or nil,
+        accent = warbank and "Warbank" or nil,
+        block = warbank and "warbank" or "bank",
         draggable = slots ~= nil and slots:GetBagSocketIndex(bankType, t.ID) ~= nil,
         tooltip = function()
           self:ShowTabTooltip(bankType, t)
         end,
       })
     end
+    for i, entry in ipairs(self:OrderedTabs(tabs)) do
+      entry.gap = i == 1 and gap or nil
+      table.insert(entries, entry)
+    end
     if C_Bank.FetchNextPurchasableBankTabData(bankType) ~= nil then
       table.insert(entries, {
         id = purchaseID,
         name = "+",
         secure = bankType,
-        accent = bankType == Enum.BankType.Account and style.Color.Warbank or nil,
+        accent = bankType == Enum.BankType.Account and "Warbank" or nil,
         tooltip = { purchaseTitle, L:G("Click to purchase this tab") },
       })
     end
@@ -434,7 +469,7 @@ function bankProto:useBankType(warbank, bagIndex)
   else
     self.bankTab = const.BANK_TAB.BANK
   end
-  self:SetWash(warbank and "WarbankWash" or "Wash")
+  self:SetWash(warbank and "Warbank" or "Default")
   self:UpdatePurchaseBankButton()
 end
 
@@ -468,7 +503,7 @@ function bankProto:shown(ctx, id)
   self:Draw(ctx, items:GetAllSlotInfo()[self.kind], function() end)
   addon.TriggerItemContextChanged()
   if addon.atBank then
-    events:SendMessage(ctx, 'bags/Rederive', { backpack = true, bank = false })
+    events:SendMessage(ctx, 'bags/Rederive', { backpack = true, bank = false, categoriesUnchanged = true })
   end
 end
 
@@ -685,7 +720,7 @@ end
 -- closed (refresh-scheduler.md §10).
 ---@param ctx Context
 function bankProto:Refresh(ctx)
-  events:SendMessage(ctx, 'bags/Rederive', { backpack = false, bank = true })
+  events:SendMessage(ctx, 'bags/Rederive', { backpack = false, bank = true, categoriesUnchanged = true })
 end
 
 -- Sort sorts the bank as the menu button's right click does on retail (the Warbank while a

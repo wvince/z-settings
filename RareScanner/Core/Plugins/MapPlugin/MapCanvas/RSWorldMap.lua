@@ -338,14 +338,12 @@ function RSWorldMap:WaitForCanvasReady(callback)
     Check()
 end
 
-if (WorldMapFrame and WorldMapFrame.TriggerEvent) then
-	hooksecurefunc(WorldMapFrame, "TriggerEvent", function(self, event, ...)
-		if (event == "SetBounty") then
-			for dataProvider in pairs(RSWorldMap.dataProviders) do
-				if (dataProvider.SetBounty) then
-					dataProvider:SetBounty(...)
-				end
+if (WorldMapFrame and WorldMapFrame.RegisterCallback) then
+	WorldMapFrame:RegisterCallback("SetBounty", function(_, ...)
+		for dataProvider in pairs(RSWorldMap.dataProviders) do
+			if (dataProvider.SetBounty) then
+				dataProvider:SetBounty(...)
 			end
 		end
-	end)
+	end, RSWorldMap)
 end

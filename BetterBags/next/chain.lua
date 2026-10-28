@@ -78,7 +78,20 @@ function chain:Register(panel, role)
     self.watching = true
     events:RegisterEvent("UI_SCALE_CHANGED", function(ctx) self:Update(ctx, true) end)
     events:RegisterEvent("DISPLAY_SIZE_CHANGED", function(ctx) self:Update(ctx, true) end)
+    events:RegisterMessage("next/ScalesChanged", function(ctx) self:ScalesChanged(ctx) end)
   end
+end
+
+-- ScalesChanged applies the Size tab's scales (docs/next-appearance-size.md, next/ScalesChanged from its
+-- sliders): the item buttons' size, then every panel (ApplyScales), then where the panels rest, a small
+-- one refitted to the screen (Update, snapping).
+---@param ctx Context
+function chain:ScalesChanged(ctx)
+  style:SetIconScale(database:GetNextIconScale())
+  for _, panel in ipairs(self:Panels()) do
+    panel:ApplyScales(ctx)
+  end
+  self:Update(ctx, true)
 end
 
 ---@return NextChainLayout
@@ -126,13 +139,13 @@ function chain:Partner(panel)
 end
 
 -- Gap is the room between the bodies of two bags side by side: both tab rails hang into it from
--- their bodies, each its widest tab plus the hover slide, with a margin between them; never less
--- than the two feathers.
+-- their bodies (past a side rail standing outside each, Header.Buttons.Rail.Outside), each its widest
+-- tab plus the hover slide, with a margin between them; never less than the two feathers.
 ---@param a NextPanelFrame
 ---@param b NextPanelFrame
 ---@return number
 function chain:Gap(a, b)
-  local tabs = a.tabs:Width() + b.tabs:Width() + 2 * style.TAB_HOVER + style.Chain.TabMargin
+  local tabs = a.tabs:Width() + b.tabs:Width() + 2 * (style.TAB_HOVER + style.RAIL_OUT) + style.Chain.TabMargin
   return math.max(2 * style.FEATHER, tabs)
 end
 
@@ -174,14 +187,18 @@ function chain:SmallLayout()
   return database:GetNextSmallChain()
 end
 
--- SmallGap is the room between two small bags side by side: both tab rails hang into it, each its
--- widest tab plus the hover slide, with a margin between them; never less than Small.MinGap.
+-- SmallGap is the room between two small bags side by side, on the screen: both tab rails hang into it,
+-- each its widest tab plus the hover slide at its bag's scale (docs/next-appearance-size.md), with a
+-- margin between them; never less than Small.MinGap, both at the larger scale.
 ---@param a NextPanelFrame
 ---@param b NextPanelFrame
 ---@return number
 function chain:SmallGap(a, b)
-  local tabs = a.tabs:Width() + b.tabs:Width() + 2 * style.TAB_HOVER + style.Chain.TabMargin
-  return math.max(style.Small.MinGap, tabs)
+  local sa, sb = a:Scale(), b:Scale()
+  local s = math.max(sa, sb)
+  local tabs = (a.tabs:Width() + style.TAB_HOVER + style.RAIL_OUT) * sa
+    + (b.tabs:Width() + style.TAB_HOVER + style.RAIL_OUT) * sb + style.Chain.TabMargin * s
+  return math.max(style.Small.MinGap * s, tabs)
 end
 
 -- SmallAnchorOf returns the bag a small panel sits beside, when the small chain makes it the chained
@@ -201,7 +218,8 @@ function chain:SmallAnchorOf(panel)
 end
 
 -- ChainedPlace is where panel sits beside anchor, whose top left is ax, ay: a companion left of the
--- backpack, the backpack right of a companion, the gap between them, their tops aligned.
+-- backpack, the backpack right of a companion, the gap between them, their tops aligned. Each is as
+-- wide as the player made it (next.md §14g).
 ---@param panel NextPanelFrame
 ---@param anchor NextPanelFrame
 ---@param ax number
@@ -210,9 +228,32 @@ end
 function chain:ChainedPlace(panel, anchor, ax, ay)
   local gap = self:SmallGap(panel, anchor)
   if panel.chainRole == "companion" then
-    return ax - gap - style.BODY_WIDTH, ay
+    return ax - gap - panel:BodyWidth() * panel:Scale(), ay
   end
-  return ax + style.BODY_WIDTH + gap, ay
+  return ax + anchor:BodyWidth() * anchor:Scale() + gap, ay
+end
+
+-- ChainedSide is the side of a small panel its chained partner is on, where a grip would push the
+-- partner (next.md §14g): a bag chained beside an anchor, its facing side always (its place hangs from
+-- the anchor's, open or not); an anchor, its facing side while the bag chained to it is open. Facing is
+-- the backpack's left, a companion's right. Else nil.
+---@param panel NextPanelFrame
+---@return "LEFT"|"RIGHT"|nil
+function chain:ChainedSide(panel)
+  if not isSmall(panel) then
+    return nil
+  end
+  if self:SmallAnchorOf(panel) == nil and self:Follower(panel) == nil then
+    return nil
+  end
+  return panel.chainRole == "backpack" and "LEFT" or "RIGHT"
+end
+
+-- UpdateGrips shows or hides every small panel's grips for how the bags are chained now.
+function chain:UpdateGrips()
+  for _, panel in ipairs(self:Panels()) do
+    panel:UpdateGrips()
+  end
 end
 
 -- SmallPair returns the anchor and the chained bag when the small chain chains them and both are open
@@ -285,13 +326,14 @@ function chain:Dropped(panel, x, y)
   end
   local px, py = partner:SmallPlace()
   local wx, wy = self:ChainedPlace(panel, partner, px, py)
-  if wx < 0 or wx + style.BODY_WIDTH > UIParent:GetWidth() then
+  if wx < 0 or wx + panel:BodyWidth() * panel:Scale() > UIParent:GetWidth() then
     return nil, nil
   end
   if math.abs(x - wx) > style.Small.SnapReach or math.abs(y - wy) > style.Small.SnapRise then
     return nil, nil
   end
   database:SetNextSmallChain(partner.chainRole)
+  self:UpdateGrips()
   return wx, wy
 end
 
@@ -482,10 +524,13 @@ function chain:Update(ctx, snap)
   for _, panel in ipairs(self:Panels()) do
     if isOpen(panel) and isSmall(panel) then
       -- Where the player put it; the screen changed: still on it, its height the screen's share. A
-      -- chained bag whose spot beside its open anchor moved (the gap changed) glides there.
-      if snap then
+      -- chained bag whose spot beside its open anchor moved (the gap changed) glides there. One the
+      -- player sizes, or whose size glides (back to its default, or onto its columns' width), is left alone: it
+      -- places itself after.
+      local sizing = panel.sizing ~= nil or panel.sizeGliding
+      if snap and not sizing then
         panel:FitSmall()
-      elseif panel.morph == nil and not tween:IsPlaying(panel) then
+      elseif not snap and not sizing and panel.morph == nil and not tween:IsPlaying(panel) then
         -- Never cutting a slide or a switch short (a slide's end says the bag has shown): Arrived
         -- settles it once there.
         self:Settle(panel)
@@ -531,6 +576,7 @@ end
 -- pair parted), "apart".
 ---@return string
 function chain:UpdateCoupling()
+  self:UpdateGrips()
   local anchor, chained = self:Pair()
   local placed, arrived = false, false
   if chained ~= nil then
@@ -617,7 +663,7 @@ function chain:tweenCoupling(to)
     duration = to == 1 and style.Time.Couple or style.Time.Uncouple,
     from = c.amount,
     to = to,
-    ease = to == 1 and "outCubic" or "inOutSine",
+    ease = style:Ease(to == 1 and "Couple" or "Uncouple"),
     onUpdate = function(v)
       c.amount = v
       self:applyCoupling()
@@ -655,10 +701,11 @@ function chain:applyCoupling()
     if backpack.chainRole ~= "backpack" then
       backpack, companion = companion, backpack
     end
-    local gap = backpack:SmallLeft() - (companion:SmallLeft() + style.BODY_WIDTH)
+    local gap = backpack:SmallLeft() - (companion:SmallLeft() + companion:BodyWidth() * companion:Scale())
     local half = math.max(0, gap / 2)
-    c.anchor:SetCoupling(c.amount, half, false, c.phase, c.time, style.FEATHER)
-    c.chained:SetCoupling(c.amount, half, true, c.phase, c.time, style.FEATHER)
+    -- The braid is drawn in each bag, in its own units (its Bag Scale).
+    c.anchor:SetCoupling(c.amount, half / c.anchor:Scale(), false, c.phase, c.time, style.FEATHER)
+    c.chained:SetCoupling(c.amount, half / c.chained:Scale(), true, c.phase, c.time, style.FEATHER)
     return
   end
   local gap = UIParent:GetWidth() - 2 * (style.WIDTH - style.FEATHER) - math.abs(c.anchor.offset)

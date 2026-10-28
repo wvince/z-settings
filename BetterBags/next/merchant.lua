@@ -90,13 +90,10 @@ local MAX_ITEM_COST = 3
 ---@field cost number Copper.
 
 function merchant:Init()
-  -- A search instance of its own: the search module keeps everything it indexes on itself.
+  -- A search instance of its own: the search module keeps everything it indexes on itself, so a
+  -- negated query covers the vendor's items, not the bags' (search:Universe).
   local index = setmetatable({}, { __index = search })
   index:Init()
-  -- A negated query covers the vendor's items, not the bags'.
-  index.Universe = function(own)
-    return own.indexed
-  end
   self.search = index
 end
 
@@ -152,8 +149,8 @@ local function recordOf(item)
     info.itemID = info.itemID or instID
     info.itemType, info.itemSubType, info.itemEquipLoc = instType, instSubType, instEquipLoc
     info.classID, info.subclassID = instClassID, instSubclassID
-    local name, _, quality, level, minLevel, itemType, itemSubType, _, equipLoc, _, sellPrice, classID, subclassID,
-      bindType, expacID, _, isCraftingReagent = C_Item.GetItemInfo(link)
+    local name, _, quality, level, minLevel, itemType, itemSubType, stackSize, equipLoc, _, sellPrice, classID,
+      subclassID, bindType, expacID, _, isCraftingReagent = C_Item.GetItemInfo(link)
     if name ~= nil then
       warm = true
       info.itemName = name
@@ -170,9 +167,10 @@ local function recordOf(item)
       info.expacID = expacID
       info.isCraftingReagent = isCraftingReagent
       info.currentItemLevel = C_Item.GetDetailedItemLevelInfo and C_Item.GetDetailedItemLevelInfo(link) or level
+      info.traits = items:ReadItemTraits(info.itemID, link, minLevel, stackSize, sellPrice)
     end
   end
-  info.tooltipText = tooltipScanner:GetMerchantItemText(item.index)
+  info.tooltipText, info.tooltipMarks = tooltipScanner:GetMerchantItemText(item.index)
   ---@type ItemData
   local record = {
     kind = const.BAG_KIND.BACKPACK,
@@ -180,6 +178,12 @@ local function recordOf(item)
     itemInfo = info,
     containerInfo = { quality = info.itemQuality },
   }
+  -- The merchant's own answer (GetMerchantItemInfo's isUsable), read with the item's data.
+  if info.traits then
+    record.isUsable = item.isUsable
+    record.petOwned, record.petLimit = items:PetCountsOf(info.traits.petSpeciesID)
+    record.appearanceKnown, record.sourceKnown = items:AppearanceStateOf(info.traits, link)
+  end
   return record, warm
 end
 
@@ -195,7 +199,7 @@ function merchant:searchCategoriesOf(records)
   for _, filter in ipairs(categories:GetSortedSearchCategories() or {}) do
     if filter.enabled and filter.enabled[kind] and filter.searchCategory then
       local priority = filter.priority or 10
-      local groupBy = filter.searchCategory.groupBy or const.SEARCH_CATEGORY_GROUP_BY.NONE
+      local groupBy = filter.groupBy or const.SEARCH_CATEGORY_GROUP_BY.NONE
       for slotkey in pairs(self.search:Search(filter.searchCategory.query)) do
         local record = records[slotkey]
         if record ~= nil and (found[slotkey] == nil or priority < found[slotkey].priority) then
@@ -278,10 +282,12 @@ function merchant:ReadItems(ctx)
   for _, item in ipairs(list) do
     local hit = found[item.record.slotkey]
     if hit then
-      -- As items:GetCategory weighs them: a custom category beats a search category only with a
-      -- lower priority number; a tie goes to the search category.
-      local custom, customPriority = categories:GetCustomCategory(ctx, const.BAG_KIND.BACKPACK, item.record)
-      if not custom or (customPriority or 10) >= hit.priority then
+      -- As items:GetCategory weighs them (category-lifecycle.md §7): an item added by hand to a category
+      -- of yours stays there; a plugin's item list loses to a rule only with a lower priority number.
+      local custom, customPriority, customFilter = categories:GetCustomCategory(ctx, const.BAG_KIND.BACKPACK,
+        item.record)
+      local yours = customFilter ~= nil and customFilter.save == true
+      if not custom or (not yours and (customPriority or 10) > hit.priority) then
         local old = item.category
         item.category = hit.name
         item.record.itemInfo.category = hit.name
@@ -329,14 +335,7 @@ function merchant:Search(text)
   if text == nil or text == "" then
     return nil
   end
-  -- Only the vendor's slots: the search's results can carry markers of its own (___NEGATED___).
-  local results = {}
-  for slotkey in pairs(self.search:Search(text)) do
-    if self.search.indexed[slotkey] ~= nil then
-      results[slotkey] = true
-    end
-  end
-  return results
+  return self.search:Search(text)
 end
 
 ---@param link? string
@@ -480,6 +479,70 @@ function merchant:Purchase(button, item, quantity)
   end
 end
 
+---@class (exact) NextVendorPurchase
+---@field item NextVendorItem
+---@field quantity number How many to buy.
+
+-- ToBuy is what a shopping list buys here, as Profession Shopping List's BuyFromMerchant buys it
+-- (profession-shopping-list.md): for each item the list needs (needs, by item ID), the merchant's first
+-- item of that ID, unless it cannot be bought, and how many; in the merchant's order.
+---@param list NextVendorItem[] The merchant's items (ReadItems), in its order.
+---@param needs table<number, number>
+---@return NextVendorPurchase[]
+function merchant:ToBuy(list, needs)
+  local purchases, seen = {}, {}
+  for _, item in ipairs(list) do
+    local id = item.itemID
+    if id ~= nil and needs[id] ~= nil and not seen[id] then
+      seen[id] = true
+      if item.isPurchasable then
+        table.insert(purchases, { item = item, quantity = needs[id] })
+      end
+    end
+  end
+  return purchases
+end
+
+-- PriceOf is what quantity of an item costs, as Blizzard prices a quantity (MerchantFrame.lua): the
+-- price of one purchase per unit it gives (MerchantItemButton_OnModifiedClick: price / stackCount), and
+-- each other cost scaled the same way (MerchantFrame_ConfirmExtendedItemCost); a fraction rounds up, so
+-- it never says less than the purchase costs.
+---@param item NextVendorItem
+---@param quantity number
+---@return number price, NextVendorCost[] costs
+function merchant:PriceOf(item, quantity)
+  local per = quantity / item.stackCount
+  local costs = {}
+  for _, cost in ipairs(item.costs) do
+    table.insert(costs, { texture = cost.texture, value = math.ceil(cost.value * per), link = cost.link,
+      currencyName = cost.currencyName })
+  end
+  return math.ceil(item.price * per), costs
+end
+
+-- TotalOf is what buying every purchase costs: the prices added up, and each thing paid (an item, a
+-- currency) once, in the order first met.
+---@param purchases NextVendorPurchase[]
+---@return number price, NextVendorCost[] costs
+function merchant:TotalOf(purchases)
+  local total, costs, byKey = 0, {}, {}
+  for _, purchase in ipairs(purchases) do
+    local price, each = self:PriceOf(purchase.item, purchase.quantity)
+    total = total + price
+    for _, cost in ipairs(each) do
+      local key = cost.link or cost.currencyName or cost.texture
+      local sum = byKey[key]
+      if sum == nil then
+        byKey[key] = cost
+        table.insert(costs, cost)
+      else
+        sum.value = sum.value + cost.value
+      end
+    end
+  end
+  return total, costs
+end
+
 -- MaxPurchasable is the most one quantity purchase can buy, as Blizzard's stack split works it out
 -- (MerchantItemButton_OnModifiedClick): the stack limit, what the money pays for, and what the
 -- items it costs pay for.
@@ -526,6 +589,23 @@ function merchant:JunkSlots()
   return slots
 end
 
+-- SellCursorItem sells the item on the cursor, as dropping it on Blizzard's merchant frame does (its
+-- OnMouseUp), or on one of its item buttons (a left click picks the merchant item up while holding
+-- the player's: a sale): Blizzard asks first about a refundable item. It returns what it did, for
+-- profiler traces: "sold", "asked" (Blizzard's refund question) or "nothing" (no item on the cursor).
+---@return string
+function merchant:SellCursorItem()
+  if not CursorHasItem() then
+    return "nothing"
+  end
+  if MerchantFrame and MerchantFrame.refundItem
+    and ContainerFrame_GetExtendedPriceString(MerchantFrame.refundItem, MerchantFrame.refundItemEquipped) then
+    return "asked"
+  end
+  PickupMerchantItem(0)
+  return "sold"
+end
+
 ---@return number
 function merchant:NumJunk()
   if C_MerchantFrame and C_MerchantFrame.GetNumJunkItems then
@@ -537,19 +617,6 @@ end
 -- SellAllJunk is Blizzard's Sell All Junk button: its confirmation, then C_MerchantFrame.SellAllJunkItems.
 function merchant:SellAllJunk()
   MerchantFrame_OnSellAllJunkButtonClicked()
-end
-
--- SellSlots sells items to the merchant one by one, as a right click at a merchant does, while
--- stillOpen (when given) says the merchant is open.
----@param slots {bag: number, slot: number}[]
----@param stillOpen? fun(): boolean
-function merchant:SellSlots(slots, stillOpen)
-  for _, s in ipairs(slots) do
-    if stillOpen and not stillOpen() then
-      return
-    end
-    C_Container.UseContainerItem(s.bag, s.slot)
-  end
 end
 
 merchant:Init()

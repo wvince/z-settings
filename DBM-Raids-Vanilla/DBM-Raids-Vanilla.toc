@@ -1,4 +1,4 @@
-## Interface: 11509, 16001, 20506, 30405, 38002, 40402, 50504, 120100, 120105
+## Interface: 11509, 16001, 20506, 30405, 38002, 40402, 50504, 120105, 120107
 ## Category: DBM
 
 ## Title:|cffffe00a<|r|cffff7d0aDBM Mod|r|cffffe00a>|r |cffff6010Raids (Vanilla)|r
@@ -45,7 +45,7 @@
 ## X-DBM-Mod-MinExpansion: 0
 ## X-Curse-Project-ID: 16442
 ## X-Wago-ID: 7x61xpN1
-## Version: r833
+## Version: r834
 
 locale.generated.lua
 

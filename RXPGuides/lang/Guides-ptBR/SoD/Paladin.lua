@@ -294,7 +294,7 @@ step
     .xp >22,1
 step
     #completewith next
-    .zone Wetlands >> Viaje para Terras do Interior
+    .zone Wetlands >> Vá para o Pantanal
     .itemStat 18,QUALITY,2
     .aura 408828
     .train 410001,1
@@ -1371,7 +1371,7 @@ step
     .xp <24,1
 step
     #completewith next
-    .zone Duskwood >> Voe para Floresta do Crepúsculo
+    .zone Duskwood >> Vá para Floresta do Crepúsculo
     .train 416037,1
     .xp <24,1
 step
@@ -2146,7 +2146,7 @@ step << Horde
     .complete 81970,4 --1/1 Symbol of Faith
 step << Horde
     #completewith next
-    .zone Searing Gorge >>Vá para Garganta Abrasadora
+    .zone Searing Gorge >>Viaje para Garganta Abrasadora
     .train 410013,1
 step << Horde
     >>|cRXP_WARN_É recomendado formar um grupo de 5 jogadores e você precisará de 3 ouro.|r

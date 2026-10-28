@@ -38,6 +38,9 @@ local context = addon:GetModule("Context")
 ---@class Debug: AceModule
 local debug = addon:GetModule("Debug")
 
+---@class Texels: AceModule
+local texels = addon:GetModule("Texels")
+
 -- Alpha floor for the additive quality halo the instant it turns on, just above
 -- the halo threshold. The halo ramps from this value at (threshold + 1) up to a
 -- blinding 1.0 at intensity 100, so it is already clearly visible the moment it
@@ -86,6 +89,8 @@ end
 ---@field UpdateTooltip function
 ---@field IconQuestTexture Texture
 ---@field drawState table|nil The inputs of the last full draw (see DrawInputChanged).
+---@field width? number The size SetSize gave it (never read back from the client).
+---@field height? number
 ---@field cooldownState table|nil The cooldown last applied (see UpdateCooldown).
 itemFrame.itemProto = {}
 -- Bumped by RestyleButtons; part of every button's draw record.
@@ -666,6 +671,8 @@ function itemFrame.itemProto:SetItemFromData(ctx, data)
 		events:SendMessage(ctx, "item/Updated", self, decoration)
 	end
 	self:UpdateUpgrade(ctx, data)
+	-- After item/Updated: Masque makes its textures as it skins the button (texture-sharpening.md).
+	texels:Unsharpen(self.frame)
 	recordItemDraw(self, decoration, data)
 	self:FinishItemDraw(ctx, decoration)
 end
@@ -784,11 +791,19 @@ function itemFrame.itemProto:ResetSize(ctx)
 	end
 end
 
+-- SetSize sizes the button. A new size makes its next draw a full one: Masque sizes a skin to the
+-- button when it skins it (Masque 12.1.0 Core.lua UpdateScale) and re-skins it on item/Updated, which
+-- only a full draw sends, so a button resized with nothing else changed kept a skin for its old size
+-- (BetterBags Next's Quiet theme, next-themes.md §6).
 ---@param ctx Context
 ---@param width number
 ---@param height number
 function itemFrame.itemProto:SetSize(ctx, width, height)
 	local decoration = self:GetDecoration(ctx)
+	if (self.width ~= width or self.height ~= height) and self.drawState then
+		self.drawState.valid = false
+	end
+	self.width, self.height = width, height
 	self.frame:SetSize(width, height)
 	self.button:SetSize(width, height)
 	decoration:SetSize(width, height)
@@ -986,6 +1001,7 @@ function itemFrame.itemProto:SetFreeSlots(ctx, data, count, nocount)
 	self.frame:SetAlpha(1)
 	recordFreeDraw(self, decoration, data, count, nocount)
 	events:SendMessage(ctx, "item/Updated", self, decoration)
+	texels:Unsharpen(self.frame)
 	self.frame:Show()
 	self.button:Show()
 end
@@ -1231,6 +1247,8 @@ function itemFrame:_DoCreate(_, bagID)
 	-- shows the buttons themselves; this holder keeps them from being visible.
 	local parent = CreateFrame("Frame", name .. "parent")
 	parent:Hide()
+	-- Its full draws draw it without the client's sharpening; the bag it is drawn in leaves it out of its walk.
+	texels:DrawsItself(parent)
 	parent:SetID(bagID)
 	parent.IsCombinedBagContainer = function() return false end
 

@@ -9,7 +9,7 @@ RXPGuides.RegisterGuide([[
 #name 1-10级 艾尔文森林 人类法师 A怪进阶指南
 #version 2
 #group RestedXP 联盟法师 A怪进阶指南
-#defaultfor Human Mage
+#defaultfor none Human Mage
 #next 10-11级 丹莫罗 人类法师 A怪进阶指南
 
 
@@ -1150,7 +1150,7 @@ RXPGuides.RegisterGuide([[
 #name 10-11级 丹莫罗 人类法师 A怪进阶指南
 #version 2
 #group RestedXP 联盟法师 A怪进阶指南
-#defaultfor Human Mage
+#defaultfor none Human Mage
 #next 10-12级 黑海岸 1 法师 A怪进阶指南
 
 step
@@ -1442,7 +1442,7 @@ RXPGuides.RegisterGuide([[
 #name 1-10级 丹莫罗 侏儒法师 A怪进阶指南
 #version 2
 #group RestedXP 联盟法师 A怪进阶指南
-#defaultfor Gnome Mage
+#defaultfor none Gnome Mage
 #next 10-12级 黑海岸 1 法师 A怪进阶指南
 
 
@@ -3002,7 +3002,7 @@ RXPGuides.RegisterGuide([[
 #name 10-12级 黑海岸 1 法师 A怪进阶指南
 #version 2
 #group RestedXP 联盟法师 A怪进阶指南
-#defaultfor Human Mage/Gnome Mage
+#defaultfor none Mage
 #next 12-14级 洛克莫丹 法师 A怪进阶指南
 
 step
@@ -3559,7 +3559,7 @@ RXPGuides.RegisterGuide([[
 #name 10-12级 黑海岸 1 法师 A怪进阶指南 起飞路线
 #version 2
 #group RestedXP 联盟法师 A怪进阶指南
-#defaultfor none
+#defaultfor none none
 #next 12-14级 洛克莫丹 法师 A怪进阶指南
 
 --VV Make this an alternative route that must be manually selected
@@ -4127,7 +4127,7 @@ RXPGuides.RegisterGuide([[
 #name 12-14级 洛克莫丹 法师 A怪进阶指南
 #version 2
 #group RestedXP 联盟法师 A怪进阶指南
-#defaultfor Human Mage/Gnome Mage
+#defaultfor none Mage
 #next 14-16级 黑海岸 2 法师 A怪进阶指南
 step
     #completewith next
@@ -4908,7 +4908,7 @@ RXPGuides.RegisterGuide([[
 #name 14-16级 黑海岸 2 法师 A怪进阶指南
 #version 2
 #group RestedXP 联盟法师 A怪进阶指南
-#defaultfor Human Mage/Gnome Mage
+#defaultfor none Mage
 #next 16-18级 西部荒野 法师 A怪进阶指南
 
 
@@ -5557,7 +5557,7 @@ RXPGuides.RegisterGuide([[
 #name 16-18级 西部荒野 法师 A怪进阶指南
 #version 2
 #group RestedXP 联盟法师 A怪进阶指南
-#defaultfor Human Mage/Gnome Mage
+#defaultfor none Mage
 #next 18-20级 黑海岸 3 法师 A怪进阶指南
 
 step
@@ -6288,7 +6288,7 @@ RXPGuides.RegisterGuide([[
 #name 18-20级 黑海岸 3 法师 A怪进阶指南
 #version 2
 #group RestedXP 联盟法师 A怪进阶指南
-#defaultfor Human Mage/Gnome Mage
+#defaultfor none Mage
 #next 20-22级 赤脊山 1 法师 A怪进阶指南
 
 step
@@ -7067,7 +7067,7 @@ RXPGuides.RegisterGuide([[
 #name 20-22级 赤脊山 1 法师 A怪进阶指南
 #version 2
 #group RestedXP 联盟法师 A怪进阶指南
-#defaultfor Human Mage/Gnome Mage
+#defaultfor none Mage
 #next 22-26级 湿地 1 法师 A怪进阶指南
 
 step
@@ -7301,7 +7301,7 @@ step
 step
     #requires FarleyHome
     .goto 1429/0,-186.46,-8874.91
-    >>与 |cRXP_FRIENDLY_帕克斯顿|r 对话
+    >>与 |cRXP_FRIENDLY_帕克斯顿修士|r 对话
     .turnin 344 >> 交任务 帕克斯顿修士
     .accept 345 >> 接受任务 墨水短缺
     .target Brother Paxton
@@ -7345,7 +7345,7 @@ step
     #completewith next
     #requires Dawn2
     .goto 1431/0,-1159.00,-10544.31,20,0
-    .goto 1431/0,-1164.94,-10533.15,10 >>进入旅馆
+    .goto 1431/0,-1164.94,-10533.15,10 >>进入旅店
 step
     #requires Dawn2
     .goto 1431/0,-1159.54,-10509.03
@@ -7522,7 +7522,7 @@ step
     #sticky
     #label Darcy1
     .goto 1433/0,-2155.22,-9225.84,0,0
-    >>进入旅馆
+    >>进入旅店
     >>与 |cRXP_FRIENDLY_达希|r 对话
     .accept 129 >>接受任务 免费的午餐
     .target Darcy
@@ -7905,7 +7905,7 @@ step
     .target Kimberly Hiett
 step
     .goto 1433/0,-2155.22,-9225.84
-    >>进入旅馆
+    >>进入旅店
     >>与 |cRXP_FRIENDLY_达希|r 对话
     .turnin 131 >>交任务 水仙诉衷情
     .target Darcy
@@ -7937,13 +7937,13 @@ step
     .goto 1429/0,-186.46,-8874.91,10 >>前去找 |cRXP_FRIENDLY_帕克斯顿|r
 step
     .goto 1429/0,-186.46,-8874.91
-    >>与 |cRXP_FRIENDLY_帕克斯顿|r 对话
+    >>与 |cRXP_FRIENDLY_帕克斯顿修士|r 对话
     .turnin 347 >> 交任务 瑞斯班矿石
     .accept 346 >> 接受任务 克里斯托弗的书
     .target Brother Paxton
 step
     #completewith CharysEnd
-    .cast 3561 >> 施放|T135763:0|t[传送：暴风城]
+    .cast 3561 >> 施放 |T135763:0|t[传送：暴风城]
     .zoneskip Stormwind City
 step
     #completewith CharysEnd

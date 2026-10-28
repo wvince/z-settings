@@ -75,6 +75,15 @@ local async = addon:GetModule("Async")
 ---@field bindingInfo BindingInfo
 ---@field bagid number
 ---@field slotid number
+---@field bagName? string The plain name of the item's bag (GetPlainBagName), set in Phase 6.
+---@field itemTotal? number How many of its item the kind's bags hold (CountItemTotals).
+---@field isUsable? boolean Whether the character can use it (CanUseItem); nil read cold or without the API.
+---@field petOwned? number How many of its pet the account has (PetCountsOf); nil until the pet journal loaded.
+---@field petLimit? number How many of its pet the account may have.
+---@field appearanceKnown? boolean Its appearance is collected (AppearanceStateOf); nil without one or before the collection loaded.
+---@field sourceKnown? boolean Its own source is collected.
+---@field slotEquipped? number The lowest item level worn in its slots (SlotLevelsOf).
+---@field slotBest? number The character's best item level in its slot (SlotLevelsOf).
 ---@field inventoryType number
 ---@field inventorySlots number[]
 ---@field slotkey string
@@ -304,8 +313,11 @@ function items:ResolveUpgrade(data)
   if cacheable and data.upgradeProvider == provider and data.upgradeGeneration == self._upgradeGeneration then
     return data.upgradeVerdict
   end
-  local verdict = func(data) and true or false
-  if cacheable then
+  -- A provider answers nil when it cannot tell yet (Pawn: "we're not sure yet"): no arrow, and it is
+  -- asked again next time.
+  local answer = func(data)
+  local verdict = answer and true or false
+  if cacheable and answer ~= nil then
     data.upgradeVerdict = verdict
     data.upgradeProvider = provider
     data.upgradeGeneration = self._upgradeGeneration
@@ -313,6 +325,38 @@ function items:ResolveUpgrade(data)
     data.upgradeGeneration = nil
   end
   return verdict
+end
+
+-- contextSignature is what grey-out (ResolveItemContextMatchResult) reads besides the item, or nil
+-- when kept grey-out cannot stand. With no item context (ItemButtonUtil.GetItemContext, every
+-- client) it reads whether the bank is open and whether it shows a Warbank tab. While a context is
+-- active, Blizzard's answer can depend on more than the context (the spell being cast for Enchanting,
+-- CheckItemCondition, ReplaceBonusTree or JumpUpgradeTrack; the recipe while recrafting:
+-- ItemButtonUtil.GetItemContextMatchResultForItem), so it is worked out on every refresh, as before.
+---@return string|nil
+function items:contextSignature()
+  local util = _G.ItemButtonUtil
+  if util and util.GetItemContext and util.GetItemContext() ~= nil then
+    return nil
+  end
+  -- The Warbank as ResolveItemContextMatchResult tells it, which reads it only at the bank.
+  local warbank = false
+  local bank = addon.Bags and addon.Bags.Bank
+  if addon.atBank and bank and bank.bankTab then
+    local accountBankStart = addon.isRetail and Enum and Enum.BagIndex and Enum.BagIndex.AccountBankTab_1
+      or (const.BANK_TAB and const.BANK_TAB.ACCOUNT_BANK_1)
+    warbank = accountBankStart ~= nil and bank.bankTab >= accountBankStart
+  end
+  return tostring(addon.atBank == true) .. "|" .. tostring(warbank)
+end
+
+-- categoryStamp is what an item's own category was worked out under, besides the item and its
+-- recency: the kind's category generation and the Categories module's.
+---@param kind BagKind
+---@return string
+function items:categoryStamp(kind)
+  local generation = categories and categories.GetGeneration and categories:GetGeneration() or 0
+  return self._categoryGeneration[kind] .. ":" .. generation
 end
 
 -- InvalidateUpgrades starts a new upgrade generation, so kept verdicts are computed again.
@@ -350,7 +394,7 @@ function items:RequestUpgradeRefresh(backpack, bank, reread)
     local ctx = context:New('InvalidateUpgrades')
     if not doReread then
       if doBackpack or doBank then
-        events:SendMessage(ctx, 'bags/Rederive', { backpack = doBackpack, bank = doBank })
+        events:SendMessage(ctx, 'bags/Rederive', { backpack = doBackpack, bank = doBank, categoriesUnchanged = true })
       end
       return
     end
@@ -421,6 +465,22 @@ function items:RegisterCacheEvents()
       self:InvalidateUpgrades(false)
     end)
   end
+  for _, name in ipairs({ 'PET_JOURNAL_LIST_UPDATE', 'NEW_PET_ADDED', 'PET_JOURNAL_PET_DELETED',
+    'PET_JOURNAL_PET_RESTORED' }) do
+    register(name, function()
+      self:OnCharacterStateChanged(true)
+    end)
+  end
+  -- What the character can use follows its spells and reputations, which change often; what is
+  -- collected follows the appearance collection: bucketed.
+  for _, name in ipairs({ 'UPDATE_FACTION', 'SPELLS_CHANGED', 'TRANSMOG_COLLECTION_UPDATED',
+    'TRANSMOG_COLLECTION_SOURCE_ADDED', 'TRANSMOG_COLLECTION_SOURCE_REMOVED' }) do
+    if isEventValid(name) then
+      events:BucketEvent(name, function()
+        self:OnCharacterStateChanged(false)
+      end)
+    end
+  end
 end
 
 ---@param data ItemData
@@ -479,6 +539,10 @@ function items:Init()
   -- result comes later (the item moves' refresh, or Refresh's fallback when nothing moved).
   -- The flag stays set until a sweep of that kind has committed.
   self._sortSweepPending = {}
+  -- The bags the client changed after BetterBags last read them, each with the number of its last
+  -- change (MarkBagUnread), and the count of changes reported so far.
+  self._unreadBags = {}
+  self._bagChanges = 0
   -- The interaction state (addon.atInteracting) each kind's committed stacks were built
   -- under (see NeedsInteractionRecalculation).
   self._stackedInteracting = {}
@@ -487,6 +551,10 @@ function items:Init()
   -- redraw whose inputs are unchanged, so a new generation makes every button of the kind
   -- redraw.
   self._drawGeneration = {}
+  -- What an item's kept category was worked out under (data-loader.md §18): bumped by every wipe and
+  -- every recalculation that does not say its categories are unchanged (settings, categories, gear
+  -- sets). With the Categories module's own generation it is each item's category stamp.
+  self._categoryGeneration = {}
   eachKind(function(kind)
     self.searchCache[kind] = {}
     self.categoryPriorityCache[kind] = {}
@@ -494,6 +562,7 @@ function items:Init()
     self._firstLoad[kind] = true
     self._sortSweepPending[kind] = false
     self._drawGeneration[kind] = 0
+    self._categoryGeneration[kind] = 0
   end)
   -- Equipped gear by inventory slot, set by every backpack sweep (HarvestEquipment); nil
   -- until the first one, so an unread slot is never taken for an empty one.
@@ -736,20 +805,43 @@ function items:guildFreeSlots(itemData)
   return emptySlots, emptySlotsByBag
 end
 
+-- GetPlainBagName returns a bag's name: a guild tab's name, the keyring, the bank, or the client's
+-- name for the container (C_Container.GetBagName). Show Bags labels it with a number
+-- (GetBagName); the bagname search field holds it as it is.
 ---@param bagid number
 ---@return string
-function items:GetBagName(bagid)
+function items:GetPlainBagName(bagid)
   local guildTab = guildTabOf(bagid)
   if guildTab then
     local info = guildBankSource():TabInfo(guildTab)
-    return string.format("#%d: %s", guildTab, info and info.name or format(GUILDBANK_TAB_NUMBER, guildTab))
+    return info and info.name or format(GUILDBANK_TAB_NUMBER, guildTab)
   end
-  local isBackpack = const.BACKPACK_BAGS[bagid] ~= nil
-  if isBackpack then
-    local isKeyring = Enum and Enum.BagIndex and Enum.BagIndex.Keyring and bagid == Enum.BagIndex.Keyring
-    local bagname = isKeyring and L:G('Keyring') or C_Container.GetBagName(bagid)
+  if const.BACKPACK_BAGS[bagid] ~= nil then
+    if Enum and Enum.BagIndex and Enum.BagIndex.Keyring and bagid == Enum.BagIndex.Keyring then
+      return L:G('Keyring')
+    end
+    return C_Container.GetBagName(bagid) or "Unknown"
+  end
+  if bagid == -1 then
+    return L:G('Bank')
+  elseif bagid == -3 then
+    return L:G('Reagent Bank')
+  end
+  return C_Container.GetBagName(bagid) or L:G("Bank Bag")
+end
+
+-- GetBagName returns a bag's Show Bags label: "#<n>: <name>" (GetPlainBagName).
+---@param bagid number
+---@return string
+function items:GetBagName(bagid)
+  local name = self:GetPlainBagName(bagid)
+  local guildTab = guildTabOf(bagid)
+  if guildTab then
+    return string.format("#%d: %s", guildTab, name)
+  end
+  if const.BACKPACK_BAGS[bagid] ~= nil then
     local displayid = bagid + 1
-    if isKeyring then
+    if Enum and Enum.BagIndex and Enum.BagIndex.Keyring and bagid == Enum.BagIndex.Keyring then
       -- After the last bag: #6 on Classic Era (bags 0-4), #7 on Forever (with the reagent bag).
       local lastBag = 0
       for id in pairs(const.BACKPACK_BAGS) do
@@ -759,18 +851,12 @@ function items:GetBagName(bagid)
       end
       displayid = lastBag + 2
     end
-    return string.format("#%d: %s", displayid, bagname or "Unknown")
+    return string.format("#%d: %s", displayid, name)
   end
-
-  local id = bagid
-  if id == -1 then
-    return string.format("#%d: %s", 1, L:G('Bank'))
-  elseif id == -3 then
-    return string.format("#%d: %s", 1, L:G('Reagent Bank'))
-  else
-    local bagname = C_Container.GetBagName(id)
-    return string.format("#%d: %s", id - 4, bagname or L:G("Bank Bag"))
+  if bagid == -1 or bagid == -3 then
+    return string.format("#%d: %s", 1, name)
   end
+  return string.format("#%d: %s", bagid - 4, name)
 end
 
 -- CloneAsGap produces a frameless gap placeholder from a previous layout entry,
@@ -953,50 +1039,18 @@ function items:Phase1_DetermineBags(ctx, kind)
         end
       end
     end
-
-    local blizzardTab = addon.Bags and addon.Bags.Bank and addon.Bags.Bank.blizzardBankTab
-    if addon.isRetail then
-      ctx:Set("bagid", const.BANK_TAB.BANK)
-      for _, bag in pairs(const.BANK_BAGS) do
-        bagList[bag] = bag
-      end
-      if const.ACCOUNT_BANK_BAGS then
-        for _, bag in pairs(const.ACCOUNT_BANK_BAGS) do
-          bagList[bag] = bag
+    bagList = self:BankBags(ctx)
+    -- While a bank open loads the bank tab by tab, only the tabs loaded so far, as a guild bank
+    -- read reads only the tabs received (refresh-scheduler.md §11).
+    local loaded = self._loadedBankBags
+    if loaded ~= nil then
+      local onlyLoaded = {}
+      for bagID in pairs(bagList) do
+        if loaded[bagID] then
+          onlyLoaded[bagID] = bagList[bagID]
         end
       end
-      local reagentBank = not addon.isRetail and const.BANK_TAB.REAGENT or nil
-      if reagentBank then
-        bagList[reagentBank] = reagentBank
-      end
-    elseif blizzardTab and addon.isRetail then
-      if Enum.BagIndex and Enum.BagIndex.AccountBankTab_1 and blizzardTab >= Enum.BagIndex.AccountBankTab_1 then
-        ctx:Set("bagid", const.BANK_TAB.ACCOUNT_BANK_1)
-      else
-        ctx:Set("bagid", const.BANK_TAB.BANK)
-      end
-      bagList[blizzardTab] = blizzardTab
-    else
-      local activeGroupID = database:GetActiveGroup(const.BAG_KIND.BANK)
-      local activeGroup = activeGroupID and database:GetGroup(const.BAG_KIND.BANK, activeGroupID)
-      local reagentBank = not addon.isRetail and const.BANK_TAB.REAGENT or nil
-
-      if activeGroup and addon.isRetail and activeGroup.bankType == (Enum and Enum.BankType and Enum.BankType.Account) then
-        ctx:Set("bagid", const.BANK_TAB.ACCOUNT_BANK_1)
-        if const.ACCOUNT_BANK_BAGS then
-          for _, bag in pairs(const.ACCOUNT_BANK_BAGS) do
-            bagList[bag] = bag
-          end
-        end
-      else
-        ctx:Set("bagid", const.BANK_TAB.BANK)
-        for _, bag in pairs(const.BANK_BAGS) do
-          bagList[bag] = bag
-        end
-        if reagentBank then
-          bagList[reagentBank] = reagentBank
-        end
-      end
+      bagList = onlyLoaded
     end
   end
 
@@ -1012,6 +1066,78 @@ function items:Phase1_DetermineBags(ctx, kind)
   end
 
   return bagList
+end
+
+-- BankBags returns the bags a read of the bank reads: on retail every character and Warbank tab; on
+-- Classic the bank, its bags and the reagent bank. With a ctx it marks which bank the read is of
+-- (bagid), for the free slot count.
+---@param ctx? Context
+---@return table<number, number>
+function items:BankBags(ctx)
+  local bagList = {}
+  local function mark(bagid)
+    if ctx ~= nil then
+      ctx:Set("bagid", bagid)
+    end
+  end
+  local blizzardTab = addon.Bags and addon.Bags.Bank and addon.Bags.Bank.blizzardBankTab
+  if addon.isRetail then
+    mark(const.BANK_TAB.BANK)
+    for _, bag in pairs(const.BANK_BAGS) do
+      bagList[bag] = bag
+    end
+    if const.ACCOUNT_BANK_BAGS then
+      for _, bag in pairs(const.ACCOUNT_BANK_BAGS) do
+        bagList[bag] = bag
+      end
+    end
+    local reagentBank = not addon.isRetail and const.BANK_TAB.REAGENT or nil
+    if reagentBank then
+      bagList[reagentBank] = reagentBank
+    end
+  elseif blizzardTab and addon.isRetail then
+    if Enum.BagIndex and Enum.BagIndex.AccountBankTab_1 and blizzardTab >= Enum.BagIndex.AccountBankTab_1 then
+      mark(const.BANK_TAB.ACCOUNT_BANK_1)
+    else
+      mark(const.BANK_TAB.BANK)
+    end
+    bagList[blizzardTab] = blizzardTab
+  else
+    local activeGroupID = database:GetActiveGroup(const.BAG_KIND.BANK)
+    local activeGroup = activeGroupID and database:GetGroup(const.BAG_KIND.BANK, activeGroupID)
+    local reagentBank = not addon.isRetail and const.BANK_TAB.REAGENT or nil
+
+    if activeGroup and addon.isRetail and activeGroup.bankType == (Enum and Enum.BankType and Enum.BankType.Account) then
+      mark(const.BANK_TAB.ACCOUNT_BANK_1)
+      if const.ACCOUNT_BANK_BAGS then
+        for _, bag in pairs(const.ACCOUNT_BANK_BAGS) do
+          bagList[bag] = bag
+        end
+      end
+    else
+      mark(const.BANK_TAB.BANK)
+      for _, bag in pairs(const.BANK_BAGS) do
+        bagList[bag] = bag
+      end
+      if reagentBank then
+        bagList[reagentBank] = reagentBank
+      end
+    end
+  end
+  return bagList
+end
+
+-- SetLoadedBankBags limits reads of the bank to the tabs a bank open has loaded so far (a set of bag
+-- IDs), or, with nil, lets them read every bank bag again (refresh-scheduler.md §11).
+---@param bags? table<number, boolean>
+function items:SetLoadedBankBags(bags)
+  self._loadedBankBags = bags
+end
+
+-- LoadedBankBags is the set of bank tabs reads of the bank are limited to, or nil for every bank bag.
+---@return table<number, boolean>?
+function items:LoadedBankBags()
+  return self._loadedBankBags
 end
 
 -- NeedsInteractionRecalculation says whether an interaction window opening or closing
@@ -1045,8 +1171,11 @@ function items:Phase2_Harvest(kind, bagList, previousItems, rereadEquipment)
 end
 
 -- Phase2_Rederive gives a derive (refresh-scheduler.md §10) the items the last read
--- committed, reading no bag slot. An item still in its slot (same GUID) gets the fields a
--- read refreshes on a kept slot (refreshKeptItem): quest state, tooltip text, gear sets and
+-- committed, reading no bag slot. A bag the client changed after that read (MarkBagUnread) keeps
+-- its committed items as they were, and the client is asked nothing about them: what it reports
+-- for their slots belongs to the change (an emptied slot has no item to ask about), and the read the
+-- change led to is on its way. In every other bag, an item still in its slot (same GUID) gets the
+-- fields a read refreshes on a kept slot (refreshKeptItem): quest state, tooltip text, gear sets and
 -- the new-item flag; one read while the client had no data for it (harvestIncomplete) is
 -- read again, as every read does with such a slot. An item whose slot now holds something else keeps its values: what the
 -- client reports for the slot belongs to the other item, and the slot's read is on its way.
@@ -1063,7 +1192,7 @@ function items:Phase2_Rederive(kind, committedItems)
   local itemData = {}
   local itemLoader = addon:GetModule("ItemLoader", true)
   for slotkey, item in pairs(committedItems) do
-    if not item.isItemEmpty then
+    if not item.isItemEmpty and self._unreadBags[item.bagid] == nil then
       local itemMixin = itemLoader and itemLoader:GetItemMixinFromSlotKey(slotkey) or Item:CreateFromBagAndSlot(item.bagid, item.slotid) --[[@as ItemMixin]]
       local itemGUID = C_Item.GetItemGUID(itemMixin:GetItemLocation()) or ""
       if itemGUID == item.itemInfo.itemGUID then
@@ -1087,12 +1216,17 @@ function items:Phase2_Rederive(kind, committedItems)
   return itemData, equipmentData
 end
 
+-- Phase6_EnrichData works out each item's own category, grey-out and upgrade arrow, and names the
+-- empty slots. An item whose own category it works out again is marked for the search index
+-- (derived.indexPending, which Phase 8 clears once it is indexed, data-loader.md §18).
 function items:Phase6_EnrichData(ctx, kind, itemData, emptySlotsByBag)
   local emptySlotByBagAndSlot = {}
   local freeSlotKeys = {}
   local freeSlotKeysByBag = {}
   local emptySlotsSorted = {}
   local totalItems = 0
+  local stamp = self:categoryStamp(kind)
+  local contextSig = self:contextSignature()
 
   -- An empty slot is named after its bag and colored by the bag's type. Both are the same
   -- for every slot of a bag, so each bag is looked up once per sweep (never kept across
@@ -1136,9 +1270,16 @@ function items:Phase6_EnrichData(ctx, kind, itemData, emptySlotsByBag)
     return details
   end
 
+  -- Each item's bag by name, for the bagname search field (Phase 8 indexes it), also looked up once
+  -- per bag per sweep.
+  local bagNames = {}
+
   for _, currentItem in pairs(itemData) do
     local bagid = currentItem.bagid
     local name
+
+    bagNames[bagid] = bagNames[bagid] or self:GetPlainBagName(bagid)
+    currentItem.bagName = bagNames[bagid]
 
     if currentItem.isItemEmpty then
       local details = bagDetailsOf(bagid)
@@ -1160,11 +1301,44 @@ function items:Phase6_EnrichData(ctx, kind, itemData, emptySlotsByBag)
       totalItems = totalItems + 1
     end
 
-    -- The item's own category, without search categories: the search index holds it while Phase 8
-    -- matches search categories (data-loader.md §8).
-    currentItem.itemInfo.category = self:GetCategory(ctx, currentItem, true)
-    currentItem.isUpgrade = self:ResolveUpgrade(currentItem)
-    currentItem.itemContextMatchResult = self:ResolveItemContextMatchResult(currentItem)
+    if currentItem.isItemEmpty then
+      currentItem.itemInfo.category = self:GetCategory(ctx, currentItem, true)
+    else
+      -- What the item was worked out with is kept on it (derived), and each part is worked out
+      -- again only when one of its inputs changed (data-loader.md §18): a re-read slot is a new
+      -- item with nothing kept, and an in-place change of one of its own inputs drops what was
+      -- kept (RefreshKeptItem).
+      local d = currentItem.derived
+      if d == nil then
+        d = {}
+        currentItem.derived = d
+      end
+      -- The item's own category, without search categories or Recent Items: the search index holds it
+      -- while Phase 8 matches search categories (data-loader.md §8), so a rule's category field matches
+      -- what the item is, new or not (a rule taking junk by `category = "junk"` takes a new junk item,
+      -- and Skip Recent Items sees it).
+      if d.category ~= stamp then
+        d.ownCategory = self:GetCategory(ctx, currentItem, true, true)
+        d.category, d.base, d.final = stamp, nil, nil
+        currentItem.itemInfo.category = d.ownCategory
+        d.indexPending = true
+      end
+      if contextSig == nil or d.context ~= contextSig then
+        currentItem.itemContextMatchResult = self:ResolveItemContextMatchResult(currentItem)
+        d.context = contextSig
+      end
+    end
+    -- Kept verdicts are reused inside (caches.md §2). The search indexes the arrow: a kept item
+    -- whose arrow changed is compared with its search entry again (search-indexing.md §11).
+    local upgrade = self:ResolveUpgrade(currentItem)
+    -- The slot values follow the worn gear, as the arrow does (search-indexing.md §16).
+    local slotEquipped, slotBest = self:SlotLevelsOf(currentItem)
+    if currentItem.derived and (currentItem.isUpgrade ~= upgrade or currentItem.slotEquipped ~= slotEquipped
+      or currentItem.slotBest ~= slotBest) then
+      currentItem.derived.indexPending = true
+    end
+    currentItem.isUpgrade = upgrade
+    currentItem.slotEquipped, currentItem.slotBest = slotEquipped, slotBest
     currentItem.drawGeneration = self._drawGeneration[kind]
   end
 
@@ -1289,25 +1463,33 @@ function items:Phase7_ApplyVirtualStacks(kind, itemData)
     return true
   end
 
+  -- A stack is shown in Recent Items while any pile it merges is recent (stackRecent, read by
+  -- GetCategory). Its root is the largest pile, which looting changes: taking recency from the root
+  -- alone moved a stack between Recent Items and its category as it was looted into
+  -- (virtual-stacks.md §9).
   local visibleItemsBySlotKey = {}
   for slotkey, item in pairs(itemData) do
     if not item.isItemEmpty then
       local stackInfo = stackData:GetStackInfo(item.itemHash)
       local isRoot = true
+      item.stackRecent = nil
 
       if ShouldMergeItem(kind, item, stackInfo) then
         if item.slotkey == stackInfo.rootItem then
           -- Root item. Compute total count.
           local totalCount = item.itemInfo.currentItemCount
+          local anyRecent = false
           for childSlotkey in pairs(stackInfo.slotkeys) do
             local childItem = itemData[childSlotkey]
             if childItem and not childItem.isItemEmpty then
               if ShouldMergeItem(kind, childItem, stackInfo) then
                 totalCount = totalCount + childItem.itemInfo.currentItemCount
+                anyRecent = anyRecent or self:IsNewItem(childItem)
               end
             end
           end
           item.stackedCount = totalCount
+          item.stackRecent = anyRecent or nil
         else
           isRoot = false
         end
@@ -1324,6 +1506,79 @@ function items:Phase7_ApplyVirtualStacks(kind, itemData)
   return visibleItemsBySlotKey, stackData
 end
 
+-- syncIndex brings a kind's entries of the search index in line with its items, comparing only the
+-- items marked for it (derived.indexPending, set when Phase 6 works an item out again) and the items
+-- that are other objects than the index was built from (search:SyncKind), then clears the marks. A
+-- mark outlives a sweep that fails before indexing, so the next sweep indexes the item.
+---@param kind BagKind
+---@param kindItems table<string, ItemData>
+---@param rebuild boolean
+function items:syncIndex(kind, kindItems, rebuild)
+  local pending = {}
+  for slotkey, item in pairs(kindItems) do
+    if item.derived and item.derived.indexPending then
+      pending[slotkey] = item
+    end
+  end
+  search:SyncKind(kind, kindItems, rebuild, pending)
+  for _, item in pairs(pending) do
+    item.derived.indexPending = nil
+  end
+end
+
+-- CountItemTotals gives each item how many of its item the kind's bags hold, by item ID
+-- (itemTotal, the search's total field), and marks for re-indexing a kept item whose total changed:
+-- a slot that changes changes the total of every other slot of its item.
+---@param itemData table<string, ItemData>
+function items:CountItemTotals(itemData)
+  local totals = {}
+  for _, item in pairs(itemData) do
+    if not item.isItemEmpty then
+      local id = item.itemInfo.itemID
+      totals[id] = (totals[id] or 0) + (item.itemInfo.currentItemCount or 0)
+    end
+  end
+  for _, item in pairs(itemData) do
+    if not item.isItemEmpty then
+      local total = totals[item.itemInfo.itemID]
+      if item.derived and item.itemTotal ~= total then
+        item.derived.indexPending = true
+      end
+      item.itemTotal = total
+    end
+  end
+end
+
+-- Phase8_EnrichCategories brings the search index up to date, matches search categories, and works out
+-- the category each item is shown in, again only for an item whose inputs changed (data-loader.md
+-- §18): it was re-read, its own category was worked out again (Phase 6), its search category or
+-- recency changed. The index holds the category each item is shown in.
+---@param ctx Context
+---@param kind BagKind
+---@param itemData table<string, ItemData>
+---@param emptySlotByBagAndSlot table
+---@return table sectionLayouts
+-- SkipRecent unmarks a new item whose category (category: the item's own with its search categories,
+-- Recent Items left out) skips Recent Items (Skip Recent Items, a category setting, categories:SkipsRecentOf;
+-- docs/next-batch-2.md §1): its timer ends and the client's new-item mark goes, so it shows in its
+-- category at once, and a virtual stack it roots is no longer recent (every pile of a stack is the same
+-- item, in the same category). It returns whether it unmarked the item, for profiler traces.
+---@param ctx Context
+---@param item ItemData
+---@param category string
+---@return boolean
+function items:SkipRecent(ctx, item, category)
+  if not (item.stackRecent or self:IsNewItem(item)) or not categories:SkipsRecentOf(category) then
+    return false
+  end
+  item.stackRecent = nil
+  if self:IsNewItem(item) then
+    self:ClearNewItemFromData(ctx, item)
+    return true
+  end
+  return false
+end
+
 function items:Phase8_EnrichCategories(ctx, kind, itemData, emptySlotByBagAndSlot)
   if search and search.SyncKind then
     -- The search index is a single, global structure shared by the backpack and the bank
@@ -1331,28 +1586,71 @@ function items:Phase8_EnrichCategories(ctx, kind, itemData, emptySlotByBagAndSlo
     -- this sweep's items -- re-indexing only the items whose indexed values changed, or
     -- every item on a wipe -- and the other kind's with its last-committed items, so the
     -- index always equals a clean rebuild over both bags.
-    search:SyncKind(kind, itemData, ctx:Get("wipe") == true)
+    self:syncIndex(kind, itemData, ctx:Get("wipe") == true)
     eachKind(function(otherKind)
       if otherKind ~= kind then
         local otherSlotInfo = self.slotInfo and self.slotInfo[otherKind]
-        search:SyncKind(otherKind, otherSlotInfo and otherSlotInfo.itemsBySlotKey or {})
+        self:syncIndex(otherKind, otherSlotInfo and otherSlotInfo.itemsBySlotKey or {}, false)
       end
     end)
   end
 
+  -- Search categories match each item's own category (data-loader.md §8). The index holds the
+  -- category each item is shown in, so while they are matched an item shown in another category is
+  -- indexed with its own; the loop below indexes the category it is shown in again.
+  local inPlay = false
+  if categories and categories.GetSortedSearchCategories then
+    for _, categoryFilter in ipairs(categories:GetSortedSearchCategories()) do
+      if categoryFilter.enabled and categoryFilter.enabled[kind] then
+        inPlay = true
+        break
+      end
+    end
+  end
+  if inPlay and search.UpdateCategoryIndex then
+    for _, currentItem in pairs(itemData) do
+      local own = not currentItem.isItemEmpty and currentItem.derived and currentItem.derived.ownCategory
+      if own and currentItem.itemInfo.category ~= own then
+        currentItem.itemInfo.category = own
+        search:UpdateCategoryIndex(currentItem)
+      end
+    end
+  end
   self:RefreshSearchCache(kind, itemData)
 
-  -- Phase 6 gave each item its own category, without search categories, and the index was
-  -- brought up to date with it, so the search categories above matched each item by its own
-  -- properties. Resolve again now that the cache reflects this sweep, so search categories compete
-  -- with custom categories, gear sets and recent items by the priority rules in GetCategory; the
-  -- index then holds the category each item is shown in, for the search box.
-  for _, currentItem in pairs(itemData) do
+  -- Search categories compete with custom categories, gear sets and recent items by the priority
+  -- rules in GetCategory. An item's shown category is worked out again when its own category was
+  -- (final dropped by Phase 6), or its search category or recency (a stack's too) changed. In the
+  -- Show Bags view every item is shown in its bag's section.
+  local showBags = database.GetBagView and database:GetBagView(kind) == const.BAG_VIEW.SECTION_ALL_BAGS
+  local searchCache = self.searchCache[kind] or {}
+  local priorities = self.categoryPriorityCache[kind] or {}
+  for slotkey, currentItem in pairs(itemData) do
     if not currentItem.isItemEmpty then
-      local oldCategory = currentItem.itemInfo.category
-      local newCategory = self:GetCategory(ctx, currentItem)
-      if newCategory ~= oldCategory then
-        currentItem.itemInfo.category = newCategory
+      local d = currentItem.derived
+      if d == nil then
+        d = {}
+        currentItem.derived = d
+      end
+      local searchCategory, searchPriority = searchCache[slotkey], priorities[slotkey]
+      -- Its category without Recent Items (base), worked out again only when its own category (Phase 6
+      -- drops it) or its search categories changed; then whether it is recent, which only picks between
+      -- base and Recent Items, as GetCategory does (its Recent Items check comes first).
+      if d.base == nil or d.searchCategory ~= searchCategory or d.searchPriority ~= searchPriority then
+        d.base = self:GetCategory(ctx, currentItem, false, true)
+        d.searchCategory, d.searchPriority, d.final = searchCategory, searchPriority, nil
+      end
+      self:SkipRecent(ctx, currentItem, d.base)
+      local recent = self:IsNewItem(currentItem) or currentItem.stackRecent == true
+      if d.final == nil or d.finalRecent ~= recent then
+        local shownRecent = recent and database:GetCategoryFilter(currentItem.kind, "RecentItems")
+        d.final = shownRecent and L:G("Recent Items") or d.base
+        d.finalRecent = recent
+      end
+      local shown = showBags and self:GetBagName(currentItem.bagid) or d.final
+      if currentItem.itemInfo.category ~= shown then
+        local oldCategory = currentItem.itemInfo.category
+        currentItem.itemInfo.category = shown
         if search.UpdateCategoryIndex then
           search:UpdateCategoryIndex(currentItem, oldCategory)
         end
@@ -1379,14 +1677,12 @@ function items:Phase8_EnrichCategories(ctx, kind, itemData, emptySlotByBagAndSlo
   end
 
   local sectionLayouts = {}
-  if database.GetBagView and database:GetBagView(kind) == const.BAG_VIEW.SECTION_ALL_BAGS then
+  if showBags then
     -- A bank tab or a guild bank tab shown by itself is one section: its tab names it.
     local shouldHideHeader = (kind == const.BAG_KIND.BANK or kind == const.BAG_KIND.GUILD)
     for _, currentItem in pairs(itemData) do
       if not currentItem.isItemEmpty then
-        local category = self:GetBagName(currentItem.bagid)
-        currentItem.itemInfo.category = category
-        sectionLayouts[category] = { hideHeader = shouldHideHeader, sortMode = "physical" }
+        sectionLayouts[currentItem.itemInfo.category] = { hideHeader = shouldHideHeader, sortMode = "physical" }
       end
     end
     for bagid, _ in pairs(emptySlotByBagAndSlot) do
@@ -1764,20 +2060,13 @@ function items:Phase10_PartitionIntoTabs(ctx, kind, sortedItems, emptySlotsSorte
     end
   end
 
-  -- Filter and assign items to their respective tabs
+  -- Assign items to their respective tabs (every category shows: hiding was retired).
   for _, item in ipairs(sortedItems) do
-    local category = item.itemInfo and item.itemInfo.category or L:G("Everything")
-    local isShown = true
-    if viewBagView ~= const.BAG_VIEW.SECTION_ALL_BAGS and categories.IsCategoryShown then
-      isShown = categories:IsCategoryShown(category) ~= false
-    end
-    if isShown then
-      for tabID, tabData in pairs(tabs) do
-        if ItemBelongsToTab(kind, item, tabID, viewBagView) then
-          table.insert(tabData.items, item)
-          if not item.isFreeSlot and not item.isItemGap then
-            tabData.totalItems = tabData.totalItems + 1
-          end
+    for tabID, tabData in pairs(tabs) do
+      if ItemBelongsToTab(kind, item, tabID, viewBagView) then
+        table.insert(tabData.items, item)
+        if not item.isFreeSlot and not item.isItemGap then
+          tabData.totalItems = tabData.totalItems + 1
         end
       end
     end
@@ -1798,7 +2087,6 @@ function items:Phase10_PartitionIntoTabs(ctx, kind, sortedItems, emptySlotsSorte
           isFreeSpace = (category == L:G("Free Space")),
           isRecent = (category == L:G("Recent Items")),
           fillWidth = false,
-          shown = (not categories.IsCategoryShown) or (categories:IsCategoryShown(category) ~= false),
         }
         table.insert(categoryOrder, categoryTally[category])
       end
@@ -1940,6 +2228,8 @@ function items:RunRefresh(ectx, kind)
   -- A wipe re-reads every slot; any other read keeps the committed item of each slot whose
   -- contents have not changed (ReuseHarvestedSlot); a derive reads no slot.
   local itemData, equipmentData
+  -- The changes the client had reported when this read harvested: those its commit shows.
+  local readAt = self._bagChanges
   if derive then
     itemData, equipmentData = self:Phase2_Rederive(kind, committedItems)
   else
@@ -1965,6 +2255,12 @@ function items:RunRefresh(ectx, kind)
 
   local targetedBags = ectx:Get("targetedBags")
   local isWipe = ectx:Get("wipe") == true
+  -- A recalculation works every item's category out again unless it says nothing categories read
+  -- changed (categoriesUnchanged), and so does a read that absorbed such a recalculation
+  -- (recategorize); a wipe re-reads every item anyway (data-loader.md §18).
+  if isWipe or ectx:Get("recategorize") == true or (derive and ectx:Get("categoriesUnchanged") ~= true) then
+    self._categoryGeneration[kind] = self._categoryGeneration[kind] + 1
+  end
   if isWipe then
     self._drawGeneration[kind] = self._drawGeneration[kind] + 1
     self:InvalidateUpgrades(false)
@@ -1996,6 +2292,7 @@ function items:RunRefresh(ectx, kind)
 
   local stackedInteracting = addon.atInteracting == true
   local visibleItemsBySlotKey, stackData = self:Phase7_ApplyVirtualStacks(kind, itemData)
+  self:CountItemTotals(itemData)
   local sectionLayouts = self:Phase8_EnrichCategories(ectx, kind, itemData, emptySlotByBagAndSlot)
   local sortedItems = self:BuildOrderedItems(ectx, kind, visibleItemsBySlotKey, emptySlotByBagAndSlot, previousSortedItems)
   local tabData = self:Phase10_PartitionIntoTabs(ectx, kind, sortedItems, emptySlotsSorted, emptySlotsByBag, freeSlotKeysByBag, itemData)
@@ -2007,6 +2304,36 @@ function items:RunRefresh(ectx, kind)
   -- the flag set for the next sweep or the fallback.
   if sortSweep then
     self._sortSweepPending[kind] = false
+  end
+  -- Likewise only a committed read shows the changes its harvest read.
+  if not derive then
+    self:MarkBagsRead(bagList, readAt)
+  end
+end
+
+-- MarkBagUnread records that the client reported a change to a bag's contents (BAG_UPDATE, and the
+-- other events a read of the bag follows: refresh:OnEnable). From then until a read that harvested
+-- the bag after the change has committed, the bag's committed items are not what it holds: a
+-- recalculation leaves them as they were and asks the client nothing about them
+-- (Phase2_Rederive). That read waits for the bag's item data (the loader) and then for its turn
+-- in the queue, and a recalculation can run in between. Changes are numbered, so one made while a
+-- read was under way (after its harvest) still marks the bag when that read commits.
+---@param bagID number
+function items:MarkBagUnread(bagID)
+  self._bagChanges = self._bagChanges + 1
+  self._unreadBags[bagID] = self._bagChanges
+end
+
+-- MarkBagsRead clears, for each bag a committed read harvested, the changes made before its
+-- harvest (readAt: the number of changes reported by then).
+---@param bagList table<number, number>
+---@param readAt number
+function items:MarkBagsRead(bagList, readAt)
+  for bagID in pairs(bagList) do
+    local changedAt = self._unreadBags[bagID]
+    if changedAt ~= nil and changedAt <= readAt then
+      self._unreadBags[bagID] = nil
+    end
   end
 end
 
@@ -2047,46 +2374,78 @@ function items:WipeSearchCache(kind)
   if self.categoryPriorityCache[kind] then wipe(self.categoryPriorityCache[kind]) end
 end
 
+-- GroupedCategory returns the category an item placed in a category by hand shows in: the category, or
+-- its sub-category for the item when it groups its members (its groupBy), made when missing.
+---@param ctx Context
+---@param name string
+---@param filter? CustomCategoryFilter
+---@param data ItemData
+---@return string
+function items:GroupedCategory(ctx, name, filter, data)
+  local groupBy = filter and filter.groupBy or const.SEARCH_CATEGORY_GROUP_BY.NONE
+  if groupBy == const.SEARCH_CATEGORY_GROUP_BY.NONE then
+    return name
+  end
+  local suffix = self:GetGroupBySuffix(data, groupBy)
+  if not suffix or suffix == "" then
+    return name
+  end
+  local grouped = name .. " - " .. suffix
+  self:ensureSubcategory(ctx, filter, grouped)
+  return grouped
+end
+
+-- ensureSubcategory makes a grouped category's sub-category for one group, unless it exists: used in
+-- the same bags, with the same color and priority.
+---@private
+---@param ctx Context
+---@param filter CustomCategoryFilter
+---@param name string
+function items:ensureSubcategory(ctx, filter, name)
+  if categories:DoesCategoryExist(name) then
+    return
+  end
+  categories:CreateCategory(ctx, {
+    name = name,
+    itemList = {},
+    enabled = filter.enabled,
+    dynamic = true,
+    isGroupBySubcategory = true,
+    groupByParent = filter.name,
+    priority = filter.priority or 10,
+    color = filter.color,
+  })
+end
+
 function items:RefreshSearchCache(kind, itemData)
   itemData = itemData or (self.slotInfo[kind] and self.slotInfo[kind].itemsBySlotKey) or {}
   self:WipeSearchCache(kind)
   if not categories or not categories.GetSortedSearchCategories then return end
   local ctx = context:New('RefreshSearchCache')
   local categoryTable = categories:GetSortedSearchCategories()
-  local createdGroupByCategories = {} -- Track created groupBy categories to avoid duplicates
 
   for _, categoryFilter in ipairs(categoryTable) do
     if categoryFilter.enabled[kind] then
       local results = search:Search(categoryFilter.searchCategory.query)
-      local groupBy = categoryFilter.searchCategory.groupBy or const.SEARCH_CATEGORY_GROUP_BY.NONE
+      local groupBy = categoryFilter.groupBy or const.SEARCH_CATEGORY_GROUP_BY.NONE
       local priority = categoryFilter.priority or 10
 
       for slotkey, match in pairs(results) do
-        if match then
+        -- A rule never takes an item its category ignores (Ignored Items): the next one does.
+        local matched = itemData[slotkey]
+        local ignored = categoryFilter.ignoredItems ~= nil and matched ~= nil and not matched.isItemEmpty
+          and categoryFilter.ignoredItems[matched.itemInfo.itemID] == true
+        if match and not ignored then
           local categoryName = categoryFilter.name
 
-          -- Apply groupBy logic to generate dynamic category name
+          -- A grouping category's match shows in its sub-category for the item.
           if groupBy ~= const.SEARCH_CATEGORY_GROUP_BY.NONE then
             local currentItem = itemData[slotkey]
             if currentItem and not currentItem.isItemEmpty then
               local suffix = self:GetGroupBySuffix(currentItem, groupBy)
               if suffix and suffix ~= "" then
                 categoryName = categoryFilter.name .. " - " .. suffix
-
-                -- Create the groupBy subcategory object if it doesn't exist yet
-                if not createdGroupByCategories[categoryName] and not categories:DoesCategoryExist(categoryName) then
-                  categories:CreateCategory(ctx, {
-                    name = categoryName,
-                    itemList = {},
-                    enabled = categoryFilter.enabled,
-                    dynamic = true,
-                    isGroupBySubcategory = true,
-                    groupByParent = categoryFilter.name,
-                    priority = priority,
-                    color = categoryFilter.color,
-                  })
-                  createdGroupByCategories[categoryName] = true
-                end
+                self:ensureSubcategory(ctx, categoryFilter, categoryName)
               end
             end
           end
@@ -2213,7 +2572,6 @@ function items:ClearNewItemFromData(ctx, data)
   if self._newItemTimers and self._newItemTimers[kind] and data.itemInfo and data.itemInfo.itemGUID then
     self._newItemTimers[kind][data.itemInfo.itemGUID] = nil
   end
-  data.itemInfo.category = self:GetCategory(ctx, data)
 end
 
 function items:ClearNewItems(kind)
@@ -2272,7 +2630,6 @@ function items:MarkItemAsNew(ctx, data)
     if timerTable and timerTable[data.itemInfo.itemGUID] == nil then
       timerTable[data.itemInfo.itemGUID] = time()
       data.itemInfo.isNewItem = true
-      data.itemInfo.category = self:GetCategory(ctx, data)
     end
   end
 end
@@ -2473,6 +2830,28 @@ function items:ClientNewItemFlag(bagid, slotid)
     and _G.C_NewItems.IsNewItem(bagid, slotid) and true or false
 end
 
+-- sameList says two lists (or nils) hold the same values in the same order.
+---@param a? table
+---@param b? table
+---@return boolean
+local function sameList(a, b)
+  if a == b then return true end
+  if a == nil or b == nil or #a ~= #b then return false end
+  for i = 1, #a do
+    if a[i] ~= b[i] then return false end
+  end
+  return true
+end
+
+-- sameQuest says two quest infos (C_Container.GetContainerItemQuestInfo) are alike.
+---@param a? table
+---@param b? table
+---@return boolean
+local function sameQuest(a, b)
+  if a == nil or b == nil then return a == b end
+  return a.isQuestItem == b.isQuestItem and a.questID == b.questID and a.isActive == b.isActive
+end
+
 -- SeedNewItemTimer starts the Recent Items timer of a new item the first time a sweep sees
 -- it, so it stays recent after the client drops its own new-item flag. It returns what it
 -- decided, which captures record: "started", "running" (the GUID already has a timer, which
@@ -2559,11 +2938,21 @@ function items:ReuseHarvestedSlot(kind, previous, bagid, slotid)
   return previous, info
 end
 
+-- refundableAt says whether the item at a location can still be refunded. It is read with the slot,
+-- as every location property: CanBeRefunded takes an ItemLocation that holds an item (not an
+-- EmptiableItemLocation, ItemDocumentation.lua) and raises an error for an empty one, so it is asked
+-- only by reads that know the slot holds the item.
+---@param itemLocation ItemLocationMixin
+---@return boolean
+local function refundableAt(itemLocation)
+  return C_Item.CanBeRefunded ~= nil and C_Item.CanBeRefunded(itemLocation) == true
+end
+
 -- RefreshKeptItem refreshes the fields of a kept item that change without its slot
 -- changing, each computed exactly as AttachItemInfo computes it: quest state, tooltip text
 -- (a cache hit, or a re-scan after TOOLTIP_DATA_UPDATE dropped it), gear sets (the set map
--- is rebuilt every sweep) and the new-item flag. The caller has checked that the slot still
--- holds the item (its GUID).
+-- is rebuilt every sweep), the new-item flag and whether it can still be refunded (its refund
+-- window ends). The caller has checked that the slot still holds the item (its GUID).
 ---@param kind BagKind
 ---@param item ItemData
 ---@param bagid number
@@ -2571,6 +2960,7 @@ end
 ---@param itemGUID string
 function items:RefreshKeptItem(kind, item, bagid, slotid, itemGUID)
   local itemInfo = item.itemInfo
+  local oldQuest, oldTooltip, oldSets = item.questInfo, itemInfo.tooltipText, itemInfo.equipmentSets
   item.questInfo = C_Container.GetContainerItemQuestInfo(bagid, slotid)
   if not item.questInfo then
     item.questInfo = {
@@ -2580,10 +2970,21 @@ function items:RefreshKeptItem(kind, item, bagid, slotid, itemGUID)
   end
   ---@class TooltipScanner: AceModule
   local tooltipScanner = addon:GetModule('TooltipScanner')
-  itemInfo.tooltipText = tooltipScanner:GetTooltipText(bagid, slotid, itemGUID) or ""
+  local tooltipText, tooltipMarks = tooltipScanner:GetTooltipText(bagid, slotid, itemGUID)
+  itemInfo.tooltipText = tooltipText or ""
+  -- Marks come from the same scan as the text, so they change only with it.
+  itemInfo.tooltipMarks = tooltipMarks
   itemInfo.equipmentSets = equipmentSets:GetItemSets(bagid, slotid)
   itemInfo.isNewItem = self:ClientNewItemFlag(bagid, slotid)
+  itemInfo.refundable = refundableAt(ItemLocation:CreateFromBagAndSlot(bagid, slotid))
   self:SeedNewItemTimer(kind, item)
+  -- Quest state, tooltip text and gear sets are inputs of the item's category and search entry:
+  -- when one changed, nothing kept about the item stands (data-loader.md §18).
+  if itemInfo.tooltipText ~= oldTooltip or not sameList(itemInfo.equipmentSets, oldSets)
+    or not sameQuest(item.questInfo, oldQuest) then
+    item.derived = nil
+  end
+  self:RefreshCharacterState(item)
 end
 
 -- REUSED DETAILED METADATA UTILITIES FROM LEGACY IMPLEMENTATION
@@ -2662,14 +3063,304 @@ function items:HasReagentBag()
   return true
 end
 
----@param itemLink string
----@return Enum.ItemBind?
-function items:GetBindTypeFromLink(itemLink)
-  local bindType = nil
-  if strfind(itemLink, "item:") then
-    bindType = select(14, C_Item.GetItemInfo(itemLink))
+-- ReadLinkInfo reads C_Item.GetItemInfo for the slot's link (the item in the slot), where the item
+-- ID describes its base item: its required level, max stack, sell price and bind type. Only an item
+-- link ("item:"; a caged pet's is battlepet:) is read; loaded is false when its data has not loaded.
+---@param itemLink? string
+---@return number? minLevel, number? stackSize, number? sellPrice, Enum.ItemBind? bindType, boolean loaded
+function items:ReadLinkInfo(itemLink)
+  if itemLink == nil or not strfind(itemLink, "item:") then
+    return nil, nil, nil, nil, true
   end
-  return bindType
+  local name, _, _, _, minLevel, _, _, stackSize, _, _, sellPrice, _, _, bindType = C_Item.GetItemInfo(itemLink)
+  return minLevel, stackSize, sellPrice, bindType, name ~= nil
+end
+
+-- SlotLevelsOf works out an equipment item's slot values (search-indexing.md §16): the lowest item
+-- level worn in its slots, 0 when nothing is worn there (slotequipped, Vendor's CurrentEquippedLevel:
+-- a one-hander counts the off hand only with dual wield, a Warrior's two-hander both hands), and the
+-- character's best item level in its slot (slotbest, Vendor's WatermarkLevel,
+-- C_ItemUpgrade.GetHighWatermarkForItem). Nil for an item that is not equipment or was read before
+-- its data loaded; slotequipped also before the worn gear has been read.
+---@param item ItemData
+---@return number? slotEquipped, number? slotBest
+function items:SlotLevelsOf(item)
+  local traits = not item.isItemEmpty and item.itemInfo.traits
+  if not traits or not traits.isEquipment then
+    return nil, nil
+  end
+  local best
+  local upgrade = _G.C_ItemUpgrade
+  if upgrade and upgrade.GetHighWatermarkForItem and item.itemInfo.itemLink then
+    best = upgrade.GetHighWatermarkForItem(item.itemInfo.itemLink)
+  end
+  if self.equipmentCache == nil then
+    return nil, best
+  end
+  local slots = item.inventorySlots or {}
+  local equipLoc = item.itemInfo.itemEquipLoc
+  if equipLoc == "INVTYPE_WEAPON" and not (_G.CanDualWield and _G.CanDualWield()) then
+    slots = { INVSLOT_MAINHAND }
+  elseif equipLoc == "INVTYPE_2HWEAPON" and _G.UnitClass and select(3, UnitClass("player")) == 1 then
+    slots = { INVSLOT_MAINHAND, INVSLOT_OFFHAND }
+  end
+  local lowest = 0
+  for _, slot in ipairs(slots) do
+    local worn = self.equipmentCache[slot]
+    local level = worn and worn.itemInfo.currentItemLevel
+    if level and (lowest == 0 or level < lowest) then
+      lowest = level
+    end
+  end
+  return lowest, best
+end
+
+-- CanUseItem says whether the character can use an item (C_PlayerInfo.CanUseItem: proficiency,
+-- level, profession, reputation), or nil on a client without the API. It follows the character,
+-- so a kept item is asked again (RefreshKeptItem).
+---@param itemID number
+---@return boolean?
+function items:CanUseItem(itemID)
+  local api = _G.C_PlayerInfo
+  if api and api.CanUseItem then
+    return api.CanUseItem(itemID) == true
+  end
+  return nil
+end
+
+-- PetCountsOf says how many of a battle pet species the account has and may have
+-- (C_PetJournal.GetNumCollectedInfo: numOwned, maxAllowed, as Blizzard_PetBattleUI.lua reads it), or
+-- nil until the pet journal has loaded. Login captures had C_PetJournal.GetNumPets report 0 owned
+-- until it loaded, just before PET_JOURNAL_LIST_UPDATE; a /reload capture had it report the
+-- account's pets from the start, with the event 59 ms after the first bag read began. So the journal
+-- has loaded once the event fired (OnCharacterStateChanged) or the account owns a pet.
+---@param speciesID? number
+---@return number? owned, number? limit
+function items:PetCountsOf(speciesID)
+  local api = _G.C_PetJournal
+  if speciesID == nil or not (api and api.GetNumCollectedInfo) then
+    return nil
+  end
+  if not self._petJournalLoaded and api.GetNumPets then
+    local _, owned = api.GetNumPets()
+    self._petJournalLoaded = owned ~= nil and owned > 0
+  end
+  if not self._petJournalLoaded then
+    return nil
+  end
+  return api.GetNumCollectedInfo(speciesID)
+end
+
+-- AppearanceCollectionLoaded says whether the account's appearance collection has loaded: some
+-- appearance collected (C_TransmogCollection.GetCategoryCollectedCount over every category but
+-- None). Captures had 0 until the player entered the world, then 3,083, on a login and on a reload;
+-- TRANSMOG_COLLECTION_UPDATED fired at login with 0 collected, so it is no sign. Asked at most once a
+-- frame until it has loaded, then never again; an account with no appearance never loads.
+---@return boolean
+function items:AppearanceCollectionLoaded()
+  if self._appearancesLoaded then
+    return true
+  end
+  local now = GetTime()
+  if self._appearancesCheckedAt == now then
+    return false
+  end
+  self._appearancesCheckedAt = now
+  local api, collectionTypes = _G.C_TransmogCollection, Enum and Enum.TransmogCollectionType
+  if not (api and api.GetCategoryCollectedCount and collectionTypes) then
+    return false
+  end
+  for _, category in pairs(collectionTypes) do
+    if category ~= collectionTypes.None and (api.GetCategoryCollectedCount(category) or 0) > 0 then
+      self._appearancesLoaded = true
+      return true
+    end
+  end
+  return false
+end
+
+-- AppearanceStateOf says whether an item's appearance is collected, every way Vendor asks
+-- (itemproperties.lua; its soulbound shortcut aside): through its own source, any source of the
+-- appearance, or the item itself (PlayerHasTransmogByItemInfo); and whether its own source is. A
+-- retail dump had all three agree on 141 items, but for 3 artifacts PlayerHasTransmogByItemInfo said
+-- no where the others said yes. Nil for an item without an appearance or before the collection has
+-- loaded.
+---@param traits? ItemTraits
+---@param itemLink? string
+---@return boolean? appearanceKnown, boolean? sourceKnown
+function items:AppearanceStateOf(traits, itemLink)
+  if not traits or traits.sourceID == nil or not self:AppearanceCollectionLoaded() then
+    return nil
+  end
+  local api = _G.C_TransmogCollection
+  local source = api.PlayerHasTransmogItemModifiedAppearance
+    and api.PlayerHasTransmogItemModifiedAppearance(traits.sourceID) == true
+  if source then
+    return true, true
+  end
+  if api.GetAppearanceSources then
+    for _, other in ipairs(api.GetAppearanceSources(traits.appearanceID) or {}) do
+      if other.isCollected then
+        return true, false
+      end
+    end
+  end
+  local known = api.PlayerHasTransmogByItemInfo and itemLink ~= nil
+    and api.PlayerHasTransmogByItemInfo(itemLink) == true
+  return known == true, false
+end
+
+-- ReadCharacterState reads what follows the character and the account rather than the item:
+-- whether the character can use it, how many of its pet the account has, and whether its appearance
+-- is collected. Only for an item read with its data (rule #1).
+---@param item ItemData
+function items:ReadCharacterState(item)
+  local traits = item.itemInfo.traits
+  item.isUsable = self:CanUseItem(item.itemInfo.itemID)
+  item.petOwned, item.petLimit = self:PetCountsOf(traits.petSpeciesID)
+  item.appearanceKnown, item.sourceKnown = self:AppearanceStateOf(traits, item.itemInfo.itemLink)
+end
+
+-- RefreshCharacterState reads a kept item's character state again (a kept item was read with its
+-- data: a cold read is never kept), and marks it for re-indexing when it changed (data-loader.md
+-- §18).
+---@param item ItemData
+function items:RefreshCharacterState(item)
+  local usable, owned, limit = item.isUsable, item.petOwned, item.petLimit
+  local appearance, source = item.appearanceKnown, item.sourceKnown
+  self:ReadCharacterState(item)
+  if (usable ~= item.isUsable or owned ~= item.petOwned or limit ~= item.petLimit
+    or appearance ~= item.appearanceKnown or source ~= item.sourceKnown) and item.derived then
+    item.derived.indexPending = true
+  end
+end
+
+-- characterStateChanged says whether a committed item's character state (ReadCharacterState) no
+-- longer matches what the client answers.
+---@param item ItemData
+---@return boolean
+function items:CharacterStateChanged(item)
+  if self:CanUseItem(item.itemInfo.itemID) ~= item.isUsable then
+    return true
+  end
+  local traits = item.itemInfo.traits
+  local appearance, source = self:AppearanceStateOf(traits, item.itemInfo.itemLink)
+  if appearance ~= item.appearanceKnown or source ~= item.sourceKnown then
+    return true
+  end
+  if traits.petSpeciesID ~= nil then
+    local owned, limit = self:PetCountsOf(traits.petSpeciesID)
+    return owned ~= item.petOwned or limit ~= item.petLimit
+  end
+  return false
+end
+
+-- OnCharacterStateChanged: something the items' character state follows may have changed: the pet
+-- journal loaded, or a pet was learned, caged, released or restored (petJournal); spells or
+-- reputations, which C_PlayerInfo.CanUseItem follows. The committed items are asked again and the
+-- kinds where an answer changed are recalculated (refresh-scheduler.md §10); nothing else. When the
+-- journal first loads every kind is recalculated: its event can come while a read is under way,
+-- before anything is committed (the request waits for the read). The bank and the guild bank only
+-- while open: opening them reads them.
+---@param petJournal boolean
+function items:OnCharacterStateChanged(petJournal)
+  local firstLoad = petJournal and not self._petJournalLoaded
+  if petJournal then
+    self._petJournalLoaded = true
+  end
+  local kinds = {
+    { const.BAG_KIND.BACKPACK, 'backpack', true },
+    { const.BAG_KIND.BANK, 'bank', addon.atBank == true },
+    { const.BAG_KIND.GUILD, 'guild', addon.atGuildBank == true },
+  }
+  local options, changed = {}, false
+  for _, entry in ipairs(kinds) do
+    local kind, name, open = entry[1], entry[2], entry[3]
+    options[name] = open and firstLoad
+    changed = changed or options[name]
+    local slotInfo = self.slotInfo[kind]
+    if open and not firstLoad and slotInfo then
+      for _, item in pairs(slotInfo.itemsBySlotKey) do
+        if not item.isItemEmpty and item.itemInfo.traits and self:CharacterStateChanged(item) then
+          options[name], changed = true, true
+          break
+        end
+      end
+    end
+  end
+  if changed then
+    events:SendMessage(context:New('CharacterStateChanged'), 'bags/Rederive', options)
+  end
+end
+
+-- ReadItemTraits reads what the search knows of an item beyond its name and type
+-- (search-indexing.md §10), from the slot's link: what it is, its upgrade track, its stats, its
+-- crafting tier. minLevel, stackSize and sellPrice are its link's (ReadLinkInfo). Call it only once
+-- the item's data has loaded (rule #1, data-loader.md §19).
+---@param itemID number
+---@param itemLink string
+---@param minLevel? number
+---@param stackSize? number
+---@param sellPrice? number
+---@return ItemTraits
+function items:ReadItemTraits(itemID, itemLink, minLevel, stackSize, sellPrice)
+  ---@type ItemTraits
+  local traits = {
+    minLevel = minLevel,
+    stackSize = stackSize,
+    sellPrice = sellPrice,
+    craftingQuality = self:CraftingQualityOf(itemLink),
+    stats = {},
+  }
+  if C_Item.IsEquippableItem then
+    traits.isEquipment = C_Item.IsEquippableItem(itemLink) == true
+  end
+  if C_Item.GetItemSpell then
+    traits.hasUse = C_Item.GetItemSpell(itemLink) ~= nil
+  end
+  if C_Item.IsCosmeticItem then
+    traits.isCosmetic = C_Item.IsCosmeticItem(itemLink) == true
+  end
+  -- Nothing for an item without an appearance (a retail capture: 87 of 88 items).
+  local transmog = _G.C_TransmogCollection
+  if transmog and transmog.GetItemInfo then
+    local appearanceID, sourceID = transmog.GetItemInfo(itemLink)
+    traits.transmoggable = appearanceID ~= nil and appearanceID ~= 0
+    if traits.transmoggable then
+      traits.appearanceID, traits.sourceID = appearanceID, sourceID
+    end
+  end
+  -- Takes an item ID only: a link raises an error (warcraft.wiki.gg).
+  if C_PetJournal and C_PetJournal.GetPetInfoByItemID then
+    local name, _, _, _, _, _, _, _, _, _, _, _, speciesID = C_PetJournal.GetPetInfoByItemID(itemID)
+    traits.isPet = name ~= nil
+    traits.petSpeciesID = speciesID
+  end
+  -- Only equipment has a track (Vendor asks only equipment): one without a track string has none.
+  if traits.isEquipment and C_Item.GetItemUpgradeInfo then
+    local upgrade = C_Item.GetItemUpgradeInfo(itemLink)
+    -- A track with no levels is not one the game shows: a retail dump's Adventurer cloak had
+    -- trackString with 0/0 and maxItemLevel 0, and no upgrade line in its tooltip.
+    if upgrade and upgrade.trackString and (upgrade.maxLevel or 0) > 0 then
+      traits.upgradeTrack = upgrade.trackString
+      traits.upgradeLevel = upgrade.currentLevel
+      traits.upgradeMax = upgrade.maxLevel
+      traits.upgradeMaxItemLevel = upgrade.maxItemLevel
+    end
+  end
+  -- The stats' names (GetItemStats keys are global strings: ITEM_MOD_HASTE_RATING_SHORT is "Haste").
+  local getItemStats = C_Item.GetItemStats or _G.GetItemStats
+  local stats = getItemStats and getItemStats(itemLink)
+  if stats then
+    for key in pairs(stats) do
+      local name = _G[key]
+      if type(name) == "string" and name ~= "" then
+        table.insert(traits.stats, name)
+      end
+    end
+    table.sort(traits.stats)
+  end
+  return traits
 end
 
 ---@param itemMixin ItemMixin
@@ -2836,7 +3527,7 @@ function items:AttachItemInfo(data, kind, containerInfo)
   ---@class TooltipScanner: AceModule
   local tooltipScanner = addon:GetModule('TooltipScanner')
   local itemGUID = C_Item.GetItemGUID(itemLocation) or ""
-  local tooltipText = tooltipScanner:GetTooltipText(bagid, slotid, itemGUID)
+  local tooltipText, tooltipMarks = tooltipScanner:GetTooltipText(bagid, slotid, itemGUID)
 
   data.inventoryType = invType --[[@as number]]
   data.inventorySlots = const.INVENTORY_TYPE_TO_INVENTORY_SLOTS[invType]
@@ -2855,8 +3546,36 @@ function items:AttachItemInfo(data, kind, containerInfo)
     currentItemLevel = C_Item.GetCurrentItemLevel and C_Item.GetCurrentItemLevel(itemLocation) or props.effectiveIlvl or 0,
     equipmentSets = equipmentSets:GetItemSets(bagid, slotid),
     tooltipText = tooltipText,
+    tooltipMarks = tooltipMarks,
   })
+  -- A purchase that can still be refunded: category automation leaves it alone (automation.md §2).
+  data.itemInfo.refundable = refundableAt(itemLocation)
+  -- Scrapping asks about the item where it is; only a bag slot has a location.
+  if data.itemInfo.traits and C_Item.CanScrapItem then
+    data.itemInfo.traits.isScrappable = C_Item.CanScrapItem(itemLocation) == true
+  end
+  if data.itemInfo.traits then
+    self:ReadCharacterState(data)
+  end
   return self:FinishItemData(data, kind, harvestIncomplete, true)
+end
+
+-- CraftingQualityOf returns an item's crafting quality tier: a reagent's, else a crafted item's, in
+-- the order Blizzard's item buttons read them (SetItemCraftingQualityOverlay,
+-- Blizzard_ItemButton/Mainline/ItemButtonTemplate.lua); nil for an item without one, or on a client
+-- without them. itemInfo is a link or an item ID: a crafted item's tier is its own, so a slot's link.
+---@param itemInfo string|number
+---@return number?
+function items:CraftingQualityOf(itemInfo)
+  local api = C_TradeSkillUI
+  if api == nil then
+    return nil
+  end
+  local tier = api.GetItemReagentQualityByItemInfo and api.GetItemReagentQualityByItemInfo(itemInfo)
+  if tier == nil and api.GetItemCraftedQualityByItemInfo then
+    tier = api.GetItemCraftedQualityByItemInfo(itemInfo)
+  end
+  return tier
 end
 
 -- ReadItemProperties reads what an item is, whatever slot holds it: C_Item.GetItemInfo, with every
@@ -2905,7 +3624,16 @@ function items:ReadItemProperties(itemID, itemLink)
   props.classID = instClassID or props.classID
   props.subclassID = instSubclassID or props.subclassID
 
-  props.bindType = self:GetBindTypeFromLink(itemLink) or bindType or 0 --link overrides itemID if set
+  local linkMinLevel, linkStackSize, linkSellPrice, linkBindType, linkLoaded = self:ReadLinkInfo(itemLink)
+  props.bindType = linkBindType or bindType or 0 --link overrides itemID if set
+  -- Item data is read only once it has loaded (C_Item.GetItemInfoInstant aside; rule #1,
+  -- data-loader.md §19): the item in the slot (its link) as well as its base item. A read without it
+  -- is incomplete, and the item is read again (harvestIncomplete); until then it has no traits.
+  props.incomplete = props.incomplete or not linkLoaded
+  if not props.incomplete then
+    props.traits = self:ReadItemTraits(itemID, itemLink, linkMinLevel or props.itemMinLevel,
+      linkStackSize or props.itemStackCount, linkSellPrice or props.sellPrice)
+  end
 
   local effectiveIlvl, isPreview, baseIlvl = C_Item.GetDetailedItemLevelInfo(itemID)
   props.effectiveIlvl = effectiveIlvl or props.itemLevel or 0
@@ -2968,6 +3696,7 @@ function items:ItemInfoOf(props, slot)
     expacID = props.expacID,
     setID = props.setID or 0,
     isCraftingReagent = props.isCraftingReagent,
+    traits = props.traits,
     effectiveIlvl = props.effectiveIlvl --[[@as number]],
     isPreview = props.isPreview --[[@as boolean]],
     baseIlvl = props.baseIlvl --[[@as number]],
@@ -2981,6 +3710,7 @@ function items:ItemInfoOf(props, slot)
     currentItemLevel = slot.currentItemLevel,
     equipmentSets = slot.equipmentSets,
     tooltipText = slot.tooltipText or "",
+    tooltipMarks = slot.tooltipMarks,
   } --[[@as ItemInfo]]
 end
 
@@ -3071,6 +3801,7 @@ function items:AttachGuildBankItemInfo(data, read)
   data.inventoryType = invType
   data.inventorySlots = const.INVENTORY_TYPE_TO_INVENTORY_SLOTS[invType] or { 0 }
   local level = C_Item.GetDetailedItemLevelInfo(read.link)
+  local tooltipText, tooltipMarks = tooltipScanner:GetGuildBankItemText(tab, data.slotid, read.link)
   data.itemInfo = self:ItemInfoOf(props, {
     itemGUID = "",
     itemName = props.itemName,
@@ -3082,8 +3813,12 @@ function items:AttachGuildBankItemInfo(data, read)
     isBattlePayItem = false,
     currentItemCount = read.count,
     currentItemLevel = level or props.effectiveIlvl or 0,
-    tooltipText = tooltipScanner:GetGuildBankItemText(tab, data.slotid, read.link),
+    tooltipText = tooltipText,
+    tooltipMarks = tooltipMarks,
   })
+  if data.itemInfo.traits then
+    self:ReadCharacterState(data)
+  end
   return self:FinishItemData(data, const.BAG_KIND.GUILD, props.incomplete, false)
 end
 
@@ -3144,7 +3879,15 @@ function items:RederiveGuildBank(committedItems)
         data.bagid, data.slotid = item.bagid, item.slotid
         item = self:AttachGuildBankItemInfo(data, guildBankSource():ReadSlot(item.guildTab, item.slotid))
       else
-        item.itemInfo.tooltipText = tooltipScanner:GetGuildBankItemText(item.guildTab, item.slotid, item.itemInfo.itemLink) or ""
+        local text, marks = tooltipScanner:GetGuildBankItemText(item.guildTab, item.slotid, item.itemInfo.itemLink)
+        text = text or ""
+        -- Tooltip text is an input of the item's category and search entry (data-loader.md §18).
+        if text ~= item.itemInfo.tooltipText then
+          item.itemInfo.tooltipText = text
+          item.itemInfo.tooltipMarks = marks
+          item.derived = nil
+        end
+        self:RefreshCharacterState(item)
       end
     end
     itemData[slotkey] = item
@@ -3238,12 +3981,17 @@ function items:AttachBasicItemInfo(itemID, data)
 end
 
 -- GetCategory returns the category data is shown in. With own, it leaves search categories out:
--- the item's own category, which search categories are matched against (Phase6_EnrichData).
+-- the item's own category, which search categories are matched against (Phase6_EnrichData). With
+-- ignoreRecent, a recent item gets the category it has once it is no longer recent (category
+-- automation acts by it, automation.md). With withoutAdded, the category it was added to by hand is
+-- left out (NaturalCategory).
 ---@param ctx Context
 ---@param data ItemData
 ---@param own? boolean
+---@param ignoreRecent? boolean
+---@param withoutAdded? boolean
 ---@return string
-function items:GetCategory(ctx, data, own)
+function items:GetCategory(ctx, data, own, ignoreRecent, withoutAdded)
   if not data or data.isItemEmpty then
     return L:G("Empty Slot")
   end
@@ -3252,8 +4000,10 @@ function items:GetCategory(ctx, data, own)
     data.itemInfo = {}
   end
 
-  if database:GetCategoryFilter(data.kind, "RecentItems") then
-    if items:IsNewItem(data) then
+  if not ignoreRecent and database:GetCategoryFilter(data.kind, "RecentItems") then
+    -- A virtual stack root is recent while any pile it merges is (stackRecent, Phase 7). Its own
+    -- category (own) goes by the item alone: the search index holds it.
+    if items:IsNewItem(data) or (not own and data.stackRecent) then
       return L:G("Recent Items")
     end
   end
@@ -3275,27 +4025,23 @@ function items:GetCategory(ctx, data, own)
     searchCategory = self.searchCache[data.kind] and self.searchCache[data.kind][data.slotkey]
     searchPriority = self.categoryPriorityCache[data.kind] and self.categoryPriorityCache[data.kind][data.slotkey]
   end
-  local customCategory, customPriority = categories:GetCustomCategory(ctx, data.kind, data)
+  local customCategory, customPriority, customFilter = categories:GetCustomCategory(ctx, data.kind, data, withoutAdded)
 
-  -- If both exist, compare priorities
+  -- An item added by hand to a category of yours stays there, whatever the order (category-lifecycle.md
+  -- §7). A plugin's item lists compete with rules by priority, the list winning a tie.
   if searchCategory and customCategory then
-    local sPriority = searchPriority or 10
-    local cPriority = customPriority or 10
-    -- Lower priority number wins (1 > 10); if equal, search category wins (tie-breaker)
-    if cPriority < sPriority then
-      return customCategory
-    else
-      return searchCategory
+    if (customFilter and customFilter.save) or (customPriority or 10) <= (searchPriority or 10) then
+      return self:GroupedCategory(ctx, customCategory, customFilter, data)
     end
+    return searchCategory
   end
 
-  -- If only one exists, return it
   if searchCategory then
     return searchCategory
   end
 
   if customCategory then
-    return customCategory
+    return self:GroupedCategory(ctx, customCategory, customFilter, data)
   end
 
   local quality = data.containerInfo and data.containerInfo.quality
@@ -3381,6 +4127,16 @@ function items:GetCategory(ctx, data, own)
   end
 
   return category
+end
+
+-- NaturalCategory returns where an item lands without the category it was added to by hand, out of
+-- Recent Items: its rules (this sweep's), a plugin's categories, the built-in ones. An item dropped on
+-- the header of that category needs no Added Items there (Categories:FileItem, docs/next-batch-2.md §8).
+---@param ctx Context
+---@param data ItemData
+---@return string
+function items:NaturalCategory(ctx, data)
+  return self:GetCategory(ctx, data, false, true, true)
 end
 
 function items:ParseItemLink(link)

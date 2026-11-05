@@ -14,8 +14,8 @@ Requires [Git for Windows](https://git-scm.com/download/win) and collaborator ac
 1. Close WoW.
 2. In `World of Warcraft\_forever_\Interface`, rename `AddOns` to `AddOns-old`.
 3. From `Interface`, run `git clone https://github.com/wvince/z-settings.git AddOns`.
-4. Optional: copy personal addons from `AddOns-old` into `AddOns`. ForeverDungeonJournal and
-   RareScanner aren't in the repo: install and update them yourself.
+4. Optional: copy personal addons from `AddOns-old` into `AddOns`. ForeverDungeonJournal,
+   RareScanner and SharpiesGearJudge aren't in the repo: install and update them yourself.
 5. Start WoW, click Apply in the popup and press the key right of Tab (QWERTY or Belgian AZERTY).
    The key is asked once.
 6. Put your own spells on your bars. Setup sharing never places anything on them.

@@ -1653,6 +1653,8 @@ L["Your profile is now picked from the shipped build closest to your talents, so
 L["Hunter and Mage weights follow the launch changes: Aspect of the Hawk, Trueshot Aura and the reworked Mage talents."] = "獵人與法師的權重已依照上線變更調整：雄鷹守護、強擊光環與重做的法師天賦。"
 L["Warlock and Paladin weights follow the launch Life Tap and Vindication."] = "術士與聖騎士的權重已依照上線時的生命分流與 Vindication 調整。"
 L["Leveling weights for every class follow Blizzard's launch notes, and the Talents plugin's solo and dungeon leveling builds are re-searched on them."] = "所有職業的升級權重已依照暴雪的上線說明調整，天賦插件的單人與地城升級配置也已依此重新搜尋。"
+L["Elemental and Restoration Shaman leveling weights follow the November 4 hotfix (2-second Chain Lightning), and the Talents plugin's Shaman builds were re-searched."] = "元素與恢復薩滿的升級權重已依照 11 月 4 日的熱修正（閃電鏈施法時間 2 秒）調整，天賦插件的薩滿配置也已重新搜尋。"
+L["Leveling PvP builds and weights are being worked on."] = "升級用的 PvP 配置與權重正在製作中。"
 L["Stat Logic follows the launch racial changes: Human crit, Dwarf hit, and no more Orc and Tauren bonuses."] = "Stat Logic 依照上市時的種族變更調整：人類致命、矮人命中，並移除獸人與牛頭人加成。"
 L["Bloom"] = "綻放"
 L["Lacerate"] = "割裂"

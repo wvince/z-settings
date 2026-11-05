@@ -1,6 +1,7 @@
 -- ============================
 -- ==========   DF ============
 -- ============================
+
 --Nesting
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
@@ -12,6 +13,7 @@ RXPGuides.RegisterGuide([[
 #displayname Dragonflight Glyphs
 #chapters a) Waking Shores Glyphs;a) Ohn'ahran Plains Glyphs;a) Azure Span Glyphs;a) Thaldraszus Glyphs;a) Forbidden Reach Glyphs;a) Zaralek Cavern Glyphs;a) Emerald Dream Dragon Glyphs
 ]])
+
 --Waking Shores
 RXPGuides.RegisterGuide([[
 #retail
@@ -21,6 +23,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF1|r - Waking Shores
 #next a) Ohn'ahran Plains Glyphs
 #chapter
+
 step
     #completewith WakingShoreDragonGlyphs
     +Welcome to the Dragon Glyph Guide
@@ -176,6 +179,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF2|r - Ohn'ahran Plains
 #next a) Azure Span Glyphs
 #chapter
+
 step
     #arrowtext Dragon Glyph: Mirewood Fen
     >>Use |T4640498:0|t[Skyward Ascend] once or twice
@@ -293,6 +297,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF3|r - Azure Span
 #next a) Thaldraszus Glyphs
 #chapter
+
 step
     #arrowtext Dragon Glyph: Forkriver Crossing
     >>Use |T4640498:0|t[Skyward Ascend] once or twice
@@ -434,6 +439,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF4|r - Thaldraszus
 #next a) Forbidden Reach Glyphs
 #chapter
+
 step
     #arrowtext Dragon Glyph: South Hold Gate
     >>Use |T4640498:0|t[Skyward Ascend] 2-3 times to reach the glyph
@@ -556,6 +562,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF5|r - Forbidden Reach
 #next a) Zaralek Cavern Glyphs
 #chapter
+
 step
     #completewith next
     .hs >> Use your Hearthstone IF it's in Valdrakken
@@ -681,6 +688,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF6|r - Zaralek Cavern
 #next a) Emerald Dream Dragon Glyphs
 #chapter
+
 step
     .zoneskip 2200
     +This guide requires you to have the |cRXP_WARN_Zaralek Caverns|r unlocked.
@@ -777,6 +785,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF7|r - Emerald Dream
 #next a) Isle of the Dorn Glyphs
 #chapter
+
 step
     .zoneskip 2200
     +This guide requires you to have the |cRXP_WARN_Emerald Dream|r unlocked.
@@ -837,9 +846,11 @@ step
     *Use |T4640477:0|t[Whirling Surge] on cooldown.
     .achievement 19306,7 >> Pick up the Dragon Glyph: Whorlwing Basin
 ]])
+
 -- =============================
 -- ==========   TWW ============
 -- =============================
+
 --Nesting
 RXPGuides.RegisterGuide([[
 #retail
@@ -850,6 +861,7 @@ RXPGuides.RegisterGuide([[
 #displayname The War Within Glyphs
 #chapters a) Isle of the Dorn Glyphs;a) The Ringing Deeps Glyphs;a) Hallowfall Glyphs;a) Azj-Kahet Glyphs;a) K'aresh Glyphs
 ]])
+
 --Isle of the Dorn
 RXPGuides.RegisterGuide([[
 #version 1
@@ -859,6 +871,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - Isle of the Dorn
 #next a) The Ringing Deeps Glyphs
 #chapter
+
 step
     #completewith
     +Welcome to the Skyriding Glyph Guide
@@ -953,6 +966,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - The Ringing Deeps
 #next a) Hallowfall Glyphs
 #chapter
+
 step
     #arrowtext Skyriding: The Stonevault Exterior
     .goto 2214,42.72,10.06
@@ -1035,6 +1049,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF003|r - Hallowfall
 #next a) Azj-Kahet Glyphs
 #chapter
+
 step
     #arrowtext Skyriding: The Fangs
     .goto 2215,62.86,51.79
@@ -1125,6 +1140,7 @@ RXPGuides.RegisterGuide([[
 #name a) Azj-Kahet Glyphs
 #next a) K'aresh Glyphs
 #chapter
+
 step
     #arrowtext Skyriding: Trickling Abyss
     .goto 2255,70.54,25.16
@@ -1223,6 +1239,7 @@ RXPGuides.RegisterGuide([[
 #name a) K'aresh Glyphs
 #next a) Waking Shores Glyphs
 #chapter
+
 step
     #arrowtext Skyriding: Tazavesh
     .goto 2472,55.12,67.55
@@ -1286,9 +1303,11 @@ step
     *Use |T4640477:0|t[Whirling Surge] on cooldown.
     .achievement 42727,6 >>Pick up the Skyriding Glyph: Shadow Point
 ]])
+
 -- ==================================
 -- ==========   MIDNIGHT ============
 -- ==================================
+
 --Nesting
 RXPGuides.RegisterGuide([[
 #retail
@@ -1298,9 +1317,13 @@ RXPGuides.RegisterGuide([[
 #name a) AMidnight Glyphs
 #displayname Midnight Glyphs
 #chapters a) Eversong Woods Glyphs;a) Zul'aman Glyphs;a) Harandar Glyphs;a) Voidstorm Glyphs
+
+
 step
 +1
+
 ]])
+
 --Eversong Woods
 RXPGuides.RegisterGuide([[
 #version 1
@@ -1310,6 +1333,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - Eversong Woods
 #next a) Zul'aman Glyphs
 #chapter
+
 step
     #arrowtext Use [Surge Forward]
     .goto 2393,48.37,6.68
@@ -1408,6 +1432,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Zul'aman
 #next a) Harandar Glyphs
 #chapter
+
 step
     #arrowtext Use [Surge Forward]
     .goto 2395,63.81,81.9
@@ -1496,6 +1521,8 @@ step
     *Use |T4640489:0|t[Second Wind] to renew vigor charges.
     *Use |T4640477:0|t[Whirling Surge] on cooldown.
     .achievement 61581,8
+
+
 ]])
 --Harandar
 RXPGuides.RegisterGuide([[
@@ -1506,6 +1533,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF003|r - Harandar
 #next a) Voidstorm Glyphs
 #chapter
+
 step
     #arrowtext Use [Surge Forward]
     .goto 2413,47.04,53.24
@@ -1583,6 +1611,7 @@ RXPGuides.RegisterGuide([[
 #name a) Voidstorm Glyphs
 #displayname |cFF1EFF004|r - Voidstorm
 #chapter
+
 step
     #arrowtext Use [Surge Forward]
     .goto 2405,49.25,87.48

@@ -8,6 +8,8 @@ RXPGuides.RegisterGuide([[
 #subgroup RestedXP Horde 1-30
 #defaultfor Scourge
 #next 6-10 Eversong Woods
+
+
 step << !Undead
     #completewith next
     +|cRXP_WARN_You have selected a guide meant for Undead. It is recommended you choose the same starter zone that you start in|r
@@ -918,4 +920,5 @@ step
 step
     .goto Eversong Woods,46.68,49.10,40 >>Travel to Falconwing Square
     .isQuestAvailable 8463
+
 ]])

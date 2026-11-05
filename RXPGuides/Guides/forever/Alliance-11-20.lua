@@ -1,5 +1,6 @@
 local faction = UnitFactionGroup("player")
 if faction == "Horde" then return end
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
@@ -13,7 +14,9 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-A1
 #next 14-16 Darkshore
 #defaultfor !NightElf !Hunter/!Dwarf !Hunter/!Human !Hunter/!Skyborne !Hunter
+
 --Going to Darkshore if already 15
+
 step
     #optional
     .maxlevel 14,endOfTheGuide
@@ -23,8 +26,10 @@ step
     .home >> Set your Hearthstone to Stormwind City
     .target Innkeeper Allison
     .bindlocation 16509
+
 step
     #label NEWestfallStart --hidden step for #include
+
 step
     #ah
     .goto 1453/0,660.28,-8814.55
@@ -801,6 +806,7 @@ step
     .goto 1453/0,1330.100,-8645.400
     .zone Darkshore >> Take the boat to Darkshore
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
 #disabledungeons
@@ -814,9 +820,12 @@ RXPGuides.RegisterGuide([[
 #displayname 13-16 Darkshore << Dwarf Hunter/Human Hunter/Skyborne Hunter
 #displayname 15-16 Darkshore << !NightElf/!Dwarf/!Human/!Skyborne Hunter
 #next 16-19 Darkshore
+
+
 -- #displayname 11-16 Darkshore << NightElf/Dwarf Hunter !SoD
 -- #displayname 15-17 Darkshore << !NightElf !Dwarf/!Hunter !SoD
 -- #displayname 13-18 Darkshore << Dwarf Hunter/!NightElf sod
+
 step << NightElf
     #label WashedA
     .goto 1439/1,542.99,6342.31--c:1439,36.621,45.596
@@ -926,6 +935,9 @@ step << !NightElf
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Caylais Moonfeather|r
     .fp Auberdine >> Get the Auberdine flight path
     .target Caylais Moonfeather
+
+
+
 step << Dwarf Hunter/Human Hunter/Skyborne Hunter
     #optional
     #completewith RabidThistle
@@ -1329,7 +1341,10 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thundris Windweaver|r
     .turnin 4761 >> Turn in Thundris Windweaver
     .accept 4762 >> Accept The Cliffspring River
+
 ----Start of NE >1.49x catchup (everyone 1x) Early boat section----
+
+
 step
     #completewith MistVeil
     .goto 1439/1,620.35,6768.76,0
@@ -1416,7 +1431,11 @@ step
     .complete 1002,1 -- Moonstalker Fang (6)
     .mob Moonstalker Runt
     .isQuestTurnedIn 1001
+
+
 ----End of NE >1.49x catchup (everyone 1x) Early boat section----
+
+
  step
     #optional
     #completewith AsterionTravel
@@ -1598,7 +1617,10 @@ step
     >>Travel up to the |cRXP_PICK_Mysterious Red Crystal|r
     >>|cRXP_WARN_Be careful of the two group of 2 |cRXP_ENEMY_Raging Moonkins|r west of the |cRXP_PICK_Mysterious Red Crystal|r as the duos closest to each other are leashed together|r
     .complete 4811,1 --Locate the large, red crystal on Darkshore's eastern mountain range
+
 ----Start of Early Red Crystal turnin Section (NE below 14 for xp, Hunters/Druids for staff wep upgrade)/Druid bear q final if not done earlier----
+
+
 step << NightElf/Hunter/Warrior/Druid
     #optional
     #completewith Cascade
@@ -1776,8 +1798,11 @@ step << NightElf !Hunter/Druid/Warrior
     .isQuestComplete 982
 ----Start of forced Level 14 Druid Turnin/train----
 --Removed in wowF
+
 ----End of forced Level 14 Druid Turnin/train----
 ----End of Early Red Crystal turnin Section (NE for xp, Hunters/Druids for staff)/Druid bear q final if not done earlier----
+
+
 step << Druid
     #optional
     #completewith AmethStart
@@ -1786,7 +1811,10 @@ step << Druid
     .collect 5469,5,2178,1 -- Strider Meat (5)
     .mob Foreststrider Fledgling
     .subzoneskip 447
+
+
 ----Start of alternate section if early Red Crystal turnin----
+
 step << NightElf !Hunter/Druid/Warrior
     #optional
     #loop
@@ -1833,10 +1861,15 @@ step
     .target Sentinel Tysha Moonblade
     .isQuestTurnedIn 4811
     .xp >17,1
+
+
 step
     #label EndFirstMoonstalker
+
 ----End of alternate section if early Red Crystal turnin----
+
 ----Start of small south loop for ERA and SoD Warrior/Rogue/Priest----
+
 step
     #optional
     #completewith AmethStart
@@ -2201,7 +2234,10 @@ step
     .accept 97914 >>Accept Expanding Horizons << NightElf
     .target Thundris Windweaver
     .isQuestComplete 958
+
 ----End of small south loop for ERA and SoD Warrior/Rogue/Priest----
+
+
 step << NightElf
     #optional
     #completewith next
@@ -2253,7 +2289,11 @@ step
     >>Click the |cRXP_PICK_Beached Sea Creature|r
     .accept 4723 >> Accept Beached Sea Creature
     .isOnQuest 982
+
+
 ----End of NE >1.49x catchup (everyone 1x) Final boat section----
+
+
 step
     #optional
     #completewith BoatSeaCreature
@@ -2373,7 +2413,11 @@ step
     >>Click the |cRXP_PICK_Buzzbox 323|r on the ground
     .accept 1003 >> Accept Buzzbox 525
     .isQuestTurnedIn 1002
+
+
 ----Start of Hunter/Druid 1x early Althalaxx section (for money+xp)----
+
+
 step << Hunter/Druid
     #optional
     #completewith Tower1
@@ -2456,7 +2500,9 @@ step << Hunter/Druid
     >>Kill |cRXP_ENEMY_Foreststriders|r. Loot them for their |cRXP_LOOT_Strider Meat|r
     .collect 5469,5,2178,1 -- Strider Meat (5)
     .mob Foreststrider
+
 ----End of Hunter/Druid 1x and SoD Warrior early Althalaxx section (for money+xp)----
+
 step
     #optional
     #completewith CliffCave
@@ -2704,7 +2750,11 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gwennyth Bly'Leggonde|r
     .turnin 4725 >> Turn in Beached Sea Turtle
     .target Gwennyth Bly'Leggonde
+
+
 ----Start of Druid Quest section----
+
+
 step << Druid
     #optional
     .goto 1439/1,328.28,5942.80,0--c:1439,39.899,54.745
@@ -2793,8 +2843,13 @@ step << Druid
     #optional
     .hs >> Hearth to Darkshore
     .zoneskip Darkshore
+
+
 ----End of Druid Quest section----
+
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
 #disabledungeons
@@ -3555,7 +3610,9 @@ step << Druid
 step
     .hs >>Hearthstone to Auberdine
     .zoneskip Darkshore
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
 #disabledungeons
@@ -3567,6 +3624,7 @@ RXPGuides.RegisterGuide([[
 #name 16-19 Darkshore
 #next 19-20 Redridge;20-21 Darkshore/Ashenvale << !Hunter
 #next 19-21 Darkshore/Ashenvale << Hunter
+
 -- step << NightElf !Druid
 --     #optional
 --     #completewith PortalDarn
@@ -4458,6 +4516,7 @@ step << Druid
     >>|cRXP_WARN_Swim out in the water|r
     >>Open the |cRXP_PICK_Strange Lockbox|r. Loot it for the |cRXP_LOOT_Half Pendant of Aquatic Agility|r
     .collect 15883,1,272,1 --Collect Half Pendant of Aquatic Agility (x1)
+
 step << Dwarf Hunter/Human Hunter/Skyborne Hunter
     #softcore
     #optional
@@ -4689,15 +4748,18 @@ step << NightElf
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Terenthis|r
     .accept 993 >> Accept A Lost Master
     .target Terenthis
+
 step << NightElf
     #optional
     >>|cRXP_WARN_If you equip the|r |T133762:0|t[Enchanted Moonstalker Cloak]|cRXP_WARN_, make sure you save your current cloak for later as the|r |T133762:0|t[Enchanted Moonstalker Cloak] |cRXP_WARN_is lost upon a later turn in|r
     .equip 15,5387 >>|cRXP_WARN_Equip the|r |T133762:0|t[Enchanted Moonstalker Cloak] |cRXP_WARN_If it's better than your current Cloak|r
     .itemcount 5387,1
     .itemStat 15,QUALITY,<7
+
 --Hunter stays Darkshore/Ashenvale
 --Shaman to IF for training then SW > Redridge
 --!Hunter !Shaman straight to SW > Redridge
+
 step << !Hunter
     .goto 1439/1,488.69,6564.830
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Dalmond|r
@@ -4822,6 +4884,7 @@ step << Shaman
     >>|cRXP_WARN_Level your|r |T135966:0|t[First Aid] |cRXP_WARN_if needed while waiting for the tram|r
     >>|cRXP_WARN_You will need your|r |T135966:0|t[First Aid] |cRXP_WARN_to be 80 for a quest at level 24 << Rogue !Dwarf
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
 #disabledungeons
@@ -4832,6 +4895,7 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-A1
 #name 19-20 Redridge
 #next 20-21 Darkshore/Ashenvale
+
 step << Shaman
     .goto 1453/0,638.8,-8341.95
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Billibub Cogspinner|r
@@ -5421,7 +5485,9 @@ step
 step
     .goto 1433/0,-2634.54,-9588.54
     .xp 20 >> Grind until you are level 20
+
 -- Druid Cat form quest --
+
 step << Druid
     #completewith catspirit1
 	.cast 18960 >> Cast Teleport: Moonglade
@@ -5447,6 +5513,7 @@ step << Druid
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mathrengyl Bearwalker::4217|r
     .target Mathrengyl Bearwalker::4217
     .accept 98393 >>Accept The Great Cat Spirit
+
 step << Druid
     #completewith next
 	.cast 18960 >> Cast Teleport: Moonglade
@@ -5543,7 +5610,9 @@ step << Druid
 step << Druid
     #completewith next
     .hs >> Hearth to Lakeshire
+
 -- Druid cat form quest end --
+
 step
     #completewith InRR
     .goto 1433/0,-2234.89,-9435.35
@@ -5714,7 +5783,13 @@ step << Warrior
     .trainer >> Train your class spells
     .target Wu Shen
     .target Ilsa Corbin
+
+
+
 ----Start of Rogue 20 Quest <1.59x Section----
+
+
+
 step << NightElf Rogue/Skyborne Rogue
     .goto 1436/0,1037.42,-10628.27,5,0
     .zone Westfall >> Travel to Westfall
@@ -5877,7 +5952,14 @@ step << Rogue
     >>|cRXP_WARN_Remember to re-equip your main weapon if you switched to a|r |T135641:0|t[Dagger] |cRXP_WARN_earlier|r << Rogue
     .turnin 2359 >> Turn in Klaven's Tower
     .target Master Mathias Shaw
+
+
+
 ----End of Rogue 20 Quest <1.59x Section----
+
+
+
+
 step
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_General Marcus Jonathan|r
 	.target General Marcus Jonathan
@@ -6032,6 +6114,7 @@ step
     .goto 1433/0,-2267.67,-9280.140
     .turnin 89 >> Turn in The Everstill Bridge
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
 #disabledungeons
@@ -6042,6 +6125,7 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-A1
 #name 19-21 Darkshore/Ashenvale
 #next RestedXP Forever Guide (A)\21-23 Ashenvale/Stonetalon
+
 step
     #optional
     .goto 1439/1,88.81,5001.87--c:1439,43.555,76.293
@@ -6656,6 +6740,7 @@ step << Dwarf Hunter/Human Hunter/Skyborne Hunter
     .target Vesprystus
     .zoneskip Ashenvale
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
 #disabledungeons
@@ -6666,6 +6751,8 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-A1
 #name 20-21 Darkshore/Ashenvale
 #next RestedXP Forever Guide (A)\21-23 Stonetalon/Ashenvale
+
+
 step << Druid
 	#completewith next
 	.cast 18960 >> Cast Teleport: Moonglade

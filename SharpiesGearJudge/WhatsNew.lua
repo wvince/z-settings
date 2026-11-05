@@ -17,17 +17,9 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.2.8
-    { text = "Leveling weights for every class follow Blizzard's launch notes, and the Talents plugin's solo and dungeon leveling builds are re-searched on them.", forever = true },
-    { text = "Level-60 weights now also account for your gear tier: from pre-raid best in slot toward Tier 1, each stat shifts toward its Tier 1 value (/sgj gearpoint shows where you are).", forever = true },
-    { text = "Leveling weights now also account for your gear: in quest rewards Stamina counts for more, and in the best gear for your level they stay as before (/sgj gearpoint shows where you are).", forever = true },
-    { text = "Bag arrows and the Roster plugin now value hit around your hit cap the same way tooltips do, so they agree.", forever = true },
-    { text = "Your profile is now picked from the shipped build closest to your talents, so off-tree talents no longer send you to the wrong weights.", forever = true },
-    { text = "Hunter and Mage weights follow the launch changes: Aspect of the Hawk, Trueshot Aura and the reworked Mage talents.", forever = true },
-    { text = "Warlock and Paladin weights follow the launch Life Tap and Vindication.", forever = true },
-    { text = "Stat Logic follows the launch racial changes: Human crit, Dwarf hit, and no more Orc and Tauren bonuses.", forever = true },
-    { text = "Raid weights for most DPS specs now also account for your gear tier, measured with the wowsims classic simulator (/sgj gearpoint shows where you are).", era = true },
-    { text = "Healing, spell power and Mp5 on your gear are no longer missed right after login, so healers see the right upgrades." },
+    -- v3.2.9
+    { forever = true, text = "Elemental and Restoration Shaman leveling weights follow the November 4 hotfix (2-second Chain Lightning), and the Talents plugin's Shaman builds were re-searched." },
+    { forever = true, text = "Leveling PvP builds and weights are being worked on." },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

@@ -1663,6 +1663,8 @@ L["Your profile is now picked from the shipped build closest to your talents, so
 L["Hunter and Mage weights follow the launch changes: Aspect of the Hawk, Trueshot Aura and the reworked Mage talents."] = "사냥꾼과 마법사 가중치가 출시 변경 사항을 따릅니다: 매의 상, 정조준 오라, 개편된 마법사 특성."
 L["Warlock and Paladin weights follow the launch Life Tap and Vindication."] = "흑마법사와 성기사 가중치가 출시 시점의 생명력 전환과 Vindication을 따릅니다."
 L["Leveling weights for every class follow Blizzard's launch notes, and the Talents plugin's solo and dungeon leveling builds are re-searched on them."] = "모든 직업의 레벨업 가중치가 Blizzard의 출시 노트를 따르며, 특성 플러그인의 솔로 및 던전 레벨업 빌드도 이에 맞춰 다시 탐색했습니다."
+L["Elemental and Restoration Shaman leveling weights follow the November 4 hotfix (2-second Chain Lightning), and the Talents plugin's Shaman builds were re-searched."] = "정기 및 복원 주술사의 레벨업 가중치가 11월 4일 핫픽스(연쇄 번개 시전 시간 2초)를 따르며, 특성 플러그인의 주술사 빌드도 다시 탐색했습니다."
+L["Leveling PvP builds and weights are being worked on."] = "레벨업 PvP 빌드와 가중치를 준비하고 있습니다."
 L["Stat Logic follows the launch racial changes: Human crit, Dwarf hit, and no more Orc and Tauren bonuses."] = "Stat Logic이 출시 종족 변경을 따릅니다: 인간 치명타, 드워프 적중, 오크와 타우렌 보너스 삭제."
 L["Bloom"] = "피워내기"
 L["Lacerate"] = "가르기"

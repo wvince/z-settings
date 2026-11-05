@@ -380,6 +380,17 @@ function DarkMode:GetUiAddonsTable()
 	return DMUiAddonsTab
 end
 
+DarkMode.CharacterBorderAtlases = {
+	["UI-Character-Info-GearSlot"] = true,
+	["common-framedivider"] = true,
+	["common-sidetab"] = true,
+	["common-sidetab-selected"] = true,
+	["common-sidetab-hover"] = true,
+	["spellbook-Tab-Frame-C60"] = true,
+	["spellbook-Tab-Frame-Glow-C60"] = true,
+	["spellbook-Tab-Frame-glow-gradient-C60"] = true,
+}
+
 -- format: multiline
 local DMEquipmentSlots = {
 	"AmmoSlot[1]",

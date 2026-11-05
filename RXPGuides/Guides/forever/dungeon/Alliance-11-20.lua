@@ -10,6 +10,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Dungeon Guide 1-20
 --#groupid RXP-SRGCE-A1
 #next 17-18 Hall of Thanes
+
 step
     #include RestedXP Forever Guide (A)\14-16 Darkshore@WashedA-DarkshoreEndNE
 step
@@ -199,6 +200,16 @@ step << NightElf
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Prospector Stormpike|r
     .turnin 301 >> Turn in Report to Ironforge
     .target Prospector Stormpike
+
+
+
+
+
+
+
+
+
+
 -- step
 --     .goto 1453/0,673.58,-8867.76
 --     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Innkeeper Allison|r
@@ -562,6 +573,7 @@ step << NightElf
 --     .target Thor
 --     .zoneskip Stormwind City
 --     .zoneskip Darkshore
+
 -- step << Rogue
 --     #ah
 --     .goto 1453/0,609.63,-8787.71
@@ -640,7 +652,10 @@ step << NightElf
 --     .zone Ironforge >> Take the tram to Ironforge
 --     .zoneskip Loch Modan
 --     .zoneskip Dun Morogh
+
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
 #version 1
@@ -651,9 +666,11 @@ RXPGuides.RegisterGuide([[
 #subgroup Dungeon Guide 1-20
 --#groupid RXP-SRGCE-A1
 #next 15-17 Darkshore
+
 step
     #optional
     .maxlevel 14,endOfTheGuide
+
 step
     .goto 1453/0,673.58,-8867.76
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Innkeeper Allison|r
@@ -681,12 +698,14 @@ step
     --.collect 255007,14,92909,1 -- Golem Isospring (14)
     --.collect 255010,5,92909,1 -- Harvester Gyrostabilizer (5)
     .target Auctioneer Jaxon
+
 step << Human
     .goto 1453/0,484.200,-8832.500
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Dungar Longdrink|r
     .turnin 6261 >> Turn in Dungar Longdrink
     .accept 6285 >> Accept Return to Lewis
     .target Dungar Longdrink
+
 step << !Skyborne
     .goto 1453/0,484.200,-8832.500
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Dungar Longdrink|r
@@ -1152,6 +1171,7 @@ step
     .target Thor
     .zoneskip Stormwind City
     .zoneskip Darkshore
+
 step << Human Rogue
     #ah
     .goto 1453/0,609.63,-8787.71
@@ -1258,6 +1278,7 @@ step
 step
     #optional
     #label endOfTheGuide
+
 step
     .goto 1453/0,673.58,-8867.76
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Innkeeper Allison|r
@@ -1399,6 +1420,7 @@ step
     .goto 1453/0,1330.100,-8645.400
     .zone Darkshore >> Take the boat to Darkshore
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
 #version 1
@@ -1408,6 +1430,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Dungeon Guide 1-20
 --#groupid RXP-SRGCE-A1
 #next 17-18 Hall of Thanes
+
 step
     .goto 1439/1,600.50,6424.66--c:1439,35.743,43.710
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Cerellean Whiteclaw|r
@@ -1512,6 +1535,9 @@ step
     .goto 1439/1,559.37,6109.83--c:1439,36.371,50.920
     >>Open the |cRXP_PICK_Beached Sea Creature|r. Loot it for the |cRXP_LOOT_Sea Creature Bones|r
     .complete 3524,1 --Sea Creature Bones (1)
+
+
+
 step << Druid
     #ah
     #optional
@@ -1536,6 +1562,9 @@ step << Druid
     >>|cRXP_WARN_Collect 5 |T134187:0|t[Earthroot] via |T136065:0|t[Herbalism] and rarely |cRXP_PICK_Battered Chests|r for a future class quest|r
     .collect 2449,5,6123,1 --Earthroot (5)
     .skill herbalism,<15,1
+
+
+
 step
     #completewith next
     >>|cRXP_WARN_Use|r |T134335:0|t[Tharnariun's Hope] |cRXP_WARN_on a|r |cRXP_ENEMY_Rabid Thistle Bear|r --|cRXP_WARN_. It can be used from any range as long as you're targeting the|r |cRXP_ENEMY_Bear|r
@@ -2175,6 +2204,7 @@ step
     .target Alanndarian Nightsong
     .skill cooking,<10,1 -- step only displays if skill is 10 or higher
     .itemcount 5469,5 -- strider meat (5)
+
 step << Druid
     #optional
     .isOnQuest 6122
@@ -2225,6 +2255,7 @@ step
     .turnin 4725 >> Turn in Beached Sea Turtle
     .target Gwennyth Bly'Leggonde
     .isOnQuest 4723
+
 ----Start of Druid Quest section----
 step << Druid
     #completewith TotL
@@ -2399,6 +2430,7 @@ step
     .zone Ironforge >> Take the tram to Ironforge
     .zoneskip Dun Morogh
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
 #version 1
@@ -2409,6 +2441,7 @@ RXPGuides.RegisterGuide([[
 #name 17-18 Hall of Thanes
 #next 18-19 Ruins of Lordaeron
 #displayname 16-17 Hall of Thanes << NightElf
+
 step << Skyborne
     .goto 1455/0,-1152.40,-4821.13
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gryth Thurden|r
@@ -2474,6 +2507,7 @@ step << !NightElf
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Earthseer Farsen|r
     .turnin 96390 >> Turn in Nip 'Em in the Bud
     .target Earthseer Farsen
+
 step
     #completewith EnterHoT
     +|cRXP_WARN_Start looking for a group for the Hall of Thanes|r
@@ -2510,6 +2544,7 @@ step
     .enabledungeon HOT
     .goto 1455/0,-933.200,-4821.900
     .subzone 16919 >> Enter the Hall of Thanes
+
 step
     #completewith FaldrimAnvilmar
     >>Loot the |cRXP_PICK_Dwarven Heirlooms|r on the ground through the Hall of Thanes
@@ -2564,6 +2599,7 @@ step
 step
     .zone Ironforge >> |cRXP_WARN_Exit the Hall of Thanes. Fastest way is running straight down the corridor from the final boss room|r
     .subzoneskip 16919,1
+
 step
     .goto 1455/0,-968.200,-4803.700
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thom Filch|r
@@ -2595,6 +2631,7 @@ step
     .turnin 96393 >> Turn in Old Ironforge Incursion
     .turnin 98423 >> Turn in The Treaty of Understanding
     .target King Magni Bronzebeard
+
 step << Shaman
     .goto 1455/0,-1086.500,-4642.400
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Eldrun Stormbreaker::258098|r
@@ -2642,6 +2679,7 @@ step << Hunter/Druid
     .goto 1455/0,-1197.27,-5041.49
     .target Buliwyf Stonehand
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
 #version 1
@@ -2652,6 +2690,7 @@ RXPGuides.RegisterGuide([[
 #name 18-19 Ruins of Lordaeron
 #next 19-20 Deadmines
 #displayname 17-18 Ruins of Lordaeron << NightElf
+
 step
     #completewith EnterRoL
     +|cRXP_WARN_You will now run Ruins of Lordaeron|r
@@ -2663,6 +2702,7 @@ step
     .fly Wetlands >> Fly to Wetlands
     .target Gryth Thurden
     .zoneskip Ironforge,1
+
 step
     .goto 1426/0,-826.400,-5027.100,30,0
     .goto 1426/0,-721.900,-5078.900,30,0
@@ -3018,6 +3058,7 @@ step << Priest
     .target Brother Joshua
     .xp <20,1
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
 #version 1
@@ -3028,6 +3069,7 @@ RXPGuides.RegisterGuide([[
 #name 19-20 Deadmines
 #displayname 18-20 Deadmines/Redridge << NightElf
 #next 20-21 Darkshore/Ashenvale
+
 step
     #optional
     .goto 1453/0,673.58,-8867.76
@@ -3394,8 +3436,10 @@ step
     .turnin 214 >> Turn in Red Silk Bandanas
     .goto 1436/0,1033.22,-10504.83
     .target Scout Riell
+
 step
    .maxlevel 19,Level20Check
+
 step
     .goto 1436/0,1037.42,-10628.27
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thor|r
@@ -3509,8 +3553,10 @@ step
 step
     #optional
     .xp 20 >> Grind to 20
+
 step
     #label Level20Check
+
 step << !Druid !Rogue
     .hs >> Hearth to Stormwind
     .cooldown item,6948,>2,1
@@ -3840,6 +3886,7 @@ step
     #optional
     .abandon 95999 >>Abandon WANTED: Incinerator Gar'im
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
 #version 1
@@ -3849,6 +3896,7 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-A1
 #name 20-21 Darkshore/Ashenvale
 #next RestedXP Forever Dungeon Guide (A)\21-23 Ashenvale/Stonetalon
+
 step << Druid
     #completewith catspirit1
 	.cast 18960 >> Cast Teleport: Moonglade

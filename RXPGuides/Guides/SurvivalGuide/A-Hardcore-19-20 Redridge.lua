@@ -1,3 +1,4 @@
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #hardcore
@@ -9,6 +10,7 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Survival Guide (A)
 #subgroup RXP Survival Guide 1-20
 #next 20-21 Darkshore/Ashenvale
+
 step << Hunter
     .goto StormwindClassic,61.609,15.269
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Einris Brightspear|r

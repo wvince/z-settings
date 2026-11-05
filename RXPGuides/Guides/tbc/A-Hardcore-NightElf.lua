@@ -8,6 +8,7 @@ RXPGuides.RegisterGuide([[
 #subgroup RXP Survival Guide 1-20
 #name 1-11 Teldrassil
 #next 12-14 Darkshore
+
 step << !NightElf
     #sticky
     #completewith next

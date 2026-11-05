@@ -1,5 +1,6 @@
 local faction = UnitFactionGroup("player")
 if faction == "Horde" then return end
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
@@ -441,6 +442,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Porthannius|r
     .accept 2159 >> Accept Dolanaar Delivery
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
 #disabledungeons
@@ -454,6 +456,7 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-A1
 #defaultfor NightElf
 #next 14-16 Darkshore
+
 step
     .goto 1438/1,734.13,9920.57
     .target Zenn Foulhoof
@@ -1326,6 +1329,7 @@ step
     .goto 1438/1,1857.86,10676.36
     .use 18152 >>|cRXP_WARN_Use the|r |T134798:0|t[Amethyst Phial] |cRXP_WARN_at The Oracle Glade moonwell|r
     .complete 7383,1 --Collect Filled Amethyst Phial (x1)
+
 --with the new quests, druids can go straight to 10, a 5 minute save later down the road
 step << Druid/Priest
     #completewith next

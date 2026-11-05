@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------
--- 	Leatrix Plus 1.60.25 (21st October 2026)
+-- 	Leatrix Plus 1.60.27 (4th November 2026)
 ----------------------------------------------------------------------
 
 --	01:Functions 02:Locks,  03:Restart 40:Player
@@ -13,7 +13,7 @@
 	-- Disable taint logging for now because having it enabled causes fake errors to show up
 	-- that will lead users to report and investigate problems that don't exist and are only
 	-- caused by having taint logging enabled.  This will be removed as soon as it's safe.
-	SetCVar("taintLog", "0")
+	-- SetCVar("taintLog", "0")
 
 	-- Create global table
 	_G.LeaPlusDB = _G.LeaPlusDB or {}
@@ -24,7 +24,7 @@
 	local void
 
 	-- Version
-	LeaPlusLC["AddonVer"] = "1.60.25"
+	LeaPlusLC["AddonVer"] = "1.60.27"
 
 	-- Get locale table
 	local void, Leatrix_Plus = ...
@@ -728,22 +728,10 @@
 				local watcher = CreateFrame("Frame", nil, UIParent)
 				watcher:SetPropagateKeyboardInput(true)
 				watcher:EnableKeyboard(true)
+				-- Every key always goes on to the game (the watcher never keeps a key, Escape closes the card through the game's own list of windows)
 				watcher:SetScript("OnKeyDown", function(self, key)
 					local card = LeaPlusLC.IDCard
-					if not card or not card:IsShown() then
-						-- No card showing, so every key goes to the game
-						if not InCombatLockdown() and not self:GetPropagateKeyboardInput() then self:SetPropagateKeyboardInput(true) end
-						return
-					end
-					-- Escape closes the card (and is kept from the game, outside combat)
-					if not InCombatLockdown() then self:SetPropagateKeyboardInput(key ~= "ESCAPE") end
-					if key == "ESCAPE" then
-						local viewer = LeaPlusLC.IDViewer
-						if viewer and viewer.scenePopup and viewer.scenePopup:IsShown() then viewer.scenePopup:Hide() elseif viewer and viewer.fullscreen then viewer:SetFullscreen(false) else card:Hide() end
-						-- Let keys through to the game again straight after (never left blocked)
-						C_Timer.After(0, function() if not InCombatLockdown() then self:SetPropagateKeyboardInput(true) end end)
-						return
-					end
+					if not card or not card:IsShown() then return end
 					if (key == "LCTRL" or key == "RCTRL" or key == "LMETA" or key == "RMETA") and card.url and not card.edit:HasFocus() then
 						card.ctrlFocus = true
 						card.edit:SetFocus()
@@ -753,7 +741,7 @@
 			end
 
 			-- Show the info card for whatever is under the mouse (arg1 is retry or upgrade when it runs itself again)
-			local function ShowInfoCard(arg1)
+			local function ShowInfoCard(arg1, forceUnit)
 				-- Secret values: the game can hide some values from addons (such as in combat, encounters and arenas)
 				-- Anything that can be hidden is passed through Safe, which gives nil for a hidden value so it is left out
 				local function IsSecret(v) return issecretvalue and issecretvalue(v) or false end
@@ -874,6 +862,9 @@
 						viewer:EnableMouse(true)
 						viewer:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = OnePixel()})
 						viewer:SetBackdropColor(0.06, 0.06, 0.08, 0.96)
+						-- Drawn into its own buffer, so 3D models open behind it (such as the character frame's model) cannot show through the model as a silhouette
+						-- (set once here and left on, as turning it off again leaves the model blank)
+						if viewer.SetIsFrameBuffer then viewer:SetIsFrameBuffer(true) end
 						viewer.title = viewer:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 						viewer.title:SetPoint("TOPLEFT", viewer, "TOPLEFT", 14, -14)
 						viewer.title:SetPoint("RIGHT", viewer, "RIGHT", -110, 0)
@@ -942,14 +933,14 @@
 							self.onLoaded = nil
 							if func then C_Timer.After(0, function() if self.loaded and self:IsVisible() then func() end end) end -- Next frame, not in the middle of loading
 						end)
-						-- Left button turns, right button moves, mouse wheel zooms
+						-- Left button turns, right button moves, middle button turns and tilts freely, mouse wheel zooms
 						model:SetScript("OnMouseDown", function(self, btn)
-							if btn == "LeftButton" then self.turning = GetCursorPosition() elseif btn == "RightButton" then self.panX, self.panY = GetCursorPosition() end
+							if btn == "LeftButton" then self.turning = GetCursorPosition() elseif btn == "RightButton" then self.panX, self.panY = GetCursorPosition() elseif btn == "MiddleButton" then self.freeX, self.freeY = GetCursorPosition() end
 						end)
 						model:SetScript("OnMouseUp", function(self, btn)
-							if btn == "LeftButton" then self.turning = nil elseif btn == "RightButton" then self.panX, self.panY = nil, nil end
+							if btn == "LeftButton" then self.turning = nil elseif btn == "RightButton" then self.panX, self.panY = nil, nil elseif btn == "MiddleButton" then self.freeX, self.freeY = nil, nil end
 						end)
-						model:SetScript("OnHide", function(self) self.turning, self.panX, self.panY = nil, nil, nil end)
+						model:SetScript("OnHide", function(self) self.turning, self.panX, self.panY, self.freeX, self.freeY = nil, nil, nil, nil, nil end)
 						model:SetScript("OnUpdate", function(self, elapsed)
 							if not self.loaded then return end
 							local changed
@@ -968,6 +959,16 @@
 								self:SetFacing(self.facing)
 								changed = true
 							end
+							if self.freeX then
+								-- Middle button: left and right turns, up and down tilts
+								local x, y = GetCursorPosition()
+								self.facing = (self.facing or 0) + (x - self.freeX) * 0.012
+								self.pitch = (self.pitch or 0) - (y - self.freeY) * 0.012
+								self.freeX, self.freeY = x, y
+								self:SetFacing(self.facing)
+								if self.SetPitch then self:SetPitch(self.pitch) end
+								changed = true
+							end
 							if self.panX then
 								local x, y = GetCursorPosition()
 								local step = 0.004 * math.max(0.3, 1 - (self.zoom or 0) * 0.3)
@@ -980,8 +981,9 @@
 							-- Keep the other dressing room model (gear on or off) the same, so swapping gear does not move anything
 							local twin = self.twin
 							if changed and twin and twin.loaded then
-								twin.facing, twin.zoom, twin.zoomTarget, twin.offsetY, twin.offsetZ = self.facing, self.zoom, self.zoomTarget, self.offsetY, self.offsetZ
+								twin.facing, twin.pitch, twin.zoom, twin.zoomTarget, twin.offsetY, twin.offsetZ = self.facing, self.pitch, self.zoom, self.zoomTarget, self.offsetY, self.offsetZ
 								twin:SetFacing(twin.facing or 0)
+								if twin.SetPitch then twin:SetPitch(twin.pitch or 0) end
 								twin:SetPosition(twin.zoom or 0, twin.offsetY or 0, twin.offsetZ or 0)
 							end
 						end)
@@ -991,11 +993,60 @@
 						end)
 						end
 						viewer.model = viewer.dressModel
-						viewer.hint = viewer:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
-						viewer.hint:SetPoint("BOTTOMLEFT", viewer.stage, "BOTTOMLEFT", 8, 6)
-						viewer.hint:SetPoint("BOTTOMRIGHT", viewer.stage, "BOTTOMRIGHT", -8, 6)
-						viewer.hint:SetWordWrap(true) -- Wraps when the viewer is made narrow
-						viewer.hint:SetText(L["Left-drag to turn, right-drag to move, mouse wheel to zoom."])
+						-- Controls button (pointing at it shows how to turn, move, tilt and zoom the model)
+						viewer.hint = FlatButton(viewer, 70, 20, L["Controls"])
+						viewer.hint:SetWidth(viewer.hint.label:GetStringWidth() + 20)
+						viewer.hint:SetPoint("BOTTOMRIGHT", viewer.stage, "BOTTOMRIGHT", -10, 10)
+						-- Controls popup (made the first time the button is pointed at)
+						function viewer:ShowControls()
+							local tip = self.controlsTip
+							if not tip then
+								tip = CreateFrame("Frame", nil, self, "BackdropTemplate")
+								self.controlsTip = tip
+								tip:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = OnePixel()})
+								tip:SetBackdropColor(0.06, 0.06, 0.08, 0.98)
+								tip.heading = tip:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+								tip.heading:SetPoint("TOPLEFT", tip, "TOPLEFT", 14, -12)
+								tip.heading:SetText(L["Model controls"])
+								local rows = {
+									{L["Left-drag"], L["Turn"]},
+									{L["Right-drag"], L["Move"]},
+									{L["Middle-drag"], L["Turn and tilt"]},
+									{L["Mouse wheel"], L["Zoom"]},
+								}
+								tip.keys, tip.actions = {}, {}
+								local keyWidth, actionWidth = 0, 0
+								for i, row in ipairs(rows) do
+									local key = tip:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+									key:SetPoint("TOPLEFT", tip, "TOPLEFT", 14, -36 - (i - 1) * 18)
+									key:SetText(row[1])
+									local action = tip:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+									action:SetText(row[2])
+									action:SetTextColor(0.8, 0.8, 0.8)
+									tip.keys[i], tip.actions[i] = key, action
+									keyWidth = math.max(keyWidth, key:GetStringWidth())
+									actionWidth = math.max(actionWidth, action:GetStringWidth())
+								end
+								for i, action in ipairs(tip.actions) do
+									action:SetPoint("LEFT", tip.keys[i], "LEFT", keyWidth + 18, 0)
+								end
+								tip:SetSize(math.max(tip.heading:GetStringWidth(), keyWidth + 18 + actionWidth) + 28, 36 + #rows * 18 + 6)
+							end
+							-- Colours follow the viewer (key names in the accent colour)
+							local r, g, b = unpack(self.accent or {1, 0.82, 0})
+							tip:SetBackdropBorderColor(r, g, b, 0.55)
+							tip.heading:SetTextColor(r, g, b)
+							for void, key in ipairs(tip.keys) do key:SetTextColor(r, g, b) end
+							-- Above the button, lined up with its right edge
+							tip:ClearAllPoints()
+							tip:SetPoint("BOTTOMRIGHT", self.hint, "TOPRIGHT", 0, 6)
+							tip:SetFrameLevel(self:GetFrameLevel() + 30)
+							tip:Show()
+						end
+						local function HideControls() if viewer.controlsTip then viewer.controlsTip:Hide() end end
+						viewer.hint:HookScript("OnEnter", function() viewer:ShowControls() end)
+						viewer.hint:HookScript("OnLeave", HideControls)
+						viewer.hint:HookScript("OnHide", HideControls)
 						-- Waiting for a player (shown when they can no longer be found, the model loads when the mouse is over them again)
 						viewer.waitText = viewer:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 						viewer.waitText:SetPoint("LEFT", viewer.stage, "LEFT", 20, 0)
@@ -1134,6 +1185,129 @@
 							end
 							self:UpdateSlots()
 						end
+						-- A player the game has not drawn in the viewer before can report the model as loaded before their gear has arrived, so the slot
+						-- buttons would stay empty until the key is pressed again: read them again a few times until something is found (up to 2 seconds)
+						function viewer:RetrySlots(model, unit, loadID)
+							local tries = 0
+							local function Retry()
+								if next(self.slotInfo) or self.loadID ~= loadID or not self:IsShown() or next(self.hiddenSlots) then return end
+								tries = tries + 1
+								self:ReadSlots(model, unit)
+								if next(self.slotInfo) then self:ApplyInspectGear() self:CheckReveal() end
+								if not next(self.slotInfo) and tries < 10 then C_Timer.After(0.2, Retry) end
+							end
+							C_Timer.After(0.2, Retry)
+						end
+						-- Other players: the game does not always put every weapon on the model (such as the main hand of a dual wielder) until
+						-- they have been inspected, so the weapons read by the card's own inspect are put on the model and on the slot buttons
+						function viewer:ApplyInspectGear()
+							local view = self.view
+							if not self:IsShown() or not view or view.mode ~= "unit" or not view.isPlayer or not view.guid then return end
+							local gear = LeaPlusLC.IDGear and LeaPlusLC.IDGear[view.guid]
+							local model = self.dressModel
+							if not gear or not model.loaded then return end
+							local GetIcon = (C_Item and C_Item.GetItemIconByID) or GetItemIcon
+							-- Weapons are put straight into their own hand slot as appearances (trying them on makes the game treat the player
+							-- as unable to dual wield, so a weapon in one hand pushes out the other)
+							local weapons = {}
+							if model.SetItemTransmogInfo then
+								for void, slotID in ipairs({16, 17}) do
+									if gear[slotID] then
+										-- The weapon's look as shown on the player (such as a transmog), if the game gives it, otherwise the item's own look
+										local look = gear.looks and SafeTable(gear.looks[slotID])
+										local lookID = look and Safe(look.appearanceID)
+										if type(lookID) == "number" and lookID > 0 then
+											weapons[slotID] = look
+										elseif C_TransmogCollection and C_TransmogCollection.GetItemInfo and ItemUtil and ItemUtil.CreateItemTransmogInfo then
+											local ok, void, sourceID = pcall(C_TransmogCollection.GetItemInfo, gear[slotID])
+											sourceID = ok and Safe(sourceID)
+											if type(sourceID) == "number" and sourceID > 0 then
+												local made, transmog = pcall(ItemUtil.CreateItemTransmogInfo, sourceID)
+												if made and transmog then weapons[slotID] = transmog end
+											end
+										end
+									end
+								end
+							end
+							local function Wield()
+								if self.view ~= view or not model.loaded then return end
+								for void, slotID in ipairs({16, 17}) do
+									if weapons[slotID] and not self.hiddenSlots[slotID] then pcall(model.SetItemTransmogInfo, model, weapons[slotID], slotID) end
+								end
+							end
+							if weapons[16] or weapons[17] then
+								Wield()
+								C_Timer.After(0.3, Wield) -- Again a moment later in case the game was still dressing the model
+							end
+							-- Fill in the slot buttons (weapons use the same appearances, so clicking to put one back on keeps both showing)
+							for void, button in ipairs(self.slotButtons) do
+								local slotID = button.slotID
+								local link, info = gear[slotID], self.slotInfo[slotID]
+								if link and (not info or not info.link or weapons[slotID]) then
+									info = info or {}
+									info.link = link
+									if weapons[slotID] then info.transmog = weapons[slotID] end
+									if not info.icon and GetIcon then info.icon = Safe(GetIcon(link)) end
+									self.slotInfo[slotID] = info
+								end
+							end
+							self:UpdateSlots()
+						end
+						-- Other players whose model comes up without a main hand (such as a paired weapon shown in both hands, which the game only gives
+						-- after an inspect) are kept hidden with a message until their inspect has come back, then shown complete (players who look
+						-- complete straight away are shown at once)
+						function viewer:HoldModel(guid)
+							self.holdGUID = guid
+							self.holdID = (self.holdID or 0) + 1
+							local holdID = self.holdID
+							self.dressModel:SetAlpha(0)
+							self.nakedModel:SetAlpha(0)
+							-- Keep waiting while the inspect is on the way (up to 6 seconds), or while its reply is waiting for the player to be pointed at again
+							local started = GetTime()
+							local function Check()
+								if self.holdID ~= holdID then return end
+								local wait = LeaPlusLC.IDTalentWait
+								if wait and wait.guid == guid then
+									self.waitText:SetFormattedText(L["Move your mouse over %s to show their model."], self.title:GetText() or "")
+									self.waitText:Show()
+									C_Timer.After(0.5, Check)
+									return
+								end
+								local card = LeaPlusLC.IDCard
+								local pending = card and card:IsShown() and (card.inspectGUID == guid or card.gearReadingGUID == guid)
+								if pending and GetTime() - started < 6 then C_Timer.After(0.5, Check) return end
+								self:RevealModel()
+							end
+							C_Timer.After(1, Check)
+						end
+						function viewer:RevealModel()
+							if not self.holdGUID then return end
+							self.holdGUID = nil
+							self.holdID = (self.holdID or 0) + 1
+							self.dressModel:SetAlpha(1)
+							self.nakedModel:SetAlpha(1)
+							if self.waitGUID == nil then self.waitText:Hide() end
+						end
+						-- Show the model once it has a main hand, once the inspect has finished, or once no inspect is on the way
+						function viewer:CheckReveal()
+							local guid = self.holdGUID
+							if not guid then return end
+							local view = self.view
+							if not self:IsShown() or not view or view.guid ~= guid then self:RevealModel() return end
+							local gear = LeaPlusLC.IDGear and LeaPlusLC.IDGear[guid]
+							local card = LeaPlusLC.IDCard
+							local wait = LeaPlusLC.IDTalentWait
+							local pending = card and card:IsShown() and (card.inspectGUID == guid or card.gearReadingGUID == guid or (wait and wait.guid == guid))
+							if self.slotInfo[16] or (gear and gear.complete) or not pending then
+								local holdID = self.holdID
+								C_Timer.After(0.1, function() if self.holdID == holdID then self:RevealModel() end end) -- Give the weapons a moment to be drawn
+							else
+								-- Still waiting, so say so
+								if not (wait and wait.guid == guid) then self.waitText:SetText(RETRIEVING_DATA or SEARCH_LOADING_TEXT or "...") end
+								self.waitText:Show()
+							end
+						end
+						viewer:HookScript("OnHide", function(self) self:RevealModel() end)
 						viewer.animLabel = viewer:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
 						viewer.animLabel:SetPoint("TOPLEFT", viewer.stage, "BOTTOMLEFT", 2, -14)
 						viewer.animLabel:SetText(L["Animation"])
@@ -1192,16 +1366,13 @@
 								self.text:SetPoint("LEFT", self.title, "RIGHT", 16, 0)
 								self.text:SetPoint("RIGHT", self.animLabel, "LEFT", -20, 0)
 								self.text:SetWordWrap(false)
-								-- Hint in the bottom-right corner of the model area
+								-- Controls button in the bottom-right corner of the model area
 								self.hint:ClearAllPoints()
-								self.hint:SetPoint("BOTTOMRIGHT", self.stage, "BOTTOMRIGHT", -10, 8)
-								self.hint:SetJustifyH("RIGHT")
+								self.hint:SetPoint("BOTTOMRIGHT", self.stage, "BOTTOMRIGHT", -10, 10)
 							else
-								-- Hint along the bottom of the model area (centred)
+								-- Controls button in the bottom-right corner of the model area (same as fullscreen)
 								self.hint:ClearAllPoints()
-								self.hint:SetPoint("BOTTOMLEFT", self.stage, "BOTTOMLEFT", 8, 6)
-								self.hint:SetPoint("BOTTOMRIGHT", self.stage, "BOTTOMRIGHT", -8, 6)
-								self.hint:SetJustifyH("CENTER")
+								self.hint:SetPoint("BOTTOMRIGHT", self.stage, "BOTTOMRIGHT", -10, 10)
 								-- Normal: gear slot buttons, then the animation slider, then the flavour text, all under the model area
 								self.slotRow:ClearAllPoints()
 								self.slotRow:SetPoint("TOPLEFT", self.stage, "BOTTOMLEFT", 0, -8)
@@ -1247,9 +1418,10 @@
 							if not (from and to and from.loaded and to.loaded) then return end
 							viewer.gearOff = not viewer.gearOff
 							-- Swap to the other model, with the same turn, position, zoom and animation (nothing reloads, so nothing moves)
-							to.facing, to.zoom, to.zoomTarget, to.offsetY, to.offsetZ = from.facing, from.zoom, from.zoomTarget, from.offsetY, from.offsetZ
+							to.facing, to.pitch, to.zoom, to.zoomTarget, to.offsetY, to.offsetZ = from.facing, from.pitch, from.zoom, from.zoomTarget, from.offsetY, from.offsetZ
 							to:Show()
 							to:SetFacing(to.facing or 0)
+							if to.SetPitch then to:SetPitch(to.pitch or 0) end
 							to:SetPosition(to.zoom or 0, to.offsetY or 0, to.offsetZ or 0)
 							local setting = math.floor(viewer.anim:GetValue() + 0.5)
 							if viewerAnims[setting] then to:SetAnimation(viewerAnims[setting]) end
@@ -1305,6 +1477,35 @@
 							self:ApplyScene()
 							self:ApplyLevels()
 							self:LayoutButtons()
+							self:HideJournalModels(on)
+						end
+						-- The game draws the collection journal's own 3D previews over the fullscreen viewer, so they are made see-through
+						-- while fullscreen is open, then put back as they were (only their transparency is changed, nothing else on them)
+						function viewer:HideJournalModels(hide)
+							if hide then
+								self.journalModels = self.journalModels or {}
+								-- The mount preview, the pet card preview and the three battle pet slots
+								local scenes = {
+									MountJournal and MountJournal.MountDisplay and MountJournal.MountDisplay.ModelScene,
+									PetJournalPetCard and PetJournalPetCard.modelScene,
+								}
+								local loadout = PetJournal and PetJournal.Loadout
+								if loadout then
+									for i = 1, 3 do
+										local plate = loadout["Pet" .. i]
+										if plate and plate.modelScene then tinsert(scenes, plate.modelScene) end
+									end
+								end
+								for void, scene in pairs(scenes) do
+									if scene and not (scene.IsForbidden and scene:IsForbidden()) and self.journalModels[scene] == nil then
+										self.journalModels[scene] = scene:GetAlpha()
+										scene:SetAlpha(0)
+									end
+								end
+							elseif self.journalModels then
+								for scene, alpha in pairs(self.journalModels) do scene:SetAlpha(alpha) end
+								wipe(self.journalModels)
+							end
 						end
 						-- Background scenes for fullscreen (plain colours, racial dressing room backgrounds and class talent backgrounds)
 						-- Each picture is made of pieces: position and size of each piece in the picture, then its texture coordinates
@@ -1469,6 +1670,7 @@
 							self.gear:SetFrameLevel(base + 7)
 							self.full:SetFrameLevel(base + 7)
 							self.sceneBtn:SetFrameLevel(base + 7)
+							self.hint:SetFrameLevel(base + 7)
 							if self.scenePopup then self.scenePopup:SetFrameLevel(base + 20) end
 						end
 						-- Size the scene picture to fill the model area (edges are cropped so nothing is stretched)
@@ -1742,6 +1944,7 @@
 					local r, g, b = unpack(info.color or {1, 0.82, 0})
 					viewer:SetBackdropBorderColor(r, g, b, 0.55)
 					viewer.gear:SetAccent(r, g, b)
+					viewer.hint:SetAccent(r, g, b)
 					viewer.accent = {r, g, b}
 					viewer.title:SetText(info.name or "")
 					if info.nameColor then viewer.title:SetTextColor(unpack(info.nameColor)) else viewer.title:SetTextColor(1, 1, 1) end
@@ -1763,6 +1966,7 @@
 					viewer.gear:SetShown(not useCreature) -- NPCs and pets have no gear to change
 					wipe(viewer.slotInfo) wipe(viewer.hiddenSlots) viewer:UpdateSlots() -- Filled in once the model has loaded
 					viewer:LayoutButtons()
+					viewer:RevealModel() -- Start from a shown model (it is hidden again below for players whose inspect is on the way)
 					-- A player who cannot be found right now: wait until the mouse is over them again
 					if view.mode == "unit" and not unit and not view.npcID then
 						viewer.waitGUID = view.guid or false
@@ -1794,6 +1998,7 @@
 					viewer.waitGUID = nil
 					viewer.waitText:Hide()
 					viewer.hint:Show()
+					if view.mode == "unit" and view.isPlayer and unit and view.guid and not Safe(UnitIsUnit(unit, "player")) then viewer:HoldModel(view.guid) end
 					viewer.loadID = (viewer.loadID or 0) + 1 -- Changes from an earlier model are ignored
 					local loadID = viewer.loadID
 					viewer.lastAnim = nil
@@ -1803,14 +2008,21 @@
 					for void, model in ipairs(models) do
 						model.loaded, model.onLoaded = false, nil
 						model.facing, model.zoom, model.zoomTarget, model.turning, model.panX, model.panY, model.offsetY, model.offsetZ = 0, 0, 0, nil, nil, nil, 0, 0
+						model.pitch, model.freeX, model.freeY = 0, nil, nil
 						local function Finish()
 							if not model:IsVisible() or viewer.loadID ~= loadID then return end
 							model:SetFacing(0)
+							if model.SetPitch then model:SetPitch(0) end
 							model:SetPosition(0, 0, 0)
 							if model == viewer.nakedModel and model.Undress then model:Undress() end
 							if view.mode == "item" and view.link then model:TryOn(view.link) end
 							-- Both dressing room models are loaded while showing (safest), then the one not in use is hidden
-							if model == viewer.dressModel then viewer:ReadSlots(model, (view.mode == "unit" and unit) or "player") end
+							if model == viewer.dressModel then
+								viewer:ReadSlots(model, (view.mode == "unit" and unit) or "player")
+								if view.mode == "unit" and not next(viewer.slotInfo) then viewer:RetrySlots(model, unit, loadID) end
+								viewer:ApplyInspectGear()
+								viewer:CheckReveal()
+							end
 							if model ~= viewer.model then model:Hide() end
 						end
 						model:Show()
@@ -1835,8 +2047,10 @@
 					end
 					local card = LeaPlusLC.IDCard
 					if not card then
-						card = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
+						card = CreateFrame("Frame", "LeaPlusGlobalInfoCard", UIParent, "BackdropTemplate")
 						card:Hide()
+						-- Escape closes the card (the game closes it like other windows, so no key is ever kept from the game)
+						table.insert(UISpecialFrames, "LeaPlusGlobalInfoCard")
 						card:SetSize(480, 140)
 						card:SetPoint("TOP", UIParent, "BOTTOM", 0, UIParent:GetHeight() * 0.28) -- Lower part of the screen, above the action bars
 						SnapToPixels(card)
@@ -1909,6 +2123,22 @@
 						function card:AddDetail(text)
 							if not text or text == "" then return end
 							tinsert(self.detailParts, text)
+							self.detail:SetText(table.concat(self.detailParts, "    "))
+							self:Relayout()
+						end
+						-- Item level for other players has its own place in the details, so a waiting message can be shown there and replaced
+						-- once the item level is read (nil removes it)
+						function card:SetItemLevelDetail(text)
+							if text == "" then text = nil end
+							local index = self.itemLevelPart
+							if index and self.detailParts[index] then
+								if text then self.detailParts[index] = text else tremove(self.detailParts, index) self.itemLevelPart = nil end
+							elseif text then
+								tinsert(self.detailParts, text)
+								self.itemLevelPart = #self.detailParts
+							else
+								return
+							end
 							self.detail:SetText(table.concat(self.detailParts, "    "))
 							self:Relayout()
 						end
@@ -2030,8 +2260,8 @@
 							local combo = (IsAltKeyDown() and "ALT-" or "") .. (IsControlKeyDown() and "CTRL-" or "") .. (IsShiftKeyDown() and "SHIFT-" or "") .. ((IsMetaKeyDown and IsMetaKeyDown()) and "META-" or "") .. key
 							if LeaPlusLC["ShowInfoCards"] == "On" and LeaPlusLC["InfoCardKey"] ~= "" and combo == LeaPlusLC["InfoCardKey"] then
 								ShowInfoCard()
-								-- If no new card was shown (such as pointing at a mailbox), the link box still has the keyboard, so give it back now
-								if card.ctrlFocus then card.ctrlFocus = nil self:ClearFocus() end
+								-- Ctrl is still held, so the link box keeps the keyboard (for the new card, or the old one if no new card was shown such as pointing at a mailbox)
+								-- Letting go of Ctrl gives it back to the game as usual
 								return
 							end
 							-- Any other key (not Ctrl itself) gives the keyboard back so the next press reaches the game
@@ -2049,9 +2279,16 @@
 						card:SetScript("OnShow", function() card.fade:Play() end)
 						-- The link box only keeps the keyboard while Ctrl is held (letting go of Ctrl is not always seen by the link box, so check every frame)
 						card:SetScript("OnUpdate", function(self)
-							if self.ctrlFocus and not (IsControlKeyDown() or (IsMetaKeyDown and IsMetaKeyDown())) then
+							if not self.ctrlFocus then return end
+							-- (Ctrl is not checked for a moment after the card is shown, as the game can report it as not held while the key is being handled)
+							local ctrlHeld = IsControlKeyDown() or (IsMetaKeyDown and IsMetaKeyDown()) or (GetTime() - (self.ctrlFocusTime or 0) < 0.2)
+							if not ctrlHeld or not self.url or not self.edit:IsShown() then
 								self.ctrlFocus = nil
 								if self.edit:HasFocus() then self.edit:ClearFocus() end
+							elseif not self.edit:HasFocus() then
+								-- Ctrl is still held but the link box does not have the keyboard (such as when it could not be given while the info card key was being handled), so give it now
+								self.edit:SetFocus()
+								self.edit:HighlightText()
 							end
 						end)
 						-- Closing the card always gives the keyboard back to the game
@@ -2105,8 +2342,12 @@
 					card.sub:SetText(info.sub or (L["ID"] .. " |cffffffff" .. tostring(info.id or "") .. "|r" .. (info.note and ("    " .. info.note) or "")))
 					card.hint:SetText(L["Press CTRL/C to copy"])
 					card.talents:SetText("")
+					card.talentsReadID = (card.talentsReadID or 0) + 1 -- Stops talent reads for an earlier card from changing this one
 					card.talentsReserved = info.talents and true or false
 					card.detailParts = {}
+					card.itemLevelPart = nil
+					card.gearReadingGUID = nil
+					LeaPlusLC.IDTalentWait = nil -- A reply kept for the last player is no longer needed
 					card.detail:SetText("")
 					for void, part in ipairs(info.details or {}) do if part and not IsSecret(part) and part ~= "" then tinsert(card.detailParts, part) end end
 					card.detail:SetText(table.concat(card.detailParts, "    "))
@@ -2179,8 +2420,18 @@
 						viewer:Hide()
 					end
 					card:Raise()
-					card.ctrlFocus = nil
-					card.edit:ClearFocus() -- The keyboard stays with the game (holding Ctrl gives it to the link box)
+					-- The keyboard stays with the game (holding Ctrl gives it to the link box)
+					-- If Ctrl is already held (such as from pressing CTRL/A to show the card), give the link box the keyboard now so CTRL/C works straight away
+					-- (otherwise the Ctrl watcher only sees Ctrl again when key repeat sends it, which is a short delay)
+					-- (while the info card key is being handled the game reports Ctrl as not held, so the key itself is checked too)
+					if card.url and (IsControlKeyDown() or (IsMetaKeyDown and IsMetaKeyDown()) or LeaPlusLC.IDKeyHasCtrl) then
+						card.ctrlFocus = true
+						card.ctrlFocusTime = GetTime()
+						card.edit:SetFocus()
+					else
+						card.ctrlFocus = nil
+						card.edit:ClearFocus()
+					end
 					card.edit:HighlightText()
 				end
 				-- Card for a buff or debuff the game has hidden from addons (such as in combat or a PvP match)
@@ -2311,6 +2562,17 @@
 				-- Talent summary: the talent trees with points in them, most points first (such as Frost 31   Arcane 20)
 				-- Forever keeps the three trees side by side in one modern talent tree, so talents are grouped by
 				-- their position (a new tree starts where the gap between columns is much wider than usual)
+				-- Find a player by their GUID (the mouse may have moved off them since the key was pressed)
+				local function FindUnitByGUID(guid, first)
+					if not guid then return nil end
+					local tokens = {first or "mouseover", "mouseover", "target", "focus", "targettarget"}
+					for i = 1, 4 do tinsert(tokens, "party" .. i) end
+					if IsInRaid and IsInRaid() then for i = 1, 40 do tinsert(tokens, "raid" .. i) end end
+					for i = 1, 40 do tinsert(tokens, "nameplate" .. i) end
+					for void, token in ipairs(tokens) do
+						if UnitExists(token) and Safe(UnitGUID(token)) == guid then return token end
+					end
+				end
 				local function TalentSummary(configID, classFile)
 					if not configID or not C_Traits or not C_Traits.GetConfigInfo then return nil end
 					local config = SafeTable(C_Traits.GetConfigInfo(configID))
@@ -2420,7 +2682,12 @@
 				local function AverageItemLevel(unit)
 					if Safe(UnitIsUnit(unit, "player")) and GetAverageItemLevel then
 						local void, equipped = Safe(GetAverageItemLevel())
-						if type(equipped) == "number" and equipped > 0 then return math.floor(equipped + 0.5) end
+						if type(equipped) == "number" and equipped > 0 then
+							-- Match the character sheet: never below the minimum item level, and always round down
+							local minLevel = C_PaperDollInfo and C_PaperDollInfo.GetMinItemLevel and Safe(C_PaperDollInfo.GetMinItemLevel())
+							if type(minLevel) == "number" and minLevel > equipped then equipped = minLevel end
+							return math.floor(equipped)
+						end
 					end
 					local total, count, mainHandTwoHand, offHand = 0, 0, false, false
 					local GetInfo = (C_Item and C_Item.GetItemInfo) or GetItemInfo
@@ -2440,7 +2707,7 @@
 					end
 					if mainHandTwoHand and not offHand then total, count = total + mainHandTwoHand, count + 1 end
 					if count == 0 then return nil end
-					return math.floor(total / count + 0.5)
+					return math.floor(total / count)
 				end
 				-- Items: item level, binding, sell price, item set
 				local function ItemDetails(itemLink, tooltip)
@@ -2577,7 +2844,9 @@
 					card.inspectGUID = guid
 					card.inspectClassFile = classFile
 					card.inspectUnit = unit
+					card.inspectTime = GetTime() -- Each inspect starts with fresh gear for the model viewer
 					card.talents:SetText("|cff8a8a90" .. L["Reading talents..."] .. "|r")
+					card:SetItemLevelDetail("|cff8a8a90" .. L["Item level"] .. " ...|r") -- Shown until the inspect has come back
 					if not LeaPlusLC.IDCardInspect then
 						LeaPlusLC.IDCardInspect = CreateFrame("Frame")
 						LeaPlusLC.IDCardInspect:SetScript("OnEvent", function(self, event, readyGUID)
@@ -2588,14 +2857,114 @@
 							LeaPlusLC.IDInspectPending = nil
 							self:UnregisterEvent("INSPECT_READY")
 							local inspectConfigID = Constants and Constants.TraitConsts and Constants.TraitConsts.INSPECT_TRAIT_CONFIG_ID or -1
-							c.talents:SetText(TalentSummary(inspectConfigID, c.inspectClassFile) or "")
-							-- Average item level from the inspected gear (only if the unit is still the same player)
-							local unitGUID = c.inspectUnit and Safe(UnitGUID(c.inspectUnit))
-							if unitGUID and unitGUID == readyGUID then
-								local itemLevel = AverageItemLevel(c.inspectUnit)
-								if itemLevel then c:AddDetail(L["Item level"] .. " |cffffffff" .. itemLevel .. "|r") end
+							local classFile, firstUnit = c.inspectClassFile, c.inspectUnit
+							-- Talents are only ever read live from the player, so the card needs to find them when the answer arrives
+							-- They are read straight away and again shortly after (in case the game had not finished updating them), and the inspect data is only cleared after the last read
+							-- If the player cannot be found when the answer arrives, the card does not keep looking for them
+							c.talentsReadID = (c.talentsReadID or 0) + 1
+							local readID = c.talentsReadID
+							local delays = {0, 0.3, 1}
+							local itemLevelDone = false
+							local function ClearInspect()
+								if ClearInspectPlayer and not LeaPlusLC.IDInspectPending and not (InspectFrame and InspectFrame:IsShown()) then ClearInspectPlayer() end
 							end
-							if ClearInspectPlayer and not (InspectFrame and InspectFrame:IsShown()) then ClearInspectPlayer() end
+							-- Stop if the card has been closed or is showing something else now
+							local function CardChanged()
+								return not c:IsShown() or c.talentsReadID ~= readID
+							end
+							-- Gear for the model viewer (the weapons, and how they look on the player such as a transmog or a paired weapon), read while
+							-- the inspect data is there and kept after it is cleared, and the viewer is updated if it shows this player
+							c.gearReadingGUID = readyGUID
+							local function ReadGear(unit)
+								LeaPlusLC.IDGear = LeaPlusLC.IDGear or {}
+								local gear = LeaPlusLC.IDGear[readyGUID]
+								if not gear or gear.inspectTime ~= c.inspectTime then gear = {inspectTime = c.inspectTime} LeaPlusLC.IDGear = {[readyGUID] = gear} end -- Only the player just inspected is kept
+								local RequestLoad = C_Item and C_Item.RequestLoadItemDataByID
+								local complete, newWeapon = true, false
+								for slot = 1, 19 do
+									local link = Safe(GetInventoryItemLink(unit, slot))
+									if link then
+										if not gear[slot] then
+											gear[slot] = link
+											if slot == 16 or slot == 17 then newWeapon = true end
+										end
+									else
+										local itemID = GetInventoryItemID and Safe(GetInventoryItemID(unit, slot))
+										if itemID then
+											complete = false
+											if RequestLoad then pcall(RequestLoad, itemID) end
+										end
+									end
+								end
+								if not gear.looks and C_TransmogCollection and C_TransmogCollection.GetInspectItemTransmogInfoList then
+									local ok, looks = pcall(C_TransmogCollection.GetInspectItemTransmogInfoList)
+									if ok and SafeTable(looks) and next(looks) then gear.looks = looks newWeapon = true end
+								end
+								if complete then gear.complete = true end
+								local viewer = LeaPlusLC.IDViewer
+								if viewer and (newWeapon or complete) then viewer:ApplyInspectGear() viewer:CheckReveal() end
+							end
+							-- The last read: use whatever gear could be read
+							local function FinishGear()
+								c.gearReadingGUID = nil
+								local gear = LeaPlusLC.IDGear and LeaPlusLC.IDGear[readyGUID]
+								if gear then gear.complete = true end
+								local viewer = LeaPlusLC.IDViewer
+								if viewer then viewer:ApplyInspectGear() viewer:CheckReveal() end
+							end
+							-- Read the talents from the player if they can be found (gives true when they were read)
+							local function ReadLive()
+								-- Find the player again (the pointer may have moved off them since the key was pressed)
+								local foundUnit = FindUnitByGUID(readyGUID, firstUnit)
+								if not foundUnit then return false end
+								ReadGear(foundUnit)
+								c.talents:SetText(TalentSummary(inspectConfigID, classFile) or "")
+								-- Average item level from the inspected gear (added once)
+								if not itemLevelDone then
+									itemLevelDone = true
+									local itemLevel = AverageItemLevel(foundUnit)
+									c:SetItemLevelDetail(itemLevel and (L["Item level"] .. " |cffffffff" .. itemLevel .. "|r") or nil)
+								end
+								return true
+							end
+							local function ReadTalents(step)
+								if CardChanged() then ClearInspect() return end
+								if not ReadLive() and step == 1 then
+									-- The player could not be found when the answer arrived (the pointer moved off them or they went out of range)
+									-- The reply is kept, and the talents and item level are read as soon as the player can be found again (pointed at, targeted or their nameplate shown)
+									local name = c.title:GetText() or ""
+									c.talents:SetText("|cff8a8a90" .. string.format(L["Move your mouse over %s to show their talents."], name) .. "|r")
+									if not itemLevelDone then c:SetItemLevelDetail("|cff8a8a90" .. string.format(L["Move your mouse over %s to show their item level."], name) .. "|r") end
+									LeaPlusLC.IDTalentWait = {guid = readyGUID, resume = function() ReadTalents(1) end}
+									c.gearReadingGUID = nil
+									if LeaPlusLC.IDViewer then LeaPlusLC.IDViewer:CheckReveal() end
+									if not LeaPlusLC.IDTalentWatch then
+										local watch = CreateFrame("Frame")
+										LeaPlusLC.IDTalentWatch = watch
+										watch:SetScript("OnEvent", function()
+											local wait, card = LeaPlusLC.IDTalentWait, LeaPlusLC.IDCard
+											if not wait then return end
+											if not card or not card:IsShown() then LeaPlusLC.IDTalentWait = nil return end
+											if not FindUnitByGUID(wait.guid) then return end
+											LeaPlusLC.IDTalentWait = nil
+											wait.resume()
+										end)
+										watch:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
+										watch:RegisterEvent("PLAYER_TARGET_CHANGED")
+										watch:RegisterEvent("NAME_PLATE_UNIT_ADDED")
+										watch:RegisterEvent("GROUP_ROSTER_UPDATE")
+									end
+									return
+								end
+								-- Read again shortly after while the player can still be found (a later read that cannot find them leaves the talents as they are)
+								if step < #delays then
+									C_Timer.After(delays[step + 1] - delays[step], function() ReadTalents(step + 1) end)
+								else
+									FinishGear()
+									ClearInspect()
+								end
+							end
+							ReadTalents(1)
 						end)
 					end
 					LeaPlusLC.IDCardInspect:RegisterEvent("INSPECT_READY")
@@ -2611,6 +2980,7 @@
 							c.inspectGUID = nil
 							LeaPlusLC.IDCardInspect:UnregisterEvent("INSPECT_READY")
 							c.talents:SetText("|cff8a8a90" .. L["Talents are not available right now."] .. "|r")
+							c:SetItemLevelDetail(nil) -- No reply, so no item level
 						end
 					end)
 				end
@@ -2642,7 +3012,7 @@
 				-- Find the unit frame under the mouse (used by the aura picker below)
 				if LeaPlusLC.AuraPicker then LeaPlusLC.AuraPicker:Hide() end
 				local pickerUnit
-				do
+				if not forceUnit then -- Not when a player was given
 					local mouseFocus = GetMouseFoci and GetMouseFoci()[1]
 					while mouseFocus and not pickerUnit do
 						if mouseFocus.IsForbidden and mouseFocus:IsForbidden() then break end
@@ -2687,6 +3057,77 @@
 						elseif GameLocale == "enUS" and GetCurrentRegion() == 3 then LeaPlusLC.BlizzardLock = "https://worldofwarcraft.com/en-gb/character/eu/" -- UK (enUS connected to Europe)
 						else 														 LeaPlusLC.BlizzardLock = "https://worldofwarcraft.com/en-us/character/us/" -- US (default)
 						end
+					end
+					-- Player card (for the player under the mouse, or the player given to ShowInfoCard such as from the dressing room)
+					local function ShowPlayerCard(unitFocus)
+						-- Show armory link
+						local name, realm = Safe(UnitName(unitFocus))
+						local surname = isForever and realm or nil -- On Forever, the second name is the surname (and there is no armory link yet)
+						local class = Safe(UnitClassBase(unitFocus))
+						local color = class and RAID_CLASS_COLORS[class]
+						if not color then return end
+						if not realm then realm = Safe(GetNormalizedRealmName()) end
+						if not (name and realm) then return end
+						-- Debug
+						-- local realm = "StrandoftheAncients" -- Debug
+						-- Chinese armory not available
+						if GameLocale == "zhCN" then return end
+						-- Fix non-standard names
+							if realm == "Area52" then realm = "Area-52"
+						elseif realm == "AzjolNerub" then realm = "AzjolNerub"
+						elseif realm == "Chantséternels" then realm = "Chants-Éternels"
+						elseif realm == "ConfrérieduThorium" then realm = "Confrérie-du-Thorium"
+						elseif realm == "ConseildesOmbres" then realm = "Conseil-des-Ombres"
+						elseif realm == "CultedelaRivenoire" then realm = "Culte-de-la-Rive-noire"
+						elseif realm == "DerRatvonDalaran" then realm = "Der-Rat-von-Dalaran"
+						elseif realm == "DieewigeWacht" then realm = "Die-ewige-Wacht"
+						elseif realm == "FestungderStürme" then realm = "Festung-der-Stürme"
+						elseif realm == "KultderVerdammten" then realm = "Kult-der-Verdammten"
+						elseif realm == "LaCroisadeécarlate" then realm = "La-Croisade-Écarlate"
+						elseif realm == "MarécagedeZangar" then realm = "Marécage-de-Zangar"
+						elseif realm == "Pozzodell'Eternità" then realm = "Pozzo-dellEternità"
+						elseif realm == "Templenoir" then realm = "Temple-noir"
+						elseif realm == "VanCleef" then realm = "Vancleef"
+						elseif realm == "ZirkeldesCenarius" then realm = "Zirkel-des-Cenarius"
+						-- Fix Russian names
+						elseif realm == "СвежевательДуш" then realm = "Свежеватель-Душ"
+						elseif realm == "СтражСмерти" then realm = "Страж-Смерти"
+						elseif realm == "Ревущийфьорд" then realm = "Ревущий-фьорд"
+						elseif realm == "ТкачСмерти" then realm = "Ткач-Смерти"
+						elseif realm == "Борейскаятундра" then realm = "Борейская-тундра"
+						elseif realm == "Ясеневыйлес" then realm = "Ясеневый-лес"
+						elseif realm == "ПиратскаяБухта" then realm = "Пиратская-Бухта"
+						elseif realm == "ВечнаяПесня" then realm = "Вечная-Песня"
+						elseif realm == "ЧерныйШрам" then realm = "Черный-Шрам"
+						elseif realm == "ВестникРока" then realm = "Вестник-Рока"
+						-- Fix all other names
+						else
+							-- Realm name is not one of the above so fix it
+							realm = realm:gsub("(%l[of])(%u)", "-%1-%2") -- Add hyphen after of if capital follows of (CavernsofTime becomes Cavernsof-Time)
+							realm = realm:gsub("(ofthe)", "-of-the-") -- Replace ofthe with -of-the- (ShrineoftheDormantFlame becomes Shrine-of-the-DormantFlame)
+							realm = realm:gsub("(%l)(%u)", "%1 %2") -- Add space before capital letters (CavernsofTime becomes Cavernsof Time)
+							realm = realm:gsub(" ", "-") -- Replace space with hyphen (Cavernsof Time becomes Cavernsof-Time)
+							realm = realm:gsub("'", "") -- Remove apostrophe
+							realm = realm:gsub("[(]", "-") -- Replace opening parentheses with hyphen
+							realm = realm:gsub("[)]", "") -- Remove closing parentheses
+						end
+						-- print(realm) -- Debug
+						local armoryLink = LeaPlusLC.BlizzardLock .. strlower(realm) .. "/" .. strlower(name)
+						realm = realm:gsub("-", " ") -- Replace hyphen with space
+						local playerColor = {color.r, color.g, color.b}
+						local playerLevel = Safe(UnitLevel(unitFocus))
+						local playerName, realmText = name, realm
+						if surname and surname ~= "" then playerName, realmText = name .. " " .. surname, Safe(GetRealmName()) or "" end
+						local playerNote = realmText
+						if type(playerLevel) == "number" and playerLevel > 0 then playerNote = L["Level"] .. " " .. playerLevel .. " " .. (Safe(UnitClass(unitFocus)) or "") .. "    " .. realmText end
+						local unitGUID = Safe(UnitGUID(unitFocus))
+						ShowIDCard({kind = L["Player"], name = playerName, sub = playerNote, url = not isForever and armoryLink or nil, unit = unitFocus, color = playerColor, nameColor = playerColor, view = {mode = "unit", isPlayer = true, unit = unitFocus, guid = unitGUID, text = PlayerText(unitFocus)}, talents = true, details = PlayerDetails(unitFocus, unitGUID)})
+						ShowPlayerTalents(unitFocus)
+					end
+					-- A player was given, so show their card and nothing else
+					if forceUnit then
+						if Safe(UnitExists(forceUnit)) and Safe(UnitIsPlayer(forceUnit)) then ShowPlayerCard(forceUnit) end
+						return
 					end
 					-- Quest tracker (the list of quests under the minimap)
 					local questID, questTitle
@@ -2855,69 +3296,7 @@
 					if WorldFrame:IsMouseMotionFocus() then unitFocus = "mouseover" else unitFocus = Safe(select(2, GameTooltip:GetUnit())) end
 					if not unitFocus and UnitExists("mouseover") then unitFocus = "mouseover" end
 					if unitFocus and Safe(UnitIsPlayer(unitFocus)) then
-						-- Show armory link
-						local name, realm = Safe(UnitName(unitFocus))
-						local surname = isForever and realm or nil -- On Forever, the second name is the surname (and there is no armory link yet)
-						local class = Safe(UnitClassBase(unitFocus))
-						local color = class and RAID_CLASS_COLORS[class]
-						if not color then return end
-						if not realm then realm = Safe(GetNormalizedRealmName()) end
-						if not (name and realm) then return end
-						-- Debug
-						-- local realm = "StrandoftheAncients" -- Debug
-						-- Chinese armory not available
-						if GameLocale == "zhCN" then return end
-						-- Fix non-standard names
-							if realm == "Area52" then realm = "Area-52"
-						elseif realm == "AzjolNerub" then realm = "AzjolNerub"
-						elseif realm == "Chantséternels" then realm = "Chants-Éternels"
-						elseif realm == "ConfrérieduThorium" then realm = "Confrérie-du-Thorium"
-						elseif realm == "ConseildesOmbres" then realm = "Conseil-des-Ombres"
-						elseif realm == "CultedelaRivenoire" then realm = "Culte-de-la-Rive-noire"
-						elseif realm == "DerRatvonDalaran" then realm = "Der-Rat-von-Dalaran"
-						elseif realm == "DieewigeWacht" then realm = "Die-ewige-Wacht"
-						elseif realm == "FestungderStürme" then realm = "Festung-der-Stürme"
-						elseif realm == "KultderVerdammten" then realm = "Kult-der-Verdammten"
-						elseif realm == "LaCroisadeécarlate" then realm = "La-Croisade-Écarlate"
-						elseif realm == "MarécagedeZangar" then realm = "Marécage-de-Zangar"
-						elseif realm == "Pozzodell'Eternità" then realm = "Pozzo-dellEternità"
-						elseif realm == "Templenoir" then realm = "Temple-noir"
-						elseif realm == "VanCleef" then realm = "Vancleef"
-						elseif realm == "ZirkeldesCenarius" then realm = "Zirkel-des-Cenarius"
-						-- Fix Russian names
-						elseif realm == "СвежевательДуш" then realm = "Свежеватель-Душ"
-						elseif realm == "СтражСмерти" then realm = "Страж-Смерти"
-						elseif realm == "Ревущийфьорд" then realm = "Ревущий-фьорд"
-						elseif realm == "ТкачСмерти" then realm = "Ткач-Смерти"
-						elseif realm == "Борейскаятундра" then realm = "Борейская-тундра"
-						elseif realm == "Ясеневыйлес" then realm = "Ясеневый-лес"
-						elseif realm == "ПиратскаяБухта" then realm = "Пиратская-Бухта"
-						elseif realm == "ВечнаяПесня" then realm = "Вечная-Песня"
-						elseif realm == "ЧерныйШрам" then realm = "Черный-Шрам"
-						elseif realm == "ВестникРока" then realm = "Вестник-Рока"
-						-- Fix all other names
-						else
-							-- Realm name is not one of the above so fix it
-							realm = realm:gsub("(%l[of])(%u)", "-%1-%2") -- Add hyphen after of if capital follows of (CavernsofTime becomes Cavernsof-Time)
-							realm = realm:gsub("(ofthe)", "-of-the-") -- Replace ofthe with -of-the- (ShrineoftheDormantFlame becomes Shrine-of-the-DormantFlame)
-							realm = realm:gsub("(%l)(%u)", "%1 %2") -- Add space before capital letters (CavernsofTime becomes Cavernsof Time)
-							realm = realm:gsub(" ", "-") -- Replace space with hyphen (Cavernsof Time becomes Cavernsof-Time)
-							realm = realm:gsub("'", "") -- Remove apostrophe
-							realm = realm:gsub("[(]", "-") -- Replace opening parentheses with hyphen
-							realm = realm:gsub("[)]", "") -- Remove closing parentheses
-						end
-						-- print(realm) -- Debug
-						local armoryLink = LeaPlusLC.BlizzardLock .. strlower(realm) .. "/" .. strlower(name)
-						realm = realm:gsub("-", " ") -- Replace hyphen with space
-						local playerColor = {color.r, color.g, color.b}
-						local playerLevel = Safe(UnitLevel(unitFocus))
-						local playerName, realmText = name, realm
-						if surname and surname ~= "" then playerName, realmText = name .. " " .. surname, Safe(GetRealmName()) or "" end
-						local playerNote = realmText
-						if type(playerLevel) == "number" and playerLevel > 0 then playerNote = L["Level"] .. " " .. playerLevel .. " " .. (Safe(UnitClass(unitFocus)) or "") .. "    " .. realmText end
-						local unitGUID = Safe(UnitGUID(unitFocus))
-						ShowIDCard({kind = L["Player"], name = playerName, sub = playerNote, url = not isForever and armoryLink or nil, unit = unitFocus, color = playerColor, nameColor = playerColor, view = {mode = "unit", isPlayer = true, unit = unitFocus, guid = unitGUID, text = PlayerText(unitFocus)}, talents = true, details = PlayerDetails(unitFocus, unitGUID)})
-						ShowPlayerTalents(unitFocus)
+						ShowPlayerCard(unitFocus)
 						return
 					end
 					-- Unknown tooltip
@@ -3078,8 +3457,15 @@
 			InfoButton:Hide()
 			InfoButton:RegisterForClicks("AnyDown")
 			InfoButton:SetScript("OnClick", function()
+				-- The game reports Ctrl as not held while a key binding is being handled, so remember whether the key includes Ctrl
+				local key = LeaPlusLC["InfoCardKey"] or ""
+				LeaPlusLC.IDKeyHasCtrl = (key:find("CTRL%-") or key:find("META%-")) and true or nil
 				ShowInfoCard()
+				LeaPlusLC.IDKeyHasCtrl = nil
 			end)
+
+			-- Show the card for a player unit (used by the dressing room)
+			LeaPlusLC.ShowInfoCardForUnit = function(unit) ShowInfoCard(nil, unit) end
 
 			-- Create configuration panel
 			local InfoCardPanel = LeaPlusLC:CreatePanel("Show info cards", "InfoCardPanel")
@@ -3259,185 +3645,235 @@
 
 		if LeaPlusLC["ShowRangeColoring"] == "On" then
 
-			-- Colors
-			local colorNormal	= {1.0, 1.0, 1.0}		-- Usable
-			local colorRange	= {1.0, 0.3, 0.1}		-- Out of range
-			local colorMana		= {0.1, 0.3, 1.0}		-- Not enough mana
-			local colorUnusable	= {0.4, 0.4, 0.4}		-- Not usable
-
-			-- States
-			local STATE_NORMAL, STATE_RANGE, STATE_MANA, STATE_UNUSABLE = 1, 2, 3, 4
-			local stateColors = {colorNormal, colorRange, colorMana, colorUnusable}
+			-- Colors (red, green, blue, desaturate)
+			local stateColors = {
+				normal		= {1.0, 1.0, 1.0, false},	-- Usable
+				range		= {1.0, 0.3, 0.1, true},	-- Out of range
+				mana		= {0.1, 0.3, 1.0, true},	-- Not enough mana
+				unusable	= {0.4, 0.4, 0.4, false},	-- Not usable
+			}
 
 			-- Upvalues
-			local IsActionInRange, IsUsableAction, HasAction = IsActionInRange, IsUsableAction, HasAction
-			local issecretvalue, hooksecurefunc, pairs, type = issecretvalue, hooksecurefunc, pairs, type
+			local IsActionInRange, IsUsableAction, GetActionInfo, GetMacroInfo, GetMacroSpell = IsActionInRange, IsUsableAction, GetActionInfo, GetMacroInfo, GetMacroSpell
+			local IsSpellUsable = C_Spell and C_Spell.IsSpellUsable or IsUsableSpell
+			local hooksecurefunc, pairs, strsub, issecretvalue = hooksecurefunc, pairs, strsub, issecretvalue
 
-			-- Button data is stored locally so nothing is ever written to Blizzard frames
-			local buttonIcons = setmetatable({}, {__mode = "k"})	-- button -> icon texture
-			local buttonState = setmetatable({}, {__mode = "k"})	-- button -> last applied state
-			local buttonDesat = setmetatable({}, {__mode = "k"})	-- button -> true if we desaturated the icon
-
-			-- Desaturate icon when out of range (only undo desaturation that we applied)
-			local function SetDesat(button, icon, desat)
-				if desat then
-					if not buttonDesat[button] then
-						icon:SetDesaturated(true)
-						buttonDesat[button] = true
-					end
-				elseif buttonDesat[button] then
-					icon:SetDesaturated(false)
-					buttonDesat[button] = nil
-				end
-			end
-
-			-- Return true if any value is a secret value (never compare or test a secret)
+			-- Function to check for secret values (secret values can never be compared or tested)
 			local function IsSecret(a, b, c)
 				if not issecretvalue then return false end
 				return issecretvalue(a) or issecretvalue(b) or issecretvalue(c)
 			end
 
-			-- Get button state (returns nil if state cannot be safely read)
-			local function GetState(action, checksRange, inRange)
-				if checksRange == nil then
-					inRange = IsActionInRange(action)
-					if IsSecret(inRange) then return end
-					checksRange = inRange ~= nil
-				elseif IsSecret(checksRange, inRange) then
-					return
-				end
-				-- Older clients return 0/1, newer clients return false/true
-				if checksRange and (inRange == false or inRange == 0) then
-					return STATE_RANGE
-				end
-				local isUsable, notEnoughMana = IsUsableAction(action)
-				if IsSecret(isUsable, notEnoughMana) then return end
-				if isUsable then
-					return STATE_NORMAL
-				elseif notEnoughMana then
-					return STATE_MANA
-				end
-				return STATE_UNUSABLE
+			-- Button data is stored locally (nothing is written onto the game's action buttons)
+			local iconStates = {}		-- Icon texture -> last applied state
+			local hotkeyStates = {}		-- Hotkey text -> last applied state
+			local actionButtons = {}	-- Button -> true if it is one of the game's action buttons (false if not)
+			local petButtons = {}		-- Pet buttons
+
+			-- Function to check if a button is one of the game's action buttons (read from the game's own list, then remembered)
+			local function IsActionButton(button)
+				local known = actionButtons[button]
+				if known ~= nil then return known end
+				local found = false
+				ActionBarButtonEventsFrame:ForEachFrame(function(frame) if frame == button then found = true end end)
+				actionButtons[button] = found
+				return found
 			end
 
-			-- Update button icon color (force is used after Blizzard has recolored the icon)
-			local function UpdateButton(button, force, checksRange, inRange)
-				local icon = buttonIcons[button]
-				if not icon then return end
-				local action = button.action
-				local state
-				if action and not IsSecret(action) then
-					local hasAction = HasAction(action)
-					if hasAction and not IsSecret(hasAction) then
-						state = GetState(action, checksRange, inRange)
-					end
-				end
-				if not state then
-					buttonState[button] = nil
-					SetDesat(button, icon, false)
-					return
-				end
-				if not force and buttonState[button] == state then return end
-				buttonState[button] = state
-				SetDesat(button, icon, state == STATE_RANGE or state == STATE_MANA)
+			----------------------------------------------------------------------
+			-- Coloring
+			----------------------------------------------------------------------
+
+			-- Function to color an icon
+			local function SetIconState(icon, state)
+				iconStates[icon] = state
 				local c = stateColors[state]
 				icon:SetVertexColor(c[1], c[2], c[3])
+				icon:SetDesaturated(c[4])
 			end
 
-			-- Determine how range updates will be received
-			local globalRangeHook = type(ActionButton_UpdateRangeIndicator) == "function"
-			local methodRangeHook = false
-			local needGlobalUsableHook = false
-
-			local function UsableHook(self) UpdateButton(self, true) end
-			local function RangeHook(self, checksRange, inRange) UpdateButton(self, false, checksRange, inRange) end
-
-			-- Setup button
-			local function SetupButton(button)
-				if not button or buttonIcons[button] then return end
-				local icon = button.icon
-				if not icon and button.GetName then
-					local name = button:GetName()
-					icon = name and _G[name .. "Icon"]
-				end
-				if not icon then return end
-				buttonIcons[button] = icon
-				-- Usable color is reapplied from events (hooking the button's UpdateUsable breaks with taintLog enabled)
-				if type(button.UpdateUsable) ~= "function" then
-					needGlobalUsableHook = true
-				end
-				-- Range method hook (only used if the global function does not exist)
-				if not globalRangeHook and type(button.UpdateRangeIndicator) == "function" then
-					hooksecurefunc(button, "UpdateRangeIndicator", RangeHook)
-					methodRangeHook = true
-				end
-				UpdateButton(button, true)
+			-- Function to color a hotkey
+			local function SetHotkeyState(hotkey, state)
+				hotkeyStates[hotkey] = state
+				local c = stateColors[state]
+				hotkey:SetVertexColor(c[1], c[2], c[3])
 			end
 
-			-- Setup action buttons
-			local barNames = {"ActionButton", "MultiBarBottomLeftButton", "MultiBarBottomRightButton", "MultiBarRightButton", "MultiBarLeftButton", "MultiBar5Button", "MultiBar6Button", "MultiBar7Button", "BonusActionButton"}
-			for void, bar in pairs(barNames) do
-				for i = 1, 12 do
-					SetupButton(_G[bar .. i])
-				end
-			end
-			if ActionBarButtonEventsFrame and type(ActionBarButtonEventsFrame.frames) == "table" then
-				for void, button in pairs(ActionBarButtonEventsFrame.frames) do
-					SetupButton(button)
-				end
-			end
-			if type(ActionBarButtonEventsFrame_RegisterFrame) == "function" then
-				hooksecurefunc("ActionBarButtonEventsFrame_RegisterFrame", SetupButton)
-			end
-
-			-- Usable fallback for clients without a button UpdateUsable method
-			if needGlobalUsableHook and type(ActionButton_UpdateUsable) == "function" then
-				hooksecurefunc("ActionButton_UpdateUsable", UsableHook)
-			end
-
-			-- Reapply color after Blizzard updates usable state (registered after Blizzard so this runs last)
-			local usableFrame = CreateFrame("Frame")
-			for void, event in pairs({"ACTION_USABLE_CHANGED", "ACTIONBAR_UPDATE_USABLE", "SPELL_UPDATE_USABLE", "ACTIONBAR_SLOT_CHANGED", "UPDATE_BONUS_ACTIONBAR", "ACTIONBAR_PAGE_CHANGED", "UPDATE_SHAPESHIFT_FORM", "PLAYER_MOUNT_DISPLAY_CHANGED", "PLAYER_ENTERING_WORLD"}) do
-				pcall(usableFrame.RegisterEvent, usableFrame, event)
-			end
-			usableFrame:SetScript("OnEvent", function(self, event, changes)
-				if event == "ACTION_USABLE_CHANGED" and type(changes) == "table" then
-					-- Only update buttons for the slots that changed
-					local slots = {}
-					for void, change in ipairs(changes) do
-						if change.slot then slots[change.slot] = true end
-					end
-					for button in pairs(buttonIcons) do
-						if slots[button.action] then
-							UpdateButton(button, true)
+			-- Function to get the state of an action slot (second return is true if out of range)
+			-- (returns nil if anything needed is a secret value so the button is left alone)
+			local function GetActionState(slot)
+				if not slot or IsSecret(slot) then return end
+				local isUsable, notEnoughMana
+				-- Macros with names starting with # use the macro spell for the mana check
+				local actionType, id = GetActionInfo(slot)
+				if not IsSecret(actionType, id) and actionType == "macro" then
+					local name = GetMacroInfo(id)
+					if name and not IsSecret(name) and strsub(name, 1, 1) == "#" then
+						local spellID = GetMacroSpell(id)
+						if spellID and not IsSecret(spellID) then
+							isUsable, notEnoughMana = IsSpellUsable(spellID)
 						end
 					end
+				end
+				if isUsable == nil then
+					isUsable, notEnoughMana = IsUsableAction(slot)
+				end
+				local inRange = IsActionInRange(slot)
+				if IsSecret(isUsable, notEnoughMana, inRange) then return end
+				local outOfRange = inRange == false
+				if isUsable then
+					return outOfRange and "range" or "normal", outOfRange
+				elseif notEnoughMana then
+					return "mana", outOfRange
+				end
+				return "unusable", outOfRange
+			end
+
+			-- Function to get the state of a pet action
+			local function GetPetActionState(index)
+				local void, void, void, void, void, void, spellID, checksRange, inRange = GetPetActionInfo(index)
+				if IsSecret(spellID, checksRange, inRange) then return end
+				local outOfRange = checksRange and not inRange
+				local isUsable, notEnoughMana
+				if spellID then
+					isUsable, notEnoughMana = IsSpellUsable(spellID)
 				else
-					for button in pairs(buttonIcons) do
-						UpdateButton(button, true)
+					isUsable, notEnoughMana = GetPetActionSlotUsable(index), false
+				end
+				if IsSecret(isUsable, notEnoughMana) then return end
+				if isUsable then
+					return outOfRange and "range" or "normal"
+				elseif notEnoughMana then
+					return "mana"
+				end
+				return "unusable"
+			end
+
+			-- Function to color an action button (runs after the game colors it)
+			local function UpdateActionButton(button)
+				local state, outOfRange = GetActionState(button.action)
+				if not state then return end
+				SetIconState(button.icon, state)
+				SetHotkeyState(button.HotKey, outOfRange and "range" or "normal")
+			end
+
+			-- Function to update range coloring when the game says the range has changed
+			-- (only switches between usable and out of range, other states are left alone)
+			local function UpdateRange(button, checksRange, inRange)
+				if not (petButtons[button] or IsActionButton(button)) or IsSecret(checksRange, inRange) then return end
+				local outOfRange = checksRange and not inRange
+				local icon, hotkey = button.icon, button.HotKey
+				local state = iconStates[icon]
+				if state == "normal" and outOfRange then
+					SetIconState(icon, "range")
+				elseif state == "range" and not outOfRange then
+					SetIconState(icon, "normal")
+				end
+				state = hotkeyStates[hotkey]
+				if state == "normal" and outOfRange then
+					SetHotkeyState(hotkey, "range")
+				elseif state == "range" and not outOfRange then
+					SetHotkeyState(hotkey, "normal")
+				end
+			end
+
+			-- Function to color the pet bar
+			local function UpdatePetBar(bar)
+				if not PetHasActionBar() then return end
+				for index, button in pairs(bar.actionButtons) do
+					local icon = button.icon
+					if icon:IsVisible() then
+						local state = GetPetActionState(index)
+						if state then
+							SetIconState(icon, state)
+						end
 					end
+				end
+			end
+
+			----------------------------------------------------------------------
+			-- Setup
+			----------------------------------------------------------------------
+
+			-- Nothing is hooked onto the action buttons themselves (they are secure), only the game's shared functions and events are used,
+			-- and the game's own attack flash is left alone
+
+			-- Function to check if the game has colored an icon since it was last colored here (it colors a button when the button changes)
+			local abs = math.abs
+			local function IconWasReset(icon)
+				local state = iconStates[icon]
+				if not state then return true end
+				local c = stateColors[state]
+				local r, g, b = icon:GetVertexColor()
+				if IsSecret(r, g, b) then return false end
+				return abs(r - c[1]) > 0.01 or abs(g - c[2]) > 0.01 or abs(b - c[3]) > 0.01
+			end
+
+			-- Action buttons: the game updates a button's cooldown straight after it colors the button when the button changes, so the
+			-- button is colored again after that (cooldowns also change on their own every global cooldown, so the button is only colored
+			-- again if the game has actually changed its color, which is a single quick check)
+			hooksecurefunc("ActionButton_UpdateCooldown", function(button)
+				local icon = button.icon
+				if icon and IconWasReset(icon) and IsActionButton(button) then UpdateActionButton(button) end
+			end)
+
+			-- Range changes are event driven (the game calls this from ACTION_RANGE_CHECK_UPDATE)
+			hooksecurefunc("ActionButton_UpdateRangeIndicator", UpdateRange)
+
+			-- Usable changes (such as running out of mana): the game colors the buttons for these slots, so they are colored again a moment later
+			local usableFrame = CreateFrame("FRAME")
+			local dirtySlots, usableQueued = {}, false
+			local function UpdateDirtySlots()
+				usableQueued = false
+				ActionBarButtonEventsFrame:ForEachFrame(function(button)
+					local slot = button.action
+					if slot and not IsSecret(slot) and dirtySlots[slot] then UpdateActionButton(button) end
+				end)
+				wipe(dirtySlots)
+			end
+			usableFrame:RegisterEvent("ACTION_USABLE_CHANGED")
+			usableFrame:SetScript("OnEvent", function(self, event, changes)
+				if type(changes) ~= "table" or IsSecret(changes) then return end
+				for void, change in ipairs(changes) do
+					local slot = change.slot
+					if slot and not IsSecret(slot) then dirtySlots[slot] = true end
+				end
+				if not usableQueued then
+					usableQueued = true
+					C_Timer.After(0, UpdateDirtySlots)
 				end
 			end)
 
-			-- Range updates
-			if globalRangeHook then
-				-- Event driven (Blizzard calls this from ACTION_RANGE_CHECK_UPDATE), no OnUpdate needed
-				hooksecurefunc("ActionButton_UpdateRangeIndicator", RangeHook)
-			elseif not methodRangeHook then
-				-- Fallback for clients with no range callback: single throttled OnUpdate
-				local rangeFrame = CreateFrame("Frame")
-				local elapsedTotal = 0
-				rangeFrame:SetScript("OnUpdate", function(self, elapsed)
-					elapsedTotal = elapsedTotal + elapsed
-					if elapsedTotal < 0.2 then return end
-					elapsedTotal = 0
-					for button in pairs(buttonIcons) do
-						if button:IsVisible() then
-							UpdateButton(button, false)
-						end
-					end
-				end)
+			-- Pet bar: colored again a moment after the game updates it (when the pet bar changes or pet power changes)
+			if PetActionBar and PetActionBar.actionButtons then
+				for void, button in pairs(PetActionBar.actionButtons) do
+					petButtons[button] = true
+				end
+				local petFrame = CreateFrame("FRAME")
+				local petQueued = false
+				local function UpdatePetLater()
+					if petQueued then return end
+					petQueued = true
+					C_Timer.After(0, function()
+						petQueued = false
+						UpdatePetBar(PetActionBar)
+					end)
+				end
+				petFrame:RegisterEvent("PET_BAR_UPDATE")
+				petFrame:RegisterEvent("PET_BAR_UPDATE_USABLE")
+				petFrame:RegisterEvent("PET_UI_UPDATE")
+				petFrame:RegisterUnitEvent("UNIT_PET", "player")
+				petFrame:RegisterUnitEvent("UNIT_POWER_UPDATE", "pet")
+				petFrame:SetScript("OnEvent", UpdatePetLater)
 			end
+
+			-- Color everything once at startup
+			C_Timer.After(1 / 30, function()
+				ActionBarButtonEventsFrame:ForEachFrame(UpdateActionButton)
+				if PetActionBar and PetActionBar.actionButtons then
+					UpdatePetBar(PetActionBar)
+				end
+			end)
 
 		end
 
@@ -4612,11 +5048,19 @@
 				SetQuestInBox()
 			end)
 
-			-- Set position for Leatrix Maps 'Simple map frame' setting.
+			-- Set position for Leatrix Maps 'Simple map frame' setting (the link goes to the left of the map filter button,
+			-- right-justified towards it, so the spare width used to stop the text scrolling is on the left)
 			EventUtil.ContinueOnAddOnLoaded("Leatrix_Maps",function()
 				if LeaMapsDB and LeaMapsDB["SimpleMapFrame"] and LeaMapsDB["SimpleMapFrame"] == "On" then
+					local filterButton = WorldMapFrame.WorldMapTrackingOptionsButton
 					mEB:ClearAllPoints()
-					mEB:SetPoint("TOPLEFT", WorldMapFrame.ScrollContainer, "TOPLEFT", 98, -4)
+					if filterButton then
+						mEB:SetPoint("RIGHT", filterButton, "LEFT", -4, 0)
+						mEB:SetJustifyH("RIGHT")
+						mEB:SetHitRectInsets(90, 0, 0, 0)
+					else
+						mEB:SetPoint("TOPLEFT", WorldMapFrame.ScrollContainer, "TOPLEFT", 98, -4)
+					end
 				end
 			end)
 
@@ -4632,7 +5076,7 @@
 			local DressupPanel = LeaPlusLC:CreatePanel("Enhance dressup", "DressupPanel")
 
 			LeaPlusLC:MakeTx(DressupPanel, "Dressing room", 16, -72)
-			LeaPlusLC:MakeCB(DressupPanel, "DressupItemButtons", "Show item buttons", 16, -92, false, "If checked, item buttons will be shown in the dressing room.  You can click the item buttons to remove individual items from the model.")
+			LeaPlusLC:MakeCB(DressupPanel, "DressupItemButtons", "Show item buttons", 16, -92, false, "If checked, item buttons will be shown in the dressing room.  You can click the item buttons to hide individual items on the model and click them again to show them.")
 			LeaPlusLC:MakeCB(DressupPanel, "DressupAnimControl", "Show animation slider", 16, -112, false, "If checked, an animation slider will be shown in the dressing room.")
 
 			LeaPlusLC:MakeTx(DressupPanel, "Transmogrify character preview", 16, -152)
@@ -4701,114 +5145,467 @@
 			-- Item buttons
 			----------------------------------------------------------------------
 
+			-- Shared with the bottom buttons (further down)
+			local DressupGear = {}
+
+			-- Secret values: the game can hide some values from addons (such as in instances), so anything that could be hidden is checked first
+			local function Safe(v)
+				if issecretvalue and issecretvalue(v) then return nil end
+				return v
+			end
+
+			-- The player model in the dressing room (nil when it shows something else, such as a mount)
+			local function GetActor()
+				return DressUpFrame.ModelScene:GetPlayerActor()
+			end
+
+			-- Give a button the same look as the item slots in the character sheet (the icon is btn.t)
+			local function PaperDollButton(btn, size)
+				btn:SetSize(size, size)
+				local bg = btn:CreateTexture(nil, "BACKGROUND")
+				bg:SetAllPoints()
+				bg:SetColorTexture(0, 0, 0, 0.7) -- Behind the icon (portraits are round, so this fills the corners)
+				btn.t = btn:CreateTexture(nil, "BORDER")
+				btn.t:SetAllPoints()
+				btn:SetNormalTexture("Interface\\Buttons\\UI-Quickslot2")
+				local border = btn:GetNormalTexture()
+				border:ClearAllPoints()
+				border:SetSize(size * 64 / 37, size * 64 / 37)
+				border:SetPoint("CENTER", 0, -size / 37)
+				btn:SetPushedTexture("Interface\\Buttons\\UI-Quickslot-Depress")
+				btn:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
+			end
+
+			-- Show a message in the dressing room, at the top of the model on a dark background, which fades out after a few seconds
+			do
+				local msgFrame = CreateFrame("Frame", nil, DressUpFrame)
+				msgFrame:SetFrameStrata("HIGH")
+				msgFrame:SetPoint("TOPLEFT", DressUpFrame, "TOPLEFT", 52, -68)
+				msgFrame:SetPoint("TOPRIGHT", DressUpFrame, "TOPRIGHT", -54, -68)
+				msgFrame:SetHeight(30)
+				msgFrame:Hide()
+				local bg = msgFrame:CreateTexture(nil, "BACKGROUND")
+				bg:SetAllPoints()
+				bg:SetColorTexture(0, 0, 0, 0.75)
+				local text = msgFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+				text:SetPoint("TOPLEFT", 6, -6)
+				text:SetPoint("TOPRIGHT", -6, -6)
+				text:SetJustifyH("CENTER")
+				local fade = msgFrame:CreateAnimationGroup()
+				local alpha = fade:CreateAnimation("Alpha")
+				alpha:SetFromAlpha(1)
+				alpha:SetToAlpha(0)
+				alpha:SetStartDelay(3)
+				alpha:SetDuration(0.5)
+				fade:SetScript("OnFinished", function() msgFrame:Hide() end)
+				function DressupGear.Message(message)
+					text:SetText(message)
+					msgFrame:SetHeight(text:GetStringHeight() + 12) -- Fits the text (long messages go over two lines)
+					fade:Stop()
+					msgFrame:SetAlpha(1)
+					msgFrame:Show()
+					fade:Play()
+				end
+				DressUpFrame:HookScript("OnHide", function() fade:Stop() msgFrame:Hide() end)
+			end
+
 			do
 
-				local buttons = {}
-				local slotTable = {"HeadSlot", "ShoulderSlot", "BackSlot", "ChestSlot", "ShirtSlot", "TabardSlot", "WristSlot", "HandsSlot", "WaistSlot", "LegsSlot", "FeetSlot", "MainHandSlot", "SecondaryHandSlot"}
+				local buttons, slotOrder = {}, {}
+				local slotInfo, hiddenSlots, nudeSaved = {}, {}, {} -- Appearance in each slot (transmog info), slots taken off, slots to put back on after nude
+				local mode -- What the model shows: me, target, myOutfitOnTarget or targetOutfitOnMe
+				local nudeBtn -- The all items button at the bottom of the left column
 
-				local function MakeSlotButton(slot, anchor, x, y)
+				-- Set what the model shows (the bottom buttons show it)
+				local function SetMode(newMode)
+					mode = newMode
+					if DressupGear.OnModeChanged then DressupGear.OnModeChanged() end
+				end
+				function DressupGear.GetMode() return mode end
+
+				-- Slot buttons (slot name, icon shown when the game has no empty slot picture)
+				local leftSlots = {{"HeadSlot", "INV_Misc_Desecrated_ClothHelm"}, {"ShoulderSlot", "INV_Misc_Desecrated_ClothShoulder"}, {"BackSlot", "INV_Misc_Cape_01"}, {"ChestSlot", "INV_Misc_Desecrated_ClothChest"}, {"ShirtSlot", "INV_Shirt_01"}, {"TabardSlot", "INV_Shirt_GuildTabard_01"}, {"WristSlot", "INV_Misc_Desecrated_ClothBracer"}}
+				local rightSlots = {{"HandsSlot", "INV_Misc_Desecrated_ClothGlove"}, {"WaistSlot", "INV_Misc_Desecrated_ClothBelt"}, {"LegsSlot", "INV_Misc_Desecrated_ClothPants"}, {"FeetSlot", "INV_Misc_Desecrated_ClothBoots"}, {"MainHandSlot", "INV_Sword_01"}, {"SecondaryHandSlot", "INV_Shield_01"}}
+
+				-- The appearance the model shows in a slot (nil if none, or if the game is hiding it)
+				local function ModelAppearance(actor, slotID)
+					local ok, transmog = pcall(actor.GetItemTransmogInfo, actor, slotID)
+					if not ok or type(transmog) ~= "table" then return end
+					local appearanceID = Safe(transmog.appearanceID)
+					if type(appearanceID) == "number" and appearanceID > 0 then return transmog end
+				end
+
+				-- Put an appearance on the model (weapons go straight into their own hand, so a dual wielder keeps both)
+				local function DressSlot(slotID)
+					local actor, transmog = GetActor(), slotInfo[slotID]
+					if not actor or not transmog then return end
+					pcall(actor.SetItemTransmogInfo, actor, transmog, slotID, slotID ~= INVSLOT_MAINHAND)
+				end
+
+				-- Show each button as worn, taken off or empty
+				local function UpdateSlots()
+					for void, button in ipairs(buttons) do
+						local transmog = slotInfo[button.slotID]
+						local hidden = hiddenSlots[button.slotID]
+						button.link = nil
+						if transmog then
+							local appearanceID = transmog.appearanceID
+							if C_TransmogCollection.IsAppearanceHiddenVisual(appearanceID) then
+								button.t:SetAtlas("transmog-icon-hidden")
+							else
+								local source = C_TransmogCollection.GetAppearanceSourceInfo(appearanceID)
+								button.t:SetTexture(source and source.icon or "Interface\\Icons\\INV_Misc_QuestionMark")
+								button.link = source and source.itemLink
+							end
+						else
+							button.t:SetTexture(button.emptyTexture)
+						end
+						button.t:SetDesaturated(hidden and true or false)
+						button.t:SetAlpha(hidden and 0.45 or 1)
+					end
+					-- All items button: in colour with a red cross while anything is showing, grey once everything is off
+					if nudeBtn then
+						local anyShown = DressupGear.AnyShown()
+						nudeBtn.t:SetDesaturated(not anyShown)
+						nudeBtn.t:SetAlpha(anyShown and 1 or 0.45)
+						nudeBtn.badge:SetShown(anyShown)
+					end
+				end
+
+				-- Read what the model is wearing (slots taken off with the buttons stay taken off until something is put in them)
+				local function Refresh()
+					local actor = GetActor()
+					if not actor then return end
+					for void, slotID in ipairs(slotOrder) do
+						local transmog = ModelAppearance(actor, slotID)
+						if transmog then
+							slotInfo[slotID] = transmog
+							hiddenSlots[slotID] = nil
+						elseif not hiddenSlots[slotID] then
+							slotInfo[slotID] = nil
+						end
+					end
+					UpdateSlots()
+				end
+				DressupGear.Refresh = Refresh
+
+				-- Start again (the model has been reset or shows someone else)
+				local function Reset(newMode)
+					wipe(slotInfo) wipe(hiddenSlots) wipe(nudeSaved)
+					SetMode(newMode)
+					Refresh()
+				end
+				DressupGear.Reset = Reset
+
+				-- Follow the model while the dressing room is open: a new model (opened or reset) starts again, and anything put on or taken off
+				-- (such as an item tried on with Ctrl-click) shows on the buttons
+				-- This is a light check a few times a second, rather than hooking the dressing room's own functions: on retail, a function hooked
+				-- with hooksecurefunc can read as missing while the taint log is on, which breaks the dressing room itself
+				local lastActor, ticker
+				local function Check()
+					local actor = GetActor()
+					if actor ~= lastActor then
+						lastActor = actor
+						if actor then Reset("me") end
+					elseif actor then
+						Refresh()
+					end
+				end
+				DressUpFrame:HookScript("OnShow", function()
+					if ticker then ticker:Cancel() end
+					lastActor = nil
+					ticker = C_Timer.NewTicker(0.2, Check)
+					Check()
+				end)
+				DressUpFrame:HookScript("OnHide", function()
+					if ticker then ticker:Cancel() ticker = nil end
+				end)
+
+				-- The model changes when the dressing room shows me or the target (so it does not count as the dressing room being reset)
+				function DressupGear.NoteActor() lastActor = GetActor() end
+
+				----------------------------------------------------------------------
+				-- Slot buttons
+				----------------------------------------------------------------------
+
+				local function SlotTip(self)
+					GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+					if not (self.link and pcall(GameTooltip.SetHyperlink, GameTooltip, self.link)) then
+						GameTooltip:SetText(self.label, 1, 1, 1)
+					end
+					if not slotInfo[self.slotID] then
+						GameTooltip:AddLine(L["Nothing to show in this slot"], 0.6, 0.6, 0.65)
+					elseif hiddenSlots[self.slotID] then
+						GameTooltip:AddLine(L["Click to show"], 0.6, 0.6, 0.65)
+					else
+						GameTooltip:AddLine(L["Click to hide"], 0.6, 0.6, 0.65)
+					end
+					GameTooltip:Show()
+				end
+
+				-- A column for each set of slot buttons (down each side of the model, like the character sheet)
+				-- The columns are inside the reset button, so they only show when the dressing room shows a character (not a mount or pet)
+				local columns = {}
+				local step = 33 -- Distance from one slot button to the next (the same spacing as the character sheet, scaled to these smaller buttons)
+				local function MakeColumn(anchor, x, y)
+					local column = CreateFrame("Frame", nil, DressUpFrameResetButton)
+					column:SetFrameStrata("HIGH")
+					column:SetPoint(anchor, DressUpFrame, anchor, x, y)
+					column:SetWidth(38)
+					column.count = 0
+					tinsert(columns, column)
+					return column
+				end
+				local leftColumn = MakeColumn("TOPLEFT", 8, -64)
+				local rightColumn = MakeColumn("TOPRIGHT", -10, -64)
+
+				-- The frame each slot sits in on the character sheet (with a tab towards the model), if this game has it
+				local slotFrameFile = "Interface\\CharacterFrame\\Char-Paperdoll-Parts"
+				local hasSlotFrames = GetFileIDFromPath and GetFileIDFromPath(slotFrameFile) and true or false
+				local function AddSlotFrame(btn, column)
+					if not hasSlotFrames then return end
+					local frame = column:CreateTexture(nil, "BACKGROUND") -- On the column, so it is always behind every slot button
+					frame:SetTexture(slotFrameFile)
+					local scale = btn:GetWidth() / 37 -- The character sheet slots are 37 wide
+					if column == leftColumn then
+						frame:SetTexCoord(0.20703125, 0.39843750, 0.59375000, 0.93750000)
+						frame:SetSize(49 * scale, 44 * scale)
+						frame:SetPoint("TOPLEFT", btn, "TOPLEFT", -4 * scale, 0)
+					else
+						frame:SetTexCoord(0.00390625, 0.19921875, 0.59375000, 0.93750000)
+						frame:SetSize(50 * scale, 44 * scale)
+						frame:SetPoint("TOPRIGHT", btn, "TOPRIGHT", 4 * scale, 0)
+					end
+				end
+
+				local function MakeSlotButton(entry, column)
+
+					-- Slots this game does not have are left out
+					local slotName, fallbackIcon = entry[1], entry[2]
+					local ok, slotID, emptyTexture = pcall(C_PaperDollInfo.GetInventorySlotInfo, slotName)
+					if not ok or not slotID then return end
 
 					-- Create slot button
-					local slotBtn = CreateFrame("Button", nil, DressUpFrame)
-					slotBtn:SetFrameStrata("HIGH")
-					slotBtn:SetSize(35, 35)
-					slotBtn.slot = slot
-					slotBtn:ClearAllPoints()
-					slotBtn:SetPoint(anchor, x, y)
+					local slotBtn = CreateFrame("Button", nil, column)
+					slotBtn:SetFrameLevel(column:GetFrameLevel() + 2)
+					PaperDollButton(slotBtn, 30)
+					AddSlotFrame(slotBtn, column)
+					slotBtn.slotID = slotID
+					slotBtn.label = _G[strupper(slotName)] or slotName
+					slotBtn.emptyTexture = emptyTexture or ("Interface\\Icons\\" .. fallbackIcon)
+					slotBtn:SetPoint("TOP", column, "TOP", 0, -4 - step * column.count)
+					column.count = column.count + 1
+					column:SetHeight(8 + step * column.count - (step - 30))
 					slotBtn:RegisterForClicks("LeftButtonUp")
 					slotBtn:SetMotionScriptsWhileDisabled(true)
 
-					-- Ensure slot buttons only show with reset button
-					slotBtn:SetParent(DressUpFrameResetButton)
+					-- Slot button click: take the item off, click again to put it back on
+					slotBtn:SetScript("OnClick", function(self)
+						local slot = self.slotID
+						if not slotInfo[slot] then return end
+						if hiddenSlots[slot] then
+							hiddenSlots[slot] = nil
+							DressSlot(slot)
+						else
+							hiddenSlots[slot] = true
+							local actor = GetActor()
+							if actor then pcall(actor.UndressSlot, actor, slot) end
+						end
+						UpdateSlots()
+						if GameTooltip:IsOwned(self) then SlotTip(self) end
+					end)
 
 					-- Slot button tooltip
-					slotBtn:SetScript("OnClick", function(self, btn)
-						if btn == "LeftButton" then
-							local playerActor = DressUpFrame.ModelScene:GetPlayerActor()
-							local slotID = C_PaperDollInfo.GetInventorySlotInfo(self.slot)
-							playerActor:UndressSlot(slotID)
-							playerActor:SetSheathed(true)
-						end
-					end)
-
-					slotBtn:SetScript("OnEnter", function(self)
-						GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-						if self.item then
-							GameTooltip:SetHyperlink(self.item)
-						else
-							if self.slot then
-								GameTooltip:SetText(_G[string.upper(self.slot)])
-							end
-						end
-					end)
+					slotBtn:SetScript("OnEnter", SlotTip)
 					slotBtn:SetScript("OnLeave", GameTooltip_Hide)
-
-					-- Slot button textures
-					slotBtn.t = slotBtn:CreateTexture(nil, "BACKGROUND")
-					slotBtn.t:SetSize(35, 35)
-					slotBtn.t:SetPoint("CENTER")
-
-					slotBtn.h = slotBtn:CreateTexture()
-					slotBtn.h:SetSize(35, 35)
-					slotBtn.h:SetPoint("CENTER")
-					slotBtn.h:SetAtlas("bags-glow-white")
-					slotBtn.h:SetBlendMode("ADD")
-					slotBtn:SetHighlightTexture(slotBtn.h)
 
 					-- Add slot button to table
 					tinsert(buttons, slotBtn)
+					tinsert(slotOrder, slotID)
 
 				end
 
 				-- Show left column slot buttons
-				for i = 1, 7 do
-					MakeSlotButton(slotTable[i], "TOPLEFT", 10, -70 + -40 * (i - 1))
+				for i, entry in ipairs(leftSlots) do
+					MakeSlotButton(entry, leftColumn)
 				end
 
 				-- Show right column slot buttons
-				for i = 8, 13 do
-					MakeSlotButton(slotTable[i], "TOPRIGHT", -12, -70 + -40 * (i - 8))
+				for i, entry in ipairs(rightSlots) do
+					MakeSlotButton(entry, rightColumn)
 				end
 
-				-- Updates slots
-				hooksecurefunc(DressUpFrame.CustomSetDropdown, "UpdateSaveButton", function()
-					local playerActor = DressUpFrame.ModelScene:GetPlayerActor()
-					if playerActor then
-						for slot, slotButtons in pairs(buttons) do
-							if slotTable[slot] and C_PaperDollInfo.GetInventorySlotInfo(slotTable[slot]) then
-								local slotID, slotTexture = C_PaperDollInfo.GetInventorySlotInfo(slotTable[slot])
-								local itemTransmogInfo = playerActor:GetItemTransmogInfo(slotID)
-								if itemTransmogInfo == nil then
-									buttons[slot].item = nil
-									buttons[slot].text = nil
-									buttons[slot].t:SetTexture(slotTexture)
-								else
-									local appearanceSourceInfo = C_TransmogCollection.GetAppearanceSourceInfo(itemTransmogInfo.appearanceID)
-									buttons[slot].item = appearanceSourceInfo.itemLink
-									buttons[slot].text = UNKNOWN
-									if C_TransmogCollection.IsAppearanceHiddenVisual(itemTransmogInfo.appearanceID) then
-										-- Hidden item
-										buttons[slot].t:SetAtlas("transmog-icon-hidden")
-									else
-										-- Visible item
-										buttons[slot].t:SetTexture(appearanceSourceInfo.icon or "Interface\\Icons\\INV_Misc_QuestionMark")
-									end
-								end
+				-- All items button (nude) at the bottom of the left column
+				do
+					local column = leftColumn
+					nudeBtn = CreateFrame("Button", nil, column)
+					nudeBtn:SetFrameLevel(column:GetFrameLevel() + 2)
+					PaperDollButton(nudeBtn, 30)
+					AddSlotFrame(nudeBtn, column)
+					nudeBtn:SetPoint("TOP", column, "TOP", 0, -4 - step * column.count)
+					column.count = column.count + 1
+					column:SetHeight(8 + step * column.count - (step - 30))
+					nudeBtn.t:SetTexture("Interface\\Icons\\INV_Shirt_01")
+
+					-- Red cross in the corner while anything is on (click to take it all off)
+					nudeBtn.badge = nudeBtn:CreateTexture(nil, "OVERLAY", nil, 2)
+					nudeBtn.badge:SetSize(14, 14)
+					nudeBtn.badge:SetPoint("BOTTOMRIGHT", nudeBtn, "BOTTOMRIGHT", 1, -1)
+					nudeBtn.badge:SetAtlas("common-icon-redx")
+
+					local function NudeTip(self)
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+						GameTooltip:SetText(L["All items"], 1, 1, 1)
+						if DressupGear.AnyShown() then
+							GameTooltip:AddLine(L["Click to remove all items"], 0.6, 0.6, 0.65)
+						else
+							GameTooltip:AddLine(L["Click to put all items back on"], 0.6, 0.6, 0.65)
+						end
+						GameTooltip:Show()
+					end
+					nudeBtn:RegisterForClicks("LeftButtonUp")
+					nudeBtn:SetScript("OnEnter", NudeTip)
+					nudeBtn:SetScript("OnLeave", GameTooltip_Hide)
+					nudeBtn:SetScript("OnClick", function(self)
+						DressupGear.ToggleNude()
+						if GameTooltip:IsOwned(self) then NudeTip(self) end
+					end)
+				end
+
+				----------------------------------------------------------------------
+				-- Nude (used by the nude button)
+				----------------------------------------------------------------------
+
+				-- Is anything still showing (true when nothing is known about the gear, so nude always takes everything off)
+				function DressupGear.AnyShown()
+					if not next(slotInfo) then return true end
+					for slotID in pairs(slotInfo) do
+						if not hiddenSlots[slotID] then return true end
+					end
+					return false
+				end
+
+				-- Take everything off, click again to put back on what was showing before
+				function DressupGear.ToggleNude()
+					local actor = GetActor()
+					if not actor then return end
+					if DressupGear.AnyShown() then
+						wipe(nudeSaved)
+						for slotID in pairs(slotInfo) do
+							if not hiddenSlots[slotID] then nudeSaved[slotID] = true; hiddenSlots[slotID] = true end
+						end
+						pcall(actor.Undress, actor)
+					else
+						local all = not next(nudeSaved) -- Nothing remembered, so put everything back on
+						for void, slotID in ipairs(slotOrder) do
+							if slotInfo[slotID] and (all or nudeSaved[slotID]) then
+								hiddenSlots[slotID] = nil
+								DressSlot(slotID)
 							end
 						end
+						wipe(nudeSaved)
 					end
-				end)
+					UpdateSlots()
+				end
+
+				----------------------------------------------------------------------
+				-- Outfits (my outfit on target, target outfit on me)
+				----------------------------------------------------------------------
+
+				-- Put a list of appearances on the model (in their own slots, so a dual wielder keeps both weapons)
+				local function ApplyList(actor, list)
+					for slotID, transmog in ipairs(list) do
+						local appearanceID = type(transmog) == "table" and Safe(transmog.appearanceID)
+						if type(appearanceID) == "number" and appearanceID > 0 then
+							pcall(actor.SetItemTransmogInfo, actor, transmog, slotID, slotID ~= INVSLOT_MAINHAND)
+						end
+					end
+				end
+
+				-- Read the appearances a model is wearing (nil if the game is hiding them)
+				local function ReadList(actor)
+					local ok, list = pcall(actor.GetItemTransmogInfoList, actor)
+					if not ok or type(list) ~= "table" then return end
+					if (issecretvalue and issecretvalue(list)) or (canaccesstable and not canaccesstable(list)) then return end
+					return list
+				end
+
+				-- Show my outfit on the target
+				function DressupGear.MyOutfitOnTarget()
+					local actor = GetActor()
+					if not actor or not Safe(UnitIsPlayer("target")) then return end
+					actor:SetModelByUnit("player", true, true)
+					local list = ReadList(actor)
+					actor:SetModelByUnit("target", true, true)
+					C_Timer.After(0.01, function()
+						actor = GetActor()
+						if not actor or not Safe(UnitIsPlayer("target")) then return end
+						actor:SetModelByUnit("target", true, true)
+						if list then
+							actor:Undress()
+							ApplyList(actor, list)
+						else
+							DressupGear.Message(L["Their gear could not be read."])
+						end
+						Reset("myOutfitOnTarget")
+						DressupGear.NoteActor()
+						C_Timer.After(0.2, Refresh)
+					end)
+				end
+
+				-- Show the target's outfit on me
+				function DressupGear.TargetOutfitOnMe()
+					local actor = GetActor()
+					if not actor or not Safe(UnitIsPlayer("target")) then return end
+					actor:SetModelByUnit("target", true, true)
+					C_Timer.After(0.01, function()
+						actor = GetActor()
+						if not actor then return end
+						local list = ReadList(actor)
+						actor:SetModelByUnit("player", true, true)
+						if list then
+							actor:Undress()
+							ApplyList(actor, list)
+						else
+							DressupGear.Message(L["Their gear could not be read."])
+						end
+						Reset("targetOutfitOnMe")
+						DressupGear.NoteActor()
+						C_Timer.After(0.2, Refresh)
+					end)
+				end
+
+				-- Show me or the target
+				function DressupGear.ShowUnit(unit, newMode)
+					local actor = GetActor()
+					if not actor then return end
+					actor:SetModelByUnit(unit, true, true)
+					C_Timer.After(0.1, function()
+						actor = GetActor()
+						if not actor then return end
+						actor:SetModelByUnit(unit, true, true)
+						Reset(newMode)
+						DressupGear.NoteActor()
+						C_Timer.After(0.2, Refresh)
+					end)
+				end
+
+				-- The unit shown in the dressing room (nil if it cannot be found any more)
+				function DressupGear.GetUnit()
+					if mode == "target" or mode == "myOutfitOnTarget" then
+						if Safe(UnitIsPlayer("target")) then return "target" end
+						return
+					end
+					return "player"
+				end
 
 				-- Function to set item buttons
 				local function ToggleItemButtons()
-					if LeaPlusLC["DressupItemButtons"] == "On" then
-						for i = 1, #buttons do buttons[i]:Show() end
-					else
-						for i = 1, #buttons do buttons[i]:Hide() end
-					end
+					-- The buttons are inside the columns, so showing or hiding the columns does the buttons too
+					for i = 1, #columns do columns[i]:SetShown(LeaPlusLC["DressupItemButtons"] == "On" and columns[i].count > 0) end
 				end
 
-				-- Assign file level scope to function (it's used in bottom row buttons)
+				-- Assign file level scope to function
 				LeaPlusLC.ToggleItemButtons = ToggleItemButtons
 
 				-- Set item buttons for option click, startup, reset click and preset click
@@ -4826,6 +5623,8 @@
 					end
 				end)
 
+				UpdateSlots()
+
 			end
 
 			----------------------------------------------------------------------
@@ -4838,10 +5637,10 @@
 			LeaPlusLC["DressupAnim"] = 0 -- Defined here since the setting is not saved
 			LeaPlusLC:MakeSL(DressUpFrame, "DressupAnim", "", 1, #animTable - 1, 1, 356, -92, "%.0f")
 			LeaPlusCB["DressupAnim"]:ClearAllPoints()
-			LeaPlusCB["DressupAnim"]:SetPoint("BOTTOM", 0, 32)
+			LeaPlusCB["DressupAnim"]:SetPoint("BOTTOM", 26, 44) -- Above the bottom bar (the title goes to the left of it and the number to the right)
 			LeaPlusCB["DressupAnim"]:SetParent(DressUpFrameResetButton) -- So it only shows with reset button
-			LeaPlusCB["DressupAnim"]:SetWidth(240)
-			LeaPlusCB["DressupAnim"]:SetFrameLevel(5)
+			LeaPlusCB["DressupAnim"]:SetWidth(150)
+			LeaPlusCB["DressupAnim"]:SetFrameLevel(DressUpFrame.ModelScene:GetFrameLevel() + 5)
 			LeaPlusCB["DressupAnim"]:HookScript("OnValueChanged", function(self, setting)
 				local playerActor = DressUpFrame.ModelScene:GetPlayerActor()
 				setting = math.floor(setting + 0.5)
@@ -4851,6 +5650,11 @@
 					-- print(animTable[setting]) -- Debug
 				end
 			end)
+
+			-- Title for the slider (part of the slider, so it hides with it)
+			local animTitle = LeaPlusCB["DressupAnim"]:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+			animTitle:SetPoint("RIGHT", LeaPlusCB["DressupAnim"], "LEFT", -4, 1) -- Up a pixel, so the lower case letters line up with the middle of the bar
+			animTitle:SetText(L["Animation"])
 
 			-- Function to show animation control
 			local function SetAnimationSlider()
@@ -4878,7 +5682,7 @@
 			end)
 
 			-- Reset animation when dressup frame is shown and model is reset
-			hooksecurefunc(DressUpFrame, "Show", SetAnimationSlider)
+			DressUpFrame:HookScript("OnShow", SetAnimationSlider)
 			DressUpFrameResetButton:HookScript("OnClick", SetAnimationSlider)
 
 			-- Skin slider for ElvUI
@@ -4891,10 +5695,8 @@
 			-- Bottom row buttons
 			----------------------------------------------------------------------
 
-			-- Function to modify a button
-			local function SetButton(where, text, tip)
-				where:SetText(L[text])
-				where:SetWidth(where:GetFontString():GetStringWidth() + 20)
+			-- Function to modify a button tooltip
+			local function SetButton(where, tip)
 				where:HookScript("OnEnter", function()
 					GameTooltip:SetOwner(where, "ANCHOR_NONE")
 					GameTooltip:SetPoint("BOTTOM", where, "TOP", 0, 10)
@@ -4903,143 +5705,319 @@
 				where:HookScript("OnLeave", GameTooltip_Hide)
 			end
 
-			SetButton(DressUpFrameCancelButton, "C", "Close")
-			SetButton(DressUpFrameResetButton, "R", "Reset")
-			SetButton(DressUpFrame.LinkButton, "L", "Link outfit")
+			SetButton(DressUpFrameCancelButton, "Close")
+			SetButton(DressUpFrameResetButton, "Reset")
+			SetButton(DressUpFrame.LinkButton, "Link outfit")
 
-			-- Remove all items button (parented to reset button so they show with reset button)
-			LeaPlusLC:CreateButton("DressUpNudeBtn", DressUpFrameResetButton, "N", "BOTTOMLEFT", 106, 79, 80, 22, false, "")
-			LeaPlusCB["DressUpNudeBtn"]:ClearAllPoints()
-			LeaPlusCB["DressUpNudeBtn"]:SetPoint("RIGHT", DressUpFrameResetButton, "LEFT", 0, 0)
-			SetButton(LeaPlusCB["DressUpNudeBtn"], "N", "Remove all items")
-			LeaPlusCB["DressUpNudeBtn"]:SetScript("OnClick", function()
-				local playerActor = DressUpFrame.ModelScene:GetPlayerActor()
-				playerActor:Undress()
-			end)
-
-			-- Show me button
-			LeaPlusLC:CreateButton("DressUpShowMeBtn", DressUpFrameResetButton, "M", "BOTTOMLEFT", 26, 79, 80, 22, false, "")
-			LeaPlusCB["DressUpShowMeBtn"]:ClearAllPoints()
-			LeaPlusCB["DressUpShowMeBtn"]:SetPoint("RIGHT", LeaPlusCB["DressUpNudeBtn"], "LEFT", 0, 0)
-			SetButton(LeaPlusCB["DressUpShowMeBtn"], "M", "Show me")
-			LeaPlusCB["DressUpShowMeBtn"]:SetScript("OnClick", function()
-				local playerActor = DressUpFrame.ModelScene:GetPlayerActor()
-				playerActor:SetModelByUnit("player", true, true)
-				C_Timer.After(0.1, function()
-					playerActor:SetModelByUnit("player", true, true)
-					-- Set animation
+			-- Function to set the animation again after the model has changed
+			local function ResetAnimation()
+				C_Timer.After(0.2, function()
+					local playerActor = DressUpFrame.ModelScene:GetPlayerActor()
+					if not playerActor then return end
 					playerActor:SetAnimation(0)
-					C_Timer.After(0.1,function()
+					C_Timer.After(0.1, function()
 						playerActor:SetAnimation(animTable[math.floor(LeaPlusCB["DressupAnim"]:GetValue() + 0.5)], 0, 1, 1)
 					end)
 				end)
-			end)
+			end
 
-			-- Show my outfit on target button
-			LeaPlusLC:CreateButton("DressUpOutfitOnTargetBtn", DressUpFrameResetButton, "O", "BOTTOMLEFT", 26, 79, 80, 22, false, "")
-			LeaPlusCB["DressUpOutfitOnTargetBtn"]:ClearAllPoints()
-			LeaPlusCB["DressUpOutfitOnTargetBtn"]:SetPoint("RIGHT", LeaPlusCB["DressUpShowMeBtn"], "LEFT", 0, 0)
-			SetButton(LeaPlusCB["DressUpOutfitOnTargetBtn"], "O", "Show my outfit on target")
-			LeaPlusCB["DressUpOutfitOnTargetBtn"]:SetScript("OnClick", function()
-				if UnitIsPlayer("target") then
-					local playerActor = DressUpFrame.ModelScene:GetPlayerActor()
-					playerActor:SetModelByUnit("player", true, true)
-					local modelTransmogList = playerActor:GetItemTransmogInfoList()
-					playerActor:SetModelByUnit("target", true, true)
-					C_Timer.After(0.01, function()
-						playerActor:SetModelByUnit("target", true, true)
-						playerActor:Undress()
-						DressUpItemTransmogInfoList(modelTransmogList)
-						-- Set animation
-						playerActor:SetAnimation(0)
-						C_Timer.After(0.1,function()
-							playerActor:SetAnimation(animTable[math.floor(LeaPlusCB["DressupAnim"]:GetValue() + 0.5)], 0, 1, 1)
-						end)
-					end)
+			-- Bottom bar: picture buttons in the same style as the slot buttons, then Reset and Close
+			-- The bar is inside the reset button, so it only shows when the dressing room shows a character (not a mount or pet)
+			local size, gap = 30, 6
+			local mePics, targetPics, shades = {}, {}, {}
+			local barLevel = DressUpFrame.ModelScene:GetFrameLevel() + 5 -- Above the model
+
+			-- Grey out a button's pictures when it is disabled
+			local function Shade(btn)
+				local on = btn:IsEnabled()
+				for void, pic in ipairs({btn.t, btn.badge}) do
+					pic:SetDesaturated(not on)
+					pic:SetAlpha(on and 1 or 0.45)
+				end
+			end
+
+			-- Create a bar button (title and optional text for the tooltip, isMode for buttons that stay lit while the model shows that)
+			local barCount = 0
+			local function MakeBarButton(title, text, isMode)
+				local btn = CreateFrame(isMode and "CheckButton" or "Button", nil, DressUpFrameResetButton)
+				PaperDollButton(btn, size)
+				if isMode then
+					btn:SetCheckedTexture("Interface\\Buttons\\CheckButtonHilight")
+					btn:GetCheckedTexture():SetBlendMode("ADD")
+				end
+				btn:SetFrameLevel(barLevel)
+				btn:SetPoint("BOTTOMLEFT", DressUpFrame, "BOTTOMLEFT", 12 + barCount * (size + gap), 7)
+				barCount = barCount + 1
+				btn:SetMotionScriptsWhileDisabled(true) -- Tooltip shows while greyed out
+				btn:SetScript("OnEnter", function(self)
+					GameTooltip:SetOwner(self, "ANCHOR_NONE")
+					GameTooltip:SetPoint("BOTTOM", self, "TOP", 0, 10)
+					GameTooltip:SetText(L[title], 1, 1, 1)
+					if text then GameTooltip:AddLine(L[text], nil, nil, nil, true) end
+					if self.why and not self:IsEnabled() then GameTooltip:AddLine(self.why, 1, 0.3, 0.3, true) end
+					GameTooltip:Show()
+				end)
+				btn:SetScript("OnLeave", GameTooltip_Hide)
+				-- Small round picture in the corner (whose gear is being worn)
+				btn.badge = btn:CreateTexture(nil, "OVERLAY", nil, 2)
+				btn.badge:SetSize(15, 15)
+				btn.badge:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", 3, -3)
+				btn.badge:Hide()
+				btn:SetScript("OnEnable", Shade)
+				btn:SetScript("OnDisable", Shade)
+				tinsert(shades, btn)
+				return btn
+			end
+
+			-- Make a picture round (portraits)
+			local circle = "Interface\\CharacterFrame\\TempPortraitAlphaMask"
+			local function MakeRound(btn, pic)
+				local mask = btn:CreateMaskTexture()
+				mask:SetTexture(circle, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+				mask:SetAllPoints(pic)
+				pic:AddMaskTexture(mask)
+			end
+
+			-- Show a small portrait in the corner of a button (with a dark ring so it stands apart from the big picture)
+			local function AddBadge(btn, list)
+				local ring = btn:CreateTexture(nil, "OVERLAY", nil, 1)
+				ring:SetTexture(circle)
+				ring:SetVertexColor(0, 0, 0, 1)
+				ring:SetSize(18, 18)
+				ring:SetPoint("CENTER", btn.badge, "CENTER")
+				MakeRound(btn, btn.badge)
+				btn.badge:Show()
+				tinsert(list, btn.badge)
+			end
+
+			-- Link: Blizzard's own button, given the same look (see below), so it comes first in the bar
+			barCount = 1
+
+			local meBtn = MakeBarButton("Show me", nil, true)
+			tinsert(mePics, meBtn.t)
+
+			local targetBtn = MakeBarButton("Show target", nil, true)
+			tinsert(targetPics, targetBtn.t)
+
+			local myGearBtn = MakeBarButton("Show my gear on target", nil, true)
+			tinsert(targetPics, myGearBtn.t)
+			AddBadge(myGearBtn, mePics)
+
+			local theirGearBtn = MakeBarButton("Show target gear on me", nil, true)
+			tinsert(mePics, theirGearBtn.t)
+			AddBadge(theirGearBtn, targetPics)
+
+			local infoBtn = MakeBarButton("Show info card", nil, false)
+			infoBtn.t:SetTexture("Interface\\Icons\\INV_Misc_Note_02")
+
+			-- Link, Reset and Close, given the same look as the other buttons
+			-- These are Blizzard's own buttons, so they are only re-skinned (their red art is made see-through and pictures are laid
+			-- over it): clicking them still runs Blizzard's own code (the link menu, including copying to the clipboard, stays Blizzard's),
+			-- nothing is replaced and nothing is written onto them
+			local skinParts = {}
+			local function SkinBlizzardButton(btn, file, picSize, isAtlas)
+				btn:SetText("")
+				btn:SetSize(size, size)
+				for void, region in ipairs({btn:GetRegions()}) do
+					if region:IsObjectType("Texture") then region:SetAlpha(0) end -- Stays see-through when the game changes the art (pressed, disabled)
+				end
+				local parts = {}
+				parts.bg = btn:CreateTexture(nil, "BACKGROUND", nil, 7)
+				parts.bg:SetAllPoints()
+				parts.bg:SetColorTexture(0, 0, 0, 0.7)
+				parts.pic = btn:CreateTexture(nil, "BORDER")
+				parts.pic:SetSize(picSize, picSize)
+				parts.pic:SetPoint("CENTER")
+				if isAtlas then parts.pic:SetAtlas(file) else parts.pic:SetTexture(file) end
+				parts.border = btn:CreateTexture(nil, "ARTWORK")
+				parts.border:SetTexture("Interface\\Buttons\\UI-Quickslot2")
+				parts.border:SetSize(size * 64 / 37, size * 64 / 37)
+				parts.border:SetPoint("CENTER", 0, -size / 37)
+				parts.pushed = btn:CreateTexture(nil, "OVERLAY")
+				parts.pushed:SetAllPoints()
+				parts.pushed:SetTexture("Interface\\Buttons\\UI-Quickslot-Depress")
+				parts.pushed:Hide()
+				parts.glow = btn:CreateTexture(nil, "OVERLAY")
+				parts.glow:SetAllPoints()
+				parts.glow:SetTexture("Interface\\Buttons\\ButtonHilight-Square")
+				parts.glow:SetBlendMode("ADD")
+				parts.glow:Hide()
+				skinParts[btn] = parts
+				btn:HookScript("OnEnter", function() parts.glow:Show() end)
+				btn:HookScript("OnLeave", function() parts.glow:Hide() parts.pushed:Hide() end)
+				btn:HookScript("OnMouseDown", function(self) if self:IsEnabled() then parts.pushed:Show() end end)
+				btn:HookScript("OnMouseUp", function() parts.pushed:Hide() end)
+				btn:SetFrameLevel(barLevel)
+			end
+
+			-- Link: a chain link (first in the bar)
+			local linkPicture = "Interface\\Buttons\\UI-LinkProfession-Up"
+			if not (GetFileIDFromPath and GetFileIDFromPath(linkPicture)) then linkPicture = "Interface\\Icons\\INV_Letter_15" end -- In case this game does not have it
+			SkinBlizzardButton(DressUpFrame.LinkButton, linkPicture, 22)
+			DressUpFrame.LinkButton:ClearAllPoints()
+			DressUpFrame.LinkButton:SetPoint("BOTTOMLEFT", DressUpFrame, "BOTTOMLEFT", 12, 7)
+
+			-- Close: a red cross
+			SkinBlizzardButton(DressUpFrameCancelButton, "common-icon-redx", 18, true)
+			DressUpFrameCancelButton:ClearAllPoints()
+			DressUpFrameCancelButton:SetPoint("BOTTOMRIGHT", DressUpFrame, "BOTTOMRIGHT", -12, 7)
+
+			-- Reset: a circular arrow
+			SkinBlizzardButton(DressUpFrameResetButton, "Interface\\Buttons\\UI-RefreshButton", 20)
+			DressUpFrameResetButton:ClearAllPoints()
+			DressUpFrameResetButton:SetPoint("RIGHT", DressUpFrameCancelButton, "LEFT", -gap, 0)
+
+			-- Grey background behind the bottom bar (the frame's own grey, raised to cover the bottom of the model area, as the bar
+			-- buttons are taller than Blizzard's own buttons and the edge of the model area would otherwise run through them)
+			do
+				local barBg = CreateFrame("Frame", nil, DressUpFrameResetButton) -- Inside the reset button like the bar buttons, so it hides with them
+				barBg:SetFrameLevel(barLevel - 1) -- Above the model, below the buttons
+				barBg:SetPoint("LEFT", DressUpFrame.Inset or DressUpFrame, "LEFT", DressUpFrame.Inset and 0 or 4, 0)
+				barBg:SetPoint("RIGHT", DressUpFrame.Inset or DressUpFrame, "RIGHT", DressUpFrame.Inset and 0 or -4, 0)
+				barBg:SetPoint("BOTTOM", DressUpFrame, "BOTTOM", 0, 3)
+				barBg:SetPoint("TOP", meBtn, "TOP", 0, 4)
+				local tex = barBg:CreateTexture(nil, "BACKGROUND")
+				tex:SetAllPoints()
+				local frameBg = DressUpFrame.Bg
+				local atlas = frameBg and frameBg.GetAtlas and frameBg:GetAtlas()
+				if atlas then
+					tex:SetAtlas(atlas)
+					tex:SetHorizTile(frameBg:GetHorizTile())
+					tex:SetVertTile(frameBg:GetVertTile())
+				elseif frameBg and frameBg:GetTexture() then
+					tex:SetTexture(frameBg:GetTexture(), frameBg:GetHorizTile() and "REPEAT" or nil, frameBg:GetVertTile() and "REPEAT" or nil)
+					tex:SetHorizTile(frameBg:GetHorizTile())
+					tex:SetVertTile(frameBg:GetVertTile())
+				else
+					tex:SetColorTexture(0.1, 0.1, 0.1, 1)
+				end
+				if frameBg then tex:SetVertexColor(frameBg:GetVertexColor()) end
+
+				-- Border line along the top of the grey, copied from the bottom border of the model area (the inset), so it looks the
+				-- same as the default line (the pieces keep their own positions, moved from the bottom of the inset to the top of the grey)
+				local inset = DressUpFrame.Inset
+				local source = inset and inset.NineSlice
+				local keys = {"BottomLeftCorner", "BottomEdge", "BottomRightCorner"}
+				if not (source and source.BottomEdge) then
+					source = inset
+					keys = {"InsetBorderBottomLeft", "InsetBorderBottom", "InsetBorderBottomRight"}
+				end
+				local copies = {}
+				for void, key in ipairs(keys) do
+					local piece = source and source[key]
+					if piece and piece.GetTexture then
+						local t = barBg:CreateTexture(nil, "BORDER")
+						local pieceAtlas = piece.GetAtlas and piece:GetAtlas()
+						if pieceAtlas then
+							t:SetAtlas(pieceAtlas)
+						else
+							t:SetTexture(piece:GetTexture())
+							t:SetTexCoord(piece:GetTexCoord())
+						end
+						t:SetHorizTile(piece:GetHorizTile())
+						t:SetVertTile(piece:GetVertTile())
+						t:SetVertexColor(piece:GetVertexColor())
+						t:SetSize(piece:GetSize())
+						copies[piece] = t
+					end
+				end
+				if next(copies) then
+					for piece, t in pairs(copies) do
+						for i = 1, piece:GetNumPoints() do
+							local point, relativeTo, relativePoint, x, y = piece:GetPoint(i)
+							if copies[relativeTo] then
+								-- Anchored to another piece, so anchor to its copy
+								t:SetPoint(point, copies[relativeTo], relativePoint, x, y)
+							else
+								-- Anchored to the inset, so anchor to the top of the grey instead of the bottom of the inset
+								t:SetPoint(point, barBg, (gsub(relativePoint, "BOTTOM", "TOP")), x, y)
+							end
+						end
+					end
+				else
+					-- No border pieces found, so draw a plain line
+					local line = barBg:CreateTexture(nil, "BORDER")
+					line:SetColorTexture(0.35, 0.35, 0.35, 1)
+					line:SetPoint("TOPLEFT"); line:SetPoint("TOPRIGHT")
+					line:SetHeight(2)
+				end
+			end
+
+			-- Update the buttons: pictures, greyed out ones and the one for what the model shows
+			local modeButtons = {me = meBtn, target = targetBtn, myOutfitOnTarget = myGearBtn, targetOutfitOnMe = theirGearBtn}
+			local function UpdateButtons()
+				local hasTarget = Safe(UnitIsPlayer("target")) and true or false
+				for void, pic in ipairs(mePics) do SetPortraitTexture(pic, "player") end
+				for void, pic in ipairs(targetPics) do
+					if hasTarget then SetPortraitTexture(pic, "target") else pic:SetTexture("Interface\\CharacterFrame\\TempPortrait") end
+				end
+				for void, btn in ipairs({targetBtn, myGearBtn, theirGearBtn}) do
+					btn:SetEnabled(hasTarget)
+					btn.why = L["Target a player to use this."]
+				end
+				infoBtn:SetEnabled(LeaPlusLC.ShowInfoCardForUnit ~= nil)
+				if LeaPlusLC["ShowInfoCards"] == "On" then
+					infoBtn.why = L["Reload your UI to use this."]
+				else
+					infoBtn.why = L["This needs Show info cards to be turned on in Leatrix Plus."]
+				end
+				local mode = DressupGear.GetMode()
+				for key, btn in pairs(modeButtons) do btn:SetChecked(key == mode) end
+				for void, btn in ipairs(shades) do Shade(btn) end
+			end
+			DressupGear.OnModeChanged = UpdateButtons
+
+			-- Clicks (each then shows what the model really shows, as clicking a check button would otherwise flip it)
+			meBtn:SetScript("OnClick", function()
+				DressupGear.ShowUnit("player", "me")
+				ResetAnimation()
+				UpdateButtons()
+			end)
+			targetBtn:SetScript("OnClick", function()
+				if Safe(UnitIsPlayer("target")) then
+					DressupGear.ShowUnit("target", "target")
+					ResetAnimation()
+				end
+				UpdateButtons()
+			end)
+			myGearBtn:SetScript("OnClick", function()
+				DressupGear.MyOutfitOnTarget()
+				ResetAnimation()
+				UpdateButtons()
+			end)
+			theirGearBtn:SetScript("OnClick", function()
+				DressupGear.TargetOutfitOnMe()
+				ResetAnimation()
+				UpdateButtons()
+			end)
+			infoBtn:SetScript("OnClick", function()
+				if not LeaPlusLC.ShowInfoCardForUnit then return end
+				local unit = DressupGear.GetUnit()
+				if unit then
+					LeaPlusLC.ShowInfoCardForUnit(unit)
+				else
+					DressupGear.Message(L["Target that player to show their info card."])
 				end
 			end)
 
-			-- Show target outfit on me button
-			LeaPlusLC:CreateButton("DressUpTargetSelfBtn", DressUpFrameResetButton, "B", "BOTTOMLEFT", 26, 79, 80, 22, false, "")
-			LeaPlusCB["DressUpTargetSelfBtn"]:ClearAllPoints()
-			LeaPlusCB["DressUpTargetSelfBtn"]:SetPoint("RIGHT", LeaPlusCB["DressUpOutfitOnTargetBtn"], "LEFT", 0, 0)
-			SetButton(LeaPlusCB["DressUpTargetSelfBtn"], "S", "Show target outfit on me")
-			LeaPlusCB["DressUpTargetSelfBtn"]:SetScript("OnClick", function()
-				if UnitIsPlayer("target") then
-					local playerActor = DressUpFrame.ModelScene:GetPlayerActor()
-					playerActor:SetModelByUnit("target", true, true)
-					C_Timer.After(0.01, function()
-						local modelTransmogList = playerActor:GetItemTransmogInfoList()
-						playerActor:SetModelByUnit("player", true, true)
-						SetupPlayerForModelScene(DressUpFrame.ModelScene, modelTransmogList, true, true)
-						playerActor:Undress()
-						DressUpItemTransmogInfoList(modelTransmogList)
-						-- Set animation
-						playerActor:SetAnimation(0)
-						C_Timer.After(0.1,function()
-							playerActor:SetAnimation(animTable[math.floor(LeaPlusCB["DressupAnim"]:GetValue() + 0.5)], 0, 1, 1)
-						end)
-					end)
-				end
+			-- Only watch the target while the dressing room is open
+			local watcher = CreateFrame("Frame")
+			watcher:SetScript("OnEvent", UpdateButtons)
+			DressUpFrame:HookScript("OnShow", function()
+				watcher:RegisterEvent("PLAYER_TARGET_CHANGED")
+				watcher:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", "player", "target")
+				UpdateButtons()
 			end)
-
-			-- Show target model button
-			LeaPlusLC:CreateButton("DressUpTargetBtn", DressUpFrameResetButton, "T", "BOTTOMLEFT", 26, 79, 80, 22, false, "")
-			LeaPlusCB["DressUpTargetBtn"]:ClearAllPoints()
-			LeaPlusCB["DressUpTargetBtn"]:SetPoint("RIGHT", LeaPlusCB["DressUpTargetSelfBtn"], "LEFT", 0, 0)
-			SetButton(LeaPlusCB["DressUpTargetBtn"], "T", "Show target model")
-			LeaPlusCB["DressUpTargetBtn"]:SetScript("OnClick", function()
-				if UnitIsPlayer("target") then
-					local playerActor = DressUpFrame.ModelScene:GetPlayerActor()
-					playerActor:SetModelByUnit("target", true, true)
-					C_Timer.After(0.1, function()
-						playerActor:SetModelByUnit("target", true, true)
-						-- Set animation
-						playerActor:SetAnimation(0)
-						C_Timer.After(0.1,function()
-							playerActor:SetAnimation(animTable[math.floor(LeaPlusCB["DressupAnim"]:GetValue() + 0.5)], 0, 1, 1)
-						end)
-					end)
-				end
-			end)
-
-			-- Toggle buttons
-			LeaPlusLC:CreateButton("DressUpButonsBtn", DressUpFrameResetButton, "B", "BOTTOMLEFT", 26, 79, 80, 22, false, "")
-			LeaPlusCB["DressUpButonsBtn"]:ClearAllPoints()
-			LeaPlusCB["DressUpButonsBtn"]:SetPoint("LEFT", DressUpFrame.LinkButton, "RIGHT", 0, 0)
-			SetButton(LeaPlusCB["DressUpButonsBtn"], "B", "Toggle buttons")
-			LeaPlusCB["DressUpButonsBtn"]:SetScript("OnClick", function()
-				if LeaPlusLC["DressupItemButtons"] == "On" then LeaPlusLC["DressupItemButtons"] = "Off" else LeaPlusLC["DressupItemButtons"] = "On" end
-				LeaPlusLC:ToggleItemButtons()
-				if DressupPanel:IsShown() then DressupPanel:Hide(); DressupPanel:Show() end
-			end)
+			DressUpFrame:HookScript("OnHide", function() watcher:UnregisterAllEvents() end)
+			UpdateButtons()
 
 			-- Change player actor to player when reset button is clicked (needed because target button changes it)
 			DressUpFrameResetButton:HookScript("OnClick", function()
 				local playerActor = DressUpFrame.ModelScene:GetPlayerActor()
-				playerActor:SetModelByUnit("player", true, true)
+				if playerActor then playerActor:SetModelByUnit("player", true, true) end
+				-- Start the slot buttons again (the game can reuse the same model, so the light check may not see the reset)
+				C_Timer.After(0.1, function() DressupGear.Reset("me") DressupGear.NoteActor() end)
 			end)
-
-			-- Skin buttons for ElvUI
-			if LeaPlusLC.ElvUI then
-				_G.LeaPlusGlobalDressUpButtonsButton = LeaPlusCB["DressUpButonsBtn"]
-				LeaPlusLC.ElvUI:GetModule("Skins"):HandleButton(_G.LeaPlusGlobalDressUpButtonsButton)
-
-				_G.LeaPlusGlobalDressUpShowMeButton = LeaPlusCB["DressUpShowMeBtn"]
-				LeaPlusLC.ElvUI:GetModule("Skins"):HandleButton(_G.LeaPlusGlobalDressUpShowMeButton)
-
-				_G.LeaPlusGlobalDressUpTargetButton = LeaPlusCB["DressUpTargetBtn"]
-				LeaPlusLC.ElvUI:GetModule("Skins"):HandleButton(_G.LeaPlusGlobalDressUpTargetButton)
-
-				_G.LeaPlusGlobalDressUpNudeButton = LeaPlusCB["DressUpNudeBtn"]
-				LeaPlusLC.ElvUI:GetModule("Skins"):HandleButton(_G.LeaPlusGlobalDressUpNudeButton)
-
-				_G.LeaPlusGlobalDressUpTargetSelfBtn = LeaPlusCB["DressUpTargetSelfBtn"]
-				LeaPlusLC.ElvUI:GetModule("Skins"):HandleButton(_G.LeaPlusGlobalDressUpTargetSelfBtn)
-
-				_G.LeaPlusGlobalDressUpOutfitOnTargetBtn = LeaPlusCB["DressUpOutfitOnTargetBtn"]
-				LeaPlusLC.ElvUI:GetModule("Skins"):HandleButton(_G.LeaPlusGlobalDressUpOutfitOnTargetBtn)
-			end
 
 			----------------------------------------------------------------------
 			-- Controls
@@ -5237,10 +6215,10 @@
 				3615, 352, 257087, 16227, 2226, 1572, 931, 523, 1573, 2432, 11900, 255993, 12616, 3310, 2299, 4267, 2995, 12636, 12617, 10378, 8019, 8610, 1571, 4321, 12740, 4551, 10583, 15178, 3838, 4407, 4312, 7824, 3841, 2859, 8609, 2858, 6726, 4319, 2835, 41861, 12577, 2941, 10897, 6706, 7823, 12596, 260626, 13177, 11901, 6026, 12578, 4317, 2409, 11899, 8018, 8020, 2851, 15177, 2389, 2861, 1387, 11138, 3305, 4314, 11139,
 
 				-- Trainer (https://www.wowhead.com/forever/npcs?filter=28;1;0)
-				264936, 248197, 3448, 234, 272045, 3446, 4949, 66, 253372, 5494, 11870, 254151, 252475, 257944, 11867, 246152, 257006, 5567, 1286, 3365, 1253, 11865, 2988, 251684, 253092, 252383, 3649, 1285, 3419, 255940, 4217, 3389, 256732, 253590, 252476, 258098, 12042, 11072, 255877, 246344, 11869, 8508, 5504, 340, 252378, 249713, 11044, 1346, 252380, 11868, 246389, 2704, 5811, 254082, 1275, 3614, 843, 1300, 252390, 248200, 3482, 4568, 1103, 11074, 251905, 3523, 252359, 252373, 1937, 5482, 3032, 265756, 5153, 265574, 244808, 252800, 253576, 3432, 3033, 251993, 5941, 4606, 3363, 344, 253395, 927, 3355, 11026, 5101, 5497, 11098, 240, 266881, 276067, 5491, 5513, 3064, 514, 251992, 6306, 10266, 257021, 1317, 2327, 2132, 3373, 4611, 5515, 260093, 3605, 267336, 254081, 5157, 257019, 3606, 3702, 1232, 205729, 258785, 254345, 11068, 257004, 3391, 4576, 11073, 3069, 254084, 253004, 267327, 257020, 1383, 5695, 5165, 5511, 3191, 247226, 1226, 256083, 3401, 251913, 1231, 257003, 4160, 270459, 5885, 252376, 7088, 5880, 1340, 3595, 2855, 1241, 251991, 257446, 1632, 2836, 377, 8363, 6286, 4219, 3484, 3332, 3171, 1682, 6094, 11028, 5783, 257024, 247223, 4156, 1692, 252382, 5564, 4605, 256507, 4218, 11866, 3344, 1651, 1215, 2129, 1470, 6301, 1243, 3293, 3347, 13084, 928, 914, 5690, 252389, 5115, 11557, 257007, 3338, 4258, 3087, 4607, 461, 5127, 2329, 5150, 3549, 5499, 1700, 10993, 3007, 5159, 5149, 3490, 3703, 251972, 1466, 376, 251507, 3036, 1297, 5939, 4616, 267326, 261, 252479, 3404, 3602, 247227, 3065, 1702, 267338, 3429, 1703, 3661, 1070, 3600, 3066, 491, 5122, 3173, 6018, 251978, 4582, 3658, 1246, 265944, 233, 1325, 4212, 5505, 5173, 3001, 1465, 267332, 3345, 3407, 251374, 4210, 11406, 3352, 5137, 3399, 3026, 8140, 1669, 2080, 271483, 3464, 1699, 252388, 911, 5943, 5174, 3488, 2131, 2128, 3168, 3067, 2326, 3009, 251964, 957, 2399, 11066, 2391, 3967, 3607, 6291, 5148, 254088, 3601, 1698, 10219, 3038, 5518, 3044, 13417, 252377, 895, 11052, 7311, 5479, 3408, 3175, 3412, 257008, 151, 2123, 3348, 5116, 2798, 3016, 267329, 459, 5161, 258113, 3013, 6297, 918, 3041, 267325, 251389, 3172, 251379, 8306, 5498, 1228, 4614, 1386, 235, 11046, 3081, 1681, 4182, 8362, 167, 11065, 3494, 248415, 3326, 251977, 3596, 4609, 9465, 2627, 1218, 3063, 3062, 11096, 11048, 5144, 4552, 3153, 5492, 3357, 257018, 267333, 257005, 4573, 4090, 925, 4193, 5480, 3170, 252084, 2130, 3137, 260562, 257022, 5759, 11049, 5496, 7944, 328, 4598, 10930, 3174, 11081, 3060, 262560, 4596, 3154, 4563, 3028, 4092, 6251, 3047, 4087, 5142, 5489, 3965, 5883, 246797, 2485, 2127, 3354, 1430, 5147, 460, 837, 5172, 8736, 3603, 3327, 5612, 917, 913, 254086, 3706, 10278, 5784, 267334, 1234, 252449, 1691, 5884, 5506, 267324, 1356, 5117, 5177, 3169, 7867, 5516, 3449, 6299, 908, 1229, 1292, 5882, 4211, 3599, 11037, 2998, 267330, 3030, 11084, 259250, 8934, 3324, 5164, 295, 3061, 11025, 375, 11017, 3040, 4588, 4595, 7315, 3290, 4205, 3179, 3039, 3707, 267328, 1323, 262558, 6287, 10276, 4163, 5493, 926, 252379, 5113, 198, 1404, 7948, 3704, 11401, 4565, 3403, 3478, 5392, 3593, 6387, 267335, 3353, 14740, 3045, 5566, 2857, 3049, 6014, 28694, 4204, 11047, 3328, 3034, 916, 251376, 5500, 3031, 5495, 5938, 251373, 812, 7312, 2114, 3046, 3059, 6740, 11071, 1382, 3156, 5958, 2390, 4593, 1355, 6707, 3181, 256655, 4586, 3881, 6929, 1901, 944, 8153, 2878, 1668, 5114, 7232, 5123, 3495, 4254, 4584, 1411, 4146, 11070, 267337, 3157, 912, 3406, 1701, 11083, 6791, 3555, 1697, 3598, 246795, 3604, 3184, 4732, 1963, 2119, 4165, 4608, 8142, 13283, 4564, 12025, 4591, 254087, 6289, 5484, 2122, 11031, 2124, 915, 791, 331, 3597, 1680, 906, 4583, 2834, 11397, 5171, 11050, 5957, 11178, 988, 3043, 8126, 3155, 4594, 3481, 5611, 10277, 4567, 1645, 257422, 7868, 5517, 267331, 8738, 3545, 255891, 227, 2126, 7313, 3609, 2818, 3011, 1458, 3004, 11029, 3048, 6290, 7954, 10054, 3594, 4091, 3325, 5994, 10090, 2367, 986, 258930, 1473, 11067, 7866, 10088, 8308, 4256, 5501, 3322, 3337, 3008, 11041, 5166, 275322, 254411, 8146, 4213, 5143, 11051, 1683, 223, 4214, 3934, 4566, 2489, 3479, 5141, 4773, 7953, 6300, 5167, 3557, 5145, 985, 4772, 1214, 4203, 7870, 11097, 3042, 7871, 9981, 4089, 11042, 2987, 3165, 3610, 2879, 7087, 3185, 987, 1198, 6295, 4215, 3477, 9584, 12961, 2492, 7089, 268238, 271480, 8674, 3963, 4266, 3487, 260558, 3518, 257037, 2046, 6747, 4223, 3177, 275321, 6292, 1676, 4752, 5109, 7406, 8128, 4192, 7869, 6737, 1237, 10045, 11177, 3688, 5502, 9856, 8724, 4898, 10086, 372, 5146, 10089, 3023, 3611, 8141, 6288, 4138, 11069, 4578, 4183, 4195, 2856, 3698, 3291, 3491, 4753, 2837, 8144, 4159, 4320, 3622, 3480, 543, 8358, 6790, 11146, 1670, 8722, 15659, 8673, 1362, 256658, 3486, 8931, 3964, 12032, 9980, 2999, 3136, 3620, 6734, 3306, 3315, 8670, 1385, 4167, 3080, 12030, 259585, 3162, 7230, 4900, 8719, 3003, 3690, 3613, 3624, 7946, 5509, 7231, 7949, 3612, 249968, 2410, 211033, 3955, 4554, 1077, 14754, 256734, 263570, 1074, 956, 11833, 3368, 2055, 5767, 3027, 4225, 12736, 251968, 261366, 256730, 5768, 2094, 268745, 3142, 3313, 3556, 3005, 10216, 1646, 3682, 264078, 2679, 242498, 3413, 277, 3323, 3410, 4307, 267310, 5483, 271465, 955, 1239, 2104, 415, 2784, 248198, 262471, 1938, 3029, 270581, 259013, 7161, 3367, 263, 8361, 270438, 3954, 3387, 1257, 1298, 3497, 4265, 4721, 3134, 951, 256731, 382, 3537, 392, 257421, 2393, 1250, 3333, 3341, 3015, 270582, 258878, 6735, 3701, 253844, 10118, 4201, 2832, 256384, 254089, 228, 248242, 4200, 271613, 5160, 4305, 1343, 3442, 4189, 3489, 2216, 1078, 256389, 5111, 3516, 3616, 2682, 3691, 3845, 777, 1093, 2215, 12043, 197, 256400, 3014, 237, 5565, 272, 894, 289, 265, 1440, 252448, 238, 4169, 8305, 270844, 10537, 7317, 3366, 10369, 3187, 341, 4553, 311, 264, 8307, 259012, 6667, 1242, 279, 2948, 5817, 3562, 5128, 381, 2930, 270280, 3400, 3583, 253285, 12737, 8364, 3178, 3666, 3608, 465, 3339, 343, 4170, 3164, 3536, 4173, 3958, 2383, 254358, 663, 1247, 1154, 1091, 3018, 3483, 249235, 1287, 274, 3961, 3012, 960, 3962, 12196, 1459, 2401, 12962, 10053, 6028, 1448, 1374, 3492, 3650, 2481, 1289, 5512, 244512, 1274, 3519, 4194, 1685, 8359, 271478, 6928, 11857, 342, 259287, 270278, 3292, 4084, 5121, 2394, 251, 2111, 3096, 4775, 4241, 3097, 3085, 1464, 244, 3342, 1687, 7714, 6736, 2388, 9553, 222, 3517, 3567, 11864, 1678, 8723, 2839, 3331, 1456, 1089, 3543, 5944, 6577, 7731, 2997, 1474, 3485, 11137, 1673, 2366, 3644, 2229, 2078, 9859, 3493, 5103, 6746, 1471, 15012, 1461, 4221, 3163, 1452, 2352, 5107, 226, 3572, 8669, 14964, 6739, 10085, 10063, 3319, 9549, 3411, 6730, 3078, 3167, 3952, 8720, 1453, 10048, 6727, 2483, 3498, 2814, 3317, 3953, 3552, 3515, 3969, 793, 3937, 3935, 4191, 15686, 1462, 1686, 3025, 5124, 8671, 5620, 5102, 2140, 8360, 954, 9983, 3318, 3329, 4190, 8398, 3089,
+				264936, 248197, 3448, 234, 272045, 3446, 4949, 66, 253372, 5494, 11870, 254151, 252475, 257944, 11867, 246152, 257006, 5567, 1286, 3365, 1253, 11865, 2988, 251684, 253092, 252383, 3649, 1285, 3419, 255940, 4217, 3389, 256732, 253590, 252476, 258098, 12042, 11072, 255877, 246344, 11869, 8508, 5504, 340, 252378, 249713, 11044, 1346, 252380, 11868, 246389, 2704, 5811, 254082, 1275, 3614, 843, 1300, 252390, 248200, 3482, 4568, 1103, 11074, 251905, 3523, 252359, 252373, 1937, 5482, 3032, 265756, 5153, 265574, 244808, 252800, 253576, 3432, 3033, 251993, 5941, 4606, 3363, 344, 253395, 927, 3355, 11026, 5101, 5497, 11098, 240, 266881, 276067, 5491, 5513, 3064, 514, 251992, 6306, 10266, 257021, 1317, 2327, 2132, 3373, 4611, 5515, 260093, 3605, 267336, 254081, 5157, 257019, 3606, 3702, 1232, 205729, 258785, 254345, 11068, 257004, 3391, 4576, 11073, 3069, 254084, 253004, 267327, 257020, 1383, 5695, 5165, 5511, 3191, 247226, 1226, 256083, 3401, 251913, 1231, 257003, 4160, 270459, 5885, 252376, 7088, 5880, 1340, 3595, 2855, 1241, 251991, 257446, 1632, 2836, 377, 8363, 6286, 4219, 3484, 3332, 3171, 1682, 6094, 11028, 5783, 257024, 247223, 4156, 1692, 252382, 5564, 4605, 256507, 4218, 11866, 3344, 1651, 1215, 2129, 1470, 6301, 1243, 3293, 3347, 13084, 928, 914, 5690, 252389, 5115, 11557, 257007, 3338, 4258, 3087, 4607, 461, 5127, 2329, 5150, 3549, 5499, 1700, 10993, 3007, 5159, 5149, 3490, 3703, 251972, 1466, 376, 251507, 3036, 1297, 5939, 4616, 267326, 261, 252479, 3404, 3602, 247227, 3065, 1702, 267338, 3429, 1703, 3661, 1070, 3600, 3066, 491, 5122, 3173, 6018, 251978, 4582, 3658, 1246, 265944, 233, 1325, 4212, 5505, 5173, 3001, 1465, 267332, 3345, 3407, 251374, 4210, 11406, 3352, 5137, 3399, 3026, 8140, 1669, 2080, 271483, 3464, 1699, 252388, 911, 5943, 5174, 3488, 2131, 2128, 3168, 3067, 2326, 3009, 251964, 957, 2399, 11066, 2391, 3967, 3607, 6291, 5148, 254088, 3601, 1698, 10219, 3038, 5518, 3044, 13417, 252377, 895, 11052, 7311, 5479, 3408, 3175, 3412, 257008, 151, 2123, 3348, 5116, 2798, 3016, 267329, 459, 5161, 258113, 3013, 6297, 918, 3041, 267325, 251389, 3172, 251379, 8306, 5498, 1228, 4614, 1386, 235, 11046, 3081, 1681, 4182, 8362, 167, 11065, 3494, 248415, 3326, 251977, 3596, 4609, 9465, 2627, 1218, 3063, 3062, 11096, 11048, 5144, 4552, 3153, 5492, 3357, 257018, 267333, 257005, 4573, 4090, 925, 4193, 5480, 3170, 252084, 2130, 3137, 260562, 257022, 5759, 11049, 5496, 7944, 328, 4598, 10930, 3174, 11081, 3060, 262560, 4596, 3154, 4563, 3028, 4092, 6251, 3047, 4087, 5142, 5489, 3965, 5883, 246797, 2485, 2127, 3354, 1430, 5147, 460, 837, 5172, 8736, 3603, 3327, 5612, 917, 913, 254086, 3706, 10278, 5784, 267334, 1234, 252449, 1691, 5884, 5506, 267324, 1356, 5117, 5177, 3169, 7867, 5516, 3449, 6299, 908, 1229, 1292, 5882, 4211, 3599, 11037, 2998, 267330, 3030, 11084, 259250, 8934, 3324, 5164, 295, 3061, 11025, 375, 11017, 3040, 4588, 4595, 7315, 3290, 4205, 3179, 3039, 3707, 267328, 1323, 262558, 6287, 10276, 4163, 5493, 926, 252379, 5113, 198, 1404, 7948, 3704, 11401, 4565, 3403, 3478, 5392, 3593, 6387, 267335, 3353, 14740, 3045, 5566, 2857, 3049, 6014, 28694, 4204, 11047, 3328, 3034, 916, 251376, 5500, 3031, 5495, 5938, 251373, 812, 7312, 2114, 3046, 3059, 6740, 11071, 1382, 3156, 5958, 2390, 4593, 1355, 6707, 3181, 256655, 4586, 3881, 6929, 1901, 944, 8153, 2878, 1668, 5114, 7232, 5123, 3495, 4254, 4584, 1411, 4146, 11070, 267337, 3157, 912, 3406, 1701, 11083, 6791, 3555, 1697, 3598, 246795, 3604, 3184, 4732, 1963, 2119, 4165, 4608, 8142, 13283, 4564, 12025, 4591, 254087, 6289, 5484, 2122, 11031, 2124, 915, 791, 331, 3597, 1680, 906, 4583, 2834, 11397, 5171, 11050, 5957, 11178, 988, 3043, 8126, 3155, 4594, 3481, 5611, 10277, 4567, 1645, 257422, 7868, 5517, 267331, 8738, 3545, 255891, 227, 2126, 7313, 3609, 2818, 3011, 1458, 3004, 11029, 3048, 6290, 7954, 10054, 3594, 4091, 3325, 5994, 10090, 2367, 986, 258930, 1473, 11067, 7866, 10088, 8308, 4256, 5501, 3322, 3337, 3008, 11041, 5166, 275322, 254411, 8146, 4213, 5143, 11051, 1683, 223, 4214, 3934, 4566, 2489, 3479, 5141, 4773, 7953, 6300, 5167, 3557, 5145, 985, 4772, 1214, 4203, 7870, 11097, 3042, 7871, 9981, 4089, 11042, 2987, 3165, 3610, 2879, 7087, 3185, 987, 1198, 6295, 4215, 3477, 9584, 12961, 2492, 7089, 268238, 271480, 8674, 3963, 4266, 3487, 260558, 3518, 257037, 2046, 6747, 4223, 3177, 275321, 6292, 1676, 4752, 5109, 7406, 8128, 4192, 7869, 6737, 1237, 10045, 11177, 3688, 5502, 9856, 8724, 4898, 10086, 372, 5146, 10089, 3023, 3611, 8141, 6288, 4138, 11069, 4578, 4183, 4195, 2856, 3698, 3291, 3491, 4753, 2837, 8144, 4159, 4320, 3622, 3480, 543, 8358, 6790, 11146, 1670, 8722, 15659, 8673, 1362, 256658, 3486, 8931, 3964, 12032, 9980, 2999, 3136, 3620, 6734, 3306, 3315, 8670, 1385, 4167, 3080, 12030, 259585, 3162, 7230, 4900, 8719, 3003, 3690, 3613, 3624, 7946, 5509, 7231, 7949, 3612, 249968, 2410, 211033, 3955, 4554, 1077, 14754, 256734, 263570, 1074, 956, 11833, 3368, 2055, 5767, 3027, 4225, 12736, 251968, 261366, 256730, 5768, 2094, 268745, 3142, 3313, 3556, 3005, 10216, 1646, 3682, 264078, 2679, 242498, 3413, 277, 3323, 3410, 4307, 267310, 5483, 271465, 955, 1239, 2104, 415, 2784, 248198, 262471, 1938, 3029, 270581, 259013, 7161, 3367, 263, 8361, 270438, 3954, 3387, 1257, 1298, 3497, 4265, 4721, 3134, 951, 256731, 382, 3537, 392, 257421, 2393, 1250, 3333, 3341, 3015, 270582, 258878, 6735, 3701, 253844, 10118, 4201, 2832, 256384, 254089, 228, 248242, 4200, 271613, 5160, 4305, 1343, 3442, 4189, 3489, 2216, 1078, 256389, 5111, 3516, 3616, 2682, 3691, 3845, 777, 1093, 2215, 12043, 197, 256400, 3014, 237, 5565, 272, 894, 289, 265, 1440, 252448, 238, 4169, 8305, 270844, 10537, 7317, 3366, 10369, 3187, 341, 4553, 311, 264, 8307, 259012, 6667, 1242, 279, 2948, 5817, 3562, 5128, 381, 2930, 270280, 3400, 3583, 253285, 12737, 8364, 3178, 3666, 3608, 465, 3339, 343, 4170, 3164, 3536, 4173, 3958, 2383, 254358, 663, 1247, 1154, 1091, 3018, 3483, 249235, 1287, 274, 3961, 3012, 960, 3962, 12196, 1459, 2401, 12962, 10053, 6028, 1448, 1374, 3492, 3650, 2481, 1289, 5512, 244512, 1274, 3519, 4194, 1685, 8359, 271478, 6928, 11857, 342, 259287, 270278, 3292, 4084, 5121, 2394, 251, 2111, 3096, 4775, 4241, 3097, 3085, 1464, 244, 3342, 1687, 7714, 6736, 2388, 9553, 222, 3517, 3567, 11864, 1678, 8723, 2839, 3331, 1456, 1089, 3543, 5944, 6577, 7731, 2997, 1474, 3485, 11137, 1673, 2366, 3644, 2229, 2078, 9859, 3493, 5103, 6746, 1471, 15012, 1461, 4221, 3163, 1452, 2352, 5107, 226, 3572, 8669, 14964, 6739, 10085, 10063, 3319, 9549, 3411, 6730, 3078, 3167, 3952, 8720, 1453, 10048, 6727, 2483, 3498, 2814, 3317, 3953, 3552, 3515, 3969, 793, 3937, 3935, 4191, 15686, 1462, 1686, 3025, 5124, 8671, 5620, 5102, 2140, 8360, 954, 9983, 3318, 3329, 4190, 8398, 3089, 265003, 258306, 256386, 5940, 1684, 12757, 11861, 54, 734, 4877, 3139, 3693, 11860, 4046, 3453, 2437, 4177, 12696, 9099, 10052, 4878, 3390, 1092, 3960, 10056, 1672, 4630, 3933, 9987, 9984, 8672, 2461, 1213, 2456, 10380, 3361, 1650, 6749, 74, 5871, 9551, 3022,
 
 				-- Vendor Level 1-40 (https://www.wowhead.com/forever/npcs/min-level:1/max-level:40?filter=29;1;0)
-				4554, 14450, 272045, 66, 5494, 4617, 257006, 3027, 1286, 1684, 3005, 1285, 255940, 3367, 268745, 228, 3014, 4562, 3323, 8508, 4585, 3556, 4555, 4574, 12033, 3346, 844, 252380, 3025, 4086, 3410, 1275, 1318, 3614, 843, 5565, 252390, 3482, 5942, 251905, 4561, 214070, 5757, 242498, 271465, 3012, 7683, 265756, 265574, 1257, 5162, 5483, 277, 9087, 3955, 5758, 2118, 251993, 3550, 217689, 5101, 4189, 1298, 2786, 214101, 3682, 5158, 276067, 254089, 251992, 256736, 256384, 4225, 5519, 214096, 3313, 3605, 256400, 5817, 267336, 251537, 257019, 3530, 254358, 3497, 5940, 1309, 257004, 3164, 12246, 253004, 267327, 257020, 251913, 257003, 256389, 1302, 213077, 252376, 4307, 251991, 1351, 10118, 8363, 1347, 1308, 1682, 465, 274, 5783, 257024, 2682, 1692, 256507, 4615, 3405, 6301, 1243, 955, 4265, 5128, 5151, 2679, 3335, 3531, 3490, 3485, 1297, 1321, 1250, 1247, 214098, 1287, 252479, 3954, 958, 3366, 12245, 254360, 8361, 257421, 491, 5122, 3658, 233, 1303, 1325, 3029, 3350, 1465, 258306, 10216, 3528, 3562, 1312, 265575, 1669, 271483, 252388, 216672, 3488, 2697, 3168, 4575, 5163, 2683, 4553, 3537, 3364, 4612, 1441, 2393, 1698, 6731, 3044, 3532, 5110, 4775, 1694, 5848, 214099, 7976, 3369, 3187, 257008, 151, 3348, 3016, 5411, 4194, 267325, 5503, 1313, 1440, 3081, 3489, 3608, 4182, 8362, 3351, 2685, 2381, 167, 2134, 5175, 5748, 1148, 1454, 4305, 267333, 257005, 2265, 257022, 483, 4879, 5100, 5111, 6730, 6367, 267334, 252449, 1691, 4200, 14846, 267324, 4229, 3960, 1456, 3015, 222, 54, 2264, 3483, 8403, 3186, 3159, 267330, 5510, 3368, 8934, 295, 4589, 3533, 264078, 777, 211653, 267328, 1323, 3539, 258568, 5138, 6741, 262471, 4604, 8666, 3178, 9549, 5160, 4169, 226, 8681, 5178, 3413, 5754, 734, 3577, 6740, 1474, 8307, 4610, 152, 251364, 3881, 4897, 6929, 3134, 2383, 4577, 14847, 1668, 4602, 5123, 4896, 3495, 3498, 5816, 3958, 3529, 3499, 267337, 3333, 3314, 829, 1294, 3097, 3090, 6791, 1697, 1448, 5154, 2672, 2668, 4165, 3091, 12043, 9553, 1261, 4220, 2810, 791, 3587, 272437, 4241, 1326, 4453, 5944, 217412, 1289, 6746, 384, 1459, 2135, 3552, 3481, 5611, 3358, 3018, 4892, 2394, 259860, 5132, 1645, 257422, 3548, 267331, 12962, 3400, 3409, 3096, 3166, 16458, 5512, 3072, 2921, 227, 3609, 3361, 10369, 1263, 2113, 1672, 5193, 3334, 2816, 3951, 5188, 960, 6735, 3542, 2115, 4173, 3077, 8665, 3534, 4731, 836, 8137, 4256, 5133, 3133, 4083, 258, 3322, 790, 3561, 3076, 5191, 3163, 14637, 6576, 4216, 3411, 258548, 2117, 894, 3934, 5688, 3078, 2357, 3479, 3356, 4228, 1349, 2116, 2481, 6300, 225, 2698, 793, 3002, 222261, 13699, 1469, 1685, 1214, 4203, 5620, 5514, 4168, 4188, 6739, 5698, 2401, 7564, 8398, 3053, 5169, 13433, 1291, 3578, 2812, 251965, 3165, 2352, 3610, 2832, 1198, 4235, 1678, 5103, 1452, 8401, 3477, 6928, 1301, 789, 4186, 268238, 271480, 1460, 3167, 8359, 14480, 1673, 259863, 6374, 258572, 4266, 3158, 271478, 3956, 7733, 4590, 2997, 3487, 954, 3536, 4730, 3010, 13420, 208920, 222685, 1320, 3518, 5189, 4230, 2046, 258415, 271006, 1462, 4181, 1238, 3493, 13436, 3962, 4187, 6747, 3589, 1381, 1295, 1299, 272646, 2684, 2819, 4191, 4569, 1687, 6328, 2397, 4170, 1463, 259962, 14860, 4223, 5820, 3085, 4556, 1273, 6736, 6574, 13418, 260560, 5871, 12031, 4085, 5520, 9551, 9676, 3177, 3492, 216902, 7978, 258466, 2140, 28776, 1104, 8139, 4877, 12028, 5049, 5109, 3551, 3541, 14845, 4192, 4259, 4226, 3572, 3180, 3093, 6737, 1305, 1237, 2821, 13435, 3359, 74, 4190, 4557, 2814, 4603, 12027, 2808, 11287, 1319, 258463, 1304, 956, 3020, 4082, 1348, 1324, 6727, 6272, 7736, 1686, 372, 3017, 2380, 2364, 3543, 4597, 5821, 2669, 3023, 1149, 1146, 4222, 8404, 3611, 4084, 1453, 3969, 5112, 1464, 5814, 252020, 78, 3937, 3135, 1322, 5819, 1461, 4183, 8364, 268663, 4195, 3349, 3554, 2366, 5152, 3522, 3019, 5125, 2137, 1333, 2820, 3291, 240568, 7714, 3491, 2483, 3544, 251365, 5749, 8305, 8737, 5108, 1407, 15124, 1650, 1350, 6376, 4981, 12960, 4894, 4164, 5102, 3088, 8150, 216924, 1671, 13434, 4171, 4878, 3480, 2136, 267000, 3553, 13431, 4172, 1450, 6373, 29537, 190, 4587, 8358, 3160, 6790, 4231, 4558, 5107, 5753, 1670, 13429, 3319, 14844, 3092, 8129, 1315, 4234, 1240, 5106, 6028, 6091, 8360, 3591, 1362, 4885, 3086, 12045, 3933, 3486, 3316, 11116, 8931, 12196, 9179, 4888, 3073, 1339, 207743, 259861, 222684, 4581, 4221, 3953, 2999, 1690, 1341, 3952, 3075, 267001, 1314, 4601, 1213, 3540, 8152, 5170, 9501, 6734, 2388, 4876, 3884, 3331, 3161, 945, 4599, 3022, 3935, 3315, 4167, 3080, 1147, 6738, 3021, 3683, 5129, 5190, 13018, 3317, 1249, 3342, 5812, 4899, 28989, 3592, 6496, 3162, 5140, 1310, 3095, 12776, 7737, 11106, 3590, 29491, 5121, 6027, 8122, 5870, 5156, 959, 9555, 8878, 4233, 6495, 1457, 10380, 3138, 5124, 9099, 5508, 4889, 8117, 11137, 29049, 14481, 3003, 4232, 3547, 3948, 6930, 11103, 32413, 13430, 15353, 203475, 3613, 4571, 4592, 3684, 4570, 6298, 3079, 896, 3882, 32631, 2365, 3705, 5750, 5886, 7731, 9356, 7744, 11118, 3329, 3360, 8118, 4580, 3321, 5126, 262469, 3074, 4560, 29547, 5120, 4240, 14963, 4600, 5155, 1311, 5509, 3588, 218115, 3961, 3330, 15354, 4559, 4175, 4891, 5569, 4043, 4886, 3970, 4177, 3883, 4185, 4875, 4236, 5119, 8121, 15125, 32424, 3959, 7485, 13432, 3089, 4954, 14961, 32403, 3612, 14962, 14964, 252080, 256372, 254151, 253139, 253140, 254695, 256672, 257595, 261313, 255894, 275623, 272435, 256675, 32333, 251997, 256657, 275603, 260343, 275626, 275625, 251975, 271005, 275622, 275598, 251999, 265730, 252040, 251955, 32426, 252083, 252019, 275596, 251976, 28990, 32337, 251973, 252000, 251980, 251981,
+				4554, 14450, 272045, 66, 5494, 4617, 257006, 3027, 1286, 1684, 3005, 1285, 255940, 3367, 268745, 228, 3014, 4562, 3323, 8508, 4585, 3556, 4555, 4574, 12033, 3346, 844, 252380, 3025, 4086, 3410, 1275, 1318, 3614, 843, 5565, 252390, 3482, 5942, 251905, 4561, 214070, 5757, 242498, 271465, 3012, 7683, 265756, 265574, 1257, 5162, 5483, 277, 9087, 3955, 5758, 2118, 251993, 3550, 217689, 5101, 4189, 1298, 2786, 214101, 3682, 5158, 276067, 254089, 251992, 256736, 256384, 4225, 5519, 214096, 3313, 3605, 256400, 5817, 267336, 251537, 257019, 3530, 254358, 3497, 5940, 1309, 257004, 3164, 12246, 253004, 267327, 257020, 251913, 257003, 256389, 1302, 213077, 252376, 4307, 251991, 1351, 10118, 8363, 1347, 1308, 1682, 465, 274, 5783, 257024, 2682, 1692, 256507, 4615, 3405, 6301, 1243, 955, 4265, 5128, 5151, 2679, 3335, 3531, 3490, 3485, 1297, 1321, 1250, 1247, 214098, 1287, 252479, 3954, 958, 3366, 12245, 254360, 8361, 257421, 491, 5122, 3658, 233, 1303, 1325, 3029, 3350, 1465, 258306, 10216, 3528, 3562, 1312, 265575, 1669, 271483, 252388, 216672, 3488, 2697, 3168, 4575, 5163, 2683, 4553, 3537, 3364, 4612, 1441, 2393, 1698, 6731, 3044, 3532, 5110, 4775, 1694, 5848, 214099, 7976, 3369, 3187, 257008, 151, 3348, 3016, 5411, 4194, 267325, 5503, 1313, 1440, 3081, 3489, 3608, 4182, 8362, 3351, 2685, 2381, 167, 2134, 5175, 5748, 1148, 1454, 4305, 267333, 257005, 2265, 257022, 483, 4879, 5100, 5111, 6730, 6367, 267334, 252449, 1691, 4200, 14846, 267324, 4229, 3960, 1456, 3015, 222, 54, 2264, 3483, 8403, 3186, 3159, 267330, 5510, 3368, 8934, 295, 4589, 3533, 264078, 777, 211653, 267328, 1323, 3539, 258568, 5138, 6741, 262471, 4604, 8666, 3178, 9549, 5160, 4169, 226, 8681, 5178, 3413, 5754, 734, 3577, 6740, 1474, 8307, 4610, 152, 251364, 3881, 4897, 6929, 3134, 2383, 4577, 14847, 1668, 4602, 5123, 4896, 3495, 3498, 5816, 3958, 3529, 3499, 267337, 3333, 3314, 829, 1294, 3097, 3090, 6791, 1697, 1448, 5154, 2672, 2668, 4165, 3091, 12043, 9553, 1261, 4220, 2810, 791, 3587, 272437, 4241, 1326, 4453, 5944, 217412, 1289, 6746, 384, 1459, 2135, 3552, 3481, 5611, 3358, 3018, 4892, 2394, 259860, 5132, 1645, 257422, 3548, 267331, 12962, 3400, 3409, 3096, 3166, 16458, 5512, 3072, 2921, 227, 3609, 3361, 10369, 1263, 2113, 1672, 5193, 3334, 2816, 3951, 5188, 960, 6735, 3542, 2115, 4173, 3077, 8665, 3534, 4731, 836, 8137, 4256, 5133, 3133, 4083, 258, 3322, 790, 3561, 3076, 5191, 3163, 14637, 6576, 4216, 3411, 258548, 2117, 894, 3934, 5688, 3078, 2357, 3479, 3356, 4228, 1349, 2116, 2481, 6300, 225, 2698, 793, 3002, 222261, 13699, 1469, 1685, 1214, 4203, 5620, 5514, 4168, 4188, 6739, 5698, 2401, 7564, 8398, 3053, 5169, 13433, 1291, 3578, 2812, 251965, 3165, 2352, 3610, 2832, 1198, 4235, 1678, 5103, 1452, 8401, 3477, 6928, 1301, 789, 4186, 268238, 271480, 1460, 3167, 8359, 14480, 1673, 259863, 6374, 258572, 4266, 3158, 271478, 3956, 7733, 4590, 2997, 3487, 954, 3536, 4730, 3010, 13420, 208920, 222685, 1320, 3518, 5189, 4230, 2046, 258415, 271006, 1462, 4181, 1238, 3493, 13436, 3962, 4187, 6747, 3589, 1381, 1295, 1299, 272646, 2684, 2819, 4191, 4569, 1687, 6328, 2397, 4170, 1463, 259962, 14860, 4223, 5820, 3085, 4556, 1273, 6736, 6574, 13418, 260560, 5871, 12031, 4085, 5520, 9551, 9676, 3177, 3492, 216902, 7978, 258466, 2140, 28776, 1104, 8139, 4877, 12028, 5049, 5109, 3551, 3541, 14845, 4192, 4259, 4226, 3572, 3180, 3093, 6737, 1305, 1237, 2821, 13435, 3359, 74, 4190, 4557, 2814, 4603, 12027, 2808, 11287, 1319, 258463, 1304, 956, 3020, 4082, 1348, 1324, 6727, 6272, 7736, 1686, 372, 3017, 2380, 2364, 3543, 4597, 5821, 2669, 3023, 1149, 1146, 4222, 8404, 3611, 4084, 1453, 3969, 5112, 1464, 5814, 252020, 78, 3937, 3135, 1322, 5819, 1461, 4183, 8364, 268663, 4195, 3349, 3554, 2366, 5152, 3522, 3019, 5125, 2137, 1333, 2820, 3291, 240568, 7714, 3491, 2483, 3544, 251365, 5749, 8305, 8737, 5108, 1407, 15124, 1650, 1350, 6376, 4981, 12960, 4894, 4164, 5102, 3088, 8150, 216924, 1671, 13434, 4171, 4878, 3480, 2136, 267000, 3553, 13431, 4172, 1450, 6373, 29537, 190, 4587, 8358, 3160, 6790, 4231, 4558, 5107, 5753, 1670, 13429, 3319, 14844, 3092, 8129, 1315, 4234, 1240, 5106, 6028, 6091, 8360, 3591, 1362, 4885, 3086, 12045, 3933, 3486, 3316, 11116, 8931, 12196, 9179, 4888, 3073, 1339, 207743, 259861, 222684, 4581, 4221, 3953, 2999, 1690, 1341, 3952, 3075, 267001, 1314, 4601, 1213, 3540, 8152, 5170, 9501, 6734, 2388, 4876, 3884, 3331, 3161, 945, 4599, 3022, 3935, 3315, 4167, 3080, 1147, 6738, 3021, 3683, 5129, 5190, 13018, 3317, 1249, 3342, 5812, 4899, 28989, 3592, 6496, 3162, 5140, 1310, 3095, 12776, 7737, 11106, 3590, 29491, 5121, 6027, 8122, 5870, 5156, 959, 9555, 8878, 4233, 6495, 1457, 10380, 3138, 5124, 9099, 5508, 4889, 8117, 11137, 29049, 14481, 3003, 4232, 3547, 3948, 6930, 11103, 32413, 13430, 15353, 203475, 3613, 4571, 4592, 3684, 4570, 6298, 3079, 896, 3882, 32631, 2365, 3705, 5750, 5886, 7731, 9356, 7744, 11118, 3329, 3360, 8118, 4580, 3321, 5126, 262469, 3074, 4560, 29547, 5120, 4240, 14963, 4600, 5155, 1311, 5509, 3588, 218115, 3961, 3330, 15354, 4559, 4175, 4891, 5569, 4043, 4886, 3970, 4177, 3883, 4185, 4875, 4236, 5119, 8121, 15125, 32424, 3959, 7485, 13432, 3089, 4954, 14961, 32403, 3612, 14962, 14964, 252080, 256372, 254151, 253139, 253140, 254695, 256672, 257595, 261313, 255894, 275623, 272435, 256675, 32333, 251997, 256657, 275603, 260343, 275626, 275625, 251975, 271005, 275622, 275598, 251999, 265730, 252040, 251955, 32426, 252083, 252019, 275596, 251976, 28990, 32337, 251973, 252000, 251980, 251981, 5695, 256742, 4963,
 
 				-- Vendor Level 41-200 (https://www.wowhead.com/forever/npcs/min-level:41/max-level:200?filter=29;1;0)
 				248201, 248197, 256734, 256730, 14754, 14753, 256735, 248202, 233428, 248199, 227853, 263570, 233335, 264797, 4217, 263384, 256732, 2626, 340, 256733, 2934, 248200, 214954, 2805, 256729, 3682, 248196, 6779, 248198, 13476, 15078, 247226, 12792, 12943, 11557, 14581, 14301, 12782, 11036, 247227, 12777, 5173, 12944, 9499, 2664, 230319, 11189, 5594, 256731, 14322, 230317, 12805, 15127, 13278, 240248, 255897, 6777, 1307, 240654, 4047, 32287, 6382, 12919, 265576, 8125, 15126, 13219, 14921, 10667, 12799, 14740, 11278, 13217, 7854, 16376, 13216, 13698, 12022, 14624, 2699, 10618, 2670, 11555, 2663, 5139, 2848, 13218, 2482, 989, 15734, 6548, 7947, 7775, 15419, 8679, 12942, 11536, 2688, 6568, 2839, 12783, 10856, 2806, 11188, 11874, 2084, 12384, 12795, 15179, 260570, 15282, 240604, 260487, 10361, 8161, 2843, 7955, 3779, 4782, 260559, 14738, 15176, 12957, 12958, 255895, 15736, 7852, 983, 1316, 10857, 2846, 2480, 230565, 16256, 14731, 3362, 3625, 9544, 10379, 12021, 2687, 15012, 2803, 12959, 8145, 12096, 15864, 9552, 15174, 7940, 2908, 3685, 2303, 11056, 12793, 11038, 12941, 1695, 15199, 240633, 8131, 1328, 11703, 4890, 222687, 255151, 16015, 12956, 11057, 4255, 3708, 260565, 2849, 15011, 1296, 12097, 235164, 6567, 11187, 6807, 12781, 984, 2842, 7942, 3298, 1471, 2847, 2840, 222408, 240631, 14437, 980, 8678, 9636, 5815, 3689, 4257, 15315, 12029, 8160, 14736, 240632, 11185, 8158, 259766, 240607, 260566, 3000, 5134, 43411, 8143, 241664, 12024, 2622, 5135, 3500, 17070, 12784, 14739, 11182, 14737, 11184, 238376, 17068, 15197, 4180, 2845, 7943, 2844, 15175, 15471, 14522, 7952, 9548, 15006, 981, 12023, 8157, 15898, 8178, 12796, 8177, 12785, 8159, 2225, 3546, 10293, 241663, 3621, 12026, 10364, 222413, 4884, 12019, 14337, 4184, 230566, 4883, 222686, 10367, 12794, 982, 2838, 8176, 3343, 241019, 11186, 17598, 7945, 243855, 5570, 7879, 14371, 4893, 11183, 12807, 7941, 242183, 3700, 7772, 3312, 243815, 8116, 277945, 263569, 263230, 265346, 265577, 5398, 265347, 263440, 248809, 270545, 244512,
@@ -5249,7 +6227,7 @@
 				347, 3890, 12198, 14981, 15106, 10360, 15007, 857, 2804, 2302, 15006, 12197, 14942, 907, 15008, 7410, 14990, 14991, 7427, 15105, 15102, 14982, 5118, 15103, 263645, 268048, 263349, 268047, 263643, 263647, 263646,
 
 				-- LeaPlusLC.NewPatch - Class trainer (https://www.wowhead.com/forever/npcs?filter=24;1;0)
-				4217, 258098, 5504, 4568, 3032, 3033, 4606, 5497, 5491, 5515, 260093, 5165, 3401, 5885, 4219, 4218, 3344, 928, 914, 5115, 4607, 461, 5149, 376, 3036, 6018, 4582, 5505, 5173, 3407, 11406, 3352, 5148, 3038, 3044, 13417, 7311, 5479, 3408, 5116, 918, 3041, 5498, 3326, 5144, 5492, 5480, 5496, 4563, 4092, 3047, 4087, 5142, 5489, 5883, 3354, 5147, 5172, 3327, 5506, 5117, 5516, 5882, 3030, 3324, 3040, 4595, 7315, 4205, 3039, 4163, 5113, 11401, 4565, 3403, 3353, 3045, 3049, 6014, 3328, 3034, 3031, 5495, 7312, 3046, 10881, 4593, 1901, 5114, 4584, 4146, 3406, 4608, 13283, 4564, 5484, 331, 4583, 5171, 3043, 4594, 4567, 3048, 4091, 3325, 5994, 5166, 5143, 4566, 5167, 5145, 3042, 4089, 10879, 252359, 258785, 254411, 10880, 4214, 2198, 10878,
+				4217, 258098, 5504, 4568, 3032, 3033, 4606, 5497, 5491, 5515, 260093, 5165, 3401, 5885, 4219, 4218, 3344, 928, 914, 5115, 4607, 461, 5149, 376, 3036, 6018, 4582, 5505, 5173, 3407, 11406, 3352, 5148, 3038, 3044, 13417, 7311, 5479, 3408, 5116, 918, 3041, 5498, 3326, 5144, 5492, 5480, 5496, 4563, 4092, 3047, 4087, 5142, 5489, 5883, 3354, 5147, 5172, 3327, 5506, 5117, 5516, 5882, 3030, 3324, 3040, 4595, 7315, 4205, 3039, 4163, 5113, 11401, 4565, 3403, 3353, 3045, 3049, 6014, 3328, 3034, 3031, 5495, 7312, 3046, 10881, 4593, 1901, 5114, 4584, 4146, 3406, 4608, 13283, 4564, 5484, 331, 4583, 5171, 3043, 4594, 4567, 3048, 4091, 3325, 5994, 5166, 5143, 4566, 5167, 5145, 3042, 4089, 10879, 252359, 258785, 254411, 10880, 4214, 2198, 10878, 4090, 10088,
 
 				-- Miscellaneous
 				132969,	-- Katy Stampwhistle (toy)
@@ -6552,6 +7530,11 @@
 				glowSync:SetShown(roundGlow:IsShown())
 			end
 
+			-- Used by class colored frames (chain and rest glow in class color)
+			LeaPlusLC.PlayerChainTextures = {modernChain, classicChain}
+			LeaPlusLC.PlayerRoundGlow = roundGlow
+			LeaPlusLC.UpdateRoundGlow = UpdateRoundGlow
+
 			-- Keep in sync with Blizzard's updates
 			hooksecurefunc("PlayerFrame_UpdateStatus", UpdateRoundGlow) -- Resting/combat color and visibility
 			hooksecurefunc("PlayerFrame_ToPlayerArt", UpdateModernGlow) -- Blizzard resets the glow anchor here
@@ -6576,6 +7559,7 @@
 				end
 				UpdateModernGlow()
 				UpdateRoundGlow()
+				if LeaPlusLC.UpdateChainColor then LeaPlusLC.UpdateChainColor() end -- Class colored frames
 			end
 
 			----------------------------------------------------------------------
@@ -6667,25 +7651,161 @@
 			PlayFN:ClearAllPoints()
 			PlayFN:SetPoint("TOPLEFT", 75, -25)
 
+			-- Make the name background end where the health bar ends, like the target frame (on Forever the fixed size above
+			-- stops short of the end of the player name box). A frame of our own takes the left and top from the position above
+			-- and the right from the health bar, and the name background takes its width from that frame.
+			do
+				local main = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain
+				local healthBar = PlayerFrame.healthbar or (PlayerFrame_GetHealthBar and PlayerFrame_GetHealthBar()) or (main.HealthBarsContainer and main.HealthBarsContainer.HealthBar)
+				if healthBar then
+					local nameArea = CreateFrame("Frame", nil, PlayerFrame.PlayerFrameContent.PlayerFrameContentMain)
+					nameArea:SetPoint("TOPLEFT", PlayerFrame.PlayerFrameContent.PlayerFrameContentMain, "TOPLEFT", 75, -25)
+					nameArea:SetPoint("BOTTOMRIGHT", healthBar, "TOPRIGHT", 0, 0)
+					-- The name background fills the name box down to the health bar, like the target frame (the frame border
+					-- covers the bottom edge)
+					PlayFN:ClearAllPoints()
+					PlayFN:SetPoint("TOPLEFT", nameArea, "TOPLEFT", 0, 0)
+					PlayFN:SetPoint("BOTTOMRIGHT", nameArea, "BOTTOMRIGHT", 0, 0)
+					-- The art has an empty strip at one end (hidden under the frame edge on the target frame), which is on the
+					-- right once the art is flipped for the player frame, and an empty part at the bottom, so both are cut off
+					-- (the art is still flipped)
+					PlayFN:SetTexCoord(1, 0.06, 0, 0.68)
+				end
+			end
+
 			local c = LeaPlusLC["RaidColors"][select(2, UnitClass("player"))]
 			if c then PlayFN:SetVertexColor(c.r, c.g, c.b) end
 
+			-- Function to tint frame border (desaturate first so the gold does not mix with the class color)
+			local function TintFrameBorder(tex, col)
+				if not tex then return end
+				if col then
+					tex:SetDesaturated(true)
+					tex:SetVertexColor(col.r, col.g, col.b)
+				else
+					tex:SetDesaturated(false)
+					tex:SetVertexColor(1, 1, 1)
+				end
+			end
+
+			-- Function to set player frame border color
+			local function PlayerBorderCol()
+				local col = LeaPlusLC["ClassColPlayerBorder"] == "On" and c or nil
+				TintFrameBorder(PlayerFrame.PlayerFrameContainer.FrameTexture, col)
+				TintFrameBorder(PlayerFrame.PlayerFrameContainer.AlternatePowerFrameTexture, col)
+				TintFrameBorder(PlayerFrame.PlayerFrameContent.PlayerFrameContentContextual.PlayerPortraitCornerIcon, col)
+			end
+
+			-- Refresh player frame border color when player frame art is changed (such as leaving a vehicle)
+			if PlayerFrame_ToPlayerArt then
+				hooksecurefunc("PlayerFrame_ToPlayerArt", function()
+					if LeaPlusLC["ClassColPlayerBorder"] == "On" then
+						PlayerBorderCol()
+					end
+				end)
+			end
+
+			-- Function to set the round rest glow color (used by classic chains, it copies the color of the resting glow)
+			local restTinted
+			local function RoundGlowCol()
+				local glow = LeaPlusLC.PlayerRoundGlow
+				if not glow then return end
+				if restTinted and c then
+					glow:SetDesaturated(true)
+					glow:SetVertexColor(c.r, c.g, c.b)
+				else
+					glow:SetDesaturated(false)
+					if LeaPlusLC.UpdateRoundGlow then LeaPlusLC.UpdateRoundGlow() end -- Copy the resting or combat glow color again
+				end
+			end
+
+			-- Function to set player frame resting glow color (resting glow only, combat glow stays red)
+			local function RestGlowCol()
+				local st = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.StatusTexture
+				if not st then return end
+				if LeaPlusLC["ClassColPlayerBorder"] == "On" and c then
+					local r, g, b = st:GetVertexColor()
+					if issecretvalue and issecretvalue(g) then return end
+					if restTinted or g > 0.5 then
+						-- Resting glow (Blizzard gold or already tinted)
+						st:SetDesaturated(true)
+						st:SetVertexColor(c.r, c.g, c.b)
+						restTinted = true
+					end
+				elseif restTinted then
+					-- Option turned off so restore Blizzard resting glow
+					st:SetDesaturated(false)
+					st:SetVertexColor(1.0, 0.88, 0.25, 1.0)
+					restTinted = nil
+				end
+				RoundGlowCol()
+			end
+
+			-- Refresh resting glow color after Blizzard sets it
+			if PlayerFrame_UpdateStatus then
+				hooksecurefunc("PlayerFrame_UpdateStatus", function()
+					if LeaPlusLC["ClassColPlayerBorder"] == "On" and c then
+						local st = PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.StatusTexture
+						if not st then return end
+						local r, g, b = st:GetVertexColor()
+						if issecretvalue and issecretvalue(g) then return end
+						if g > 0.5 then
+							-- Blizzard set resting glow
+							st:SetDesaturated(true)
+							st:SetVertexColor(c.r, c.g, c.b)
+							restTinted = true
+						else
+							-- Blizzard set combat glow
+							st:SetDesaturated(false)
+							restTinted = nil
+						end
+						RoundGlowCol()
+					end
+				end)
+			end
+
+			-- Function to set player chain color (Forever has modern and classic chains, given by show player chain if enabled)
+			local function ChainCol()
+				local chains = LeaPlusLC.PlayerChainTextures
+				if not chains then return end
+				for i, chainTex in ipairs(chains) do
+					if LeaPlusLC["ClassColChain"] == "On" and c then
+						chainTex:SetDesaturated(true)
+						chainTex:SetVertexColor(c.r, c.g, c.b)
+					else
+						chainTex:SetDesaturated(false)
+						chainTex:SetVertexColor(1, 1, 1, 1)
+					end
+				end
+			end
+
+			-- Refresh player chain color when the chain style is changed
+			LeaPlusLC.UpdateChainColor = ChainCol
+
 			-- Create color function for target and focus frames
 			local function TargetFrameCol()
+				local targetCol, focusCol
 				if UnitIsPlayer("target") then
 					local void, target = UnitClass("target")
 					if canaccessvalue(target) then
-						local c = LeaPlusLC["RaidColors"][target]
-						if c then TargetFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor:SetVertexColor(c.r, c.g, c.b) end
+						targetCol = LeaPlusLC["RaidColors"][target]
 					end
 				end
 				if UnitIsPlayer("focus") then
 					local void, focus = UnitClass("focus")
 					if canaccessvalue(focus) then
-						local c = LeaPlusLC["RaidColors"][focus]
-						if c then FocusFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor:SetVertexColor(c.r, c.g, c.b) end
+						focusCol = LeaPlusLC["RaidColors"][focus]
 					end
 				end
+				-- Name backgrounds
+				if LeaPlusLC["ClassColTarget"] == "On" then
+					if targetCol then TargetFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor:SetVertexColor(targetCol.r, targetCol.g, targetCol.b) end
+					if focusCol then FocusFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor:SetVertexColor(focusCol.r, focusCol.g, focusCol.b) end
+				end
+				-- Frame borders
+				local borderOn = LeaPlusLC["ClassColTargetBorder"] == "On"
+				TintFrameBorder(TargetFrame.TargetFrameContainer.FrameTexture, borderOn and targetCol or nil)
+				TintFrameBorder(FocusFrame.TargetFrameContainer.FrameTexture, borderOn and focusCol or nil)
 			end
 
 			local ColTar = CreateFrame("FRAME")
@@ -6694,7 +7814,7 @@
 			-- Refresh color if focus frame size changes
 			if FocusFrame_SetSmallSize then
 				hooksecurefunc(FocusFrame, "SetSmallSize", function()
-					if LeaPlusLC["ClassColTarget"] == "On" then
+					if LeaPlusLC["ClassColTarget"] == "On" or LeaPlusLC["ClassColTargetBorder"] == "On" then
 						TargetFrameCol()
 					end
 				end)
@@ -6703,9 +7823,14 @@
 			-- Create configuration panel
 			local ClassFrame = LeaPlusLC:CreatePanel("Class colored frames", "ClassFrame")
 
-			LeaPlusLC:MakeTx(ClassFrame, "Settings", 16, -72)
-			LeaPlusLC:MakeCB(ClassFrame, "ClassColPlayer", "Show player frame in class color", 16, -92, false, "If checked, the player frame background will be shown in class color.")
-			LeaPlusLC:MakeCB(ClassFrame, "ClassColTarget", "Show target frame and focus frame in class color", 16, -112, false, "If checked, the target frame background and focus frame background will be shown in class color.")
+			LeaPlusLC:MakeTx(ClassFrame, "Player frame", 16, -72)
+			LeaPlusLC:MakeCB(ClassFrame, "ClassColPlayer", "Show player name background in class color", 16, -92, false, "If checked, the background behind the player name will be shown in class color.")
+			LeaPlusLC:MakeCB(ClassFrame, "ClassColPlayerBorder", "Show player frame border in class color", 16, -112, false, "If checked, the player frame border including the ring around the portrait will be shown in class color.")
+			LeaPlusLC:MakeCB(ClassFrame, "ClassColChain", "Show player chain in class color", 16, -132, false, "If checked, the player chain will be shown in class color.|n|nThis requires the show player chain option to be enabled.")
+
+			LeaPlusLC:MakeTx(ClassFrame, "Target and focus frames", 16, -172)
+			LeaPlusLC:MakeCB(ClassFrame, "ClassColTarget", "Show target and focus name background in class color", 16, -192, false, "If checked, the background behind the target name and focus name will be shown in class color.")
+			LeaPlusLC:MakeCB(ClassFrame, "ClassColTargetBorder", "Show target and focus frame border in class color", 16, -212, false, "If checked, the target frame border and focus frame border including the ring around the portrait will be shown in class color.")
 
 			-- Help button hidden
 			ClassFrame.h:Hide()
@@ -6724,8 +7849,15 @@
 				else
 					PlayFN:Hide()
 				end
+				PlayerBorderCol()
+				RestGlowCol()
+				ChainCol()
 				-- Target and focus frames
-				if LeaPlusLC["ClassColTarget"] == "On" then
+				if LeaPlusLC["ClassColTarget"] ~= "On" then
+					TargetFrame.CheckFaction(TargetFrame) -- Reset target frame colors
+					TargetFrame.CheckFaction(FocusFrame) -- Reset focus frame colors
+				end
+				if LeaPlusLC["ClassColTarget"] == "On" or LeaPlusLC["ClassColTargetBorder"] == "On" then
 					ColTar:RegisterEvent("GROUP_ROSTER_UPDATE")
 					ColTar:RegisterEvent("PLAYER_TARGET_CHANGED")
 					ColTar:RegisterEvent("PLAYER_FOCUS_CHANGED")
@@ -6733,14 +7865,17 @@
 					TargetFrameCol()
 				else
 					ColTar:UnregisterAllEvents()
-					TargetFrame.CheckFaction(TargetFrame) -- Reset target frame colors
-					TargetFrame.CheckFaction(FocusFrame) -- Reset focus frame colors
+					TintFrameBorder(TargetFrame.TargetFrameContainer.FrameTexture, nil) -- Reset target frame border
+					TintFrameBorder(FocusFrame.TargetFrameContainer.FrameTexture, nil) -- Reset focus frame border
 				end
 			end
 
 			-- Run function when options are clicked and on startup
 			LeaPlusCB["ClassColPlayer"]:HookScript("OnClick", SetClassColFrames)
 			LeaPlusCB["ClassColTarget"]:HookScript("OnClick", SetClassColFrames)
+			LeaPlusCB["ClassColPlayerBorder"]:HookScript("OnClick", SetClassColFrames)
+			LeaPlusCB["ClassColTargetBorder"]:HookScript("OnClick", SetClassColFrames)
+			LeaPlusCB["ClassColChain"]:HookScript("OnClick", SetClassColFrames)
 			SetClassColFrames()
 
 			-- Reset button handler
@@ -6749,6 +7884,9 @@
 				-- Reset checkboxes
 				LeaPlusLC["ClassColPlayer"] = "On"
 				LeaPlusLC["ClassColTarget"] = "On"
+				LeaPlusLC["ClassColPlayerBorder"] = "Off"
+				LeaPlusLC["ClassColTargetBorder"] = "Off"
+				LeaPlusLC["ClassColChain"] = "Off"
 
 				-- Update colors and refresh configuration panel
 				SetClassColFrames()
@@ -6762,6 +7900,9 @@
 					-- Preset profile
 					LeaPlusLC["ClassColPlayer"] = "On"
 					LeaPlusLC["ClassColTarget"] = "On"
+					LeaPlusLC["ClassColPlayerBorder"] = "Off"
+					LeaPlusLC["ClassColTargetBorder"] = "Off"
+					LeaPlusLC["ClassColChain"] = "Off"
 					SetClassColFrames()
 				else
 					ClassFrame:Show()
@@ -8179,6 +9320,34 @@
 				end
 			end)
 
+			-- Apply the main chat window font size to the guild and community chat (and GM chat)
+			-- Blizzard only copies it when the communities addon loads or when a size is chosen from the menu,
+			-- so if the communities addon loads before saved chat sizes are applied at login, it keeps the default size
+			local function SyncCommunityChatFont()
+				if not DEFAULT_CHAT_FRAME then return end
+				local void, fontSize = FCF_GetChatWindowInfo(DEFAULT_CHAT_FRAME:GetID())
+				if not fontSize or fontSize <= 0 then return end
+				local fontFile, void, fontFlags = DEFAULT_CHAT_FRAME:GetFont()
+				if not fontFile then return end
+				if CommunitiesFrame and CommunitiesFrame.Chat and CommunitiesFrame.Chat.MessageFrame then
+					CommunitiesFrame.Chat.MessageFrame:SetFont(fontFile, fontSize, fontFlags)
+				end
+				if GMChatFrame then
+					GMChatFrame:SetFont(fontFile, fontSize, fontFlags)
+				end
+			end
+
+			local fontSyncFrame = CreateFrame("FRAME")
+			fontSyncFrame:RegisterEvent("UPDATE_CHAT_WINDOWS")
+			fontSyncFrame:RegisterEvent("ADDON_LOADED")
+			fontSyncFrame:SetScript("OnEvent", function(self, event, addonName)
+				if event == "ADDON_LOADED" and addonName ~= "Blizzard_Communities" and addonName ~= "Blizzard_GMChatUI" then return end
+				SyncCommunityChatFont()
+			end)
+
+			-- Apply now in case chat sizes were already applied before this ran
+			SyncCommunityChatFont()
+
 		end
 
 		----------------------------------------------------------------------
@@ -8265,7 +9434,7 @@
 			SetExcludeButtonsFunc()
 
 			-- Add effects dropdown
-			LeaPlusLC:CreateDropdown("MinimapEffect", "Visual effect", 150, "TOPLEFT", SideMinimap, "TOPLEFT", 356, -92, false, {{L["None"], 1}, {L["Arcane Orbit"], 2}, {L["Rune Ward"], 3}, {L["Vortex"], 4}, {L["Inferno"], 5}, {L["Snow Globe"], 6}, {L["Storm"], 7}, {L["Corona"], 8}, {L["Aurora"], 9}, {L["Starfield"], 10}, {L["Chronometer"], 11}, {L["Heartbeat"], 12}, {L["Fireworks"], 13}, {L["Crystals"], 14}, {L["Neon"], 15}, {L["Marquee"], 16}, {L["Glitch"], 17}, {L["Lava"], 18}, {L["Fuse"], 19}, {L["Digital Rain"], 20}, {L["Prism"], 21}, {L["Candy Party"], 22}})
+			LeaPlusLC:CreateDropdown("MinimapEffect", "Visual effect", 150, "TOPLEFT", SideMinimap, "TOPLEFT", 356, -92, false, {{L["None"], 1}, {L["Arcane"], 2}, {L["Rune"], 3}, {L["Vortex"], 4}, {L["Inferno"], 5}, {L["Snow"], 6}, {L["Storm"], 7}, {L["Corona"], 8}, {L["Aurora"], 9}, {L["Starfield"], 10}, {L["Chronometer"], 11}, {L["Heartbeat"], 12}, {L["Fireworks"], 13}, {L["Crystals"], 14}, {L["Neon"], 15}, {L["Marquee"], 16}, {L["Glitch"], 17}, {L["Lava"], 18}, {L["Fuse"], 19}, {L["Rain"], 20}, {L["Prism"], 21}, {L["Candy"], 22}, {L["Rainbow"], 23}, {L["Fireflies"], 24}, {L["Synthwave"], 25}, {L["Collider"], 26}, {L["Bubbles"], 27}, {L["Acid"], 28}, {L["Shadow"], 29}, {L["Radar"], 30}, {L["Tesla"], 31}, {L["Meteor"], 32}, {L["Tube"], 33}})
 
 			LeaPlusLC:MakeTx(SideMinimap, "Border width", 356, -142)
 			LeaPlusLC:MakeSL(SideMinimap, "MinimapBorderWidth", "Drag to set the square minimap border width.", 1, 10, 1, 356, -152, "%.0f")
@@ -9558,104 +10727,17 @@
 			-- Minimum time difference (in seconds) to flight data entry before flight report window is shown
 			local timeBuffer = 15
 
-			-- Create editbox
-			local editFrame = CreateFrame("ScrollFrame", nil, UIParent, "LeaPlusShowFlightTimesScrollFrameTemplate")
-
-			-- Set frame parameters
-			editFrame:ClearAllPoints()
-			editFrame:SetPoint("BOTTOM", 0, 130)
-			editFrame:SetSize(600, 420)
-			editFrame:SetFrameStrata("MEDIUM")
-			editFrame:SetToplevel(true)
-			editFrame:Hide()
-
-			-- Add background color
-			editFrame.t = editFrame:CreateTexture(nil, "BACKGROUND")
-			editFrame.t:SetAllPoints()
-			editFrame.t:SetColorTexture(0.00, 0.00, 0.0, 0.6)
-
-			-- Create title bar
-			local titleFrame = CreateFrame("Frame", nil, editFrame)
-			titleFrame:ClearAllPoints()
-			titleFrame:SetPoint("TOP", 0, 24)
-			titleFrame:SetSize(600, 24)
-			titleFrame:SetFrameStrata("MEDIUM")
-			titleFrame:SetToplevel(true)
-			titleFrame:SetHitRectInsets(-6, -6, -6, -6)
-			titleFrame.t = titleFrame:CreateTexture(nil, "BACKGROUND")
-			titleFrame.t:SetAllPoints()
-			titleFrame.t:SetColorTexture(0.00, 0.00, 0.0, 0.8)
-
-			-- Add title
-			titleFrame.m = titleFrame:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
-			titleFrame.m:SetPoint("LEFT", 4, 0)
-			titleFrame.m:SetText(L["Leatrix Plus"])
-			titleFrame.m:SetFont(titleFrame.m:GetFont(), 16, nil)
-
-			-- Add right-click to close message
-			titleFrame.x = titleFrame:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
-			titleFrame.x:SetPoint("RIGHT", -4, 0)
-			titleFrame.x:SetText(L["Right-click to close"])
-			titleFrame.x:SetFont(titleFrame.x:GetFont(), 16, nil)
-			titleFrame.x:SetWidth(600 - titleFrame.m:GetStringWidth() - 30)
-			titleFrame.x:SetWordWrap(false)
-			titleFrame.x:SetJustifyH("RIGHT")
-
-			-- Create editbox
-			local editBox = CreateFrame("EditBox", nil, editFrame)
-			editBox:SetAltArrowKeyMode(false)
-			editBox:SetTextInsets(4, 4, 4, 4)
-			editBox:SetWidth(editFrame:GetWidth() - 30)
-			editBox:SetSecurityDisablePaste()
-			editBox:SetFont(_G["ChatFrame1"]:GetFont())
-			editBox:SetMaxLetters(0)
-			editBox:SetMultiLine(true)
-
-			editFrame:SetScrollChild(editBox)
-
-			local introMsg = L["Thank you for helping the community by contributing missing or incorrect flight times for Leatrix Plus.|n|nPress CTRL/C to copy the flight details below then paste them into a comment on the Leatrix Plus page on CurseForge so that the addon can be updated."] .. "|n|n" .. L["https://www.curseforge.com/wow/addons/leatrix-plus/comments"] .. "|n|n"
-			local startHighlight = string.len(introMsg)
-
-			local function DoHighlight()
-				editBox:HighlightText(startHighlight)
-			end
-
-			editBox:SetScript("OnEscapePressed", DoHighlight)
-			editBox:SetScript("OnEnterPressed", DoHighlight)
-			editBox:SetScript("OnMouseUp", DoHighlight)
-			editBox:HookScript("OnShow", function()
-				editBox:SetFocus(); DoHighlight()
-			end)
-
-			-- Close frame with right-click of editframe or editbox
-			local function CloseFlightReportWindow(self, btn)
-				if btn and btn == "RightButton" then
-					editBox:SetText("")
-					editBox:ClearFocus()
-					editFrame:Hide()
-				end
-			end
-
-			editFrame:SetScript("OnMouseDown", CloseFlightReportWindow)
-			editBox:SetScript("OnMouseDown", CloseFlightReportWindow)
-			titleFrame:HookScript("OnMouseDown", CloseFlightReportWindow)
-
-			-- Disable text changes while still allowing editing controls to work
-			editBox:EnableKeyboard(false)
-			editBox:SetScript("OnKeyDown", function() end)
-
-			-- Debug (uncomment to show flight report window test)
-			-- editBox:SetText(introMsg .. "Flight details (Classic Era): Nesingwary Base Camp (0.18:0.40) to Conquest Hold (0.70:0.55) (Horde) took 690 seconds (5 hop)." .. "|n|n" .. "[" .. '"' .. "0.18:0.40:0.24:0.40:0.52:0.38:0.54:0.52:0.59:0.55:0.70:0.55" .. '"' .. "] = 690, -- Nesingwary Base Camp, River's Heart, Dalaran, Wyrmrest Temple, Venomspite, Conquest Hold|n|nThis flight does not exist in the database."); editFrame:Show()
-
-			-- Load LibCandyBar
-			Leatrix_Plus:LeaPlusCandyBar()
+			----------------------------------------------------------------------
+			-- Route lookup
+			----------------------------------------------------------------------
 
 			-- Variables
 			local data = Leatrix_Plus["FlightData"]
-			local candy = LibStub("LibCandyBar-3.0")
-			local texture = "Interface\\TargetingFrame\\UI-StatusBar"
 			local flightFrame = CreateFrame("FRAME")
 			LeaPlusLC.flightFrame = flightFrame
+
+			-- Cache functions used while flying
+			local GetTime, UnitOnTaxi, format, floor, ceil, max = GetTime, UnitOnTaxi, string.format, math.floor, math.ceil, math.max
 
 			-- Set game title as shown in incorrect flight details window
 			local gameTitle = L["Forever"]
@@ -9676,328 +10758,781 @@
 				end
 			end
 
+			-- Function to get the flight data for the current continent
+			local function GetContinentData()
+				local continent = getContinent()
+				return continent and data[faction] and data[faction][continent]
+			end
+
 			-- Function to get node name
 			local function GetNodeName(i)
 				return strmatch(TaxiNodeName(i), "[^,]+")
 			end
 
-			-- Show progress bar when flight is taken
-			hooksecurefunc("TakeTaxiNode", function(node)
-				if UnitAffectingCombat("player") then return end
-				if editFrame:IsShown() then editFrame:Hide() end
+			-- Function to get the node the player is standing at
+			local function GetCurrentNode()
 				for i = 1, NumTaxiNodes() do
-					local nodeType = TaxiNodeGetType(i)
-					local nodeName = GetNodeName(i)
-					if nodeType == "CURRENT" then
-
-						-- Get current node
-						local continent = getContinent()
-						local startX, startY = TaxiNodePosition(i)
-						local currentNode = string.format("%0.2f", startX) .. ":" .. string.format("%0.2f", startY)
-
-						-- Get flight duration and start the progress timer
-						local endX, endY = TaxiNodePosition(node)
-						local destination = string.format("%0.2f", endX) .. ":" .. string.format("%0.2f", endY)
-						local barName = GetNodeName(node)
-
-						-- Assign file level scope to destination (it's used for removing bar name)
-						LeaPlusLC.FlightDestination = barName
-
-						-- Build route string and debug string
-						local numHops = GetNumRoutes(node)
-						local debugString = '["' .. currentNode
-						local routeString = currentNode
-						for i = 2, numHops + 1 do
-							local hopPosX, hopPosY = TaxiNodePosition(TaxiGetNodeSlot(node, i, true))
-							local hopPos = string.format("%0.2f", hopPosX) .. ":" .. string.format("%0.2f", hopPosY)
-							local fpName = string.split(", ", TaxiNodeName(TaxiGetNodeSlot(node, i, true)))
-							debugString = debugString .. ":" .. hopPos
-							routeString = routeString .. ":" .. hopPos
-						end
-
-						-- If route string does not contain destination, add it to the end (such as Altar of Sha'tar)
-						if not string.find(routeString, destination) then
-							debugString = debugString .. ":" .. destination
-							routeString = routeString .. ":" .. destination
-						end
-
-						-- Flights with variable durations (flagged as 0) have no bar and no report popup
-						if data[faction] and data[faction][continent] and data[faction][continent][routeString] == 0 then
-							flightFrame:UnregisterEvent("PLAYER_CONTROL_GAINED")
-							if LeaPlusLC.FlightProgressBar then
-								LeaPlusLC.FlightProgressBar:Stop()
-								LeaPlusLC.FlightProgressBar = nil
-							end
-							return
-						end
-
-						debugString = debugString .. '"] = TimeTakenPlaceHolder,'
-						debugString = debugString .. " -- " .. nodeName
-						for i = 2, numHops + 1 do
-							local fpName = string.split(",", TaxiNodeName(TaxiGetNodeSlot(node, i, true)))
-							debugString = debugString .. ", " .. fpName
-						end
-
-						-- If debug string does not contain destination, add it to the end
-						if not string.find(debugString, barName) then
-							debugString = debugString .. ", " .. barName
-						end
-
-						-- Handle flight time not correct or flight does not exist in database
-						local timeStart = GetTime()
-						local frequentFlier = HasFrequentFlier()
-						C_Timer.After(1, function()
-							if UnitOnTaxi("player") then
-								-- Player is on a taxi so register when taxi lands
-								flightFrame:RegisterEvent("PLAYER_CONTROL_GAINED")
-							else
-								-- Player is not on a taxi so delete the flight progress bar
-								flightFrame:UnregisterEvent("PLAYER_CONTROL_GAINED")
-								if LeaPlusLC.FlightProgressBar then
-									LeaPlusLC.FlightProgressBar:Stop()
-									LeaPlusLC.FlightProgressBar = nil
-								end
-							end
-						end)
-						flightFrame:SetScript("OnEvent", function()
-							local timeEnd = GetTime()
-							local timeTaken = timeEnd - timeStart
-							-- Convert to normal speed so it matches the flight data
-							if frequentFlier then timeTaken = timeTaken * frequentFlierSpeed end
-							debugString = gsub(debugString, "TimeTakenPlaceHolder", string.format("%0.0f", timeTaken))
-							local flightMsg = faction .. " (" .. gameTitle.. "): " .. nodeName .. " (" .. currentNode .. ") " .. L["to"] .. " " .. barName .. " (" .. destination .. ") " .. L["took"] .. " " .. string.format("%0.0f", timeTaken) .. " " .. L["seconds"] .. " (" .. numHops .. " " .. L["hop"] ..").|n|n" .. debugString .. "|n|n"
-							-- Frequent Flier status (shown in every report so it's clear the report is Frequent Flier aware)
-							flightMsg = flightMsg .. "Frequent Flier: " .. (frequentFlier and "Yes (time converted to normal speed)" or "No") .. "|n|n"
-							if frequentFlier then
-								flightMsg = flightMsg .. L["Frequent Flier was active, so this time has been converted to normal flight speed."] .. "|n|n"
-							end
-							if destination and data[faction] and data[faction][continent] and data[faction][continent][routeString] then
-								local savedDuration = data[faction][continent][routeString]
-								if savedDuration then
-									if timeTaken > (savedDuration + timeBuffer) or timeTaken < (savedDuration - timeBuffer) then
-										local editMsg = introMsg .. flightMsg .. L["This flight's actual time of"] .. " " .. string.format("%0.0f", timeTaken) .. " " .. L["seconds does not match the saved flight time of"] .. " " .. savedDuration .. " " .. L["seconds"] .. "."
-										editBox:SetText(editMsg); if LeaPlusLC["FlightBarContribute"] == "On" then editFrame:Show() end
-									end
-								else
-									local editMsg = introMsg .. flightMsg .. L["This flight does not have a saved duration in the database."]
-									editBox:SetText(editMsg); if LeaPlusLC["FlightBarContribute"] == "On" then editFrame:Show() end
-								end
-							else
-								local editMsg = introMsg .. flightMsg .. L["This flight does not exist in the database."]
-								editBox:SetText(editMsg); if LeaPlusLC["FlightBarContribute"] == "On" then editFrame:Show() end
-							end
-							flightFrame:UnregisterEvent("PLAYER_CONTROL_GAINED")
-
-							-- Delete the progress bar since we have landed
-							if LeaPlusLC.FlightProgressBar then
-								LeaPlusLC.FlightProgressBar:Stop()
-								LeaPlusLC.FlightProgressBar = nil
-							end
-						end)
-
-						-- Show flight progress bar if flight exists in database
-						if data[faction] and data[faction][continent] and data[faction][continent][routeString] then
-
-							local duration = data[faction][continent][routeString]
-							if duration then
-
-								-- Frequent Flier flights are faster
-								if frequentFlier then duration = duration / frequentFlierSpeed end
-
-								-- Delete an existing progress bar if one exists
-								if LeaPlusLC.FlightProgressBar then
-									LeaPlusLC.FlightProgressBar:Stop()
-									LeaPlusLC.FlightProgressBar = nil
-								end
-
-								-- Create progress bar
-								local mybar = candy:New(texture, 230, 16)
-								mybar:SetPoint(LeaPlusLC["FlightBarA"], UIParent, LeaPlusLC["FlightBarR"], LeaPlusLC["FlightBarX"], LeaPlusLC["FlightBarY"])
-								mybar:SetScale(LeaPlusLC["FlightBarScale"])
-								mybar:SetWidth(LeaPlusLC["FlightBarWidth"])
-
-								-- Setup sound files
-								local mt
-								local Seconds600, Seconds540, Seconds480, Seconds420, Seconds360
-								local Seconds300, Seconds240, Seconds180, Seconds120, Seconds060
-								local Seconds030, Seconds020, Seconds010
-								local speed = -2
-
-								if LeaPlusLC["FlightBarSpeech"] == "On" then
-									C_Timer.After(1, function()
-										C_VoiceChat.SpeakText(0, L["Flight commenced."], speed, GetCVar("Sound_MasterVolume") * 100)
-									end)
-									mybar:AddUpdateFunction(function(bar)
-										mt = bar.remaining
-											if mt > 600 and mt < 601 and not Seconds600 then Seconds600 = true; C_VoiceChat.SpeakText(0, L["Ten minutes"], speed, GetCVar("Sound_MasterVolume") * 100)
-										elseif mt > 540 and mt < 541 and not Seconds540 then Seconds540 = true; C_VoiceChat.SpeakText(0, L["Nine minutes"], speed, GetCVar("Sound_MasterVolume") * 100)
-										elseif mt > 480 and mt < 481 and not Seconds480 then Seconds480 = true; C_VoiceChat.SpeakText(0, L["Eight minutes"], speed, GetCVar("Sound_MasterVolume") * 100)
-										elseif mt > 420 and mt < 421 and not Seconds420 then Seconds420 = true; C_VoiceChat.SpeakText(0, L["Seven minutes"], speed, GetCVar("Sound_MasterVolume") * 100)
-										elseif mt > 360 and mt < 361 and not Seconds360 then Seconds360 = true; C_VoiceChat.SpeakText(0, L["Six minutes"], speed, GetCVar("Sound_MasterVolume") * 100)
-										elseif mt > 300 and mt < 301 and not Seconds300 then Seconds300 = true; C_VoiceChat.SpeakText(0, L["Five minutes"], speed, GetCVar("Sound_MasterVolume") * 100)
-										elseif mt > 240 and mt < 241 and not Seconds240 then Seconds240 = true; C_VoiceChat.SpeakText(0, L["Four minutes"], speed, GetCVar("Sound_MasterVolume") * 100)
-										elseif mt > 180 and mt < 181 and not Seconds180 then Seconds180 = true; C_VoiceChat.SpeakText(0, L["Three minutes"], speed, GetCVar("Sound_MasterVolume") * 100)
-										elseif mt > 120 and mt < 121 and not Seconds120 then Seconds120 = true; C_VoiceChat.SpeakText(0, L["Two minutes"], speed, GetCVar("Sound_MasterVolume") * 100)
-										elseif mt > 060 and mt < 061 and not Seconds060 then Seconds060 = true; C_VoiceChat.SpeakText(0, L["One minute"], speed, GetCVar("Sound_MasterVolume") * 100)
-										elseif mt > 030 and mt < 031 and not Seconds030 then Seconds030 = true; C_VoiceChat.SpeakText(0, L["Thirty seconds"], speed, GetCVar("Sound_MasterVolume") * 100)
-										elseif mt > 020 and mt < 021 and not Seconds020 then Seconds020 = true; C_VoiceChat.SpeakText(0, L["Twenty seconds"], speed, GetCVar("Sound_MasterVolume") * 100)
-										elseif mt > 010 and mt < 011 and not Seconds010 then Seconds010 = true; C_VoiceChat.SpeakText(0, L["Ten seconds"], speed, GetCVar("Sound_MasterVolume") * 100)
-										end
-									end)
-								end
-
-								if faction == "Alliance" then
-									mybar:SetColor(0, 0.5, 1, 0.5)
-								else
-									mybar:SetColor(1, 0.0, 0, 0.5)
-								end
-								mybar:SetShadowColor(0, 0, 0, 0.5)
-
-								mybar:SetScript("OnMouseDown", function(self, btn)
-									if btn == "RightButton" then
-										mybar:Stop()
-										LeaPlusLC.FlightProgressBar = nil
-									end
-								end)
-
-								-- Set bar label width
-								-- barName = "SupercalifragilisticexpialidociousDociousaliexpisticfragicalirupus" -- Debug
-								mybar.candyBarLabel:ClearAllPoints()
-								mybar.candyBarLabel:SetPoint("TOPLEFT", mybar.candyBarBackground, "TOPLEFT", 2, 0)
-								mybar.candyBarLabel:SetPoint("BOTTOMRIGHT", mybar.candyBarBackground, "BOTTOMRIGHT", -40, 0)
-
-								-- Set flight bar background
-								if LeaPlusLC["FlightBarBackground"] == "On" then
-									if LeaPlusLC.ElvUI then
-										_G.LeaPlusGlobalFlightBar = mybar.candyBarBar
-										if faction == "Alliance" then
-											LeaPlusLC.ElvUI:GetModule("Skins"):HandleStatusBar(_G.LeaPlusGlobalFlightBar, {0, 0.5, 1, 0.5})
-										else
-											LeaPlusLC.ElvUI:GetModule("Skins"):HandleStatusBar(_G.LeaPlusGlobalFlightBar, {1, 0.0, 0, 0.5})
-										end
-									else
-										mybar:SetTexture(texture)
-									end
-								else
-									mybar:SetTexture("")
-								end
-
-								-- Set flight bar destination
-								if LeaPlusLC["FlightBarDestination"] == "On" then
-									mybar:SetLabel(barName)
-								end
-
-								-- Set flight bar fill mode
-								if LeaPlusLC["FlightBarFillBar"] == "On" then
-									mybar:SetFill(true)
-								else
-									mybar:SetFill(false)
-								end
-
-								mybar:EnableMouse(false)
-								mybar:SetDuration(duration)
-								mybar:Start()
-
-								-- Unlock close bar button
-								if LeaPlusCB["CloseFlightBarButton"] then
-									LeaPlusLC:LockItem(LeaPlusCB["CloseFlightBarButton"], false)
-								end
-
-								-- Assign file level scope to the bar so it can be cancelled later
-								LeaPlusLC.FlightProgressBar = mybar
-
-							end
-
-						end
-
-					end
-				end
-			end)
-
-			-- Function to stop the progress bar
-			local function CeaseProgress()
-				if LeaPlusLC.FlightProgressBar then
-					LeaPlusLC.FlightProgressBar:Stop()
-					LeaPlusLC.FlightProgressBar = nil
+					if TaxiNodeGetType(i) == "CURRENT" then return i end
 				end
 			end
 
-			-- Stop the progress bar under various circumstances
-			hooksecurefunc("TaxiRequestEarlyLanding", CeaseProgress)
-			hooksecurefunc("AcceptBattlefieldPort", CeaseProgress)
-			hooksecurefunc(C_SummonInfo, "ConfirmSummon", CeaseProgress)
+			-- Function to get the flight data key for a node (its map position)
+			local function GetNodeKey(i)
+				local x, y = TaxiNodePosition(i)
+				return format("%0.2f", x) .. ":" .. format("%0.2f", y), x, y
+			end
+
+			-- Every node on the route to a destination (start first) with its key, position and name
+			local routeKeys, routeX, routeY, routeNames = {}, {}, {}, {}
+
+			local function AddRouteNode(i)
+				local n = #routeKeys + 1
+				routeKeys[n], routeX[n], routeY[n] = GetNodeKey(i)
+				routeNames[n] = GetNodeName(i)
+			end
+
+			-- Function to build the route to a destination (returns the flight data key of the route and destination)
+			local function BuildRoute(current, node)
+				wipe(routeKeys); wipe(routeX); wipe(routeY); wipe(routeNames)
+				AddRouteNode(current)
+				for i = 2, GetNumRoutes(node) + 1 do
+					AddRouteNode(TaxiGetNodeSlot(node, i, true))
+				end
+				local destination = GetNodeKey(node)
+				local routeString = table.concat(routeKeys, ":")
+				-- If route string does not contain destination, add it to the end (such as Altar of Sha'tar)
+				if not strfind(routeString, destination, 1, true) then
+					AddRouteNode(node)
+					routeString = routeString .. ":" .. destination
+				end
+				return routeString, destination
+			end
+
+			-- Function to get a saved flight time between two nodes on the route (nil if not saved)
+			local function GetSavedTime(continentData, first, last)
+				local routeString = routeKeys[first]
+				for i = first + 1, last do
+					routeString = routeString .. ":" .. routeKeys[i]
+				end
+				local duration = continentData[routeString]
+				if type(duration) == "number" and duration > 0 then return duration end
+			end
+
+			-- Function to work out when each stop on the route is reached (in seconds after takeoff)
+			-- Uses the saved time from the start to the stop, else the saved time from the stop to the end, else the share of the distance
+			local function GetStopTimes(continentData, total, names, times)
+				wipe(names); wipe(times)
+				local last = #routeKeys
+				local previous = 0
+				for i = 2, last - 1 do
+					local stopTime = GetSavedTime(continentData, 1, i)
+					if not stopTime then
+						local rest = GetSavedTime(continentData, i, last)
+						stopTime = rest and total - rest
+					end
+					if not stopTime or stopTime <= previous or stopTime >= total then
+						-- Saved times are missing or do not agree so use the share of the distance for every stop
+						wipe(times)
+						break
+					end
+					times[i - 1] = stopTime
+					previous = stopTime
+				end
+				if last > 2 and #times ~= last - 2 then
+					local distance = 0
+					for i = 2, last do
+						local dx, dy = routeX[i] - routeX[i - 1], routeY[i] - routeY[i - 1]
+						distance = distance + math.sqrt(dx * dx + dy * dy)
+						if i < last then times[i - 1] = distance end
+					end
+					for i = 1, last - 2 do
+						times[i] = distance > 0 and total * times[i] / distance or total * i / (last - 1)
+					end
+				end
+				for i = 2, last - 1 do
+					names[i - 1] = routeNames[i]
+				end
+			end
+
+			----------------------------------------------------------------------
+			-- Flight progress bar
+			----------------------------------------------------------------------
+
+			local WHITE = "Interface\\Buttons\\WHITE8X8"
+			local fillR, fillG, fillB = 0.95, 0.27, 0.27
+			if faction == "Alliance" then fillR, fillG, fillB = 0.30, 0.62, 1.00 end
+
+			local bar -- The bar frame (created when first needed)
+			local flying -- True while the bar is showing a flight
+			local fl = { names = {}, times = {} } -- The flight shown on the bar (stop names and times exclude start and destination)
+			local ticks = {} -- Stop markers on the bar
+			local barFill, barNext -- Fill mode and next stop settings
+			local lastSecond, sinceUpdate = -1, 0
+			local StopBar, FlightPanel
+
+			-- Speech
+			local speechTimes = {600, 540, 480, 420, 360, 300, 240, 180, 120, 60, 30, 20, 10}
+			local speechText = {L["Ten minutes"], L["Nine minutes"], L["Eight minutes"], L["Seven minutes"], L["Six minutes"], L["Five minutes"], L["Four minutes"], L["Three minutes"], L["Two minutes"], L["One minute"], L["Thirty seconds"], L["Twenty seconds"], L["Ten seconds"]}
+			local speechIndex = 1
+
+			-- Function to get the voice chosen in the game's text to speech options
+			local function GetVoice()
+				if C_TTSSettings and C_TTSSettings.GetVoiceOptionID and Enum.TtsVoiceType then
+					return C_TTSSettings.GetVoiceOptionID(Enum.TtsVoiceType.Standard) or 0
+				end
+				return 0
+			end
+
+			-- Function to speak text (uses the speech rate and volume from the game's text to speech options)
+			local function Speak(text)
+				local rate, volume = -2, GetCVar("Sound_MasterVolume") * 100
+				if C_TTSSettings then
+					if C_TTSSettings.GetSpeechRate then rate = C_TTSSettings.GetSpeechRate() or rate end
+					if C_TTSSettings.GetSpeechVolume then volume = C_TTSSettings.GetSpeechVolume() or volume end
+				end
+				C_VoiceChat.SpeakText(GetVoice(), text, rate, volume)
+			end
+
+			-- Function to skip spoken times that are already behind
+			local function SpeechReset(remaining)
+				speechIndex = 1
+				while speechTimes[speechIndex] and speechTimes[speechIndex] >= remaining do
+					speechIndex = speechIndex + 1
+				end
+			end
+
+			-- Function to speak the remaining time when it passes a spoken time
+			local function SpeechCheck(remaining)
+				local spoken = speechTimes[speechIndex]
+				if spoken and remaining <= spoken then
+					speechIndex = speechIndex + 1
+					if remaining > spoken - 2 then Speak(speechText[speechIndex - 1]) end
+				end
+			end
+
+			-- Function to format time as minutes and seconds
+			local function FormatTime(seconds)
+				seconds = ceil(seconds)
+				return format("%d:%02d", floor(seconds / 60), seconds % 60)
+			end
+
+			-- Function to create a font string
+			local function MakeText(justify)
+				local fs = bar:CreateFontString(nil, "OVERLAY")
+				fs:SetJustifyH(justify)
+				fs:SetWordWrap(false)
+				return fs
+			end
+
+			-- Function to create the bar
+			local function BuildBar()
+
+				bar = CreateFrame("Frame", nil, UIParent)
+				bar:SetFrameStrata("MEDIUM")
+				bar:SetPoint(LeaPlusLC["FlightBarA"], UIParent, LeaPlusLC["FlightBarR"], LeaPlusLC["FlightBarX"], LeaPlusLC["FlightBarY"])
+				bar:Hide()
+
+				-- Background
+				bar.bg = bar:CreateTexture(nil, "BACKGROUND")
+				bar.bg:SetAllPoints()
+				bar.bg:SetColorTexture(0.04, 0.04, 0.06, 0.75)
+
+				-- Hairline border (top, bottom, left, right)
+				bar.edges = {}
+				for i = 1, 4 do
+					bar.edges[i] = bar:CreateTexture(nil, "BORDER")
+					bar.edges[i]:SetColorTexture(1, 1, 1, 0.1)
+				end
+				bar.edges[1]:SetPoint("TOPLEFT"); bar.edges[1]:SetPoint("TOPRIGHT")
+				bar.edges[2]:SetPoint("BOTTOMLEFT"); bar.edges[2]:SetPoint("BOTTOMRIGHT")
+				bar.edges[3]:SetPoint("TOPLEFT"); bar.edges[3]:SetPoint("BOTTOMLEFT")
+				bar.edges[4]:SetPoint("TOPRIGHT"); bar.edges[4]:SetPoint("BOTTOMRIGHT")
+
+				-- Destination and time remaining
+				bar.dest = MakeText("LEFT")
+				bar.time = MakeText("RIGHT")
+				bar.time:SetTextColor(0.9, 0.9, 0.9)
+
+				-- Progress track
+				bar.track = CreateFrame("StatusBar", nil, bar)
+				bar.track:SetStatusBarTexture(WHITE)
+				bar.track:SetStatusBarColor(fillR, fillG, fillB, 1)
+				bar.track:SetMinMaxValues(0, 1)
+				bar.track.bg = bar.track:CreateTexture(nil, "BACKGROUND")
+				bar.track.bg:SetAllPoints()
+				bar.track.bg:SetColorTexture(1, 1, 1, 0.12)
+
+				-- Spark at the edge of the fill
+				bar.spark = bar.track:CreateTexture(nil, "OVERLAY", nil, 1)
+				bar.spark:SetTexture("Interface\\CastingBar\\UI-CastingBar-Spark")
+				bar.spark:SetBlendMode("ADD")
+				bar.spark:SetPoint("CENTER", bar.track:GetStatusBarTexture(), "RIGHT")
+
+				-- Next stop
+				bar.nextIcon = bar:CreateTexture(nil, "OVERLAY")
+				bar.nextIcon:SetTexture("Interface\\TaxiFrame\\UI-Taxi-Icon-White")
+				bar.nextIcon:SetVertexColor(0.7, 0.7, 0.7)
+				bar.nextName = MakeText("LEFT")
+				bar.nextName:SetTextColor(0.7, 0.7, 0.7)
+				bar.nextTime = MakeText("RIGHT")
+				bar.nextTime:SetTextColor(0.7, 0.7, 0.7)
+
+				-- Drag to move (mouse is only enabled while the configuration panel is showing)
+				bar:SetMovable(true)
+				bar:EnableMouse(false)
+				bar:SetScript("OnMouseDown", function(self, btn)
+					if btn == "LeftButton" then self:StartMoving() end
+				end)
+				bar:SetScript("OnMouseUp", function(self)
+					self:StopMovingOrSizing()
+					LeaPlusLC["FlightBarA"], void, LeaPlusLC["FlightBarR"], LeaPlusLC["FlightBarX"], LeaPlusLC["FlightBarY"] = self:GetPoint()
+				end)
+
+			end
+
+			-- Function to place stop markers on the track
+			local function PlaceTicks(width, thick, px)
+				local count = #fl.times
+				for i = 1, max(count, #ticks) do
+					local tick = ticks[i]
+					if i <= count then
+						if not tick then
+							tick = bar.track:CreateTexture(nil, "OVERLAY")
+							tick:SetColorTexture(0.04, 0.04, 0.06, 0.9)
+							ticks[i] = tick
+						end
+						local frac = fl.times[i] / fl.total
+						if not barFill then frac = 1 - frac end
+						tick:SetSize(px * 2, thick)
+						tick:ClearAllPoints()
+						tick:SetPoint("CENTER", bar.track, "LEFT", width * frac, 0)
+						tick:Show()
+					elseif tick then
+						tick:Hide()
+					end
+				end
+			end
+
+			-- Function to lay out the bar from the current settings
+			local function Layout()
+
+				local size = LeaPlusLC["FlightBarFontSize"]
+				local small = max(6, size - 2)
+				local showBg = LeaPlusLC["FlightBarBackground"] == "On"
+				barFill = LeaPlusLC["FlightBarFillBar"] == "On"
+				barNext = LeaPlusLC["FlightBarNextHop"] == "On"
+				local showNext = barNext and fl.nextStop ~= nil
+				local pad = showBg and max(3, floor(size * 0.4 + 0.5)) or 0
+				local thick = max(2, floor(size / 4 + 0.5))
+				local gap = max(2, floor(size / 4 + 0.5))
+				local width = LeaPlusLC["FlightBarWidth"]
+
+				-- Size
+				bar:SetScale(LeaPlusLC["FlightBarScale"])
+				bar:SetWidth(width)
+				bar:SetHeight(pad + size + gap + thick + (showNext and gap + small or 0) + pad)
+
+				-- Background and border (border is one screen pixel thick)
+				local px = PixelUtil and PixelUtil.GetPixelToUIUnitFactor() / bar:GetEffectiveScale() or 1
+				bar.bg:SetShown(showBg)
+				for i = 1, 4 do bar.edges[i]:SetShown(showBg) end
+				bar.edges[1]:SetHeight(px); bar.edges[2]:SetHeight(px)
+				bar.edges[3]:SetWidth(px); bar.edges[4]:SetWidth(px)
+
+				-- Fonts (outlined without the background so text stays readable)
+				local font = GameFontNormal:GetFont()
+				local flags = showBg and "" or "OUTLINE"
+				local shadow = showBg and 1 or 0
+				bar.dest:SetFont(font, size, flags)
+				bar.time:SetFont(font, size, flags)
+				bar.nextName:SetFont(font, small, flags)
+				bar.nextTime:SetFont(font, small, flags)
+				bar.dest:SetShadowOffset(shadow, -shadow)
+				bar.time:SetShadowOffset(shadow, -shadow)
+				bar.nextName:SetShadowOffset(shadow, -shadow)
+				bar.nextTime:SetShadowOffset(shadow, -shadow)
+
+				-- Destination and time remaining
+				bar.time:ClearAllPoints()
+				bar.time:SetPoint("TOPRIGHT", -pad, -pad)
+				bar.dest:ClearAllPoints()
+				bar.dest:SetPoint("TOPLEFT", pad, -pad)
+				bar.dest:SetPoint("RIGHT", bar.time, "LEFT", -size / 2, 0)
+				bar.dest:SetText(LeaPlusLC["FlightBarDestination"] == "On" and fl.dest or "")
+
+				-- Progress track
+				local y = pad + size + gap
+				bar.track:ClearAllPoints()
+				bar.track:SetPoint("TOPLEFT", pad, -y)
+				bar.track:SetPoint("TOPRIGHT", -pad, -y)
+				bar.track:SetHeight(thick)
+				bar.spark:SetSize(max(8, thick * 4), thick * 4)
+				PlaceTicks(width - pad * 2, thick, px)
+
+				-- Next stop
+				bar.nextIcon:SetShown(showNext)
+				bar.nextName:SetShown(showNext)
+				bar.nextTime:SetShown(showNext)
+				if showNext then
+					y = y + thick + gap
+					bar.nextIcon:SetSize(small, small)
+					bar.nextIcon:ClearAllPoints()
+					bar.nextIcon:SetPoint("TOPLEFT", pad, -y)
+					bar.nextTime:ClearAllPoints()
+					bar.nextTime:SetPoint("TOPRIGHT", -pad, -y)
+					bar.nextName:ClearAllPoints()
+					bar.nextName:SetPoint("TOPLEFT", bar.nextIcon, "TOPRIGHT", 3, 0)
+					bar.nextName:SetPoint("RIGHT", bar.nextTime, "LEFT", -small / 2, 0)
+					bar.nextName:SetText(fl.names[fl.nextStop])
+				end
+
+			end
+
+			-- Function to show progress (returns the time remaining)
+			local function SetProgress(elapsed)
+				local remaining = fl.total - elapsed
+				if remaining < 0 then remaining = 0 end
+				local value = remaining / fl.total
+				if barFill then value = 1 - value end
+				bar.track:SetValue(value)
+				bar.spark:SetShown(value > 0 and value < 1)
+				return remaining
+			end
+
+			-- Function to show the time remaining and the next stop
+			local function UpdateText(elapsed, remaining)
+				bar.time:SetText(FormatTime(remaining))
+				local nextStop = fl.nextStop
+				if nextStop then
+					-- Move past stops already reached
+					while nextStop and elapsed >= fl.times[nextStop] do
+						nextStop = fl.times[nextStop + 1] and nextStop + 1 or nil
+					end
+					if nextStop ~= fl.nextStop then
+						fl.nextStop = nextStop
+						if nextStop then
+							bar.nextName:SetText(fl.names[nextStop])
+						elseif barNext then
+							-- No more stops so remove the next stop line
+							Layout()
+						end
+					end
+					if nextStop and barNext then
+						bar.nextTime:SetText(FormatTime(fl.times[nextStop] - elapsed))
+					end
+				end
+			end
+
+			-- Update the bar while flying (text changes once per second)
+			local function OnUpdate(self, elapsed)
+				sinceUpdate = sinceUpdate + elapsed
+				if sinceUpdate < 0.1 then return end
+				sinceUpdate = 0
+				local flown = GetTime() - fl.start
+				local remaining = SetProgress(flown)
+				local second = ceil(remaining)
+				if second ~= lastSecond then
+					lastSecond = second
+					-- Remove the bar when time is up or the player is no longer on a taxi (such as after an early landing)
+					if remaining <= 0 or (flown > 2 and not UnitOnTaxi("player")) then
+						StopBar()
+						return
+					end
+					UpdateText(flown, remaining)
+					if fl.speech then SpeechCheck(remaining) end
+				end
+			end
+
+			-- Function to show a preview on the bar while the configuration panel is showing
+			local function ShowPreview()
+				if not bar then BuildBar() end
+				bar:EnableMouse(true)
+				if flying then return end
+				-- Sample flight with one stop (zone names come from the game so they are localised)
+				local destMap, stopMap = 1454, 1413 -- Orgrimmar, The Barrens
+				if faction == "Alliance" then destMap, stopMap = 1455, 1432 end -- Ironforge, Loch Modan
+				local destInfo, stopInfo = C_Map.GetMapInfo(destMap), C_Map.GetMapInfo(stopMap)
+				wipe(fl.names); wipe(fl.times)
+				fl.dest = destInfo and destInfo.name or ""
+				fl.names[1] = stopInfo and stopInfo.name or ""
+				fl.times[1] = 165
+				fl.total, fl.start, fl.nextStop = 300, GetTime() - 120, 1
+				Layout()
+				SetProgress(120)
+				UpdateText(120, 180)
+				bar:Show()
+			end
+
+			-- Function to remove the preview
+			local function HidePreview()
+				if not bar then return end
+				bar:EnableMouse(false)
+				if not flying then bar:Hide() end
+			end
+
+			-- Function to start the bar (stop names and times must already be in fl)
+			local function StartBar(total, destination)
+				if not bar then BuildBar() end
+				flying = true
+				fl.total, fl.dest, fl.start = total, destination, GetTime()
+				fl.nextStop = fl.times[1] and 1 or nil
+				fl.speech = LeaPlusLC["FlightBarSpeech"] == "On"
+				SpeechReset(total)
+				if fl.speech then
+					C_Timer.After(1, function()
+						if flying then Speak(L["Flight commenced."]) end
+					end)
+				end
+				Layout()
+				SetProgress(0)
+				UpdateText(0, total)
+				lastSecond, sinceUpdate = -1, 0
+				bar:SetScript("OnUpdate", OnUpdate)
+				bar:Show()
+				if LeaPlusCB["CloseFlightBarButton"] then LeaPlusLC:LockItem(LeaPlusCB["CloseFlightBarButton"], false) end
+			end
+
+			-- Function to stop the bar
+			StopBar = function()
+				if not bar then return end
+				flying = nil
+				bar:SetScript("OnUpdate", nil)
+				if LeaPlusCB["CloseFlightBarButton"] then LeaPlusLC:LockItem(LeaPlusCB["CloseFlightBarButton"], true) end
+				if FlightPanel and FlightPanel:IsShown() then
+					ShowPreview()
+				else
+					bar:Hide()
+				end
+			end
+
+			-- Function to apply changed settings to the bar
+			local function RefreshBar()
+				if not bar or not bar:IsShown() then return end
+				if flying then
+					Layout()
+					SetProgress(GetTime() - fl.start)
+					lastSecond = -1 -- Update text on the next tick
+				else
+					ShowPreview()
+				end
+			end
+
+			----------------------------------------------------------------------
+			-- Flight report window
+			----------------------------------------------------------------------
+
+			local reportFrame -- Created when first needed
+			local reportLink = "https://www.curseforge.com/members/leatrix/projects"
+
+			-- Function to create a read-only copy box (click it to highlight the text for copying)
+			local function MakeCopyBox(parent, px)
+				local box = CreateFrame("EditBox", nil, parent)
+				box:SetHeight(24)
+				box:SetAutoFocus(false)
+				box:SetFontObject("ChatFontNormal")
+				box:SetTextInsets(8, 8, 0, 0)
+				box:SetAltArrowKeyMode(false)
+				box.bg = box:CreateTexture(nil, "BACKGROUND")
+				box.bg:SetAllPoints()
+				box.bg:SetColorTexture(0, 0, 0, 0.5)
+				box.edges = {}
+				for i = 1, 4 do
+					box.edges[i] = box:CreateTexture(nil, "BORDER")
+					box.edges[i]:SetColorTexture(1, 1, 1, 0.15)
+				end
+				box.edges[1]:SetPoint("TOPLEFT"); box.edges[1]:SetPoint("TOPRIGHT"); box.edges[1]:SetHeight(px)
+				box.edges[2]:SetPoint("BOTTOMLEFT"); box.edges[2]:SetPoint("BOTTOMRIGHT"); box.edges[2]:SetHeight(px)
+				box.edges[3]:SetPoint("TOPLEFT"); box.edges[3]:SetPoint("BOTTOMLEFT"); box.edges[3]:SetWidth(px)
+				box.edges[4]:SetPoint("TOPRIGHT"); box.edges[4]:SetPoint("BOTTOMRIGHT"); box.edges[4]:SetWidth(px)
+				-- Highlight on click and put the text back if it gets changed
+				box:SetScript("OnEditFocusGained", function(self) self:HighlightText() end)
+				box:SetScript("OnEditFocusLost", function(self) self:HighlightText(0, 0) end)
+				box:SetScript("OnMouseUp", function(self) self:HighlightText() end)
+				box:SetScript("OnTextChanged", function(self, userInput)
+					if userInput then self:SetText(self.copyText or ""); self:HighlightText() end
+				end)
+				box:SetScript("OnEnterPressed", function(self) self:HighlightText() end)
+				box:SetScript("OnEscapePressed", function(self) self:ClearFocus(); parent:Hide() end)
+				return box
+			end
+
+			-- Function to set the text of a copy box
+			local function SetCopyText(box, text)
+				box.copyText = text
+				box:SetText(text)
+				box:SetCursorPosition(0)
+			end
+
+			-- Function to create the report window
+			local function BuildReportFrame()
+
+				local frame = CreateFrame("Frame", LeaPlusLC:CreateRandomName(), UIParent)
+				reportFrame = frame
+				frame:SetSize(460, 300)
+				frame:SetPoint("CENTER", 0, 80)
+				frame:SetFrameStrata("DIALOG")
+				frame:SetToplevel(true)
+				frame:SetClampedToScreen(true)
+				frame:EnableMouse(true)
+				frame:SetMovable(true)
+				frame:RegisterForDrag("LeftButton")
+				frame:SetScript("OnDragStart", frame.StartMoving)
+				frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
+				frame:Hide()
+
+				-- Close with escape
+				table.insert(UISpecialFrames, frame:GetName())
+
+				-- Background and hairline border
+				local px = PixelUtil and PixelUtil.GetPixelToUIUnitFactor() / frame:GetEffectiveScale() or 1
+				frame.bg = frame:CreateTexture(nil, "BACKGROUND")
+				frame.bg:SetAllPoints()
+				frame.bg:SetColorTexture(0.06, 0.06, 0.08, 0.94)
+				local edges = {}
+				for i = 1, 4 do
+					edges[i] = frame:CreateTexture(nil, "BORDER")
+					edges[i]:SetColorTexture(1, 1, 1, 0.12)
+				end
+				edges[1]:SetPoint("TOPLEFT"); edges[1]:SetPoint("TOPRIGHT"); edges[1]:SetHeight(px)
+				edges[2]:SetPoint("BOTTOMLEFT"); edges[2]:SetPoint("BOTTOMRIGHT"); edges[2]:SetHeight(px)
+				edges[3]:SetPoint("TOPLEFT"); edges[3]:SetPoint("BOTTOMLEFT"); edges[3]:SetWidth(px)
+				edges[4]:SetPoint("TOPRIGHT"); edges[4]:SetPoint("BOTTOMRIGHT"); edges[4]:SetWidth(px)
+
+				-- Accent line along the top in the faction colour
+				frame.accent = frame:CreateTexture(nil, "ARTWORK")
+				frame.accent:SetPoint("TOPLEFT"); frame.accent:SetPoint("TOPRIGHT")
+				frame.accent:SetHeight(2)
+				frame.accent:SetColorTexture(fillR, fillG, fillB, 0.9)
+
+				-- Header icon
+				frame.icon = frame:CreateTexture(nil, "ARTWORK")
+				frame.icon:SetSize(40, 40)
+				frame.icon:SetPoint("TOPLEFT", 16, -18)
+				frame.icon:SetTexture("Interface\\Icons\\INV_Misc_Map_01")
+				frame.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+
+				-- Title and thank you message
+				frame.title = frame:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+				frame.title:SetPoint("TOPLEFT", frame.icon, "TOPRIGHT", 12, -3)
+				frame.title:SetText(L["Flight time report"])
+				frame.thanks = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+				frame.thanks:SetPoint("TOPLEFT", frame.title, "BOTTOMLEFT", 0, -5)
+				frame.thanks:SetPoint("RIGHT", -40, 0)
+				frame.thanks:SetJustifyH("LEFT")
+				frame.thanks:SetText(L["Thank you for helping to improve Leatrix Plus!"])
+
+				-- Close button
+				frame.close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
+				frame.close:SetSize(28, 28)
+				frame.close:SetPoint("TOPRIGHT", -2, -4)
+				frame.close:SetScript("OnClick", function() frame:Hide() end)
+
+				-- Divider
+				frame.divider = frame:CreateTexture(nil, "ARTWORK")
+				frame.divider:SetPoint("TOPLEFT", 16, -72)
+				frame.divider:SetPoint("TOPRIGHT", -16, -72)
+				frame.divider:SetHeight(px)
+				frame.divider:SetColorTexture(1, 1, 1, 0.1)
+
+				-- Flight summary
+				frame.flightIcon = frame:CreateTexture(nil, "ARTWORK")
+				frame.flightIcon:SetSize(16, 16)
+				frame.flightIcon:SetPoint("TOPLEFT", 16, -84)
+				frame.flightIcon:SetTexture("Interface\\GossipFrame\\TaxiGossipIcon")
+				frame.summary = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+				frame.summary:SetPoint("TOPLEFT", frame.flightIcon, "TOPRIGHT", 8, -2)
+				frame.summary:SetWidth(404)
+				frame.summary:SetJustifyH("LEFT")
+
+				-- How to send the report
+				frame.sendIcon = frame:CreateTexture(nil, "ARTWORK")
+				frame.sendIcon:SetSize(16, 16)
+				frame.sendIcon:SetPoint("TOPLEFT", frame.summary, "BOTTOMLEFT", -24, -14)
+				frame.sendIcon:SetTexture("Interface\\Icons\\INV_Letter_15")
+				frame.sendIcon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+				frame.steps = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+				frame.steps:SetPoint("TOPLEFT", frame.sendIcon, "TOPRIGHT", 8, -2)
+				frame.steps:SetWidth(404)
+				frame.steps:SetJustifyH("LEFT")
+				frame.steps:SetSpacing(2)
+				frame.steps:SetTextColor(0.8, 0.8, 0.8)
+				frame.steps:SetText(L["Please send this report to Leatrix on CurseForge. Open the link below, click Message and paste the report into your message."] .. " " .. L["Consider following Leatrix to show your support for the addons."])
+
+				-- Link box
+				frame.linkLabel = frame:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+				frame.linkLabel:SetPoint("TOPLEFT", frame.steps, "BOTTOMLEFT", 0, -14)
+				frame.linkLabel:SetText("1. " .. L["Link"])
+				frame.link = MakeCopyBox(frame, px)
+				frame.link:SetPoint("TOPLEFT", frame.linkLabel, "BOTTOMLEFT", 0, -4)
+				frame.link:SetPoint("RIGHT", -16, 0)
+				SetCopyText(frame.link, reportLink)
+
+				-- Report box
+				frame.reportLabel = frame:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+				frame.reportLabel:SetPoint("TOPLEFT", frame.link, "BOTTOMLEFT", 0, -10)
+				frame.reportLabel:SetText("2. " .. L["Report"])
+				frame.report = MakeCopyBox(frame, px)
+				frame.report:SetPoint("TOPLEFT", frame.reportLabel, "BOTTOMLEFT", 0, -4)
+				frame.report:SetPoint("RIGHT", -16, 0)
+
+				-- Copy hint
+				frame.hint = frame:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
+				frame.hint:SetPoint("TOP", frame.report, "BOTTOM", 0, -10)
+				frame.hint:SetText(L["Click a box then press CTRL/C to copy it."])
+
+				-- Remove keyboard focus when closed
+				frame:SetScript("OnHide", function(self)
+					self.link:ClearFocus()
+					self.report:ClearFocus()
+				end)
+
+			end
+
+			-- Function to show the report window
+			-- info: from, to, taken and saved (seconds at normal speed, saved is nil for new flights), route, names and frequentFlier
+			local function ShowReport(info)
+				if not reportFrame then BuildReportFrame() end
+				local summary = info.from .. " " .. L["to"] .. " " .. info.to .. " " .. L["took"] .. " " .. FormatTime(info.taken) .. "."
+				local savedText
+				if info.saved then
+					summary = summary .. " " .. L["The saved flight time is"] .. " " .. FormatTime(info.saved) .. "."
+					savedText = "saved " .. info.saved
+				else
+					summary = summary .. " " .. L["This flight is not in the database yet."]
+					savedText = "new"
+				end
+				if info.frequentFlier then
+					summary = summary .. " " .. L["Frequent Flier was active, so this time has been converted to normal flight speed."]
+					savedText = savedText .. ", Frequent Flier"
+				end
+				reportFrame.summary:SetText(summary)
+				-- Fit the height to the text (summary and steps can wrap)
+				reportFrame:SetHeight(86 + reportFrame.summary:GetStringHeight() + reportFrame.steps:GetStringHeight() + 156)
+				SetCopyText(reportFrame.report, faction .. " (" .. gameTitle .. "): " .. '["' .. info.route .. '"] = ' .. info.taken .. ", -- " .. info.names .. " (" .. savedText .. ")")
+				reportFrame:Show()
+			end
+
+			-- Function to hide the report window
+			local function HideReport()
+				if reportFrame then reportFrame:Hide() end
+			end
+
+			-- Show a sample report window (/ltp flightpopup)
+			LeaPlusLC.ShowFlightReportTest = function()
+				local fromMap, toMap = 1454, 1413 -- Orgrimmar, The Barrens
+				if faction == "Alliance" then fromMap, toMap = 1455, 1432 end -- Ironforge, Loch Modan
+				local fromInfo, toInfo = C_Map.GetMapInfo(fromMap), C_Map.GetMapInfo(toMap)
+				local from, to = fromInfo and fromInfo.name or "", toInfo and toInfo.name or ""
+				ShowReport({from = from, to = to, taken = 134, saved = 112, route = "0.50:0.50:0.60:0.60", names = from .. ", " .. to})
+			end
+
+			----------------------------------------------------------------------
+			-- Flight events
+			----------------------------------------------------------------------
+
+			-- Details of the flight in progress for the flight report window
+			local report = {}
+
+			-- Show flight report window after landing if the flight time is missing or wrong
+			flightFrame:SetScript("OnEvent", function()
+				flightFrame:UnregisterEvent("PLAYER_CONTROL_GAINED")
+				-- Convert to normal speed so it matches the flight data
+				report.taken = floor((GetTime() - report.start) * (report.frequentFlier and frequentFlierSpeed or 1) + 0.5)
+				if not report.saved or report.taken > (report.saved + timeBuffer) or report.taken < (report.saved - timeBuffer) then
+					if LeaPlusLC["FlightBarContribute"] == "On" then ShowReport(report) end
+				end
+				-- Remove the bar since we have landed
+				if flying then StopBar() end
+			end)
+
+			-- Show progress bar when flight is taken
+			hooksecurefunc("TakeTaxiNode", function(node)
+				if UnitAffectingCombat("player") then return end
+				HideReport()
+				local current = GetCurrentNode()
+				if not current then return end
+
+				-- Get route and saved flight time
+				local continentData = GetContinentData()
+				local routeString, destination = BuildRoute(current, node)
+				local duration = continentData and continentData[routeString]
+				if type(duration) ~= "number" then duration = nil end
+
+				-- Flights with variable durations (flagged as 0) have no bar and no report popup
+				if duration == 0 then
+					flightFrame:UnregisterEvent("PLAYER_CONTROL_GAINED")
+					StopBar()
+					return
+				end
+
+				-- Store flight details for the flight report window
+				local destName = GetNodeName(node)
+				local names = table.concat(routeNames, ", ")
+				if not strfind(names, destName, 1, true) then names = names .. ", " .. destName end
+				report.start, report.route, report.names, report.saved = GetTime(), routeString, names, duration
+				report.from, report.to = routeNames[1], destName
+				report.frequentFlier = HasFrequentFlier()
+
+				-- Register landing if the player is on a taxi or remove the bar if not
+				C_Timer.After(1, function()
+					if UnitOnTaxi("player") then
+						flightFrame:RegisterEvent("PLAYER_CONTROL_GAINED")
+					else
+						flightFrame:UnregisterEvent("PLAYER_CONTROL_GAINED")
+						StopBar()
+					end
+				end)
+
+				-- Show progress bar if flight exists in database
+				if duration then
+					GetStopTimes(continentData, duration, fl.names, fl.times)
+					-- Frequent Flier flights are faster
+					local barTime = duration
+					if report.frequentFlier then
+						barTime = duration / frequentFlierSpeed
+						for i = 1, #fl.times do
+							fl.times[i] = fl.times[i] / frequentFlierSpeed
+						end
+					end
+					StartBar(barTime, destName)
+				else
+					StopBar()
+				end
+			end)
+
+			-- Early landing stops at the next stop so the bar counts down to that instead
+			hooksecurefunc("TaxiRequestEarlyLanding", function()
+				if not flying then return end
+				local nextStop = fl.nextStop
+				if nextStop then
+					fl.total, fl.dest = fl.times[nextStop], fl.names[nextStop]
+					for i = #fl.times, nextStop, -1 do
+						fl.times[i], fl.names[i] = nil, nil
+					end
+					fl.nextStop = nil
+					SpeechReset(fl.total - (GetTime() - fl.start))
+					RefreshBar()
+				end
+			end)
 
 			-- Show flight time in node tooltips
 			hooksecurefunc("TaxiNodeOnButtonEnter", function(button)
-				local index = button:GetID()
-				for i = 1, NumTaxiNodes() do
-					local nodeType = TaxiNodeGetType(i)
-					local nodeName = GetNodeName(i)
-					if nodeType == "CURRENT" then
-
-						-- Get current node
-						local continent = getContinent()
-						local startX, startY = TaxiNodePosition(i)
-						local currentNode = string.format("%0.2f", startX) .. ":" .. string.format("%0.2f", startY)
-
-						-- Get destination
-						local endX, endY = TaxiNodePosition(index)
-						local destination = string.format("%0.2f", endX) .. ":" .. string.format("%0.2f", endY)
-						local barName = GetNodeName(index)
-
-						-- Build route string and debug string
-						local numEnterHops = GetNumRoutes(index)
-						local debugString = '["' .. currentNode
-						local routeString = currentNode
-						for i = 2, numEnterHops + 1 do
-							local hopPosX, hopPosY = TaxiNodePosition(TaxiGetNodeSlot(index, i, true)) -- TaxiNodeName
-							local hopPos = string.format("%0.2f", hopPosX) .. ":" .. string.format("%0.2f", hopPosY)
-							local fpName = string.split(", ", TaxiNodeName(TaxiGetNodeSlot(index, i, true)))
-							debugString = debugString .. ":" .. hopPos
-							routeString = routeString .. ":" .. hopPos
-						end
-
-						-- If route string does not contain destination, add it to the end (such as Altar of Sha'tar)
-						if not string.find(routeString, destination) then
-							debugString = debugString .. ":" .. destination
-							routeString = routeString .. ":" .. destination
-						end
-						debugString = debugString .. '"] = '
-
-						-- Show flight time in tooltip if it exists
-						if data[faction] and data[faction][continent] and data[faction][continent][routeString] then
-							local duration = data[faction][continent][routeString]
-							if duration and type(duration) == "number" then
-								if duration == 0 then
-									GameTooltip:AddLine(L["Flight times are not available for this route."], 0.9, 0.9, 0.9, true)
-								else
-									if HasFrequentFlier() then duration = duration / frequentFlierSpeed end
-									duration = date("%M:%S", duration):gsub("^0","")
-									GameTooltip:AddLine(L["Duration"] .. ": " .. duration, 0.9, 0.9, 0.9, true)
-								end
-								GameTooltip:Show()
-							end
-						elseif currentNode ~= destination then
-							GameTooltip:AddLine(L["Duration"] .. ": -:--", 0.9, 0.9, 0.9, true)
-							GameTooltip:Show()
-						end
-
-						-- Add node names to debug string
-						debugString = debugString .. " -- " .. nodeName
-						for i = 2, numEnterHops + 1 do
-							local fpName = string.split(",", TaxiNodeName(TaxiGetNodeSlot(index, i, true)))
-							debugString = debugString .. ", " .. fpName
-						end
-
-						-- If debug string does not contain destination, add it to the end
-						if not string.find(debugString, barName) then
-							debugString = debugString .. ", " .. barName
-						end
-
-						-- Print debug string (used for showing full routes for nodes)
-						-- print(debugString)
-
+				local current = GetCurrentNode()
+				if not current then return end
+				local continentData = GetContinentData()
+				local routeString, destination = BuildRoute(current, button:GetID())
+				local duration = continentData and continentData[routeString]
+				if type(duration) == "number" then
+					if duration == 0 then
+						GameTooltip:AddLine(L["Flight times are not available for this route."], 0.9, 0.9, 0.9, true)
+					else
+						if HasFrequentFlier() then duration = duration / frequentFlierSpeed end
+						GameTooltip:AddLine(L["Duration"] .. ": " .. FormatTime(duration), 0.9, 0.9, 0.9, true)
 					end
+					GameTooltip:Show()
+				elseif routeKeys[1] ~= destination then
+					GameTooltip:AddLine(L["Duration"] .. ": -:--", 0.9, 0.9, 0.9, true)
+					GameTooltip:Show()
 				end
 			end)
 
@@ -10012,58 +11547,21 @@
 			hooksecurefunc(C_SummonInfo, "ConfirmSummon", StopLandingEvent)
 
 			----------------------------------------------------------------------
-			-- Drag frame
-			----------------------------------------------------------------------
-
-			-- Create drag frame
-			local tempFrame = CreateFrame("FRAME", nil, UIParent)
-			tempFrame:SetWidth(230)
-			tempFrame:SetHeight(16)
-			tempFrame:SetScale(2)
-			tempFrame:ClearAllPoints()
-			tempFrame:SetPoint(LeaPlusLC["FlightBarA"], UIParent, LeaPlusLC["FlightBarR"], LeaPlusLC["FlightBarX"], LeaPlusLC["FlightBarY"])
-			tempFrame:Hide()
-			tempFrame:SetFrameStrata("FULLSCREEN_DIALOG")
-			tempFrame:SetFrameLevel(5000)
-			tempFrame:SetClampedToScreen(false)
-
-			-- Create texture
-			tempFrame.t = tempFrame:CreateTexture(nil, "BORDER")
-			tempFrame.t:SetAllPoints()
-			tempFrame.t:SetTexture("Interface\\TargetingFrame\\UI-StatusBar")
-			tempFrame.t:SetVertexColor(0.0, 1.0, 0.0, 0.5)
-
-			-- Enable movement
-			tempFrame:EnableMouse(true)
-			tempFrame:SetMovable(true)
-			tempFrame:SetScript("OnMouseDown", function()
-				tempFrame:StartMoving()
-			end)
-			tempFrame:SetScript("OnMouseUp", function()
-				tempFrame:StopMovingOrSizing()
-				LeaPlusLC["FlightBarA"], void, LeaPlusLC["FlightBarR"], LeaPlusLC["FlightBarX"], LeaPlusLC["FlightBarY"] = tempFrame:GetPoint()
-				-- Position actual flight progress bar if one exists
-				if LeaPlusLC.FlightProgressBar then
-					LeaPlusLC.FlightProgressBar:ClearAllPoints()
-					LeaPlusLC.FlightProgressBar:SetPoint(LeaPlusLC["FlightBarA"], UIParent, LeaPlusLC["FlightBarR"], LeaPlusLC["FlightBarX"], LeaPlusLC["FlightBarY"])
-				end
-			end)
-
-			----------------------------------------------------------------------
 			-- Configuration panel
 			----------------------------------------------------------------------
 
 			-- Create configuration panel
-			local FlightPanel = LeaPlusLC:CreatePanel("Show flight times", "FlightPanel")
+			FlightPanel = LeaPlusLC:CreatePanel("Show flight times", "FlightPanel")
 
 			LeaPlusLC:MakeTx(FlightPanel, "Settings", 16, -72)
 			LeaPlusLC:MakeCB(FlightPanel, "FlightBarBackground", "Show background", 16, -92, false, "If checked, the flight progress bar background texture will be shown.")
 			LeaPlusLC:MakeCB(FlightPanel, "FlightBarDestination", "Show destination", 16, -112, false, "If checked, the flight progress bar destination will be shown.")
-			LeaPlusLC:MakeCB(FlightPanel, "FlightBarFillBar", "Fill instead of drain", 16, -132, false, "If checked, the flight progress bar background will fill instead of drain.")
-			LeaPlusLC:MakeCB(FlightPanel, "FlightBarSpeech", "Speak the remaining time", 16, -152, false, "If checked, the remaining flight time will be spoken using text to speech.|n|nChanges to this setting will take effect on the next flight you take.")
+			LeaPlusLC:MakeCB(FlightPanel, "FlightBarNextHop", "Show next stop", 16, -132, false, "If checked, the next stop on the route and the time to reach it will be shown under the flight progress bar.")
+			LeaPlusLC:MakeCB(FlightPanel, "FlightBarFillBar", "Fill instead of drain", 16, -152, false, "If checked, the flight progress bar background will fill instead of drain.")
+			LeaPlusLC:MakeCB(FlightPanel, "FlightBarSpeech", "Speak the remaining time", 16, -172, false, "If checked, the remaining flight time will be spoken using text to speech.|n|nChanges to this setting will take effect on the next flight you take.")
 
-			LeaPlusLC:MakeTx(FlightPanel, "Contribute", 16, -192)
-			LeaPlusLC:MakeCB(FlightPanel, "FlightBarContribute", "Help contribute flight times", 16, -212, false, "If checked, you will be prompted to submit missing flight times.")
+			LeaPlusLC:MakeTx(FlightPanel, "Contribute", 16, -212)
+			LeaPlusLC:MakeCB(FlightPanel, "FlightBarContribute", "Help contribute flight times", 16, -232, false, "If checked, you will be prompted to submit missing flight times.")
 
 			LeaPlusLC:MakeTx(FlightPanel, "Scale", 356, -72)
 			LeaPlusLC:MakeSL(FlightPanel, "FlightBarScale", "Drag to set the flight progress bar scale.", 1, 5, 0.1, 356, -92, "%.2f")
@@ -10071,119 +11569,42 @@
 			LeaPlusLC:MakeTx(FlightPanel, "Width", 356, -132)
 			LeaPlusLC:MakeSL(FlightPanel, "FlightBarWidth", "Drag to set the flight progress bar width.", 40, 460, 10, 356, -152, "%.0f")
 
-			-- Function to lock an option and add a note to the tooltip
-			local function LockDF(option, reason)
-				LeaPlusLC:LockItem(LeaPlusCB[option], true)
-				if reason then
-					LeaPlusCB[option].tiptext = LeaPlusCB[option].tiptext .. "|n|n|cff00AAFF" .. L[reason]
-				end
-			end
+			LeaPlusLC:MakeTx(FlightPanel, "Text size", 356, -192)
+			LeaPlusLC:MakeSL(FlightPanel, "FlightBarFontSize", "Drag to set the flight progress bar text size.", 6, 20, 1, 356, -212, "%.0f")
 
 			-- Add close bar button
 			local CloseFlightBarButton = LeaPlusLC:CreateButton("CloseFlightBarButton", FlightPanel, "Close Bar", "TOPLEFT", 16, -72, 0, 25, true, "Click to close the currently active flight progress bar.")
 			LeaPlusCB["CloseFlightBarButton"]:ClearAllPoints()
 			LeaPlusCB["CloseFlightBarButton"]:SetPoint("LEFT", FlightPanel.h, "RIGHT", 10, 0)
 			LeaPlusCB["CloseFlightBarButton"]:SetScript("OnClick", function()
-				if LeaPlusLC.FlightProgressBar then
-					LeaPlusLC.FlightProgressBar:Stop()
-					LeaPlusLC.FlightProgressBar = nil
-				end
+				if flying then StopBar() end
 			end)
-
-			-- Lock close bar button at startup and when flight progress bar stops
 			LeaPlusLC:LockItem(LeaPlusCB["CloseFlightBarButton"], true)
-			candy.RegisterCallback(LeaPlusLC, "LibCandyBar_Stop", function()
-				if LeaPlusCB["CloseFlightBarButton"] then
-					LeaPlusLC:LockItem(LeaPlusCB["CloseFlightBarButton"], true)
-				end
-			end)
 
-			-- Set progress bar background
-			if LeaPlusLC.ElvUI then
-
-				-- Progress bar background is always enabled and cannot be disabled with ElvUI
-				LeaPlusLC:LockItem(LeaPlusCB["FlightBarBackground"], true)
-				LeaPlusLC["FlightBarBackground"] = "On"
-				LeaPlusCB["FlightBarBackground"].tiptext = LeaPlusCB["FlightBarBackground"].tiptext .. "|n|n|cff00AAFF" .. L["The background is always shown with ElvUI."]
-
-			else
-
-				-- Set progress bar background
-				local function SetProgressBarBackground()
-					if LeaPlusLC.FlightProgressBar then
-						if LeaPlusLC["FlightBarBackground"] == "On" then
-							LeaPlusLC.FlightProgressBar:SetTexture(texture)
-						else
-							LeaPlusLC.FlightProgressBar:SetTexture("")
-						end
-					end
-				end
-
-				-- Set progress bar background when option is clicked and on startup
-				LeaPlusCB["FlightBarBackground"]:HookScript("OnClick", SetProgressBarBackground)
-				SetProgressBarBackground()
-
-			end
-
-			-- Set progress bar fill mode
-			local function SetProgressBarFillMode()
-				if LeaPlusLC.FlightProgressBar then
-					if LeaPlusLC["FlightBarFillBar"] == "On" then
-						LeaPlusLC.FlightProgressBar:SetFill(true)
-					else
-						LeaPlusLC.FlightProgressBar:SetFill(false)
-					end
-				end
-			end
-
-			-- Set progress bar fill mode when option is clicked and on startup
-			LeaPlusCB["FlightBarFillBar"]:HookScript("OnClick", SetProgressBarFillMode)
-			SetProgressBarFillMode()
-
-			-- Set progress bar destination
-			local function SetProgressBarDestination()
-				if LeaPlusLC.FlightProgressBar then
-					if LeaPlusLC["FlightBarDestination"] == "On" then
-						if LeaPlusLC.FlightDestination then
-							LeaPlusLC.FlightProgressBar:SetLabel(LeaPlusLC.FlightDestination)
-						end
-					else
-						LeaPlusLC.FlightProgressBar:SetLabel("")
-					end
-				end
-			end
-
-			-- Set flight bar destination when option is clicked and on startup
-			LeaPlusCB["FlightBarDestination"]:HookScript("OnClick", SetProgressBarDestination)
-			SetProgressBarDestination()
+			-- Apply checkbox changes to the bar
+			LeaPlusCB["FlightBarBackground"]:HookScript("OnClick", RefreshBar)
+			LeaPlusCB["FlightBarDestination"]:HookScript("OnClick", RefreshBar)
+			LeaPlusCB["FlightBarNextHop"]:HookScript("OnClick", RefreshBar)
+			LeaPlusCB["FlightBarFillBar"]:HookScript("OnClick", RefreshBar)
 
 			-- Flight progress bar scale
 			local function SetFlightBarScale()
-				tempFrame:SetScale(LeaPlusLC["FlightBarScale"])
-				if LeaPlusLC.FlightProgressBar then
-					LeaPlusLC.FlightProgressBar:SetScale(LeaPlusLC["FlightBarScale"])
-				end
-				-- Set slider formatted text
 				LeaPlusCB["FlightBarScale"].f:SetFormattedText("%.0f%%", (LeaPlusLC["FlightBarScale"] / 2) * 100)
+				RefreshBar()
 			end
-
-			-- Set flight bar scale when slider is changed and on startup
 			LeaPlusCB["FlightBarScale"]:HookScript("OnValueChanged", SetFlightBarScale)
 			SetFlightBarScale()
 
 			-- Flight progress bar width
 			local function SetFlightBarWidth()
-				tempFrame:SetWidth(LeaPlusLC["FlightBarWidth"])
-				if LeaPlusLC.FlightProgressBar then
-					LeaPlusLC.FlightProgressBar:SetWidth(LeaPlusLC["FlightBarWidth"])
-				end
-				-- Set slider formatted text
 				LeaPlusCB["FlightBarWidth"].f:SetFormattedText("%.0f%%", (LeaPlusLC["FlightBarWidth"] / 230) * 100)
+				RefreshBar()
 			end
-
-			-- Set flight bar width when slider is changed and on startup
 			LeaPlusCB["FlightBarWidth"]:HookScript("OnValueChanged", SetFlightBarWidth)
 			SetFlightBarWidth()
+
+			-- Flight progress bar text size
+			LeaPlusCB["FlightBarFontSize"]:HookScript("OnValueChanged", RefreshBar)
 
 			-- Help button tooltip
 			FlightPanel.h.tiptext = L["Drag the frame overlay to position the frame."]
@@ -10197,40 +11618,27 @@
 			-- Reset button handler
 			FlightPanel.r:SetScript("OnClick", function()
 
-				-- Reset controls
+				-- Reset position, scale, width and text size
 				LeaPlusLC["FlightBarA"], LeaPlusLC["FlightBarR"], LeaPlusLC["FlightBarX"], LeaPlusLC["FlightBarY"] = "TOP", "TOP", 0, -66
-				tempFrame:ClearAllPoints()
-				tempFrame:SetPoint(LeaPlusLC["FlightBarA"], UIParent, LeaPlusLC["FlightBarR"], LeaPlusLC["FlightBarX"], LeaPlusLC["FlightBarY"])
-				-- Reset scale
 				LeaPlusLC["FlightBarScale"] = 2
-				tempFrame:SetScale(LeaPlusLC["FlightBarScale"])
-				-- Reset width
 				LeaPlusLC["FlightBarWidth"] = 230
-				tempFrame:SetWidth(LeaPlusLC["FlightBarWidth"])
+				LeaPlusLC["FlightBarFontSize"] = 10
+				if bar then
+					bar:ClearAllPoints()
+					bar:SetPoint(LeaPlusLC["FlightBarA"], UIParent, LeaPlusLC["FlightBarR"], LeaPlusLC["FlightBarX"], LeaPlusLC["FlightBarY"])
+				end
+
 				-- Reset checkboxes
 				LeaPlusLC["FlightBarBackground"] = "On"
 				LeaPlusLC["FlightBarDestination"] = "On"
-				LeaPlusLC["FlightBarFillBar"] = "Off"; SetProgressBarFillMode()
+				LeaPlusLC["FlightBarNextHop"] = "On"
+				LeaPlusLC["FlightBarFillBar"] = "Off"
 				LeaPlusLC["FlightBarSpeech"] = "Off"
 				LeaPlusLC["FlightBarContribute"] = "On"
-				-- Reset live progress bar
-				if LeaPlusLC.FlightProgressBar then
-					-- Reset position
-					LeaPlusLC.FlightProgressBar:ClearAllPoints()
-					LeaPlusLC.FlightProgressBar:SetPoint(LeaPlusLC["FlightBarA"], UIParent, LeaPlusLC["FlightBarR"], LeaPlusLC["FlightBarX"], LeaPlusLC["FlightBarY"])
-					LeaPlusLC.FlightProgressBar:SetScale(LeaPlusLC["FlightBarScale"])
-					-- Reset width
-					LeaPlusLC.FlightProgressBar:SetWidth(LeaPlusLC["FlightBarWidth"])
-					-- Reset background
-					LeaPlusLC.FlightProgressBar:SetTexture(texture)
-					-- Reset destination
-					if LeaPlusLC.FlightDestination then
-						LeaPlusLC.FlightProgressBar:SetLabel(LeaPlusLC.FlightDestination)
-					end
-				end
 
-				-- Refresh configuration panel
+				-- Refresh configuration panel and bar
 				FlightPanel:Hide(); FlightPanel:Show()
+				RefreshBar()
 
 			end)
 
@@ -10245,14 +11653,9 @@
 				end
 			end)
 
-			-- Toggle drag frame with configuration panel
-			FlightPanel:HookScript("OnShow", function()
-				tempFrame:Show()
-			end)
-
-			FlightPanel:HookScript("OnHide", function()
-				tempFrame:Hide()
-			end)
+			-- Show the bar with a preview while the configuration panel is showing so it can be positioned
+			FlightPanel:HookScript("OnShow", ShowPreview)
+			FlightPanel:HookScript("OnHide", HidePreview)
 
 		end
 
@@ -13215,7 +14618,12 @@
 			local uframe = CreateFrame("FRAME")
 
 			-- These categories will not appear in random track selections
-			local randomBannedList = {L["Narration"], L["Cinematics"], "MUS_51_DarkmoonFaire_MerryGoRound_01#34440"}
+			local randomBannedList = {L["Narration"], L["Cinematics"]}
+
+			-- Remove the duplicate number some tracks have after the file ID (path#fileid#2 becomes path#fileid)
+			local function StripDup(track)
+				return (track:gsub("^(.-#%d+)#%d+$", "%1"))
+			end
 
 			-- Get media table
 			local ZoneList = Leatrix_Plus["ZoneList"]
@@ -13226,8 +14634,12 @@
 				for i, button in ipairs(scrollFrame.buttons) do
 					local index = offset + i
 					if index <= #ListData then
-						-- Show zone listing or track listing
-						button:SetText(ListData[index].zone or ListData[index])
+						-- Show zone listing or track listing (store the full list entry on the button)
+						button.item = ListData[index]
+						local label = ListData[index].zone or ListData[index]
+						-- Hide the duplicate number some tracks have after the file ID (path#fileid#2 shows as path#fileid)
+						if type(ListData[index]) == "string" then label = StripDup(label) end
+						button:SetText(label)
 						-- Set width of highlight texture
 						if button:GetTextWidth() > 290 then
 							button.t:SetSize(290, 16)
@@ -13241,7 +14653,7 @@
 						-- Hide highlight bar if the button is a heading
 						if strfind(button:GetText(), "|c") then button.t:Hide() end
 						-- Show last played track highlight bar texture
-						if LastPlayed == button:GetText() then
+						if LastPlayed == button.item then
 							local HeadingOfCurrentFolder = ListData[1]
 							if HeadingOfCurrentFolder == HeadingOfClickedTrack then
 								button.s:Show()
@@ -13409,6 +14821,10 @@
 			stopBtn:Hide(); stopBtn:Show()
 			LeaPlusLC:LockItem(stopBtn, true)
 			stopBtn:SetScript("OnClick", function()
+				-- Unregister loading screen event and cancel the track monitor first so stopping doesn't start the next track
+				uframe:UnregisterEvent("LOADING_SCREEN_DISABLED")
+				if LeaPlusLC.TrackTimer then LeaPlusLC.TrackTimer:Cancel() end
+				LastMusicHandle = nil
 				if musicHandle then
 					StopSound(musicHandle)
 					musicHandle = nil
@@ -13417,43 +14833,57 @@
 					LastFolder = ""
 					UpdateList()
 				end
-				-- Cancel sound file music timer
-				if LeaPlusLC.TrackTimer then LeaPlusLC.TrackTimer:Cancel() end
-				-- Lock button and unregister next track events
+				-- Lock button
 				LeaPlusLC:LockItem(stopBtn, true)
-				uframe:UnregisterEvent("SOUNDKIT_FINISHED")
-				uframe:UnregisterEvent("LOADING_SCREEN_DISABLED")
 			end)
 
 			-- Store currently playing track number
 			local tracknumber = 1
 
+			-- Count tracks in a row that failed to start (stops the player looping forever if nothing can play)
+			local failedTracks = 0
+
+			-- Forward declaration so the track monitor can move on to the next track
+			local PlayTrack
+
+			-- Function to play the next track in the playlist
+			local function PlayNextTrack()
+				-- Playlist is at the end (last entry repeats the first track), restart from first track
+				if tracknumber >= #playlist then tracknumber = 1 end
+				PlayTrack()
+			end
+
 			-- Function to play a track and show the static highlight bar
-			local function PlayTrack()
-				-- Play tracks
-				if musicHandle then StopSound(musicHandle) end
-				local file, soundID, trackTime
-				if playlist[tracknumber]:match("([^,]+)%#([^,]+)%#([^,]+)") then
-					-- Music file with track time
-					file, soundID, trackTime = playlist[tracknumber]:match("([^,]+)%#([^,]+)%#([^,]+)")
-					willPlay, musicHandle = PlaySoundFile(soundID, "Master", false, true)
-				else
-					-- Sound kit without track time
-					file, soundID = playlist[tracknumber]:match("([^,]+)%#([^,]+)")
-					willPlay, musicHandle = C_Sound.PlaySound(soundID, "Master", false, true)
-				end
-				-- Cancel existing music timer for a sound file
+			function PlayTrack()
+				if not playlist[tracknumber] then return end
+				-- Stop the previous track and its monitor (clear the handle first so stopping it doesn't trigger the next track)
 				if LeaPlusLC.TrackTimer then LeaPlusLC.TrackTimer:Cancel() end
-				if playlist[tracknumber]:match("([^,]+)%#([^,]+)%#([^,]+)") then
-					-- Track is a sound file with track time so create track timer
-					LeaPlusLC.TrackTimer = C_Timer.NewTimer(trackTime + 1, function()
-						if musicHandle then StopSound(musicHandle) end
-						if tracknumber == #playlist then
-							-- Playlist is at the end, restart from first track
-							tracknumber = 1
+				local oldHandle = musicHandle
+				musicHandle, LastMusicHandle = nil, nil
+				if oldHandle then StopSound(oldHandle) end
+				-- Play music file (entries are path#filedataid)
+				local file, soundID = playlist[tracknumber]:match("^(.-)#(%d+)")
+				willPlay, musicHandle = PlaySoundFile(tonumber(soundID) or soundID, "Master")
+				if willPlay and musicHandle then
+					-- Watch the track and play the next one when it stops playing
+					failedTracks = 0
+					local thisHandle, ticker = musicHandle
+					ticker = C_Timer.NewTicker(1, function()
+						-- Another track has started since this one so stop watching
+						if musicHandle ~= thisHandle then ticker:Cancel() return end
+						if not C_Sound.IsPlaying(thisHandle) then
+							-- Track has finished
+							ticker:Cancel()
+							PlayNextTrack()
 						end
-						PlayTrack()
 					end)
+					LeaPlusLC.TrackTimer = ticker
+				else
+					-- Track could not be played so try the next one (give up after a full pass of the playlist)
+					failedTracks = failedTracks + 1
+					if failedTracks < #playlist then
+						LeaPlusLC.TrackTimer = C_Timer.NewTimer(1, PlayNextTrack)
+					end
 				end
 				-- Store its handle for later use
 				LastMusicHandle = musicHandle
@@ -13462,28 +14892,12 @@
 				-- Show static highlight bar
 				for index = 1, numButtons do
 					local button = scrollFrame.buttons[index]
-					local item = button:GetText()
-					if item then
-						if item:match("([^,]+)%#([^,]+)%#([^,]+)") then
-							-- Music file with track time
-							local item, void, void = item:match("([^,]+)%#([^,]+)%#([^,]+)")
-							if item then
-								if item == file and LastFolder == TempFolder then
-									button.s:Show()
-								else
-									button.s:Hide()
-								end
-							end
+					local item = button:IsShown() and button.item
+					if type(item) == "string" and item:match("^(.-)#(%d+)") then
+						if item == LastPlayed and LastFolder == TempFolder then
+							button.s:Show()
 						else
-							-- Sound kit without track time
-							local item, void = item:match("([^,]+)%#([^,]+)")
-							if item then
-								if item == file and LastFolder == TempFolder then
-									button.s:Show()
-								else
-									button.s:Hide()
-								end
-							end
+							button.s:Hide()
 						end
 					end
 				end
@@ -13555,9 +14969,13 @@
 																end
 																hash[b.category] = true
 															end
-															-- Show track
-															tinsert(ListData, "|Cffffffaa" .. b.zone .. " |r" .. v)
-															trackCount = trackCount + 1
+															-- Show track (only once if it appears more than once in the same entry)
+															local dupKey = "|Cffffffaa" .. b.zone .. " |r" .. StripDup(v)
+															if not hash[dupKey] then
+																tinsert(ListData, "|Cffffffaa" .. b.zone .. " |r" .. v)
+																trackCount = trackCount + 1
+																hash[dupKey] = true
+															end
 															hash[v] = true
 														end
 													end
@@ -13632,7 +15050,15 @@
 					-- Get random track within zone
 					local rTrack = ZoneList[rCategory][rZone].tracks[random(1, #ZoneList[rCategory][rZone].tracks)]
 					-- Insert track into ListData if it's not a duplicate or on the banned list
-					if rTrack and rTrack ~= "" and strfind(rTrack, "#") and not table.contains(ListData, "|Cffffffaa" .. ZoneList[rCategory][rZone].zone .. " |r" .. rTrack) then
+					-- Check the track isn't already listed (ignoring any duplicate number)
+					local alreadyListed = false
+					if rTrack and rTrack ~= "" and strfind(rTrack, "#") then
+						local rKey = "|Cffffffaa" .. ZoneList[rCategory][rZone].zone .. " |r" .. StripDup(rTrack)
+						for n = 5, #ListData do
+							if StripDup(ListData[n]) == rKey then alreadyListed = true break end
+						end
+					end
+					if rTrack and rTrack ~= "" and strfind(rTrack, "#") and not alreadyListed then
 						if not table.contains(randomBannedList, L[ZoneList[rCategory][rZone].zone]) and not table.contains(randomBannedList, rTrack) then
 							tinsert(ListData, "|Cffffffaa" .. ZoneList[rCategory][rZone].zone .. " |r" .. rTrack)
 						end
@@ -13698,16 +15124,9 @@
 
 				button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 
-				-- Handler for playing next SoundKit track in playlist
-				uframe:SetScript("OnEvent", function(self, event, stoppedHandle)
-					if event == "SOUNDKIT_FINISHED" then
-						-- Do nothing if stopped sound kit handle doesnt match last played track handle
-						if LastMusicHandle and LastMusicHandle ~= stoppedHandle then return end
-						-- Reset track number if playlist has reached the end
-						if tracknumber == #playlist then tracknumber = 1 end
-						-- Play next track
-						PlayTrack()
-					elseif event == "LOADING_SCREEN_DISABLED" then
+				-- Handler for restarting the player after a loading screen (track endings are watched in PlayTrack)
+				uframe:SetScript("OnEvent", function(self, event)
+					if event == "LOADING_SCREEN_DISABLED" then
 						-- Restart player if it stopped between tracks during loading screen
 						if playlist and tracknumber and playlist[tracknumber] and not willPlay and not musicHandle then
 							tracknumber = tracknumber - 1
@@ -13721,8 +15140,8 @@
 					if btn == "LeftButton" then
 						-- Remove focus from search box
 						sBox:ClearFocus()
-						-- Get clicked track text
-						local item = self:GetText()
+						-- Get clicked list entry (full entry, including any hidden duplicate number)
+						local item = type(self.item) == "string" and self.item or self:GetText()
 						-- Do nothing if its a blank line or informational heading
 						if not item or strfind(item, "|c") then return end
 						if item == "|Cffffffaa{" .. L["click here for new selection"] .. "}" then -- must be capital |C
@@ -13739,8 +15158,7 @@
 							local StartItem = 0
 							-- Get item clicked row number
 							for index = 1, #ListData do
-								local item = ListData[index]
-								if self:GetText() == item then StartItem = index end
+								if ListData[index] == item then StartItem = index end
 							end
 							-- Add all items from clicked item onwards to playlist
 							for index = StartItem, #ListData do
@@ -13773,8 +15191,7 @@
 							HeadingOfClickedTrack = ListData[1]
 							-- Play first track
 							PlayTrack()
-							-- Play subsequent tracks
-							uframe:RegisterEvent("SOUNDKIT_FINISHED")
+							-- Restart the player if a loading screen stops it between tracks
 							uframe:RegisterEvent("LOADING_SCREEN_DISABLED")
 							return
 						elseif strfind(item, "|r") then
@@ -14160,7 +15577,7 @@
 				LeaPlusLC:LoadVarChk("HideMiniAddonButtons", "On")			-- Hide addon buttons
 				LeaPlusLC:LoadVarNum("MinimapBorderWidth", 3, 1, 10)		-- Minimap border width
 				LeaPlusLC:LoadVarNum("MiniClusterScale", 1, 0.5, 2)			-- Minimap cluster scale
-				LeaPlusLC:LoadVarNum("MinimapEffect", 1, 1, 22)				-- Minimap effect
+				LeaPlusLC:LoadVarNum("MinimapEffect", 1, 1, 33)				-- Minimap effect
 
 				LeaPlusLC:LoadVarChk("TipModEnable", "Off")					-- Enhance tooltip
 				LeaPlusLC:LoadVarChk("TipShowRank", "On")					-- Show rank for your guild
@@ -14223,6 +15640,9 @@
 				LeaPlusLC:LoadVarChk("ClassColFrames", "Off")				-- Class colored frames
 				LeaPlusLC:LoadVarChk("ClassColPlayer", "On")				-- Class colored player frame
 				LeaPlusLC:LoadVarChk("ClassColTarget", "On")				-- Class colored target frame
+				LeaPlusLC:LoadVarChk("ClassColPlayerBorder", "Off")			-- Class colored player frame border
+				LeaPlusLC:LoadVarChk("ClassColTargetBorder", "Off")			-- Class colored target frame border
+				LeaPlusLC:LoadVarChk("ClassColChain", "Off")				-- Class colored player chain
 
 				LeaPlusLC:LoadVarChk("NoAlerts", "Off")						-- Hide alerts
 				LeaPlusLC:LoadVarChk("HideCleanupBtns", "Off")				-- Hide clean-up buttons
@@ -14258,6 +15678,7 @@
 				LeaPlusLC:LoadVarChk("ShowFlightTimes", "Off")				-- Show flight times
 				LeaPlusLC:LoadVarChk("FlightBarBackground", "On")			-- Show flight times bar background
 				LeaPlusLC:LoadVarChk("FlightBarDestination", "On")			-- Show flight times bar destination
+				LeaPlusLC:LoadVarChk("FlightBarNextHop", "On")				-- Show flight times bar next stop
 				LeaPlusLC:LoadVarChk("FlightBarFillBar", "Off")				-- Show flight times bar fill mode
 				LeaPlusLC:LoadVarChk("FlightBarSpeech", "Off")				-- Show flight times bar speech
 				LeaPlusLC:LoadVarChk("FlightBarContribute", "On")			-- Show flight times contribute
@@ -14267,6 +15688,7 @@
 				LeaPlusLC:LoadVarNum("FlightBarY", -66, -5000, 5000)		-- Show flight position Y
 				LeaPlusLC:LoadVarNum("FlightBarScale", 2, 1, 5)				-- Show flight times bar scale
 				LeaPlusLC:LoadVarNum("FlightBarWidth", 230, 40, 460)		-- Show flight times bar width
+				LeaPlusLC:LoadVarNum("FlightBarFontSize", 10, 6, 20)		-- Show flight times bar text size
 
 				-- Settings
 				LeaPlusLC:LoadVarNum("AddonLanguage", 1, 1, 12)				-- Addon language
@@ -14578,6 +16000,9 @@
 			LeaPlusDB["ClassColFrames"]			= LeaPlusLC["ClassColFrames"]
 			LeaPlusDB["ClassColPlayer"]			= LeaPlusLC["ClassColPlayer"]
 			LeaPlusDB["ClassColTarget"]			= LeaPlusLC["ClassColTarget"]
+			LeaPlusDB["ClassColPlayerBorder"]	= LeaPlusLC["ClassColPlayerBorder"]
+			LeaPlusDB["ClassColTargetBorder"]	= LeaPlusLC["ClassColTargetBorder"]
+			LeaPlusDB["ClassColChain"]			= LeaPlusLC["ClassColChain"]
 
 			LeaPlusDB["NoAlerts"]				= LeaPlusLC["NoAlerts"]
 			LeaPlusDB["HideCleanupBtns"]		= LeaPlusLC["HideCleanupBtns"]
@@ -14613,6 +16038,7 @@
 			LeaPlusDB["ShowFlightTimes"]		= LeaPlusLC["ShowFlightTimes"]
 			LeaPlusDB["FlightBarBackground"]	= LeaPlusLC["FlightBarBackground"]
 			LeaPlusDB["FlightBarDestination"]	= LeaPlusLC["FlightBarDestination"]
+			LeaPlusDB["FlightBarNextHop"]		= LeaPlusLC["FlightBarNextHop"]
 			LeaPlusDB["FlightBarFillBar"]		= LeaPlusLC["FlightBarFillBar"]
 			LeaPlusDB["FlightBarSpeech"]		= LeaPlusLC["FlightBarSpeech"]
 			LeaPlusDB["FlightBarContribute"]	= LeaPlusLC["FlightBarContribute"]
@@ -14622,6 +16048,7 @@
 			LeaPlusDB["FlightBarY"]				= LeaPlusLC["FlightBarY"]
 			LeaPlusDB["FlightBarScale"]			= LeaPlusLC["FlightBarScale"]
 			LeaPlusDB["FlightBarWidth"]			= LeaPlusLC["FlightBarWidth"]
+			LeaPlusDB["FlightBarFontSize"]		= LeaPlusLC["FlightBarFontSize"]
 
 			-- Settings
 			LeaPlusDB["AddonLanguage"] 			= LeaPlusLC["AddonLanguage"]
@@ -15123,71 +16550,215 @@
 		return mbtn
 	end
 
-	-- Create a dropdown menu (using standard dropdown template)
+	----------------------------------------------------------------------
+	-- Pop-up lists
+	----------------------------------------------------------------------
+
+	-- The game's menus keep their state on the menu frame and the world map reads the frame under the pointer every
+	-- frame, so menu entries made by an addon spread taint into the map's own code while the map is open. Dropdown
+	-- menus use these pop-up lists instead. They are frames of our own, so the map never reads anything the addon wrote.
+
+	function LeaPlusLC:CreatePopupList(parent)
+
+		local rowHeight, rowsPerColumn, columnWidth = 20, 25, 180
+		local rows = {}
+		local owner, entries, isChecked, onClick, onWheel
+
+		local list = CreateFrame("Frame", nil, parent, "BackdropTemplate")
+		list:SetFrameStrata("FULLSCREEN_DIALOG")
+		list:SetClampedToScreen(true)
+		list:EnableMouse(true)
+		list:EnableMouseWheel(true)
+		list:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1})
+		list:SetBackdropColor(0.05, 0.05, 0.05, 0.95)
+		list:SetBackdropBorderColor(0.3, 0.3, 0.3, 1)
+		list:Hide()
+
+		-- Mousewheel runs the wheel function if there is one (and stops anything under the list from scrolling)
+		list:SetScript("OnMouseWheel", function(self, delta)
+			if onWheel then onWheel(delta) end
+		end)
+
+		-- Close the list when clicking anywhere else (only watched while the list is showing)
+		list:SetScript("OnShow", function(self) self:RegisterEvent("GLOBAL_MOUSE_DOWN") end)
+		list:SetScript("OnHide", function(self) self:UnregisterEvent("GLOBAL_MOUSE_DOWN") end)
+		list:SetScript("OnEvent", function(self)
+			if not self:IsMouseOver() and not (owner and owner:IsMouseOver()) then
+				self:Hide()
+			end
+		end)
+
+		-- Function to show a row as checked or not
+		local function SetRowCheck(row)
+			if isChecked(row.entry) then
+				row.Check:Show()
+				row.Text:SetTextColor(NORMAL_FONT_COLOR:GetRGB())
+			else
+				row.Check:Hide()
+				row.Text:SetTextColor(HIGHLIGHT_FONT_COLOR:GetRGB())
+			end
+		end
+
+		-- Function to get a row (rows are created when first needed and reused)
+		local function GetRow(index)
+			local row = rows[index]
+			if not row then
+				row = CreateFrame("Button", nil, list)
+				row:SetSize(columnWidth, rowHeight)
+				row:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
+				row.Check = row:CreateTexture(nil, "ARTWORK")
+				row.Check:SetTexture("Interface\\Buttons\\UI-CheckBox-Check")
+				row.Check:SetSize(16, 16)
+				row.Check:SetPoint("LEFT", 4, 0)
+				row.Text = row:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+				row.Text:SetPoint("LEFT", 22, 0)
+				row.Text:SetPoint("RIGHT", -4, 0)
+				row.Text:SetJustifyH("LEFT")
+				row.Text:SetWordWrap(false)
+				row:SetScript("OnClick", function(self)
+					-- The click function returns true to keep the list open (such as for checkboxes)
+					if onClick(self.entry) then
+						for i = 1, #entries do SetRowCheck(rows[i]) end
+					else
+						list:Hide()
+					end
+				end)
+				rows[index] = row
+			end
+			return row
+		end
+
+		local popup = {}
+
+		-- Close the list
+		function popup:Close()
+			list:Hide()
+		end
+
+		-- Update the checks in the open list
+		function popup:Refresh()
+			if not list:IsShown() then return end
+			for i = 1, #entries do SetRowCheck(rows[i]) end
+		end
+
+		-- Show the list next to a button (long lists are split into columns)
+		function popup:Open(button, items, checkedFunc, clickFunc, point, relativePoint, x, y, wheelFunc)
+			local count = #items
+			if count == 0 then return end
+			owner, entries, isChecked, onClick, onWheel = button, items, checkedFunc, clickFunc, wheelFunc
+			local columns = math.ceil(count / rowsPerColumn)
+			local perColumn = math.ceil(count / columns)
+			for i = 1, count do
+				local row = GetRow(i)
+				row.entry = items[i]
+				row.Text:SetText(items[i].name)
+				SetRowCheck(row)
+				row:ClearAllPoints()
+				row:SetPoint("TOPLEFT", list, "TOPLEFT", 8 + math.floor((i - 1) / perColumn) * columnWidth, -8 - ((i - 1) % perColumn) * rowHeight)
+				row:Show()
+			end
+			for i = count + 1, #rows do
+				rows[i]:Hide()
+				rows[i].entry = nil
+			end
+			list:SetSize(columns * columnWidth + 16, perColumn * rowHeight + 16)
+			list:ClearAllPoints()
+			list:SetPoint(point, button, relativePoint, x, y)
+			list:SetFrameLevel(button:GetFrameLevel() + 20)
+			list:Show()
+		end
+
+		-- Open the list for a button or close it if it's already open for that button
+		function popup:Toggle(button, ...)
+			if list:IsShown() and owner == button then
+				list:Hide()
+			else
+				self:Open(button, ...)
+			end
+		end
+
+		return popup
+
+	end
+
+	-- Create a dropdown menu (the standard dropdown button but it opens a pop-up list instead of the game's menu, see
+	-- LeaPlusLC:CreatePopupList for why)
 	function LeaPlusLC:CreateDropdown(frame, label, width, anchor, parent, relative, x, y, reload, items)
 
-		local RadioDropdown = CreateFrame("DropdownButton", nil, parent, "WowStyle1DropdownTemplate")
-		LeaPlusCB[frame] = RadioDropdown
-		RadioDropdown:SetPoint(anchor, parent, relative, x, y)
-		RadioDropdown:SetWidth(width)
+		local dropdown = CreateFrame("DropdownButton", nil, parent, "WowStyle1DropdownTemplate")
+		LeaPlusCB[frame] = dropdown
+		dropdown:SetPoint(anchor, parent, relative, x, y)
+		dropdown:SetWidth(width)
 
-		local function IsSelected(value)
-			return value == LeaPlusLC[frame]
+		local lf = dropdown:CreateFontString(nil, "OVERLAY", "GameFontNormal"); lf:SetPoint("TOPLEFT", dropdown, 0, 20); lf:SetPoint("TOPRIGHT", dropdown, -5, 20); lf:SetJustifyH("LEFT"); lf:SetText(L[label])
+
+		-- List entries
+		local entries = {}
+		for i = 1, #items do
+			entries[i] = {name = items[i][1], value = items[i][2]}
 		end
 
-		local function SetSelected(value)
-			LeaPlusLC[frame] = value
-		end
-
-		MenuUtil.CreateRadioMenu(RadioDropdown, IsSelected, SetSelected, unpack(items))
-
-		local lf = RadioDropdown:CreateFontString(nil, "OVERLAY", "GameFontNormal"); lf:SetPoint("TOPLEFT", RadioDropdown, 0, 20); lf:SetPoint("TOPRIGHT", RadioDropdown, -5, 20); lf:SetJustifyH("LEFT"); lf:SetText(L[label])
-
-		-- Cycle through the options with the mousewheel while the menu is closed (scroll down for the next option, up for the previous one)
-		RadioDropdown:EnableMouseWheel(true)
-
-		-- Apply the new option in the same way as choosing it from the menu (runs anything hooked to the menu closing)
-		RadioDropdown:HookScript("OnMouseWheel", function(self)
-			self:TriggerEvent(DropdownButtonMixin.Event.OnMenuClose, self)
-		end)
-
-		-- Cycle through the options with the mousewheel while the menu is open (an invisible layer over the menu takes the mousewheel but lets clicks through)
-		local wheel
-		RadioDropdown:RegisterCallback("OnMenuOpen", function()
-			local menu = RadioDropdown.menu
-			if not menu then return end
-			if not wheel then
-				wheel = CreateFrame("Frame", nil, UIParent)
-				wheel:EnableMouse(false)
-				wheel:EnableMouseWheel(true)
-				wheel:SetScript("OnMouseWheel", function(self, delta)
-					-- Find the current option and step to the next or previous one (stops at either end)
-					local index = 1
-					for i = 1, #items do
-						if items[i][2] == LeaPlusLC[frame] then index = i; break end
-					end
-					index = index + (delta < 0 and 1 or -1)
-					if index < 1 or index > #items then return end
-					LeaPlusLC[frame] = items[index][2]
-					-- Move the tick in the open menu, update the dropdown text and apply the option
-					if RadioDropdown.menu then RadioDropdown.menu:ReinitializeAll() end
-					RadioDropdown:SignalUpdate()
-					RadioDropdown:TriggerEvent(DropdownButtonMixin.Event.OnMenuClose, RadioDropdown)
-				end)
+		-- Function to show the current option on the button
+		local function UpdateText()
+			for i = 1, #entries do
+				if entries[i].value == LeaPlusLC[frame] then
+					dropdown:OverrideText(entries[i].name)
+					return
+				end
 			end
-			wheel:SetAllPoints(menu)
-			wheel:SetFrameStrata(menu:GetFrameStrata())
-			wheel:SetFrameLevel(menu:GetFrameLevel() + 50)
-			wheel:Show()
-		end)
+			dropdown:OverrideText("")
+		end
 
-		-- Hide the layer when the menu really closes (the mousewheel also signals the menu closing so options apply, but without a menu)
-		RadioDropdown:RegisterCallback("OnMenuClose", function(owner, dropdown, menu)
-			if menu and wheel then wheel:Hide() end
+		-- Function to apply an option (runs anything hooked to the menu closing, so options apply in the same way as before)
+		local function SetValue(value)
+			LeaPlusLC[frame] = value
+			UpdateText()
+			dropdown:TriggerEvent(DropdownButtonMixin.Event.OnMenuClose, dropdown)
 			if reload then
 				LeaPlusLC:ReloadCheck()
 			end
+		end
+
+		local popup = LeaPlusLC:CreatePopupList(parent)
+
+		local function IsCurrent(entry)
+			return entry.value == LeaPlusLC[frame]
+		end
+
+		local function Choose(entry)
+			SetValue(entry.value)
+		end
+
+		-- Function to step to the next or previous option (scroll down for the next option, up for the previous one, stops at either end)
+		local function Step(delta)
+			local index = 1
+			for i = 1, #entries do
+				if entries[i].value == LeaPlusLC[frame] then index = i; break end
+			end
+			index = index + (delta < 0 and 1 or -1)
+			if index < 1 or index > #entries then return end
+			SetValue(entries[index].value)
+			popup:Refresh()
+		end
+
+		-- Open or close the list when the button is clicked
+		dropdown:HookScript("OnMouseDown", function(self, button)
+			if button ~= "LeftButton" or not self:IsEnabled() then return end
+			popup:Toggle(self, entries, IsCurrent, Choose, "TOPLEFT", "BOTTOMLEFT", 0, -2, Step)
 		end)
+
+		-- Cycle through the options with the mousewheel over the button (the open list does the same)
+		dropdown:EnableMouseWheel(true)
+		dropdown:HookScript("OnMouseWheel", function(self, delta)
+			if self:IsEnabled() then Step(delta) end
+		end)
+
+		-- Close the list if the button is disabled
+		dropdown:HookScript("OnDisable", function() popup:Close() end)
+
+		-- Show the current option when the button is shown
+		dropdown:HookScript("OnShow", UpdateText)
+		UpdateText()
 
 	end
 
@@ -16096,7 +17667,7 @@
 					local col1, col2, color1 = 10, 120, "|cffffffaa"
 					LeaPlusLC:MakeTx(frame, "Leatrix Plus Help", col1, -10)
 					LeaPlusLC:MakeWD(frame, color1 .. "/ltp|r", col1, -30)
-					LeaPlusLC:MakeWD(frame, "Toggle opttions panel.", col2, -30)
+					LeaPlusLC:MakeWD(frame, "Toggle options panel.", col2, -30)
 					LeaPlusLC:MakeWD(frame, color1 .. "/ltp reset", col1, -50)
 					LeaPlusLC:MakeWD(frame, "Reset addon panel position and scale.", col2, -50)
 					LeaPlusLC:MakeWD(frame, color1 .. "/ltp wipe", col1, -70)
@@ -16924,6 +18495,14 @@
 				SetCVar("addonChallengeModeRestrictionsForced", "0")
 				LeaPlusLC:Print("Addon restrictions are no longer enforced.")
 				return
+			elseif str == "flightpopup" then
+				-- Show a sample flight time report window
+				if LeaPlusLC.ShowFlightReportTest then
+					LeaPlusLC.ShowFlightReportTest()
+				else
+					LeaPlusLC:Print("Show flight times is not enabled.")
+				end
+				return
 			elseif str == "checkglobal" then
 				-- Print global frame names created by the addon
 				local c = 0
@@ -17045,6 +18624,7 @@
 				LeaPlusDB["ShowReadyTimer"] = "On"				-- Show ready timer
 				LeaPlusDB["ShowRangeColoring"] = "On"			-- Show range coloring
 				LeaPlusDB["ShowInfoCards"] = "On"				-- Show info cards
+				LeaPlusDB["InfoCardKey"] = "CTRL-A"				-- Info card key
 				LeaPlusDB["ShowWowheadLinks"] = "On"			-- Show Wowhead links
 				LeaPlusDB["WowheadLinkComments"] = "On"			-- Show Wowhead links to comments
 
@@ -17057,6 +18637,9 @@
 				LeaPlusDB["WidgetTopScale"] = 1.25				-- Manage widget top scale
 
 				LeaPlusDB["ClassColFrames"] = "On"				-- Class colored frames
+				LeaPlusDB["ClassColPlayerBorder"] = "On"			-- Player border in class color
+				LeaPlusDB["ClassColTargetBorder"] = "On"			-- Target border in class color
+				LeaPlusDB["ClassColChain"] = "On"				-- Chain in class color
 
 				LeaPlusDB["NoAlerts"] = "On"					-- Hide alerts
 				LeaPlusDB["HideCleanupBtns"] = "On"				-- Hide cleanup buttons

@@ -1,4 +1,16 @@
-﻿1.60.25 - 21st October 2026
+﻿1.60.27 - 4th November 2026
+- For 'Class colored frames' ('Frames'), you can now set the frame border and player chain (if you use that option) to be in class color too.
+- For 'Show info cards' ('Interface'), fixed an issue which caused CTRL/C to not copy the link if your info card key included CTRL and you had not released CTRL first.
+- For 'Show flight times' ('System'), redesigned the flight progress bar.  The progress bar now shows the next stop in addition to the final destination.  There is a toggle for that and a text size slider in the configuration panel.
+- Fixed an issue with 'More chat font sizes' ('Chat') which caused the communities and guild chat font size to reset sometimes.
+
+1.60.26 - 28th October 2026
+- For 'Enhance minimap', added more visual effects.
+- For 'Enhance dressup', redesigned the dressing room layout.  There are additional buttons, the gear slot buttons and the nude button are now toggles and there is now an info card button.
+- For 'Media', tracks are now automatically generated from game data.
+- Updated flight times and translations.
+
+1.60.25 - 21st October 2026
 - For 'Automate gossip' ('Automation'), updated the NPC list.
 - For 'Show info cards' ('Interface'), you can now toggle individual gear slot items and there's a new fullscreen button with a scene selection menu in the model viewer.
 - For 'Show range coloring' ('Interface'), fixed a Lua error.

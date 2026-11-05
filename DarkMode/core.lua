@@ -211,7 +211,34 @@ function DarkMode:UpdateSpellBook()
 	DarkMode:FindTexts(PlayerSpellsFrame.SpellBookFrame.PagedSpellsFrame.PagingControls, "sb")
 end
 
+function DarkMode:ColorCharacterBorders(frame, depth)
+	depth = depth or 0
+	if frame == nil or depth > 10 or DarkMode:IsForbidden(frame) then return end
+	DarkMode:ForeachRegions(frame, function(region)
+		if DarkMode:IsForbidden(region) or not region.GetAtlas then return end
+		local atlas = region:GetAtlas()
+		if type(atlas) == "string" and not DarkMode:IsSecret(atlas) and DarkMode.CharacterBorderAtlases[atlas] then DarkMode:UpdateColor(region, "frames") end
+	end, "CharacterBorders")
+	DarkMode:ForeachChildren(frame, function(child) DarkMode:ColorCharacterBorders(child, depth + 1) end, "CharacterBorders")
+end
+
 function DarkMode:CheckLateFrames()
+	if ProfessionsFrame and DarkMode:IsForever() and not ProfessionsFrame.dmTabBordersHooked then
+		ProfessionsFrame.dmTabBordersHooked = true
+		for index = 0, 7 do
+			local tab = index == 0 and ProfessionsFrame.ProfessionsOverviewTab or ProfessionsFrame["Professions" .. index .. "Tab"]
+			if tab then
+				for _, key in ipairs({"Background", "SelectedTexture", "HighlightTexture", "TabGlow"}) do
+					DarkMode:LockColorType(tab[key], "frames")
+				end
+			end
+		end
+	end
+	if CharacterFrame and DarkMode:IsForever() and not CharacterFrame.dmBordersHooked then
+		CharacterFrame.dmBordersHooked = true
+		CharacterFrame:HookScript("OnShow", function(frame) DarkMode:ColorCharacterBorders(frame) end)
+		DarkMode:ColorCharacterBorders(CharacterFrame)
+	end
 	local MiniMapTrackingBorder = getglobal("MiniMapTrackingBorder")
 	if not foundMinimapTracking and MiniMapTrackingBorder then
 		foundMinimapTracking = true
@@ -1671,6 +1698,43 @@ function DarkMode:SetupLeatrixPlayerChain(tries)
 	if found == 0 and (tries or 0) > 0 then DarkMode:After(1, function() DarkMode:SetupLeatrixPlayerChain(tries - 1) end, "LeatrixChain") end
 end
 
+function DarkMode:ColorLeatrixMapsBorder(frame)
+	DarkMode:ForeachRegions(frame, function(region) if region.IsObjectType and region:IsObjectType("Texture") and region:GetDrawLayer() == "BORDER" then DarkMode:UpdateColor(region, "frames") end end, "LeatrixMapsBorder")
+	for _, child in ipairs({frame:GetChildren()}) do
+		DarkMode:ColorBackdropEdges(child)
+	end
+end
+
+function DarkMode:SetupLeatrixMapsBorder()
+	if not DarkMode:IsAddOnLoaded("Leatrix_Maps") or not WorldMapFrame or not WorldMapFrame.GetChildren then return end
+	if not WorldMapFrame.dmLeatrixMapsHook then
+		WorldMapFrame.dmLeatrixMapsHook = true
+		WorldMapFrame:HookScript("OnShow", function() DarkMode:SetupLeatrixMapsBorder() end)
+	end
+
+	for _, child in ipairs({WorldMapFrame:GetChildren()}) do
+		local info = child.backdropInfo
+		if not child.dmLeatrixMapsBorder and child:GetName() == nil and type(info) == "table" and info.bgFile == "Interface\\Buttons\\WHITE8X8" and info.edgeFile == nil and child:GetFrameStrata() == WorldMapFrame:GetFrameStrata() then
+			child.dmLeatrixMapsBorder = true
+			hooksecurefunc(child, "CreateTexture", function() DarkMode:After(0.1, function() DarkMode:ColorLeatrixMapsBorder(child) end, "LeatrixMapsBorder") end)
+			DarkMode:ColorLeatrixMapsBorder(child)
+		end
+	end
+end
+
+function DarkMode:SetupMapUtilsSimpleMapFrame()
+	if not WorldMapFrame or not WorldMapFrame.HookScript then return end
+	if not WorldMapFrame.dmMapUtilsSimpleHook then
+		WorldMapFrame.dmMapUtilsSimpleHook = true
+		WorldMapFrame:HookScript("OnShow", function() DarkMode:SetupMapUtilsSimpleMapFrame() end)
+	end
+
+	local frame = _G["MapUtilsSimpleMapFrame"]
+	if frame == nil or frame.dmMapUtilsSimple then return end
+	frame.dmMapUtilsSimple = true
+	DarkMode:ForeachRegions(frame, function(region) if region.IsObjectType and region:IsObjectType("Texture") then DarkMode:UpdateColor(region, "frames") end end, "MapUtilsSimpleMapFrame")
+end
+
 function DarkMode:ColorClassicUIBarBorder(bar, layer)
 	local fill = bar.GetStatusBarTexture and bar:GetStatusBarTexture()
 	local found = false
@@ -1866,6 +1930,8 @@ function DarkMode:Event(event, ...)
 			end
 
 			DarkMode:After(1, function() DarkMode:SetupLeatrixPlayerChain(10) end, "LeatrixChain")
+			DarkMode:After(1, function() DarkMode:SetupLeatrixMapsBorder() end, "LeatrixMapsBorder")
+			DarkMode:After(1, function() DarkMode:SetupMapUtilsSimpleMapFrame() end, "MapUtilsSimpleMapFrame")
 
 			if DarkMode:GetWoWBuild() ~= "RETAIL" then
 				-- delay for other addons changing

@@ -2328,6 +2328,8 @@ L["Your profile is now picked from the shipped build closest to your talents, so
 L["Hunter and Mage weights follow the launch changes: Aspect of the Hawk, Trueshot Aura and the reworked Mage talents."] = "Веса охотников и магов учитывают изменения к запуску: Дух ястреба, Аура меткого выстрела и переработанные таланты мага."
 L["Warlock and Paladin weights follow the launch Life Tap and Vindication."] = "Веса чернокнижников и паладинов учитывают Жизнеотвод и Vindication к запуску."
 L["Leveling weights for every class follow Blizzard's launch notes, and the Talents plugin's solo and dungeon leveling builds are re-searched on them."] = "Веса для прокачки всех классов учитывают заметки Blizzard к запуску, а сборки для одиночной прокачки и прокачки в подземельях в плагине талантов подобраны заново с их учётом."
+L["Elemental and Restoration Shaman leveling weights follow the November 4 hotfix (2-second Chain Lightning), and the Talents plugin's Shaman builds were re-searched."] = "Веса для прокачки шамана «Стихии» и «Исцеления» учитывают исправление от 4 ноября (Цепная молния за 2 секунды), а сборки шамана в плагине талантов подобраны заново."
+L["Leveling PvP builds and weights are being worked on."] = "Идёт работа над PvP-сборками и весами для прокачки."
 L["Stat Logic follows the launch racial changes: Human crit, Dwarf hit, and no more Orc and Tauren bonuses."] = "Stat Logic учитывает расовые изменения к запуску: крит людей, меткость дворфов, бонусы орков и тауренов убраны."
 L["Affliction: Drain Life Solo"] = "Колдовство: Соло с Похищением жизни"
 L["Bloom"] = "Цветение"

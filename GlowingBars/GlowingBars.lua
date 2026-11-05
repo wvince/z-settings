@@ -8155,7 +8155,7 @@ ____exports.STYLE_DEFAULTS = {
         color = {1, 0.55, 0.1},
         glowPercent = 100,
         isMessageOn = false,
-        sound = "alarm2",
+        sound = "none",
         ["repeat"] = 0,
         when = "always",
         glowTime = 0,
@@ -8205,7 +8205,7 @@ ____exports.STYLE_DEFAULTS = {
         color = {1, 0.85, 0.2},
         glowPercent = 50,
         isMessageOn = true,
-        sound = "alarm1",
+        sound = "none",
         ["repeat"] = 0,
         when = "always",
         glowTime = 0,
@@ -8641,7 +8641,7 @@ ____exports.TEXTS = {
     TIP_COLOR = "The color of the glow and the message. Click to choose another.",
     TIP_GLOW_PERCENT = "How strong the glow is, 1 to 100. Type a number.",
     TIP_MESSAGE = "Shows a short message at the top of the screen.",
-    TIP_WHEN = "When the reminder may show: always, only in combat, only out of combat, or only while a living enemy is targeted. Low reagent and Low stock also have Alert in town: the button glows anywhere, and the message and the sound come only in a town or an inn. Click for the next choice, right-click for the one before.",
+    TIP_WHEN = "When the reminder may show: always, only in combat, only out of combat, or only while a living enemy is targeted. Low reagent and Low stock also have Alert in town: the button glows anywhere, and the message and the sound come only in a town or an inn.",
     TIP_BELOW = "Reminds you when you have fewer than this. The number on a row under Defaults is used for every row of that type, unless you set a different number on the row.",
     TIP_ENABLED = "Turns the reminder on or off. On a row under Defaults, it turns the whole type on or off: while it's off, none of its rows work and they are grayed out.",
     TIP_ADD = "Low stock needs an Item ID, every other type a Spell ID. To see them, turn on \"Show spell and item IDs in tooltips\" in the Settings.",
@@ -8663,16 +8663,16 @@ ____exports.TEXTS = {
     COL_BELOW = "Below",
     MSG_UNKNOWN_ITEM = "No item found with ID %d.",
     COL_SOUND = "Sound",
-    TIP_SOUND = "The sound that plays when the reminder starts. Click for the next choice, right-click for the one before.",
+    TIP_SOUND = "The sound that plays when the reminder starts.",
     COL_REPEAT = "Repeat",
     REPEAT_OFF = "Off",
     REPEAT_SECONDS = "%d s",
-    TIP_REPEAT = "Every so many seconds, the glow, the message and the sound come again, for the glow time (with Until done the glow stays, and the sound and the message come again). Off shows them once, as the reminder starts. Click for the next choice, right-click for the one before.",
+    TIP_REPEAT = "Every so many seconds, the glow, the message and the sound come again, for the glow time (with Until done the glow stays, and the sound and the message come again). Off shows them once, as the reminder starts.",
     COL_ANIMATION = "Animation",
-    TIP_ANIMATION = "How the glow moves. Circling: it runs around the button. Breathing: it stands still and slowly fades out and in. None: it stands still, fading in and out only as it comes and goes. Round buttons cannot circle: there Circling does what the Settings page says (Breathing by default). Click for the next choice, right-click for the one before.",
+    TIP_ANIMATION = "How the glow moves. Circling: it runs around the button. Breathing: it stands still and slowly fades out and in. None: it stands still, fading in and out only as it comes and goes. Round buttons cannot circle: there Circling does what the Settings page says (Breathing by default).",
     COL_GLOW_TIME = "Glow time",
     GLOW_UNTIL_DONE = "Until done",
-    TIP_GLOW_TIME = "How long the glow and the message show once the reminder is due, and again with each repeat. Until done: the whole time, until you cast the buff, press the cooldown... Click for the next choice, right-click for the one before.",
+    TIP_GLOW_TIME = "How long the glow and the message show once the reminder is due, and again with each repeat. Until done: the whole time, until you cast the buff, press the cooldown...",
     COL_WHEN = "When",
     COL_ACTIONS = "Actions",
     TIP_ACTIONS = "Reset: undoes your changes on this row. X: removes a spell or item you added. Each one only shows on the rows where it can be used.",
@@ -12128,7 +12128,33 @@ function IdTooltipService.prototype.isOn(self)
 end
 return ____exports
  end,
+["addons.glowing-bars.src.options.choice-menu"] = function(...) 
+local ____exports = {}
+--- A click on the button lists the choices; picking one closes the list.
+function ____exports.connectChoiceMenu(button, listChoices)
+    button:SetScript(
+        "OnClick",
+        function()
+            local choices = listChoices()
+            if #choices == 0 then
+                return
+            end
+            MenuUtil.CreateContextMenu(
+                button,
+                function(_owner, root)
+                    for ____, choice in ipairs(choices) do
+                        root:CreateRadio(choice.label, choice.isChosen, choice.choose)
+                    end
+                end
+            )
+        end
+    )
+end
+return ____exports
+ end,
 ["addons.glowing-bars.src.options.style-table_constants"] = function(...) 
+local ____lualib = require("lualib_bundle")
+local __TS__ObjectAssign = ____lualib.__TS__ObjectAssign
 local ____exports = {}
 ____exports.WINDOW_NAME = "GlowingBarsLooks"
 ____exports.WINDOW_HEIGHT = 520
@@ -12172,9 +12198,16 @@ ____exports.BASIC_COLUMN = {
     enabled = {x = 578, width = 66},
     actions = {x = 644, width = 72}
 }
---- Where the columns of a view are.
-function ____exports.findColumns(isAdvanced)
-    return isAdvanced and ____exports.COLUMN or ____exports.BASIC_COLUMN
+--- Where the columns of a view are; without `hasBelow` (no row has a limit) the Below column is left out and the next ones close up.
+function ____exports.findColumns(isAdvanced, hasBelow)
+    local columns = isAdvanced and ____exports.COLUMN or ____exports.BASIC_COLUMN
+    if hasBelow then
+        return columns
+    end
+    local width = columns.belowLimits.width
+    local closedUp = __TS__ObjectAssign({}, columns, {enabled = {x = columns.enabled.x - width, width = columns.enabled.width}, actions = {x = columns.actions.x - width, width = columns.actions.width}})
+    closedUp.belowLimits = nil
+    return closedUp
 end
 --- A row is as wide as its columns.
 ____exports.TABLE_WIDTH = ____exports.COLUMN.actions.x + ____exports.COLUMN.actions.width
@@ -12394,8 +12427,7 @@ return ____exports
 ["addons.glowing-bars.src.options.style-choices_service"] = function(...) 
 local ____lualib = require("lualib_bundle")
 local __TS__Class = ____lualib.__TS__Class
-local __TS__ArrayFindIndex = ____lualib.__TS__ArrayFindIndex
-local __TS__ArrayIndexOf = ____lualib.__TS__ArrayIndexOf
+local __TS__ArrayMap = ____lualib.__TS__ArrayMap
 local ____exports = {}
 local ____ui = require("packages.@wowkit.ui.src.index")
 local SOUNDS = ____ui.SOUNDS
@@ -12406,6 +12438,8 @@ local REPEAT_CHOICES = ____settings_2Econstants.REPEAT_CHOICES
 local listWhenChoices = ____settings_2Econstants.listWhenChoices
 local ____animation_2Esection = require("addons.glowing-bars.src.options.animation_section")
 local ANIMATION_TEXTS = ____animation_2Esection.ANIMATION_TEXTS
+local ____choice_2Dmenu = require("addons.glowing-bars.src.options.choice-menu")
+local connectChoiceMenu = ____choice_2Dmenu.connectChoiceMenu
 local ____style_2Dtable_2Econstants = require("addons.glowing-bars.src.options.style-table_constants")
 local COLUMN = ____style_2Dtable_2Econstants.COLUMN
 local findCenteredX = ____style_2Dtable_2Econstants.findCenteredX
@@ -12425,176 +12459,142 @@ function StyleChoicesService.prototype.____constructor(self, locale, styles, mes
     self.styles = styles
     self.messages = messages
 end
-function StyleChoicesService.prototype.chooseNextSound(self, row, step)
-    local current = self.styles:getStyle(row.reminderType, row.spellId).sound
-    local index = math.max(
-        0,
-        __TS__ArrayFindIndex(
+function StyleChoicesService.prototype.connectSoundMenu(self, button, getRow)
+    local function listSounds()
+        return __TS__ArrayMap(
             SOUNDS,
-            function(____, sound) return sound.key == current end
+            function(____, sound) return {value = sound.key, label = sound.label} end
         )
+    end
+    self:connectMenu(
+        button,
+        getRow,
+        "sound",
+        listSounds,
+        function(sound) return self.messages:playAlertSound(sound) end
     )
-    local chosen = SOUNDS[(index + step + #SOUNDS) % #SOUNDS + 1].key
-    self.styles:changeStyle(row.reminderType, row.spellId, {sound = chosen})
-    self.messages:playAlertSound(chosen)
 end
 function StyleChoicesService.prototype.createChoiceButtons(self, frame, getRow)
     return {
-        ["repeat"] = self:createRepeatButton(frame, getRow),
-        when = self:createWhenButton(frame, getRow),
-        glowTime = self:createGlowTimeButton(frame, getRow),
-        animation = self:createAnimationButton(frame, getRow)
+        ["repeat"] = self:createChoiceButton(
+            frame,
+            COLUMN["repeat"],
+            54,
+            getRow,
+            "repeat",
+            function() return __TS__ArrayMap(
+                REPEAT_CHOICES,
+                function(____, seconds) return {
+                    value = seconds,
+                    label = self:findRepeatText(seconds)
+                } end
+            ) end
+        ),
+        when = self:createChoiceButton(
+            frame,
+            COLUMN.when,
+            104,
+            getRow,
+            "when",
+            function(row) return __TS__ArrayMap(
+                listWhenChoices(row.reminderType),
+                function(____, when) return {
+                    value = when,
+                    label = self.locale:getText(WHEN_TEXTS[when])
+                } end
+            ) end
+        ),
+        glowTime = self:createChoiceButton(
+            frame,
+            COLUMN.glowTime,
+            72,
+            getRow,
+            "glowTime",
+            function() return __TS__ArrayMap(
+                GLOW_TIME_CHOICES,
+                function(____, seconds) return {
+                    value = seconds,
+                    label = self:findGlowTimeText(seconds)
+                } end
+            ) end
+        ),
+        animation = self:createChoiceButton(
+            frame,
+            COLUMN.animation,
+            82,
+            getRow,
+            "animation",
+            function() return __TS__ArrayMap(
+                ANIMATION_CHOICES,
+                function(____, animation) return {
+                    value = animation,
+                    label = self.locale:getText(ANIMATION_TEXTS[animation])
+                } end
+            ) end
+        )
     }
 end
 function StyleChoicesService.prototype.fillChoices(self, buttons, row)
-    self:fillRepeat(buttons["repeat"], row)
-    self:fillWhen(buttons.when, row)
     local style = self.styles:getStyle(row.reminderType, row.spellId)
+    buttons["repeat"]:SetText(self:findRepeatText(style["repeat"]))
+    buttons.when:SetText(self.locale:getText(WHEN_TEXTS[style.when]))
+    buttons.glowTime:SetText(self:findGlowTimeText(style.glowTime))
     buttons.animation:SetText(self.locale:getText(ANIMATION_TEXTS[style.animation]))
-    local seconds = style.glowTime
-    buttons.glowTime:SetText(seconds == 0 and self.locale:getText("GLOW_UNTIL_DONE") or string.format(
+end
+function StyleChoicesService.prototype.createChoiceButton(self, frame, column, width, getRow, part, listValues)
+    local button = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+    button:SetSize(width, 24)
+    button:SetPoint(
+        "LEFT",
+        frame,
+        "LEFT",
+        findCenteredX(column, width),
+        0
+    )
+    self:connectMenu(button, getRow, part, listValues)
+    return button
+end
+function StyleChoicesService.prototype.connectMenu(self, button, getRow, part, listValues, reactToChoice)
+    connectChoiceMenu(
+        button,
+        function()
+            local row = getRow()
+            if row == nil then
+                return {}
+            end
+            return __TS__ArrayMap(
+                listValues(row),
+                function(____, ____bindingPattern0)
+                    local label
+                    local value
+                    value = ____bindingPattern0.value
+                    label = ____bindingPattern0.label
+                    return {
+                        label = label,
+                        isChosen = function() return self.styles:getStyle(row.reminderType, row.spellId)[part] == value end,
+                        choose = function()
+                            self.styles:changeStyle(row.reminderType, row.spellId, {[part] = value})
+                            if reactToChoice ~= nil then
+                                reactToChoice(value)
+                            end
+                        end
+                    }
+                end
+            )
+        end
+    )
+end
+function StyleChoicesService.prototype.findRepeatText(self, seconds)
+    return seconds == 0 and self.locale:getText("REPEAT_OFF") or string.format(
         self.locale:getText("REPEAT_SECONDS"),
         seconds
-    ))
+    )
 end
-function StyleChoicesService.prototype.createRepeatButton(self, frame, getRow)
-    local button = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-    button:SetSize(54, 24)
-    button:SetPoint(
-        "LEFT",
-        frame,
-        "LEFT",
-        findCenteredX(COLUMN["repeat"], 54),
-        0
-    )
-    button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-    button:SetScript(
-        "OnClick",
-        function(_button, mouseButton)
-            local row = getRow()
-            if row ~= nil then
-                self:chooseNextRepeat(row, mouseButton == "RightButton" and -1 or 1)
-            end
-        end
-    )
-    return button
-end
-function StyleChoicesService.prototype.createWhenButton(self, frame, getRow)
-    local button = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-    button:SetSize(104, 24)
-    button:SetPoint(
-        "LEFT",
-        frame,
-        "LEFT",
-        findCenteredX(COLUMN.when, 104),
-        0
-    )
-    button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-    button:SetScript(
-        "OnClick",
-        function(_button, mouseButton)
-            local row = getRow()
-            if row == nil then
-                return
-            end
-            local choices = listWhenChoices(row.reminderType)
-            local index = math.max(
-                0,
-                __TS__ArrayIndexOf(
-                    choices,
-                    self.styles:getStyle(row.reminderType, row.spellId).when
-                )
-            )
-            local step = mouseButton == "RightButton" and -1 or 1
-            self.styles:changeStyle(row.reminderType, row.spellId, {when = choices[(index + step + #choices) % #choices + 1]})
-        end
-    )
-    return button
-end
-function StyleChoicesService.prototype.fillWhen(self, button, row)
-    button:SetText(self.locale:getText(WHEN_TEXTS[self.styles:getStyle(row.reminderType, row.spellId).when]))
-end
-function StyleChoicesService.prototype.createGlowTimeButton(self, frame, getRow)
-    local button = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-    button:SetSize(72, 24)
-    button:SetPoint(
-        "LEFT",
-        frame,
-        "LEFT",
-        findCenteredX(COLUMN.glowTime, 72),
-        0
-    )
-    button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-    button:SetScript(
-        "OnClick",
-        function(_button, mouseButton)
-            local row = getRow()
-            if row == nil then
-                return
-            end
-            local index = math.max(
-                0,
-                __TS__ArrayIndexOf(
-                    GLOW_TIME_CHOICES,
-                    self.styles:getStyle(row.reminderType, row.spellId).glowTime
-                )
-            )
-            local step = mouseButton == "RightButton" and -1 or 1
-            local chosen = GLOW_TIME_CHOICES[(index + step + #GLOW_TIME_CHOICES) % #GLOW_TIME_CHOICES + 1]
-            self.styles:changeStyle(row.reminderType, row.spellId, {glowTime = chosen})
-        end
-    )
-    return button
-end
-function StyleChoicesService.prototype.createAnimationButton(self, frame, getRow)
-    local button = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-    button:SetSize(82, 24)
-    button:SetPoint(
-        "LEFT",
-        frame,
-        "LEFT",
-        findCenteredX(COLUMN.animation, 82),
-        0
-    )
-    button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-    button:SetScript(
-        "OnClick",
-        function(_button, mouseButton)
-            local row = getRow()
-            if row == nil then
-                return
-            end
-            local index = math.max(
-                0,
-                __TS__ArrayIndexOf(
-                    ANIMATION_CHOICES,
-                    self.styles:getStyle(row.reminderType, row.spellId).animation
-                )
-            )
-            local step = mouseButton == "RightButton" and -1 or 1
-            local chosen = ANIMATION_CHOICES[(index + step + #ANIMATION_CHOICES) % #ANIMATION_CHOICES + 1]
-            self.styles:changeStyle(row.reminderType, row.spellId, {animation = chosen})
-        end
-    )
-    return button
-end
-function StyleChoicesService.prototype.fillRepeat(self, button, row)
-    local seconds = self.styles:getStyle(row.reminderType, row.spellId)["repeat"]
-    button:SetText(seconds == 0 and self.locale:getText("REPEAT_OFF") or string.format(
+function StyleChoicesService.prototype.findGlowTimeText(self, seconds)
+    return seconds == 0 and self.locale:getText("GLOW_UNTIL_DONE") or string.format(
         self.locale:getText("REPEAT_SECONDS"),
         seconds
-    ))
-end
-function StyleChoicesService.prototype.chooseNextRepeat(self, row, step)
-    local index = math.max(
-        0,
-        __TS__ArrayIndexOf(
-            REPEAT_CHOICES,
-            self.styles:getStyle(row.reminderType, row.spellId)["repeat"]
-        )
     )
-    local chosen = REPEAT_CHOICES[(index + step + #REPEAT_CHOICES) % #REPEAT_CHOICES + 1]
-    self.styles:changeStyle(row.reminderType, row.spellId, {["repeat"] = chosen})
 end
 function StyleChoicesService.prototype.chooseColor(self, row)
     local picker = ColorPickerFrame
@@ -12746,10 +12746,13 @@ return ____exports
 ["addons.glowing-bars.src.options.style-edits_service"] = function(...) 
 local ____lualib = require("lualib_bundle")
 local __TS__Class = ____lualib.__TS__Class
+local __TS__ArrayMap = ____lualib.__TS__ArrayMap
 local __TS__ArraySome = ____lualib.__TS__ArraySome
 local ____exports = {}
 local ____settings_2Econstants = require("addons.glowing-bars.src.settings.settings_constants")
 local ADDABLE_TYPES = ____settings_2Econstants.ADDABLE_TYPES
+local ____choice_2Dmenu = require("addons.glowing-bars.src.options.choice-menu")
+local connectChoiceMenu = ____choice_2Dmenu.connectChoiceMenu
 local ____style_2Dtable_2Econstants = require("addons.glowing-bars.src.options.style-table_constants")
 local COLUMN = ____style_2Dtable_2Econstants.COLUMN
 local HEADER_HEIGHT = ____style_2Dtable_2Econstants.HEADER_HEIGHT
@@ -12949,7 +12952,7 @@ function StyleEditsService.prototype.createAddRow(self, content)
         function() return GameTooltip:Hide() end
     )
     local box = self:createNumberBox(frame, COLUMN.name.x, 90, 7)
-    local typeIndex = 0
+    local chosenType = ADDABLE_TYPES[1]
     local typeButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     typeButton:SetSize(136, 24)
     typeButton:SetPoint(
@@ -12960,16 +12963,21 @@ function StyleEditsService.prototype.createAddRow(self, content)
         0
     )
     local function showType()
-        return typeButton:SetText(self.locale:getText(TYPE_TEXTS[ADDABLE_TYPES[typeIndex + 1]]))
+        return typeButton:SetText(self.locale:getText(TYPE_TEXTS[chosenType]))
     end
-    typeButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-    typeButton:SetScript(
-        "OnClick",
-        function(_button, mouseButton)
-            local step = mouseButton == "RightButton" and -1 or 1
-            typeIndex = (typeIndex + step + #ADDABLE_TYPES) % #ADDABLE_TYPES
-            showType()
-        end
+    connectChoiceMenu(
+        typeButton,
+        function() return __TS__ArrayMap(
+            ADDABLE_TYPES,
+            function(____, reminderType) return {
+                label = self.locale:getText(TYPE_TEXTS[reminderType]),
+                isChosen = function() return reminderType == chosenType end,
+                choose = function()
+                    chosenType = reminderType
+                    showType()
+                end
+            } end
+        ) end
     )
     showType()
     local addButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
@@ -12986,7 +12994,7 @@ function StyleEditsService.prototype.createAddRow(self, content)
         "OnClick",
         function()
             local spellId = tonumber(box:GetText())
-            if spellId ~= nil and self:addSpell(spellId, ADDABLE_TYPES[typeIndex + 1]) then
+            if spellId ~= nil and self:addSpell(spellId, chosenType) then
                 box:SetText("")
             end
             box:ClearFocus()
@@ -13127,7 +13135,6 @@ local ____exports = {}
 local ____style_2Dtable_2Econstants = require("addons.glowing-bars.src.options.style-table_constants")
 local ICON_SIZE = ____style_2Dtable_2Econstants.ICON_SIZE
 local findCenteredX = ____style_2Dtable_2Econstants.findCenteredX
-local findColumns = ____style_2Dtable_2Econstants.findColumns
 local COLUMN = ____style_2Dtable_2Econstants.COLUMN
 local function applyPosition(control, frame, x)
     control:ClearAllPoints()
@@ -13140,8 +13147,7 @@ local function applyPosition(control, frame, x)
     )
 end
 --- Puts the controls of a filled row in the columns of the view.
-function ____exports.applyRowView(row, isAdvanced)
-    local columns = findColumns(isAdvanced)
+function ____exports.applyRowView(row, columns, isAdvanced)
     applyPosition(
         row.swatch,
         row.frame,
@@ -13157,11 +13163,13 @@ function ____exports.applyRowView(row, isAdvanced)
         row.frame,
         findCenteredX(columns.sound, 126)
     )
-    applyPosition(
-        row.belowBox,
-        row.frame,
-        findCenteredX(columns.belowLimits, 44)
-    )
+    if columns.belowLimits ~= nil then
+        applyPosition(
+            row.belowBox,
+            row.frame,
+            findCenteredX(columns.belowLimits, 44)
+        )
+    end
     applyPosition(
         row.enabled,
         row.frame,
@@ -13257,12 +13265,22 @@ function StyleWindowService.prototype.____constructor(self, locale, settings)
     self.locale = locale
     self.settings = settings
     self.headers = {}
+    self.hasBelow = false
 end
 function StyleWindowService.prototype.isAdvanced(self)
     return self.settings:get("isTableAdvanced")
 end
+function StyleWindowService.prototype.setBelowShown(self, hasBelow)
+    self.hasBelow = hasBelow
+end
+function StyleWindowService.prototype.getColumns(self)
+    return findColumns(
+        self:isAdvanced(),
+        self.hasBelow
+    )
+end
 function StyleWindowService.prototype.showView(self, window)
-    local columns = findColumns(self:isAdvanced())
+    local columns = self:getColumns()
     for ____, ____value in ipairs(self.headers) do
         local header = ____value.header
         local hover = ____value.hover
@@ -13538,6 +13556,7 @@ return ____exports
 local ____lualib = require("lualib_bundle")
 local __TS__Class = ____lualib.__TS__Class
 local __TS__DecorateLegacy = ____lualib.__TS__DecorateLegacy
+local __TS__ArraySome = ____lualib.__TS__ArraySome
 local __TS__ArrayFind = ____lualib.__TS__ArrayFind
 local __TS__ObjectAssign = ____lualib.__TS__ObjectAssign
 local ____exports = {}
@@ -13548,7 +13567,6 @@ local SOUNDS = ____ui.SOUNDS
 local ____style_2Dtable_2Econstants = require("addons.glowing-bars.src.options.style-table_constants")
 local BRONZE_TEXT = ____style_2Dtable_2Econstants.BRONZE_TEXT
 local COLUMN = ____style_2Dtable_2Econstants.COLUMN
-local findColumns = ____style_2Dtable_2Econstants.findColumns
 local findCenteredX = ____style_2Dtable_2Econstants.findCenteredX
 local HEADER_HEIGHT = ____style_2Dtable_2Econstants.HEADER_HEIGHT
 local OVERRIDDEN_COLOR = ____style_2Dtable_2Econstants.OVERRIDDEN_COLOR
@@ -13622,6 +13640,10 @@ function StyleTableService.prototype.showRows(self)
     self.usedHeaders = 0
     local spellRows = self.rows:listSpellRows()
     local typeRows = self.rows:listTypeRows(spellRows)
+    self.windows:setBelowShown(__TS__ArraySome(
+        typeRows,
+        function(____, row) return row.reminderType == "lowReagent" or row.reminderType == "lowStock" end
+    ))
     self:applyTableWidth(content)
     local y = self:drawSection(content, "HDR_TABLE_DEFAULTS", typeRows, 0)
     y = self:drawSection(content, "HDR_TABLE_SPELLS", spellRows, y)
@@ -13643,8 +13665,8 @@ function StyleTableService.prototype.showRows(self)
     content:SetHeight(math.max(10, y))
 end
 function StyleTableService.prototype.applyTableWidth(self, content)
-    local ____findColumns_result_2 = findColumns(self.windows:isAdvanced())
-    local actions = ____findColumns_result_2.actions
+    local ____temp_2 = self.windows:getColumns()
+    local actions = ____temp_2.actions
     self.tableWidth = actions.x + actions.width
     if self.window ~= nil then
         self.windows:setWidthToFit(
@@ -13779,6 +13801,7 @@ function StyleTableService.prototype.fill(self, widgets, row)
     self.edits:fillBelowBox(widgets.belowBox, row)
     applyRowView(
         widgets,
+        self.windows:getColumns(),
         self.windows:isAdvanced()
     )
 end
@@ -13920,14 +13943,9 @@ function StyleTableService.prototype.connectMessage(self, widgets)
 end
 function StyleTableService.prototype.connectSound(self, widgets)
     widgets.sound:SetSize(126, 24)
-    widgets.sound:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-    widgets.sound:SetScript(
-        "OnClick",
-        function(_button, mouseButton)
-            if widgets.row ~= nil then
-                self.choices:chooseNextSound(widgets.row, mouseButton == "RightButton" and -1 or 1)
-            end
-        end
+    self.choices:connectSoundMenu(
+        widgets.sound,
+        function() return widgets.row end
     )
 end
 function StyleTableService.prototype.connectReset(self, widgets)

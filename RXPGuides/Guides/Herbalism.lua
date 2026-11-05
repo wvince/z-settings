@@ -6,6 +6,7 @@ RXPGuides.RegisterGuide([[
 #name 1-450 Herbalism (H)
 #guideKind profession
 #displayname 1-450 Herbalism
+
 step << Mage
     #completewith next
     .zone Undercity >> Teleport to Undercity
@@ -324,6 +325,7 @@ step
 step
     +Congratulations on reaching skill level 450 in Herbalism!
 ]])
+
 RXPGuides.RegisterGuide([[
 #wotlk
 #group +Profession Leveling
@@ -331,6 +333,8 @@ RXPGuides.RegisterGuide([[
 #name 1-450 Herbalism (A)
 #guideKind profession
 #displayname 1-450 Herbalism
+
+
 step << Mage
     #completewith next
     .zone Stormwind City >> Teleport to Stormwind

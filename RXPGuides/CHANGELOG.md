@@ -1,10 +1,15 @@
 # RestedXP Guides
 
-## [v4.11.32](https://github.com/RestedXP/RXPGuides/tree/v4.11.32) (2026-11-04)
-[Full Changelog](https://github.com/RestedXP/RXPGuides/compare/v4.11.31...v4.11.32) [Previous Releases](https://github.com/RestedXP/RXPGuides/releases)
+## [v4.11.32-10-g5d840d7](https://github.com/RestedXP/RXPGuides/tree/5d840d7002eaf51cdeebf1b1da805cc4d89b6510) (2026-11-05)
+[Full Changelog](https://github.com/RestedXP/RXPGuides/compare/v4.11.32...5d840d7002eaf51cdeebf1b1da805cc4d89b6510) [Previous Releases](https://github.com/RestedXP/RXPGuides/releases)
 
-- fix(locale): translate the Forever group names to match the guides (#422)  
-    The four Forever group names now use the same text as the #group lines in lang/.  
-    Adds a small ptBR locale and loads the Spanish file on esMX clients too.  
-    Co-authored-by: F00L1X <dev4u.llc@gmail.com>  
-- Localization fixes  
+- Update deDE Classic starter guides from Pontoon  
+- Update deDE Classic starter guides from Pontoon  
+- Update frFR Guides starter guides from Pontoon  
+- Skyborne: Readd more deathskips  
+- Skyborne Horde: Remove the second hearthstone and change it to a deathskip  
+- Skyborne Shaman Horde: Readd the deathskip  
+- Skyborne Druid Horde: Fix "Go around the mountain" waypoints  
+- Skyborne Druid Horde: Fix Turn in Order after the assassins  
+- Skyborne Druid: Remove unnecessary waypoint  
+- Skyborne: Fix Druid Skysight waypoint  

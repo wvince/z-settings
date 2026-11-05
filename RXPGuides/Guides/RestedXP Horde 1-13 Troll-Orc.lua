@@ -1,5 +1,6 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #tbc
@@ -1340,6 +1341,7 @@ step
     .goto Durotar,49.90,68.43,25 >>Exit the Valley of Trials
     .isOnQuest 805
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -1350,6 +1352,7 @@ RXPGuides.RegisterGuide([[
 #groupid RXP-SRGCE-H1
 #next 10-13 Durotar << Warrior/Shaman
 #next 10-12 Eversong Woods << !Warrior !Shaman
+
 step
     .goto Durotar,52.06,68.30
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ukor|r
@@ -2158,6 +2161,7 @@ step << Paladin
     .goto Silvermoon City,91.2,36.9
     .trainer >> Go and train your class spells
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk

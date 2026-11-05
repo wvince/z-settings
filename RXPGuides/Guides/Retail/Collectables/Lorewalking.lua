@@ -1,4 +1,5 @@
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
+
 --Xal'atath
 RXPGuides.RegisterGuide([[
 #retail
@@ -8,6 +9,7 @@ RXPGuides.RegisterGuide([[
 #name a) Xal'atath
 #displayname Xal'atath
 #next ab) Ethereals
+
 step
     .chromieon
     .goto 84,56.27,17.32 << Alliance
@@ -724,6 +726,7 @@ RXPGuides.RegisterGuide([[
 #name ab) Ethereals
 #displayname Ethereals
 #next ac) The Lich King
+
 step
     .chromieon
     .goto 84,56.27,17.32 << Alliance
@@ -1194,6 +1197,10 @@ step
     .turnin 47219 >>Turn in A Vessel Made Ready
     .timer 5,Alleria Roleplay
     .target Alleria Windrunner
+
+
+
+
 -
 step
     .goto 882,37.13,52.32
@@ -1891,6 +1898,7 @@ RXPGuides.RegisterGuide([[
 #name ac) The Lich King
 #displayname The Lich King
 #next ad) The Elves of Quel'Thalas
+
 step
     .chromieon
     .goto 84,56.27,17.32 << Alliance
@@ -2357,6 +2365,7 @@ RXPGuides.RegisterGuide([[
 #name ad) The Elves of Quel'Thalas
 #displayname The Elves of Quel'Thalas
 #next ae) The Loa
+
 step
     .chromieon
     .goto 84,56.27,17.32 << Alliance
@@ -2568,6 +2577,7 @@ RXPGuides.RegisterGuide([[
 #name ae) The Loa
 #displayname The Loa
 #next a) Xal'atath
+
 step
     .chromieon
     .goto 84,56.27,17.32 << Alliance
@@ -3046,6 +3056,7 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Speed Leveling
 #name a) War Within Recap
 #internal
+
 step
     .goto 2112,59.55,41.46
     .accept 72560 >>Accept Climbing

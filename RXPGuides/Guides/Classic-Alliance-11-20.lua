@@ -1,7 +1,9 @@
 local faction = UnitFactionGroup("player")
 if faction == "Horde" then return end
+
 ----Start of <1.5x Westfall----
 ----Night Elves and Hunters stay in Darkshore and Grind----
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #xprate <1.5
@@ -16,6 +18,7 @@ RXPGuides.RegisterGuide([[
 #groupid RXP-SRGCE-A1
 #next 14-16 Darkshore
 #defaultfor !NightElf !Hunter
+
 step
     #sticky
     #optional
@@ -721,8 +724,10 @@ step
     >>|cRXP_WARN_Level your|r |T135966:0|t[First Aid] |cRXP_WARN_while waiting for the boat to Darkshore if needed|r
     .zone Darkshore >> Take the boat to Darkshore
 ]])
+
 ----End of <1.5x Westfall----
 ----Start of Darkshore Part 1----
+
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
@@ -736,9 +741,12 @@ RXPGuides.RegisterGuide([[
 #displayname 13-16 Darkshore << Dwarf Hunter
 #displayname 15-16 Darkshore << !NightElf/!Dwarf Hunter
 #next 16-19 Darkshore
+
+
 -- #displayname 11-16 Darkshore << NightElf/Dwarf Hunter !SoD
 -- #displayname 15-17 Darkshore << !NightElf !Dwarf/!Hunter !SoD
 -- #displayname 13-18 Darkshore << Dwarf Hunter/!NightElf sod
+
 step
     #label start --hidden step for #include
 step << NightElf
@@ -1214,7 +1222,10 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thundris Windweaver|r
     .turnin 4761 >> Turn in Thundris Windweaver
     .accept 4762 >> Accept The Cliffspring River
+
 ----Start of NE >1.49x catchup (everyone 1x) Early boat section----
+
+
 step
     #xprate <1.5 --<< !NightElf/Hunter
     #completewith MistVeil
@@ -1311,7 +1322,11 @@ step
     .complete 1002,1 -- Moonstalker Fang (6)
     .mob Moonstalker Runt
     .isQuestTurnedIn 1001
+
+
 ----End of NE >1.49x catchup (everyone 1x) Early boat section----
+
+
  step
     #optional
     #completewith AsterionTravel
@@ -1573,7 +1588,10 @@ step << Druid
     .complete 6001,1 --Defeat Lunaclaw (x1)
     .use 15208
     .mob Lunaclaw
+
 ----Start of Early Red Crystal turnin Section (NE below 14 for xp, Hunters/Druids for staff wep upgrade)/Druid bear q final if not done earlier----
+
+
 step << NightElf/Hunter/Warrior/Druid
     #optional
     #completewith Cascade
@@ -1770,7 +1788,11 @@ step << Hunter/Druid/Warrior
     .itemcount 15397,1
     .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<9.5
     .isQuestTurnedIn 4811
+
+
 ----Start of forced Level 14 Druid Turnin/train----
+
+
 step << Druid
     #season 0
     .goto 1439,36.767,44.285
@@ -1854,8 +1876,11 @@ step << Druid
     #completewith AmethStart
     .hs >> Hearth to Darkshore
     .zoneskip Darkshore
+
 ----End of forced Level 14 Druid Turnin/train----
 ----End of Early Red Crystal turnin Section (NE for xp, Hunters/Druids for staff)/Druid bear q final if not done earlier----
+
+
 step << Druid
     #season 0
     #optional
@@ -1865,7 +1890,11 @@ step << Druid
     .collect 5469,5,2178,1 -- Strider Meat (5)
     .mob Foreststrider Fledgling
     .subzoneskip 447
+
+
 ----Start of alternate section if early Red Crystal turnin----
+
+
 step << NightElf/Hunter/Druid/Warrior
     #xprate <1.5 --<< !NightElf/Hunter
     #completewith EarlyBlackwood
@@ -1941,8 +1970,11 @@ step
     .target Sentinel Tysha Moonblade
     .isQuestTurnedIn 4811
     .xp >17,1
+
 ----End of alternate section if early Red Crystal turnin----
+
 ----Start of small south loop for ERA and SoD Warrior/Rogue/Priest----
+
 step
     #xprate <1.5 --<< !NightElf/Hunter
     #optional
@@ -2406,8 +2438,13 @@ step << !sod/Rogue
     .accept 4763 >> Accept The Blackwood Corrupted << sod
     .target Thundris Windweaver
     .isQuestComplete 958
+
 ----End of small south loop for ERA and SoD Warrior/Rogue/Priest----
+
+
 ----Start of NE >1.49x catchup (everyone 1x) Final boat section----
+
+
 step
     #xprate <1.5 --<< !NightElf/Hunter
     #optional
@@ -2442,7 +2479,11 @@ step
     >>Click the |cRXP_PICK_Beached Sea Creature|r
     .accept 4723 >> Accept Beached Sea Creature
     .isOnQuest 982
+
+
 ----End of NE >1.49x catchup (everyone 1x) Final boat section----
+
+
 step
     #xprate <1.5 --<< !NightElf/Hunter
     #optional
@@ -2576,7 +2617,11 @@ step
     >>Click the |cRXP_PICK_Buzzbox 323|r on the ground
     .accept 1003 >> Accept Buzzbox 525
     .isQuestTurnedIn 1002
+
+
 ----Start of Hunter/Druid 1x early Althalaxx section (for money+xp)----
+
+
 step << Hunter/Druid
 	#xprate <1.5 << Hunter/Druid
     #optional
@@ -2667,7 +2712,9 @@ step << Hunter/Druid
     >>Kill |cRXP_ENEMY_Foreststriders|r. Loot them for their |cRXP_LOOT_Strider Meat|r
     .collect 5469,5,2178,1 -- Strider Meat (5)
     .mob Foreststrider
+
 ----End of Hunter/Druid 1x and SoD Warrior early Althalaxx section (for money+xp)----
+
 step
     #optional
     #completewith CliffCave
@@ -2937,7 +2984,11 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gwennyth Bly'Leggonde|r
     .turnin 4725 >> Turn in Beached Sea Turtle
     .target Gwennyth Bly'Leggonde
+
+
 ----Start of Druid Quest section----
+
+
 step << Druid
     #optional
     #season 0
@@ -3040,11 +3091,17 @@ step << Druid
     #season 0
     .hs >> Hearth to Darkshore
     .zoneskip Darkshore
+
+
 ----End of Druid Quest section----
+
+
 ]])
+
 ----End of Darkshore Part 1----
 ----Start of Darkshore Part 2----
 ----Hunters stay in Darkshore/Ashenvale and Grind, 2x skips Redridge----
+
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
@@ -3056,6 +3113,7 @@ RXPGuides.RegisterGuide([[
 #name 16-19 Darkshore
 #next 19-20 Redridge;20-21 Darkshore/Ashenvale << !Hunter
 #next 19-21 Darkshore/Ashenvale << Hunter
+
 step << NightElf !Druid
     #optional
     #completewith PortalDarn
@@ -4032,7 +4090,11 @@ step << Druid
     >>|cRXP_WARN_Swim out in the water|r
     >>Open the |cRXP_PICK_Strange Lockbox|r. Loot it for the |cRXP_LOOT_Half Pendant of Aquatic Agility|r
     .collect 15883,1,272,1 --Collect Half Pendant of Aquatic Agility (x1)
+
+
 ----Start of Darkshore 2x 20 Turnins & Druid Training----
+
+
 step << Druid
     #xprate >1.59
     #optional
@@ -4146,8 +4208,12 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gwennyth Bly'Leggonde|r
     .turnin 4727 >> Turn in Beached Sea Turtle
     .target Gwennyth Bly'Leggonde
+
 ----End of Darkshore 2x 20 Turnins & Druid Training----
 ----Start of 2x Non-Deadmines Training/Class q section----
+
+
+
 step << Warrior/Paladin/Mage/Warlock/Rogue
     #xprate >1.59
     #label TravelMenethilNoDMBoat
@@ -4314,7 +4380,14 @@ step << NightElf Rogue
     .zoneskip Ironforge
     .zoneskip Westfall
     .dungeon !DM
+
+
+
+
 ----Start of NE Warrior and Rogue 2x No Deadmines swim to Westfall Alternative section----
+
+
+
 step << NightElf Rogue
     #xprate >1.59
     #optional
@@ -4407,7 +4480,14 @@ step << NightElf Rogue
     .zoneskip Wetlands
     .zoneskip Ironforge
     .dungeon !DM
+
+
+
+
 ----End of NE Warrior Rogue 2x No Deadmines swim to Westfall Alternative section----
+
+
+
 step << NightElf Warrior
     #xprate >1.59
     #season 1 --Not loading for now
@@ -4853,7 +4933,13 @@ step << Rogue
     .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<10.93
     .xp <21,1
     .dungeon !DM
+
+
+
 ----Start of 2x Non-Deadmines Rogue Class q section----
+
+
+
 step << Rogue
     #xprate >1.59
     #ah
@@ -5283,7 +5369,11 @@ step << Rogue
     .train 1785 >> Train |T132320:0|t[Stealth](rank 2)
     .target Osborne the Night Man
     .dungeon !DM
+
+
 ----End of 2x Non-Deadmines Rogue Class q section----
+
+
 step << Warlock
     #xprate >1.59
     #ah
@@ -5548,8 +5638,12 @@ step << NightElf Rogue
     .zoneskip Wetlands
     .isOnQuest 968
     .dungeon !DM
+
+
+
 ----End of 2x Non-Deadmines Training/Class q section----
 ----Start of 2x Non-Deadmines (Darnassus) training section----
+
 step << Mage/Warlock/Rogue
     #xprate >1.59
     #label NoDMStockadeEnd
@@ -5623,8 +5717,15 @@ step << !Druid
     .subzoneskip 442
     .cooldown item,6948,>0,1
     .dungeon !DM << !Dwarf/!Hunter
+
+
+
 ----End of 2x no DM Return to Darkshore Steps----
 ----End of 2x Non-Deadmines (Darnassus) training section----
+
+
+
+
 step << Dwarf Hunter
     #xprate <1.59
     #softcore
@@ -5879,13 +5980,22 @@ step << NightElf
     .turnin 986 >> Turn in A Lost Master
     .accept 993 >> Accept A Lost Master
     .target Terenthis
+
+
+
+
 ----End of <1.59x Turnin section----
+
+
+
+
 step << NightElf
     #optional
     >>|cRXP_WARN_If you equip the|r |T133762:0|t[Enchanted Moonstalker Cloak]|cRXP_WARN_, make sure you save your current cloak for later as the|r |T133762:0|t[Enchanted Moonstalker Cloak] |cRXP_WARN_is lost upon a later turn in|r
     .equip 15,5387 >>|cRXP_WARN_Equip the|r |T133762:0|t[Enchanted Moonstalker Cloak] |cRXP_WARN_If it's better than your current Cloak|r
     .itemcount 5387,1
     .itemStat 15,QUALITY,<7
+
 ----Start of Hunter Deadmines/All 2x Deadmines Section----
 step
     #xprate <1.59 << !Hunter
@@ -6036,7 +6146,14 @@ step << NightElf
     .zoneskip Ironforge
     .zoneskip Westfall
     .dungeon DM
+
+
+
+
 ----Start of Hunter/All Night Elves 2x Deadmines swim to Westfall Alternative section----
+
+
+
 step << NightElf
     #xprate >1.59 << !Hunter
     #optional
@@ -6131,7 +6248,16 @@ step << NightElf Priest
     .zoneskip Stormwind City,1
     .dungeon DM
 --XX Alt if NE priest cant website unstuck
+
+
+
+
 ----End of Hunter/All Night Elves 2x Deadmines swim to Westfall Alternative (and Alt NE Priest Training) section----
+
+
+
+
+
 step << NightElf Warrior/NightElf Hunter
     #xprate >1.59 << !Hunter
     #optional
@@ -7942,8 +8068,18 @@ step
     .hs >> Hearth to Darkshore
     .zoneskip Darkshore
     .dungeon DM
+
+
+
+
 ----End of Hunter/All 2x Deadmines section----
 ----Start of <1.59x Redridge Transition----
+
+
+
+
+
+
 step << !Hunter
 --XX NightElf
     #xprate <1.59
@@ -8040,7 +8176,13 @@ step << !NightElf !Hunter
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Shellei|r
     .fly Ironforge >> Fly to Ironforge
     .target Shellei Brondir
+
+
+
 ----Start of <1.59x Night Elf Wetlands->IF Transition----
+
+
+
 step << !Hunter NightElf
     #xprate <1.59
     .goto Wetlands,8.509,55.697
@@ -8161,7 +8303,13 @@ step << !Hunter NightElf
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gryth|r
     .fp Ironforge >> Get the Ironforge flight path
     .target Gryth Thurden
+
+
+
 ----End of <1.59x Night Elf Wetlands->IF Transition----
+
+
+
 step << skip --logout skip !Hunter
     #xprate <1.59
     #completewith next
@@ -8185,10 +8333,20 @@ step << !Hunter
     .zone Stormwind City >> Enter the Deeprun Tram. Take the tram to Stormwind
     >>|cRXP_WARN_Level your|r |T135966:0|t[First Aid] |cRXP_WARN_and|r |T133971:0|t[Cooking] |cRXP_WARN_if needed while waiting for the tram|r
     >>|cRXP_WARN_You will need your|r |T135966:0|t[First Aid] |cRXP_WARN_to be 80 for a quest at level 24 << Rogue !Dwarf
+
+
+
+
 ----End of <1.59x Redridge Transition----
+
+
+
+
 ]])
+
 ----Start of <1.59x Redridge----
 ----2x and ALL Hunters stay in Darkshore/Ashen and grind----
+
 RXPGuides.RegisterGuide([[
 #xprate <1.59
 #classic
@@ -8200,6 +8358,7 @@ RXPGuides.RegisterGuide([[
 #groupid RXP-SRGCE-A1
 #name 19-20 Redridge
 #next 20-21 Darkshore/Ashenvale
+
 step
     #completewith BMenace
     .goto StormwindClassic,55.21,7.04
@@ -8952,6 +9111,7 @@ step
     #completewith FlyR
 	.goto Redridge Mountains,6.7,72.4
     .zone Redridge Mountains >> Travel to Redridge Mountains
+
 step
 .dungeon DM
     #xprate <1.5
@@ -8967,6 +9127,8 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Deputy Feldon|r
     .turnin 244 >> Turn in Encroaching Gnolls
     .target Deputy Feldon
+
+
 step
     #label BMenace
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Marshal Marris|r
@@ -9469,7 +9631,13 @@ step << Warrior
     .trainer >> Train your class spells
     .target Wu Shen
     .target Ilsa Corbin
+
+
+
 ----Start of Rogue 20 Quest <1.59x Section----
+
+
+
 step << NightElf Rogue
     .goto Westfall,56.55,52.64,5,0
     .zone Westfall >> Travel to Westfall
@@ -9632,7 +9800,14 @@ step << Rogue
     >>|cRXP_WARN_Remember to re-equip your main weapon if you switched to a|r |T135641:0|t[Dagger] |cRXP_WARN_earlier|r << Rogue
     .turnin 2359 >> Turn in Klaven's Tower
     .target Master Mathias Shaw
+
+
+
 ----End of Rogue 20 Quest <1.59x Section----
+
+
+
+
 step
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_General Marcus Jonathan|r
 	.target General Marcus Jonathan
@@ -9820,8 +9995,10 @@ step
     .goto Redridge Mountains,32.10,48.70
     .turnin 89 >> Turn in The Everstill Bridge
 ]])
+
 ----End of <1.59x Redridge----
 ----Start of Hunter-only Darkshore/Ashen (Needs to be merged)----
+
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
@@ -9833,6 +10010,7 @@ RXPGuides.RegisterGuide([[
 #groupid RXP-SRGCE-A1
 #name 19-21 Darkshore/Ashenvale
 #next RestedXP Alliance 20-30\21-23 Ashenvale/Stonetalon
+
 step
     #xprate >1.59
     .goto 1439,38.325,43.039
@@ -10609,7 +10787,11 @@ step << Dwarf Hunter
     .target Vesprystus
     .zoneskip Ashenvale
 ]])
+
+
 ----End of Hunter-only Darkshore/Ashen (Needs to be merged)----
+
+
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
@@ -10621,6 +10803,8 @@ RXPGuides.RegisterGuide([[
 #groupid RXP-SRGCE-A1
 #name 20-21 Darkshore/Ashenvale
 #next RestedXP Alliance 20-30\21-23 Stonetalon/Ashenvale;RestedXP Alliance 20-30\21-22 Ashenvale SoD
+
+
 step << Druid
     #xprate <1.59
 	#completewith next

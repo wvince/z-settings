@@ -58,6 +58,8 @@ local QuestieDB = QuestieLoader:ImportModule("QuestieDB")
 local l10n = QuestieLoader:ImportModule("l10n")
 ---@type Expansions
 local Expansions = QuestieLoader:ImportModule("Expansions")
+---@type SpokenPlayButton
+local SpokenPlayButton = QuestieLoader:ImportModule("SpokenPlayButton")
 ---@type ThreadLib
 local ThreadLib = QuestieLoader:ImportModule("ThreadLib")
 ---@type CommsVisibility
@@ -248,7 +250,9 @@ function QuestieTracker.Initialize()
     trackerQuestFrame = TrackerQuestFrame.Initialize(trackerBaseFrame, trackerHeaderFrame)
     TrackerLayout.Initialize(trackerBaseFrame, function(width) QuestieTracker:UpdateWidth(width) end, function() QuestieTracker:UpdateHeight() end,
         function() return Questie.db.profile.trackerShowQuestFocusButtons end,
-        function() return TrackerUtils:IsVoiceOverLoaded() end)
+        function()
+            return Questie.db.profile.trackerShowPlayButtons and (TrackerUtils:IsVoiceOverLoaded() or TrackerUtils:IsSpokenLoaded())
+        end)
 
     if Expansions.Current >= Expansions.Cata or Questie.IsTitanReforged then
         AutoCompleteFrame.Initialize(trackerBaseFrame)
@@ -256,6 +260,9 @@ function QuestieTracker.Initialize()
 
     -- Initialize tracker functions
     TrackerLinePool.Initialize(trackerQuestFrame)
+    if TrackerUtils:IsSpokenLoaded() then
+        SpokenPlayButton.Initialize(function() QuestieTracker:Update() end)
+    end
     TrackerFadeTicker.Initialize(trackerBaseFrame, trackerHeaderFrame)
     QuestieTracker.started = true
 
@@ -1036,7 +1043,7 @@ function QuestieTracker:UpdateFormatting()
             line.label:SetWidth(trackerBaseFrame:GetWidth() - margin)
             line:SetWidth(line.label:GetWidth() + effectiveMarginLeft)
         end)
-        TrackerLinePool.UpdateQuestTitleLines(function(line)
+        TrackerLinePool.ForEachQuestTitleLine(function(line)
             line.label:SetWidth(trackerBaseFrame:GetWidth() - questMarginLeft - trackerMarginRight)
             line:SetWidth(line.label:GetWidth() + questMarginLeft)
 

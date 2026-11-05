@@ -1,5 +1,6 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
@@ -12,6 +13,7 @@ RXPGuides.RegisterGuide([[
 #defaultfor Undead
 #name 1-6 Tirisfal Glades
 #next 6-12 Tirisfal Glades
+
 step << !Undead
     #completewith next
     +|cRXP_WARN_You have selected a guide meant for Undead. It is recommended you choose the same starter zone that you start in|r
@@ -699,7 +701,9 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Calvin|r
     .accept 8 >> Accept A Rogue's Deal
     .target Calvin Montague
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
 #disabledungeons
@@ -712,6 +716,7 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-H1
 #defaultfor Undead
 #next 12-14 Silverpine Forest; 12-17 The Barrens
+
 step
     .goto 1420/0,1184.71,2205.63
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Simmer|r
@@ -2594,7 +2599,9 @@ step
     >>|cRXP_WARN_He patrols around the graveyard|r
     .turnin 99142 >>Turn in Tomb Weed
     .target Junior Apothecary Holland
+
     --Bandarion Keep section
+
 step << !Paladin
     #optional
     .maxlevel 11,BandarionKeepSkip
@@ -3140,7 +3147,9 @@ step << Paladin
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lady Sylvanas Windrunner|r
     .turnin 95803 >>Turn in A Token of Good Faith
     .target Lady Sylvanas Windrunner
+
     --Paladin Ressurrect chain route
+
 step << Paladin
     #completewith
     .goto 1420/0,235.32,1883.89
@@ -3193,7 +3202,9 @@ step << Paladin
     .accept 94438 >>Accept A Lesson in Divinity
     .target Deathguard Billmuth
     .isQuestTurnedIn 94436
+
     --East Tirisfal south of SM
+
 step << Paladin
     #completewith next
     .goto 1420/0,-885.200,2399.800,50 >>Travel to Eastern Tirisfal
@@ -3216,7 +3227,9 @@ step << Paladin
     .mob Scarlet Friar
     .mob Scarlet Zealot
     .isQuestTurnedIn 94436
+
     --Back to Bandarion Keep
+
 step << Paladin
     #completewith next
     .goto 1420/0,1732.500,2437.900,50,0
@@ -3263,6 +3276,8 @@ step
     .goto 1420/0,629.36,1553.42
     .zone Silverpine Forest >> Travel to Silverpine Forest
 ]])
+
+
 RXPGuides.RegisterGuide([[
 #group RestedXP Forever Guide (H)
 #subgroup Speedrun Guide 1-22
@@ -3275,6 +3290,7 @@ RXPGuides.RegisterGuide([[
 #name 12-14 Silverpine Forest
 #displayname 13-15 Silverpine Forest << Paladin
 #next 12-17 The Barrens
+
 step << Undead Rogue
     #sticky
     #completewith RotHideCluesTurnIn
@@ -4328,4 +4344,5 @@ step << !Undead !Skyborne
     >>|cRXP_WARN_Loot the|r |T134095:0|t[Flawed Power Stone] |cRXP_WARN_next to|r |cRXP_FRIENDLY_Ak'Zeloth|r|cRXP_WARN_. This item has a 30 minute timer, so be sure to be quick|r
     .turnin 926 >>Turn in Flawed Power Stone
     .isOnQuest 924
+
 ]])

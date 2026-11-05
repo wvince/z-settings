@@ -1034,7 +1034,7 @@ local function UpdateNotCollectedAppearanceItemIDs(routines, routineTextOutput)
 									if (not inVisualList) then
 										local item = Item:CreateFromItemID(itemID)
 										item:ContinueOnItemLoad(function()
-											if (not RSTooltipScanners.ScanLoot(item:GetItemLink(), TRANSMOGRIFY_TOOLTIP_APPEARANCE_UNKNOWN)) then
+											if (not RSTooltipScanners.ScanLootByItemID(itemID, TRANSMOGRIFY_TOOLTIP_APPEARANCE_UNKNOWN)) then
 												DropNotCollectedAppearance(visualID)
 											end
 										end)

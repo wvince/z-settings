@@ -1,5 +1,6 @@
 local faction = UnitFactionGroup("player")
 if faction == "Horde" then return end
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
@@ -15,6 +16,7 @@ RXPGuides.RegisterGuide([[
 step
 #include RestedXP Forever Guide (A)\1-6 Shadowglen
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
 #season 0,1
@@ -26,6 +28,7 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-A1
 #defaultfor NightElf
 #next 11-16 Darkshore/Loch Modan
+
 step
 #include RestedXP Forever Guide (A)\6-11 Teldrassil
 ]])

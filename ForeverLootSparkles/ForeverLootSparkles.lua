@@ -1,26 +1,17 @@
--- Quest item sparkles only show when the outline mode is off and
--- outlineModeShowLootEffectWhenDisabled is on. Graphics presets reset these,
--- so they are applied at login and again after every relevant cvar change.
+-- Quest item sparkles need outlineModeShowLootEffectWhenDisabled on. Graphics
+-- presets reset it, so it is applied at login and again after every relevant
+-- cvar change. The outline mode is the player's: up to 1.3.0 it was forced
+-- off, which took away the Self Highlight outline (CurseForge issue #1).
 
 local ADDON_NAME, ns = ...;
 
 local WANTED = {
 	outlineModeShowLootEffectWhenDisabled = "1",
-	graphicsOutlineMode = "0",
-	OutlineEngineMode = "0",
-	raidGraphicsOutlineMode = "0",
-	RAIDOutlineEngineMode = "0",
 };
 
--- Written once when the option is switched off: loot sparkle off, outline
--- mode back to 2 ("High" in the graphics settings). The plain cvar defaults
--- would leave the outline off too, so quest items would get no highlight.
+-- Written once when the option is switched off
 local DISABLED = {
 	outlineModeShowLootEffectWhenDisabled = "0",
-	graphicsOutlineMode = "2",
-	OutlineEngineMode = "2",
-	raidGraphicsOutlineMode = "2",
-	RAIDOutlineEngineMode = "2",
 };
 
 local WATCHED = {
@@ -87,6 +78,12 @@ local function OnEnabledChanged(_, value)
 		pendingAfterCombat = false;
 		timerFrame:Hide();
 		SetAll(DISABLED);
+		-- Switching off only takes effect after a full game restart (/reload is
+		-- not enough). Told in chat: a shown predicate on a settings initializer
+		-- runs addon code inside Blizzard's options search and taints it.
+		if sparklesShown then
+			print("|cffff8000Forever Loot Sparkles:|r restart the game to remove the sparkles. /reload is not enough.");
+		end
 	end
 end
 
@@ -97,15 +94,7 @@ local function RegisterOptions()
 		db, Settings.VarType.Boolean, "Show quest item sparkles", Settings.Default.True);
 	setting:SetValueChangedCallback(OnEnabledChanged);
 	Settings.CreateCheckbox(category, setting,
-		"Keeps the outline mode off and the loot sparkle on. Switching this off turns the sparkle off and the outline mode back to High. Switching it off takes effect after restarting the game.");
-
-	-- Switching on works at once, but switching off only takes effect after a
-	-- full game restart (/reload is not enough), so only that case gets a notice.
-	local notice = CreateSettingsListSectionHeaderInitializer("|cffff8000Restart the game to remove the sparkles. /reload is not enough.|r");
-	notice:AddShownPredicate(function()
-		return sparklesShown and not IsEnabled();
-	end);
-	Settings.RegisterInitializer(category, notice);
+		"Keeps the game's loot sparkle on, even after a graphics preset turns it off. Your outline mode is left as you set it. Switching this off takes effect after restarting the game.");
 
 	ns.AddSoftTargetOptions(category, db);
 

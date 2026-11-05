@@ -6,6 +6,7 @@ RXPGuides.RegisterGuide([[
 #name 1-450 Skinning (H)
 #guideKind profession
 #displayname 1-450 Skinning
+
 step << Mage
     #completewith Thuwd
     .zone Orgrimmar >> Teleport to Orgrimmar
@@ -274,6 +275,7 @@ step
 step
     +Congratulations on reaching skill level 450 in Skinning!
 ]])
+
 RXPGuides.RegisterGuide([[
 #wotlk
 #group +Profession Leveling
@@ -281,6 +283,7 @@ RXPGuides.RegisterGuide([[
 #name 1-450 Skinning (A)
 #guideKind profession
 #displayname 1-450 Skinning
+
 step << Mage
     #completewith Maris
     .zone Stormwind City >> Teleport to Stormwind

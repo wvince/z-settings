@@ -2210,6 +2210,8 @@ L["Your profile is now picked from the shipped build closest to your talents, so
 L["Hunter and Mage weights follow the launch changes: Aspect of the Hawk, Trueshot Aura and the reworked Mage talents."] = "Los pesos de cazadores y magos siguen los cambios del lanzamiento: Aspecto del halcón, Aura de disparo certero y los talentos de mago revisados."
 L["Warlock and Paladin weights follow the launch Life Tap and Vindication."] = "Los pesos de brujos y paladines siguen Transfusión de vida y Vindication del lanzamiento."
 L["Leveling weights for every class follow Blizzard's launch notes, and the Talents plugin's solo and dungeon leveling builds are re-searched on them."] = "Los pesos de subida de nivel de todas las clases siguen las notas de lanzamiento de Blizzard, y las configuraciones de subida en solitario y en calabozo del Plugin de talentos se volvieron a buscar con ellas."
+L["Elemental and Restoration Shaman leveling weights follow the November 4 hotfix (2-second Chain Lightning), and the Talents plugin's Shaman builds were re-searched."] = "Los pesos de subida de nivel del chamán Elemental y Restauración siguen la corrección del 4 de noviembre (Cadena de relámpagos de 2 segundos), y las configuraciones de chamán del Plugin de talentos se volvieron a buscar."
+L["Leveling PvP builds and weights are being worked on."] = "Se está trabajando en configuraciones y pesos JcJ para la subida de nivel."
 L["Stat Logic follows the launch racial changes: Human crit, Dwarf hit, and no more Orc and Tauren bonuses."] = "Stat Logic sigue los cambios raciales del lanzamiento: crítico humano, golpe enano y sin las bonificaciones de orcos y taurens."
 L["Affliction: Drain Life Solo"] = "Aflicción: Drenar vida en solitario"
 L["Bloom"] = "Florecer"

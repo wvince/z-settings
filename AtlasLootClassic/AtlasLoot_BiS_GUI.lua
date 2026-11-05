@@ -1133,7 +1133,7 @@ local function CreatePSAFooter()
     text:SetJustifyH("LEFT")
     text:SetJustifyV("MIDDLE")
     text:SetWordWrap(true)
-    text:SetText("PSA: Dungeons, in wich new Forever related Items have been added are now marked with the '|TInterface\\AddOns\\AtlasLootClassic\\ltn4.tga:18:18:2:0|t' Icon. Updates will occur daily, to adress any reported bugs or missing items asap. Forever is now live!")
+    text:SetText("PSA: All new Forever items have already been added to your Atlas but you cannot see them right now, unless a player on the server has found them! New Forever related additions are now marked with the '|TInterface\\AddOns\\AtlasLootClassic\\ltn4.tga:18:18:2:0|t' Icon.")
 
     footer.text = text
 
@@ -1145,14 +1145,14 @@ local function CreatePSAFooter()
         UpdatePSAFooterHeight()
     end)
 
-    -- Auto-fade footer after 15s, fading over 2s on every frame show
+    -- Auto-fade footer after 15s/120s, fading over 2s on every frame show
     local fadeTimer
     local function StartPSATimer()
         if fadeTimer then fadeTimer:Cancel() end
         UIFrameFadeRemoveFrame(footer)
         footer:SetAlpha(1)
         footer:Show()
-        fadeTimer = C_Timer.NewTimer(15, function()
+        fadeTimer = C_Timer.NewTimer(120, function()
             UIFrameFadeOut(footer, 2, 1, 0)
         end)
     end

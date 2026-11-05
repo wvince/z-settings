@@ -1,4 +1,14 @@
-﻿1.60.25 - 21st October 2026
+﻿1.60.27 - 5th November 2026
+- Added dungeon maps.  There is a new option called 'Show dungeon maps' (enabled by default).  To access dungeon maps, you can choose the Dungeons item in the continent menu (one of the zone menus), you can click the dungeon icon on the zone map or you can enter the dungeon itself.
+- Added 'Blizzard' to themes for those who want the default UI look with the enhanced features.
+- Points of interest icons can now be clicked to show the destination map.  Only dungeon icons can be clicked during combat.
+- For 'Use simple map frame', added 'Show zone menus'.  Note that the menu items cannot be clicked while in combat.
+- Added theme support for the world map.  There is a theme dropdown in the configuration panel.
+
+1.60.26 - 28th October 2026
+- Added a few protections against specific addons breaking the map.
+
+1.60.25 - 21st October 2026
 - Removed the 'Use English language' option now that the addon has a language dropdown menu.
 
 1.60.24 - 20th October 2026

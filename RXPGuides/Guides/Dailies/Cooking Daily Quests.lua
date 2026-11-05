@@ -6,6 +6,7 @@ RXPGuides.RegisterGuide([[
 #wotlk
 #cata
 #name Cooking
+
 step << Alliance
 	.goto Dalaran,40.43,65.66
 	.daily 13100,13101,13102,13103,13107 >> Talk to |cRXP_FRIENDLY_Katherine Lee|r inside the inn. She has 1 out of 5 daily Cooking quests. Accept whichever is available

@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.3.1
+
+- The addon no longer touches your outline mode, so the Self Highlight outline around your character works again. It only keeps the loot sparkle switched on. Up to 1.3.0 it switched the outline mode off; pick it again under Options > Graphics if you want it back.
+- Fixed: searching the game's Options (e.g. for "name" or "display") with the addon enabled raised `ADDON_ACTION_FORBIDDEN … IsUserOAuthed()` and blamed ForeverLootSparkles. The restart reminder is no longer a line in the options panel; it is printed in chat when you switch the sparkles off.
+- Fixed: the addon no longer switches on all of **Interact Key Icons**, which put icons on every chair and NPC. It only keeps the icons on world objects, which the herb and ore sparkle needs; the rest goes back to what you had before 1.2.0.
+- Fixed: **Enable Interact Key** and the icons on world objects are no longer switched back on at every login and `/reload`. The addon turns them on when the sparkles start and when you tick a sparkle checkbox; if you switch them off afterwards, they stay off (and nodes and corpses don't sparkle).
+
 ## 1.3.0
 
 - Corpses that still hold loot for you sparkle as you approach them after the fight, bosses included (the game's own loot sparkle left boss corpses out). New checkbox "Corpses with loot" (on; off if you had switched all sparkles off before).

@@ -1,5 +1,6 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
@@ -13,6 +14,8 @@ RXPGuides.RegisterGuide([[
 #subgroup Speedrun Guide 1-22
 --#groupid RXP-SRGCE-H1
 #next 17-22 Stonetalon/Barrens/Ashenvale
+
+
 step << Tauren Shaman
     .goto 1411/1,-4648.55,271.43
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Takrin|r
@@ -2573,6 +2576,7 @@ step
     .accept 1062 >> Accept Goblin Invaders
     .target Seereth Stonebreak
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
 #disabledungeons
@@ -2584,6 +2588,8 @@ RXPGuides.RegisterGuide([[
 #subgroup Speedrun Guide 1-22
 --#groupid RXP-SRGCE-H1
 #next 22-24 Hillsbrad
+
+
 step
     #loop
     .goto 1442/1,-691.11,-13.63,0

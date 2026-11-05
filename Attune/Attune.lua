@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------
 --
---	Copyright (c) 2019-2021 by Antoine Desmarets.
+--	Copyright (c) 2019-2026 by Antoine Desmarets.
 --	Cixi Delmont/Gaya Greyhoof of Wow Forever Horde
 --
 --	Attune is distributed in the hope that it will be useful/entertaining
@@ -8,6 +8,11 @@
 --
 -------------------------------------------------------------------------
 
+-- 16001-35
+--   - Added the Character Progression attunes.
+--   - Added the Attune: Next window
+--   - Added an options to hide the character progression attunes and the Next window.
+--
 -- 16001-34
 --   - Added the Bear Form quest for Skyborne elves.
 --
@@ -582,6 +587,28 @@ local attunelocal_myFullName = attunelocal_myFirst .. " " .. attunelocal_myLast
 local attunelocal_charKey = attunelocal_myFullName --.. "-" .. attunelocal_realm			-- Character unique name
 local attunelocal_statusText = AttuneLang["Version"]:gsub("##VERSION##", attunelocal_version)		-- Default status text
 
+-- Forever UnitName returns "First", "Last". On Blizzard clients the second
+-- return is the realm, and it is nil while the unit is on the home realm.
+local function Attune_CharacterKey(unit)
+	local name, extra = UnitName(unit or "player")
+	if name == nil or name == "" then return nil end
+	local forever = attunelocal_interfaceVersion >= 16000 and attunelocal_interfaceVersion < 20000
+	if forever then
+		if extra ~= nil and extra ~= "" then
+			return name .. " " .. extra, name, extra
+		end
+		return name, name, ""
+	end
+	local realm = extra
+	if realm == nil or realm == "" then
+		realm = (GetNormalizedRealmName and GetNormalizedRealmName()) or GetRealmName()
+	end
+	if realm ~= nil and realm ~= "" then
+		return name .. "-" .. realm, name, realm
+	end
+	return name, name, ""
+end
+
 local attunelocal_refreshDone = false		-- flag to indicate when the UI refresh has been done, to avoid doing it too many times and freezing UI)
 
 local attunelocal_syncTarget = nil
@@ -658,19 +685,34 @@ local attune_options = {
 							Attune_DB.minimapbuttonpos.hide = not val
 						end,
 					width = 2.5,
-					order = 5,
+					order = 3,
 				},
-				useFullMap = {
+				showNextSteps = {
 					type = "toggle",
-					name = AttuneLang["FullMap_TEXT"],
-					desc = AttuneLang["FullMap_DESC"],
-					get = function(info) return Attune_DB.useFullMap end,
+					name = AttuneLang["NextSteps_TEXT"],
+					desc = AttuneLang["NextSteps_DESC"],
+					get = function(info) return Attune_DB.showNextSteps ~= false end,
 					set = function(info, val)
-						Attune_DB.useFullMap = val
-						if Attune_RefreshQuestMapMode then Attune_RefreshQuestMapMode() end
+						Attune_DB.showNextSteps = val
+						Attune_NextFrameUpdate()
 					end,
-					width = 1.65,
-					order = 6,
+					width = 2.5,
+					order = 4,
+				},
+				showCharacterProgression = {
+					type = "toggle",
+					name = AttuneLang["ShowCharacterProgression_TEXT"],
+					desc = AttuneLang["ShowCharacterProgression_DESC"],
+					get = function(info) return Attune_DB.showCharacterProgression ~= false end,
+					set = function(info, val)
+						Attune_DB.showCharacterProgression = val
+						Attune_ReloadAttuneTree()
+						if Attune_DB.iconView then Attune_LayoutIconView() end
+						if attunelocal_glist then Attune_ShowResultList() end
+						Attune_NextFrameUpdate()
+					end,
+					width = 2.5,
+					order = 5,
 				},
 				showAllClassQuests = {
 					type = "toggle",
@@ -680,9 +722,45 @@ local attune_options = {
 					set = function(info, val)
 						Attune_DB.showAllClassQuests = val
 						Attune_ReloadAttuneTree()
+						Attune_NextFrameUpdate()
 					end,
-					width = 1.65,
+					width = 2.5,
+					order = 6,
+				},
+                iconView = {
+					type = "toggle",
+					name = AttuneLang["IconView_TEXT"],
+					desc = AttuneLang["IconView_DESC"],
+					get = function(info) return Attune_DB.iconView end,
+					set = function(info, val)
+						Attune_SetIconView(val)
+					end,
+					width = 2.5,
 					order = 7,
+				},
+				archiveCompleted = {
+					type = "toggle",
+					name = AttuneLang["ArchiveCompleted_TEXT"],
+					desc = AttuneLang["ArchiveCompleted_DESC"],
+					get = function(info) return Attune_DB.archiveCompleted end,
+					set = function(info, val)
+						Attune_DB.archiveCompleted = val
+						Attune_ReloadAttuneTree()
+					end,
+					width = 2.5,
+					order = 8,
+				},                          
+				useFullMap = {
+					type = "toggle",
+					name = AttuneLang["FullMap_TEXT"],
+					desc = AttuneLang["FullMap_DESC"],
+					get = function(info) return Attune_DB.useFullMap end,
+					set = function(info, val)
+						Attune_DB.useFullMap = val
+						if Attune_RefreshQuestMapMode then Attune_RefreshQuestMapMode() end
+					end,
+					width = 2.5,
+					order = 8.5,
 				},
 				treeScale = {
 					type = "select",
@@ -703,30 +781,14 @@ local attune_options = {
 						end
 					end,
 					width = 1.65,
-					order = 8,
-				},                
-				iconView = {
-					type = "toggle",
-					name = AttuneLang["IconView_TEXT"],
-					desc = AttuneLang["IconView_DESC"],
-					get = function(info) return Attune_DB.iconView end,
-					set = function(info, val)
-						Attune_SetIconView(val)
-					end,
-					width = 1.65,
-					order = 8.5,
-				},
-				archiveCompleted = {
-					type = "toggle",
-					name = AttuneLang["ArchiveCompleted_TEXT"],
-					desc = AttuneLang["ArchiveCompleted_DESC"],
-					get = function(info) return Attune_DB.archiveCompleted end,
-					set = function(info, val)
-						Attune_DB.archiveCompleted = val
-						Attune_ReloadAttuneTree()
-					end,
-					width = 1.65,
 					order = 9,
+				},                
+
+                spacer1 = {
+					type = "description",
+					name = " ",
+					width = "full",
+					order = 9.5,
 				},
 				autosurvey = {
 					type = "toggle",
@@ -1001,6 +1063,18 @@ function Attune:OnEnable()
 	-- Called when the addon is enabled
 	-- Class quests are already merged; index them before any completion event.
 	Attune_BuildStepIndex()
+
+	-- Resolve the character and create the DB before any event can fire.
+	-- A bag update during enable used to run while Attune_DB was still nil.
+	local full, first, last = Attune_CharacterKey("player")
+	attunelocal_myFirst = first or attunelocal_myFirst
+	attunelocal_myLast = last or ""
+	attunelocal_myFullName = full or attunelocal_myFirst
+	attunelocal_charKey = attunelocal_myFullName
+	if Attune_DB == nil then Attune_DB = {} end
+	if Attune_DB.toons == nil then Attune_DB.toons = {} end
+	if Attune_DB.toons[attunelocal_charKey] == nil then Attune_DB.toons[attunelocal_charKey] = {} end
+
 	C_ChatInfo.RegisterAddonMessagePrefix(attunelocal_prefix)
 	C_ChatInfo.RegisterAddonMessagePrefix(attunelocal_versionprefix)
     --	C_ChatInfo.RegisterAddonMessagePrefix(attunelocal_syncprefix)
@@ -1018,12 +1092,14 @@ function Attune:OnEnable()
 	self:RegisterEvent("BAG_UPDATE")
 	self:RegisterEvent("GOSSIP_SHOW")
 	self:RegisterEvent("QUEST_DETAIL")
+	-- Statistics (kills, gold looted, profession skill). Missing on clients without achievements.
+	pcall(self.RegisterEvent, self, "CRITERIA_UPDATE")
+	pcall(self.RegisterEvent, self, "SKILL_LINES_CHANGED")
+	pcall(self.RegisterEvent, self, "CHAT_MSG_MONEY")
+	pcall(self.RegisterEvent, self, "PLAYER_PVP_KILLS_CHANGED")
+	pcall(self.RegisterEvent, self, "PLAYER_ENTERING_WORLD")
 --	self:RegisterEvent("ACHIEVEMENT_EARNED")
 
-    attunelocal_myFirst, attunelocal_myLast = UnitName("player")
-    attunelocal_myFullName = attunelocal_myFirst .. " " .. attunelocal_myLast
-    attunelocal_charKey = attunelocal_myFullName --.. "-" .. attunelocal_realm			-- Character unique name
-    
 	--self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 	if attunelocal_hasCombatLog then
 		cleu_parser:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
@@ -1076,7 +1152,15 @@ function Attune:OnEnable()
 	if Attune_DB.autosurvey == nil then Attune_DB.autosurvey = false end
 	if Attune_DB.useFullMap == nil then Attune_DB.useFullMap = false end
 	if Attune_DB.showAllClassQuests == nil then Attune_DB.showAllClassQuests = false end
+	if Attune_DB.showCharacterProgression == nil then
+		if Attune_DB.hideCharacterProgression == nil then
+			Attune_DB.showCharacterProgression = true
+		else
+			Attune_DB.showCharacterProgression = not Attune_DB.hideCharacterProgression
+		end
+	end
 	if Attune_DB.iconView == nil then Attune_DB.iconView = true end
+	if Attune_DB.showNextSteps == nil then Attune_DB.showNextSteps = true end
 	if Attune_DB.treeScale ~= "large" and Attune_DB.treeScale ~= "larger" then Attune_DB.treeScale = "normal" end
 	if Attune_DB.archiveCompleted == nil then Attune_DB.archiveCompleted = true end
 	if Attune_DB.websiteUrl == nil then Attune_DB.websiteUrl = "https://wowhead.com/forever" end
@@ -1703,6 +1787,8 @@ local function Attune_MarkStepDone(s, typeLabel, stepLabel, checkComplete)
 end
 
 local function Attune_ProcessKill(npc_id)
+	-- Creature-killed statistics move even when this npc is not an attune target.
+	Attune_QueueStatScan()
 	if npc_id == nil or npc_id == -1 then return end
 	local steps = Attune_Data.stepsByKill and Attune_Data.stepsByKill[tostring(npc_id)]
 	if steps == nil then return end
@@ -1747,7 +1833,10 @@ end
 function Attune:PLAYER_LEVEL_UP(event, arg1)
 
 	local levels = Attune_Data.stepsByType and Attune_Data.stepsByType["Level"]
-	if levels == nil then return end
+	if levels == nil then
+		Attune_NextFrameUpdate()
+		return
+	end
 
 	local refreshNeeded = false
 	for _, s in ipairs(levels) do
@@ -1760,7 +1849,30 @@ function Attune:PLAYER_LEVEL_UP(event, arg1)
 	end
 
 	if refreshNeeded then Attune_ForceAttuneTabRefresh() end -- refresh view if needed
+	Attune_NextFrameUpdate()
 
+end
+
+-- Kills, looted gold, and profession skill move the character trials.
+function Attune:CRITERIA_UPDATE()
+	Attune_QueueStatScan()
+end
+
+function Attune:SKILL_LINES_CHANGED()
+	Attune_QueueStatScan()
+end
+
+function Attune:CHAT_MSG_MONEY()
+	Attune_QueueStatScan()
+end
+
+function Attune:PLAYER_PVP_KILLS_CHANGED()
+	Attune_QueueStatScan()
+end
+
+function Attune:PLAYER_ENTERING_WORLD()
+	Attune_QueueStatScan()
+	Attune_NextFrameUpdate()
 end
 
 
@@ -1900,6 +2012,7 @@ end
 -------------------------------------------------------------------------
 
 function Attune:QUEST_TURNED_IN(event, arg1)
+	Attune_QueueStatScan()
 	local questID = tonumber(arg1)
 	if questID == nil then return end
 	local steps = Attune_Data.stepsByTurnIn and Attune_Data.stepsByTurnIn[questID]
@@ -1956,6 +2069,7 @@ local attuneItemScanQueued = false
 local function Attune_ScanItemSteps()
 	local items = Attune_Data.stepsByItem
 	if items == nil then return end
+	if Attune_DB == nil or Attune_DB.toons == nil then return end
 	local toon = Attune_DB.toons[attunelocal_charKey]
 	if toon == nil or toon.done == nil or toon.items == nil then return end
 
@@ -2026,8 +2140,11 @@ function Attune:UPDATE_FACTION(event)
 	local reps = Attune_Data.stepsByType and Attune_Data.stepsByType["Rep"]
 	if reps == nil then return end
 
+	if Attune_DB == nil or Attune_DB.toons == nil then return end
 	local refreshNeeded = false
 	local toon = Attune_DB.toons[attunelocal_charKey]
+	if toon == nil then return end
+	if toon.reps == nil then toon.reps = {} end
 	for _, s in ipairs(reps) do
 		if showPatchStep(s) then
 			local name, _, _, _, _, earnedValue = Attune_GetFactionInfoByID(s.LOCATION)
@@ -2069,6 +2186,325 @@ function Attune_UpdateLogs()
 		attune_options.args.tab2.args.logs.name = slogs
 	end
 
+end
+
+-------------------------------------------------------------------------
+-- Character trials: statistics (kills, gold looted, profession skill)
+-------------------------------------------------------------------------
+
+-- GetStatistic returns a display string ("1,234" or "--").
+function Attune_ReadStatisticRaw(statId)
+	if statId == nil or statId == "" or statId == "0" then return nil end
+	if GetStatistic == nil then return nil end
+	local ok, raw = pcall(GetStatistic, tonumber(statId) or statId)
+	if not ok or raw == nil then return nil end
+	raw = tostring(raw)
+	if raw == "--" or raw == "" then return nil end
+	return raw
+end
+
+function Attune_ReadStatistic(statId)
+	local raw = Attune_ReadStatisticRaw(statId)
+	if raw == nil then return 0 end
+	local digits = raw:gsub("%D", "")
+	if digits == "" then return 0 end
+	return tonumber(digits) or 0
+end
+
+-- Gold looted is a money string: "1530|T...UI-GoldIcon...|t 68|T...SilverIcon...".
+-- The gold amount is the number before the first pipe. Icon coordinates must not be counted.
+function Attune_ReadGoldLooted(statId)
+	local raw = Attune_ReadStatisticRaw(statId)
+	if raw == nil then return 0 end
+	if raw:find("|", 1, true) then
+		if not raw:find("GoldIcon", 1, true) then return 0 end
+		local head = raw:match("^([^|]*)") or ""
+		local digits = head:gsub("%D", "")
+		if digits == "" then return 0 end
+		return tonumber(digits) or 0
+	end
+	local digits = raw:gsub("%D", "")
+	if digits == "" then return 0 end
+	local per = COPPER_PER_GOLD or 10000
+	return math.floor((tonumber(digits) or 0) / per)
+end
+
+function Attune_StatGoal(step)
+	if step == nil then return 0 end
+	if step.TYPE == "Prof" then return tonumber(step.NEED) or 2 end
+	return tonumber(step.COUNT) or 0
+end
+
+function Attune_StatValue(step)
+	if step == nil then return 0 end
+	if step.TYPE == "Prof" then
+		local skill = tonumber(step.COUNT) or 0
+		local have = 0
+		local profs = Attune_Data.primaryProfessions
+		if profs then
+			for i = 1, #profs do
+				if Attune_ReadStatistic(profs[i][1]) >= skill then
+					have = have + 1
+				end
+			end
+		end
+		return have
+	end
+	if step.GOLD then
+		return Attune_ReadGoldLooted(step.ID_WOWHEAD)
+	end
+	return Attune_ReadStatistic(step.ID_WOWHEAD)
+end
+
+function Attune_CurrentAttuneId()
+	local last = Attune_GetLastViewed()
+	if last ~= nil and last ~= "" then
+		local _, _, sel = strsplit("\001", last)
+		if sel ~= nil and sel ~= "" then return sel end
+	end
+	if attunelocal_treeframe then
+		local status = attunelocal_treeframe.status or attunelocal_treeframe.localstatus
+		local selected = status and status.selected
+		if selected then
+			local _, _, sel = strsplit("\001", selected)
+			if sel ~= nil and sel ~= "" then return sel end
+		end
+	end
+end
+
+function Attune_ViewingCharacterAttune()
+	if attunelocal_frame == nil or not attunelocal_frame:IsShown() then return false end
+	local sel = Attune_CurrentAttuneId()
+	if sel == nil then return false end
+	local a = Attune_Data.attuneById and Attune_Data.attuneById[sel]
+	return a ~= nil and a.GROUP == AttuneLang["CHARACTER"]
+end
+
+-- Rewrite the open trial's counts without rebuilding the chain.
+function Attune_RefreshOpenStatLabels()
+	local sel = Attune_CurrentAttuneId()
+	if sel == nil then return end
+	local chain = Attune_Data.stepsByAttune and Attune_Data.stepsByAttune[sel]
+	if chain == nil then return end
+	for _, s in pairs(chain) do
+		if s.TYPE == "Stat" or s.TYPE == "Prof" then
+			local title = _G["Attune_Title_" .. s.ID]
+			if title then
+				local goal = Attune_StatGoal(s)
+				local value = Attune_StatValue(s)
+				if goal > 0 and value > goal then value = goal end
+				title:SetText(value .. "/" .. goal)
+			end
+		end
+	end
+end
+
+function Attune_CharacterStepAllowed(toon, attuneId)
+	local a = Attune_Data.attuneById and Attune_Data.attuneById[attuneId]
+	if a == nil then return false end
+	if a.DEPRECATED ~= nil and not Attune_DB.showDeprecatedAttunes then return false end
+	local faction = UnitFactionGroup("player")
+	if not (a.FACTION == faction or a.FACTION == "Both") then return false end
+	return Attune_MayRecordAttuneProgress(toon, a.ID)
+end
+
+-- Rebuild the tree and icon list after the current draw finishes.
+-- The graph records completion during its own redraw, which is too late for the list just built.
+function Attune_QueueCharacterTreeRefresh()
+	if Attune_CharacterTreeRefreshQueued then return end
+	Attune_CharacterTreeRefreshQueued = true
+	C_Timer.After(0, function()
+		Attune_CharacterTreeRefreshQueued = false
+		if attunelocal_initial then return end
+		if not (attunelocal_frame and attunelocal_frame:IsShown() and attunelocal_treeIsShown) then
+			if Attune_DB and attunelocal_charKey then Attune_LoadTree() end
+			return
+		end
+		Attune_ReloadAttuneTree()
+		if Attune_DB and Attune_DB.iconView and attunelocal_treeframe then
+			Attune_ShowIconView(attunelocal_treeframe)
+		end
+	end)
+end
+
+-- Close or reopen the Character end node from the requirement steps.
+-- Returns true when a trial newly finishes or reopens, so the tree can move it.
+function Attune_SyncCharacterEnds(toon)
+	if toon == nil or toon.done == nil then return false end
+	local ends = Attune_Data.stepsByType and Attune_Data.stepsByType["End"]
+	if ends == nil then return false end
+	if toon.attuned == nil then toon.attuned = {} end
+	local changed = false
+	for _, e in pairs(ends) do
+		local a = Attune_Data.attuneById and Attune_Data.attuneById[e.ID_ATTUNE]
+		if a and a.GROUP == AttuneLang["CHARACTER"] and showPatchStep(e) then
+			local allDone = e.FOLLOWS ~= nil and e.FOLLOWS ~= "0"
+			if allDone then
+				for _, flw in pairs(Attune_split(e.FOLLOWS, "&")) do
+					if not toon.done[e.ID_ATTUNE .. "-" .. flw] then
+						allDone = false
+						break
+					end
+				end
+			end
+			local key = e.ID_ATTUNE .. "-" .. e.ID
+			local wasComplete = (toon.attuned[e.ID_ATTUNE] or 0) >= 100 or toon.done[key] ~= nil
+			if allDone then
+				toon.done[key] = 1
+				toon.attuned[e.ID_ATTUNE] = 100
+				if not wasComplete then
+					changed = true
+					if not attunelocal_initial and attunelocal_frame and attunelocal_frame:IsShown() then
+						PlaySound(5275) -- AuctionWindowClose
+						if Attune_DB.showStepReached then print("|cffff00ff[Attune]|r "..AttuneLang["AttuneComplete"]:gsub("##NAME##", a.NAME)) end
+						if Attune_DB.announceAttuneCompleted and attunelocal_myguild ~= "" then SendChatMessage("[Attune] "..AttuneLang["AttuneCompleteGuild"]:gsub("##NAME##", a.NAME), "GUILD") end
+					end
+				end
+			else
+				if toon.done[key] then toon.done[key] = nil end
+				Attune_RecountAttune(e.ID_ATTUNE)
+				if wasComplete then changed = true end
+			end
+		end
+	end
+	return changed
+end
+
+function Attune_ShowStatTooltip(step, fnode)
+	local goal = Attune_StatGoal(step)
+	local value = Attune_StatValue(step)
+	local shown = value
+	if goal > 0 and shown > goal then shown = goal end
+	if attunelocal_frame then
+		attunelocal_frame:SetStatusText(shown .. "/" .. goal .. " " .. (step.STEP or ""))
+	end
+	GameTooltip:SetOwner(fnode, "ANCHOR_NONE")
+	GameTooltip:SetPoint("TOPLEFT", fnode, "TOPRIGHT", 10, 0)
+	GameTooltip:SetText(step.STEP or "")
+	GameTooltip:AddLine((AttuneLang["Current progress"] or "Current progress") .. ": " .. value .. "/" .. goal, 0.5, 0.5, 0.5, 1)
+	if step.GOLD and AttuneLang["GoldLooted_Note"] then
+		GameTooltip:AddLine(AttuneLang["GoldLooted_Note"], 1, 1, 1, 1, true)
+	end
+	if step.TYPE == "Prof" then
+		local skillGoal = tonumber(step.COUNT) or 0
+		local any = false
+		local profs = Attune_Data.primaryProfessions
+		if profs then
+			for i = 1, #profs do
+				local skill = Attune_ReadStatistic(profs[i][1])
+				if skill > 0 then
+					any = true
+					local name = AttuneLang[profs[i][2]] or profs[i][2]
+					if skill >= skillGoal then
+						GameTooltip:AddLine(name .. ": " .. skill .. "/" .. skillGoal, 0.373, 0.729, 0.275, 1)
+					else
+						GameTooltip:AddLine(name .. ": " .. skill .. "/" .. skillGoal, 0.851, 0.608, 0.0, 1)
+					end
+				end
+			end
+		end
+		if not any and AttuneLang["NoProfessionYet"] then
+			GameTooltip:AddLine(AttuneLang["NoProfessionYet"], 0.5, 0.5, 0.5, 1, true)
+		end
+	end
+end
+
+-- silent: record progress without the completion sound (login and redraw).
+function Attune_ScanStatSteps(silent)
+	if Attune_StatScanRunning then return end
+	if Attune_DB == nil or Attune_DB.toons == nil or attunelocal_charKey == nil then return end
+	local toon = Attune_DB.toons[attunelocal_charKey]
+	if toon == nil then return end
+	if toon.done == nil then toon.done = {} end
+	if toon.stats == nil then toon.stats = {} end
+	local byType = Attune_Data.stepsByType
+	if byType == nil then return end
+
+	Attune_StatScanRunning = true
+	local structural = false
+	local progressChanged = false
+
+	local function consider(list)
+		if list == nil then return end
+		for _, s in pairs(list) do
+			if showPatchStep(s) and (s.TYPE == "Stat" or s.TYPE == "Prof") and Attune_CharacterStepAllowed(toon, s.ID_ATTUNE) then
+				local key = s.ID_ATTUNE .. "-" .. s.ID
+				local value = Attune_StatValue(s)
+				local goal = Attune_StatGoal(s)
+				if toon.stats[key] ~= value then
+					toon.stats[key] = value
+					progressChanged = true
+				end
+				if goal > 0 and value >= goal then
+					if toon.done[key] == nil then
+						if silent then
+							toon.done[key] = 1
+							structural = true
+						elseif Attune_MarkStepDone(s, s.STEP or "", value .. "/" .. goal, true) then
+							structural = true
+						end
+					end
+				elseif toon.done[key] then
+					toon.done[key] = nil
+					structural = true
+				end
+			end
+		end
+	end
+
+	consider(byType["Stat"])
+	consider(byType["Prof"])
+	local listChanged = Attune_SyncCharacterEnds(toon)
+	Attune_StatScanRunning = false
+
+	-- Silent redraws record the finish after the tree was built. Refresh the list once that draw returns.
+	if (listChanged or structural) and not attunelocal_initial then
+		Attune_QueueCharacterTreeRefresh()
+	end
+
+	if (structural or progressChanged) and not silent then
+		Attune_NextFrameUpdate()
+	end
+
+	if silent then return end
+	if not (attunelocal_frame and attunelocal_frame:IsShown()) then return end
+	if structural then
+		Attune_ForceAttuneTabRefresh()
+	elseif progressChanged and Attune_ViewingCharacterAttune() then
+		Attune_RefreshOpenStatLabels()
+	end
+end
+
+function Attune_QueueStatScan()
+	-- The statistic often updates a moment after the kill, turn-in, or loot.
+	if not Attune_StatScanQueued then
+		Attune_StatScanQueued = true
+		C_Timer.After(0.4, function()
+			Attune_StatScanQueued = false
+			Attune_ScanStatSteps(false)
+		end)
+	end
+	if Attune_StatScanFollowUp then return end
+	Attune_StatScanFollowUp = true
+	C_Timer.After(1.25, function()
+		Attune_StatScanFollowUp = false
+		Attune_ScanStatSteps(false)
+	end)
+end
+
+-- While a Character trial is on screen, reread statistics even if the kill event was missed.
+function Attune_EnsureStatPoll()
+	if Attune_StatPollActive then return end
+	Attune_StatPollActive = true
+	local function tick()
+		if not Attune_ViewingCharacterAttune() then
+			Attune_StatPollActive = false
+			return
+		end
+		Attune_ScanStatSteps(false)
+		C_Timer.After(1, tick)
+	end
+	C_Timer.After(1, tick)
 end
 
 -------------------------------------------------------------------------
@@ -2188,6 +2624,7 @@ function Attune_CheckProgress()
 
 	-- some specific steps mean the whole attunement is complete. Close off the whole tree if those are done
 	-- including a second pass to mark as done all non-trackable steps (interact/kill/past items) that belong to earlier (completed) quests
+	Attune_ScanStatSteps(true)
 	Attune_SendPushInfo("TOON")
 	Attune_CheckComplete(true)
 	Attune_SendPushInfo("OVER")
@@ -2376,6 +2813,9 @@ function Attune_CheckIsNext(who)
 			end
 		end
 	end
+	if who == attunelocal_charKey then
+		Attune_NextFrameUpdate()
+	end
 end
 
 -------------------------------------------------------------------------
@@ -2486,6 +2926,12 @@ local function Attune_ClassQuestVisible(a)
 	return classFile ~= nil and a.CLASS == classFile
 end
 
+-- Character Progression attunes stay in the list when "Show Character Progression attunes" is on.
+local function Attune_CharacterProgressionVisible(a)
+	if a.GROUP ~= AttuneLang["CHARACTER"] then return true end
+	return not (Attune_DB and Attune_DB.showCharacterProgression == false)
+end
+
 -- Selected attunement, stored on this character inside the account-wide saved data.
 function Attune_GetLastViewed()
 	local t = Attune_DB and attunelocal_charKey and Attune_DB.toons and Attune_DB.toons[attunelocal_charKey]
@@ -2520,6 +2966,7 @@ function Attune_EnsureDefaultView()
 		if (a.DEPRECATED == nil or Attune_DB.showDeprecatedAttunes)
 			and (a.FACTION == attunelocal_faction or a.FACTION == "Both")
 			and Attune_ClassQuestVisible(a)
+			and Attune_CharacterProgressionVisible(a)
 			and Attune_MayRecordAttuneProgress(toon, a.ID)
 			and withSteps[a.ID]
 		then
@@ -2542,6 +2989,8 @@ local function Attune_CommitGroup(expacNode, groupNode, groupAllDone)
 end
 
 function Attune_LoadTree()
+	local treeToon = Attune_DB and attunelocal_charKey and Attune_DB.toons[attunelocal_charKey]
+	if treeToon then Attune_ApplyCompletedEndSteps(treeToon) end
 	attunelocal_tree = {}
 	local expac = ""
 	local group = ""
@@ -2557,7 +3006,7 @@ function Attune_LoadTree()
 	end
 
 	for i, a in pairs(Attune_Data.attunes) do
-		if (a.DEPRECATED == nil or Attune_DB.showDeprecatedAttunes) and Attune_ClassQuestVisible(a) then 
+		if (a.DEPRECATED == nil or Attune_DB.showDeprecatedAttunes) and Attune_ClassQuestVisible(a) and Attune_CharacterProgressionVisible(a) then 
 
 			--Group Level
 			if group ~= a.GROUP or expac ~= a.EXPAC then 
@@ -3220,6 +3669,7 @@ end
 
 function Attune:PLAYER_LOGOUT()
 	Attune_SaveTreeExpandStatus()
+	Attune_NextFrameSave(AttuneNextFrame)
 end
 
 
@@ -3943,6 +4393,13 @@ function Attune_Select(attuneId, quiet)
 	attunelocal_graphRoot:SetScale(Attune_DB.zoom)
 	Attune_ApplyGraphPan()
 	attunelocal_graphRoot:Show()
+
+	-- Character trials read statistics, so the open chain matches the panel before nodes are colored.
+	Attune_ScanStatSteps(true)
+	local openAttune = Attune_Data.attuneById and Attune_Data.attuneById[attuneId]
+	if openAttune and openAttune.GROUP == AttuneLang["CHARACTER"] then
+		Attune_EnsureStatPoll()
+	end
 
 	-- Count steps per stage (main chain only; SIDE reminders are placed beside End)
 	local stageSteps = {}
@@ -5244,7 +5701,8 @@ function Attune_CreateNode(step, parent, posX, posY)
 				GameTooltip:SetText(other)
 			end
 
-
+		elseif step.TYPE == "Stat" or step.TYPE == "Prof" then
+			Attune_ShowStatTooltip(step, fnode)
 
 		-- change transparency if clickable sub-attune
 		elseif step.TYPE == "Attune" then
@@ -5446,6 +5904,11 @@ function Attune_CreateNode(step, parent, posX, posY)
 
 			elseif step.TYPE == "Quest" or step.TYPE == "Pick Up" or step.TYPE == "Turn In" then
 				ftitle:SetText(AttuneLang["Q1_"..step.ID_WOWHEAD])
+			elseif step.TYPE == "Stat" or step.TYPE == "Prof" then
+				local goal = Attune_StatGoal(step)
+				local value = Attune_StatValue(step)
+				if goal > 0 and value > goal then value = goal end
+				ftitle:SetText(value .. "/" .. goal)
 			else
 				ftitle:SetText(step.STEP)
 			end
@@ -5464,6 +5927,7 @@ function Attune_CreateNode(step, parent, posX, posY)
 			elseif step.TYPE == "Level" then type = "|cffffd100"..AttuneLang["Required level"].."|r"
 			elseif step.TYPE == "Attune" then type = "|c60808080"..AttuneLang["Attunement or key"].."|r"
 			elseif step.TYPE == "Rep" then type = "|cffffd100"..AttuneLang["Reputation"].."|r"
+			elseif step.TYPE == "Stat" or step.TYPE == "Prof" then type = "|cffffd100"..(step.STEP or "").."|r"
 			elseif step.LOCATION ~= "" then type = type .. "|c60808080 ".. AttuneLang["in"].." "..AttuneLang[step.LOCATION].."|r"
 			end
 
@@ -5688,6 +6152,7 @@ function Attune_RefreshAttunePanel()
 end
 
 function Attune_ForceAttuneTabRefresh()
+	Attune_NextFrameUpdate()
 	if attunelocal_initial then
 		attunelocal_panelDirty = true
 		return
@@ -5729,7 +6194,7 @@ function Attune_ResultColumnsWidth()
 	local expac = ""
 	local faction = UnitFactionGroup("player")
 	for _, a in pairs(Attune_Data.attunes) do
-		if (a.DEPRECATED == nil or Attune_DB.showDeprecatedAttunes) and not Attune_IsClassQuest(a) then
+		if (a.DEPRECATED == nil or Attune_DB.showDeprecatedAttunes) and not Attune_IsClassQuest(a) and Attune_CharacterProgressionVisible(a) then
 			if (TreeExpandStatus[a.EXPAC] == nil or TreeExpandStatus[a.EXPAC] == 1)
 			and (TreeExpandStatus[a.EXPAC.."\001"..a.GROUP] == nil or TreeExpandStatus[a.EXPAC.."\001"..a.GROUP] == 1) then
 				local key = a.EXPAC.."-"..a.GROUP
@@ -6554,7 +7019,7 @@ function Attune_ToggleView(noToggle)
 
 			local expac = ""
 			for i, a in pairs(Attune_Data.attunes) do
-				if (a.DEPRECATED == nil or Attune_DB.showDeprecatedAttunes) and not Attune_IsClassQuest(a) then 
+				if (a.DEPRECATED == nil or Attune_DB.showDeprecatedAttunes) and not Attune_IsClassQuest(a) and Attune_CharacterProgressionVisible(a) then 
 
 					if (TreeExpandStatus[a.EXPAC] == nil 
 					or TreeExpandStatus[a.EXPAC] == 1) 
@@ -7095,7 +7560,7 @@ function Attune_ShowResultList(title)
 						-- Go through each Attune and create the corresponding % label for this toon
 						local expac = ""
 						for i, a in pairs(Attune_Data.attunes) do
-							if (a.DEPRECATED == nil or Attune_DB.showDeprecatedAttunes) and not Attune_IsClassQuest(a) then 
+							if (a.DEPRECATED == nil or Attune_DB.showDeprecatedAttunes) and not Attune_IsClassQuest(a) and Attune_CharacterProgressionVisible(a) then 
 
 								if (TreeExpandStatus[a.EXPAC] == nil 
 									or TreeExpandStatus[a.EXPAC] == 1) 
@@ -7827,8 +8292,8 @@ function Attune_SendSyncRequest()
 		if attunelocal_syncStatus ~= -1 then 
 			if Attune_DB.showOtherChat then print("|cffff00ff[Attune]|r "..AttuneLang["Cannot sync while another sync is in progress"]) end
 		else 
-            local targetFirst, targetLast = UnitName("target")
-			attunelocal_syncTarget = targetFirst .. " " .. targetLast -- .. "-" .. GetRealmName()
+            attunelocal_syncTarget = Attune_CharacterKey("target")
+			if attunelocal_syncTarget == nil then return end
 
 			StaticPopupDialogs["SYNC_CONFIRM"] = {
 				text = AttuneLang["Sending Sync Request"]:gsub("##PLAYER##", attunelocal_syncTarget) .. "\n\n" .. AttuneLang["Could be slow"],
@@ -10610,6 +11075,664 @@ function Attune_RefreshQuestMapMode()
 		Attune_ShowQuestGiverMap(panel.step)
 	else
 		Attune_CloseQuestGiverMap()
+	end
+end
+
+-------------------------------------------------------------------------
+-- Next-step window. One current step per attunement, closest level first.
+-- AttuneNextFrame is global: the main chunk is already at Lua's 200-local limit.
+-------------------------------------------------------------------------
+
+function Attune_NextStepLabel(step)
+	if step == nil then return "" end
+	local label
+	if step.TYPE == "Item" then
+		local countNeeded = tonumber(step.COUNT) or 1
+		label = AttuneLang["I_" .. step.ID_WOWHEAD]
+		if countNeeded > 1 then
+			label = Attune_OwnedItemCount(step.ID_WOWHEAD) .. "/" .. countNeeded .. " " .. (label or "")
+		end
+	elseif step.TYPE == "Kill" or step.TYPE == "Interact" then
+		label = AttuneLang["N1_" .. step.ID_WOWHEAD]
+	elseif step.TYPE == "Quest" or step.TYPE == "Pick Up" or step.TYPE == "Turn In" then
+		label = AttuneLang["Q1_" .. step.ID_WOWHEAD]
+	elseif step.TYPE == "Stat" or step.TYPE == "Prof" then
+		local goal = Attune_StatGoal(step)
+		local value = Attune_StatValue(step)
+		if goal > 0 and value > goal then value = goal end
+		label = (step.STEP or "") .. " " .. value .. "/" .. goal
+	else
+		label = step.STEP
+	end
+	if label == nil or label == "" then
+		label = step.STEP or AttuneLang[step.TYPE] or step.TYPE or ""
+	end
+	return label
+end
+
+function Attune_NextStepIsCurrent(step, done)
+	if done[step.ID_ATTUNE .. "-" .. step.ID] then return false end
+	local follows = step.FOLLOWS
+	if follows == nil or follows == "0" or follows == 0 then return true end
+	follows = tostring(follows)
+	local followOR = string.find(follows, "|", 1, true) ~= nil
+	local ids = Attune_split(follows, followOR and "|" or "&")
+	if followOR then
+		for _, id in pairs(ids) do
+			if done[step.ID_ATTUNE .. "-" .. id] then return true end
+		end
+		return false
+	end
+	for _, id in pairs(ids) do
+		if not done[step.ID_ATTUNE .. "-" .. id] then return false end
+	end
+	return true
+end
+
+function Attune_NextLevelBounds(a)
+	local levels = a and a.LEVELS
+	if type(levels) == "string" then
+		local lo, hi = levels:match("(%d+)%s*%-%s*(%d+)")
+		if lo then return tonumber(lo), tonumber(hi) end
+		local one = levels:match("(%d+)")
+		if one then
+			local n = tonumber(one)
+			return n, n
+		end
+	end
+	local chain = Attune_Data.stepsByAttune and a and Attune_Data.stepsByAttune[a.ID]
+	if chain then
+		for _, step in ipairs(chain) do
+			if step.TYPE == "Level" then
+				local n = tonumber(step.ID_WOWHEAD)
+				if n then return n, n end
+			end
+		end
+	end
+	return 1000, 1000
+end
+
+function Attune_NextFrameCollect()
+	local list = {}
+	if Attune_DB == nil or attunelocal_charKey == nil or Attune_Data == nil or Attune_Data.attunes == nil then return list end
+	local toon = Attune_DB.toons and Attune_DB.toons[attunelocal_charKey]
+	if toon == nil or toon.done == nil then return list end
+
+	local faction = attunelocal_faction
+	if faction == nil or faction == "" then faction = UnitFactionGroup("player") end
+	local player = UnitLevel("player") or 1
+	local ord = 0
+
+	for _, a in ipairs(Attune_Data.attunes) do
+		if (a.DEPRECATED == nil or Attune_DB.showDeprecatedAttunes)
+			and (a.FACTION == faction or a.FACTION == "Both")
+			and Attune_ClassQuestVisible(a)
+			and Attune_CharacterProgressionVisible(a)
+			and Attune_MayRecordAttuneProgress(toon, a.ID)
+			and (toon.attuned == nil or (toon.attuned[a.ID] or 0) < 100)
+		then
+			local chain = Attune_Data.stepsByAttune and Attune_Data.stepsByAttune[a.ID]
+			if chain then
+				local main, side = {}, {}
+				for _, step in ipairs(chain) do
+					if showPatchStep(step) and step.TYPE ~= "End" and step.TYPE ~= "Spacer" and Attune_NextStepIsCurrent(step, toon.done) then
+						if step.SIDE then
+							side[#side + 1] = step
+						else
+							main[#main + 1] = step
+						end
+					end
+				end
+				local found = (#main > 0) and main or side
+				if #found > 0 then
+					table.sort(found, function(s1, s2)
+						local a1 = tonumber(s1.STAGE) or tonumber(s1.ID) or 0
+						local a2 = tonumber(s2.STAGE) or tonumber(s2.ID) or 0
+						if a1 ~= a2 then return a1 < a2 end
+						return (tonumber(s1.ID) or 0) < (tonumber(s2.ID) or 0)
+					end)
+					local lo, hi = Attune_NextLevelBounds(a)
+					local dist
+					if player < lo then
+						dist = lo - player
+					elseif player > hi then
+						dist = (player - hi) + 0.5
+					else
+						dist = 0
+					end
+					ord = ord + 1
+					local tag = a.SHORT
+					if tag == nil or tag == "" or tonumber(tag) then tag = a.NAME or "" end
+					local name = Attune_NextStepLabel(found[1])
+					local text
+					local stepText = "|cffffffff" .. name .. "|r"
+					if tag == name then
+						text = stepText
+					else
+						text = "|cffffd100" .. tag .. "|r  " .. stepText
+					end
+					if a.LEVELS and a.LEVELS ~= "" then
+						text = "|cffaaaaaa" .. a.LEVELS .. "|r  " .. text
+					end
+					if #found > 1 then
+						text = text .. " |cffaaaaaa(+" .. (#found - 1) .. ")|r"
+					end
+					list[#list + 1] = {
+						dist = dist,
+						mid = (lo + hi) / 2,
+						lo = lo,
+						hi = hi,
+						name = a.NAME or "",
+						ord = ord,
+						text = text,
+						attune = a,
+						steps = found,
+					}
+				end
+			end
+		end
+	end
+
+	table.sort(list, function(left, right)
+		if left.dist ~= right.dist then return left.dist < right.dist end
+		local ld = math.abs(left.mid - player)
+		local rd = math.abs(right.mid - player)
+		if ld ~= rd then return ld < rd end
+		if left.lo ~= right.lo then return left.lo < right.lo end
+		if left.name ~= right.name then return left.name < right.name end
+		return left.ord < right.ord
+	end)
+
+	-- Too far above: one "next attune at level" line.
+	-- Too far below: hidden, counted in a "Missed" line at the top.
+	local shown = {}
+	local later = {}
+	local missed = {}
+	for _, entry in ipairs(list) do
+		if entry.lo < 1000 and entry.lo > player + 10 then
+			later[#later + 1] = entry
+		elseif entry.hi < 1000 and player - entry.hi > 3 then
+			missed[#missed + 1] = entry.text
+		else
+			shown[#shown + 1] = entry
+		end
+	end
+	if #missed > 0 then
+		local msg
+		if #missed == 1 then
+			msg = AttuneLang["NextSteps_MISSED_ONE"] or "Missed 1 attune"
+		else
+			msg = (AttuneLang["NextSteps_MISSED"] or "Missed ##COUNT## attunes"):gsub("##COUNT##", tostring(#missed))
+		end
+		table.insert(shown, 1, {
+			text = "|cffaaaaaa" .. msg .. "|r",
+			note = true,
+			tipTitle = msg,
+			tips = missed,
+		})
+	end
+	local nextLevel = nil
+	for _, entry in ipairs(later) do
+		if nextLevel == nil or entry.lo < nextLevel then
+			nextLevel = entry.lo
+		end
+	end
+	if nextLevel ~= nil then
+		local tips = {}
+		for _, entry in ipairs(later) do
+			if entry.lo == nextLevel then
+				tips[#tips + 1] = entry.text
+			end
+		end
+		local msg = (AttuneLang["NextSteps_LATER"] or "Next attune at level ##LEVEL##"):gsub("##LEVEL##", tostring(nextLevel))
+		shown[#shown + 1] = {
+			text = "|cffaaaaaa" .. msg .. "|r",
+			note = true,
+			tipTitle = msg,
+			tips = tips,
+		}
+	end
+	return shown
+end
+
+function Attune_NextFrameSave(frame)
+	if frame == nil or not frame.placed or Attune_DB == nil then return end
+	local point, _, rel, x, y = frame:GetPoint(1)
+	if point == nil or x == nil or y == nil then return end
+	local height = frame:GetHeight()
+	if frame.minimized and frame.fullHeight then
+		height = frame.fullHeight
+	end
+	Attune_DB.nextFrame = {
+		point = point,
+		rel = rel or point,
+		x = x,
+		y = y,
+		width = frame:GetWidth(),
+		height = height,
+		minimized = frame.minimized and true or false,
+	}
+end
+
+function Attune_NextFrameWheel(_, delta)
+	local frame = AttuneNextFrame
+	if frame == nil or frame.scroll == nil then return end
+	local scroll = frame.scroll
+	local child = scroll:GetScrollChild()
+	local maxScroll = 0
+	if child then
+		maxScroll = child:GetHeight() - scroll:GetHeight()
+		if maxScroll < 0 then maxScroll = 0 end
+	end
+	local pos = scroll:GetVerticalScroll() - delta * (frame.rowH or 16)
+	if pos < 0 then pos = 0 end
+	if pos > maxScroll then pos = maxScroll end
+	scroll:SetVerticalScroll(pos)
+end
+
+function Attune_NextFrameTip(row)
+	local entry = row.entry
+	if entry == nil then return end
+	local anchor = "ANCHOR_RIGHT"
+	local cx = AttuneNextFrame and AttuneNextFrame:GetCenter()
+	local width = UIParent and UIParent:GetWidth()
+	if cx and width and cx > width / 2 then anchor = "ANCHOR_LEFT" end
+	if entry.tips then
+		GameTooltip:SetOwner(row, anchor)
+		GameTooltip:SetText(entry.tipTitle or "")
+		for i, line in ipairs(entry.tips) do
+			if i > 40 then
+				GameTooltip:AddLine("...")
+				break
+			end
+			GameTooltip:AddLine(line, 1, 1, 1)
+		end
+		GameTooltip:Show()
+		return
+	end
+	if entry.attune == nil then return end
+	local a = entry.attune
+	GameTooltip:SetOwner(row, anchor)
+	GameTooltip:SetText(a.NAME or "")
+	if a.LEVELS and a.LEVELS ~= "" then
+		GameTooltip:AddLine(a.LEVELS, 0.75, 0.75, 0.75)
+	end
+	local steps = entry.steps or {}
+	for i, step in ipairs(steps) do
+		if i > 10 then
+			GameTooltip:AddLine("...", 0.7, 0.7, 0.7)
+			break
+		end
+		GameTooltip:AddLine(Attune_NextStepLabel(step), 1, 1, 1)
+		if #steps == 1 and step.LOCATION and step.LOCATION ~= "" and step.TYPE ~= "Rep" and step.TYPE ~= "Level" and step.TYPE ~= "Stat" and step.TYPE ~= "Prof" then
+			local kind = AttuneLang[step.TYPE] or ""
+			GameTooltip:AddLine(kind .. " " .. (AttuneLang["in"] or "in") .. " " .. step.LOCATION, 0.6, 0.6, 0.6)
+		end
+	end
+	GameTooltip:AddLine(AttuneLang["Click to navigate to that attunement"], 0.2, 1, 0.2)
+	GameTooltip:Show()
+end
+
+function Attune_NextOpenAttune(entry)
+	if entry == nil or entry.attune == nil then return end
+	local a = entry.attune
+	if attunelocal_initial or attunelocal_frame == nil then
+		Attune_SlashCommandHandler("")
+	else
+		if not attunelocal_frame:IsShown() then
+			attunelocal_frame:Show()
+		end
+		if not attunelocal_treeIsShown then
+			Attune_ToggleView()
+		end
+	end
+	if attunelocal_treeframe and attunelocal_treeframe.SelectByPath then
+		attunelocal_treeframe:SelectByPath(a.EXPAC, a.GROUP, a.ID)
+	end
+end
+
+function Attune_NextFrameLayout()
+	local frame = AttuneNextFrame
+	if frame == nil or frame.scroll == nil then return end
+	if frame.minimized then
+		frame.empty:Hide()
+		return
+	end
+	local scroll = frame.scroll
+	local content = frame.content
+	local entries = frame.entries or {}
+	local rowH = frame.rowH or 16
+	local width = scroll:GetWidth()
+	if width < 20 then width = (frame:GetWidth() or 250) - 12 end
+
+	content:SetWidth(width)
+	content:SetHeight(math.max(#entries * rowH, 1))
+
+	for i, entry in ipairs(entries) do
+		local row = frame.rows[i]
+		if row == nil then
+			row = CreateFrame("Button", nil, content)
+			row:SetHeight(rowH)
+			row:RegisterForClicks("LeftButtonUp")
+			row:EnableMouseWheel(true)
+			row.text = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+			row.text:SetPoint("LEFT", row, "LEFT", 2, 0)
+			row.text:SetPoint("RIGHT", row, "RIGHT", -2, 0)
+			row.text:SetJustifyH("LEFT")
+			row.text:SetWordWrap(false)
+			row.text:SetFontObject(GameFontHighlightSmall)
+			local hl = row:CreateTexture(nil, "HIGHLIGHT")
+			hl:SetTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight")
+			hl:SetBlendMode("ADD")
+			hl:SetAllPoints()
+			row:SetScript("OnClick", function(self)
+				Attune_NextOpenAttune(self.entry)
+			end)
+			row:SetScript("OnEnter", function(self)
+				Attune_NextFrameTip(self)
+			end)
+			row:SetScript("OnLeave", function()
+				GameTooltip:Hide()
+			end)
+			row:SetScript("OnMouseWheel", Attune_NextFrameWheel)
+			frame.rows[i] = row
+		end
+		row.entry = entry
+		row:EnableMouse(not entry.note or entry.tips ~= nil)
+		row:ClearAllPoints()
+		row:SetPoint("TOPLEFT", content, "TOPLEFT", 0, -((i - 1) * rowH))
+		row:SetPoint("TOPRIGHT", content, "TOPRIGHT", 0, -((i - 1) * rowH))
+		row.text:SetText(entry.text or "")
+		row:Show()
+	end
+	for i = #entries + 1, #frame.rows do
+		frame.rows[i]:Hide()
+	end
+
+	if #entries == 0 then
+		frame.empty:Show()
+	else
+		frame.empty:Hide()
+	end
+
+	local maxScroll = content:GetHeight() - scroll:GetHeight()
+	if maxScroll < 0 then maxScroll = 0 end
+	if scroll:GetVerticalScroll() > maxScroll then
+		scroll:SetVerticalScroll(maxScroll)
+	end
+end
+
+function Attune_NextFrameSetMinimized(frame, collapsed)
+	if frame == nil or frame.minimized == collapsed then return end
+	if collapsed and not frame.minimized then
+		local h = frame:GetHeight()
+		if h > 20 then frame.fullHeight = h end
+	end
+	frame.minimized = collapsed and true or false
+	frame.sizingMin = true
+	if frame.minimized then
+		if frame.SetResizeBounds then
+			frame:SetResizeBounds(160, 20, 480, 20)
+		else
+			frame:SetMinResize(160, 20)
+			frame:SetMaxResize(480, 20)
+		end
+		frame:SetHeight(20)
+		if frame.scroll then frame.scroll:Hide() end
+		if frame.empty then frame.empty:Hide() end
+		if frame.grip then frame.grip:Hide() end
+		if frame.minBtn and frame.minBtn.text then
+			frame.minBtn.text:SetText("|cffffd100+|r")
+		end
+	else
+		if frame.SetResizeBounds then
+			frame:SetResizeBounds(160, 48, 480, 640)
+		else
+			frame:SetMinResize(160, 48)
+			frame:SetMaxResize(480, 640)
+		end
+		frame:SetHeight(frame.fullHeight or 180)
+		if frame.scroll then frame.scroll:Show() end
+		if frame.grip then frame.grip:Show() end
+		if frame.minBtn and frame.minBtn.text then
+			frame.minBtn.text:SetText("|cffffd100_|r")
+		end
+		Attune_NextFrameLayout()
+	end
+	frame.sizingMin = false
+	if frame.placed then Attune_NextFrameSave(frame) end
+end
+
+function Attune_NextFrameDragStart()
+	if AttuneNextFrame then AttuneNextFrame:StartMoving() end
+end
+
+function Attune_NextFrameDragStop()
+	if AttuneNextFrame == nil then return end
+	AttuneNextFrame:StopMovingOrSizing()
+	Attune_NextFrameSave(AttuneNextFrame)
+end
+
+function Attune_NextFrameEnsure()
+	if AttuneNextFrame then return AttuneNextFrame end
+
+	local frame = CreateFrame("Frame", "Attune_NextFrame", UIParent)
+	frame:SetFrameStrata("MEDIUM")
+	frame:SetClampedToScreen(true)
+	frame:SetMovable(true)
+	frame:EnableMouse(true)
+	frame:EnableMouseWheel(true)
+	frame:SetResizable(true)
+	frame:RegisterForDrag("LeftButton")
+	frame.rowH = 16
+	frame.rows = {}
+	frame.entries = {}
+
+	local bg = frame:CreateTexture(nil, "BACKGROUND")
+	bg:SetAllPoints()
+	bg:SetColorTexture(0, 0, 0, 0.28)
+
+	local bar = frame:CreateTexture(nil, "BACKGROUND")
+	bar:SetPoint("TOPLEFT")
+	bar:SetPoint("TOPRIGHT")
+	bar:SetHeight(20)
+	bar:SetColorTexture(0, 0, 0, 0.45)
+
+	local top = frame:CreateTexture(nil, "BORDER")
+	top:SetColorTexture(1, 0.82, 0, 0.4)
+	top:SetPoint("TOPLEFT")
+	top:SetPoint("TOPRIGHT")
+	top:SetHeight(1)
+	local bottom = frame:CreateTexture(nil, "BORDER")
+	bottom:SetColorTexture(1, 0.82, 0, 0.4)
+	bottom:SetPoint("BOTTOMLEFT")
+	bottom:SetPoint("BOTTOMRIGHT")
+	bottom:SetHeight(1)
+	local left = frame:CreateTexture(nil, "BORDER")
+	left:SetColorTexture(1, 0.82, 0, 0.4)
+	left:SetPoint("TOPLEFT")
+	left:SetPoint("BOTTOMLEFT")
+	left:SetWidth(1)
+	local right = frame:CreateTexture(nil, "BORDER")
+	right:SetColorTexture(1, 0.82, 0, 0.4)
+	right:SetPoint("TOPRIGHT")
+	right:SetPoint("BOTTOMRIGHT")
+	right:SetWidth(1)
+
+	local title = CreateFrame("Button", nil, frame)
+	title:SetPoint("TOPLEFT", 6, -1)
+	title:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", -36, -19)
+	title:RegisterForDrag("LeftButton")
+	title:EnableMouseWheel(true)
+	title:SetScript("OnDragStart", Attune_NextFrameDragStart)
+	title:SetScript("OnDragStop", Attune_NextFrameDragStop)
+	title:SetScript("OnMouseWheel", Attune_NextFrameWheel)
+	title:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
+		GameTooltip:SetText(AttuneLang["NextSteps_DRAG"] or "Drag to move")
+		GameTooltip:Show()
+	end)
+	title:SetScript("OnLeave", function()
+		GameTooltip:Hide()
+	end)
+	title.text = title:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	title.text:SetPoint("LEFT", 2, 0)
+	title.text:SetJustifyH("LEFT")
+	title.text:SetText(AttuneLang["NextSteps_TITLE"] or "Attune: Next")
+
+	local close = CreateFrame("Button", nil, frame)
+	close:SetSize(16, 16)
+	close:SetPoint("TOPRIGHT", -3, -2)
+	close:SetScript("OnClick", function()
+		Attune_DB.showNextSteps = false
+		frame:Hide()
+	end)
+	close.text = close:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+	close.text:SetPoint("CENTER", 0, 1)
+	close.text:SetText("|cffffd100x|r")
+
+	local minBtn = CreateFrame("Button", nil, frame)
+	minBtn:SetSize(16, 16)
+	minBtn:SetPoint("TOPRIGHT", close, "TOPLEFT", -1, 0)
+	minBtn:SetScript("OnClick", function()
+		Attune_NextFrameSetMinimized(frame, not frame.minimized)
+	end)
+	minBtn:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
+		if frame.minimized then
+			GameTooltip:SetText(AttuneLang["NextSteps_RESTORE"] or "Restore")
+		else
+			GameTooltip:SetText(AttuneLang["NextSteps_MIN"] or "Minimize")
+		end
+		GameTooltip:Show()
+	end)
+	minBtn:SetScript("OnLeave", function()
+		GameTooltip:Hide()
+	end)
+	minBtn.text = minBtn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+	minBtn.text:SetPoint("CENTER", 0, 1)
+	minBtn.text:SetText("|cffffd100_|r")
+	frame.minBtn = minBtn
+
+	local scroll = CreateFrame("ScrollFrame", nil, frame)
+	scroll:SetPoint("TOPLEFT", 6, -22)
+	scroll:SetPoint("BOTTOMRIGHT", -6, 12)
+	scroll:EnableMouse(true)
+	scroll:EnableMouseWheel(true)
+	scroll:RegisterForDrag("LeftButton")
+	scroll:SetScript("OnDragStart", Attune_NextFrameDragStart)
+	scroll:SetScript("OnDragStop", Attune_NextFrameDragStop)
+	scroll:SetScript("OnMouseWheel", Attune_NextFrameWheel)
+	if scroll.SetClipsChildren then scroll:SetClipsChildren(true) end
+
+	local content = CreateFrame("Frame", nil, scroll)
+	content:SetSize(200, 16)
+	content:EnableMouseWheel(true)
+	content:SetScript("OnMouseWheel", Attune_NextFrameWheel)
+	scroll:SetScrollChild(content)
+
+	local empty = frame:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+	empty:SetPoint("TOPLEFT", frame, "TOPLEFT", 10, -28)
+	empty:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -10, 16)
+	empty:SetJustifyH("CENTER")
+	empty:SetJustifyV("MIDDLE")
+	empty:SetText(AttuneLang["NextSteps_EMPTY"] or "Nothing to do right now")
+	empty:Hide()
+
+	local grip = CreateFrame("Button", nil, frame)
+	grip:SetSize(16, 16)
+	grip:SetPoint("BOTTOMRIGHT", -1, 1)
+	grip:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
+	grip:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
+	grip:SetPushedTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down")
+	grip:SetScript("OnMouseDown", function(_, button)
+		if button == "LeftButton" then frame:StartSizing("BOTTOMRIGHT") end
+	end)
+	grip:SetScript("OnMouseUp", function()
+		frame:StopMovingOrSizing()
+		Attune_NextFrameSave(frame)
+		Attune_NextFrameLayout()
+	end)
+
+	frame:SetScript("OnDragStart", Attune_NextFrameDragStart)
+	frame:SetScript("OnDragStop", Attune_NextFrameDragStop)
+	frame:SetScript("OnMouseWheel", Attune_NextFrameWheel)
+	frame:SetScript("OnSizeChanged", function(self)
+		if self.sizingMin or self.minimized then return end
+		if self.placed and self.entries then
+			self.fullHeight = self:GetHeight()
+			Attune_NextFrameLayout()
+			Attune_NextFrameSave(self)
+		end
+	end)
+
+	frame.scroll = scroll
+	frame.content = content
+	frame.empty = empty
+	frame.grip = grip
+
+	local pos = Attune_DB and Attune_DB.nextFrame
+	local width, height = 250, 180
+	frame:ClearAllPoints()
+	if type(pos) == "table" and type(pos.point) == "string" and type(pos.x) == "number" and type(pos.y) == "number" then
+		if type(pos.width) == "number" then width = pos.width end
+		if type(pos.height) == "number" then height = pos.height end
+		if width < 160 then width = 160 elseif width > 480 then width = 480 end
+		if height < 48 then height = 48 elseif height > 640 then height = 640 end
+		frame:SetPoint(pos.point, UIParent, pos.rel or pos.point, pos.x, pos.y)
+	else
+		frame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -40, -220)
+	end
+	frame:SetSize(width, height)
+	if frame.SetResizeBounds then
+		frame:SetResizeBounds(160, 48, 480, 640)
+	else
+		frame:SetMinResize(160, 48)
+		frame:SetMaxResize(480, 640)
+	end
+
+	title:SetFrameLevel(frame:GetFrameLevel() + 4)
+	close:SetFrameLevel(frame:GetFrameLevel() + 5)
+	minBtn:SetFrameLevel(frame:GetFrameLevel() + 5)
+	grip:SetFrameLevel(frame:GetFrameLevel() + 6)
+
+	frame.fullHeight = height
+	frame.placed = true
+	if type(pos) == "table" and pos.minimized then
+		Attune_NextFrameSetMinimized(frame, true)
+	end
+	AttuneNextFrame = frame
+	return frame
+end
+
+function Attune_NextFrameRefresh()
+	if Attune_DB == nil or Attune_DB.showNextSteps == false then
+		if AttuneNextFrame then AttuneNextFrame:Hide() end
+		return
+	end
+	if attunelocal_charKey == nil or Attune_Data == nil or Attune_Data.attunes == nil then return end
+	local frame = Attune_NextFrameEnsure()
+	frame.entries = Attune_NextFrameCollect()
+	frame:Show()
+	Attune_NextFrameLayout()
+end
+
+function Attune_NextFrameUpdate()
+	if Attune_DB == nil then return end
+	if Attune_DB.showNextSteps == false then
+		if AttuneNextFrame then AttuneNextFrame:Hide() end
+		return
+	end
+	if AttuneNextFramePending then return end
+	AttuneNextFramePending = true
+	local function run()
+		AttuneNextFramePending = false
+		Attune_NextFrameRefresh()
+	end
+	if C_Timer and C_Timer.After then
+		C_Timer.After(0, run)
+	else
+		run()
 	end
 end
 

@@ -1,5 +1,7 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
+
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
@@ -12,6 +14,7 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-H1
 #defaultfor Tauren
 #next 6-12 Mulgore;6-13 Mulgore
+
 step << !Tauren
     #completewith next
     .goto 1412/1,-259.85,-2914.28--c:Mulgore,44.92,77.12
@@ -466,7 +469,10 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Antur Fallow|r
     .accept 1656 >>Accept A Task Unfinished
     .target Antur Fallow
+
 ]])
+
+
 RXPGuides.RegisterGuide([[
 #forever
 #disabledungeons
@@ -478,6 +484,8 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-H1
 #defaultfor Tauren
 #next 12-17 The Barrens
+
+
 step
 	#softcore
 	#completewith BloodhoofHome
@@ -2527,4 +2535,5 @@ step << Warrior
     .turnin 1498 >>Turn in Path of Defense
     .accept 1502 >>Accept Thun'grim Firegaze
     .target Uzzek
+
 ]])

@@ -8,7 +8,11 @@ RXPGuides.RegisterGuide([[
 #name a) 11.0: War Within
 #displayname 11.0: War Within
 #chapters a) Against the Current;a) Ties That Bird;a) News from Below;a) The Machines to War;a) A Light in the Dark;a) Lingering Shadows
+
+
+
 ]])
+
 --Against the Current
 RXPGuides.RegisterGuide([[
 #retail
@@ -18,6 +22,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF1|r - Against the Current
 #next a) Ties That Bird
 #chapter
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Brann Bronzebeard|r
     .isOnQuest 84365 --Something on the Horizon
@@ -295,6 +300,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF2|r - Ties That Bird
 #next a) News from Below
 #chapter
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Alleria Windrunner|r
     .goto 2339,31.54,59.68
@@ -713,6 +719,8 @@ step
     .turnin 79157 >>Turn in Titanic Failsafe
     .target Alleria Windrunner
     .accept 79224 >>Accept Gathering Intel
+
+
 ]])
 --News from Below
 RXPGuides.RegisterGuide([[
@@ -723,6 +731,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF3|r - News from Below
 #next a) The Machines to War
 #chapter
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Alleria Windrunner|r
     .goto 2339,31.54,59.64
@@ -1025,6 +1034,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF4|r - The Machines to War
 #next a) A Light in the Dark
 #chapter
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Alleria Windrunner|r
     .goto 2339,31.54,59.67
@@ -1631,6 +1641,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF5|r - A Light in the Dark
 #next a) Lingering Shadows
 #chapter
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Alleria Windrunner|r
     .goto 2339,31.56,59.65
@@ -1841,6 +1852,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF6|r - Lingering Shadows
 #next a) Siren Isle Campaign
 #chapter
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Alleria Windrunner|r
     .goto 2339,42.36,26.88
@@ -2244,6 +2256,7 @@ step
     .turnin 84701 >>Turn in The Speaker
     .target Magni Bronzebeard
 ]])
+
 --Nesting
 RXPGuides.RegisterGuide([[
 #retail
@@ -2253,7 +2266,11 @@ RXPGuides.RegisterGuide([[
 #name ab) 11.0.7: Siren Isle
 #displayname 11.0.7: Siren Isle
 #chapters a) Siren Isle Campaign;a) Siren Isle Weeklies
+
+
+
 ]])
+
 --Siren Isle Campaign
 RXPGuides.RegisterGuide([[
 #retail
@@ -2263,7 +2280,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF1|r - A Song of Secrets
 #next a) Chapter 1 - Trust Issues
 #chapter
+
 --WEEK 1 CAMPAIGN START
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Dawn|r
     .goto 2339,41.85,26.20
@@ -2518,7 +2537,9 @@ step
     .turnin 84725 >>Turn in The Circlet Calls
     .accept 84726 >>Accept Uncovered Mysteries
     .target Angorla
+
 --CONTRUBUTION
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Jack the Hammer|r
     .goto 2369,69.40,43.69
@@ -2651,6 +2672,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Apprentice Tanmar|r
     .turnin 85653 >>Turn in Dipping a Toe
     .target Apprentice Tanmar
+
 step
     .isQuestAvailable 85654 --Juicing Up And Storming Out
     .isQuestTurnedIn 85653 --Dipping a Toe
@@ -2736,6 +2758,7 @@ step
     #label EquipCyresCircleUnleashingPower
     .isOnQuest 85655 --Unleashing Her Power
     .equip 11,228411 >>Equip the Cyre's Circle
+
 step
     .isOnQuest 85655 --Unleashing Her Power
     #completewith EquipCyresCircleUnleashingPower
@@ -2831,6 +2854,7 @@ RXPGuides.RegisterGuide([[
 #name a) Siren Isle Weeklies
 #displayname |cFF00CCFF2|r - Weeklies
 #chapter
+
 step
     #loop
     .goto 2369,69.29,43.48,10,0
@@ -3359,6 +3383,7 @@ step
     .turnin 85589 >>Turn in Ruffled Pages
     .target Stellin Verasa
 ]])
+
 --Nesting
 RXPGuides.RegisterGuide([[
 #retail
@@ -3368,7 +3393,12 @@ RXPGuides.RegisterGuide([[
 #name ac) 11.1: Undermined
 #displayname 11.1: Undermined
 #chapters a) Trust Issues;a) Undermine Awaits;a) Uncovering the Truth;a) Breaking the Shackles;a) Ignite the Fuel of Change;a) Homecoming
+
+
+
+
 ]])
+
 --Trust Issues
 RXPGuides.RegisterGuide([[
 #retail
@@ -3378,9 +3408,11 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF1|r - Trust Issues
 #next a) Undermine Awaits
 #chapter
+
 -----------------------------------------------------
 --- START CHAPTER 1
 -----------------------------------------------------
+
 step
     .zone 2339 >>Enter Dornogal
 step
@@ -4013,6 +4045,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Monte Gazlowe|r.
     .turnin 83151 >>Turn in Down Undermine
     .target Monte Gazlowe
+
 -----------------------------------------------------
 --- END CHAPTER 1
 -----------------------------------------------------
@@ -4026,6 +4059,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF2|r - Undermine Awaits
 #next a) Uncovering the Truth
 #chapter
+
 -----------------------------------------------------
 --- START CHAPTER 2
 -----------------------------------------------------
@@ -4316,6 +4350,7 @@ step
     .turnin 83168 >>Turn in A Trail of Black Blood
     .accept 83169 >>Accept Long Way from Booty Bay
     .target Monte Gazlowe
+
 -----------------------
 --- INSERT G-99 Questline
 -----------------------
@@ -4507,6 +4542,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Monte Gazlowe|r
     .turnin 83176 >>Turn in Just a Hunch
     .target Monte Gazlowe
+
 -----------------------------------------------------
 --- END CHAPTER 2
 -----------------------------------------------------
@@ -4520,9 +4556,11 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF3|r - Uncovering the Truth
 #next a) Breaking the Shackles
 #chapter
+
 -----------------------------------------------------
 --- START CHAPTER 3
 -----------------------------------------------------
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Monte Gazlowe|r
     .goto 2346,42.33,51.41
@@ -5016,6 +5054,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF4|r - Breaking the Shackles
 #next a) Ignite the Fuel of Change
 #chapter
+
 --------------------------------------------------
 --- START CHAPTER 4
 -----------------------------------------------------
@@ -5256,6 +5295,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF5|r - Ignite the Fuel of Change
 #next a) Homecoming
 #chapter
+
 -----------------------------------------------------
 --- START CHAPTER 5
 -----------------------------------------------------
@@ -5839,6 +5879,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Monte Gazlowe|r
     .turnin 85780 >>Turn in Right Where We Want Him
     .target Monte Gazlowe
+
 -----------------------------------------------------
 --- END CHAPTER 5
 -----------------------------------------------------
@@ -5851,6 +5892,7 @@ RXPGuides.RegisterGuide([[
 #name a) Homecoming
 #displayname |cFF00CCFF6|r - Homecoming
 #chapter
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Monte Gazlowe|r
     .goto 2346,43.61,51.09
@@ -6014,6 +6056,7 @@ step
     .turnin 87297 >>Turn in Cashing the Check
     .target Monte Gazlowe
 ]])
+
 --Nesting
 RXPGuides.RegisterGuide([[
 #retail
@@ -6023,7 +6066,11 @@ RXPGuides.RegisterGuide([[
 #name ad) 11.2: Ghosts of K'aresh
 #displayname 11.2: Ghosts of K'aresh
 #chapters a) A Shadowy Invitation;a) Void Alliance;a) Desert Power;a) Shadows En Garde;a) The Light of K'aresh
+
+
+
 ]])
+
 --A Shadowy Invitation
 RXPGuides.RegisterGuide([[
 #retail
@@ -6033,6 +6080,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF1|r - A Shadowy Invitation
 #next a) Void Alliance
 #chapter
+
 step
     #completewith next
     #label Shadowy Invitation
@@ -6440,6 +6488,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF2|r - Void Alliance
 #next a) Desert Power
 #chapter
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Locus-Walker|r
     .goto 2472,37.68,74.79
@@ -6680,6 +6729,7 @@ step
     .goto 2371,47.18,58.59
     >>|TInterface/cursor/crosshair/interact.blp:20|tClick on the |cRXP_PICK_Rod of Analysis|r
     .complete 84858,5 --1/1 Rod of Analysis acquired
+
 --skyriding glyph eco dome primus
 step
     #arrowtext Click\n|cRXP_PICK_Rod of Analysis|r
@@ -6985,6 +7035,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF3|r - Desert Power
 #next a) Shadows En Garde
 #chapter
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Locus-Walker|r
     .goto 2371,47.08,54.52
@@ -7425,6 +7476,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF4|r - Shadows En Garde
 #next a) The Light of K'aresh
 #chapter
+
 step
     #label KareshCampaignSkipB
     #completewith next
@@ -7789,6 +7841,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF5|r - The Light of K'aresh
 #next a) Radiant Visions
 #chapter
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Alleria Windrunner|r
     .goto 2371,42.89,21.51
@@ -7899,6 +7952,7 @@ step
     .turnin 86458 >>Turn in A Song for Our Future
     .target Ve'nari
 ]])
+
 --Nesting
 RXPGuides.RegisterGuide([[
 #retail
@@ -7908,7 +7962,11 @@ RXPGuides.RegisterGuide([[
 #name ae) 11.2.7: Radiant Visions
 #displayname 11.2.7: Radiant Visions
 #chapters a) Radiant Visions;a) A Meeting with Minn'da;a) Paths Forward
+
+
+
 ]])
+
 --Radiant Visions
 RXPGuides.RegisterGuide([[
 #retail
@@ -7918,6 +7976,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF1|r - Radiant Visions
 #next a) A Meeting with Minn'da
 #chapter
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Silver Hand Squire|r
     .goto 2339,51.60,45.79
@@ -8065,6 +8124,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF2|r - A Meeting with Minn'da
 #next a) Paths Forward
 #chapter
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Arator|r
     .goto 2472,60.11,91.33
@@ -8510,6 +8570,7 @@ RXPGuides.RegisterGuide([[
 #name a) Paths Forward
 #displayname |cFF00CCFF3|r - Paths Forward
 #chapter
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Arator|r
     .goto 1543,25.39,32.55
@@ -9000,7 +9061,12 @@ step
     .turnin 84949 >>Turn in The Eleventh Hour
     .target Arator
 ]])
+
+
+
+
 --Sources
+
 --Unlock G-99 Breakneck
 RXPGuides.RegisterGuide([[
 #retail
@@ -9009,6 +9075,7 @@ RXPGuides.RegisterGuide([[
 #name Unlock G-99 Breakneck
 #displayname G-99 Breakneck Unlock
 #internal
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Gas Grimeshank|r
     #label UnlockG99BreakneckA
@@ -9214,6 +9281,7 @@ step
     .goto 2346,67.68,87.01,35,0
     >>Kill the |cRXP_ENEMY_enemies|r in The Heap
     .complete 86311,2 --Heaps enemies defeated (100%)
+
 step
     .isOnQuest 86319 --Eyes of the Sky
     #title |cFFFCDC00Follow the arrow|r

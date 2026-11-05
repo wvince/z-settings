@@ -1,6 +1,6 @@
 ﻿
 	----------------------------------------------------------------------
-	-- 	Leatrix Maps 1.60.25 (21st October 2026)
+	-- 	Leatrix Maps 1.60.27 (5th November 2026)
 	----------------------------------------------------------------------
 
 	-- 10:Func, 20:Comm, 30:Evnt, 40:Panl
@@ -12,7 +12,7 @@
 	local LeaMapsLC, LeaMapsCB, LeaConfigList, LeaLockList = {}, {}, {}, {}
 
 	-- Version
-	LeaMapsLC["AddonVer"] = "1.60.25"
+	LeaMapsLC["AddonVer"] = "1.60.27"
 
 	-- Get locale table
 	local void, Leatrix_Maps = ...
@@ -64,71 +64,269 @@
 		return name
 	end
 
-	-- Create a dropdown menu (using standard dropdown template)
+	-- Create a dropdown menu (the standard dropdown button but it opens a pop-up list instead of the game's menu, see
+	-- LeaMapsLC:CreatePopupList for why)
 	function LeaMapsLC:CreateDropdown(frame, label, width, anchor, parent, relative, x, y, reload, items)
 
-		local RadioDropdown = CreateFrame("DropdownButton", nil, parent, "WowStyle1DropdownTemplate")
-		LeaMapsCB[frame] = RadioDropdown
-		RadioDropdown:SetPoint(anchor, parent, relative, x, y)
-		RadioDropdown:SetWidth(width)
+		local dropdown = CreateFrame("DropdownButton", nil, parent, "WowStyle1DropdownTemplate")
+		LeaMapsCB[frame] = dropdown
+		dropdown:SetPoint(anchor, parent, relative, x, y)
+		dropdown:SetWidth(width)
 
-		local function IsSelected(value)
-			return value == LeaMapsLC[frame]
+		local lf = dropdown:CreateFontString(nil, "OVERLAY", "GameFontNormal"); lf:SetPoint("TOPLEFT", dropdown, 0, 20); lf:SetPoint("TOPRIGHT", dropdown, -5, 20); lf:SetJustifyH("LEFT"); lf:SetText(L[label])
+
+		-- List entries
+		local entries = {}
+		for i = 1, #items do
+			entries[i] = {name = items[i][1], value = items[i][2]}
 		end
 
-		local function SetSelected(value)
-			LeaMapsLC[frame] = value
-		end
-
-		MenuUtil.CreateRadioMenu(RadioDropdown, IsSelected, SetSelected, unpack(items))
-
-		local lf = RadioDropdown:CreateFontString(nil, "OVERLAY", "GameFontNormal"); lf:SetPoint("TOPLEFT", RadioDropdown, 0, 20); lf:SetPoint("TOPRIGHT", RadioDropdown, -5, 20); lf:SetJustifyH("LEFT"); lf:SetText(L[label])
-
-		-- Cycle through the options with the mousewheel while the menu is closed (scroll down for the next option, up for the previous one)
-		RadioDropdown:EnableMouseWheel(true)
-
-		-- Apply the new option in the same way as choosing it from the menu (runs anything hooked to the menu closing)
-		RadioDropdown:HookScript("OnMouseWheel", function(self)
-			self:TriggerEvent(DropdownButtonMixin.Event.OnMenuClose, self)
-		end)
-
-		-- Cycle through the options with the mousewheel while the menu is open (an invisible layer over the menu takes the mousewheel but lets clicks through)
-		local wheel
-		RadioDropdown:RegisterCallback("OnMenuOpen", function()
-			local menu = RadioDropdown.menu
-			if not menu then return end
-			if not wheel then
-				wheel = CreateFrame("Frame", nil, UIParent)
-				wheel:EnableMouse(false)
-				wheel:EnableMouseWheel(true)
-				wheel:SetScript("OnMouseWheel", function(self, delta)
-					-- Find the current option and step to the next or previous one (stops at either end)
-					local index = 1
-					for i = 1, #items do
-						if items[i][2] == LeaMapsLC[frame] then index = i; break end
-					end
-					index = index + (delta < 0 and 1 or -1)
-					if index < 1 or index > #items then return end
-					LeaMapsLC[frame] = items[index][2]
-					-- Move the tick in the open menu, update the dropdown text and apply the option
-					if RadioDropdown.menu then RadioDropdown.menu:ReinitializeAll() end
-					RadioDropdown:SignalUpdate()
-					RadioDropdown:TriggerEvent(DropdownButtonMixin.Event.OnMenuClose, RadioDropdown)
-				end)
+		-- Function to show the current option on the button
+		local function UpdateText()
+			for i = 1, #entries do
+				if entries[i].value == LeaMapsLC[frame] then
+					dropdown:OverrideText(entries[i].name)
+					return
+				end
 			end
-			wheel:SetAllPoints(menu)
-			wheel:SetFrameStrata(menu:GetFrameStrata())
-			wheel:SetFrameLevel(menu:GetFrameLevel() + 50)
-			wheel:Show()
-		end)
+			dropdown:OverrideText("")
+		end
 
-		-- Hide the layer when the menu really closes (the mousewheel also signals the menu closing so options apply, but without a menu)
-		RadioDropdown:RegisterCallback("OnMenuClose", function(owner, dropdown, menu)
-			if menu and wheel then wheel:Hide() end
+		-- Function to apply an option (runs dropdown.onChange if it's set)
+		local function SetValue(value)
+			LeaMapsLC[frame] = value
+			UpdateText()
+			if dropdown.onChange then dropdown.onChange(value) end
 			if reload then
 				LeaMapsLC:ReloadCheck()
 			end
+		end
+
+		local popup = LeaMapsLC:CreatePopupList(parent)
+
+		local function IsCurrent(entry)
+			return entry.value == LeaMapsLC[frame]
+		end
+
+		local function Choose(entry)
+			SetValue(entry.value)
+		end
+
+		-- Function to step to the next or previous option (scroll down for the next option, up for the previous one, stops at either end)
+		local function Step(delta)
+			local index = 1
+			for i = 1, #entries do
+				if entries[i].value == LeaMapsLC[frame] then index = i; break end
+			end
+			index = index + (delta < 0 and 1 or -1)
+			if index < 1 or index > #entries then return end
+			SetValue(entries[index].value)
+			popup:Refresh()
+		end
+
+		-- Open or close the list when the button is clicked
+		dropdown:HookScript("OnMouseDown", function(self, button)
+			if button ~= "LeftButton" or not self:IsEnabled() then return end
+			popup:Toggle(self, entries, IsCurrent, Choose, "TOPLEFT", "BOTTOMLEFT", 0, -2, Step)
 		end)
+
+		-- Cycle through the options with the mousewheel over the button (the open list does the same)
+		dropdown:EnableMouseWheel(true)
+		dropdown:HookScript("OnMouseWheel", function(self, delta)
+			if self:IsEnabled() then Step(delta) end
+		end)
+
+		-- Show the current option when the button is shown
+		dropdown:HookScript("OnShow", UpdateText)
+		UpdateText()
+
+	end
+
+	----------------------------------------------------------------------
+	-- Pop-up lists
+	----------------------------------------------------------------------
+
+	-- The game's menus keep their state on the menu frame and the world map reads the frame under the pointer every
+	-- frame, so menu entries made by an addon spread taint into the map's own code. Lists shown over the map use these
+	-- pop-up lists instead. They are frames of our own, so the map never reads anything the addon wrote.
+
+	function LeaMapsLC:CreatePopupList(parent)
+
+		local rowHeight, rowsPerColumn, columnWidth = 20, 25, 180
+		local rows = {}
+		local owner, entries, isChecked, onClick, onWheel
+		local highlightColor -- Row highlight color (set with popup:SetColors)
+		local rowColorFunc -- Optional function giving each row its own highlight color (set with popup:SetColors)
+
+		local list = CreateFrame("Frame", nil, parent, "BackdropTemplate")
+		list:SetFrameStrata("FULLSCREEN_DIALOG")
+		list:SetClampedToScreen(true)
+		list:EnableMouse(true)
+		list:EnableMouseWheel(true)
+		-- Mousewheel runs the wheel function if there is one (and stops the map zooming under the list)
+		list:SetScript("OnMouseWheel", function(self, delta)
+			if onWheel then onWheel(delta) end
+		end)
+		list:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8"})
+		list:SetBackdropColor(0.05, 0.05, 0.05, 0.95)
+
+		-- Border (four lines sized in whole screen pixels when the list opens, so it's the same width all the way round)
+		local borderLines = {}
+		for i = 1, 4 do
+			borderLines[i] = list:CreateTexture(nil, "BORDER")
+			borderLines[i]:SetTexture("Interface\\Buttons\\WHITE8X8")
+			borderLines[i]:SetVertexColor(0.3, 0.3, 0.3, 1)
+		end
+
+		-- Function to set the border lines to 1 screen pixel
+		local function SetBorderPixels()
+			local scale = list:GetEffectiveScale()
+			if issecretvalue and issecretvalue(scale) then return end -- Frame scales can be secret in combat
+			local px = PixelUtil and PixelUtil.GetNearestPixelSize(1, scale, 1) or 1
+			local top, bottom, left, right = borderLines[1], borderLines[2], borderLines[3], borderLines[4]
+			top:ClearAllPoints(); top:SetPoint("TOPLEFT"); top:SetPoint("TOPRIGHT"); top:SetHeight(px)
+			bottom:ClearAllPoints(); bottom:SetPoint("BOTTOMLEFT"); bottom:SetPoint("BOTTOMRIGHT"); bottom:SetHeight(px)
+			left:ClearAllPoints(); left:SetPoint("TOPLEFT", 0, -px); left:SetPoint("BOTTOMLEFT", 0, px); left:SetWidth(px)
+			right:ClearAllPoints(); right:SetPoint("TOPRIGHT", 0, -px); right:SetPoint("BOTTOMRIGHT", 0, px); right:SetWidth(px)
+		end
+		list:Hide()
+
+		-- Close the list when clicking anywhere else (only watched while the list is showing)
+		list:SetScript("OnShow", function(self) self:RegisterEvent("GLOBAL_MOUSE_DOWN") end)
+		list:SetScript("OnHide", function(self) self:UnregisterEvent("GLOBAL_MOUSE_DOWN") end)
+		list:SetScript("OnEvent", function(self)
+			if not self:IsMouseOver() and not (owner and owner:IsMouseOver()) then
+				self:Hide()
+			end
+		end)
+
+		-- Function to show a row as checked or not
+		local function SetRowCheck(row)
+			if isChecked(row.entry) then
+				row.Check:Show()
+				row.Text:SetTextColor(NORMAL_FONT_COLOR:GetRGB())
+			else
+				row.Check:Hide()
+				row.Text:SetTextColor(HIGHLIGHT_FONT_COLOR:GetRGB())
+			end
+		end
+
+		-- Function to get a row (rows are created when first needed and reused)
+		local function GetRow(index)
+			local row = rows[index]
+			if not row then
+				row = CreateFrame("Button", nil, list)
+				row:SetSize(columnWidth, rowHeight)
+				row:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
+				if highlightColor then row:GetHighlightTexture():SetVertexColor(highlightColor[1], highlightColor[2], highlightColor[3]) end
+				row.Check = row:CreateTexture(nil, "ARTWORK")
+				row.Check:SetTexture("Interface\\Buttons\\UI-CheckBox-Check")
+				row.Check:SetSize(16, 16)
+				row.Check:SetPoint("LEFT", 4, 0)
+				row.Text = row:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+				row.Text:SetPoint("LEFT", 22, 0)
+				row.Text:SetPoint("RIGHT", -4, 0)
+				row.Text:SetJustifyH("LEFT")
+				row.Text:SetWordWrap(false)
+				row:SetScript("OnClick", function(self)
+					-- The click function returns true to keep the list open (such as for checkboxes)
+					if onClick(self.entry) then
+						for i = 1, #entries do SetRowCheck(rows[i]) end
+					else
+						list:Hide()
+					end
+				end)
+				rows[index] = row
+			end
+			return row
+		end
+
+		local popup = {}
+
+		-- Close the list
+		function popup:Close()
+			list:Hide()
+		end
+
+		-- Set the list colors (background, border and row highlight, used by the map theme)
+		-- (rowFunc is optional, it is called with the row number and row count and returns a highlight color for that row)
+		-- Use the game's tooltip background and border instead of the flat background and pixel border (Blizzard map theme)
+		local tooltipStyle
+		function popup:SetTooltipStyle(on)
+			on = on and true or false
+			if on == tooltipStyle then return end
+			tooltipStyle = on
+			if on then
+				list:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = {left = 5, right = 5, top = 5, bottom = 5}})
+			else
+				list:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8"})
+			end
+			for i = 1, #borderLines do borderLines[i]:SetShown(not on) end
+		end
+
+		function popup:SetColors(bgR, bgG, bgB, borderR, borderG, borderB, hlR, hlG, hlB, rowFunc)
+			list:SetBackdropColor(bgR, bgG, bgB, 0.97)
+			if tooltipStyle then list:SetBackdropBorderColor(borderR, borderG, borderB, 1) end
+			for i = 1, #borderLines do borderLines[i]:SetVertexColor(borderR, borderG, borderB, 1) end
+			highlightColor = {hlR, hlG, hlB}
+			rowColorFunc = rowFunc
+			for i = 1, #rows do
+				rows[i]:GetHighlightTexture():SetVertexColor(hlR, hlG, hlB)
+			end
+		end
+
+		-- The list frame (so the map theme can add textures to it)
+		popup.frame = list
+
+		-- Update the checks in the open list
+		function popup:Refresh()
+			if not list:IsShown() then return end
+			for i = 1, #entries do SetRowCheck(rows[i]) end
+		end
+
+		-- Show the list next to a button (long lists are split into columns)
+		function popup:Open(button, items, checkedFunc, clickFunc, point, relativePoint, x, y, wheelFunc)
+			local count = #items
+			if count == 0 then return end
+			owner, entries, isChecked, onClick, onWheel = button, items, checkedFunc, clickFunc, wheelFunc
+			local columns = math.ceil(count / rowsPerColumn)
+			local perColumn = math.ceil(count / columns)
+			for i = 1, count do
+				local row = GetRow(i)
+				if rowColorFunc then
+					row:GetHighlightTexture():SetVertexColor(rowColorFunc(i, count))
+				elseif highlightColor then
+					row:GetHighlightTexture():SetVertexColor(highlightColor[1], highlightColor[2], highlightColor[3])
+				end
+				row.entry = items[i]
+				row.Text:SetText(items[i].name)
+				SetRowCheck(row)
+				row:ClearAllPoints()
+				row:SetPoint("TOPLEFT", list, "TOPLEFT", 8 + math.floor((i - 1) / perColumn) * columnWidth, -8 - ((i - 1) % perColumn) * rowHeight)
+				row:Show()
+			end
+			for i = count + 1, #rows do
+				rows[i]:Hide()
+				rows[i].entry = nil
+			end
+			list:SetSize(columns * columnWidth + 16, perColumn * rowHeight + 16)
+			list:ClearAllPoints()
+			list:SetPoint(point, button, relativePoint, x, y)
+			list:SetFrameLevel(button:GetFrameLevel() + 20)
+			SetBorderPixels()
+			list:Show()
+		end
+
+		-- Open the list for a button or close it if it's already open for that button
+		function popup:Toggle(button, ...)
+			if list:IsShown() and owner == button then
+				list:Hide()
+			else
+				self:Open(button, ...)
+			end
+		end
+
+		return popup
 
 	end
 
@@ -160,6 +358,10 @@
 		----------------------------------------------------------------------
 		-- Simple map frame
 		----------------------------------------------------------------------
+
+		-- Map theme (simple map frame only, ApplyMapTheme is set when the simple map frame is created)
+		-- mapTheme holds the parts the theme colors (title bar, buttons, menus, lists, coordinates background)
+		local ApplyMapTheme, mapTheme = nil, {}
 
 		if LeaMapsLC["SimpleMapFrame"] == "On" and not LeaLockList["SimpleMapFrame"] then
 
@@ -214,9 +416,18 @@
 			-- Create border (covers the map and the quest log when it's shown)
 			local borderFrame = CreateFrame("Frame", nil, WorldMapFrame, "BackdropTemplate")
 			borderFrame:SetFrameLevel(WorldMapFrame:GetFrameLevel())
-			borderFrame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1})
+			borderFrame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8"})
 			borderFrame:SetBackdropColor(0, 0, 0, 0.9)
-			borderFrame:SetBackdropBorderColor(0.3, 0.3, 0.3, 1)
+
+			-- Create black edge with a soft drop shadow around the border (sized in whole screen pixels in SetPixelEdges)
+			-- (the shadow layers stack so the shadow fades out naturally from the edge)
+			local edgeTextures = {}
+			for i = 1, 5 do
+				local tex = borderFrame:CreateTexture(nil, "BACKGROUND", nil, -8 + i)
+				tex:SetTexture("Interface\\Buttons\\WHITE8X8")
+				if i == 5 then tex:SetVertexColor(0, 0, 0, 1) else tex:SetVertexColor(0, 0, 0, 0.12) end
+				edgeTextures[i] = tex
+			end
 
 			-- Create title bar (uses the space left by the navigation bar)
 			local titleFrame = CreateFrame("Frame", nil, WorldMapFrame)
@@ -229,18 +440,11 @@
 
 			local titleTexture = titleFrame:CreateTexture(nil, "BACKGROUND")
 			titleTexture:SetAllPoints()
-			titleTexture:SetColorTexture(0.06, 0.06, 0.06, 1)
+			titleTexture:SetTexture("Interface\\Buttons\\WHITE8X8") -- Colors are set by the map theme
+			mapTheme.titleBar = titleFrame
+			mapTheme.titleTexture = titleTexture
 
-			-- Create gold border (same art as the default map frame)
-			local goldBorder = CreateFrame("Frame", nil, WorldMapFrame, "NineSlicePanelTemplate")
-			goldBorder:ClearAllPoints()
-			goldBorder:SetPoint("TOPLEFT", borderFrame, "TOPLEFT", -5, 0)
-			goldBorder:SetPoint("BOTTOMRIGHT", borderFrame, "BOTTOMRIGHT", 5, -5)
-			goldBorder:SetFrameStrata("HIGH")
-			goldBorder:SetFrameLevel(frameLevel + 1)
-			NineSliceUtil.ApplyLayoutByName(goldBorder, "ButtonFrameTemplateNoPortrait")
-
-			-- Create frame for title bar text (above the gold border)
+			-- Create frame for title bar text
 			local titleTextFrame = CreateFrame("Frame", nil, titleFrame)
 			titleTextFrame:SetAllPoints()
 			titleTextFrame:SetFrameLevel(frameLevel + 2)
@@ -250,9 +454,15 @@
 			titleText:SetPoint("CENTER")
 			titleText:SetWordWrap(false)
 
+			-- Assign file level scope to map title (needed for Show zone menus)
+			LeaMapsCB["MapTitleText"] = titleText
+
 			-- Create quest count
 			local questCount = titleTextFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
 			questCount:SetPoint("LEFT", 8, 0)
+
+			-- Assign file level scope to quest count (needed for Show zone menus)
+			LeaMapsCB["MapQuestCount"] = questCount
 
 			----------------------------------------------------------------------
 			-- Title bar buttons
@@ -262,36 +472,43 @@
 			WorldMapFrame.BorderFrame.CloseButton:SetSize(20, 20)
 			WorldMapFrame.BorderFrame.MaximizeMinimizeFrame:SetSize(20, 20)
 
-			-- Function to replace button art with an icon (the button still works as normal)
-			local function SetButtonIcon(button, file, normal, hover, boxColor)
-				for i, v in pairs({button:GetNormalTexture(), button:GetPushedTexture(), button:GetHighlightTexture(), button:GetDisabledTexture()}) do
+			-- Function to replace button art with a white icon (the button still works as normal)
+			-- The icon and hover box colors are set by the map theme (the icon turns white on hover)
+			mapTheme.buttons = {}
+			local function SetButtonIcon(button, file, left, right, top, bottom)
+				-- Keep the game's button art so the Blizzard theme can show it again (it's hidden for the other themes)
+				local art = {button:GetNormalTexture(), button:GetPushedTexture(), button:GetHighlightTexture(), button:GetDisabledTexture()}
+				for i, v in pairs(art) do
 					v:SetAlpha(0)
 				end
 				-- Hover background
 				local box = button:CreateTexture(nil, "BACKGROUND")
 				box:SetAllPoints()
-				boxColor = boxColor or {1, 1, 1, 0.2}
-				box:SetColorTexture(boxColor[1], boxColor[2], boxColor[3], boxColor[4])
+				box:SetTexture("Interface\\Buttons\\WHITE8X8")
 				box:Hide()
 				-- Icon
 				local icon = button:CreateTexture(nil, "OVERLAY")
 				icon:SetTexture("Interface\\AddOns\\Leatrix_Maps\\" .. file)
+				if left then icon:SetTexCoord(left, right, top, bottom) end
 				icon:SetAllPoints()
-				icon:SetVertexColor(normal[1], normal[2], normal[3])
+				local entry = {box = box, icon = icon, color = {0.8, 0.8, 0.8}, art = art}
+				icon:SetVertexColor(unpack(entry.color))
+				mapTheme.buttons[#mapTheme.buttons + 1] = entry
 				button:HookScript("OnEnter", function()
+					if mapTheme.blizzard then return end -- Blizzard theme uses the game's own button art
 					box:Show()
-					icon:SetVertexColor(hover[1], hover[2], hover[3])
+					icon:SetVertexColor(1, 1, 1)
 				end)
 				button:HookScript("OnLeave", function()
 					box:Hide()
-					icon:SetVertexColor(normal[1], normal[2], normal[3])
+					icon:SetVertexColor(unpack(entry.color))
 				end)
 			end
 
-			-- Set button icons
-			SetButtonIcon(WorldMapFrame.BorderFrame.CloseButton, "Leatrix_Maps_Close", {0.8, 0.8, 0.8}, {1, 1, 1}, {0.45, 0.05, 0.05, 0.7})
-			SetButtonIcon(WorldMapFrame.BorderFrame.MaximizeMinimizeFrame.MaximizeButton, "Leatrix_Maps_Maximise", {0.8, 0.66, 0}, {1, 0.82, 0}, {0.4, 0.3, 0.02, 0.7})
-			SetButtonIcon(WorldMapFrame.BorderFrame.MaximizeMinimizeFrame.MinimizeButton, "Leatrix_Maps_Restore", {0.8, 0.66, 0}, {1, 0.82, 0}, {0.4, 0.3, 0.02, 0.7})
+			-- Set button icons (the close cross is in Leatrix_Maps.blp)
+			SetButtonIcon(WorldMapFrame.BorderFrame.CloseButton, "Leatrix_Maps.blp", 0, 0.25, 0.5, 0.75)
+			SetButtonIcon(WorldMapFrame.BorderFrame.MaximizeMinimizeFrame.MaximizeButton, "Leatrix_Maps_Maximise")
+			SetButtonIcon(WorldMapFrame.BorderFrame.MaximizeMinimizeFrame.MinimizeButton, "Leatrix_Maps_Restore")
 
 			-- Restyle quest search box to match the title bar (flat dark box filling the gap between the gold lines)
 			local searchBox = QuestScrollFrame.SearchBox
@@ -307,9 +524,12 @@
 				searchBg:SetPoint("TOPLEFT", -4, -1)
 				searchBg:SetPoint("BOTTOMRIGHT", 0, 0)
 
-				-- Set background color (slightly lighter while typing)
+				-- Set background color (slightly lighter while typing, colors are set by the map theme)
 				local function SetSearchBg(focused)
-					if focused then
+					local color = focused and mapTheme.searchFocused or mapTheme.searchNormal
+					if color then
+						searchBg:SetColorTexture(color[1], color[2], color[3], 1)
+					elseif focused then
 						searchBg:SetColorTexture(0.13, 0.09, 0.05, 1)
 					else
 						searchBg:SetColorTexture(0.08, 0.05, 0.03, 1)
@@ -318,6 +538,7 @@
 				SetSearchBg(false)
 				searchBox:HookScript("OnEditFocusGained", function() SetSearchBg(true) end)
 				searchBox:HookScript("OnEditFocusLost", function() SetSearchBg(false) end)
+				mapTheme.SetSearchBg = function() SetSearchBg(searchBox:HasFocus()) end
 
 			end
 
@@ -356,6 +577,65 @@
 
 			local detailsHeight, detailsScrollHeight
 
+			-- Function to set the border and its edge in whole screen pixels (so the edge is the same width all the way
+			-- round at any map scale or UI scale). The border is 1 pixel bigger than the map, then 1 pixel of black edge
+			-- and 4 pixels of shadow.
+			local edgeQuestWidth = 0
+			local function SetPixelEdges()
+				local scale = borderFrame:GetEffectiveScale()
+				if issecretvalue and issecretvalue(scale) then return end -- Frame scales can be secret in combat
+				local px = PixelUtil and PixelUtil.GetNearestPixelSize(1, scale, 1) or 1
+				borderFrame:ClearAllPoints()
+				borderFrame:SetPoint("TOPLEFT", titleFrame, "TOPLEFT", -px, px)
+				local footer = mapTheme.footerFrame
+				if footer and WorldMapFrame:IsMaximized() then
+					-- Maximised map fills the screen so the coordinates footer goes inside the bottom of the map
+					footer:ClearAllPoints()
+					footer:SetPoint("BOTTOMLEFT", WorldMapFrame.ScrollContainer, "BOTTOMLEFT", 0, 0)
+					footer:SetPoint("BOTTOMRIGHT", WorldMapFrame.ScrollContainer, "BOTTOMRIGHT", 0, 0)
+					mapTheme.PlaceCoords(true)
+					borderFrame:SetPoint("BOTTOMRIGHT", WorldMapFrame.ScrollContainer, "BOTTOMRIGHT", edgeQuestWidth + px, -px)
+				elseif footer then
+					-- Coordinates footer under the map and quest log (the border goes round it)
+					footer:ClearAllPoints()
+					footer:SetPoint("TOPLEFT", WorldMapFrame.ScrollContainer, "BOTTOMLEFT", 0, 0)
+					footer:SetPoint("TOPRIGHT", WorldMapFrame.ScrollContainer, "BOTTOMRIGHT", edgeQuestWidth, 0)
+					mapTheme.PlaceCoords(false)
+					borderFrame:SetPoint("BOTTOMRIGHT", footer, "BOTTOMRIGHT", px, -px)
+				else
+					borderFrame:SetPoint("BOTTOMRIGHT", WorldMapFrame.ScrollContainer, "BOTTOMRIGHT", edgeQuestWidth + px, -px)
+				end
+				for i = 1, #edgeTextures do
+					local out = (i == 5 and 1 or 6 - i) * px -- Edge 1 pixel out, shadow 2 to 5 pixels out
+					local tex = edgeTextures[i]
+					tex:ClearAllPoints()
+					tex:SetPoint("TOPLEFT", borderFrame, "TOPLEFT", -out, out)
+					tex:SetPoint("BOTTOMRIGHT", borderFrame, "BOTTOMRIGHT", out, -out)
+				end
+			end
+
+			-- Make an edge function available to code that changes the map scale. It sets the edge now and once more on
+			-- the next frame, after the game has finished laying out the scaled map. Only one next-frame pass is queued
+			-- at a time.
+			local edgeQueued
+			local function EdgeQueued()
+				edgeQueued = nil
+				SetPixelEdges()
+			end
+			LeaMapsLC.RefreshMapLines = function()
+				SetPixelEdges()
+				if not edgeQueued then
+					edgeQueued = true
+					C_Timer.After(0, EdgeQueued)
+				end
+			end
+
+			-- Update the edge when the UI scale or resolution changes
+			local edgeEvents = CreateFrame("Frame")
+			edgeEvents:RegisterEvent("UI_SCALE_CHANGED")
+			edgeEvents:RegisterEvent("DISPLAY_SIZE_CHANGED")
+			edgeEvents:SetScript("OnEvent", function() LeaMapsLC.RefreshMapLines() end)
+
 			-- Function to set map frame layout
 			local function SetFrameLayout()
 
@@ -367,9 +647,8 @@
 				titleFrame:ClearAllPoints()
 				titleFrame:SetPoint("BOTTOMLEFT", WorldMapFrame.ScrollContainer, "TOPLEFT", 0, 0)
 				titleFrame:SetPoint("BOTTOMRIGHT", WorldMapFrame.ScrollContainer, "TOPRIGHT", questWidth, 0)
-				borderFrame:ClearAllPoints()
-				borderFrame:SetPoint("TOPLEFT", titleFrame, "TOPLEFT", -1, 1)
-				borderFrame:SetPoint("BOTTOMRIGHT", WorldMapFrame.ScrollContainer, "BOTTOMRIGHT", questWidth + 1, -1)
+				edgeQuestWidth = questWidth
+				SetPixelEdges()
 
 				-- Center map title over the map (the quest log part of the title bar is used by the search box)
 				titleText:ClearAllPoints()
@@ -386,7 +665,13 @@
 				local closeButton = WorldMapFrame.BorderFrame.CloseButton
 				if CanChange(closeButton) then
 					closeButton:ClearAllPoints()
-					closeButton:SetPoint("RIGHT", titleFrame, "RIGHT", -2, 0)
+					-- Blizzard theme: like the default map, the button sits flush with the outer edge of the border and is centered
+					-- on the whole title bar including the metal edge above it
+					if mapTheme.blizzard then
+						closeButton:SetPoint("RIGHT", titleFrame, "RIGHT", 6, 2)
+					else
+						closeButton:SetPoint("RIGHT", titleFrame, "RIGHT", -2, 0)
+					end
 					closeButton:SetFrameLevel(frameLevel + 5)
 				end
 
@@ -394,7 +679,7 @@
 				local maxButton = WorldMapFrame.BorderFrame.MaximizeMinimizeFrame
 				if CanChange(maxButton) then
 					maxButton:ClearAllPoints()
-					maxButton:SetPoint("RIGHT", closeButton, "LEFT", -2, 0)
+					maxButton:SetPoint("RIGHT", closeButton, "LEFT", mapTheme.blizzard and -3 or -2, 0)
 					maxButton:SetFrameLevel(frameLevel + 6)
 					for i, v in pairs({maxButton:GetChildren()}) do
 						v:SetFrameLevel(frameLevel + 7)
@@ -468,6 +753,2135 @@
 				end
 			end)
 
+			----------------------------------------------------------------------
+			-- Map theme
+			----------------------------------------------------------------------
+
+			-- Map themes (the theme colors the title bar and coordinates background, the edge is black). The accent color is
+			-- used for the title bar buttons and zone lists, the hover color for the zone menus.
+			-- Themes with a base color (color = {r, g, b}) all use the same recipe as Class color: a dark wash of the color on
+			-- the title bar and the color itself for the accents, so they look like a matching set.
+			-- Theme numbers are saved, so new themes are added at the end (the dropdown sets the order they are listed in).
+			local mapThemes = {
+				-- 1: Classic (neutral black with a muted gold accent)
+				{bgBottom = {0.04, 0.04, 0.04}, bgTop = {0.09, 0.09, 0.09}, accent = {0.45, 0.37, 0.20}, hover = {1, 1, 1, 0.12}},
+				-- 2: Warm (dark brown with a bronze accent)
+				{bgBottom = {0.06, 0.04, 0.02}, bgTop = {0.12, 0.08, 0.045}, accent = {0.55, 0.42, 0.22}, hover = {1, 0.85, 0.6, 0.14}},
+				-- 3: Charcoal (cool slate)
+				{bgBottom = {0.05, 0.05, 0.06}, bgTop = {0.13, 0.13, 0.15}, accent = {0.32, 0.36, 0.42}, hover = {0.75, 0.85, 1, 0.14}},
+				-- 4: Class color (base color is the player's class color, filled in when the theme is applied)
+				{classColor = true},
+				-- 5: Pink
+				{color = {1, 0.35, 0.70}},
+				-- 6: Alliance
+				{color = {0.25, 0.50, 1}},
+				-- 7: Horde
+				{color = {0.90, 0.15, 0.10}},
+				-- 8: Purple
+				{color = {0.60, 0.30, 1}},
+				-- 9: Teal
+				{color = {0.10, 0.80, 0.75}},
+				-- 10: Green
+				{color = {0.30, 0.85, 0.25}},
+				-- 11: Rainbow (dark rainbow from left to right, violet accent to match the right-hand end)
+				{rainbow = true, bgBottom = {0.04, 0.04, 0.04}, bgTop = {0.09, 0.09, 0.09}, accent = {0.65, 0.40, 1}, hover = {1, 1, 1, 0.15}},
+				-- 12: Blizzard (looks like the default map: the game's frame border art, the game's title bar buttons and
+				-- tooltip style lists, the border is drawn on a frame of our own)
+				{blizzard = true, bgBottom = {0, 0, 0}, bgTop = {0.08, 0.08, 0.08}, accent = {1, 0.82, 0}, hover = {1, 1, 1, 0.15}},
+			}
+
+			-- Blizzard theme border (the game's frame border art, created the first time the theme is used)
+			-- The art textures belong to the border frame, which is the lowest part of the map frame, so the title bar text,
+			-- zone menus, buttons, map and footer always draw above it. Only the parts of the art outside the map show (like
+			-- the default map). The textures are placed by the game's frame layout using a positioning frame of our own.
+			local blizzBorder, blizzPieces
+			local blizzLayout = "ButtonFrameTemplateNoPortrait"
+
+			-- Function to create the border
+			local function CreateBlizzardBorder()
+				blizzPieces = {}
+				blizzBorder = CreateFrame("Frame", nil, borderFrame)
+				-- The art sits a little outside the map frame on the left, right and bottom so the metal edge shows like the
+				-- default map (the top of the art already sits above the title bar)
+				-- (the bottom is moved up by the drop shadow that is cut off the bottom of the art below, so the gold line stays put)
+				local shadowCrop = 4
+				blizzBorder:SetPoint("TOPLEFT", borderFrame, "TOPLEFT", -5, 0)
+				blizzBorder:SetPoint("BOTTOMRIGHT", borderFrame, "BOTTOMRIGHT", 5, -5 + shadowCrop)
+				blizzBorder:EnableMouse(false)
+				-- The layout asks for each piece by name, the pieces are textures on the border frame
+				function blizzBorder:GetNineSlicePiece(pieceName)
+					if not blizzPieces[pieceName] then
+						blizzPieces[pieceName] = borderFrame:CreateTexture(nil, "BORDER")
+					end
+					return blizzPieces[pieceName]
+				end
+				if NineSliceUtil and NineSliceUtil.ApplyLayoutByName and NineSliceUtil.GetLayout and NineSliceUtil.GetLayout(blizzLayout) then
+					NineSliceUtil.ApplyLayoutByName(blizzBorder, blizzLayout)
+				else
+					-- Game's dialog border if the frame art layout is not in the client
+					local backdrop = CreateFrame("Frame", nil, borderFrame, "BackdropTemplate")
+					backdrop:SetFrameLevel(borderFrame:GetFrameLevel())
+					backdrop:SetPoint("TOPLEFT", borderFrame, "TOPLEFT", -6, 6)
+					backdrop:SetPoint("BOTTOMRIGHT", borderFrame, "BOTTOMRIGHT", 6, -6)
+					backdrop:SetBackdrop({edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Gold-Border", edgeSize = 32})
+					blizzPieces.backdrop = backdrop
+				end
+				-- The center of the art is not used (the map, title bar and footer fill it)
+				if blizzPieces.Center then blizzPieces.Center:Hide() end
+				-- Cut the drop shadow off the bottom of the art so the border ends at the edge of the frame (the pieces are
+				-- anchored at the bottom so they keep their place, works with mirrored pieces too)
+				for void, name in ipairs({"BottomEdge", "BottomLeftCorner", "BottomRightCorner"}) do
+					local piece = blizzPieces[name]
+					local h = piece and piece:GetHeight()
+					if h and not (issecretvalue and issecretvalue(h)) and h > shadowCrop then
+						local f = (h - shadowCrop) / h
+						local ulx, uly, llx, lly, urx, ury, lrx, lry = piece:GetTexCoord()
+						piece:SetTexCoord(ulx, uly, ulx + (llx - ulx) * f, uly + (lly - uly) * f, urx, ury, urx + (lrx - urx) * f, ury + (lry - ury) * f)
+						piece:SetHeight(h - shadowCrop)
+					end
+				end
+				-- Title bar background (the game's frame background, like the title bar of the default map)
+				local titleBg = borderFrame:CreateTexture(nil, "BACKGROUND", nil, 2)
+				titleBg:SetAllPoints(titleFrame)
+				titleBg:SetTexture("Interface\\FrameGeneral\\UI-Background-Rock", "REPEAT", "REPEAT")
+				titleBg:SetHorizTile(true)
+				titleBg:SetVertTile(true)
+				blizzPieces.TitleBg = titleBg
+			end
+
+			-- Function to show or hide the Blizzard theme
+			local function SetBlizzard(show)
+				mapTheme.blizzard = show
+				if show and not blizzBorder then CreateBlizzardBorder() end
+				if blizzPieces then
+					for name, piece in pairs(blizzPieces) do
+						if name ~= "Center" then piece:SetShown(show) end
+					end
+				end
+				-- The art replaces the black edge and shadow around the map and the title bar background
+				for i = 1, #edgeTextures do edgeTextures[i]:SetShown(not show) end
+				titleTexture:SetShown(not show)
+				-- Quest count and title bar buttons move in a little so they clear the border art
+				questCount:ClearAllPoints()
+				questCount:SetPoint("LEFT", show and 12 or 8, 0)
+				-- Title bar buttons are larger for the Blizzard theme (like the default map, they overlap the border lines)
+				local buttonSize = show and 26 or 20
+				for void, button in ipairs({WorldMapFrame.BorderFrame.CloseButton, WorldMapFrame.BorderFrame.MaximizeMinimizeFrame}) do
+					if CanChange(button) then button:SetSize(buttonSize, buttonSize) end
+				end
+				SetFrameLayout()
+				-- Game's button art in the title bar (the flat icons are used otherwise)
+				for i, entry in ipairs(mapTheme.buttons) do
+					for j, v in pairs(entry.art) do v:SetAlpha(show and 1 or 0) end
+					entry.icon:SetShown(not show)
+					entry.box:Hide()
+				end
+			end
+
+			-- Rainbow colors (left to right) and how dark they are drawn so the text stays readable
+			local rainbowColors = {{1, 0.15, 0.15}, {1, 0.55, 0.10}, {1, 0.90, 0.15}, {0.25, 0.90, 0.30}, {0.20, 0.50, 1}, {0.65, 0.35, 1}}
+			local rainbowShade = 0.30
+
+			-- Function to get the rainbow for a bar (created the first time the rainbow theme is used)
+			-- (inset keeps the rainbow inside a border, such as the zone list's 1 pixel border)
+			local function GetRainbow(bar, inset)
+				if bar.leaRainbow then return bar.leaRainbow end
+				inset = inset or 0
+				local rainbow = {}
+				local count = #rainbowColors - 1
+				for i = 1, count do
+					local seg = bar:CreateTexture(nil, "BACKGROUND", nil, 1)
+					seg:SetTexture("Interface\\Buttons\\WHITE8X8")
+					local c1, c2 = rainbowColors[i], rainbowColors[i + 1]
+					seg:SetGradient("HORIZONTAL", CreateColor(c1[1] * rainbowShade, c1[2] * rainbowShade, c1[3] * rainbowShade, 1), CreateColor(c2[1] * rainbowShade, c2[2] * rainbowShade, c2[3] * rainbowShade, 1))
+					if i == 1 then
+						seg:SetPoint("TOPLEFT", inset, -inset); seg:SetPoint("BOTTOMLEFT", inset, inset)
+					else
+						seg:SetPoint("TOPLEFT", rainbow[i - 1], "TOPRIGHT"); seg:SetPoint("BOTTOMLEFT", rainbow[i - 1], "BOTTOMRIGHT")
+					end
+					if i == count then
+						seg:SetPoint("TOPRIGHT", -inset, -inset); seg:SetPoint("BOTTOMRIGHT", -inset, inset)
+					end
+					rainbow[i] = seg
+				end
+				-- Shade the bottom of the bar like the other themes
+				local shade = bar:CreateTexture(nil, "BACKGROUND", nil, 2)
+				shade:SetPoint("TOPLEFT", inset, -inset); shade:SetPoint("BOTTOMRIGHT", -inset, inset)
+				shade:SetTexture("Interface\\Buttons\\WHITE8X8")
+				shade:SetGradient("VERTICAL", CreateColor(0, 0, 0, 0.45), CreateColor(0, 0, 0, 0))
+				rainbow.shade = shade
+				-- Keep the segments evenly spaced when the bar changes size (the last one fills the rest)
+				local function SetWidths()
+					local barWidth = bar:GetWidth()
+					if issecretvalue and issecretvalue(barWidth) then return end -- Frame sizes can be secret in combat
+					local width = (barWidth - inset * 2) / count
+					for i = 1, count - 1 do rainbow[i]:SetWidth(width) end
+				end
+				bar:HookScript("OnSizeChanged", SetWidths)
+				SetWidths()
+				bar.leaRainbow = rainbow
+				return rainbow
+			end
+
+			-- Function to get the rainbow color for a list row (rows run through the rainbow from top to bottom)
+			local function RainbowRowColor(index, count)
+				local pos = count > 1 and (index - 1) / (count - 1) * (#rainbowColors - 1) or 0
+				local i = math.min(math.floor(pos) + 1, #rainbowColors - 1)
+				local f = pos - (i - 1)
+				local c1, c2 = rainbowColors[i], rainbowColors[i + 1]
+				return c1[1] + (c2[1] - c1[1]) * f, c1[2] + (c2[2] - c1[2]) * f, c1[3] + (c2[3] - c1[3]) * f
+			end
+
+			-- Function to show or hide the rainbow on a bar
+			local function SetRainbow(bar, show, inset)
+				if not show and not bar.leaRainbow then return end
+				local rainbow = GetRainbow(bar, inset)
+				for i = 1, #rainbow do
+					if show then rainbow[i]:Show() else rainbow[i]:Hide() end
+				end
+				if show then rainbow.shade:Show() else rainbow.shade:Hide() end
+			end
+
+			-- Function to apply the map theme (runs on startup and when the theme is changed, no reload needed)
+			ApplyMapTheme = function()
+				local theme = mapThemes[LeaMapsLC["MapTheme"]] or mapThemes[1]
+				local ar, ag, ab, hr, hg, hb, ha, bgBottom, bgTop
+				local r, g, b
+				if theme.classColor then
+					local color = RAID_CLASS_COLORS[select(2, UnitClass("player"))] or NORMAL_FONT_COLOR
+					r, g, b = color.r, color.g, color.b
+				elseif theme.color then
+					r, g, b = theme.color[1], theme.color[2], theme.color[3]
+				end
+				if r then
+					-- Base color recipe (dark wash on the title bar, the color itself for the accents)
+					ar, ag, ab = r * 0.85, g * 0.85, b * 0.85
+					hr, hg, hb, ha = r, g, b, 0.22
+					bgBottom, bgTop = CreateColor(r * 0.10, g * 0.10, b * 0.10, 1), CreateColor(r * 0.20, g * 0.20, b * 0.20, 1)
+				else
+					ar, ag, ab = theme.accent[1], theme.accent[2], theme.accent[3]
+					hr, hg, hb, ha = theme.hover[1], theme.hover[2], theme.hover[3], theme.hover[4]
+					bgBottom = CreateColor(theme.bgBottom[1], theme.bgBottom[2], theme.bgBottom[3], 1)
+					bgTop = CreateColor(theme.bgTop[1], theme.bgTop[2], theme.bgTop[3], 1)
+				end
+				local topR, topG, topB = bgTop:GetRGB()
+				-- Blizzard theme border and button art
+				SetBlizzard(theme.blizzard)
+				-- Title bar and coordinates background
+				mapTheme.titleTexture:SetGradient("VERTICAL", bgBottom, bgTop)
+				SetRainbow(mapTheme.titleBar, theme.rainbow)
+				if mapTheme.footer then
+					mapTheme.footerTexture:SetGradient("VERTICAL", bgBottom, bgTop)
+					SetRainbow(mapTheme.footer, theme.rainbow)
+				end
+				-- Title bar buttons (icon in a bright accent color, hover box in the accent color with a white icon)
+				local brightest = math.max(ar, ag, ab)
+				local boost = brightest > 0 and 1 / brightest or 1 -- Brighten so the strongest channel is full (keeps the hue)
+				for i, entry in ipairs(mapTheme.buttons) do
+					entry.box:SetVertexColor(ar, ag, ab, 0.6)
+					entry.color = {ar * boost, ag * boost, ab * boost}
+					if not entry.box:IsShown() then entry.icon:SetVertexColor(unpack(entry.color)) end
+				end
+				-- Quest search box (title bar color, a little lighter while typing)
+				mapTheme.searchNormal = {topR + 0.04, topG + 0.04, topB + 0.04}
+				mapTheme.searchFocused = {topR + 0.10, topG + 0.10, topB + 0.10}
+				if mapTheme.SetSearchBg then mapTheme.SetSearchBg() end
+				-- Zone menu hover
+				if mapTheme.menuButtons then
+					for i, button in ipairs(mapTheme.menuButtons) do
+						button.Hover:SetColorTexture(hr, hg, hb, ha)
+					end
+				end
+				-- Zone menu lists (title bar color, accent border and a highlight tinted with the hover color)
+				-- (Rainbow gives the list the same rainbow as the title bar and each row its own rainbow highlight color)
+				for void, list in ipairs({mapTheme.popup or false, mapTheme.dungeonPopup or false}) do
+					if list then
+						list:SetTooltipStyle(theme.blizzard)
+						if theme.blizzard then
+							-- Tooltip colors and the game's plain white menu highlight
+							list:SetColors(0.09, 0.09, 0.19, 1, 1, 1, 1, 1, 1)
+						else
+							list:SetColors(topR, topG, topB, ar, ag, ab, hr + (1 - hr) * 0.3, hg + (1 - hg) * 0.3, hb + (1 - hb) * 0.3, theme.rainbow and RainbowRowColor or nil)
+						end
+						SetRainbow(list.frame, theme.rainbow)
+					end
+				end
+				-- Dungeon map level menu (title bar color, accent border and the zone menu hover color, tooltip colors for Blizzard)
+				if mapTheme.dungeonButtons then
+					for i, button in ipairs(mapTheme.dungeonButtons) do
+						if theme.blizzard then
+							button:SetBackdropColor(0.09, 0.09, 0.19, 0.95)
+							button:SetBackdropBorderColor(0.6, 0.6, 0.6, 1)
+						else
+							button:SetBackdropColor(topR, topG, topB, 0.95)
+							button:SetBackdropBorderColor(ar, ag, ab, 1)
+						end
+						button.Hover:SetColorTexture(hr, hg, hb, ha)
+					end
+				end
+			end
+
+			-- Set theme on startup (the theme dropdown sets it when changed)
+			ApplyMapTheme()
+
+			----------------------------------------------------------------------
+			-- Configuration panel
+			----------------------------------------------------------------------
+
+			-- Create configuration panel
+			local simplePanel = LeaMapsLC:CreatePanel("Use simple map frame", "simplePanel")
+
+			-- Add controls
+			LeaMapsLC:MakeTx(simplePanel, "Settings", 16, -72)
+			LeaMapsLC:MakeCB(simplePanel, "ShowZoneMenu", "Show zone menus", 16, -92, false, "If checked, continent and zone menus will be shown in the map title bar.|n|nThe menus cannot be used in combat.")
+
+			-- Map theme dropdown (applies straight away)
+			LeaMapsLC:CreateDropdown("MapTheme", "Map Theme", 146, "TOPLEFT", simplePanel, "TOPLEFT", 16, -152, false, {{L["Classic"], 1}, {L["Warm"], 2}, {L["Charcoal"], 3}, {L["Class Color"], 4}, {L["Alliance"], 6}, {L["Horde"], 7}, {L["Green"], 10}, {L["Teal"], 9}, {L["Purple"], 8}, {L["Pink"], 5}, {L["Rainbow"], 11}, {L["Blizzard"], 12}})
+			LeaMapsCB["MapTheme"].onChange = ApplyMapTheme
+
+			-- Back to Main Menu button click
+			simplePanel.b:HookScript("OnClick", function()
+				simplePanel:Hide()
+				LeaMapsLC["PageF"]:Show()
+			end)
+
+			-- Reset button click
+			simplePanel.r:HookScript("OnClick", function()
+				LeaMapsLC["ShowZoneMenu"] = "On"
+				LeaMapsLC["MapTheme"] = 1
+				ApplyMapTheme()
+				if LeaMapsLC.SetZoneMenus then LeaMapsLC.SetZoneMenus() end
+				simplePanel:Hide(); simplePanel:Show()
+			end)
+
+			-- Show configuration panel when configuration button is clicked
+			LeaMapsCB["SimpleMapFrameBtn"]:HookScript("OnClick", function()
+				if IsShiftKeyDown() and IsControlKeyDown() then
+					-- Preset profile
+					LeaMapsLC["ShowZoneMenu"] = "On"
+					if LeaMapsLC.SetZoneMenus then LeaMapsLC.SetZoneMenus() end
+					LeaMapsLC["MapTheme"] = 1
+					ApplyMapTheme()
+					if simplePanel:IsShown() then simplePanel:Hide(); simplePanel:Show(); end
+				else
+					simplePanel:Show()
+					LeaMapsLC["PageF"]:Hide()
+				end
+			end)
+
+		end
+
+		----------------------------------------------------------------------
+		-- Show zone menus (simple map frame only)
+		----------------------------------------------------------------------
+
+		if LeaMapsLC["SimpleMapFrame"] == "On" and not LeaLockList["SimpleMapFrame"] then
+
+			-- The menus can be turned on and off at any time, including in combat (they only use frames of our own).
+			-- Nothing is created until the menus are turned on for the first time.
+
+			local zoneMenusReady, updateZoneMenus
+
+			local function SetupZoneMenus()
+
+				-- Maps are changed with C_Map.OpenWorldMap which fires WORLD_MAP_OPEN. Blizzard's own event handler then changes
+				-- the map in secure code so the map is never tainted (calling WorldMapFrame:SetMapID from here would taint it).
+				-- C_Map.OpenWorldMap cannot be used in combat so the menus are disabled during combat.
+
+				local continents, continentByID, continentByName = {}, {}, {}
+				local selectedContinent, selectedZone, listsBuilt
+				local dungeonsEntry -- Dungeons entry in the continent menu (the zone menu lists the dungeon maps, show dungeon maps option)
+
+				-- Create menu holder (in the title bar after the quest count, the map title is hidden while the menus show)
+				local titleFrame, titleText = LeaMapsCB["MapTitleFrame"], LeaMapsCB["MapTitleText"]
+				local holder = CreateFrame("Frame", nil, titleFrame)
+				holder:SetHeight(20)
+				holder:SetPoint("LEFT", LeaMapsCB["MapQuestCount"], "RIGHT", 4, 0)
+				holder:SetFrameLevel(titleFrame:GetFrameLevel() + 3)
+				holder:Hide()
+
+				-- Function to create a divider line (separates the quest count and the menus)
+				local function CreateDivider()
+					local divider = holder:CreateTexture(nil, "ARTWORK")
+					divider:SetColorTexture(0.4, 0.4, 0.4, 1)
+					divider:SetSize(1, 12)
+					return divider
+				end
+
+				-- Function to create a title bar menu button (map name, highlighted on hover)
+				local function CreateMenuButton()
+					local button = CreateFrame("Button", nil, holder)
+					button:SetHeight(20)
+					button.Hover = button:CreateTexture(nil, "BACKGROUND")
+					button.Hover:SetAllPoints()
+					button.Hover:SetColorTexture(1, 1, 1, 0.2)
+					button.Hover:Hide()
+					button.Text = button:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+					button.Text:SetPoint("LEFT", 6, 0)
+					button.Text:SetWordWrap(false)
+					button.Text:SetJustifyH("LEFT")
+					button:SetScript("OnEnter", function(self)
+						if self:IsEnabled() then self.Hover:Show() end
+					end)
+					button:SetScript("OnLeave", function(self)
+						self.Hover:Hide()
+					end)
+					button:SetScript("OnDisable", function(self)
+						self.Hover:Hide()
+						self.Text:SetTextColor(DISABLED_FONT_COLOR:GetRGB())
+					end)
+					button:SetScript("OnEnable", function(self)
+						self.Text:SetTextColor(NORMAL_FONT_COLOR:GetRGB())
+					end)
+					return button
+				end
+
+				-- Function to set a button's text and fit the button to it (or to a fixed width if given, long names are cut short)
+				local function SetButtonText(button, text, fixedWidth)
+					button.Text:SetWidth(0)
+					button.Text:SetText(text)
+					local width = fixedWidth or math.min(button.Text:GetStringWidth(), 200)
+					button.Text:SetWidth(width)
+					button:SetWidth(width + 12)
+				end
+
+				-- Continent menu width (fits the longest continent name so the zone menu stays in the same place)
+				local contWidth
+
+				-- Create continent and zone menus (quest count | continent | zone)
+				local contDivider = CreateDivider()
+				contDivider:SetPoint("LEFT", holder, "LEFT", 4, 0)
+
+				local contMenu = CreateMenuButton()
+				contMenu:SetPoint("LEFT", contDivider, "RIGHT", 4, 0)
+
+				local zoneDivider = CreateDivider()
+				zoneDivider:SetPoint("LEFT", contMenu, "RIGHT", 4, 0)
+
+				local zoneMenu = CreateMenuButton()
+				zoneMenu:SetPoint("LEFT", zoneDivider, "RIGHT", 4, 0)
+
+				-- Give the menu buttons the theme hover color
+				mapTheme.menuButtons = {contMenu, zoneMenu}
+
+				-- Function to sort entries by name
+				local function SortByName(a, b) return a.name < b.name end
+
+				-- Function to create a list entry (the first zone in each list is the continent itself)
+				local function CreateEntry(mapID, name)
+					local entry = {mapID = mapID, name = name, zoneByID = {}, zoneByName = {}}
+					entry.zones = {{mapID = mapID, name = name}}
+					return entry
+				end
+
+				-- Function to build the continent and zone lists (done once, the first time the map is shown)
+				local function BuildLists()
+					listsBuilt = true
+
+					-- Continents (top-level continents in Cosmic and Azeroth, duplicate names keep the one with the most zones)
+					local children = {}
+					for i, rootID in ipairs({946, 947}) do
+						local list = C_Map.GetMapChildrenInfo(rootID)
+						if list then
+							for j, info in ipairs(list) do
+								if info.mapID ~= 947 and (info.mapType == Enum.UIMapType.Continent or info.mapType == Enum.UIMapType.World) then
+									children[#children + 1] = info
+								end
+							end
+						end
+					end
+					do
+						for i, info in ipairs(children) do
+							local entry = CreateEntry(info.mapID, info.name)
+							local zones = C_Map.GetMapChildrenInfo(info.mapID, Enum.UIMapType.Zone)
+							if zones then
+								local list = {}
+								for j, zoneInfo in ipairs(zones) do
+									-- Duplicate zone names (such as phased versions) keep the lowest map ID
+									local existing = entry.zoneByName[zoneInfo.name]
+									if not existing then
+										local zone = {mapID = zoneInfo.mapID, name = zoneInfo.name}
+										list[#list + 1] = zone
+										entry.zoneByName[zoneInfo.name] = zone
+										entry.zoneByID[zoneInfo.mapID] = zone
+									elseif zoneInfo.mapID < existing.mapID then
+										entry.zoneByID[existing.mapID] = nil
+										existing.mapID = zoneInfo.mapID
+										entry.zoneByID[zoneInfo.mapID] = existing
+									end
+								end
+								table.sort(list, SortByName)
+								for j = 1, #list do
+									entry.zones[#entry.zones + 1] = list[j]
+								end
+							end
+							if #entry.zones > 1 then
+								local existing = continentByName[info.name]
+								if not existing or #entry.zones > #existing.zones then
+									continentByName[info.name] = entry
+								end
+							end
+						end
+					end
+					for name, entry in pairs(continentByName) do
+						continents[#continents + 1] = entry
+						continentByID[entry.mapID] = entry
+					end
+					table.sort(continents, SortByName)
+
+					-- Azeroth and Cosmic go at the end (they have no zones)
+					for i, mapID in ipairs({947, 946}) do
+						local info = C_Map.GetMapInfo(mapID)
+						if info then
+							local entry = CreateEntry(mapID, info.name)
+							continents[#continents + 1] = entry
+							continentByID[mapID] = entry
+						end
+					end
+
+					-- Dungeons entry at the end (the zone menu lists the dungeon maps)
+					if LeaMapsLC.GetDungeonList then
+						dungeonsEntry = {name = L["Dungeons"], isDungeons = true, zoneByID = {}, zoneByName = {}, zones = {}, byInstance = {}}
+						for i, dungeon in ipairs(LeaMapsLC.GetDungeonList()) do
+							local zone = {name = dungeon.name, instanceID = dungeon.id}
+							dungeonsEntry.zones[#dungeonsEntry.zones + 1] = zone
+							dungeonsEntry.byInstance[dungeon.id] = zone
+						end
+						table.sort(dungeonsEntry.zones, SortByName)
+						continents[#continents + 1] = dungeonsEntry
+					end
+
+				end
+
+				-- Function to find the continent and zone for a map (walks up the map parents)
+				local function FindSelection(mapID)
+					local below
+					for i = 1, 20 do
+						local info = mapID and C_Map.GetMapInfo(mapID)
+						if not info then return end
+						local continent = continentByID[mapID] or ((info.mapType == Enum.UIMapType.Continent or info.mapType == Enum.UIMapType.World) and continentByName[info.name])
+						if continent then
+							local zone = below and (continent.zoneByID[below.mapID] or continent.zoneByName[below.name]) or continent.zones[1]
+							return continent, zone
+						end
+						below = info
+						mapID = info.parentMapID
+					end
+				end
+
+				-- Function to change the map (taint-free, not available in combat)
+				local function OpenMap(mapID)
+					if InCombatLockdown() then return end
+					if mapID and mapID ~= WorldMapFrame:GetMapID() then
+						C_Map.OpenWorldMap(mapID)
+					end
+				end
+
+				-- Continent and zone lists (see LeaMapsLC:CreatePopupList, colors are set by the map theme)
+				local popup = LeaMapsLC:CreatePopupList(WorldMapFrame)
+				mapTheme.popup = popup
+				if ApplyMapTheme then ApplyMapTheme() end
+				local function IsCurrentContinent(entry) return entry == selectedContinent end
+				local function IsCurrentZone(entry) return entry == selectedZone end
+
+				-- Function to choose a list entry (a map, a dungeon map, or the Dungeons entry which shows the last dungeon map)
+				-- (dungeon maps are frames of our own shown over the map so the map itself is not changed)
+				local lastDungeon
+				local function ChooseMap(entry)
+					if entry.isDungeons then
+						local zone = lastDungeon or entry.zones[1]
+						if zone then LeaMapsLC.ShowDungeonPreview(zone.instanceID) end
+					elseif entry.instanceID then
+						lastDungeon = entry
+						LeaMapsLC.ShowDungeonPreview(entry.instanceID)
+					else
+						if LeaMapsLC.GetDungeonPreview and LeaMapsLC.GetDungeonPreview() then LeaMapsLC.EndDungeonPreview() end
+						OpenMap(entry.mapID)
+					end
+				end
+
+				-- Open or close the lists when the menu buttons are clicked
+				contMenu:SetScript("OnClick", function(self)
+					if InCombatLockdown() then return end
+					popup:Toggle(self, continents, IsCurrentContinent, ChooseMap, "TOPLEFT", "BOTTOMLEFT", 0, -2)
+				end)
+
+				zoneMenu:SetScript("OnClick", function(self)
+					if InCombatLockdown() or not selectedContinent then return end
+					popup:Toggle(self, selectedContinent.zones, IsCurrentZone, ChooseMap, "TOPLEFT", "BOTTOMLEFT", 0, -2)
+				end)
+
+				-- Function to enable or disable the menus (they are disabled in combat)
+				local function SetMenusEnabled(inCombat)
+					if inCombat then popup:Close() end
+					contMenu:SetEnabled(not inCombat)
+					zoneMenu:SetEnabled(not inCombat)
+				end
+
+				-- Function to update the menus to match the map that is showing
+				local function HideMenus()
+					popup:Close()
+					holder:Hide()
+					titleText:SetAlpha(1)
+				end
+
+				local function UpdateMenus()
+					-- Menus turned off
+					if LeaMapsLC["ShowZoneMenu"] ~= "On" then
+						HideMenus()
+						return
+					end
+					-- Build lists the first time they are needed while the map is showing
+					if not listsBuilt then
+						if not WorldMapFrame:IsShown() then return end
+						BuildLists()
+					end
+					local previewID = LeaMapsLC.GetDungeonPreview and LeaMapsLC.GetDungeonPreview()
+					if previewID and dungeonsEntry and dungeonsEntry.byInstance[previewID] then
+						-- A dungeon map is showing so show Dungeons and the dungeon
+						selectedContinent, selectedZone = dungeonsEntry, dungeonsEntry.byInstance[previewID]
+						lastDungeon = selectedZone
+					else
+						selectedContinent, selectedZone = FindSelection(WorldMapFrame:GetMapID())
+					end
+					if not selectedContinent then
+						HideMenus()
+						return
+					end
+
+					-- Continent menu, then the zone menu if the continent has zones (it says Zones while the continent map shows)
+					popup:Close()
+					if not contWidth then
+						contWidth = 0
+						for i = 1, #continents do
+							contMenu.Text:SetWidth(0)
+							contMenu.Text:SetText(continents[i].name)
+							contWidth = math.max(contWidth, contMenu.Text:GetStringWidth())
+						end
+						contWidth = math.min(math.ceil(contWidth), 200)
+					end
+					SetButtonText(contMenu, selectedContinent.name, contWidth)
+					if #selectedContinent.zones > 1 then
+						if selectedZone and (selectedContinent.isDungeons or selectedZone ~= selectedContinent.zones[1]) then
+							SetButtonText(zoneMenu, selectedZone.name)
+						else
+							SetButtonText(zoneMenu, L["Zones"])
+						end
+						zoneDivider:Show()
+						zoneMenu:Show()
+						holder:SetWidth(9 + contMenu:GetWidth() + 9 + zoneMenu:GetWidth())
+					else
+						zoneDivider:Hide()
+						zoneMenu:Hide()
+						holder:SetWidth(9 + contMenu:GetWidth())
+					end
+
+					-- Show the menus in place of the map title
+					titleText:SetAlpha(0)
+					holder:Show()
+					SetMenusEnabled(InCombatLockdown())
+				end
+
+				-- Update menus when the map changes (runs after Blizzard's code has finished)
+				hooksecurefunc(WorldMapFrame, "OnMapChanged", UpdateMenus)
+
+				-- Update menus when the map is shown
+				WorldMapFrame:HookScript("OnShow", UpdateMenus)
+
+				-- Disable menus during combat
+				holder:RegisterEvent("PLAYER_REGEN_DISABLED")
+				holder:RegisterEvent("PLAYER_REGEN_ENABLED")
+				holder:SetScript("OnEvent", function(self, event)
+					SetMenusEnabled(event == "PLAYER_REGEN_DISABLED")
+				end)
+
+				updateZoneMenus = UpdateMenus
+				LeaMapsLC.UpdateZoneMenus = UpdateMenus -- Used when a dungeon map preview starts or ends
+
+			end
+
+			-- Function to turn the menus on or off
+			local function SetZoneMenus()
+				if LeaMapsLC["ShowZoneMenu"] == "On" and not zoneMenusReady then
+					zoneMenusReady = true
+					SetupZoneMenus()
+				end
+				if updateZoneMenus then updateZoneMenus() end
+			end
+
+			-- Set menus when the option is clicked (and from the panel reset button) and on startup
+			LeaMapsCB["ShowZoneMenu"]:HookScript("OnClick", SetZoneMenus)
+			LeaMapsLC.SetZoneMenus = SetZoneMenus
+			SetZoneMenus()
+
+		end
+
+		----------------------------------------------------------------------
+		-- Show dungeon maps
+		----------------------------------------------------------------------
+
+		if LeaMapsLC["ShowDungeonMaps"] == "On" then
+
+			-- Map art: [instance map ID] = {{map ID, level name, game map texture}, ...}
+			-- Scholomance is not in the game in its classic layout so it uses {map ID, level name, nil, x, y} in Leatrix_Maps_Dungeon_Scholomance (2048x2048, maps are 1024x683)
+			local dungeonArt = {
+				[389] = {{213, nil, "Ragefire\\Ragefire1_"}}, -- Ragefire Chasm
+				[36] = {{291, nil, "TheDeadmines\\TheDeadmines1_"}, {292, L["Ironclad Cove"], "TheDeadmines\\TheDeadmines2_"}}, -- The Deadmines
+				[43] = {{279, nil, "WailingCaverns\\WailingCaverns1_"}}, -- Wailing Caverns
+				[33] = {{310, L["The Courtyard"], "ShadowfangKeep\\ShadowfangKeep1_"}, {311, L["Dining Hall"], "ShadowfangKeep\\ShadowfangKeep2_"}, {312, L["The Vacant Den"], "ShadowfangKeep\\ShadowfangKeep3_"}, {313, L["Lower Observatory"], "ShadowfangKeep\\ShadowfangKeep4_"}, {314, L["Upper Observatory"], "ShadowfangKeep\\ShadowfangKeep5_"}, {316, L["The Wall Walk"], "ShadowfangKeep\\ShadowfangKeep7_"}, {315, L["Lord Godfrey's Chamber"], "ShadowfangKeep\\ShadowfangKeep6_"}}, -- Shadowfang Keep
+				[34] = {{225, nil, "TheStockade\\TheStockade1_"}}, -- The Stockade
+				[48] = {{221, L["The Pool of Ask'Ar"], "BlackFathomDeeps\\BlackFathomDeeps1_"}, {222, L["Moonshrine Sanctum"], "BlackFathomDeeps\\BlackFathomDeeps2_"}, {223, L["The Forgotten Pool"], "BlackFathomDeeps\\BlackFathomDeeps3_"}}, -- Blackfathom Deeps
+				[90] = {{226, L["The Hall of Gears"], "Gnomeregan\\Gnomeregan1_"}, {227, L["The Dormitory"], "Gnomeregan\\Gnomeregan2_"}, {228, L["Launch Bay"], "Gnomeregan\\Gnomeregan3_"}, {229, L["Tinkers' Court"], "Gnomeregan\\Gnomeregan4_"}}, -- Gnomeregan
+				[47] = {{301, nil, "RazorfenKraul\\RazorfenKraul1_"}}, -- Razorfen Kraul
+				[189] = {{302, L["Graveyard"], "ScarletMonastery\\ScarletMonastery1_"}, {303, L["Library"], "ScarletMonastery\\ScarletMonastery2_"}, {304, L["Armory"], "ScarletMonastery\\ScarletMonastery3_"}, {305, L["Cathedral"], "ScarletMonastery\\ScarletMonastery4_"}}, -- Scarlet Monastery
+				[129] = {{300, nil, "RazorfenDowns\\RazorfenDowns1_"}}, -- Razorfen Downs
+				[70] = {{230, L["Hall of the Keepers"], "Uldaman\\Uldaman1_"}, {231, L["Khaz'Goroth's Seat"], "Uldaman\\Uldaman2_"}}, -- Uldaman
+				[209] = {{219, nil, "ZulFarrak\\ZulFarrak"}}, -- Zul'Farrak
+				[349] = {{280, L["Caverns of Maraudon"], "Maraudon\\Maraudon1_"}, {281, L["Zaetar's Grave"], "Maraudon\\Maraudon2_"}}, -- Maraudon
+				[109] = {{220, nil, "TheTempleOfAtalHakkar\\TheTempleOfAtalHakkar1_"}}, -- Temple of Atal'Hakkar
+				[230] = {{242, L["Detention Block"], "BlackrockDepths\\BlackrockDepths1_"}, {243, L["Shadowforge City"], "BlackrockDepths\\BlackrockDepths2_"}}, -- Blackrock Depths
+				[229] = {{250, L["Tazz'Alor"], "BlackrockSpire\\BlackrockSpire1_"}, {251, L["Skitterweb Tunnels"], "BlackrockSpire\\BlackrockSpire2_"}, {252, L["Hordemar City"], "BlackrockSpire\\BlackrockSpire3_"}, {253, L["Hall of Blackhand"], "BlackrockSpire\\BlackrockSpire4_"}, {254, L["Halycon's Lair"], "BlackrockSpire\\BlackrockSpire5_"}, {255, L["Chamber of Battle"], "BlackrockSpire\\BlackrockSpire6_"}}, -- Blackrock Spire
+				[409] = {{232, nil, "MoltenCore\\MoltenCore1_"}}, -- Molten Core
+				[469] = {{287, L["Dragonmaw Garrison"], "BlackwingLair\\BlackwingLair1_"}, {288, L["Halls of Strife"], "BlackwingLair\\BlackwingLair2_"}, {289, L["Crimson Laboratories"], "BlackwingLair\\BlackwingLair3_"}, {290, L["Nefarian's Lair"], "BlackwingLair\\BlackwingLair4_"}}, -- Blackwing Lair
+				[429] = {{235, L["Gordok Commons"], "DireMaul\\DireMaul1_"}, {236, L["Capital Gardens"], "DireMaul\\DireMaul2_"}, {237, L["Court of the Highborne"], "DireMaul\\DireMaul3_"}, {238, L["Prison of Immol'Thar"], "DireMaul\\DireMaul4_"}, {239, L["Warpwood Quarter"], "DireMaul\\DireMaul5_"}, {240, L["The Shrine of Eldretharr"], "DireMaul\\DireMaul6_"}}, -- Dire Maul
+				[289] = {{306, L["The Reliquary"], nil, 0, 0}, {307, L["Chamber of Summoning"], nil, 1024, 0}, {308, L["The Upper Study"], nil, 0, 683}, {309, L["Headmaster's Study"], nil, 1024, 683}}, -- Scholomance
+				[329] = {{317, L["Crusader's Square"], "Stratholme\\Stratholme1_"}, {318, L["The Gauntlet"], "Stratholme\\Stratholme2_"}}, -- Stratholme
+				[309] = {{233, nil, "ZulGurub\\ZulGurub"}}, -- Zul'Gurub
+				[249] = {{248, nil, "OnyxiasLair\\OnyxiasLair1_"}}, -- Onyxia's Lair
+				[509] = {{247, nil, "RuinsofAhnQiraj\\RuinsofAhnQiraj"}}, -- Ruins of Ahn'Qiraj
+				[531] = {{319, L["The Hive Undergrounds"], "AhnQiraj\\AhnQiraj1_"}, {320, L["The Temple Gates"], "AhnQiraj\\AhnQiraj2_"}, {321, L["Vault of C'Thun"], "AhnQiraj\\AhnQiraj3_"}}, -- Temple of Ahn'Qiraj
+				[533] = {{162, L["The Construct Quarter"], "Naxxramas\\Naxxramas1_"}, {163, L["The Arachnid Quarter"], "Naxxramas\\Naxxramas2_"}, {164, L["The Military Quarter"], "Naxxramas\\Naxxramas3_"}, {165, L["The Plague Quarter"], "Naxxramas\\Naxxramas4_"}, {166, L["The Lower Necropolis"], "Naxxramas\\Naxxramas5_"}, {167, L["The Upper Necropolis"], "Naxxramas\\Naxxramas6_"}}, -- Naxxramas
+				-- Dungeons that are new in Forever use {map key, level name, nil, nil, nil, art file, art height} with one map
+				-- per file (1024 wide, the height given, in 1024x1024 files). Maps and pins are from MapUtils by D4KiR, used with permission.
+				[2959] = {{"2959", L["City of Dalaran"] .. " (1)", nil, nil, nil, "Leatrix_Maps_Dungeon_2959", 684}, {"2959_2", L["City of Dalaran"] .. " (2)", nil, nil, nil, "Leatrix_Maps_Dungeon_2959_2", 689}}, -- City of Dalaran
+				[2998] = {{"2998", nil, nil, nil, nil, "Leatrix_Maps_Dungeon_2998", 683}}, -- Excavation Site: Wetlands
+				[2999] = {{"2999", nil, nil, nil, nil, "Leatrix_Maps_Dungeon_2999", 683}}, -- The Ruins of Lordaeron
+				[3065] = {{"3065", nil, nil, nil, nil, "Leatrix_Maps_Dungeon_3065", 683}}, -- The Hall of Thanes
+			}
+
+			-- Game maps in the addon folder for game locales that do not have them (such as esMX and ruRU)
+			-- [game map texture] = map number (Leatrix_Maps_Dungeon_01 to 03 are 16x16 tiles of 256 pixels, 12 tiles per map in order)
+			local bundledArt = {
+				["Ragefire\\Ragefire1_"] = 0,
+				["TheDeadmines\\TheDeadmines1_"] = 1,
+				["TheDeadmines\\TheDeadmines2_"] = 2,
+				["WailingCaverns\\WailingCaverns1_"] = 3,
+				["ShadowfangKeep\\ShadowfangKeep1_"] = 4,
+				["ShadowfangKeep\\ShadowfangKeep2_"] = 5,
+				["ShadowfangKeep\\ShadowfangKeep3_"] = 6,
+				["ShadowfangKeep\\ShadowfangKeep4_"] = 7,
+				["ShadowfangKeep\\ShadowfangKeep5_"] = 8,
+				["ShadowfangKeep\\ShadowfangKeep7_"] = 9,
+				["ShadowfangKeep\\ShadowfangKeep6_"] = 10,
+				["TheStockade\\TheStockade1_"] = 11,
+				["BlackFathomDeeps\\BlackFathomDeeps1_"] = 12,
+				["BlackFathomDeeps\\BlackFathomDeeps2_"] = 13,
+				["BlackFathomDeeps\\BlackFathomDeeps3_"] = 14,
+				["Gnomeregan\\Gnomeregan1_"] = 15,
+				["Gnomeregan\\Gnomeregan2_"] = 16,
+				["Gnomeregan\\Gnomeregan3_"] = 17,
+				["Gnomeregan\\Gnomeregan4_"] = 18,
+				["RazorfenKraul\\RazorfenKraul1_"] = 19,
+				["ScarletMonastery\\ScarletMonastery1_"] = 20,
+				["ScarletMonastery\\ScarletMonastery2_"] = 21,
+				["ScarletMonastery\\ScarletMonastery3_"] = 22,
+				["ScarletMonastery\\ScarletMonastery4_"] = 23,
+				["RazorfenDowns\\RazorfenDowns1_"] = 24,
+				["Uldaman\\Uldaman1_"] = 25,
+				["Uldaman\\Uldaman2_"] = 26,
+				["ZulFarrak\\ZulFarrak"] = 27,
+				["Maraudon\\Maraudon1_"] = 28,
+				["Maraudon\\Maraudon2_"] = 29,
+				["TheTempleOfAtalHakkar\\TheTempleOfAtalHakkar1_"] = 30,
+				["BlackrockDepths\\BlackrockDepths1_"] = 31,
+				["BlackrockDepths\\BlackrockDepths2_"] = 32,
+				["BlackrockSpire\\BlackrockSpire1_"] = 33,
+				["BlackrockSpire\\BlackrockSpire2_"] = 34,
+				["BlackrockSpire\\BlackrockSpire3_"] = 35,
+				["BlackrockSpire\\BlackrockSpire4_"] = 36,
+				["BlackrockSpire\\BlackrockSpire5_"] = 37,
+				["BlackrockSpire\\BlackrockSpire6_"] = 38,
+				["MoltenCore\\MoltenCore1_"] = 39,
+				["BlackwingLair\\BlackwingLair1_"] = 40,
+				["BlackwingLair\\BlackwingLair2_"] = 41,
+				["BlackwingLair\\BlackwingLair3_"] = 42,
+				["BlackwingLair\\BlackwingLair4_"] = 43,
+				["DireMaul\\DireMaul1_"] = 44,
+				["DireMaul\\DireMaul2_"] = 45,
+				["DireMaul\\DireMaul3_"] = 46,
+				["DireMaul\\DireMaul4_"] = 47,
+				["DireMaul\\DireMaul5_"] = 48,
+				["DireMaul\\DireMaul6_"] = 49,
+				["Stratholme\\Stratholme1_"] = 50,
+				["Stratholme\\Stratholme2_"] = 51,
+				["ZulGurub\\ZulGurub"] = 52,
+				["OnyxiasLair\\OnyxiasLair1_"] = 53,
+				["RuinsofAhnQiraj\\RuinsofAhnQiraj"] = 54,
+				["AhnQiraj\\AhnQiraj1_"] = 55,
+				["AhnQiraj\\AhnQiraj2_"] = 56,
+				["AhnQiraj\\AhnQiraj3_"] = 57,
+				["Naxxramas\\Naxxramas1_"] = 58,
+				["Naxxramas\\Naxxramas2_"] = 59,
+				["Naxxramas\\Naxxramas3_"] = 60,
+				["Naxxramas\\Naxxramas4_"] = 61,
+				["Naxxramas\\Naxxramas5_"] = 62,
+				["Naxxramas\\Naxxramas6_"] = 63,
+			}
+
+			-- Map pins: [map ID] = {{"entrance", x, y, type}, {"level", x, y, map ID, up}, {"boss", x, y, npc ID, name, level, display ID, style}, ...}
+			local dungeonPins = {
+				[213] = {
+					{"entrance", 0.611, 0.072},
+					{"boss", 0.564, 0.372, 11517, L["Oggleflint <Ragefire Chieftain>"], 16, 11611, 1},
+					{"boss", 0.408, 0.574, 11520, L["Taragaman the Hungerer"], 16, 7970, 1},
+					{"boss", 0.343, 0.814, 11518, L["Jergosh the Invoker"], 16, 11429, 1},
+					{"boss", 0.422, 0.857, 11519, L["Bazzalan"], 16, 2007, 1},
+				},
+				[291] = {
+					{"entrance", 0.297, 0.133},
+					{"level", 0.655, 0.667, 292},
+					{"boss", 0.364, 0.612, 644, L["Rhahk'Zor <The Foreman>"], 19, 14403, 1},
+					{"boss", 0.523, 0.510, 3586, L["Miner Johnson"], 19, 556, 2},
+					{"boss", 0.503, 0.863, 642, L["Sneed's Shredder / Sneed"], 20, 1269, 1},
+					{"boss", 0.607, 0.572, 1763, L["Gilnid <The Smelter>"], 20, 7124, 1},
+				},
+				[292] = {
+					{"level", 0.123, 0.883, 291, true},
+					{"boss", 0.561, 0.265, 646, L["Mr. Smite <The Ship's First Mate>"], 20, 2026, 1},
+					{"boss", 0.605, 0.372, 647, L["Captain Greenskin"], 20, 7113, 1},
+					{"boss", 0.605, 0.447, 639, L["Edwin VanCleef <Defias Kingpin>"], 21, 2029, 1},
+					{"boss", 0.668, 0.398, 645, L["Cookie <The Ship's Cook>"], 20, 1305, 1},
+				},
+				[279] = {
+					{"entrance", 0.463, 0.590},
+					{"boss", 0.307, 0.429, 3671, L["Lady Anacondra <Fanglord>"], 20, 4313, 1},
+					{"boss", 0.159, 0.565, 3669, L["Lord Cobrahn <Fanglord>"], 20, 4213, 1},
+					{"boss", 0.386, 0.350, 3653, L["Kresh"], 20, 5126, 1},
+					{"boss", 0.190, 0.396, 3670, L["Lord Pythas <Fanglord>"], 21, 4214, 1},
+					{"boss", 0.619, 0.737, 3674, L["Skum"], 21, 4203, 1},
+					{"boss", 0.615, 0.534, 3673, L["Lord Serpentis <Fanglord>"], 21, 4215, 1},
+					{"boss", 0.551, 0.463, 5775, L["Verdan the Everliving"], 21, 4256, 1},
+					{"boss", 0.560, 0.400, 5912, L["Deviate Faerie Dragon"], 20, 1267, 2},
+					{"boss", 0.344, 0.135, 3654, L["Mutanus the Devourer"], 22, 4088, 1},
+				},
+				[310] = {
+					{"entrance", 0.705, 0.606},
+					{"level", 0.367, 0.392, 311},
+					{"level", 0.148, 0.866, 311},
+					{"level", 0.355, 0.666, 316, true},
+					{"boss", 0.667, 0.719, 3914, L["Rethilgore <The Cell Keeper>"], 20, 524, 1},
+					{"boss", 0.279, 0.598, 4278, L["Commander Springvale"], 24, 3223, 1},
+				},
+				[311] = {
+					{"level", 0.593, 0.121, 310, true},
+					{"level", 0.273, 0.881, 310, true},
+					{"boss", 0.303, 0.766, 3887, L["Baron Silverlaine"], 24, 3222, 1},
+					{"boss", 0.472, 0.277, 3886, L["Razorclaw the Butcher"], 22, 524, 1},
+				},
+				[316] = {
+					{"level", 0.239, 0.745, 310},
+					{"level", 0.436, 0.331, 312, true},
+					{"boss", 0.597, 0.824, 4279, L["Odo the Blindwatcher"], 24, 522, 1},
+					{"boss", 0.690, 0.770, 3872, L["Deathsworn Captain"], 25, 3224, 2},
+				},
+				[312] = {
+					{"level", 0.516, 0.904, 316, true},
+					{"level", 0.533, 0.600, 313, true},
+				},
+				[313] = {
+					{"level", 0.442, 0.749, 314, true},
+					{"level", 0.526, 0.872, 312},
+					{"boss", 0.543, 0.534, 4274, L["Fenrus the Devourer"], 25, 2352, 1},
+				},
+				[314] = {
+					{"level", 0.437, 0.743, 315, true},
+					{"level", 0.490, 0.780, 313},
+				},
+				[315] = {
+					{"level", 0.420, 0.842, 314},
+					{"boss", 0.560, 0.624, 3927, L["Wolf Master Nandos"], 25, 11179, 1},
+					{"boss", 0.639, 0.200, 4275, L["Archmage Arugal"], 26, 2353, 1},
+				},
+				[225] = {
+					{"entrance", 0.500, 0.815},
+					{"boss", 0.440, 0.446, 1696, L["Targorr the Dread"], 24, 517, 1},
+					{"boss", 0.691, 0.300, 1666, L["Kam Deepfury"], 27, 825, 1},
+					{"boss", 0.783, 0.454, 1717, L["Hamhock"], 28, 3250, 1},
+					{"boss", 0.745, 0.562, 1716, L["Bazil Thredd"], 29, 1621, 1},
+					{"boss", 0.217, 0.261, 1663, L["Dextren Ward"], 26, 2149, 1},
+					{"boss", 0.500, 0.210, 1720, L["Bruegal Ironknuckle"], 26, 2142, 2},
+				},
+				[221] = {
+					{"entrance", 0.453, 0.108},
+					{"level", 0.621, 0.741, 222},
+					{"boss", 0.329, 0.602, 4887, L["Ghamoo-ra"], 25, 5027, 1},
+					{"boss", 0.113, 0.394, 4831, L["Lady Sarevess"], 25, 4979, 1},
+					{"boss", 0.543, 0.567, 6243, L["Gelihast"], 26, 1773, 1},
+					{"boss", 0.614, 0.625, 12902, L["Lorgus Jett"], 26, 12822, 1},
+				},
+				[222] = {
+					{"level", 0.477, 0.707, 223},
+					{"level", 0.350, 0.290, 221},
+					{"boss", 0.527, 0.817, 4832, L["Twilight Lord Kelris"], 27, 4939, 1},
+					{"boss", 0.858, 0.862, 4829, L["Aku'mai"], 28, 2837, 1},
+				},
+				[223] = {
+					{"level", 0.300, 0.612, 222, true},
+					{"boss", 0.588, 0.302, 4830, L["Old Serra'kis"], 26, 1816, 1},
+					{"boss", 0.234, 0.498, 12876, L["Baron Aquanis"], 28, 110, 1},
+				},
+				[226] = {
+					{"entrance", 0.644, 0.275},
+					{"level", 0.345, 0.640, 227},
+					{"level", 0.470, 0.870, 227},
+					{"level", 0.551, 0.440, 227},
+					{"boss", 0.774, 0.664, 7361, L["Grubbis"], 32, 6533, 1},
+				},
+				[227] = {
+					{"level", 0.245, 0.580, 228},
+					{"level", 0.430, 0.830, 226, true},
+					{"level", 0.640, 0.580, 226, true},
+					{"boss", 0.758, 0.462, 7079, L["Viscous Fallout"], 30, 5497, 1},
+				},
+				[228] = {
+					{"entrance", 0.870, 0.480},
+					{"level", 0.488, 0.710, 229},
+					{"level", 0.273, 0.308, 229},
+					{"level", 0.445, 0.430, 227, true},
+					{"boss", 0.432, 0.876, 6229, L["Crowd Pummeler 9-60"], 32, 6774, 1},
+				},
+				[229] = {
+					{"level", 0.481, 0.540, 228, true},
+					{"level", 0.710, 0.773, 228, true},
+					{"boss", 0.655, 0.835, 6235, L["Electrocutioner 6000"], 32, 6915, 1},
+					{"boss", 0.295, 0.540, 6228, L["Dark Iron Ambassador"], 41, 6669, 2},
+					{"boss", 0.313, 0.293, 7800, L["Mekgineer Thermaplugg"], 34, 6980, 1},
+				},
+				[301] = {
+					{"entrance", 0.715, 0.837},
+					{"boss", 0.806, 0.514, 6168, L["Roogug"], 28, 6110, 1},
+					{"boss", 0.874, 0.412, 4424, L["Aggem Thorncurse <Death's Head Prophet>"], 30, 6097, 1},
+					{"boss", 0.573, 0.306, 4428, L["Death Speaker Jargba <Death's Head Captain>"], 30, 4644, 1},
+					{"boss", 0.218, 0.306, 4420, L["Overlord Ramtusk"], 32, 4652, 1},
+					{"boss", 0.112, 0.724, 4422, L["Agathelos the Raging"], 33, 2450, 1},
+					{"boss", 0.110, 0.303, 4425, L["Blind Hunter"], 32, 4735, 2},
+					{"boss", 0.079, 0.679, 4421, L["Charlga Razorflank <The Crone>"], 33, 4642, 1},
+					{"boss", 0.494, 0.471, 4842, L["Earthcaller Halmgar"], 32, 6102, 2},
+				},
+				[302] = {
+					{"entrance", 0.840, 0.830},
+					{"boss", 0.721, 0.593, 3983, L["Interrogator Vishas"], 32, 2044, 1},
+					{"boss", 0.243, 0.559, 4543, L["Bloodmage Thalnos"], 34, 11396, 1},
+					{"boss", 0.325, 0.660, 6490, L["Azshir the Sleepless"], 33, 5534, 2},
+					{"boss", 0.400, 0.460, 6488, L["Fallen Champion"], 33, 5230, 2},
+					{"boss", 0.400, 0.660, 6489, L["Ironspine"], 33, 5231, 2},
+				},
+				[303] = {
+					{"entrance", 0.130, 0.248},
+					{"boss", 0.294, 0.841, 3974, L["Houndmaster Loksey"], 34, 2040, 1},
+					{"boss", 0.834, 0.742, 6487, L["Arcanist Doan"], 37, 5266, 1},
+				},
+				[304] = {
+					{"entrance", 0.610, 0.955},
+					{"boss", 0.786, 0.106, 3975, L["Herod <The Scarlet Champion>"], 40, 2041, 1},
+				},
+				[305] = {
+					{"entrance", 0.623, 0.920},
+					{"boss", 0.490, 0.275, 3976, L["Scarlet Commander Mograine"], 42, 2042, 1},
+					{"boss", 0.492, 0.164, 3977, L["High Inquisitor Whitemane"], 42, 2043, 1},
+					{"boss", 0.554, 0.248, 4542, L["High Inquisitor Fairbanks"], 40, 2605, 1},
+				},
+				[300] = {
+					{"entrance", 0.237, 0.190},
+					{"boss", 0.470, 0.200, 7356, L["Plaguemaw the Rotting"], 40, 6124, 1},
+					{"boss", 0.857, 0.465, 7357, L["Mordresh Fire Eye"], 39, 8055, 1},
+					{"boss", 0.346, 0.664, 8567, L["Glutton"], 40, 7864, 1},
+					{"boss", 0.529, 0.672, 7354, L["Ragglesnout"], 40, 11382, 1},
+					{"boss", 0.444, 0.601, 7358, L["Amnennar the Coldbringer"], 41, 7971, 1},
+					{"boss", 0.590, 0.339, 7355, L["Tuten'kash"], 40, 7845, 1},
+				},
+				[230] = {
+					{"entrance", 0.285, 0.692},
+					{"level", 0.485, 0.210, 231},
+					{"entrance", 0.680, 0.725},
+					{"boss", 0.532, 0.722, 6910, L["Revelosh"], 40, 5945, 1},
+					{"boss", 0.585, 0.918, 6906, L["Baelog / Eric \"The Swift\" / Olaf"], 41, 5710, 1},
+					{"boss", 0.475, 0.439, 7206, L["Ancient Stone Keeper"], 44, 10798, 1},
+					{"boss", 0.266, 0.323, 7291, L["Galgann Firehammer"], 45, 6059, 1},
+					{"boss", 0.220, 0.257, 4854, L["Grimlok <Stonevault Chieftain>"], 45, 11165, 1},
+					{"boss", 0.370, 0.736, 7228, L["Ironaya"], 40, 6089, 1},
+				},
+				[231] = {
+					{"level", 0.645, 0.410, 230, true},
+					{"boss", 0.552, 0.504, 2748, L["Archaedas <Ancient Stone Watcher>"], 47, 5988, 1},
+				},
+				[219] = {
+					{"entrance", 0.566, 0.901},
+					{"boss", 0.690, 0.256, 8127, L["Antu'sul <Overseer of Sul>"], 48, 7353, 1},
+					{"boss", 0.527, 0.261, 7272, L["Theka the Martyr"], 46, 6696, 1},
+					{"boss", 0.442, 0.173, 7271, L["Witch Doctor Zum'rah"], 46, 6434, 1},
+					{"boss", 0.255, 0.130, 7604, L["Sergeant Bly"], 45, 6433, 1},
+					{"boss", 0.313, 0.408, 7795, L["Hydromancer Velratha"], 46, 6685, 1},
+					{"boss", 0.423, 0.333, 7797, L["Ruuzlu"], 46, 6687, 1},
+					{"boss", 0.423, 0.333, 7267, L["Chief Ukorz Sandscalp"], 48, 6439, 1},
+					{"boss", 0.538, 0.373, 10082, L["Zerillis"], 45, 9293, 2},
+					{"boss", 0.463, 0.578, 10080, L["Sandarr Dunereaver"], 45, 9291, 2},
+					{"boss", 0.313, 0.408, 10081, L["Dustwraith"], 45, 9292, 2},
+					{"boss", 0.235, 0.183, 7796, L["Nekrum Gutchewer"], 46, 6690, 1},
+					{"boss", 0.334, 0.170, 7275, L["Shadowpriest Sezz'ziz"], 47, 6441, 1},
+					{"boss", 0.313, 0.408, 7273, L["Gahz'rilla"], 46, 7271, 1},
+				},
+				[280] = {
+					{"entrance", 0.768, 0.657},
+					{"level", 0.145, 0.570, 281},
+					{"entrance", 0.622, 0.281},
+					{"boss", 0.359, 0.098, 13282, L["Noxxion"], 48, 11172, 1},
+					{"boss", 0.163, 0.338, 12258, L["Razorlash"], 48, 12389, 1},
+					{"boss", 0.378, 0.707, 12236, L["Lord Vyletongue"], 47, 12334, 1},
+					{"boss", 0.246, 0.874, 12237, L["Meshlok the Harvester"], 48, 9014, 2},
+				},
+				[281] = {
+					{"level", 0.295, 0.040, 280, true},
+					{"boss", 0.245, 0.135, 12225, L["Celebras the Cursed"], 49, 12350, 1},
+					{"boss", 0.412, 0.487, 12203, L["Landslide"], 50, 12293, 1},
+					{"boss", 0.484, 0.686, 13601, L["Tinkerer Gizlock"], 50, 7125, 1},
+					{"boss", 0.333, 0.771, 13596, L["Rotgrip"], 50, 13589, 1},
+					{"boss", 0.259, 0.784, 12201, L["Princess Theradras"], 51, 12292, 1},
+				},
+				[220] = {
+					{"entrance", 0.500, 0.110},
+					{"boss", 0.525, 0.450, 5721, L["Dreamscythe"], 53, 7553, 1},
+					{"boss", 0.470, 0.450, 5720, L["Weaver"], 51, 6375, 1},
+					{"boss", 0.451, 0.585, 5713, L["Gasher"], 51, 6698, 1},
+					{"boss", 0.451, 0.585, 5714, L["Loro"], 51, 6700, 1},
+					{"boss", 0.451, 0.585, 5715, L["Hukku"], 52, 6702, 1},
+					{"boss", 0.451, 0.585, 5712, L["Zolo"], 51, 6699, 1},
+					{"boss", 0.451, 0.585, 5717, L["Mijan"], 52, 6707, 1},
+					{"boss", 0.451, 0.585, 5716, L["Zul'Lor"], 52, 6701, 1},
+					{"boss", 0.760, 0.370, 5710, L["Jammal'an the Prophet"], 54, 6708, 1},
+					{"boss", 0.767, 0.361, 5711, L["Ogom the Wretched"], 53, 6709, 1},
+					{"boss", 0.499, 0.866, 5719, L["Morphaz"], 52, 7975, 1},
+					{"boss", 0.448, 0.851, 5722, L["Hazzas"], 53, 9584, 1},
+					{"boss", 0.665, 0.874, 5709, L["Shade of Eranikus"], 55, 7806, 1},
+					{"boss", 0.501, 0.358, 8580, L["Atal'alarion <Guardian of the Idol>"], 50, 7873, 1},
+					{"boss", 0.241, 0.453, 8443, L["Avatar of Hakkar"], 49, 8053, 1},
+				},
+				[242] = {
+					{"entrance", 0.333, 0.791},
+					{"level", 0.655, 0.294, 243, true},
+					{"boss", 0.494, 0.567, 9025, L["Lord Roccor"], 51, 5781, 1},
+					{"boss", 0.476, 0.920, 9018, L["High Interrogator Gerstahn <Twilight's Hammer Interrogator>"], 52, 8761, 1},
+					{"boss", 0.495, 0.617, 9319, L["Houndmaster Grebmar"], 52, 9212, 1},
+					{"boss", 0.256, 0.526, 9016, L["Bael'Gar"], 54, 12162, 1},
+					{"boss", 0.565, 0.308, 9017, L["Lord Incendius"], 55, 1204, 1},
+					{"boss", 0.634, 0.206, 9056, L["Fineous Darkvire <Chief Architect>"], 54, 8704, 1},
+					{"boss", 0.560, 0.667, 9024, L["Pyromancer Loregrain"], 52, 8762, 1},
+					{"boss", 0.356, 0.570, 9033, L["General Angerforge"], 57, 8756, 1},
+					{"boss", 0.500, 0.635, 9031, L["Anub'shiah / Eviscerator / Gorosh the Dervish / Grizzle / Hedrum the Creeper / Ok'thor the Breaker"], 56, 3004, 1},
+				},
+				[243] = {
+					{"level", 0.595, 0.547, 242},
+					{"boss", 0.595, 0.655, 9041, L["Warder Stilgiss / Verek"], 56, 9089, 1},
+					{"boss", 0.364, 0.646, 8983, L["Golem Lord Argelmach"], 57, 8759, 1},
+					{"boss", 0.498, 0.632, 9502, L["Phalanx"], 55, 8177, 1},
+					{"boss", 0.498, 0.632, 9543, L["Ribbly Screwspigot"], 53, 8667, 1},
+					{"boss", 0.498, 0.632, 9499, L["Plugger Spazzring"], 55, 8652, 1},
+					{"boss", 0.539, 0.483, 9156, L["Ambassador Flamelash"], 57, 8329, 1},
+					{"boss", 0.802, 0.113, 9938, L["Magmus"], 57, 12162, 1},
+					{"boss", 0.535, 0.243, 9039, L["Doom'rel / Dope'rel / Hate'rel / Seeth'rel / Vile'rel / Gloom'rel / Anger'rel"], 57, 8687, 1},
+					{"boss", 0.916, 0.115, 9019, L["Emperor Dagran Thaurissan"], 59, 8807, 1},
+					{"boss", 0.916, 0.115, 8929, L["Princess Moira Bronzebeard <Princess of Ironforge>"], 58, 8705, 1},
+					{"boss", 0.498, 0.632, 9537, L["Hurley Blackbreath"], 55, 8658, 1},
+					{"boss", 0.505, 0.354, 8923, L["Panzor the Invincible"], 57, 8270, 2},
+				},
+				[232] = {
+					{"entrance", 0.264, 0.226, "raid"},
+					{"boss", 0.658, 0.376, 12118, L["Lucifron"], 9999, 13031, 3},
+					{"boss", 0.689, 0.236, 11982, L["Magmadar"], 9999, 10193, 3},
+					{"boss", 0.333, 0.486, 12259, L["Gehennas"], 9999, 13030, 3},
+					{"boss", 0.309, 0.697, 12057, L["Garr"], 9999, 12110, 3},
+					{"boss", 0.551, 0.845, 12264, L["Shazzrah"], 9999, 13032, 3},
+					{"boss", 0.523, 0.775, 12056, L["Baron Geddon"], 9999, 12129, 3},
+					{"boss", 0.827, 0.827, 12098, L["Sulfuron Harbinger"], 9999, 13030, 3},
+					{"boss", 0.685, 0.583, 11988, L["Golemagg the Incinerator"], 9999, 11986, 3},
+					{"boss", 0.839, 0.656, 12018, L["Majordomo Executus"], 9999, 12029, 3},
+					{"boss", 0.558, 0.538, 11502, L["Ragnaros"], 9999, 11121, 3},
+				},
+				[287] = {
+					{"entrance", 0.527, 0.836, "raid"},
+					{"level", 0.435, 0.300, 288, true},
+					{"level", 0.360, 0.130, 288, true},
+					{"boss", 0.417, 0.601, 12435, L["Razorgore the Untamed"], 999, 10115, 3},
+					{"boss", 0.331, 0.275, 13020, L["Vaelastrasz the Corrupt"], 999, 13992, 3},
+				},
+				[288] = {
+					{"level", 0.525, 0.320, 287},
+					{"level", 0.463, 0.198, 287},
+					{"boss", 0.560, 0.780, 12017, L["Broodlord Lashlayer"], 999, 14308, 3},
+				},
+				[239] = {
+					{"entrance", 0.070, 0.392},
+					{"entrance", 0.164, 0.853},
+					{"entrance", 0.954, 0.508},
+					{"level", 0.505, 0.630, 240},
+					{"boss", 0.122, 0.310, 14354, L["Pusillin"], 57, 7552, 1},
+					{"boss", 0.439, 0.474, 11490, L["Zevrim Thornhoof"], 57, 11335, 1},
+				},
+				[240] = {
+					{"entrance", 0.281, 0.555},
+					{"level", 0.633, 0.844, 239, true},
+					{"boss", 0.564, 0.284, 11492, L["Alzzin the Wildshaper"], 58, 14416, 1},
+					{"boss", 0.536, 0.710, 13280, L["Hydrospawn"], 57, 5489, 1},
+					{"boss", 0.576, 0.737, 14327, L["Lethtendris"], 57, 14378, 1},
+				},
+				[236] = {
+					{"entrance", 0.935, 0.721},
+					{"entrance", 0.936, 0.510},
+					{"level", 0.270, 0.190, 237},
+					{"level", 0.304, 0.430, 238},
+					{"boss", 0.332, 0.530, 11489, L["Tendris Warpwood"], 60, 14383, 1},
+					{"boss", 0.208, 0.779, 11488, L["Illyanna Ravenoak"], 60, 11270, 1},
+				},
+				[237] = {
+					{"level", 0.415, 0.120, 236},
+					{"boss", 0.338, 0.444, 11487, L["Magister Kalendris"], 60, 14384, 1},
+					{"boss", 0.322, 0.143, 11467, L["Tsu'zee"], 59, 11250, 1},
+				},
+				[238] = {
+					{"level", 0.745, 0.400, 236, true},
+					{"boss", 0.349, 0.571, 11496, L["Immol'thar"], 61, 14173, 1},
+					{"boss", 0.620, 0.230, 11486, L["Prince Tortheldrin"], 61, 11256, 1},
+				},
+				[235] = {
+					{"entrance", 0.718, 0.926},
+					{"boss", 0.694, 0.754, 14326, L["Guard Mol'dar"], 59, 11561, 1},
+					{"boss", 0.609, 0.681, 14322, L["Stomper Kreeg <The Drunk>"], 59, 11545, 1},
+					{"boss", 0.496, 0.778, 14321, L["Guard Fengus"], 59, 11561, 1},
+					{"boss", 0.264, 0.570, 14323, L["Guard Slip'kik"], 59, 11561, 1},
+					{"boss", 0.319, 0.496, 14325, L["Captain Kromcrush"], 61, 11564, 1},
+					{"boss", 0.318, 0.263, 14324, L["Cho'Rush the Observer"], 60, 11537, 1},
+					{"boss", 0.318, 0.263, 11501, L["King Gordok"], 62, 11583, 1},
+				},
+				[306] = {
+					{"entrance", 0.390, 0.652},
+				},
+				[309] = {
+					{"boss", 0.406, 0.884, 10508, L["Ras Frostwhisper"], 62, 7919, 1},
+					{"boss", 0.674, 0.481, 10507, L["The Ravenian"], 60, 10433, 1},
+					{"boss", 0.792, 0.296, 10504, L["Lord Alexei Barov"], 60, 11072, 1},
+					{"boss", 0.672, 0.149, 10502, L["Lady Illucia Barov"], 60, 11835, 1},
+				},
+				[317] = {
+					{"entrance", 0.640, 0.880},
+					{"boss", 0.392, 0.287, 10808, L["Timmy the Cruel"], 58, 571, 2},
+					{"entrance", 0.686, 0.880},
+					{"level", 0.900, 0.330, 318, true},
+					{"boss", 0.815, 0.438, 10393, L["Skul"], 58, 2606, 2},
+					{"boss", 0.847, 0.454, 10558, L["Hearthsinger Forresten"], 57, 10482, 2},
+					{"boss", 0.735, 0.200, 10516, L["The Unforgiven"], 57, 10771, 1},
+					{"boss", 0.298, 0.405, 11032, L["Malor the Zealous"], 60, 10458, 1},
+					{"boss", 0.041, 0.507, 10997, L["Cannon Master Willey"], 60, 10674, 1},
+					{"boss", 0.272, 0.746, 10811, L["Archivist Galford"], 60, 10544, 1},
+					{"boss", 0.204, 0.817, 10813, L["Balnazzar"], 62, 10691, 1},
+				},
+				[318] = {
+					{"level", 0.355, 0.390, 317},
+					{"level", 0.570, 0.770, 317},
+					{"boss", 0.649, 0.489, 10809, L["Stonespine"], 60, 7856, 2},
+					{"boss", 0.745, 0.460, 10436, L["Baroness Anastari"], 59, 10698, 1},
+					{"boss", 0.571, 0.459, 10437, L["Nerub'enkan"], 60, 9793, 1},
+					{"boss", 0.676, 0.213, 10438, L["Maleki the Pallid"], 61, 10546, 1},
+					{"boss", 0.644, 0.752, 10435, L["Magistrate Barthilas"], 58, 10433, 1},
+					{"boss", 0.391, 0.201, 10440, L["Baron Rivendare"], 62, 10729, 1},
+					{"boss", 0.452, 0.197, 10439, L["Ramstein the Gorger"], 61, 12818, 1},
+				},
+				[233] = {
+					{"entrance", 0.290, 0.490, "raid"},
+					{"boss", 0.390, 0.730, 14517, L["High Priestess Jeklik"], 9999, 15219, 3},
+					{"boss", 0.508, 0.541, 14507, L["High Priest Venoxis"], 9999, 15217, 3},
+					{"boss", 0.470, 0.770, 14510, L["High Priestess Mar'li"], 9999, 15220, 3},
+					{"boss", 0.602, 0.797, 11382, L["Bloodlord Mandokir"], 9999, 11288, 3},
+					{"boss", 0.597, 0.460, 15082, L["Gri'lek / Hazza'rah / Renataki / Wushoolay"], 9999, 8390, 3},
+					{"boss", 0.535, 0.320, 15114, L["Gahz'ranka"], 9999, 15288, 3},
+					{"boss", 0.620, 0.340, 14509, L["High Priest Thekal"], 9999, 15216, 3},
+					{"boss", 0.476, 0.204, 14515, L["High Priestess Arlokk"], 9999, 15218, 3},
+					{"boss", 0.316, 0.245, 11380, L["Jin'do the Hexxer"], 9999, 11311, 3},
+					{"boss", 0.499, 0.394, 14834, L["Hakkar"], 9999, 15295, 3},
+				},
+				[248] = {
+					{"entrance", 0.341, 0.205, "raid"},
+					{"boss", 0.673, 0.306, 10184, L["Onyxia"], 9999, 8570, 3},
+				},
+				[250] = {
+					{"boss", 0.523, 0.546, 9237, L["War Master Voone"], 59, 9733, 1},
+				},
+				[251] = {
+					{"boss", 0.554, 0.692, 9236, L["Shadow Hunter Vosh'gajin"], 58, 9732, 1},
+					{"boss", 0.618, 0.739, 10596, L["Mother Smolderweb"], 59, 9929, 1},
+					{"boss", 0.660, 0.700, 10376, L["Crystal Fang"], 60, 9755, 2},
+				},
+				[252] = {
+					{"boss", 0.386, 0.586, 9196, L["Highlord Omokk"], 59, 11565, 1},
+				},
+				[253] = {
+					{"boss", 0.454, 0.550, 10584, L["Urok Doomhowl"], 60, 11583, 1},
+				},
+				[254] = {
+					{"boss", 0.380, 0.835, 10220, L["Halycon"], 59, 9567, 1},
+					{"boss", 0.420, 0.880, 10268, L["Gizrul the Slavener"], 60, 9564, 1},
+					{"boss", 0.540, 0.844, 9736, L["Quartermaster Zigris"], 59, 9738, 1},
+				},
+				[255] = {
+					{"boss", 0.575, 0.604, 9568, L["Overlord Wyrmthalak"], 60, 8711, 1},
+				},
+				[289] = {
+					{"boss", 0.501, 0.616, 11983, L["Firemaw"], 999, 6377, 3},
+					{"boss", 0.462, 0.427, 14601, L["Ebonroc"], 999, 6377, 3},
+					{"boss", 0.348, 0.209, 11981, L["Flamegor"], 999, 6377, 3},
+				},
+				[290] = {
+					{"boss", 0.354, 0.372, 14020, L["Chromaggus"], 999, 14367, 3},
+					{"boss", 0.702, 0.724, 11583, L["Nefarian"], 999, 11380, 3},
+				},
+				[247] = {
+					{"boss", 0.559, 0.356, 15348, L["Kurinnaxx"], 999, 15742, 3},
+					{"boss", 0.584, 0.492, 15341, L["General Rajaxx"], 999, 15376, 3},
+					{"boss", 0.699, 0.619, 15340, L["Moam"], 999, 15392, 3},
+					{"boss", 0.616, 0.899, 15370, L["Buru the Gorger"], 999, 15654, 3},
+					{"boss", 0.329, 0.363, 15369, L["Ayamiss the Hunter"], 999, 15431, 3},
+					{"boss", 0.432, 0.691, 15339, L["Ossirian the Unscarred"], 999, 15432, 3},
+				},
+				[319] = {
+					{"boss", 0.621, 0.224, 15263, L["The Prophet Skeram"], 999, 15345, 3},
+					{"boss", 0.721, 0.177, 15543, L["Bug Trio"], 999, 15657, 3},
+					{"boss", 0.445, 0.333, 15516, L["Battleguard Sartura"], 999, 15583, 3},
+					{"boss", 0.434, 0.498, 15510, L["Fankriss the Unyielding"], 999, 15743, 3},
+					{"boss", 0.284, 0.493, 15299, L["Viscidus"], 999, 15686, 3},
+					{"boss", 0.303, 0.812, 15509, L["Princess Huhuran"], 999, 15739, 3},
+					{"boss", 0.605, 0.697, 15517, L["Ouro"], 999, 15509, 3},
+				},
+				[320] = {
+					{"boss", 0.459, 0.513, 15275, L["Twin Emperors"], 999, 15761, 3},
+				},
+				[321] = {
+					{"boss", 0.569, 0.625, 15727, L["C'Thun"], 999, 15787, 3},
+				},
+				[162] = {
+					{"boss", 0.616, 0.523, 16028, L["Patchwerk"], 999, 16174, 3},
+					{"boss", 0.459, 0.439, 15931, L["Grobbulus"], 999, 16035, 3},
+					{"boss", 0.539, 0.417, 15932, L["Gluth"], 999, 16064, 3},
+					{"boss", 0.265, 0.146, 15928, L["Thaddius"], 999, 16137, 3},
+				},
+				[163] = {
+					{"boss", 0.306, 0.466, 15956, L["Anub'Rekhan"], 999, 15931, 3},
+					{"boss", 0.440, 0.359, 15953, L["Grand Widow Faerlina"], 999, 15940, 3},
+					{"boss", 0.685, 0.152, 15952, L["Maexxna"], 999, 15928, 3},
+				},
+				[164] = {
+					{"boss", 0.674, 0.595, 16061, L["Instructor Razuvious"], 999, 16582, 3},
+					{"boss", 0.427, 0.454, 16060, L["Gothik the Harvester"], 999, 16279, 3},
+					{"boss", 0.302, 0.766, 16064, L["The Four Horsemen"], 999, 16155, 3},
+				},
+				[165] = {
+					{"boss", 0.347, 0.562, 15954, L["Noth the Plaguebringer"], 999, 16590, 3},
+					{"boss", 0.498, 0.454, 15936, L["Heigan the Unclean"], 999, 16309, 3},
+					{"boss", 0.757, 0.282, 16011, L["Loatheb"], 999, 16110, 3},
+				},
+				[167] = {
+					{"boss", 0.565, 0.671, 15989, L["Sapphiron"], 999, 16033, 3},
+					{"boss", 0.366, 0.224, 15990, L["Kel'Thuzad"], 999, 15945, 3},
+				},
+				[307] = {
+					{"boss", 0.496, 0.101, 10506, L["Kirtonos the Herald"], 60, 7534, 1},
+					{"boss", 0.620, 0.700, 10503, L["Jandice Barov"], 61, 11073, 1},
+				},
+				["2959"] = {
+					{"level", 0.616, 0.542, "2959_2"},
+					{"level", 0.513, 0.684, "2959_2"},
+					{"level", 0.531, 0.365, "2959_2"},
+					{"boss", 0.524, 0.840, 245999, L["Arcane Anomaly"], 30, 129891, 1},
+					{"boss", 0.565, 0.230, 246020, L["Shade of the Archmage"], 33, 130061, 1},
+					{"boss", 0.517, 0.551, 246003, L["Fel Ancient"], 32, 129894, 1},
+					{"boss", 0.613, 0.424, 246017, L["Unstable Sentinel"], 31, 129954, 1},
+					{"boss", 0.668, 0.516, 246016, L["Arcanic Enigma"], 30, 129900, 1},
+					{"boss", 0.418, 0.729, 246008, L["Mana Devourer"], 31, 129895, 1},
+				},
+				["2959_2"] = {
+					{"entrance", 0.184, 0.840},
+					{"level", 0.765, 0.570, "2959", true},
+					{"boss", 0.545, 0.510, 247126, L["Atrexis the Grave Knight"], 29, 145787, 1},
+					{"boss", 0.680, 0.180, 247032, L["Lyn the Ignored"], 31, 130235, 2},
+				},
+				["2998"] = {
+					{"entrance", 0.889, 0.258},
+					{"boss", 0.550, 0.360, 260322, L["Saltspine"], nil, 144209, 1},
+					{"boss", 0.325, 0.700, 260326, L["Relic Guardian"], nil, 144224, 1},
+					{"boss", 0.305, 0.480, 260325, L["Shadetooth"], nil, 144210, 1},
+					{"boss", 0.770, 0.220, 260808, L["Highland Horror"], 28, 9010, 1},
+				},
+				["2999"] = {
+					{"entrance", 0.612, 0.216},
+					{"boss", 0.704, 0.389, 250483, L["Witherfang"], 17, 144189, 1},
+					{"boss", 0.606, 0.696, 250660, L["The Baron"], 17, 144188, 1},
+					{"boss", 0.382, 0.670, 256035, L["Viktor the Vile"], 19, 139455, 1},
+					{"boss", 0.406, 0.534, 250631, L["The Abandoned"], 18, 138667, 1},
+					{"boss", 0.424, 0.385, 256097, L["Bjork"], 19, 144170, 1},
+					{"boss", 0.463, 0.623, 250657, L["Rath'mael"], 20, 144175, 1},
+					{"boss", 0.433, 0.269, 255699, L["Lordaeron Captain"], 19, 139050, 2},
+				},
+				["3065"] = {
+					{"entrance", 0.511, 0.948},
+					{"boss", 0.509, 0.666, 261306, L["Faldrim Anvilmar"], 16, 142826, 1},
+					{"boss", 0.717, 0.465, 261316, L["Magmatus"], 16, 1070, 1},
+					{"boss", 0.509, 0.516, 261311, L["Plunder"], 16, 142840, 1},
+					{"boss", 0.510, 0.167, 261319, L["Durgen Dirgehammer"], 16, 142837, 1},
+				},
+				[308] = {
+					{"boss", 0.316, 0.643, 11622, L["Rattlegore"], 61, 12073, 1},
+					{"boss", 0.511, 0.143, 10433, L["Marduk Blackpool"], 58, 10248, 1},
+					{"boss", 0.571, 0.143, 10432, L["Vectus"], 60, 2606, 1},
+					{"boss", 0.723, 0.219, 10901, L["Lorekeeper Polkelt"], 60, 11492, 1},
+					{"boss", 0.726, 0.701, 10505, L["Instructor Malicia"], 60, 11069, 1},
+					{"boss", 0.888, 0.456, 11261, L["Doctor Theolen Krastinov"], 60, 10901, 1},
+					{"boss", 0.680, 0.420, 1853, L["Darkmaster Gandling"], 61, 11070, 1},
+				},
+			}
+
+			-- Settings
+			local artPath = "Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps_Dungeon_Scholomance"
+			local pinPath = "Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps_Dungeon_Pins"
+			local bundlePath = "Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps_Dungeon_"
+			local maxZoom, wheelStep = 4, 1.25
+			local bossSize, rareSize, pinSize = 34, 24, 26
+			local ringScale = 1.55
+			local skullLevels = 10 -- Show skull if boss is this many levels above the player
+
+			-- Boss pin styles (ring color and dragon row in the pins texture)
+			local pinStyles = {
+				[0] = {0.55, 0.5, 0.4},
+				[1] = {0.95, 0.75, 0.25, 0},
+				[2] = {0.85, 0.87, 0.95, 1},
+				[3] = {0.95, 0.75, 0.25, 0},
+				[4] = {0.85, 0.87, 0.95, 2},
+			}
+
+			-- Function to check for secret values (frame sizes and scales can be secret in combat)
+			local function IsSecret(a, b, c)
+				if not issecretvalue then return false end
+				return issecretvalue(a) or issecretvalue(b) or issecretvalue(c)
+			end
+
+			-- Private tooltip so we never write to the shared GameTooltip (avoids taint)
+			local tip = CreateFrame("GameTooltip", "LeaMapsDungeonTooltip", UIParent, "GameTooltipTemplate")
+			tip:SetFrameStrata("TOOLTIP")
+
+			-- Use atlas if the client has it, otherwise use the fallback texture
+			local function SetIcon(texture, atlas, fallback)
+				if C_Texture and C_Texture.GetAtlasInfo and C_Texture.GetAtlasInfo(atlas) then
+					texture:SetAtlas(atlas)
+				else
+					texture:SetTexture(fallback)
+					texture:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+				end
+			end
+
+			-- State
+			local container = WorldMapFrame.ScrollContainer
+			local levels, levelIndex, instanceID, shownMapID
+			local chosenLevel = {} -- Level picked by the user while the map is open
+			local hiddenFor -- Instance hidden with right-click until the map is opened again
+			local view = {zoom = 1, x = 0, y = 0, baseW = 0, baseH = 0}
+			local pins, pinRows = {}, nil
+			local Refresh, SelectLevel, HideOverlay
+			local previewID, previewIndex, previewMapID -- Instance shown with /ltm dun or a dungeon icon click (and the world map it was opened on)
+
+			-- Create overlay (covers the map canvas)
+			local overlay = CreateFrame("Frame", nil, container)
+			overlay:SetAllPoints()
+			overlay:EnableMouse(true)
+			overlay:EnableMouseWheel(true)
+			if overlay.SetClipsChildren then overlay:SetClipsChildren(true) end
+			overlay:Hide()
+
+			overlay.bg = overlay:CreateTexture(nil, "BACKGROUND")
+			overlay.bg:SetAllPoints()
+			overlay.bg:SetColorTexture(0, 0, 0, 1)
+
+			-- Create canvas (holds the map art and pins, sized to the art)
+			local canvas = CreateFrame("Frame", nil, overlay)
+			canvas.art = canvas:CreateTexture(nil, "ARTWORK")
+			canvas.art:SetAllPoints()
+
+			-- Create game map tiles (game maps are 4x3 tiles of 256 pixels showing 1002x668 pixels)
+			local tiles = {}
+			for i = 1, 12 do
+				local tile = canvas:CreateTexture(nil, "ARTWORK")
+				local col, row = (i - 1) % 4, math.floor((i - 1) / 4)
+				tile.col, tile.row = col, row
+				tile:SetTexCoord(0, col == 3 and 234 / 256 or 1, 0, row == 2 and 156 / 256 or 1)
+				tile:Hide()
+				tiles[i] = tile
+			end
+			local usingTiles = false
+			local nativeMissing = {} -- Game map textures that are not in the client
+
+			-- Pop-up list for the level menu and dungeon icons with several dungeons (see LeaMapsLC:CreatePopupList, the
+			-- game's menus are not used over the map as they spread taint into the map's own code)
+			local popup = LeaMapsLC:CreatePopupList(WorldMapFrame)
+			mapTheme.dungeonPopup = popup
+
+			-- Create level menu (a button of our own that opens the pop-up list)
+			local levelMenu = CreateFrame("Button", nil, overlay, "BackdropTemplate")
+			levelMenu:SetSize(230, 24)
+			levelMenu:SetPoint("TOPLEFT", overlay, "TOPLEFT", 8, -8)
+			levelMenu:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1})
+			levelMenu:SetBackdropColor(0.05, 0.05, 0.05, 0.9)
+			levelMenu:SetBackdropBorderColor(0.3, 0.3, 0.3, 1)
+			levelMenu.Hover = levelMenu:CreateTexture(nil, "ARTWORK")
+			levelMenu.Hover:SetPoint("TOPLEFT", 1, -1)
+			levelMenu.Hover:SetPoint("BOTTOMRIGHT", -1, 1)
+			levelMenu.Hover:SetColorTexture(1, 1, 1, 0.12)
+			levelMenu.Hover:Hide()
+			levelMenu.Arrow = levelMenu:CreateTexture(nil, "OVERLAY")
+			if C_Texture and C_Texture.GetAtlasInfo and C_Texture.GetAtlasInfo("common-dropdown-a-button") then
+				levelMenu.Arrow:SetAtlas("common-dropdown-a-button")
+			else
+				levelMenu.Arrow:SetTexture("Interface\\ChatFrame\\ChatFrameExpandArrow")
+				levelMenu.Arrow:SetRotation(-math.pi / 2)
+			end
+			levelMenu.Arrow:SetSize(18, 18)
+			levelMenu.Arrow:SetPoint("RIGHT", -3, 0)
+			levelMenu.Text = levelMenu:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+			levelMenu.Text:SetPoint("LEFT", 8, 0)
+			levelMenu.Text:SetPoint("RIGHT", levelMenu.Arrow, "LEFT", -2, 0)
+			levelMenu.Text:SetJustifyH("LEFT")
+			levelMenu.Text:SetWordWrap(false)
+			levelMenu:SetScript("OnEnter", function(self) self.Hover:Show() end)
+			levelMenu:SetScript("OnLeave", function(self) self.Hover:Hide() end)
+			mapTheme.dungeonButtons = {levelMenu}
+
+			-- Function to get level name
+			local function GetLevelName(info)
+				if info[2] then return info[2] end
+				local instanceName = instanceID and GetRealZoneText(instanceID)
+				if not instanceName or instanceName == "" then instanceName = GetInstanceInfo() end
+				return instanceName or ""
+			end
+
+			-- Level list entries (rebuilt each time the list opens)
+			local levelEntries = {}
+			local function IsCurrentLevel(entry) return entry.index == levelIndex end
+			local function ChooseLevel(entry) SelectLevel(entry.index, true) end
+
+			levelMenu:SetScript("OnClick", function(self)
+				if not levels then return end
+				wipe(levelEntries)
+				for i, info in ipairs(levels) do
+					levelEntries[i] = {index = i, name = GetLevelName(info)}
+				end
+				popup:Toggle(self, levelEntries, IsCurrentLevel, ChooseLevel, "TOPLEFT", "BOTTOMLEFT", 0, -2)
+			end)
+
+			-- Apply the map theme to the level menu and list (simple map frame only)
+			if ApplyMapTheme then ApplyMapTheme() end
+
+			-- Function to position pins on the canvas
+			local function PlacePins()
+				for i = 1, #pins do
+					local pin = pins[i]
+					if pin:IsShown() then
+						pin:ClearAllPoints()
+						pin:SetPoint("CENTER", canvas, "TOPLEFT", view.baseW * view.zoom * pin.row[2], -view.baseH * view.zoom * pin.row[3])
+					end
+				end
+			end
+
+			-- Function to apply zoom and pan
+			local function ApplyView()
+				local ow, oh = overlay:GetWidth(), overlay:GetHeight()
+				if IsSecret(ow, oh) then return end
+				local w, h = view.baseW * view.zoom, view.baseH * view.zoom
+				local maxX = math.max(0, (w - ow) / 2)
+				local maxY = math.max(0, (h - oh) / 2)
+				view.x = math.min(maxX, math.max(-maxX, view.x))
+				view.y = math.min(maxY, math.max(-maxY, view.y))
+				canvas:SetSize(w, h)
+				canvas:ClearAllPoints()
+				canvas:SetPoint("CENTER", overlay, "CENTER", view.x, view.y)
+				if usingTiles then
+					local tw, th = w * 256 / 1002, h * 256 / 668
+					for i = 1, 12 do
+						local tile = tiles[i]
+						tile:SetSize(tile.col == 3 and w * 234 / 1002 or tw, tile.row == 2 and h * 156 / 668 or th)
+						tile:ClearAllPoints()
+						tile:SetPoint("TOPLEFT", canvas, "TOPLEFT", tile.col * tw, -tile.row * th)
+					end
+				end
+				PlacePins()
+			end
+
+			-- Function to fit the art to the overlay
+			local function Layout()
+				if not levels or not levelIndex then return end
+				local info = levels[levelIndex]
+				local ow, oh = overlay:GetWidth(), overlay:GetHeight()
+				if IsSecret(ow, oh) or not ow or not oh or ow <= 0 or oh <= 0 then return end
+				local ratio = info[3] and 668 / 1002 or info[6] and info[7] / 1024 or 683 / 1024
+				local w, h = ow, ow * ratio
+				if h > oh then h = oh; w = oh / ratio end
+				view.baseW, view.baseH = w, h
+				ApplyView()
+			end
+			overlay:SetScript("OnSizeChanged", Layout)
+
+			-- Function to get cursor position relative to overlay center
+			local function GetCursorOffset()
+				local scale = overlay:GetEffectiveScale()
+				local cx, cy = overlay:GetCenter()
+				if IsSecret(scale, cx, cy) or not cx or not scale or scale <= 0 then return end
+				local x, y = GetCursorPosition()
+				return x / scale - cx, y / scale - cy
+			end
+
+			-- Zoom with mouse wheel (zooms towards the cursor)
+			overlay:SetScript("OnMouseWheel", function(self, delta)
+				local zoom = math.min(maxZoom, math.max(1, view.zoom * wheelStep ^ delta))
+				if zoom == view.zoom then return end
+				local dx, dy = GetCursorOffset()
+				if dx then
+					local factor = zoom / view.zoom
+					view.x = dx - (dx - view.x) * factor
+					view.y = dy - (dy - view.y) * factor
+				end
+				view.zoom = zoom
+				ApplyView()
+			end)
+
+			-- Pan by dragging (update script only runs while dragging)
+			local drag = {}
+			local function OnDragUpdate()
+				if not IsMouseButtonDown("LeftButton") then
+					overlay:SetScript("OnUpdate", nil)
+					return
+				end
+				local dx, dy = GetCursorOffset()
+				if not dx then return end
+				view.x = drag.x + dx - drag.cx
+				view.y = drag.y + dy - drag.cy
+				ApplyView()
+			end
+
+			overlay:SetScript("OnMouseDown", function(self, button)
+				if button ~= "LeftButton" or view.zoom <= 1 then return end
+				local dx, dy = GetCursorOffset()
+				if not dx then return end
+				drag.cx, drag.cy, drag.x, drag.y = dx, dy, view.x, view.y
+				overlay:SetScript("OnUpdate", OnDragUpdate)
+			end)
+
+			overlay:SetScript("OnMouseUp", function(self, button)
+				if button == "LeftButton" then
+					overlay:SetScript("OnUpdate", nil)
+				elseif button == "RightButton" then
+					HideOverlay()
+				end
+			end)
+
+			-- Pin tooltip
+			local function PinOnEnter(pin)
+				local row = pin.row
+				tip:SetScale(GameTooltip:GetScale())
+				tip:SetOwner(pin, "ANCHOR_RIGHT")
+				if row[1] == "boss" then
+					tip:SetText(row[5], 1, 0.82, 0)
+					if row[8] == 2 or row[8] == 4 then
+						tip:AddLine(L["Rare"], 0.7, 0.8, 1)
+					else
+						tip:AddLine(L["Boss"], 1, 0.5, 0.25)
+					end
+					if row[6] then
+						if row[6] >= UnitLevel("player") + skullLevels or row[8] == 3 then
+							tip:AddLine(LEVEL .. " ??", 1, 0.1, 0.1)
+						else
+							local color = GetCreatureDifficultyColor(row[6])
+							tip:AddLine(LEVEL .. " " .. row[6], color.r, color.g, color.b)
+						end
+					end
+				elseif row[1] == "level" then
+					tip:SetText(pin.levelIndex and GetLevelName(levels[pin.levelIndex]) or "", 1, 0.82, 0)
+					tip:AddLine(L["Click to show this level."], 0.6, 0.6, 0.6)
+				elseif row[4] == "raid" then
+					tip:SetText(L["Raid entrance"], 1, 0.82, 0)
+				else
+					tip:SetText(L["Dungeon entrance"], 1, 0.82, 0)
+				end
+				tip:Show()
+			end
+
+			local function PinOnLeave(pin)
+				if tip:IsOwned(pin) then tip:Hide() end
+			end
+
+			local function PinOnClick(pin, button)
+				if button == "RightButton" then
+					HideOverlay()
+				elseif pin.row[1] == "level" and pin.levelIndex then
+					PinOnLeave(pin)
+					SelectLevel(pin.levelIndex, true)
+				end
+			end
+
+			-- Function to add a circular mask to a texture
+			local function AddMask(owner, texture)
+				local mask = owner:CreateMaskTexture()
+				mask:SetAllPoints(texture)
+				mask:SetTexture("Interface\\CharacterFrame\\TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+				texture:AddMaskTexture(mask)
+			end
+
+			-- Function to create a pin
+			local function CreatePin()
+				local pin = CreateFrame("Button", nil, canvas)
+				pin:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+				pin.icon = pin:CreateTexture(nil, "ARTWORK")
+				pin.icon:SetAllPoints()
+				pin.highlight = pin:CreateTexture(nil, "HIGHLIGHT")
+				pin.highlight:SetAllPoints()
+				pin.highlight:SetBlendMode("ADD")
+				pin.highlight:SetAlpha(0.5)
+
+				-- Boss portrait and ring
+				pin.portrait = pin:CreateTexture(nil, "ARTWORK")
+				pin.portrait:SetPoint("TOPLEFT", 2, -2)
+				pin.portrait:SetPoint("BOTTOMRIGHT", -2, 2)
+				AddMask(pin, pin.portrait)
+				pin.ring = pin:CreateTexture(nil, "OVERLAY", nil, 1)
+				pin.ring:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
+				pin.ring:SetTexCoord(0, 0.6, 0, 0.6)
+				pin.ring:SetSize((bossSize - 4) * ringScale, (bossSize - 4) * ringScale)
+				pin.ring:SetPoint("CENTER", pin.portrait, "CENTER")
+
+				-- Elite and rare dragon
+				local s = (bossSize - 4) / 64
+				pin.dragon = pin:CreateTexture(nil, "OVERLAY", nil, 2)
+				pin.dragon:SetTexture(pinPath)
+				pin.dragon:SetSize(256 * s, 128 * s)
+				pin.dragon:SetPoint("CENTER", pin, "CENTER", -54 * s, -20 * s)
+
+				-- Level badge
+				local badgeSize = 16 * s * 64 / 34
+				pin.badge = CreateFrame("Frame", nil, pin)
+				pin.badge:SetSize(badgeSize, badgeSize)
+				pin.badge:SetPoint("CENTER", pin, "CENTER", 19.5 * s, -22 * s)
+				pin.badge.ring = pin.badge:CreateTexture(nil, "BORDER")
+				pin.badge.ring:SetAllPoints()
+				pin.badge.fill = pin.badge:CreateTexture(nil, "ARTWORK")
+				pin.badge.fill:SetPoint("TOPLEFT", 1.5, -1.5)
+				pin.badge.fill:SetPoint("BOTTOMRIGHT", -1.5, 1.5)
+				pin.badge.fill:SetColorTexture(0.05, 0.04, 0.03, 0.95)
+				AddMask(pin.badge, pin.badge.ring)
+				AddMask(pin.badge, pin.badge.fill)
+				pin.badge.text = pin.badge:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+				pin.badge.text:SetPoint("CENTER", 0.5, 0)
+				local font, _, flags = pin.badge.text:GetFont()
+				if font then pin.badge.text:SetFont(font, 8, flags) end
+				pin.badge.skull = pin.badge:CreateTexture(nil, "OVERLAY")
+				pin.badge.skull:SetSize(badgeSize - 5, badgeSize - 5)
+				pin.badge.skull:SetPoint("CENTER")
+				pin.badge.skull:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Skull")
+
+				pin:SetScript("OnEnter", PinOnEnter)
+				pin:SetScript("OnLeave", PinOnLeave)
+				pin:SetScript("OnClick", PinOnClick)
+				return pin
+			end
+
+			-- Function to style a pin for its row
+			local function StylePin(pin, row)
+				local isBoss = row[1] == "boss"
+				local isRare = isBoss and (row[8] == 2 or row[8] == 4)
+				local size = isRare and rareSize or isBoss and bossSize or pinSize
+				pin:SetSize(size, size)
+				if isBoss then
+					-- Scale ring and level badge to the pin size
+					local s = (size - 4) / 64
+					local badgeSize = 16 * s * 64 / 34
+					pin.ring:SetSize((size - 4) * ringScale, (size - 4) * ringScale)
+					pin.badge:SetSize(badgeSize, badgeSize)
+					pin.badge:ClearAllPoints()
+					pin.badge:SetPoint("CENTER", pin, "CENTER", 19.5 * s, -22 * s)
+					pin.badge.skull:SetSize(badgeSize - 5, badgeSize - 5)
+				end
+				pin.portrait:SetShown(isBoss)
+				pin.ring:SetShown(isBoss)
+				pin.icon:SetShown(not isBoss)
+				pin.highlight:SetShown(not isBoss)
+				pin.dragon:Hide()
+				pin.badge:Hide()
+				if isBoss then
+					if row[7] and SetPortraitTextureFromCreatureDisplayID then
+						SetPortraitTextureFromCreatureDisplayID(pin.portrait, row[7])
+					else
+						pin.portrait:SetTexture("Interface\\Icons\\INV_Misc_QuestionMark")
+					end
+					local style = pinStyles[row[8]] or pinStyles[0]
+					-- Rares are smaller, have a silver ring and no dragon
+					if isRare then
+						pin.ring:SetVertexColor(0.7, 0.8, 1)
+					else
+						pin.ring:SetVertexColor(1, 1, 1)
+					end
+					if style[4] and not isRare then
+						pin.dragon:SetTexCoord(0, 1, style[4] * 0.25, (style[4] + 1) * 0.25)
+						pin.dragon:Show()
+					end
+					local level = row[6]
+					local isSkull = row[8] == 3 or (level and level >= UnitLevel("player") + skullLevels)
+					if level or isSkull then
+						pin.badge.ring:SetColorTexture(style[1], style[2], style[3], 1)
+						pin.badge.text:SetShown(not isSkull)
+						pin.badge.skull:SetShown(isSkull)
+						if not isSkull then
+							local color = GetCreatureDifficultyColor(level)
+							pin.badge.text:SetText(level)
+							pin.badge.text:SetTextColor(color.r, color.g, color.b)
+						end
+						pin.badge:Show()
+					end
+				elseif row[1] == "entrance" then
+					SetIcon(pin.icon, row[4] == "raid" and "Raid" or "Dungeon", "Interface\\Icons\\INV_Misc_Bone_Skull_02")
+					SetIcon(pin.highlight, row[4] == "raid" and "Raid" or "Dungeon", "Interface\\Icons\\INV_Misc_Bone_Skull_02")
+					pin.icon:SetRotation(0)
+					pin.highlight:SetRotation(0)
+				else
+					-- Level change arrow (points up for a level above, down for a level below)
+					local rotation = row[5] and 0 or math.pi
+					SetIcon(pin.icon, "Garr_LevelUpgradeArrow", "Interface\\Icons\\INV_Misc_Map_01")
+					SetIcon(pin.highlight, "Garr_LevelUpgradeArrow", "Interface\\Icons\\INV_Misc_Map_01")
+					pin.icon:SetRotation(rotation)
+					pin.highlight:SetRotation(rotation)
+				end
+			end
+
+			-- Function to show pins for a map
+			local function UpdatePins(mapID)
+				local rows = dungeonPins[mapID]
+				local count = 0
+				if rows then
+					-- Draw rares above other pins and bosses above rares
+					for pass = 1, 3 do
+						for i = 1, #rows do
+							local row = rows[i]
+							local index
+							if row[1] == "level" then
+								for j = 1, #levels do
+									if levels[j][1] == row[4] then index = j; break end
+								end
+							end
+							local rowPass = row[1] ~= "boss" and 1 or (row[8] == 2 or row[8] == 4) and 2 or 3
+							if pass == rowPass and (row[1] ~= "level" or index) then
+								count = count + 1
+								local pin = pins[count] or CreatePin()
+								pins[count] = pin
+								pin.row = row
+								pin.levelIndex = index
+								pin:SetFrameLevel(canvas:GetFrameLevel() + count * 4)
+								pin.badge:SetFrameLevel(pin:GetFrameLevel() + 2)
+								StylePin(pin, row)
+								pin:Show()
+							end
+						end
+					end
+				end
+				for i = count + 1, #pins do
+					pins[i]:Hide()
+				end
+			end
+
+			-- Function to show a level
+			SelectLevel = function(index, byUser)
+				if not levels or not levels[index] then return end
+				if byUser then chosenLevel[instanceID] = index end
+				local info = levels[index]
+				if levelIndex ~= index or shownMapID ~= info[1] then
+					levelIndex, shownMapID = index, info[1]
+					-- Use the game map (Scholomance uses map art in the addon folder)
+					usingTiles = false
+					local native = info[3]
+					if native and not nativeMissing[native] then
+						local path = "Interface\\WorldMap\\" .. native
+						local fileID
+						if GetFileIDFromPath then
+							fileID = GetFileIDFromPath(path .. "1")
+						else
+							tiles[1]:SetTexture(path .. "1")
+							fileID = tiles[1]:GetTextureFileID()
+						end
+						if fileID and fileID > 0 then
+							for i = 1, 12 do
+								local tile = tiles[i]
+								tile:SetTexture(path .. i)
+								tile:SetTexCoord(0, tile.col == 3 and 234 / 256 or 1, 0, tile.row == 2 and 156 / 256 or 1)
+							end
+							usingTiles = true
+						else
+							nativeMissing[native] = true
+						end
+					end
+					if not usingTiles and native and bundledArt[native] then
+						-- Game map is not in this game locale so use the copy in the addon folder
+						local first = bundledArt[native] * 12
+						for i = 1, 12 do
+							local tile = tiles[i]
+							local slot = (first + i - 1) % 256
+							local x, y = (slot % 16) * 256, math.floor(slot / 16) * 256
+							local w, h = tile.col == 3 and 234 or 256, tile.row == 2 and 156 or 256
+							tile:SetTexture(bundlePath .. string.format("%02d", math.floor((first + i - 1) / 256) + 1))
+							tile:SetTexCoord((x + 0.5) / 4096, (x + w - 0.5) / 4096, (y + 0.5) / 4096, (y + h - 0.5) / 4096)
+						end
+						usingTiles = true
+					end
+					if not usingTiles and not info[4] and not info[6] then
+						-- Game map is missing from the client so show the normal map instead
+						levelIndex, shownMapID = nil, nil
+						overlay:Hide()
+						return
+					end
+					for i = 1, 12 do tiles[i]:SetShown(usingTiles) end
+					canvas.art:SetShown(not usingTiles)
+					if not usingTiles and info[6] then
+						-- One map per file (dungeons that are new in Forever)
+						canvas.art:SetTexture("Interface\\AddOns\\Leatrix_Maps\\" .. info[6])
+						canvas.art:SetTexCoord(0, 1, 0, info[7] / 1024)
+					elseif not usingTiles then
+						local x, y = info[4], info[5]
+						canvas.art:SetTexture(artPath)
+						canvas.art:SetTexCoord((x + 0.5) / 2048, (x + 1024 - 0.5) / 2048, (y + 0.5) / 2048, (y + 683 - 0.5) / 2048)
+					end
+					view.zoom, view.x, view.y = 1, 0, 0
+					UpdatePins(info[1])
+					Layout()
+				end
+				levelMenu.Text:SetText(GetLevelName(levels[levelIndex]))
+				levelMenu:SetShown(#levels > 1)
+				popup:Refresh()
+			end
+
+			-- Function to hide the overlay until the map is opened again
+			HideOverlay = function()
+				if previewID then LeaMapsLC.StopPreview() else hiddenFor = instanceID end
+				Refresh()
+			end
+
+			-- Function to show or hide the overlay
+			Refresh = function()
+				local art, id
+				-- End the preview if the world map has been changed to another zone
+				if previewID and WorldMapFrame:GetMapID() ~= previewMapID then LeaMapsLC.StopPreview() end
+				if WorldMapFrame:IsShown() and previewID then
+					art, id = dungeonArt[previewID], previewID
+				elseif WorldMapFrame:IsShown() then
+					local mapID = select(8, GetInstanceInfo())
+					local playerMap = MapUtil.GetDisplayableMapForPlayer()
+					if IsSecret(mapID, playerMap) then mapID = nil end
+					if mapID and dungeonArt[mapID] and hiddenFor ~= mapID and playerMap and WorldMapFrame:GetMapID() == playerMap then
+						art, id = dungeonArt[mapID], mapID
+					end
+				end
+				if not art then
+					overlay:Hide()
+					return
+				end
+				if id ~= instanceID then
+					instanceID, levels, levelIndex, shownMapID = id, art, nil, nil
+				end
+				-- Use the level picked by the user, otherwise the level the player is on
+				local index = chosenLevel[id]
+				if not index then
+					local bestMap = C_Map.GetBestMapForUnit("player")
+					if IsSecret(bestMap) then bestMap = nil end
+					for i = 1, #art do
+						if art[i][1] == bestMap then index = i; break end
+					end
+				end
+				overlay:Show()
+				SelectLevel(index or levelIndex or 1)
+				-- The map art could not be sized (frame sizes can be secret in combat) so show the normal map
+				if overlay:IsShown() and view.baseW <= 0 then overlay:Hide() end
+			end
+
+			-- Keep the coordinates footer above the overlay (it is inside the map when the map is maximised)
+			local raised = {}
+			overlay:SetScript("OnShow", function()
+				local top = 2000
+				local manager = WorldMapFrame.GetPinFrameLevelsManager and WorldMapFrame:GetPinFrameLevelsManager()
+				if manager and manager.GetValidFrameLevel then top = manager:GetValidFrameLevel("PIN_FRAME_LEVEL_TOPMOST", 1000) end
+				overlay:SetFrameLevel(math.min(top + 100, 9000))
+				canvas:SetFrameLevel(overlay:GetFrameLevel() + 1)
+				for i = 1, #pins do
+					pins[i]:SetFrameLevel(canvas:GetFrameLevel() + i * 4)
+					pins[i].badge:SetFrameLevel(pins[i]:GetFrameLevel() + 2)
+				end
+				levelMenu:SetFrameLevel(overlay:GetFrameLevel() + 200)
+				local offset = 300
+				for void, frame in ipairs({mapTheme.footerFrame}) do
+					if frame then
+						raised[frame] = raised[frame] or frame:GetFrameLevel()
+						frame:SetFrameLevel(overlay:GetFrameLevel() + offset)
+						offset = offset + 5
+					end
+				end
+				if shownMapID then UpdatePins(shownMapID) end -- Level colours depend on player level
+				Layout()
+				if LeaMapsLC.RefreshPointsOfInterest then LeaMapsLC.RefreshPointsOfInterest() end
+			end)
+
+			overlay:SetScript("OnHide", function()
+				overlay:SetScript("OnUpdate", nil)
+				for frame, level in pairs(raised) do
+					frame:SetFrameLevel(level)
+				end
+				wipe(raised)
+				popup:Close()
+				if tip:GetOwner() and tip:GetOwner():GetParent() == canvas then tip:Hide() end
+				if LeaMapsLC.RefreshPointsOfInterest then LeaMapsLC.RefreshPointsOfInterest() end
+			end)
+
+			-- Used by points of interest (they are hidden while a dungeon map is showing)
+			LeaMapsLC.IsDungeonMapShown = function() return overlay:IsShown() end
+
+			-- Update when the map is opened, the map changes or the player changes zone
+			WorldMapFrame:HookScript("OnShow", function()
+				hiddenFor = nil
+				if previewID then LeaMapsLC.StopPreview() end
+				wipe(chosenLevel)
+				view.zoom, view.x, view.y = 1, 0, 0
+				Refresh()
+			end)
+			hooksecurefunc(WorldMapFrame, "OnMapChanged", Refresh)
+
+			local dungeonEvents = CreateFrame("Frame")
+			dungeonEvents:RegisterEvent("PLAYER_ENTERING_WORLD")
+			dungeonEvents:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+			dungeonEvents:RegisterEvent("ZONE_CHANGED")
+			dungeonEvents:RegisterEvent("ZONE_CHANGED_INDOORS")
+			dungeonEvents:RegisterEvent("PLAYER_REGEN_ENABLED") -- Frame sizes can be secret in combat so try again after combat
+			dungeonEvents:SetScript("OnEvent", function()
+				if WorldMapFrame:IsShown() then Refresh() end
+			end)
+
+			-- Preview dungeon maps without being in the dungeon (/ltm dun)
+			local previewList = {
+				{389, "Ragefire Chasm"},
+				{36, "The Deadmines"},
+				{43, "Wailing Caverns"},
+				{33, "Shadowfang Keep"},
+				{34, "The Stockade"},
+				{48, "Blackfathom Deeps"},
+				{90, "Gnomeregan"},
+				{47, "Razorfen Kraul"},
+				{189, "Scarlet Monastery"},
+				{129, "Razorfen Downs"},
+				{70, "Uldaman"},
+				{209, "Zul'Farrak"},
+				{349, "Maraudon"},
+				{109, "Temple of Atal'Hakkar"},
+				{230, "Blackrock Depths"},
+				{229, "Blackrock Spire"},
+				{409, "Molten Core"},
+				{469, "Blackwing Lair"},
+				{429, "Dire Maul"},
+				{289, "Scholomance"},
+				{329, "Stratholme"},
+				{309, "Zul'Gurub"},
+				{249, "Onyxia's Lair"},
+				{509, "Ruins of Ahn'Qiraj"},
+				{531, "Temple of Ahn'Qiraj"},
+				{533, "Naxxramas"},
+				{2959, "City of Dalaran"},
+				{2998, "Excavation Site: Wetlands"},
+				{2999, "The Ruins of Lordaeron"},
+				{3065, "The Hall of Thanes"},
+			}
+
+			-- Arrow keys change the previewed map (key frame only exists and listens while previewing, never in combat)
+			local keyFrame
+			local function StartPreviewKeys()
+				if InCombatLockdown() then return end
+				if not keyFrame then
+					keyFrame = CreateFrame("Frame", nil, overlay)
+					keyFrame:EnableKeyboard(true)
+					keyFrame:SetPropagateKeyboardInput(true)
+					keyFrame:SetScript("OnKeyDown", function(self, key)
+						if InCombatLockdown() then return end
+						if key == "LEFT" or key == "RIGHT" then
+							self:SetPropagateKeyboardInput(false)
+							LeaMapsLC.PreviewDungeon(key == "LEFT" and "prev" or "next")
+						else
+							self:SetPropagateKeyboardInput(true)
+						end
+					end)
+					-- Stop listening when combat starts or the frame hides
+					keyFrame:SetScript("OnEvent", function(self) self:Hide() end)
+					keyFrame:SetScript("OnHide", function(self) self:UnregisterAllEvents() end)
+				end
+				keyFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
+				keyFrame:Show()
+			end
+
+			-- Check which game map textures are in the client (/ltm duncheck)
+			LeaMapsLC.CheckDungeonMaps = function()
+				if not GetFileIDFromPath then
+					LeaMapsLC:Print("GetFileIDFromPath is not available in this client.")
+					return
+				end
+				local checked, bundled, missing = 0, 0, 0
+				for void, levels in pairs(dungeonArt) do
+					for void, info in ipairs(levels) do
+						if info[3] then
+							checked = checked + 1
+							for i = 1, 12 do
+								if not GetFileIDFromPath("Interface\\WorldMap\\" .. info[3] .. i) then
+									if bundledArt[info[3]] then
+										bundled = bundled + 1
+									else
+										missing = missing + 1
+										LeaMapsLC:Print("Missing: " .. info[3] .. i .. " (map " .. info[1] .. ")")
+									end
+									break
+								end
+							end
+						end
+					end
+				end
+				LeaMapsLC:Print(checked .. " game maps checked, " .. (checked - bundled - missing) .. " in the game, " .. bundled .. " using the addon copy, " .. missing .. " missing.")
+			end
+
+			-- Dungeon icons on the world map show the dungeon map when clicked (icon name = instance map IDs)
+			LeaMapsLC.DungeonMapsByName = {
+				[L["Uldaman"]] = {70},
+				[L["Scarlet Monastery"]] = {189},
+				[L["Shadowfang Keep"]] = {33},
+				[L["Scholomance"]] = {289},
+				[L["Stratholme (Main Gate)"]] = {329},
+				[L["Stratholme (Service Gate)"]] = {329},
+				[L["Naxxramas"]] = {533},
+				[L["Gnomeregan"]] = {90},
+				[L["Blackrock Mountain"]] = {230, 229, 409, 469},
+				[L["Zul'Gurub"]] = {309},
+				[L["Temple of Atal'Hakkar"]] = {109},
+				[L["The Deadmines"]] = {36},
+				[L["The Stockade"]] = {34},
+				[L["Wailing Caverns"]] = {43},
+				[L["Razorfen Kraul"]] = {47},
+				[L["Razorfen Downs"]] = {129},
+				[L["Blackfathom Deeps"]] = {48},
+				[L["Maraudon"]] = {349},
+				[L["Dire Maul (North)"]] = {429},
+				[L["Dire Maul (West)"]] = {429},
+				[L["Dire Maul (East)"]] = {429},
+				[L["Onyxia's Lair"]] = {249},
+				[L["Zul'Farrak"]] = {209},
+				[L["Ahn'Qiraj"]] = {509, 531},
+				[L["Ragefire Chasm"]] = {389},
+				[L["City of Dalaran"]] = {2959},
+				[L["Excavation Site: Wetlands"]] = {2998},
+				[L["The Ruins of Lordaeron"]] = {2999},
+				[L["The Hall of Thanes"]] = {3065},
+			}
+
+			-- Function to show the dungeon map for an instance
+			local function ShowDungeonMap(id)
+				for i = 1, #previewList do
+					if previewList[i][1] == id then LeaMapsLC.PreviewDungeon(tostring(i), true, true) return end
+				end
+			end
+
+			-- Function to show the dungeon map for a clicked dungeon icon (a list if the icon has several)
+			local iconEntries = {}
+			local function IsNotChecked() return false end
+			local function ChooseIconEntry(entry) ShowDungeonMap(entry.id) end
+			LeaMapsLC.OpenDungeonMaps = function(owner, title, ids)
+				if #ids == 1 then
+					ShowDungeonMap(ids[1])
+					return
+				end
+				wipe(iconEntries)
+				for void, id in ipairs(ids) do
+					local name = GetRealZoneText(id)
+					if not name or name == "" then
+						for i = 1, #previewList do
+							if previewList[i][1] == id then name = previewList[i][2] end
+						end
+					end
+					iconEntries[#iconEntries + 1] = {id = id, name = name}
+				end
+				popup:Open(owner, iconEntries, IsNotChecked, ChooseIconEntry, "TOPLEFT", "CENTER", 0, 0)
+			end
+
+			LeaMapsLC.StopPreview = function()
+				previewID = nil
+				if keyFrame then keyFrame:Hide() end
+				if LeaMapsLC.UpdateZoneMenus then LeaMapsLC.UpdateZoneMenus() end
+			end
+
+			-- Functions used by the zone menus (Dungeons entry)
+			LeaMapsLC.GetDungeonList = function()
+				local list = {}
+				for i = 1, #previewList do
+					local id = previewList[i][1]
+					local name = GetRealZoneText(id)
+					if not name or name == "" then name = previewList[i][2] end
+					list[i] = {id = id, name = name}
+				end
+				return list
+			end
+			LeaMapsLC.GetDungeonPreview = function() return previewID end
+			LeaMapsLC.ShowDungeonPreview = function(id) ShowDungeonMap(id) end
+			LeaMapsLC.EndDungeonPreview = function()
+				LeaMapsLC.StopPreview()
+				Refresh()
+			end
+
+			-- quiet: no chat messages, noKeys: no arrow keys (used when clicking dungeon icons)
+			LeaMapsLC.PreviewDungeon = function(arg, quiet, noKeys)
+				if not WorldMapFrame:IsShown() then
+					LeaMapsLC:Print("Open the world map first.")
+					return
+				end
+				if arg == "off" then
+					LeaMapsLC.StopPreview()
+					Refresh()
+					return
+				end
+				local index = tonumber(arg)
+				if arg == "prev" then
+					index = ((previewIndex or 1) - 2) % #previewList + 1
+				elseif arg == "next" then
+					index = (previewIndex or 0) % #previewList + 1
+				elseif not index and arg then
+					-- Find instance by part of its name
+					for i = 1, #previewList do
+						if strfind(strlower(previewList[i][2]), arg, 1, true) then index = i; break end
+					end
+				end
+				index = index or ((previewIndex or 0) % #previewList + 1)
+				if not previewList[index] then
+					LeaMapsLC:Print("Use a number from 1 to " .. #previewList .. ".")
+					return
+				end
+				local keysOn = keyFrame and keyFrame:IsShown()
+				previewIndex, previewID, previewMapID = index, previewList[index][1], WorldMapFrame:GetMapID()
+				chosenLevel[previewID] = nil
+				Refresh()
+				if not noKeys then StartPreviewKeys() end
+				if LeaMapsLC.UpdateZoneMenus then LeaMapsLC.UpdateZoneMenus() end
+				if not quiet then
+					if not keysOn and keyFrame and keyFrame:IsShown() then LeaMapsLC:Print("Use the left and right arrow keys to change map.") end
+					LeaMapsLC:Print(index .. "/" .. #previewList .. ": " .. previewList[index][2])
+				end
+			end
+
 		end
 
 		----------------------------------------------------------------------
@@ -508,11 +2922,14 @@
 			local function SetMapScale()
 				LeaMapsCB["MapScale"].f:SetFormattedText("%.0f%%", LeaMapsLC["MapScale"] * 100)
 				LeaMapsCB["MaxMapScale"].f:SetFormattedText("%.0f%%", LeaMapsLC["MaxMapScale"] * 100)
+				-- Do not change scale if the map frame cannot be changed (scale controls are locked then)
+				if not LeaMapsLC:CanChangeMap() then return end
 				if not WorldMapFrame:IsMaximized() then
 					WorldMapFrame:SetScale(LeaMapsLC["MapScale"])
 				else
 					WorldMapFrame:SetScale(LeaMapsLC["MaxMapScale"])
 				end
+				if LeaMapsLC.RefreshMapLines then LeaMapsLC.RefreshMapLines() end
 			end
 
 			-- Set scale properties when controls are changed and on startup
@@ -523,6 +2940,13 @@
 			-- Set scale when map size is toggled
 			hooksecurefunc(WorldMapFrame, "SynchronizeDisplayState", SetMapScale)
 
+			-- Lock scale controls while the map frame cannot be changed
+			LeaMapsLC:AddMapLock(function(lock)
+				LeaMapsLC:LockItem(LeaMapsCB["MapScale"], lock)
+				LeaMapsLC:LockItem(LeaMapsCB["MaxMapScale"], lock)
+				LeaMapsLC:LockItem(scalePanel.r, lock)
+			end)
+
 			-- Back to Main Menu button click
 			scalePanel.b:HookScript("OnClick", function()
 				scalePanel:Hide()
@@ -531,6 +2955,7 @@
 
 			-- Reset button click
 			scalePanel.r:HookScript("OnClick", function()
+				if not LeaMapsLC:CanChangeMap() then return end
 				-- Reset map scale
 				LeaMapsLC["MapScale"] = 1.0
 				LeaMapsLC["MaxMapScale"] = 1.0
@@ -542,11 +2967,13 @@
 			-- Show scale panel when configuration button is clicked
 			LeaMapsCB["ScaleWorldMapBtn"]:HookScript("OnClick", function()
 				if IsShiftKeyDown() and IsControlKeyDown() then
-					-- Preset profile
-					LeaMapsLC["MapScale"] = 1.0
-					LeaMapsLC["MaxMapScale"] = 0.9
-					SetMapScale()
-					if scalePanel:IsShown() then scalePanel:Hide(); scalePanel:Show(); end
+					-- Preset profile (not while the map frame cannot be changed)
+					if LeaMapsLC:CanChangeMap() then
+						LeaMapsLC["MapScale"] = 1.0
+						LeaMapsLC["MaxMapScale"] = 0.9
+						SetMapScale()
+						if scalePanel:IsShown() then scalePanel:Hide(); scalePanel:Show(); end
+					end
 				else
 					scalePanel:Show()
 					LeaMapsLC["PageF"]:Hide()
@@ -911,10 +3338,48 @@
 			cFrame:SetPoint("BOTTOMLEFT", 17)
 			cFrame:SetPoint("BOTTOMRIGHT", 0)
 
-			cFrame.t = cFrame:CreateTexture(nil, "BACKGROUND")
+			-- Background (on its own frame so the rainbow theme can add to it)
+			cFrame.back = CreateFrame("Frame", nil, cFrame)
+			cFrame.back:SetAllPoints()
+			cFrame.t = cFrame.back:CreateTexture(nil, "BACKGROUND")
 			cFrame.t:SetAllPoints()
 			cFrame.t:SetTexture("Interface\\ChatFrame\\ChatFrameBackground")
 			cFrame.t:SetVertexColor(0, 0, 0, 0.5)
+
+			-- Simple map frame: the coordinates sit in a footer under the map (so the bar does not cover anything on the
+			-- map), the same width as the title bar and colored by the map theme (the footer is placed in SetPixelEdges)
+			if ApplyMapTheme then
+				cFrame:SetParent(WorldMapFrame)
+				cFrame:ClearAllPoints()
+				cFrame:SetHeight(20)
+				cFrame:SetFrameStrata(mapTheme.titleBar:GetFrameStrata())
+				cFrame:SetFrameLevel(mapTheme.titleBar:GetFrameLevel())
+				cFrame.t:SetTexture("Interface\\Buttons\\WHITE8X8")
+				cFrame.t:SetVertexColor(1, 1, 1, 1)
+				mapTheme.footerFrame = cFrame
+				mapTheme.footer = cFrame.back
+				mapTheme.footerTexture = cFrame.t
+
+				-- Function to move the coordinates into the footer (same places along the map as before, in the footer which
+				-- is under the map, or inside the bottom of the map when the map is maximised)
+				local function MoveCoords(frame, point, relativePoint, x, y)
+					if not frame then return end
+					frame:SetParent(cFrame)
+					frame:ClearAllPoints()
+					frame:SetPoint(point, canvas, relativePoint, x, y)
+					frame:SetFrameLevel(cFrame:GetFrameLevel() + 2)
+				end
+				mapTheme.PlaceCoords = function(inside)
+					local y = inside and 16 or -4
+					MoveCoords(coords.PlayerCoords, "TOPLEFT", "BOTTOMLEFT", 40, y)
+					MoveCoords(coords.CursorCoords, "TOPRIGHT", "BOTTOMRIGHT", -80, y)
+					MoveCoords(coords.CrosshairCoords, "TOP", "BOTTOM", -32, y)
+				end
+				mapTheme.PlaceCoords(false)
+
+				ApplyMapTheme()
+				LeaMapsLC.RefreshMapLines()
+			end
 
 			-- Disable coordinates if option is turned off
 			cFrame:RegisterEvent("PLAYER_LOGOUT")
@@ -935,9 +3400,9 @@
 			-- Function to apply settings
 			local function SetCoordFunc()
 				if LeaMapsLC["CoordsBackground"] == "On" then
-					cFrame.t:Show()
+					cFrame.back:Show()
 				else
-					cFrame.t:Hide()
+					cFrame.back:Hide()
 				end
 			end
 
@@ -990,24 +3455,67 @@
 			-- Allow map frame movement
 			----------------------------------------------------------------------
 
+			local SetMapPositionFunc -- Defined below
+			local mapMoving
+
+			-- Function to check if the map frame has a position on screen (it can be missing or secret)
+			local function MapHasRect()
+				local left = WorldMapFrame:GetLeft()
+				if issecretvalue and issecretvalue(left) then return false end
+				return left ~= nil
+			end
+
+			-- Function to check if map frame position values can be saved (they can be missing or secret)
+			local function IsValidMapPoint(a, r, x, y)
+				if issecretvalue and (issecretvalue(a) or issecretvalue(r) or issecretvalue(x) or issecretvalue(y)) then return false end
+				return type(a) == "string" and type(r) == "string" and type(x) == "number" and type(y) == "number"
+			end
+
+			-- Function to start moving the map frame (not while the map frame cannot be changed)
+			local function StartMapMove()
+				if LeaMapsLC["EnableMovement"] ~= "On" or not LeaMapsLC:CanChangeMap() then return end
+				WorldMapFrame:StartMoving()
+				-- Another addon's frames anchored to the map frame can leave it with no position when moving starts so
+				-- stop moving and put the map frame back at its saved position
+				if not MapHasRect() then
+					WorldMapFrame:StopMovingOrSizing()
+					WorldMapFrame:SetUserPlaced(false)
+					SetMapPositionFunc()
+					return
+				end
+				mapMoving = true
+			end
+
+			-- Function to stop moving the map frame and save its position
+			local function StopMapMove()
+				if not mapMoving or not LeaMapsLC:CanChangeMap() then return end
+				mapMoving = nil
+				WorldMapFrame:StopMovingOrSizing()
+				WorldMapFrame:SetUserPlaced(false)
+				-- Save map frame position (if it's not valid, put the map frame back at its saved position)
+				local a, void, r, x, y = WorldMapFrame:GetPoint()
+				if not IsValidMapPoint(a, r, x, y) then
+					SetMapPositionFunc()
+					return
+				end
+				if WorldMapFrame:IsMaximized() then
+					LeaMapsLC["MaxMapPosA"], LeaMapsLC["MaxMapPosR"], LeaMapsLC["MaxMapPosX"], LeaMapsLC["MaxMapPosY"] = a, r, x, y
+				else
+					LeaMapsLC["MapPosA"], LeaMapsLC["MapPosR"], LeaMapsLC["MapPosX"], LeaMapsLC["MapPosY"] = a, r, x, y
+				end
+			end
+
 			-- Enable movement
 			WorldMapFrame:SetMovable(true)
 			WorldMapFrame:RegisterForDrag("LeftButton")
-			WorldMapFrame:SetScript("OnDragStart", function()
-				if LeaMapsLC["EnableMovement"] == "On" then
-					WorldMapFrame:StartMoving()
-				end
-			end)
-			WorldMapFrame:SetScript("OnDragStop", function()
-				WorldMapFrame:StopMovingOrSizing()
-				WorldMapFrame:SetUserPlaced(false)
-				-- Save map frame position
-				if WorldMapFrame:IsMaximized() then
-					LeaMapsLC["MaxMapPosA"], void, LeaMapsLC["MaxMapPosR"], LeaMapsLC["MaxMapPosX"], LeaMapsLC["MaxMapPosY"] = WorldMapFrame:GetPoint()
-				else
-					LeaMapsLC["MapPosA"], void, LeaMapsLC["MapPosR"], LeaMapsLC["MapPosX"], LeaMapsLC["MapPosY"] = WorldMapFrame:GetPoint()
-				end
-			end)
+			WorldMapFrame:SetScript("OnDragStart", StartMapMove)
+			WorldMapFrame:SetScript("OnDragStop", StopMapMove)
+
+			-- Stop moving the map frame when combat starts (combat lockdown starts after this event and another addon
+			-- may make the map frame protected during it)
+			local moveEvents = CreateFrame("Frame")
+			moveEvents:RegisterEvent("PLAYER_REGEN_DISABLED")
+			moveEvents:SetScript("OnEvent", StopMapMove)
 
 			-- Allow map to be moved by the title bar (needed for simple map frame)
 			if LeaMapsCB["MapTitleFrame"] then
@@ -1019,8 +3527,9 @@
 
 			WorldMapFrame:SetClampedToScreen(true)
 
-			-- Function to set map position
-			local function SetMapPositionFunc()
+			-- Function to set map position (not while the map frame cannot be changed)
+			SetMapPositionFunc = function()
+				if not LeaMapsLC:CanChangeMap() then return end
 				WorldMapFrame:ClearAllPoints()
 				if not WorldMapFrame:IsMaximized() then
 					WorldMapFrame:SetClampRectInsets(600, -600, -64, 470)
@@ -1036,8 +3545,9 @@
 			hooksecurefunc(WorldMapFrame, "OnFrameSizeChanged", SetMapPositionFunc) -- Needed when maximising the map
 			SetMapPositionFunc()
 
-			-- Function to set map movement clickable area
+			-- Function to set map movement clickable area (not while the map frame cannot be changed)
 			local function SetMapHitRect()
+				if not LeaMapsLC:CanChangeMap() then return end
 				if LeaMapsLC["EnableMovement"] == "On" then
 					WorldMapFrame:SetHitRectInsets(-10, -10, -10, -10)
 				else
@@ -1053,6 +3563,12 @@
 			SetMapHitRect()
 			LeaMapsCB["EnableMovement"]:HookScript("OnClick", SetMapHitRect)
 
+			-- Lock map movement controls while the map frame cannot be changed
+			LeaMapsLC:AddMapLock(function(lock)
+				LeaMapsLC:LockItem(LeaMapsCB["EnableMovement"], lock)
+				LeaMapsLC:LockItem(scaleFrame.r, lock)
+			end)
+
 			----------------------------------------------------------------------
 			-- Panel button handlers
 			----------------------------------------------------------------------
@@ -1065,6 +3581,7 @@
 
 			-- Reset button click
 			scaleFrame.r:HookScript("OnClick", function()
+				if not LeaMapsLC:CanChangeMap() then return end
 				-- Reset map position
 				LeaMapsLC["EnableMovement"] = "On"
 				LeaMapsLC["MapPosA"], LeaMapsLC["MapPosR"], LeaMapsLC["MapPosX"], LeaMapsLC["MapPosY"] = "TOPLEFT", "TOPLEFT", 16, -94
@@ -1395,6 +3912,24 @@
 			-- Tooltip
 			----------------------------------------------------------------------
 
+			-- Function to check if a pin can be clicked to show its destination map (zone crossing arrows, portals, trams and boats)
+			local tramPrefix, boatPrefix = L["Tram to"], L["Boat to"]
+			local function IsMapLink(pinInfo)
+				local kind = pinInfo[1]
+				if not pinInfo[13] then return false end
+				if kind == "Arrow" or kind == "PortalA" or kind == "PortalH" or kind == "PortalN" then return true end
+				-- Trams and boats share the travel icon with zeppelins so they are found by their name
+				if (kind == "TravelA" or kind == "TravelH" or kind == "TravelN") and pinInfo[4] then
+					if strsub(pinInfo[4], 1, #tramPrefix) == tramPrefix or strsub(pinInfo[4], 1, #boatPrefix) == boatPrefix then return true end
+				end
+				return false
+			end
+
+			-- Function to check if a pin is a dungeon icon
+			local function IsDungeonPin(pinInfo)
+				return pinInfo[1] == "Dungeon" or pinInfo[1] == "Raid" or pinInfo[1] == "Dunraid"
+			end
+
 			local function BuildPOITooltip(pin)
 				local pinInfo = pin.data
 				if not pinInfo then return end
@@ -1424,6 +3959,11 @@
 				tip:SetText(name)
 				if pinInfo[5] and pinInfo[5] ~= "" then
 					tip:AddLine(pinInfo[5], 1, 1, 1, true)
+				end
+				if IsMapLink(pinInfo) and C_Map.OpenWorldMap and not InCombatLockdown() then
+					tip:AddLine(L["Click to view this map."], 0, 1, 0, true)
+				elseif IsDungeonPin(pinInfo) and LeaMapsLC.DungeonMapsByName and LeaMapsLC.DungeonMapsByName[pinInfo[4]] then
+					tip:AddLine(L["Click to view this map."], 0, 1, 0, true)
 				end
 				tip:Show()
 			end
@@ -1504,6 +4044,12 @@
 			-- Parented to the map, so it only runs while the map is open
 			local hoverDriver = CreateFrame("Frame", nil, WorldMapFrame)
 			hoverDriver:SetScript("OnUpdate", function()
+				-- Points of interest are hidden while a dungeon map is showing (or its list for a dungeon icon is open)
+				if (LeaMapsLC.IsDungeonMapShown and LeaMapsLC.IsDungeonMapShown()) or (mapTheme.dungeonPopup and mapTheme.dungeonPopup.frame:IsShown()) then
+					SetHoveredPin(nil)
+					return
+				end
+
 				local gamepadUI = UpdateActiveInput()
 
 				-- Pin under the gamepad crosshair
@@ -1540,6 +4086,65 @@
 				SetHoveredPin(pin)
 			end)
 			hoverDriver:SetScript("OnHide", function() SetHoveredPin(nil) end)
+
+			----------------------------------------------------------------------
+			-- Click a zone crossing arrow, portal, tram or boat to show its destination map (or a dungeon icon to show its dungeon map)
+			----------------------------------------------------------------------
+
+			-- The map is changed with C_Map.OpenWorldMap, which fires WORLD_MAP_OPEN.
+			-- Blizzard's own event handler then changes the map in secure code, so the
+			-- map is never tainted (calling WorldMapFrame:SetMapID from here would taint it).
+			-- C_Map.OpenWorldMap cannot be used in combat so arrows cannot be clicked in combat.
+			-- Dungeon maps are frames of our own shown over the map so the map itself is not changed.
+			do
+				local downMapID, downX, downY
+
+				-- Remember where a left click started (post-hook, Blizzard's handler runs first)
+				WorldMapFrame.ScrollContainer:HookScript("OnMouseDown", function(self, button)
+					if button == "LeftButton" then
+						downMapID = WorldMapFrame:GetMapID()
+						downX, downY = GetCursorPosition()
+					else
+						downMapID = nil
+					end
+				end)
+
+				WorldMapFrame.ScrollContainer:HookScript("OnMouseUp", function(self, button)
+					if button ~= "LeftButton" or not downMapID then return end
+					local startMapID = downMapID
+					downMapID = nil
+
+					-- Ignore drags (panning the map)
+					local x, y = GetCursorPosition()
+					if math.abs(x - downX) > 5 or math.abs(y - downY) > 5 then return end
+
+					-- Blizzard already used the click (such as opening a child map)
+					if WorldMapFrame:GetMapID() ~= startMapID then return end
+
+					-- Only the pin under the pointer that is currently highlighted
+					local mx, my = WorldMapFrame:GetNormalizedCursorPosition()
+					if not mx or not my then return end
+					local pin = FindPinAt(mx, my)
+					if not pin or pin ~= hoveredPin then return end
+					local pinInfo = pin.data
+					if not pinInfo then return end
+
+					-- Dungeon icons show the dungeon map (if show dungeon maps is enabled)
+					if IsDungeonPin(pinInfo) then
+						local dungeonMaps = LeaMapsLC.DungeonMapsByName and LeaMapsLC.DungeonMapsByName[pinInfo[4]]
+						if dungeonMaps and LeaMapsLC.OpenDungeonMaps then
+							SetHoveredPin(nil)
+							LeaMapsLC.OpenDungeonMaps(pin, pinInfo[4], dungeonMaps)
+						end
+						return
+					end
+
+					-- Zone crossing arrows, portals, trams and boats show their destination map (OpenWorldMap cannot be used in combat)
+					if not IsMapLink(pinInfo) or not C_Map.OpenWorldMap then return end
+					if InCombatLockdown() then return end
+					C_Map.OpenWorldMap(pinInfo[13])
+				end)
+			end
 
 			----------------------------------------------------------------------
 			-- Adding and refreshing pins
@@ -1593,6 +4198,9 @@
 					self[i] = nil
 				end
 
+				-- Points of interest are hidden while a dungeon map is showing
+				if LeaMapsLC.IsDungeonMapShown and LeaMapsLC.IsDungeonMapShown() then return end
+
 				local mapPins = WorldMapFrame.mapID and PinData[WorldMapFrame.mapID]
 				if not mapPins then return end
 
@@ -1609,6 +4217,13 @@
 					LeaMapsPOI:RefreshAllData()
 				end
 			end)
+
+			-- Used by show dungeon maps (points of interest are hidden while a dungeon map is showing)
+			LeaMapsLC.RefreshPointsOfInterest = function()
+				if WorldMapFrame:IsShown() then
+					LeaMapsPOI:RefreshAllData()
+				end
+			end
 
 			----------------------------------------------------------------------
 			-- Configuration panel
@@ -2006,42 +4621,6 @@
 				end
 			end)
 
-			-- Add tint unexplored areas checkbox to world map filter menu
-			do
-
-				-- Define essential functions
-				local function IsSelected()
-					return LeaMapsLC["RevTint"] == "On"
-				end
-
-				local function SetSelected()
-					if LeaMapsLC["RevTint"] == "On" then
-						LeaMapsLC["RevTint"] = "Off"
-					else
-						LeaMapsLC["RevTint"] = "On"
-					end
-					SetTintCol()
-					if LeaMapsCB["RevTint"]:IsShown() then LeaMapsCB["RevTint"]:Hide(); LeaMapsCB["RevTint"]:Show() end
-				end
-
-				-- Create checkbox entry
-				local button = MenuUtil.CreateCheckbox(L["Tint unexplored areas"], IsSelected, SetSelected)
-
-				-- Add tooltip
-				-- local function OnTooltipShow(tooltipFrame, elementDescription)
-				-- 	GameTooltip_SetTitle(tooltipFrame, L["If checked, unexplored areas will be tinted."])
-				-- end
-				-- button:SetTooltip(OnTooltipShow)
-
-				-- Insert button to menu
-				Menu.ModifyMenu("MENU_WORLD_MAP_TRACKING", function(ownerRegion, rootDescription, contextData)
-					rootDescription:CreateDivider()
-					rootDescription:CreateTitle(L["Leatrix Maps"])
-					rootDescription:Insert(button)
-				end)
-
-			end
-
 		end
 
 		----------------------------------------------------------------------
@@ -2288,26 +4867,33 @@
 			reloadb.f:Hide()
 		end)
 
-		-- Add reset map layout button
-		local resetMapBtn = LeaMapsLC:CreateButton("ResetMapLayoutButton", LeaMapsLC["PageF"], "Reset map layout", "BOTTOMLEFT", 16, 10, 25, "Click to reset the map position and scale to the game default.")
-		resetMapBtn:SetScript("OnClick", function()
-			-- Reset saved map position and scale
-			LeaMapsLC["MapPosA"], LeaMapsLC["MapPosR"], LeaMapsLC["MapPosX"], LeaMapsLC["MapPosY"] = "TOPLEFT", "TOPLEFT", 16, -94
-			LeaMapsLC["MaxMapPosA"], LeaMapsLC["MaxMapPosR"], LeaMapsLC["MaxMapPosX"], LeaMapsLC["MaxMapPosY"] = "CENTER", "CENTER", 0, 0
-			LeaMapsLC["MapScale"] = 1.0
-			LeaMapsLC["MaxMapScale"] = 1.0
-			-- Apply them now (the map frame is not protected so this works during combat)
-			if InCombatLockdown() and WorldMapFrame:IsProtected() then return end
-			WorldMapFrame:SetScale(1)
-			if LeaMapsLC["UnlockMap"] == "On" then
-				WorldMapFrame:ClearAllPoints()
-				if WorldMapFrame:IsMaximized() then
-					WorldMapFrame:SetPoint(LeaMapsLC["MaxMapPosA"], UIParent, LeaMapsLC["MaxMapPosR"], LeaMapsLC["MaxMapPosX"], LeaMapsLC["MaxMapPosY"])
-				else
-					WorldMapFrame:SetPoint(LeaMapsLC["MapPosA"], UIParent, LeaMapsLC["MapPosR"], LeaMapsLC["MapPosX"], LeaMapsLC["MapPosY"])
+		-- Add reset map layout button (once, it's on the main panel)
+		if not LeaMapsCB["ResetMapLayoutButton"] then
+			local resetMapBtn = LeaMapsLC:CreateButton("ResetMapLayoutButton", LeaMapsLC["PageF"], "Reset map layout", "BOTTOMLEFT", 16, 10, 25, "Click to reset the map position and scale to the game default.")
+			resetMapBtn:SetScript("OnClick", function()
+				-- Do nothing if the map frame cannot be changed (the button is locked then)
+				if not LeaMapsLC:CanChangeMap() then return end
+				-- Reset saved map position and scale
+				LeaMapsLC["MapPosA"], LeaMapsLC["MapPosR"], LeaMapsLC["MapPosX"], LeaMapsLC["MapPosY"] = "TOPLEFT", "TOPLEFT", 16, -94
+				LeaMapsLC["MaxMapPosA"], LeaMapsLC["MaxMapPosR"], LeaMapsLC["MaxMapPosX"], LeaMapsLC["MaxMapPosY"] = "CENTER", "CENTER", 0, 0
+				LeaMapsLC["MapScale"] = 1.0
+				LeaMapsLC["MaxMapScale"] = 1.0
+				-- Apply them now
+				WorldMapFrame:SetScale(1)
+				if LeaMapsLC["UnlockMap"] == "On" then
+					WorldMapFrame:ClearAllPoints()
+					if WorldMapFrame:IsMaximized() then
+						WorldMapFrame:SetPoint(LeaMapsLC["MaxMapPosA"], UIParent, LeaMapsLC["MaxMapPosR"], LeaMapsLC["MaxMapPosX"], LeaMapsLC["MaxMapPosY"])
+					else
+						WorldMapFrame:SetPoint(LeaMapsLC["MapPosA"], UIParent, LeaMapsLC["MapPosR"], LeaMapsLC["MapPosX"], LeaMapsLC["MapPosY"])
+					end
 				end
-			end
-		end)
+			end)
+			-- Lock the button while the map frame cannot be changed
+			LeaMapsLC:AddMapLock(function(lock)
+				LeaMapsLC:LockItem(resetMapBtn, lock)
+			end)
+		end
 
 		-- Set textures
 		LeaMapsLC:CreateBar("FootTexture", Side, 470, 48, "BOTTOM", 0.5, 0.5, 0.5, 1.0, "Interface\\ACHIEVEMENTFRAME\\UI-GuildAchievement-Parchment-Horizontal-Desaturated.png")
@@ -2469,6 +5055,50 @@
 		end
 	end
 
+	----------------------------------------------------------------------
+	-- Map frame protection
+	----------------------------------------------------------------------
+
+	-- Another addon can make the map frame protected (such as by giving it a secure child frame) and protected frames
+	-- cannot be moved or scaled during combat. Actions that move or scale the map frame are not done while it cannot be
+	-- changed and the controls for them are locked until it can be changed again.
+
+	local mapLockFuncs = {}
+
+	-- Function to check if the map frame can be moved or scaled
+	function LeaMapsLC:CanChangeMap()
+		return not InCombatLockdown() or not WorldMapFrame:IsProtected()
+	end
+
+	-- Function to lock or unlock controls that move or scale the map frame
+	local function SetMapLocks(lock)
+		for i = 1, #mapLockFuncs do
+			mapLockFuncs[i](lock)
+		end
+	end
+
+	-- Function to add a function that locks or unlocks controls (it's run now and when combat starts or ends)
+	function LeaMapsLC:AddMapLock(func)
+		tinsert(mapLockFuncs, func)
+		func(not LeaMapsLC:CanChangeMap())
+	end
+
+	-- Set control locks when combat starts and ends
+	local mapLockEvents = CreateFrame("Frame")
+	mapLockEvents:RegisterEvent("PLAYER_REGEN_DISABLED")
+	mapLockEvents:RegisterEvent("PLAYER_REGEN_ENABLED")
+	mapLockEvents:SetScript("OnEvent", function(self, event)
+		if #mapLockFuncs == 0 then return end
+		if event == "PLAYER_REGEN_DISABLED" then
+			-- Combat lockdown starts after this event so lock now if the map frame is protected and check again on the
+			-- next frame (another addon may make the map frame protected during this event)
+			if WorldMapFrame:IsProtected() then SetMapLocks(true) end
+			C_Timer.After(0, function() SetMapLocks(not LeaMapsLC:CanChangeMap()) end)
+		else
+			SetMapLocks(not LeaMapsLC:CanChangeMap())
+		end
+	end)
+
 	-- Function to set lock state for configuration buttons
 	function LeaMapsLC:LockOption(option, item, reloadreq)
 		if reloadreq then
@@ -2491,6 +5121,7 @@
 
 	-- Set lock state for configuration buttons
 	function LeaMapsLC:SetDim()
+		LeaMapsLC:LockOption("SimpleMapFrame", "SimpleMapFrameBtn", true)				-- Use simple map frame
 		LeaMapsLC:LockOption("ScaleWorldMap", "ScaleWorldMapBtn", true) 				-- Scale the map
 		LeaMapsLC:LockOption("RevealMap", "RevTintBtn", true)							-- Shiw unexplored areas
 		LeaMapsLC:LockOption("UnlockMap", "UnlockMapBtn", true)							-- Unlock map frame
@@ -2549,6 +5180,7 @@
 		or	(LeaMapsLC["ShowZoneLevels"] ~= LeaMapsDB["ShowZoneLevels"])				-- Show zone levels
 		or	(LeaMapsLC["ShowCoords"] ~= LeaMapsDB["ShowCoords"])						-- Show coordinates
 		or	(LeaMapsLC["HideTownCity"] ~= LeaMapsDB["HideTownCity"])					-- Hide town and city icons
+		or	(LeaMapsLC["ShowDungeonMaps"] ~= LeaMapsDB["ShowDungeonMaps"])				-- Show dungeon maps
 		or	(LeaMapsLC["EnhanceBattleMap"] ~= LeaMapsDB["EnhanceBattleMap"])			-- Enhance battlefield map
 		or	(LeaMapsLC["NoFilterResetBtn"] ~= LeaMapsDB["NoFilterResetBtn"])			-- Hide filte reset button
 		then
@@ -2800,12 +5432,53 @@
 					LeaMapsLC:Print("Invalid map ID.")
 				end
 				return
+			elseif str == "findmap" then
+				-- Search the game's maps by name (such as /ltm findmap lordaeron)
+				local text = str and strtrim(strlower(table.concat({arg1 or "", arg2 or "", arg3 or ""}, " ")))
+				if not text or text == "" then
+					LeaMapsLC:Print("Use /ltm findmap <part of a map name>.")
+					return
+				end
+				local typeNames = {}
+				if Enum.UIMapType then
+					for name, value in pairs(Enum.UIMapType) do typeNames[value] = name end
+				end
+				local found = 0
+				for mapID = 1, 5000 do
+					local info = C_Map.GetMapInfo(mapID)
+					if info and info.name and strfind(strlower(info.name), text, 1, true) then
+						found = found + 1
+						local hasArt = C_Map.MapHasArt and C_Map.MapHasArt(mapID)
+						LeaMapsLC:Print(mapID .. ": " .. info.name .. " (" .. (typeNames[info.mapType] or tostring(info.mapType)) .. ", " .. (hasArt and "has map" or "no map") .. ")")
+					end
+				end
+				LeaMapsLC:Print(found .. " maps found.")
+				return
+			elseif str == "dun" then
+				-- Preview dungeon maps
+				if LeaMapsLC.PreviewDungeon then
+					LeaMapsLC.PreviewDungeon(arg1)
+				else
+					LeaMapsLC:Print("Show dungeon maps is not enabled.")
+				end
+				return
+			elseif str == "duncheck" then
+				-- Check game dungeon maps
+				if LeaMapsLC.CheckDungeonMaps then
+					LeaMapsLC.CheckDungeonMaps()
+				else
+					LeaMapsLC:Print("Show dungeon maps is not enabled.")
+				end
+				return
 			elseif str == "hadmin" then
 				-- Show admin commands
 				LeaMapsLC:Print("reset - Reset panel position")
 				LeaMapsLC:Print("wipe - Wipe addon settings")
 				LeaMapsLC:Print("debug - Lets you enable dungeon icons in world map settings")
 				LeaMapsLC:Print("setmap <id> - Show map ID <id>")
+				LeaMapsLC:Print("dun [number, name or off] - Preview dungeon maps (map must be open)")
+				LeaMapsLC:Print("duncheck - Check which game dungeon maps are in the client")
+				LeaMapsLC:Print("findmap <text> - Search the game's maps by name")
 				LeaMapsLC:Print("admin - Load admin profile")
 				return
 			elseif str == "map" then
@@ -2849,6 +5522,8 @@
 				LeaMapsDB["EnableMovement"] = "On"
 				LeaMapsDB["ScaleWorldMap"] = "Off"
 				LeaMapsDB["HideBlackoutFrame"] = "On"
+				LeaMapsDB["ShowZoneMenu"] = "On"
+				LeaMapsDB["MapTheme"] = 1
 				LeaMapsDB["AddonLanguage"] = 1
 				LeaMapsDB["MapScale"] = 1.0
 				LeaMapsDB["MaxMapScale"] = 0.9
@@ -2884,6 +5559,7 @@
 				LeaMapsDB["ShowCoords"] = "On"
 				LeaMapsDB["CoordsBackground"] = "On"
 				LeaMapsDB["HideTownCity"] = "On"
+				LeaMapsDB["ShowDungeonMaps"] = "On"
 
 				-- More
 				LeaMapsDB["EnhanceBattleMap"] = "On"
@@ -2959,6 +5635,8 @@
 			LeaMapsLC:LoadVarNum("MapScale", 1.0, 0.5, 2)				-- Map scale
 			LeaMapsLC:LoadVarNum("MaxMapScale", 1.0, 0.5, 2)			-- Maximised map scale
 			LeaMapsLC:LoadVarChk("HideBlackoutFrame", "On")				-- Hide blackout frame
+			LeaMapsLC:LoadVarChk("ShowZoneMenu", "On")					-- Show zone menus
+			LeaMapsLC:LoadVarNum("MapTheme", 1, 1, 12)					-- Map theme
 			LeaMapsLC:LoadVarNum("AddonLanguage", 1, 1, 12)				-- Addon language
 			LeaMapsLC:LoadVarChk("NoMapFade", "On")						-- Disable map fade
 			LeaMapsLC:LoadVarChk("NoFilterResetBtn", "On")				-- Hide filter reset button
@@ -2993,6 +5671,7 @@
 			LeaMapsLC:LoadVarChk("ShowCoords", "On")					-- Show coordinates
 			LeaMapsLC:LoadVarChk("CoordsBackground", "On")				-- Coordinates background
 			LeaMapsLC:LoadVarChk("HideTownCity", "On")					-- Hide town and city icons
+			LeaMapsLC:LoadVarChk("ShowDungeonMaps", "On")				-- Show dungeon maps
 
 			-- More
 			LeaMapsLC:LoadVarChk("EnhanceBattleMap", "Off")				-- Enhance battlefield map
@@ -3065,7 +5744,9 @@
 			LeaMapsDB["MapScale"] = LeaMapsLC["MapScale"]
 			LeaMapsDB["MaxMapScale"] = LeaMapsLC["MaxMapScale"]
 			LeaMapsDB["HideBlackoutFrame"] = LeaMapsLC["HideBlackoutFrame"]
+			LeaMapsDB["ShowZoneMenu"] = LeaMapsLC["ShowZoneMenu"]
 			LeaMapsDB["AddonLanguage"] = LeaMapsLC["AddonLanguage"]
+			LeaMapsDB["MapTheme"] = LeaMapsLC["MapTheme"]
 			LeaMapsDB["NoMapFade"] = LeaMapsLC["NoMapFade"]
 			LeaMapsDB["NoFilterResetBtn"] = LeaMapsLC["NoFilterResetBtn"]
 
@@ -3099,6 +5780,7 @@
 			LeaMapsDB["ShowCoords"] = LeaMapsLC["ShowCoords"]
 			LeaMapsDB["CoordsBackground"] = LeaMapsLC["CoordsBackground"]
 			LeaMapsDB["HideTownCity"] = LeaMapsLC["HideTownCity"]
+			LeaMapsDB["ShowDungeonMaps"] = LeaMapsLC["ShowDungeonMaps"]
 
 			-- More
 			LeaMapsDB["EnhanceBattleMap"] = LeaMapsLC["EnhanceBattleMap"]
@@ -3219,13 +5901,15 @@
 	LeaMapsLC:MakeCB(PageF, "ShowZoneLevels", "Show zone levels", 225, -132, true, "If checked, zone levels will be shown on the continent maps.")
 	LeaMapsLC:MakeCB(PageF, "ShowCoords", "Show coordinates", 225, -152, true, "If checked, coordinates will be shown.")
 	LeaMapsLC:MakeCB(PageF, "HideTownCity", "Hide town and city icons", 225, -172, true, "If checked, town and city icons will not be shown on the continent maps.")
+	LeaMapsLC:MakeCB(PageF, "ShowDungeonMaps", "Show dungeon maps", 225, -192, true, "If checked, the map will show a map of the dungeon or raid you are in, with bosses, entrances and level changes.|n|nUse the mouse wheel to zoom and drag to pan.|n|nRight-click the dungeon map to show the normal map until you next open the map.")
 
-	LeaMapsLC:MakeTx(PageF, "More", 225, -212)
-	LeaMapsLC:MakeCB(PageF, "EnhanceBattleMap", "Enhance battlefield map", 225, -232, true, "If checked, you will be able to customise the battlefield map.")
-	LeaMapsLC:MakeCB(PageF, "NoMapFade", "Disable map fade", 225, -252, false, "If checked, the map will not fade while your character is moving.")
-	LeaMapsLC:MakeCB(PageF, "NoFilterResetBtn", "Hide filter reset button", 225, -272, true, "If checked, the world map filter reset button will be hidden.")
-	LeaMapsLC:MakeCB(PageF, "ShowMinimapIcon", "Show minimap button", 225, -292, false, "If checked, the minimap button will be shown.")
+	LeaMapsLC:MakeTx(PageF, "More", 225, -232)
+	LeaMapsLC:MakeCB(PageF, "EnhanceBattleMap", "Enhance battlefield map", 225, -252, true, "If checked, you will be able to customise the battlefield map.")
+	LeaMapsLC:MakeCB(PageF, "NoMapFade", "Disable map fade", 225, -272, false, "If checked, the map will not fade while your character is moving.")
+	LeaMapsLC:MakeCB(PageF, "NoFilterResetBtn", "Hide filter reset button", 225, -292, true, "If checked, the world map filter reset button will be hidden.")
+	LeaMapsLC:MakeCB(PageF, "ShowMinimapIcon", "Show minimap button", 225, -312, false, "If checked, the minimap button will be shown.")
 
+	LeaMapsLC:CfgBtn("SimpleMapFrameBtn", LeaMapsCB["SimpleMapFrame"])
 	LeaMapsLC:CfgBtn("ScaleWorldMapBtn", LeaMapsCB["ScaleWorldMap"])
 	LeaMapsLC:CfgBtn("RevTintBtn", LeaMapsCB["RevealMap"])
 	LeaMapsLC:CfgBtn("UnlockMapBtn", LeaMapsCB["UnlockMap"])

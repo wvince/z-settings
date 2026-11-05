@@ -14,6 +14,8 @@ local QuestieTracker = QuestieLoader:ImportModule("QuestieTracker")
 local TrackerBaseFrame = QuestieLoader:ImportModule("TrackerBaseFrame")
 ---@type TrackerLinePool
 local TrackerLinePool = QuestieLoader:ImportModule("TrackerLinePool")
+---@type TrackerUtils
+local TrackerUtils = QuestieLoader:ImportModule("TrackerUtils")
 ---@type TrackerQuestTimers
 local TrackerQuestTimers = QuestieLoader:ImportModule("TrackerQuestTimers")
 ---@type Expansions
@@ -537,6 +539,20 @@ function QuestieOptionsEngine.tabs.tracker:Initialize()
                             QuestieTracker:Update()
                         end
                     },
+                    showPlayButtons = {
+                        type = "checkbox",
+                        order = 7.3,
+                        width = "half",
+                        title = "Show Play Buttons",
+                        tooltip = "If checked, a button in front of each Quest plays its voice-over from VoiceOver or Spoken.",
+                        visible = TrackerUtils:IsVoiceOverLoaded() or TrackerUtils:IsSpokenLoaded(),
+                        enabled = function() return Questie.db.profile.trackerEnabled end,
+                        get = function() return Questie.db.profile.trackerShowPlayButtons end,
+                        set = function(_, value)
+                            Questie.db.profile.trackerShowPlayButtons = value
+                            QuestieTracker:Update()
+                        end
+                    },
                     fadeQuestFocusButtons = {
                         type = "checkbox",
                         order = 7.2,
@@ -612,7 +628,7 @@ function QuestieOptionsEngine.tabs.tracker:Initialize()
                         title = "Sticky VoiceOver Frame",
                         tooltip = "If checked, the VoiceOver talking head / sound queue frame will be placed on the left or right side of the Questie Tracker depending on where the Tracker is placed on your screen.",
                         width = "half",
-                        visible = (IsAddOnLoaded("AI_VoiceOver") and IsAddOnLoaded("AI_VoiceOverData_Vanilla")),
+                        visible = TrackerUtils:IsVoiceOverLoaded(),
                         enabled = function() return Questie.db.profile.trackerEnabled end,
                         get = function() return Questie.db.profile.stickyVoiceOverFrame end,
                         set = function(_, value)

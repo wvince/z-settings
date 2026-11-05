@@ -1,5 +1,6 @@
 local _,addon = ...
 if addon.gameVersion < 40000 or addon.player.faction == 'Alliance' then return end
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #cata
@@ -9,9 +10,11 @@ RXPGuides.RegisterGuide([[
 #next 27-31 Northern Stranglethorn
 #version 1
 --#group RXP Cataclysm (H) << cata
+
 #group RXP Cataclysm 1-80 (H) << cata
 #group RXP MoP 1-80 (H) << mop
 #subweight 10000
+
 step
     #optional
     .goto 63,94.410,46.819
@@ -538,7 +541,9 @@ step
     --.target Valusha
     --.isQuestTurnedIn 26447
     --Not worth doing
+
     --Could go straight to Zoram Strand from here. The 13751 chain is bad xp/hr (13751/13797/13798/13841/13842)
+
 step
     #questguide
     .goto 63,72.20,57.65
@@ -631,7 +636,9 @@ step
     >>Finish killing |cRXP_ENEMY_Ashenvale Scouts|r
     .complete 13865,4 --12/12 Ashenvale Scouts defeated
     .mob Ashenvale Scout
+
     --Quest below (26449) not worth, too much travel
+
 step
     #questguide
     #completewith next
@@ -1609,7 +1616,10 @@ step << Warrior Cata
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Nahu|r
     .trainer >> Train your class spells
     .target Nahu Ragehoof
+
+
     --Next section is flying back only for final Ashenvale quest, not worth xp wise. Nice bow reward for hunters though..
+
 step
     #questguide
     .goto 85,49.21,72.27

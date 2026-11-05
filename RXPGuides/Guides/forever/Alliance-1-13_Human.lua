@@ -1,5 +1,6 @@
 local faction = UnitFactionGroup("player")
 if faction == "Horde" then return end
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
@@ -13,6 +14,8 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-A1
 #defaultfor Human
 #next 6-11 Elwynn Forest
+
+
 step << !Human
     #completewith next
     +You have selected a guide meant for Humans. You should choose the same starter zone that you start in
@@ -230,6 +233,7 @@ step
     .accept 3105 >> Accept Tainted Letter << Human Warlock
     .accept 92479 >>Accept A Scribbled Letter << Human Hunter
     .target Marshal McBride
+
 step << Warlock
     .goto 1429/0,-136.52,-8933.53
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Deputy Willem|r outside
@@ -242,6 +246,8 @@ step << Warlock
     .accept 1598 >> Accept The Stolen Tome
     .train 348 >> Train |T135817:0|t[Immolate]
     .target Drusilla La Salle
+
+
 step << Warlock
     #hardcore
 --   .goto 1429/0,-300.65,-8964.94,60,0
@@ -272,6 +278,7 @@ step << Warlock
     #completewith next
     .cast 688 >> |cRXP_WARN_Cast|r |T136218:0|t[Summon Imp]
     .usespell 688
+
 step
     #completewith next
     >>Kill |cRXP_ENEMY_Kobolds|r. Loot them for their |cRXP_LOOT_Stolen Books|r
@@ -300,7 +307,12 @@ step
     >>Kill |cRXP_ENEMY_Kobold Workers|r
     .complete 15,1 --Kill Kobold Worker (x10)
     .mob Kobold Worker
+
 ----Start of 1x train section----
+
+
+
+
 step
     #label xp3
     #loop
@@ -347,6 +359,7 @@ step
     .turnin 15 >> Turn in Investigate Echo Ridge
     .accept 21 >> Accept Skirmish at Echo Ridge
     .target Marshal McBride
+
 step
     .isQuestComplete 91743
     .goto 1429/0,-186.12,-8874.91
@@ -360,6 +373,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Brother Paxton|r
     .accept 91745 >>Accept Mining Consultant
     .target Brother Paxton
+
 step << Mage
     #optional
     #completewith next
@@ -426,7 +440,14 @@ step << Warlock
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Drusilla La Salle|r
     .train 172 >>Train |T136118:0|t[Corruption]
     .target Drusilla La Salle
+
+
+
 ----End of 1x train section----
+
+
+
+
 step
     #season 0,1
     #loop
@@ -562,6 +583,7 @@ step
     >>Kill |cRXP_ENEMY_Shinyfinder Narf|r. Loot him for the |cRXP_LOOT_Sack of "Picture" Books|r
     .complete 91752,1 --|1/1 Sack of "Picture" Books
     .target Shinyfinder Narf
+
 step
     .goto 1429/0,-224.02,-8850.30
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Milly Osworth|r
@@ -757,6 +779,8 @@ step
     .accept 2158 >> Accept Rest and Relaxation
     .target Falkhaan Isenstrider
 ]])
+
+
 RXPGuides.RegisterGuide([[
 #forever
 #disabledungeons
@@ -770,6 +794,7 @@ RXPGuides.RegisterGuide([[
 #displayname 6-13 Elwynn Forest << SoD
 #next 11-13 Loch Modan
 #defaultfor Human
+
 step << skip -- removing for now for camp fire buff/questline
     #season 0,1 << Rogue
     #softcore
@@ -777,6 +802,7 @@ step << skip -- removing for now for camp fire buff/questline
     .deathskip >> Die and respawn at the |cRXP_FRIENDLY_Spirit Healer|r
     .target Spirit Healer
     .subzoneskip 87
+
 step
     #completewith CampQuest
     .isOnQuest 91772
@@ -801,6 +827,7 @@ step
     +|cRXP_WARN_Use the|r |T4625105:0|t[Mining for Dummies] |cRXP_WARN_to raise your|r |T136248:0|t[Mining] |cRXP_WARN_skill by 2 or to train|r |T136248:0|t[Mining] |cRXP_WARN_if you don't already have two professions|r
     .itemcount 247840,1 -- Mining for Dummies
     .use 247840
+
 step
     #label CampQuest
     .goto 1429/0,-22.99,-9404.71
@@ -813,6 +840,7 @@ step
     >>|cRXP_WARN_Type "/sit" in chat and wait for one minute around the campfire|r
     .complete 95998,1 -- /sit emote in chat 1/1
     .complete 95998,2 -- Gain boosted rest buff 1/1
+
 step
     .goto 1429/0,-22.99,-9404.71
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Sam Sarsaparilla|r
@@ -837,13 +865,17 @@ step
     .accept 97923 >> Accept Camping 101: Mining
     .target Sam Sarsaparilla
     .skill mining,<1,1 -- shows if mining is >1
+
 --Add turnins for skinning/herb/mining later
+
 step
     .goto 1429/0,-22.99,-9404.71
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Sam Sarsaparilla|r
     .turnin 95998 >> Turn in The Great Outdoors
     .accept 96626 >> Accept Camping 101: Cooking
     .target Sam Sarsaparilla
+
+
 step
     .isOnQuest 91772
     #loop
@@ -854,6 +886,7 @@ step
     >>Click the green |cRXP_PICK_Kobold Tracks|r on the ground
     .use 247970 >> |cRXP_WARN_Use the|r |T132995:0|t[Kobold Tracking Kit] |cRXP_WARN_to track them on your minimap|r
     .complete 91772,1 -- Followed Kobold Tracks 6/6
+
 step << Warrior/Rogue/Paladin
     .goto 1429/0,87.87,-9456.65
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Smith Argus|r
@@ -957,6 +990,7 @@ step
     .turnin 2158,2 >> Turn in Rest and Relaxation << !Rogue !Warrior
     .home >> Set your Hearthstone to Goldshire
     .target Innkeeper Farley
+
 step
     .goto 1429/0,-5.63,-9467.21
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tomas|r
@@ -1713,6 +1747,8 @@ step
 --  .skill cooking,<10,1
     .skill cooking,50,1 --XX Shows if cooking skill is between 1-50
     .subzoneskip 54
+
+
 step
     .goto 1429/0,-113.23,-9379.25--c:1429,47.5,62.2
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Jason Mathers|r
@@ -1824,6 +1860,7 @@ step
     .turnin 99128 >> Turn in Slimy Menace
     .accept 99129 >> Accept A Man About a Murloc
     .target Jason Mathers
+
 step << Warrior/Paladin/Rogue
     #optional
     #label RoughStone4
@@ -2253,6 +2290,7 @@ step
     .mob +Prowler
     .complete 52,2 --Kill Young Forest Bear (x5)
     .mob +Young Forest Bear
+
 step
     .goto 1429/0,-1119.7708,-9603.7687
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ormin Pelford|r
@@ -2297,6 +2335,7 @@ step
     .mob +Prowler
     .complete 52,2 --Kill Young Forest Bear (x5)
     .mob +Young Forest Bear
+
 step
     #completewith Level9Grind << Warlock/Warrior/Rogue
     #completewith DefiasBandits << !Warlock !Warrior !Rogue
@@ -2701,6 +2740,7 @@ step << !Warlock
     #completewith PrincessFinish
     #optional
     .abandon 59 >> Abandon Cloth and Leather Armor
+
 step
     .goto 1429/0,72.81,-9496.23--c:Elwynn Forest,42.140,67.254
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Remy "Two Times"|r
@@ -2708,6 +2748,7 @@ step
     --.accept 99130 >> Accept An Enticing Offer
     .target Remy "Two Times"
     --skipping the follow up. terrible drop rates/respawn times
+
 step << skip
     >>Loot the |cRXP_PICK_Duskweed Petals|r at the farms in Elwynn Forest
     >>Kill |cRXP_ENEMY_Stonetusk Boars|r. Loot them for their |cRXP_LOOT_Vials of Animal Blood|r
@@ -2725,6 +2766,9 @@ sstep << skip
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Jason Mathers|r
     .turnin 99131 >> Turn in Baited for Success
     .target Jason Mathers
+
+
+
 step
     #optional
     #label BoarMeatCooking3
@@ -3125,6 +3169,8 @@ step << Hunter
     .equip 18,2507 >> |cRXP_WARN_Equip the|r |T135489:0|t[Laminated Recurve Bow]
     .use 2507
     .itemcount 2507,1 --Hornwood Recurve Bow (1)
+
+
 ----Warlock Elwynn Voidwalker Section Start----
 step << Warlock
     #optional
@@ -3369,7 +3415,10 @@ step << Warlock
     .target Gakin the Darkbinder
     .goto 1453/0,1041.54,-8983.29
     .turnin 1689 >> Turn in The Binding
+
+
 ----Warlock Elwynn Voidwalker Section End----
+
 step << Rogue
     #xprate <1.59
     .goto 1453/0,377.47,-8752.39
@@ -4079,6 +4128,7 @@ step
     .goto 1426/0,-2354.62,-4898.20,25 >>Go through the tunnel to Loch Modan
     .zoneskip Loch Modan
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
 #disabledungeons
@@ -4093,6 +4143,7 @@ RXPGuides.RegisterGuide([[
 #next 13-15 Westfall << !Hunter
 #next 14-16 Darkshore << Hunter
 #defaultfor Human
+
 step -- dont delete
     #label NormalRouteStart
 step
@@ -4542,6 +4593,7 @@ step
     .turnin 224 >> Turn in In Defense of the King's Lands
     .target Mountaineer Cobbleflint
     .isQuestComplete 224
+
 step << Warlock
     #optional
     #completewith next
@@ -4553,6 +4605,7 @@ step << Warlock
     .goto 1432/0,-2747.60,-5530.540
     .xp 14 >>Grind to 14
     >>|cRXP_WARN_Fly to Ironforge and skip this step if you're planning on running the Hall of Thanes dungeon in Ironforge|r
+
 step << !Warrior
     #optional
     .goto 1432/0,-2747.60,-5530.540
@@ -4560,6 +4613,7 @@ step << !Warrior
     .cooldown item,6948,<1
     .mob Stonesplinter Trogg
     .mob Stonesplinter Scout
+
 step << Human Warrior -- flying IF to train thrown before going westfall/darkshore
     #completewith next
     #optional
@@ -4581,11 +4635,13 @@ step << Human Warrior
     .trainer >> Train your class spells
     .target Bilban Tosslespanner
     .zoneskip Ironforge,1
+
 step
     .hs >> Hearth to Stormwind City
     .zoneskip Stormwind City
     .zoneskip Darkshore
     .zoneskip Westfall
+
 step << Hunter
     .goto 1453/0,596.400,-8831.700
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thurman Mullby|r
@@ -4807,8 +4863,10 @@ step << Rogue
     .itemcount 2027,1
     .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<8.7
     .xp <14,1
+
 step -- dont delete
     #label NormalRouteEnd
+
 --Hunter going Darkshore, rest Westfall
 step << Hunter
     .goto 1453/0,765.700,-8804.000

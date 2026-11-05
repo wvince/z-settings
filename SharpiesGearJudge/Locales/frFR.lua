@@ -2333,6 +2333,8 @@ L["Your profile is now picked from the shipped build closest to your talents, so
 L["Hunter and Mage weights follow the launch changes: Aspect of the Hawk, Trueshot Aura and the reworked Mage talents."] = "Les pondérations des chasseurs et des mages suivent les changements du lancement : Aspect du faucon, Aura de précision et les talents de mage remaniés."
 L["Warlock and Paladin weights follow the launch Life Tap and Vindication."] = "Les pondérations des démonistes et des paladins suivent Connexion et Vindication du lancement."
 L["Leveling weights for every class follow Blizzard's launch notes, and the Talents plugin's solo and dungeon leveling builds are re-searched on them."] = "Les pondérations de montée en niveau de toutes les classes suivent les notes de lancement de Blizzard, et les builds de montée en solo et en donjon du Plugin Talents ont été recherchés à nouveau sur cette base."
+L["Elemental and Restoration Shaman leveling weights follow the November 4 hotfix (2-second Chain Lightning), and the Talents plugin's Shaman builds were re-searched."] = "Les pondérations de montée en niveau du chaman Élémentaire et Restauration suivent le correctif du 4 novembre (Chaîne d'éclairs en 2 secondes), et les builds de chaman du Plugin Talents ont été recherchés à nouveau."
+L["Leveling PvP builds and weights are being worked on."] = "Des builds et des pondérations JcJ pour la montée en niveau sont en préparation."
 L["Stat Logic follows the launch racial changes: Human crit, Dwarf hit, and no more Orc and Tauren bonuses."] = "Stat Logic suit les changements raciaux du lancement : critique humain, toucher nain, et plus de bonus orc ni tauren."
 L["Affliction: Drain Life Solo"] = "Affliction : Drain de vie en solo"
 L["Bloom"] = "Floraison"

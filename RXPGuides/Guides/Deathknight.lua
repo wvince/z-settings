@@ -1,5 +1,6 @@
 local _, class = UnitClass("player")
 if class ~= "DEATHKNIGHT" then return end
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #version 6
@@ -16,6 +17,7 @@ RXPGuides.RegisterGuide([[
 #next RXP MoP 60-80 (A)\59-61 Hellfire Peninsula << Alliance !wotlk !cata
 #defaultfor DK
 #name 55-58 The Scarlet Enclave
+
 step
     .goto 124,51.345,35.205
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_The Lich King|r

@@ -7,7 +7,9 @@ RXPGuides.RegisterGuide([[
 #name 1-375 Horde_m1
 #guideKind profession
 #displayname 1-375 Horde
+
 --XX TBC Herbalism 1-375 guide
+
 step << Mage
     #completewith next
     .zone Undercity >> Teleport to Undercity
@@ -270,6 +272,7 @@ step
 step
     +Congratulations on reaching 375 Herbalism!
 ]])
+
 RXPGuides.RegisterGuide([[
 #wotlk
 #group +Profession leveling
@@ -278,6 +281,8 @@ RXPGuides.RegisterGuide([[
 #name 1-375 Alliance_m2
 #guideKind profession
 #displayname 1-375 Alliance
+
+
 step << Mage
     #completewith next
     .zone Stormwind City >> Teleport to Stormwind

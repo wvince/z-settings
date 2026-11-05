@@ -118,12 +118,12 @@ function LineBuilder.AddTitle(options)
     local collapseId = options.collapseId
     local collapsed = collapseId ~= nil and Questie.db.char.collapsedQuests[collapseId] and true or false
 
-    -- Achievement titles must not be mistaken for quest titles by TrackerLinePool.UpdateQuestTitleLines
+    -- Achievement titles must not be mistaken for quest titles by TrackerLinePool.ForEachQuestTitleLine
     line:SetMode(options.clickMode == "achieve" and "achieve" or "quest")
     _SetTarget(line, options.clickMode, options.target)
     line.expandZone:Hide()
     line.criteriaMark:Hide()
-    -- Quest titles show the VoiceOver play button. SetPlayButton skips an unchanged quest, so it must not be hidden here.
+    -- Quest titles show the play button. VoiceOver's SetPlayButton skips an unchanged quest, so it must not be hidden here.
     if options.clickMode ~= "quest" then
         line.playButton:Hide()
     end

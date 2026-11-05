@@ -7,7 +7,9 @@ RXPGuides.RegisterGuide([[
 #name 1-375 Horde_a1
 #guideKind profession
 #displayname 1-375 Horde
+
 --XX TBC Mining 1-375 guide
+
 step << Mage
     #completewith Makaru
     .zone Orgrimmar >> Teleport to Orgrimmar
@@ -271,6 +273,7 @@ step
 step
     +Congratulations on reaching 375 Mining!
 ]])
+
 RXPGuides.RegisterGuide([[
 #wotlk
 #group +Profession leveling
@@ -279,6 +282,7 @@ RXPGuides.RegisterGuide([[
 #name 1-375 Alliance_a2
 #guideKind profession
 #displayname 1-375 Alliance
+
 step << Mage
     #completewith Gelman
     .zone Stormwind City >> Teleport to Stormwind

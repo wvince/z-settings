@@ -8,6 +8,7 @@ RXPGuides.RegisterGuide([[
 #subgroup RXP Survival Guide 1-20
 #name 1-11 Elwynn Forest
 #next 11-12 Dun Morogh/Loch Modan
+
 step << !Human
     #sticky
     #completewith next
@@ -1599,6 +1600,7 @@ step
     .target Auctioneer Redmuse
     .target Auctioneer Buckler
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -1608,6 +1610,7 @@ RXPGuides.RegisterGuide([[
 #subgroup RXP Survival Guide 1-20
 #name 11-12 Dun Morogh/Loch Modan
 #next 12-14 Darkshore
+
 step
     #completewith OperationRecombobulation
 	.goto Dun Morogh,53.5,34.9,60,0
@@ -1816,6 +1819,8 @@ step
     >>|cRXP_WARN_Don't accept the follow up|r
     .turnin 353 >> Turn in Stormpike's Delivery
     .target Mountaineer Stormpike
+
+
 --I want Humans to hit 12 here before going Darkshore, Warlocks will already be 12 comfortably
 step << !Warlock
     #completewith TroggT

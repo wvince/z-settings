@@ -1,5 +1,6 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
@@ -12,6 +13,8 @@ RXPGuides.RegisterGuide([[
 #subgroup Dungeon Guide 1-22
 --#groupid RXP-SRGCE-H1
 #next 16-17 Ragefire Chasm
+
+
 step << Tauren Shaman
     .goto 1411/1,-4648.55,271.43
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Takrin|r
@@ -1679,7 +1682,9 @@ step << skip
     .goto 1454/1,-4242.34,1637.33,30 >>|cRXP_WARN_Jump onto the wooden beam. Perform a Logout Skip by logging out and back in. Run back to Orgrimmar if you don't succeed|r
     .link https://www.youtube.com/watch?v=U7YfoaO-X8E&ab_channel=RestedXP >> |cRXP_WARN_CLICK HERE for an example|r
     .zoneskip Orgrimmar
+
 ]])
+
 RXPGuides.RegisterGuide([[
 #forever
 << Horde
@@ -1689,6 +1694,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Dungeon Guide 1-22
 --#groupid RXP-SRGCE-H1
 #next 17-18 Ruins of Lordaeron
+
 step
     #sticky
     #completewith EnterRFC
@@ -2172,7 +2178,9 @@ step
     .turnin 5730 >> Turn in Hidden Enemies
     .target Thrall
     .isQuestTurnedIn 5728
+
     ]])
+
 RXPGuides.RegisterGuide([[
 #forever
 << Horde
@@ -2182,6 +2190,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Dungeon Guide 1-22
 --#groupid RXP-SRGCE-H1
 #next 18-21 The Barrens
+
 step
     #sticky
     #completewith EnterRoL
@@ -2569,7 +2578,10 @@ step << Rogue
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tabitha Heartweaver::250686|r
     .turnin 92401 >>Turn in A Frightened Request
     .target Tabitha Heartweaver::250686
+
+
     ]])
+
 RXPGuides.RegisterGuide([[
 #forever
 << Horde
@@ -2579,6 +2591,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Dungeon Guide 1-22
 --#groupid RXP-SRGCE-H1
 #next 21-22 Wailing Caverns
+
 step
     #completewith FoodandWater2
     .hs >> Hearth to The Crossroads
@@ -4379,7 +4392,9 @@ step << Warlock
     .turnin 1510 >>Turn in News of Dogran
     .accept 1511 >>Accept Ken'zigla's Draught
     .target Ken'zigla
+
     ]])
+
 RXPGuides.RegisterGuide([[
 #forever
 << Horde
@@ -4389,6 +4404,7 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Forever Dungeon Guide (H)
 #subgroup Dungeon Guide 1-22
 --#groupid RXP-SRGCE-H1
+
 step
     #sticky
     #completewith EnterWC

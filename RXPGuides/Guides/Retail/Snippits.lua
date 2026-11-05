@@ -2,6 +2,7 @@ local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 -- #############################################
 -- #                  MIDNIGHT                 #
 -- #############################################
+
 --GC: Stormwind Quests
 RXPGuides.RegisterGuide([[
 #retail
@@ -9,6 +10,7 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Speed Leveling
 #name a) Stormwind Quests
 #internal
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Renato Gallina|r
     .goto 84,63.79,73.59
@@ -40,6 +42,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thurman Schneider|r
     .turnin 334 >>Turn in Package for Thurman
     .target Thurman Schneider
+
 ]])
 --Housing Alliance
 RXPGuides.RegisterGuide([[
@@ -48,6 +51,7 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Speed Leveling
 #name a) Housing Tutorial Alliance
 #internal
+
 step
     >>Press the macro "In the Active Items Frame" to start the housing tutorial
     .accept 91863 >>Accept My First Home
@@ -64,7 +68,10 @@ step
 step
     >>Buy an available House
     .complete 91863,4 --1/1 Acquire a house
+
 --teleport unlock
+
+
 step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lyssabel Dawnpetal|r |cRXP_WARN_next to you|r.
     .turnin 91863 >>Turn in My First Home
@@ -132,7 +139,9 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Speed Leveling
 #name a) Housing Tutorial Horde
 #internal
+
 << Horde
+
 step
     >>Press the macro "In the Active Items Frame" to start the housing tutorial
     .accept 91863 >>Accept My First Home
@@ -155,7 +164,10 @@ step
     .turnin 91863 >>Turn in My First Home
     .accept 94455 >>Accept Home at Last
     .target Tocho Cloudhide
+
 --teleport unlock
+
+
 step
     >>Enter your House.
     .complete 94455,1 --1/1 Enter your house via the front door
@@ -218,6 +230,7 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Speed Leveling
 #name a) DMF
 #internal
+
 step << Alliance
     #completewith next
     #label ProfessionsDmf1
@@ -659,6 +672,8 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Speed Leveling
 #name a) GC Chromie Time Tower
 #internal
+
+
 step << Alliance
     #completewith next
     #label The Legion Returns
@@ -741,6 +756,7 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Speed Leveling
 #name a) GC Chromie Time Normal
 #internal
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Chromie|r
     #label ChromieTime1
@@ -802,9 +818,11 @@ step
     .nodmf
     .use 205456
 ]])
+
 -- #########################################
 -- #                  TWW                  #
 -- #########################################
+
 --DawnBreakerTeleport
 RXPGuides.RegisterGuide([[
 #retail
@@ -812,6 +830,7 @@ RXPGuides.RegisterGuide([[
 #group RestedXP War Within Endgame
 #name a) DawnBreakerTeleport
 #internal
+
 step
     .zoneskip 2215
     .zone 2359 >>Open the Dungeon Finder, navigate to Follower Dungeons, and queue for |cRXP_WARN_'The Dawnbreaker'|r.
@@ -827,6 +846,8 @@ RXPGuides.RegisterGuide([[
 #group RestedXP War Within Loremaster
 #name a) Phase Diving Unlock Free
 #internal
+
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Hashim|r
     .goto 2371,50.34,36.33
@@ -1003,10 +1024,14 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Hashim|r
     .turnin 89561 >>Turn in Wrapped Up
     .target Hashim
+
+
 ]])
+
 -- ##################################################
 -- #                  LEGION REMIX                  #
 -- ##################################################
+
 --Skyriding Tutorial Pandaria & Legion
 RXPGuides.RegisterGuide([[
 #retail
@@ -1014,6 +1039,7 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Legion Remix
 #name a) Skyriding Panda
 #internal
+
 step
     #completewith Skyriding Panda
     #hidewindow
@@ -1321,8 +1347,11 @@ step
     .turnin 90755 >>Turn in Time Flies
     .target Moratari
 ]])
+
 -- ================= ARTIFACT WEAPONS ================
+
 -- --------- Death Knight ---------
+
 --Blood
 RXPGuides.RegisterGuide([[
 #retail
@@ -1333,7 +1362,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Blood
 #next a) Order Hall Death Knight Part 1
 #internal
+
 << DeathKnight
+
 step
     .isQuestTurnedIn 40715 --A Pact of Necessity
     .isQuestAvailable 44401,43962 --A Weapon For Every Occasion; Blades of Destiny
@@ -1587,7 +1618,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Frost
 #next a) Order Hall Death Knight Part 1
 #internal
+
 << DeathKnight
+
 step
     .isQuestTurnedIn 40715 --A Pact of Necessity
     .isQuestAvailable 44401,43962 --A Weapon For Every Occasion; Blades of Destiny
@@ -1810,7 +1843,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Unholy
 #next a) Order Hall Death Knight Part 1
 #internal
+
 << DeathKnight
+
 step
     .isQuestTurnedIn 40715 --A Pact of Necessity
     .isQuestAvailable 44401,43962 --A Weapon For Every Occasion; Blades of Destiny
@@ -2109,6 +2144,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Highlord Darion Mograine|r.
     .turnin 40987 >>Turn in The Call of Vengeance
     .target Highlord Darion Mograine
+
 ]])
 --Blood 2
 RXPGuides.RegisterGuide([[}
@@ -2120,7 +2156,9 @@ RXPGuides.RegisterGuide([[}
 #displayname Artifact Weapon: Blood
 #next ac) Order Hall Death Knight Part 2
 #internal
+
 << DeathKnight
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Blood
 ]])
@@ -2134,7 +2172,9 @@ RXPGuides.RegisterGuide([[}
 #displayname Artifact Weapon: Frost
 #next ac) Order Hall Death Knight Part 2
 #internal
+
 << DeathKnight
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Frost DK
 ]])
@@ -2148,10 +2188,14 @@ RXPGuides.RegisterGuide([[}
 #displayname Artifact Weapon: Unholy
 #next ac) Order Hall Death Knight Part 2
 #internal
+
+
 << DeathKnight
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Unholy
 ]])
+
 --Death Knight Order Hall Campaign Part 1
 RXPGuides.RegisterGuide([[
 #retail
@@ -2163,7 +2207,9 @@ RXPGuides.RegisterGuide([[
 #next ac) Order Hall Death Knight
 #chapter
 #internal
+
 << DeathKnight
+
 step
     #completewith Enlist Nazgrim2
     #hidewindow
@@ -2229,7 +2275,9 @@ step
     .goto 648,24.76,33.70
     .zone 627 >>Click on the |cRXP_PICK_Portal to Dalaran|r.
 ]])
+
 -- --------- Demon Hunter ---------
+
 --Havoc
 RXPGuides.RegisterGuide([[}
 #retail
@@ -2240,7 +2288,9 @@ RXPGuides.RegisterGuide([[}
 #displayname Artifact Weapon: Havoc
 #next a) Order Hall Demon Hunter Part 1
 #internal
+
 << DemonHunter
+
 step
     #optional
     .convertquest 40814,40816
@@ -2554,7 +2604,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Vengeance
 #next a) Order Hall Demon Hunter Part 1
 #internal
+
 << DemonHunter
+
 step
     #optional
     .convertquest 40814,40816
@@ -2886,7 +2938,9 @@ RXPGuides.RegisterGuide([[}
 #displayname Artifact Weapon: Havoc
 #next ac) Order Hall Demon Hunter Part 2
 #internal
+
 << DemonHunter
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Havoc
 ]])
@@ -2900,10 +2954,13 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Vengeance
 #next ac) Order Hall Demon Hunter Part 2
 #internal
+
 << DemonHunter
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Vengeance
 ]])
+
 --Demon Hunter Order Hall Campaign Part 1
 RXPGuides.RegisterGuide([[
 #retail
@@ -2915,7 +2972,9 @@ RXPGuides.RegisterGuide([[
 #next ac) Order Hall Demon Hunter
 #chapter
 #internal
+
 << DemonHunter
+
 step
     #completewith Champion: Asha Ravensong2
     #hidewindow
@@ -2983,7 +3042,9 @@ step
 step
     #include ac) Order Hall Demon Hunter Part 2@Eternal Vigil-Champion: Asha Ravensong
 ]])
+
 -- --------- Druid ---------
+
 --Balance
 RXPGuides.RegisterGuide([[
 #retail
@@ -2994,7 +3055,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Balance
 #next a) Order Hall Druid Part 1
 #internal
+
 << Druid
+
 step
     #completewith next
     #label UseDreamwalkA
@@ -3409,7 +3472,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Feral
 #next a) Order Hall Druid Part 1
 #internal
+
 << Druid
+
 step
     #completewith next
     #label UseDreamwalkA
@@ -3741,7 +3806,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Guardian
 #next a) Order Hall Druid Part 1
 #internal
+
 << Druid
+
 step
     #completewith next
     #label UseDreamwalkA
@@ -4145,7 +4212,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Restoration
 #next a) Order Hall Druid Part 1
 #internal
+
 << Druid
+
 step
     #completewith next
     #label UseDreamwalkA
@@ -4578,7 +4647,9 @@ RXPGuides.RegisterGuide([[}
 #displayname Artifact Weapon: Balance
 #next ac) Order Hall Druid Part 2
 #internal
+
 << Druid
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Balance Druid
 ]])
@@ -4592,7 +4663,9 @@ RXPGuides.RegisterGuide([[}
 #displayname Artifact Weapon: Feral
 #next ac) Order Hall Druid Part 2
 #internal
+
 << Druid
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Feral Druid
 ]])
@@ -4606,7 +4679,9 @@ RXPGuides.RegisterGuide([[}
 #displayname Artifact Weapon: Guardian
 #next ac) Order Hall Druid Part 2
 #internal
+
 << Druid
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Guardian Druid
 ]])
@@ -4620,10 +4695,13 @@ RXPGuides.RegisterGuide([[}
 #displayname Artifact Weapon: Restoration
 #next ac) Order Hall Druid Part 2
 #internal
+
 << Druid
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Restoration Druid
 ]])
+
 --Druid Order Hall Campaign 1
 RXPGuides.RegisterGuide([[
 #retail
@@ -4635,7 +4713,9 @@ RXPGuides.RegisterGuide([[
 #next ac) Order Hall Druid
 #chapter
 #internal
+
 << Druid
+
 step
     #completewith Making Trails2
     #hidewindow
@@ -4699,7 +4779,9 @@ step
     .goto 747,56.51,43.15
     .zone 627 >>Click on the |cRXP_PICK_Portal to Dalaran|r.
 ]])
+
 -- --------- Hunter ---------
+
 --Beast Mastery
 RXPGuides.RegisterGuide([[
 #retail
@@ -4710,7 +4792,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Beast Mastery
 #next a) Order Hall Hunter Part 1
 #internal
+
 << Hunter
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Emmarel Shadewarden|r
     .isQuestTurnedIn 44043 --Continuing the Legend
@@ -5106,7 +5190,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Marksmanship
 #next a) Order Hall Hunter Part 1
 #internal
+
 << Hunter
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Emmarel Shadewarden|r
     .isQuestTurnedIn 44043 --Continuing the Legend
@@ -5392,7 +5478,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Survival
 #next a) Order Hall Hunter Part 1
 #internal
+
 << Hunter
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Emmarel Shadewarden|r
     .isQuestTurnedIn 44043 --Continuing the Legend
@@ -5710,7 +5798,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Beast Mastery
 #next ac) Order Hall Hunter Part 2
 #internal
+
 << Hunter
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Beast Mastery
 ]])
@@ -5724,7 +5814,9 @@ RXPGuides.RegisterGuide([[}
 #displayname Artifact Weapon: Marksmanship
 #next ac) Order Hall Hunter Part 2
 #internal
+
 << Hunter
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Marksmanship
 ]])
@@ -5738,10 +5830,13 @@ RXPGuides.RegisterGuide([[}
 #displayname Artifact Weapon: Survival
 #next ac) Order Hall Hunter Part 2
 #internal
+
 << Hunter
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Survival
 ]])
+
 --Hunter Order Hall Campaign 1
 RXPGuides.RegisterGuide([[
 #retail
@@ -5753,7 +5848,9 @@ RXPGuides.RegisterGuide([[
 #next ac) Order Hall Hunter
 #chapter
 #internal
+
 << Hunter
+
 step
     #completewith The Campaign Begins2
     #hidewindow
@@ -5817,7 +5914,9 @@ step
     .goto 739,48.63,43.48
     .zone 627 >>Click on the |cRXP_PICK_Portal to Dalaran|r.
 ]])
+
 -- --------- Mage ---------
+
 --Arcane
 RXPGuides.RegisterGuide([[
 #retail
@@ -5828,7 +5927,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Arcane
 #next a) Order Hall Mage Part 1
 #internal
+
 << Mage
+
 step
     #completewith Artifact Weapon: Arcane
     #hidewindow
@@ -6257,7 +6358,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Fire
 #next a) Order Hall Mage Part 1
 #internal
+
 << Mage
+
 step
     #completewith Artifact Weapon: Fire
     #hidewindow
@@ -6617,7 +6720,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Frost
 #next a) Order Hall Mage Part 1
 #internal
+
 << Mage
+
 step
     #completewith Artifact Weapon: Frost Mage
     #hidewindow
@@ -7216,7 +7321,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Arcane
 #next ac) Order Hall Mage Part 2
 #internal
+
 << Mage
+
 step
     #include a) Artifact Weapon: Arcane
 ]])
@@ -7230,7 +7337,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Fire
 #next ac) Order Hall Mage Part 2
 #internal
+
 << Mage
+
 step
     #include a) Artifact Weapon: Fire
 ]])
@@ -7244,10 +7353,13 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Frost
 #next ac) Order Hall Mage Part 2
 #internal
+
 << Mage
+
 step
     #include a) Artifact Weapon: Frost Mage
 ]])
+
 --Mage Order Hall Campaign 1
 RXPGuides.RegisterGuide([[
 #retail
@@ -7259,7 +7371,9 @@ RXPGuides.RegisterGuide([[
 #next ac) Order Hall Mage
 #chapter
 #internal
+
 << Mage
+
 step
     #completewith Champion: Archmage Modera
     #hidewindow
@@ -7324,7 +7438,9 @@ step
 step
     #include ac) Order Hall Mage Part 2@Champion's Return-OrderHallMage3
 ]])
+
 -- --------- Monk ---------
+
 --Brewmaster
 RXPGuides.RegisterGuide([[
 #retail
@@ -7335,7 +7451,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Brewmaster
 #next a) Order Hall Monk Part 1
 #internal
+
 << Monk
+
 step
     #completewith Artifact Weapon: Brewmaster
     #hidewindow
@@ -7821,7 +7939,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Mistweaver
 #next a) Order Hall Monk Part 1
 #internal
+
 << Monk
+
 step
     #completewith Artifact Weapon: Mistweaver
     #hidewindow
@@ -8097,7 +8217,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Windwalker
 #next a) Order Hall Monk Part 1
 #internal
+
 << Monk
+
 step
     #completewith Artifact Weapon: Windwalker
     #hidewindow
@@ -8549,7 +8671,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Brewmaster
 #next ac) Order Hall Monk Part 2
 #internal
+
 << Monk
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Brewmaster
 ]])
@@ -8564,7 +8688,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Mistweaver
 #next ac) Order Hall Monk Part 2
 #internal
+
 << Monk
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Mistweaver
 ]])
@@ -8579,10 +8705,13 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Windwalker
 #next ac) Order Hall Monk Part 2
 #internal
+
 << Monk
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Windwalker
 ]])
+
 --Monk Order Hall Campaign Part 1
 RXPGuides.RegisterGuide([[
 #retail
@@ -8594,7 +8723,9 @@ RXPGuides.RegisterGuide([[
 #next ac) Order Hall Monk
 #chapter
 #internal
+
 << Monk
+
 step
     #completewith The Fight Begins2
     #hidewindow
@@ -8667,7 +8798,9 @@ step
     .accept 42186 >>Accept Growing Power
     .target Initiate Da-Nel
 ]])
+
 -- --------- Paladin ---------
+
 --Holy
 RXPGuides.RegisterGuide([[
 #retail
@@ -8678,7 +8811,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Holy
 #next a) Order Hall Paladin Part 1
 #internal
+
 << Paladin
+
 step
     #completewith Artifact Weapon: Holy Paladin
     #hidewindow
@@ -9157,7 +9292,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Protection
 #next a) Order Hall Paladin Part 1
 #internal
+
 << Paladin
+
 step
     #completewith Artifact Weapon: Paladin Protection
     #hidewindow
@@ -9650,7 +9787,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Retribution
 #next a) Order Hall Paladin Part 1
 #internal
+
 << Paladin
+
 step
     #completewith Artifact Weapon: Retribution
     #hidewindow
@@ -10062,7 +10201,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Holy
 #next ac) Order Hall Paladin Part 2
 #internal
+
 << Paladin
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Holy Paladin
 ]])
@@ -10076,7 +10217,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Paladin Protection
 #next ac) Order Hall Paladin Part 2
 #internal
+
 << Paladin
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Paladin Protection
 ]])
@@ -10090,10 +10233,13 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Retribution
 #next ac) Order Hall Paladin Part 2
 #internal
+
 << Paladin
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Retribution
 ]])
+
 --Paladin Order Hall Campaign Part 1
 RXPGuides.RegisterGuide([[
 #retail
@@ -10105,7 +10251,9 @@ RXPGuides.RegisterGuide([[
 #next ac) Order Hall Paladin
 #chapter
 #internal
+
 << Paladin
+
 step
     #completewith Order Hall Paladin Part 2
     #hidewindow
@@ -10162,7 +10310,9 @@ step
 step
     #include ac) Order Hall Paladin Part 2@A United Force-Order Hall Paladin Part 2
 ]])
+
 -- --------- Priest ---------
+
 --Discipline
 RXPGuides.RegisterGuide([[
 #retail
@@ -10173,7 +10323,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Discipline
 #next a) Order Hall Priest Part 1
 #internal
+
 << Priest
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Alonsus Faol|r
     .isQuestTurnedIn 43935 --A Second Legend
@@ -10586,7 +10738,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Holy
 #next a) Order Hall Priest Part 1
 #internal
+
 << Priest
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Alonsus Faol|r
     .isQuestTurnedIn 43935 --A Second Legend
@@ -10863,7 +11017,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Shadow
 #next a) Order Hall Priest Part 1
 #internal
+
 << Priest
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Alonsus Faol|r
     .isQuestTurnedIn 43935 --A Second Legend
@@ -11125,7 +11281,9 @@ RXPGuides.RegisterGuide([[}
 #displayname Artifact Weapon: Discipline
 #next ac) Order Hall Priest Part 2
 #internal
+
 << Priest
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Discipline
 ]])
@@ -11139,7 +11297,9 @@ RXPGuides.RegisterGuide([[}
 #displayname Artifact Weapon: Holy
 #next ac) Order Hall Priest Part 2
 #internal
+
 << Priest
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Holy Priest
 ]])
@@ -11153,10 +11313,13 @@ RXPGuides.RegisterGuide([[}
 #displayname Artifact Weapon: Shadow
 #next ac) Order Hall Priest Part 2
 #internal
+
 << Priest
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Shadow
 ]])
+
 --Priest Order Hall Campaign Part 1
 RXPGuides.RegisterGuide([[
 #retail
@@ -11168,7 +11331,9 @@ RXPGuides.RegisterGuide([[
 #next ac) Order Hall Priest
 #chapter
 #internal
+
 << Priest
+
 step
     #completewith Recruit Ishanah2
     #hidewindow
@@ -11232,7 +11397,9 @@ step
     .goto 702,49.79,80.59
     .zone 627 >>Click on the |cRXP_PICK_Portal to Dalaran|r.
 ]])
+
 -- --------- Rogue ---------
+
 --Assassination
 RXPGuides.RegisterGuide([[
 #retail
@@ -11243,7 +11410,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Assassination
 #next a) Order Hall Rogue Part 1
 #internal
+
 << Rogue
+
 step
     #completewith Artifact Weapon: Assassination
     #hidewindow
@@ -11833,7 +12002,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Outlaw
 #next a) Order Hall Rogue Part 1
 #internal
+
 << Rogue
+
 step
     #completewith Artifact Weapon: Outlaw
     #hidewindow
@@ -12171,7 +12342,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Subtlety
 #next a) Order Hall Rogue Part 1
 #internal
+
 << Rogue
+
 step
     #completewith Artifact Weapon: Subtlety
     #hidewindow
@@ -12695,7 +12868,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Assassination
 #next ac) Order Hall Rogue Part 2
 #internal
+
 << Rogue
+
 step
     #include a) Artifact Weapon: Assassination
 ]])
@@ -12709,7 +12884,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Outlaw
 #next ac) Order Hall Rogue Part 2
 #internal
+
 << Rogue
+
 step
     #include a) Artifact Weapon: Outlaw
 ]])
@@ -12723,10 +12900,13 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Subtlety
 #next ac) Order Hall Rogue Part 2
 #internal
+
 << Rogue
+
 step
     #include a) Artifact Weapon: Subtlety
 ]])
+
 --Rogue Order Hall Campaign Part 1
 RXPGuides.RegisterGuide([[
 #retail
@@ -12738,7 +12918,9 @@ RXPGuides.RegisterGuide([[
 #next ac) Order Hall Rogue
 #chapter
 #internal
+
 << Rogue
+
 step
     #completewith Lethal Efficiency22
     #hidewindow
@@ -12809,7 +12991,9 @@ step
 step
     #include ac) Order Hall Rogue Part 2@Honoring Success-Lethal Efficiency2
 ]])
+
 -- --------- Shaman ---------
+
 --Elemental
 RXPGuides.RegisterGuide([[
 #retail
@@ -12820,7 +13004,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Elemental
 #next a) Order Hall Shaman Part 1
 #internal
+
 << Shaman
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Aggramar|r
     .isQuestTurnedIn 43945 --Expanding Your Horizon
@@ -13189,7 +13375,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Enhancement
 #next a) Order Hall Shaman Part 1
 #internal
+
 << Shaman
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Aggramar|r
     .isQuestTurnedIn 43945 --Expanding Your Horizon
@@ -13514,7 +13702,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Restoration
 #next a) Order Hall Shaman Part 1
 #internal
+
 << Shaman
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Aggramar|r
     .isQuestTurnedIn 43945 --Expanding Your Horizon
@@ -13787,7 +13977,9 @@ RXPGuides.RegisterGuide([[}
 #displayname Artifact Weapon: Elemental
 #next ac) Order Hall Shaman Part 2
 #internal
+
 << Shaman
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Elemental
 ]])
@@ -13801,7 +13993,9 @@ RXPGuides.RegisterGuide([[}
 #displayname Artifact Weapon: Enhancement
 #next ac) Order Hall Shaman Part 2
 #internal
+
 << Shaman
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Enhancement
 ]])
@@ -13815,10 +14009,13 @@ RXPGuides.RegisterGuide([[}
 #displayname Artifact Weapon: Restoration
 #next ac) Order Hall Shaman Part 2
 #internal
+
 << Shaman
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Restoration Shaman
 ]])
+
 --Shaman Order Hall Campaign Part 1
 RXPGuides.RegisterGuide([[
 #retail
@@ -13830,7 +14027,9 @@ RXPGuides.RegisterGuide([[
 #next ac) Order Hall Shaman
 #chapter
 #internal
+
 << Shaman
+
 step
     #completewith Azeroth Needs You2
     #hidewindow
@@ -13893,7 +14092,9 @@ step
     .goto 726,29.81,52.02
     .zone 627 >>Click on the |cRXP_PICK_Portal to Dalaran|r.
 ]])
+
 -- --------- Warlock ---------
+
 --Affliction
 RXPGuides.RegisterGuide([[
 #retail
@@ -13904,7 +14105,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Affliction
 #next a) Order Hall Warlock Part 1
 #internal
+
 << Warlock
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Calydus|r
     .isQuestTurnedIn 43984 --The Tome Opens Again
@@ -14255,7 +14458,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Demonology
 #next a) Order Hall Warlock Part 1
 #internal
+
 << Warlock
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Calydus|r
     .isQuestTurnedIn 43984 --The Tome Opens Again
@@ -14553,7 +14758,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Destruction
 #next a) Order Hall Warlock Part 1
 #internal
+
 << Warlock
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Calydus|r
     .isQuestTurnedIn 43984 --The Tome Opens Again
@@ -14903,7 +15110,9 @@ RXPGuides.RegisterGuide([[}
 #displayname Artifact Weapon: Affliction
 #next ac) Order Hall Warlock Part 2
 #internal
+
 << Warlock
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Affliction
 ]])
@@ -14917,7 +15126,9 @@ RXPGuides.RegisterGuide([[}
 #displayname Artifact Weapon: Demonology
 #next ac) Order Hall Warlock Part 2
 #internal
+
 << Warlock
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Demonology
 ]])
@@ -14931,10 +15142,13 @@ RXPGuides.RegisterGuide([[}
 #displayname Artifact Weapon: Destruction
 #next ac) Order Hall Warlock Part 2
 #internal
+
 << Warlock
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Destruction
 ]])
+
 --Warlock Order Hall Campaign Part 1
 RXPGuides.RegisterGuide([[
 #retail
@@ -14946,7 +15160,9 @@ RXPGuides.RegisterGuide([[
 #next ac) Order Hall Warlock
 #chapter
 #internal
+
 << Warlock
+
 step
     #completewith Ritssyn Flamescowl2
     #hidewindow
@@ -15016,7 +15232,9 @@ step
     .goto 627,35.02,45.56
     .zone 627 >>|cRXP_WARN_Follow the way out of the canal.|r
 ]])
+
 -- --------- Warrior ---------
+
 --Arms
 RXPGuides.RegisterGuide([[
 #retail
@@ -15027,7 +15245,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Arms
 #next a) Order Hall Campaign Intro
 #internal
+
 << Warrior
+
 step
     #completewith Artifact Weapon: Arms
     #hidewindow
@@ -15299,7 +15519,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Fury
 #next a) Order Hall Campaign Intro
 #internal
+
 << Warrior
+
 step
     #completewith Artifact Weapon: Fury
     #hidewindow
@@ -15596,7 +15818,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Protection
 #next a) Order Hall Campaign Intro
 #internal
+
 << Warrior
+
 step
     #completewith Artifact Weapon: Warrior Protection
     #hidewindow
@@ -15865,7 +16089,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Arms
 #next ac) Order Hall Warrior Part 2
 #internal
+
 << Warrior
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Arms
 ]])
@@ -15879,7 +16105,9 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Fury
 #next ac) Order Hall Warrior Part 2
 #internal
+
 << Warrior
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Fury
 ]])
@@ -15893,10 +16121,13 @@ RXPGuides.RegisterGuide([[
 #displayname Artifact Weapon: Protection
 #next ac) Order Hall Warrior Part 2
 #internal
+
 << Warrior
+
 step
     #include RestedXP Legion Remix\a) Artifact Weapon: Warrior Protection
 ]])
+
 --Warrior Order Hall Campaign Part 1
 RXPGuides.RegisterGuide([[
 #retail
@@ -15908,7 +16139,9 @@ RXPGuides.RegisterGuide([[
 #next ac) Order Hall Warrior
 #chapter
 #internal
+
 << Warrior
+
 step
     #completewith Accept The Eye of Odyn2
     #hidewindow

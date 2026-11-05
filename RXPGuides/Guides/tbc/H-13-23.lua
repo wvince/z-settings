@@ -8,6 +8,7 @@ RXPGuides.RegisterGuide([[
 #subgroup RestedXP Horde 1-30
 #defaultfor Shaman
 #next 18-23 Stonetalon/The Barrens
+
 step << Tauren Shaman
     .goto Durotar,50.8,43.6
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Takrin|r
@@ -2033,7 +2034,9 @@ step
 step
     .goto The Barrens,35.26,27.88,100 >>Travel to Stonetalon Mountains
     .zoneskip Stonetalon Mountains
+
     ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -2043,6 +2046,7 @@ RXPGuides.RegisterGuide([[
 #subgroup RestedXP Horde 1-30
 #defaultfor Shaman
 #next 23-25 Hillsbrad Foothills
+
 step
     #completewith next
     .goto The Barrens,35.26,27.88,100 >>Travel to Stonetalon Mountains

@@ -10,6 +10,12 @@ Unlike addons that give items static points (e.g. "Hit = 10 pts"), SGJ understan
 
 ## 🔥 What's New
 
+> **WoW Forever players:** leveling PvP builds and weights are being worked on.
+
+### 3.2.9
+
+- **November 4 hotfix (WoW Forever):** Elemental and Restoration Shaman leveling weights rebuilt for the 2-second Chain Lightning.
+
 ### 3.2.8
 
 - **Launch weights (WoW Forever):** leveling and dungeon weights for every class follow Blizzard's launch notes, and dungeon mana is paced like a real group (short drinks between pulls, a full drink only when you run dry).

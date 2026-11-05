@@ -1,5 +1,7 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
+
+
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #hardcore
@@ -13,6 +15,7 @@ RXPGuides.RegisterGuide([[
 #subgroup RXP Survival Guide 1-20
 #defaultfor Tauren
 #next 6-13 Tauren
+
 step << !Tauren
     #completewith next
     .goto Mulgore,44.92,77.12
@@ -420,6 +423,8 @@ step
     .accept 1656 >>Accept A Task Unfinished
     .target Antur Fallow
 ]])
+
+
 RXPGuides.RegisterGuide([[
 #hardcore
 #classic
@@ -432,6 +437,8 @@ RXPGuides.RegisterGuide([[
 #subgroup RXP Survival Guide 1-20
 #defaultfor Tauren
 #next 13-15 Silverpine Forest
+
+
 step
 	#completewith next
     .goto Mulgore,47.35,60.70,120 >> Run to Bloodhoof Village
@@ -3255,3 +3262,4 @@ step
     .zone Silverpine Forest >> Travel to Silverpine Forest
     .zoneskip Silverpine Forest
     ]])
+

@@ -428,6 +428,10 @@ function RSTooltipScanners.ScanLootByItemID(itemID, value)
 end
 
 function RSTooltipScanners.ScanLoot(itemLink, value)
+	if (not itemLink) then
+		return false
+	end
+
 	return ScanItem(C_TooltipInfo.GetHyperlink(itemLink), value)
 end
 

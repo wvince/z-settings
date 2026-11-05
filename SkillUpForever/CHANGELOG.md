@@ -12,6 +12,22 @@ optional `### For addon authors` subsection after a version's player bullets.
 
 ## [Unreleased]
 
+## [1.0.14] - 2026-11-05
+
+- **Long lists in the Professions window scroll.** The skipped and pinned route menus, the profession dropdown and a shopping list's block menu show 20 entries at a time and scroll the rest, so every entry stays reachable on any screen. The shared settings page also drops a dropdown helper nothing used.
+
+## [1.0.13] - 2026-11-05
+
+- **The settings page opens without an error.** Its title asked the game for a font Forever does not have, which logged a Lua error each time the page was built; it now uses the font the game's own settings pages title with.
+
+## [1.0.12] - 2026-11-05
+
+- **Opening the Professions window no longer shows a Lua error.** With both side tabs on, the levelling route tab could try to sit under the crafted gear tab, which already sat under it, so the game refused the anchor and raised an error. The route tab now always comes first and the crafted gear tab follows it, below any tab another addon has added to the column.
+
+## [1.0.11] - 2026-11-05
+
+- **The objective tracker column stays still as you enter and leave combat.** All Objectives and your quests keep their place at the top, and the Forever sections always follow below them, so nothing swaps order, jumps or loses a line when a fight starts or ends.
+
 ## [1.0.10] - 2026-11-04
 
 - **Profession data now names the 1.60.1.70790 build.** Thresholds, recipes, vendors, trainer requirements and sources are regenerated from the new Forever client build, so every number the addon shows comes from the client you are running. The regenerated skill ranges match the previous build, so nothing a player sees changes.

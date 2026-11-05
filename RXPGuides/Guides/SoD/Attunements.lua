@@ -6,6 +6,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Attunements
 #name Karazhan Crypts Attunement
 #guideKind attunement
+
 step
     #completewith next
     .subzone 2268 >> Travel to the |cRXP_LOOT_Light's Hope Chapel|r in |cRXP_PICK_Eastern Plaguelands|r
@@ -210,6 +211,7 @@ step
     .accept 86971 >> Accept Curious Karazhan Curios!
     .target Harrison Jones
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 #season 2
@@ -217,6 +219,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Attunements
 #name Scarlet Enclave Introduction
 #guideKind attunement
+
 step
    #completewith next
    .subzone 2268 >> Travel to the |cRXP_LOOT_Light's Hope Chapel|r in |cRXP_PICK_Eastern Plaguelands|r

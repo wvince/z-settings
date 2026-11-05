@@ -259,6 +259,7 @@
 				["0.58:0.65:0.43:0.67:0.51:0.49:0.70:0.16"] = 701, -- Morgan's Vigil, Stormwind, Ironforge, Light's Hope Chapel
 				["0.58:0.65:0.56:0.70:0.41:0.75:0.43:0.93"] = 378, -- Morgan's Vigil, Lakeshire, Sentinel Hill, Booty Bay
 				["0.58:0.65:0.68:0.68:0.59:0.52"] = 304, -- Morgan's Vigil, Farholde Keep, Thelsamar
+				["0.58:0.65:0.68:0.68:0.59:0.52:0.49:0.44:0.48:0.30"] = 556, -- Morgans Wacht, Burg Farholde, Thelsamar, Hafen von Menethil, Southshore
 
 				-- Alliance: Nethergarde Keep (Blasted Lands)
 				["0.61:0.78:0.51:0.75:0.43:0.93"] = 260, -- Nethergarde Keep, Darkshire, Booty Bay

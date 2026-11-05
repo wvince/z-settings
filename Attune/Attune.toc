@@ -1,4 +1,4 @@
-## Interface: 16001
+## Interface: 16001, 120100, 120105, 120107
 ## Title: Attune
 ## Author: CixiDelmont
 ## Notes: Track raid attunements and dungeon quest progress
@@ -16,7 +16,7 @@
 ## IconTexture: Interface\Icons\inv_scroll_03
 ## SavedVariables: Attune_DB
 ## SavedVariablesPerCharacter: AttuneLastViewed, TreeExpandStatus
-## Version: 16001-34
+## Version: 16001-35
 ## X-Website: https://warcraftratings.com
 embeds.xml
 Locales\Locales.xml

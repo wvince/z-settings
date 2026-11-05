@@ -7,6 +7,7 @@ RXPGuides.RegisterGuide([[
 #subgroup RXP Survival Guide 20-32
 #name 23-24 Wetlands
 #next 24-27 Redridge/Duskwood
+
 step
 .dungeon SFK
     #completewith FinalAccept
@@ -254,6 +255,7 @@ step
     >>Kill |cRXP_ENEMY_Young Wetlands Crocolisks|r. Loot them for their |cRXP_LOOT_Young Crocolisk Skin|r
     .complete 484,1
     .mob Young Wetlands Crocolisk
+
 step << !NightElf !Draenei
     .isOnQuest 470,306,469,484,279
 	.hs >> Hearth to Menethil Harbor
@@ -294,6 +296,8 @@ step << !NightElf !Draenei
     .fly Ironforge >> Fly to Ironforge
     .target Shellei Brondir
     .subzoneskip 150,1
+
+
 -- only going loch if draenei/nightelf or not 25 yet
 step
     #optional
@@ -409,6 +413,7 @@ step << NightElf/Draenei
     #optional
     .goto 1426/0,-726.200,-5193.300,20,0
     .goto 1455/0,-862.200,-4998.700,70 >> Travel up the road
+
 step
     #ah
     #optional
@@ -543,6 +548,7 @@ step << skip
 	.goto Ironforge,76.4,51.2,50 >> Hop ontop of the gryphon's head then logout and back in to logout skip to the tram.
     .zone Stormwind City >>Take the tram to Stormwind
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -551,6 +557,7 @@ RXPGuides.RegisterGuide([[
 #subgroup RXP Survival Guide 20-32
 #name 24-27 Redridge/Duskwood
 #next 27-29 Wetlands
+
 step
     .goto Stormwind City,55.21,7.04
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Billibub Cogspinner|r
@@ -1404,6 +1411,7 @@ step << Rogue
     .home >> Set your hearthstone to Darkshire
     .target Innkeeper Trelayne
     --xx nosubzone. check on ptr
+
 --
 step << Rogue skip
     .goto Stormwind City,75.9,59.9
@@ -1442,6 +1450,7 @@ step << Rogue skip
     .goto Stormwind City,78.0,58.9
     .turnin 2609 >> Turn in The Touch of Zanzil
 --
+
 step
     .goto Duskwood,73.83,44.05
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Chef Grual|r
@@ -1940,6 +1949,7 @@ step
     .turnin 323 >> Turn in Proving Your Worth
     .accept 269 >> Accept Seeking Wisdom
     .target Sven Yorgen
+
 step << Warrior/Paladin
     #optional
     .isQuestComplete 228 -- turning in mor'ladim to get Archeus if complete
@@ -2770,6 +2780,7 @@ step
     >>Click the |cRXP_PICK_The Sparklematic 5200|r one more time
     .accept 2947 >> Accept Return of the Ring
     .isQuestTurnedIn 2945
+
 -- Turn ins:
 step
 .dungeon Gnomer
@@ -2871,6 +2882,7 @@ step
     .target Gryth Thurden
     .zoneskip Wetlands
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -2879,6 +2891,7 @@ RXPGuides.RegisterGuide([[
 #subgroup RXP Survival Guide 20-32
 #name 27-29 Wetlands
 #next 29-30 Ashenvale
+
 step
     .goto Wetlands,8.359,58.526
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Karl Boran|r
@@ -3426,6 +3439,7 @@ step
     .accept 293 >>Accept Cleansing the Eye
     .target Glorin Steelbrow
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -3434,6 +3448,7 @@ RXPGuides.RegisterGuide([[
 #subgroup RXP Survival Guide 20-32
 #name 29-30 Ashenvale
 #next 30-31 Wetlands
+
 step
     #completewith next
     .goto Wetlands,5.429,57.485,25 >> Travel to the Menethil Harbor Dock
@@ -3663,6 +3678,7 @@ step
     .target Bragok
     .isOnQuest 1017
     .zoneskip The Barrens,1
+
 step
     .goto 1440/1,-3215.400,2954.700
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kayneth Stillwind|r
@@ -3783,6 +3799,7 @@ step
     .zone Wetlands >> Take the boat to Menethil Harbor
     .bindlocation 2104 --HS not in Menethil
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -3791,6 +3808,7 @@ RXPGuides.RegisterGuide([[
 #subgroup RXP Survival Guide 20-32
 #name 30-31 Wetlands
 #next 31-32 Duskwood/STV
+
 step
     #optional
     #completewith BlessedArm
@@ -4052,6 +4070,7 @@ step << !Mage
     .bronzetube
     .target Billibub Cogspinner
 ]])
+
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -4060,6 +4079,7 @@ RXPGuides.RegisterGuide([[
 #subgroup RXP Survival Guide 20-32
 #name 31-32 Duskwood/STV
 #next 32-33 Shimmering Flats
+
 step << !Mage
 .dungeon Gnomer
     .goto StormwindClassic,55.511,12.502

@@ -11,13 +11,18 @@ RXPGuides.RegisterGuide([[
 #name 1a
 #displayname |cFFFCDC00LEVEL 1-10|r
 #disabled
+
 << !Harronir !Nightborne !HighmountainTauren !MagharOrc !EarthenDwarf !ZandalariTroll !Vulpera !Dracthyr !VoidElf !KulTiran !LightforgedDraenei !Mechagnome !Pandaren DK
+
 step
 +1
+
 ]])
+
 -- =================================
 -- =======   NEUTRAL ZONES   =======
 -- =================================
+
 --Exile's Reach Main Guide
 RXPGuides.RegisterGuide([[
 #retail
@@ -26,7 +31,9 @@ RXPGuides.RegisterGuide([[
 #subgroup |cFFFCDC00(1-90)|r Default
 #name a) Exile's Reach
 #internal
+
 << !Dracthyr !DemonHunter !DK !KulTiran !EarthenDwarf !DarkIronDwarf !LightforgedDraenei !Mechagnome !VoidElf !NightBorne !HighmountainTauren !Vulpera !MagharOrc !ZandalariTroll
+
 step
     #completewith ExilesEnd
     #hidewindow
@@ -278,18 +285,26 @@ step << Priest/Warrior/Druid/Mage/Shaman/Paladin/Rogue/Warlock/Monk
     #label ClassQuests
     >>Follow |cRXP_FRIENDLY_Warlord Breka Grimaxe|r and wait for her to become hostile. << Horde
     >>Follow |cRXP_FRIENDLY_Captain Garrick|r and wait for her to become hostile. << Alliance
+
     *Cast |T136207:0|t[Shadow Word: Pain] on her and refresh it when it's about to expire |cRXP_WARN_<3seconds|r. << Priest
     *|cRXP_WARN_She’ll also notify you in chat when it’s about to expire|r. << Priest
+
     *Cast |T136118:0|t[Corruption] on her and refresh it when it's about to expire |cRXP_WARN_<3seconds|r. << Warlock
     *|cRXP_WARN_She’ll also notify you in chat when it’s about to expire|r. << Warlock
+
     *Cast |T136096:0|t[Moonfire] on her and refresh it when it's about to expire |cRXP_WARN_<5seconds|r. << Druid
     *|cRXP_WARN_She’ll also notify you in chat when it’s about to expire|r. << Druid
+
     *|cRXP_WARN_Keep your distance so you can|r |T132337:0|t[Charge] |cRXP_WARN_her immediately|r. << Warrior
     *Use |T132316:0|t[Hamstring] to slow her, making it easier to create distance before your next |T132337:0|t[Charge] is ready. << Warrior
+
     *Repeat this sequence: cast |T135846:0|t[Frostbolt] on |cRXP_ENEMY_Captain Garrick|r, then move directly in front of her and use |T135807:0|t[Fire Blast]. << Mage
     *|cRXP_WARN_You must be directly in front of her when using|r |T135807:0|t[Fire Blast]. << Mage
+
     *Repeat this sequence: cast |T136048:0|t[Lightning Bolt] on |cRXP_ENEMY_Captain Garrick|r, then use |T460956:0|t[Primal Strike] on her 4 times. << Shaman
+
     *Use |T136189:0|t[Sinister Strike] |cRXP_WARN_(your builder)|r on her to generate Combo Points, then spend 3, 4, and finally 5 Combo Points on |T132292:0|t[Eviscerate]|cRXP_WARN_(your spender)|r. << Rogue
+
     *Open with |cRXP_WARN_2|r |T606551:0|t[Tiger Palms] and |cRXP_WARN_1|r |T574575:0|t[Blackout Kick] against her. << Monk
     *Continue to alternate between the two << Monk
     *Build 3 Holy Power with |T135891:0|t[Crusader Strike] on her, then use |T236265:0|t[Shield of the Righteous]. << Paladin
@@ -1964,6 +1979,7 @@ RXPGuides.RegisterGuide([[
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A) << Alliance
 #next RestedXP Speed Leveling\b1) BfA Intro << Horde
 #chapter
+
 step
     .zoneskip 1409,1
     .zone 2352 >>Enter Neighbourhood
@@ -2000,7 +2016,10 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - Plaguelands
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A) << Alliance
 #next b1) BfA Intro << Horde
+
+
 << DK !Pandaren !KulTiran !DarkIronDwarf !LightforgedDraenei !Mechagnome !VoidElf !HighmountainTauren !ZandalariTroll !Nightborne !Vulpera !MagharOrc
+
 step
     #hidewindow
     #completewith Cry For Vengeance!
@@ -3881,7 +3900,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - The Frozen Throne
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A) << Alliance
 #next b1) BfA Intro << Horde
+
 << DK Pandaren/DarkIronDwarf DK/KulTiran DK/LightforgedDraenei DK/Mechagnome DK/VoidElf DK/HighmountainTauren DK/Nightborne DK/ZandalariTroll DK/MagharOrc DK/Vulpera DK
+
 step
     .convertquest 58902,58903 << Horde
 step
@@ -3985,7 +4006,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - Mardum
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A) << Alliance
 #next b1) BfA Intro << Horde
+
 << DemonHunter !VoidElf
+
 step
     #hidewindow
     #completewith A New Direction
@@ -5558,7 +5581,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - The Forbidden Reach
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A) << Alliance
 #next b1) BfA Intro << Horde
+
 << Dracthyr
+
 step << !Evoker
     #arrowtext Talk to\n|cRXP_FRIENDLY_Scalecommander Emberthal|r
     .goto 2373,42.99,89.36
@@ -6847,7 +6872,9 @@ RXPGuides.RegisterGuide([[
 #displayname The Wandering Isle |cRXP_ENEMY_(Alternative)|r
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A) << Alliance
 #next b1) BfA Intro << Horde
+
 << Pandaren !DK
+
 step
     #hidewindow
     #completewith Accept A New Fate
@@ -9261,7 +9288,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - Harandar
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A) << Alliance
 #next b1) BfA Intro << Horde
+
 << Harronir
+
 step
     #completewith Invasive Drifter
     .collecttoy 253629,3
@@ -9530,8 +9559,11 @@ RXPGuides.RegisterGuide([[
 #next ba) DF Alliance Intro Midnight (A) << Alliance
 #next b1) BfA Intro << Horde
 #chapter
+
 << Harronir
+
 --Arcantina Route
+
 step
     #arrowtext Use [Personal Key to Arcantina]
     .goto 2541,50.67,90.10,0
@@ -9553,7 +9585,9 @@ step << Horde
     .goto 2393,52.18,65.21
     .collecttoy 253629,3
     .zone 85 >>|TInterface/cursor/crosshair/interact.blp:20|tClick on the |cRXP_PICK_Portal to Orgrimmar|r
+
 --Rootwalking Route
+
 step
     .subzone 364 >>Use |T7491037:0|t[Rootwalking]
     .usespell 1238686
@@ -9594,7 +9628,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - Hall of Awakening
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A) << Alliance
 #next b1) BfA Intro << Horde
+
 << EarthenDwarf
+
 step
     #completewith Invasive Drifter
     .collecttoy 253629,3
@@ -9890,7 +9926,9 @@ RXPGuides.RegisterGuide([[
 #next ba) DF Alliance Intro Midnight (A) << Alliance
 #next b1) BfA Intro << Horde
 #chapter
+
 << EarthenDwarf
+
 step
     #arrowtext Use [Personal Key to Arcantina]
     .goto 2541,50.67,90.10
@@ -9914,6 +9952,7 @@ step << Horde
     .collecttoy 253629,3
 step << Alliance
     #include RestedXP Speed Leveling\a) GC Chromie Time Tower
+
 ]])
 --Arathi Highlands Returning Player
 RXPGuides.RegisterGuide([[
@@ -9925,6 +9964,7 @@ RXPGuides.RegisterGuide([[
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A) << Alliance
 #next b1) BfA Intro << Horde
 #internal
+
 step
     #completewith next
     #label Gnoll Way
@@ -10218,9 +10258,11 @@ step
     >>Choose your next Adventure
     .complete 90911,1
 ]])
+
 -- =================================
 -- ======   ALLIANCE ZONES   =======
 -- =================================
+
 --Exile's Reach
 RXPGuides.RegisterGuide([[
 #retail
@@ -10230,10 +10272,13 @@ RXPGuides.RegisterGuide([[
 #name a) Exile's Reach Alliance
 #displayname |cFF1EFF001|r - Exile's Reach
 #next ba) DF Alliance Intro Midnight (A)
+
 << Alliance !Harronir !Dracthyr !DemonHunter !DK !KulTiran !EarthenDwarf !DarkIronDwarf !LightforgedDraenei !Mechagnome !VoidElf !NightBorne !HighmountainTauren !Vulpera !MagharOrc !ZandalariTroll
+
 step
     #include RestedXP Speed Leveling\a) Exile's Reach
 ]])
+
 --Draenei: Ammen Vale
 RXPGuides.RegisterGuide([[
 #retail
@@ -10244,7 +10289,9 @@ RXPGuides.RegisterGuide([[
 #displayname Ammen Vale |cRXP_ENEMY_(Alternative)|r
 #defaultfor Draenei !DK
 #next ac) Draenei Azuremyst Isle
+
 << Alliance
+
 step
     #completewith Blood Elf Plans
     #hidewindow
@@ -10920,7 +10967,10 @@ RXPGuides.RegisterGuide([[
 #next b1) BfA Intro << Horde
 #chapter
 #internal
+
 << Alliance
+
+
 ]])
 --Draenei: Azuremyst Isle
 RXPGuides.RegisterGuide([[
@@ -10932,7 +10982,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Azuremyst Isle
 #defaultfor Draenei !DK
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A)
+
 << Alliance
+
 step
     #hidewindow
     #completewith HousingDraenei
@@ -11158,10 +11210,14 @@ step
     .accept 9455 >>Accept Strange Findings
     .mob Infected Nightstalker Runt
     .use 23678
+
+
 -- ******************** ROUTES DIVERGE HERE ********************--
+
 -- =========================================================
 -- ===               XPRATE: ABOVE 1.10                  ===
 -- =========================================================
+
 step
     .xp >10,1
     #xprate >1.10
@@ -11210,9 +11266,11 @@ step
     *Loot them for |T134196:0|t[|cRXP_LOOT_Root Trapper Vine|r].
     .complete 9463,1 --8/8 Root Trapper Vine
     .mob Root Trapper
+
 -- ==============================================
 -- ===        XPRATE: BETWEEN 1 - 1.10       ====
 -- ==============================================
+
 step
     #xprate 1-1.10
     .xp >10,1
@@ -11345,7 +11403,9 @@ step
     *Loot them for |T134196:0|t[|cRXP_LOOT_Root Trapper Vine|r].
     .complete 9463,1 --8/8 Root Trapper Vine
     .mob Root Trapper
+
 -- ******************** ROUTES INTERSECT HERE ********************--
+
 step
     .isQuestComplete 9454 --The Great Moongraze Hunt
     #completewith next
@@ -11414,7 +11474,9 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Exarch Menelaous|r.
     .turnin 9455 >>Turn in Strange Findings
     .target Exarch Menelaous
+
 -- ******************** ROUTES DIVERGE HERE ********************--
+
 step
     #xprate >1.3
     #include RestedXP Speed Leveling\a) Azuremyst Isle >1.3 XP Rate
@@ -11427,10 +11489,13 @@ step
 step
     #xprate <1.25
     #include RestedXP Speed Leveling\a) Azuremyst Isle <1.25 XP Rate
+
 -- ******************** ROUTES INTERSECT HERE ********************--
+
 -- =========================
 -- ====  NO XPRATES END ====
 -- =========================
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Daedal|r
     .xp >10,1
@@ -11808,6 +11873,8 @@ step << Alliance
     .zoneskip 2352,1
 step << Alliance
     #include RestedXP Speed Leveling\a) GC Chromie Time Tower
+
+
 ]])
     --Azuremyst Isle >1.3 XP Rate
 RXPGuides.RegisterGuide([[
@@ -11816,10 +11883,13 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Speed Leveling
 #name a) Azuremyst Isle >1.3 XP Rate
 #internal
+
 << Alliance
+
 -- ====================================
 -- ===        XPRATE: >1.30        ====
 -- ====================================
+
 step
     #xprate >1.30
     #completewith next
@@ -11912,12 +11982,15 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Caregiver Chellan|r
     .turnin 9606 >>Turn in Return to Caregiver Chellan
     .target Caregiver Chellan
+
 -- ╔═════════════════════════════════╗
 -- ║       1.3 LEVEL 10 REACHED      ║
 -- ╚═════════════════════════════════╝
+
 -- ===========================================
 -- ====      XPRATE: >1.30 BACKUP         ====
 -- ===========================================
+
 step
     .xp >10,1
     #xprate >1.30
@@ -12090,10 +12163,14 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Speed Leveling
 #name a) Azuremyst Isle <1.3 XP Rate
 #internal
+
 << Alliance
+
+
 -- =====================================
 -- ===        XP RATE: <1.30         ===
 -- =====================================
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Exarch Menelaous|r
     #xprate <1.30
@@ -12197,10 +12274,14 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Speed Leveling
 #name a) Azuremyst Isle 1.25-1.3 XP XP Rate
 #internal
+
 << Alliance
+
+
 -- ===========================================
 -- ===     XPRATE: BETWEEN 1.25-1.30       ===
 -- ===========================================
+
 step
     #xprate 1.25-1.30
     #hidewindow
@@ -12262,12 +12343,14 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Acteon|r
     .turnin 10324 >>Turn in The Great Moongraze Hunt
     .target Acteon
+
 -- ╔═════════════════════════════════╗
 -- ║       LEVEL 10 REACHED!         ║
 -- ╚═════════════════════════════════╝
 -- =============================================
 -- ====   XPRATE: BETWEEN 1.25-1.30 BACKUP    ==
 -- =============================================
+
 step
     #xprate 1.25-1.30
     #completewith next
@@ -12372,10 +12455,14 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Speed Leveling
 #name a) Azuremyst Isle <1.25 XP Rate
 #internal
+
 << Alliance
+
+
 -- =====================================
 -- ====    XPRATE: UNDER 1.25       ====
 -- =====================================
+
 step
     #xprate <1.25
     #completewith next
@@ -12528,7 +12615,9 @@ RXPGuides.RegisterGuide([[
 #displayname Coldridge Valley |cRXP_ENEMY_(Alternative)|r
 #defaultfor Dwarf !DK
 #next ac) Dwarf & Gnome Dun Morogh
+
 << Alliance
+
 step
     .xp >10,1
     #completewith Pack Your Bags
@@ -12540,6 +12629,7 @@ step
     .xp >10,1
     #completewith Aid for the Wounded
     +If you want to level as fast as possible, choose Exile’s Reach as your starting zone. This requires recreating your character.
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Joren Ironstock|r
     .xp >10,1
@@ -13394,6 +13484,7 @@ step
 --     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tharek Blackstone|r.
 --     .turnin 24493 >>Turn in Don't Forget About Us
 --     .target Tharek Blackstone
+
 ]])
     --Coldridge Valley: Skip
 RXPGuides.RegisterGuide([[
@@ -13405,7 +13496,10 @@ RXPGuides.RegisterGuide([[
 #next b1) BfA Intro << Horde
 #chapter
 #internal
+
 << Alliance
+
+
 ]])
 --Gnome: New Tinkertown
 RXPGuides.RegisterGuide([[
@@ -13417,7 +13511,9 @@ RXPGuides.RegisterGuide([[
 #displayname  New Tinkertown |cRXP_ENEMY_(Alternative)|r
 #defaultfor Gnome !DK
 #next ac) Dwarf & Gnome Dun Morogh
+
 << Alliance
+
 step
     .xp >10,1
     #completewith Paint it Black
@@ -13428,6 +13524,7 @@ step
     .xp >10,1
     #completewith Withdraw to the Loading Room!
     +If you want to level as fast as possible, choose Exile’s Reach as your starting zone. This requires recreating your character.
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Nevin Twistwrench|r
     .xp >10,1
@@ -14329,7 +14426,10 @@ RXPGuides.RegisterGuide([[
 #next b1) BfA Intro << Horde
 #chapter
 #internal
+
 << Alliance
+
+
 ]])
 --Dwarf & Gnome: Dun Morogh
 RXPGuides.RegisterGuide([[
@@ -14341,7 +14441,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Dun Morogh
 #defaultfor Dwarf Gnome !DK
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A)
+
 << Alliance
+
 step
     .xp >10,1
     #hidewindow
@@ -15647,7 +15749,9 @@ RXPGuides.RegisterGuide([[
 #displayname Northshire Valley |cRXP_ENEMY_(Alternative)|r
 #defaultfor Human !DK
 #next ac) Elwynn Forest 1
+
 << Alliance
+
 step
     .xp >10,1
     #completewith Ending the Invasion!2
@@ -16167,7 +16271,10 @@ RXPGuides.RegisterGuide([[
 #next b1) BfA Intro << Horde
 #chapter
 #internal
+
 << Alliance
+
+
 ]])
 --Human: Elwynn Forest
 RXPGuides.RegisterGuide([[
@@ -16179,7 +16286,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Elwynn Forest
 #defaultfor Human !DK
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A)
+
 << Alliance
+
 step
     .xp >10,1
     #hidewindow
@@ -17393,7 +17502,9 @@ RXPGuides.RegisterGuide([[
 #displayname Shadowglen |cRXP_ENEMY_(Alternative)|r
 #defaultfor NightElf !DemonHunter !DK
 #next ac) Night Elf Teldrassil
+
 << Alliance
+
 step
     #completewith Dolanaar Delivery2
     #hidewindow
@@ -17873,7 +17984,10 @@ RXPGuides.RegisterGuide([[
 #next b1) BfA Intro << Horde
 #chapter
 #internal
+
 << Alliance
+
+
 ]])
 --Night Elf: Teldrassil
 RXPGuides.RegisterGuide([[
@@ -17885,7 +17999,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Teldrassil
 #defaultfor NightElf !DemonHunter !DK
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A)
+
 << Alliance
+
 step
     #hidewindow
     #completewith Ursal the Mauler
@@ -19126,7 +19242,9 @@ RXPGuides.RegisterGuide([[
 #name ab) Worgen Intro
 #displayname Gilneas |cRXP_ENEMY_(Alternative)|r
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A)
+
 << Alliance Worgen !DK
+
 step
     #completewith Rut'theran Village
     #hidewindow
@@ -19136,6 +19254,7 @@ step
 step
     #completewith Market Homes1
     +If you want to level as fast as possible, choose Exile’s Reach as your starting zone. This requires recreating your character.
+
     *This is especially faster for Worgen, since their starting zone keeps you until level 17 and does not allow skyriding.
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Prince Liam Greymane|r
@@ -22313,6 +22432,7 @@ step
     .zone 84 >>|TInterface/cursor/crosshair/interact.blp:20|tClick on the |cRXP_PICK_Portal to Stormwind|r.
 step << Alliance
     #include RestedXP Speed Leveling\a) GC Chromie Time Tower
+
 ]])
     --Gilneas: Skip
 RXPGuides.RegisterGuide([[
@@ -22324,7 +22444,10 @@ RXPGuides.RegisterGuide([[
 #next b1) BfA Intro << Horde
 #chapter
 #internal
+
 << Alliance Worgen !DK
+
+
 ]])
 --DarkIronDwarf: Shadowforge City
 RXPGuides.RegisterGuide([[
@@ -22335,7 +22458,9 @@ RXPGuides.RegisterGuide([[
 #name a) DarkIronDwarf Intro
 #displayname |cFF1EFF001|r - Shadowforge City
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A)
+
 << Alliance DarkIronDwarf !DK
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Moira Thaurissan|r
     .goto 1186,56.43,31.86
@@ -22390,7 +22515,9 @@ RXPGuides.RegisterGuide([[
 #name a) KulTiran Intro
 #displayname |cFF1EFF001|r - Boralus
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A)
+
 << Alliance KulTiran !DK
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Katherine Proudmoore|r
     .goto 1161,67.71,21.77
@@ -22450,7 +22577,9 @@ RXPGuides.RegisterGuide([[
 #name a) LightforgedDraenei Intro
 #displayname |cFF1EFF001|r - The Vindicaar
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A)
+
 << Alliance LightforgedDraenei !DK
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Captain Fareeya|r
     .goto 940,49.2,43.8
@@ -22507,7 +22636,9 @@ RXPGuides.RegisterGuide([[
 #name a) Mechagnome Intro
 #displayname |cFF1EFF001|r - Mechagon City
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A)
+
 << Alliance Mechagnome !DK
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_High Tinker Mekkartonque|r
     .goto 1573,18.67,67.5
@@ -22554,7 +22685,9 @@ RXPGuides.RegisterGuide([[
 #name a) VoidElf Intro
 #displayname |cFF1EFF001|r - Telogrus Rift
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A)
+
 << Alliance VoidElf !DK
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Alleria|r
     .goto 971,28.5,22.3
@@ -22719,9 +22852,11 @@ step
     .nodmf
     .use 205456
 ]])
+
 -- ====================================
 -- =======    HORDE ZONES    ==========
 -- ====================================
+
 --Exile's Reach
 RXPGuides.RegisterGuide([[
 #retail
@@ -22731,7 +22866,10 @@ RXPGuides.RegisterGuide([[
 #name a) Exile's Reach Horde
 #displayname |cFF1EFF001|r - Exile's Reach
 #next b1) BfA Intro
+
+
 << Horde !Harronir !Dracthyr !DemonHunter !DK !Nightborne !HighmountainTauren !Vulpera !MagharOrc !ZandalariTroll
+
 step
     #optional
     .convertquest 56775,59926 << Horde
@@ -24504,11 +24642,14 @@ RXPGuides.RegisterGuide([[
 #displayname Sunstrider Isle |cRXP_ENEMY_(Alternative)|r
 #next ac) Blood Elf Eversong Woods
 #defaultfor BloodElf !DK
+
 << Horde
+
 step
     .zoneskip 1727
     #completewith SunstriderIsleFirstQuestCheck
     +If you want to level as fast as possible, choose Exile’s Reach as your starting zone. This requires recreating your character.
+
 step
     #optional
     .zoneskip 1727,1
@@ -24797,7 +24938,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Eversong Woods
 #next b1) BfA Intro
 #defaultfor BloodElf !DK
+
 << Horde
+
 step << Hunter
     #completewith next
     .goto 94,58.74,57.51
@@ -25255,6 +25398,7 @@ step
     .zone 2351 >>Teleport to a Neighbourhood with the House finder, not |T7252953:0|t[Teleport to Plot], then take the |cRXP_PICK_Stormwind Portal|r.
     .link https://www.youtube.com/watch?v=uVkUB7z0njo >>CLICK HERE FOR VIDEO
     .macro House Teleport, 975747 >>/run C_Housing.StartTutorial()
+
 ]])
 --Orc: Valley of Trials
 RXPGuides.RegisterGuide([[
@@ -25269,11 +25413,14 @@ RXPGuides.RegisterGuide([[
 #next ac) Echo Isles2 << !Troll --Orc
 #next a) BfA Intro << Troll
 #defaultfor Orc !DK/Troll !DK
+
 << Horde
+
 step << Orc
     .zoneskip 1727
     #completewith DurotarFirstQuestCheck
     +If you want to level as fast as possible, choose Exile’s Reach as your starting zone. This requires recreating your character.
+
 step << Orc
     #optional
     .zoneskip 1727,1
@@ -25660,7 +25807,9 @@ RXPGuides.RegisterGuide([[
 #next ab) Valley of Trials2 << Troll
 #next b1) BfA Intro << !Troll
 #defaultfor Orc !DK/Troll !DK
+
 << Horde
+
 step << Orc
     #completewith next
     .cast 202844 >>Use your |T1405809:0|t[Gunshoes] to move faster
@@ -25670,6 +25819,7 @@ step << Troll
     .zoneskip 1727
     #completewith EchoIslesFirstQuestCheck
     +If you want to level as fast as possible, choose Exile’s Reach as your starting zone. This requires recreating your character.
+
 step << Troll
     #optional
     .zoneskip 1727,1
@@ -26445,11 +26595,14 @@ RXPGuides.RegisterGuide([[
 #displayname Camp Narache |cRXP_ENEMY_(Alternative)|r
 #next ac) Tauren Camp Mulgore
 #defaultfor Tauren !DK
+
 << Horde
+
 step << Tauren
     .zoneskip 1727
     #completewith MulgoreFirstQuestCheck
     +If you want to level as fast as possible, choose Exile’s Reach as your starting zone. This requires recreating your character.
+
 step << Tauren
     #optional
     .zoneskip 1727,1
@@ -26682,7 +26835,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Mulgore
 #next b1) BfA Intro
 #defaultfor Tauren !DK
+
 << Horde
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Maur Raincaller|r
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Maur Raincaller|r.
@@ -27203,11 +27358,14 @@ RXPGuides.RegisterGuide([[
 #title Deathknell
 #next ac) Undead Tirisfal Glades
 #defaultfor Undead !DK
+
 << Horde
+
 step << Undead
     .zoneskip 1727
     #completewith TirisfalFistQuestCheck
     +If you want to level as fast as possible, choose Exile’s Reach as your starting zone. This requires recreating your character.
+
 step << Undead
     #optional
     .zoneskip 1727,1
@@ -27513,7 +27671,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Tirisfal Glades
 #next b1) BfA Intro
 #defaultfor Undead !DK
+
 << Horde
+
 step
     #optional
     .itemcount 132516,1 --Gunshoes
@@ -28101,11 +28261,14 @@ RXPGuides.RegisterGuide([[
 #name ab) Goblin Intro
 #displayname Kezan & The Lost Isles |cRXP_ENEMY_(Alternative)|r
 #next b1) BfA Intro
+
 << Horde Goblin !DK
+
 step << Goblin
     .zoneskip 1727
     #completewith KezanFirstQuestCheck
     +If you want to level as fast as possible, choose Exile’s Reach as your starting zone. This requires recreating your character.
+
 step << Goblin
     #optional
     .zoneskip 1727,1
@@ -29767,7 +29930,10 @@ RXPGuides.RegisterGuide([[
 #next ba) DF Alliance Intro Midnight (A) << Alliance
 #next b1) BfA Intro << Horde
 #chapter
+
 << Horde Goblin !DK
+
+
 ]])
 --HighmountainTauren: Highmountain
 RXPGuides.RegisterGuide([[
@@ -29778,7 +29944,9 @@ RXPGuides.RegisterGuide([[
 #name a) HighmountainTauren
 #displayname |cFF1EFF001|r - Highmountain Tauren
 #next b1) BfA Intro
+
 << Horde HighmountainTauren !DK
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Mayla Highmountain|r
     .goto 652,54.85,63.18
@@ -29829,7 +29997,9 @@ RXPGuides.RegisterGuide([[
 #name a) Nightborne Intro
 #displayname |cFF1EFF001|r - The Nighthold
 #next b1) BfA Intro
+
 << Horde Nightborne !DK
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_First Arcanist Thalyssra|r
     .goto 680,59.34,85.53
@@ -29880,7 +30050,9 @@ RXPGuides.RegisterGuide([[
 #name a) ZandalariTroll Intro
 #displayname |cFF1EFF001|r - Dazar'alor
 #next b1) BfA Intro
+
 << Horde ZandalariTroll !DK
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Queen Talanji|r
     .goto 1165,49.93,46.64
@@ -29931,7 +30103,9 @@ RXPGuides.RegisterGuide([[
 #name a) MagharOrc Intro
 #displayname |cFF1EFF001|r - Orgrimmar
 #next b1) BfA Intro
+
 << Horde MagharOrc !DK
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Overlord Geya'rah|r
     .goto 85,70.6,44.6
@@ -29945,6 +30119,7 @@ step
     .turnin 51485 >>Turn in For the Horde
     .accept 53502 >>Accept Stranger in a Strange Land
     .target Ambassador Blackguard
+
 -- step
 --     .goto 85,48.23,62.19
 --     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Darkmoon Faire Mystic Mage|r
@@ -29970,7 +30145,10 @@ RXPGuides.RegisterGuide([[
 #name a) Vulpera Intro
 #displayname |cFF1EFF001|r - Orgrimmar
 #next b1) BfA Intro
+
 << Horde Vulpera !DK
+
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Nilsa|r
     .goto 85,64.647,46.514
@@ -30007,6 +30185,7 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Speed Leveling
 #name a) Horde Legion Intro
 #internal
+
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Holgar Stormaxe|r
     .isOnQuest 43926 --Legion: The Legion Returns
@@ -30428,10 +30607,12 @@ step
     .goto 627,55.24,24.01
     .zone 85 >>Take the portal to Orgrimmar
 ]])
+
 -- =================================
 -- =======    SEPERATORS    ========
 -- =================================
 --group RestedXP Midnight
+
 --LEVEL 1-10
 RXPGuides.RegisterGuide([[
 #retail
@@ -30440,13 +30621,18 @@ RXPGuides.RegisterGuide([[
 #name 1a 2
 #displayname |cFFFCDC00LEVEL 1-10|r
 #disabled
+
 << !Harronir !Nightborne !HighmountainTauren !MagharOrc !EarthenDwarf !ZandalariTroll !Vulpera !Dracthyr !VoidElf !KulTiran !LightforgedDraenei !Mechagnome !Pandaren DK
+
 step
 +1
+
 ]])
+
 -- =================================
 -- =======   NEUTRAL ZONES   =======
 -- =================================
+
 --Death Knight Plaguelands: The Scarlet Enclave
 RXPGuides.RegisterGuide([[
 #retail
@@ -30457,7 +30643,10 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - Plaguelands
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2 << Alliance
 #next b1) BfA Intro 2 << Horde
+
+
 << DK !Pandaren !KulTiran !DarkIronDwarf !LightforgedDraenei !Mechagnome !VoidElf !HighmountainTauren !ZandalariTroll !Nightborne !Vulpera !MagharOrc
+
 step
     #include RestedXP Speed Leveling\a) DK Intro
 ]])
@@ -30471,7 +30660,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - The Frozen Throne
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2 << Alliance
 #next b1) BfA Intro 2 << Horde
+
 << DK Pandaren/DarkIronDwarf DK/KulTiran DK/LightforgedDraenei DK/Mechagnome DK/VoidElf DK/HighmountainTauren DK/Nightborne DK/ZandalariTroll DK/MagharOrc DK/Vulpera DK
+
 step
     #include RestedXP Speed Leveling\a) New DK Intro
 ]])
@@ -30485,7 +30676,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - Mardum
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2 << Alliance
 #next b1) BfA Intro 2 << Horde
+
 << DemonHunter !VoidElf
+
 step
     #include RestedXP Speed Leveling\a) DH Intro
 ]])
@@ -30499,7 +30692,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - The Forbidden Reach
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2 << Alliance
 #next b1) BfA Intro 2 << Horde
+
 << Dracthyr
+
 step
     #include RestedXP Speed Leveling\a) Dracthyr Intro
 ]])
@@ -30513,7 +30708,9 @@ RXPGuides.RegisterGuide([[
 #displayname The Wandering Isle |cRXP_ENEMY_(Alternative)|r
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2 << Alliance
 #next b1) BfA Intro 2 << Horde
+
 << Pandaren !DK
+
 step
     #include RestedXP Speed Leveling\a) Pandaren Intro
 ]])
@@ -30527,7 +30724,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - Harandar
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2 << Alliance
 #next b1) BfA Intro 2 << Horde
+
 << Harronir
+
 step
     #include RestedXP Speed Leveling\a) Haranir Intro
 ]])
@@ -30541,7 +30740,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - Hall of Awakening
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2 << Alliance
 #next b1) BfA Intro << Horde
+
 << EarthenDwarf
+
 step
     #include RestedXP Speed Leveling\a) EarthenDwarf Intro
 ]])
@@ -30555,12 +30756,15 @@ RXPGuides.RegisterGuide([[
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2 << Alliance
 #next b1) BfA Intro << Horde
 #internal
+
 step
     #include RestedXP Speed Leveling\a) Arathi Highlands Returning Player
 ]])
+
 -- =================================
 -- ======   ALLIANCE ZONES   =======
 -- =================================
+
 --Exile's Reach
 RXPGuides.RegisterGuide([[
 #retail
@@ -30570,7 +30774,9 @@ RXPGuides.RegisterGuide([[
 #name a) Exile's Reach Alliance 2
 #displayname |cFF1EFF001|r - Exile's Reach
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2
+
 << Alliance !Harronir !Dracthyr !DemonHunter !DK !KulTiran !EarthenDwarf !DarkIronDwarf !LightforgedDraenei !Mechagnome !VoidElf !NightBorne !HighmountainTauren !Vulpera !MagharOrc !ZandalariTroll
+
 step
     #include RestedXP Speed Leveling\a) Exile's Reach
 ]])
@@ -30584,7 +30790,9 @@ RXPGuides.RegisterGuide([[
 #displayname Ammen Vale |cRXP_ENEMY_(Alternative)|r
 #defaultfor Draenei !DK
 #next ac) Draenei Azuremyst Isle 2
+
 << Alliance
+
 step
     #include RestedXP Speed Leveling\ab) Ammen Vale
 ]])
@@ -30598,7 +30806,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Azuremyst Isle
 #defaultfor Draenei !DK
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2
+
 << Alliance
+
 step
     #include RestedXP Speed Leveling\ac) Draenei Azuremyst Isle
 ]])
@@ -30612,7 +30822,9 @@ RXPGuides.RegisterGuide([[
 #displayname Coldridge Valley |cRXP_ENEMY_(Alternative)|r
 #defaultfor Dwarf !DK
 #next ac) Dwarf & Gnome Dun Morogh 2
+
 << Alliance
+
 step
     #include RestedXP Speed Leveling\ab) Dwarf Coldridge Valley
 ]])
@@ -30626,7 +30838,9 @@ RXPGuides.RegisterGuide([[
 #displayname  New Tinkertown |cRXP_ENEMY_(Alternative)|r
 #defaultfor Gnome !DK
 #next ac) Dwarf & Gnome Dun Morogh 2
+
 << Alliance
+
 step
     #include RestedXP Speed Leveling\ab) New Tinkertown
 ]])
@@ -30640,7 +30854,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Dun Morogh
 #defaultfor Dwarf Gnome !DK
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2
+
 << Alliance
+
 step
     #include RestedXP Speed Leveling\ac) Dwarf & Gnome Dun Morogh
 ]])
@@ -30654,7 +30870,9 @@ RXPGuides.RegisterGuide([[
 #displayname Northshire Valley |cRXP_ENEMY_(Alternative)|r
 #defaultfor Human !DK
 #next ac) Elwynn Forest 1 2
+
 << Alliance
+
 step
     #include RestedXP Speed Leveling\ab) Northshire Valley
 ]])
@@ -30668,7 +30886,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Elwynn Forest
 #defaultfor Human !DK
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2
+
 << Alliance
+
 step
     #include RestedXP Speed Leveling\ac) Elwynn Forest 1
 ]])
@@ -30682,7 +30902,9 @@ RXPGuides.RegisterGuide([[
 #displayname Shadowglen |cRXP_ENEMY_(Alternative)|r
 #defaultfor NightElf !DemonHunter !DK
 #next ac) Night Elf Teldrassil 2
+
 << Alliance
+
 step
     #include RestedXP Speed Leveling\ab) Shadowglen
 ]])
@@ -30696,7 +30918,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Teldrassil
 #defaultfor NightElf !DemonHunter !DK
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2
+
 << Alliance
+
 step
     #include RestedXP Speed Leveling\ac) Night Elf Teldrassil
 ]])
@@ -30709,7 +30933,9 @@ RXPGuides.RegisterGuide([[
 #name ab) Worgen Intro 2
 #displayname Gilneas |cRXP_ENEMY_(Alternative)|r
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2
+
 << Alliance Worgen !DK
+
 step
     #include RestedXP Speed Leveling\ab) Worgen Intro
 ]])
@@ -30722,7 +30948,9 @@ RXPGuides.RegisterGuide([[
 #name a) DarkIronDwarf Intro 2
 #displayname |cFF1EFF001|r - Shadowforge City
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2
+
 << Alliance DarkIronDwarf !DK
+
 step
     #include RestedXP Speed Leveling\a) DarkIronDwarf Intro
 ]])
@@ -30735,7 +30963,9 @@ RXPGuides.RegisterGuide([[
 #name a) KulTiran Intro 2
 #displayname |cFF1EFF001|r - Boralus
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2
+
 << Alliance KulTiran !DK
+
 step
     #include RestedXP Speed Leveling\a) KulTiran Intro
 ]])
@@ -30748,7 +30978,9 @@ RXPGuides.RegisterGuide([[
 #name a) LightforgedDraenei Intro 2
 #displayname |cFF1EFF001|r - The Vindicaar
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2
+
 << Alliance LightforgedDraenei !DK
+
 step
     #include RestedXP Speed Leveling\a) LightforgedDraenei Intro
 ]])
@@ -30761,7 +30993,9 @@ RXPGuides.RegisterGuide([[
 #name a) Mechagnome Intro 2
 #displayname |cFF1EFF001|r - Mechagon City
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2
+
 << Alliance Mechagnome !DK
+
 step
     #include RestedXP Speed Leveling\a) Mechagnome Intro
 ]])
@@ -30774,13 +31008,17 @@ RXPGuides.RegisterGuide([[
 #name a) VoidElf Intro 2
 #displayname |cFF1EFF001|r - Telogrus Rift
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2
+
 << Alliance VoidElf !DK
+
 step
     #include RestedXP Speed Leveling\a) VoidElf Intro
 ]])
+
 -- ====================================
 -- =======    HORDE ZONES    ==========
 -- ====================================
+
 --Exile's Reach
 RXPGuides.RegisterGuide([[
 #retail
@@ -30790,7 +31028,10 @@ RXPGuides.RegisterGuide([[
 #name a) Exile's Reach Horde 2
 #displayname |cFF1EFF001|r - Exile's Reach
 #next b1) BfA Intro 2
+
+
 << Horde !Harronir !Dracthyr !DemonHunter !DK !Nightborne !HighmountainTauren !Vulpera !MagharOrc !ZandalariTroll
+
 step
     #include RestedXP Speed Leveling\a) Exile's Reach Horde
 ]])
@@ -30804,7 +31045,9 @@ RXPGuides.RegisterGuide([[
 #displayname Sunstrider Isle |cRXP_ENEMY_(Alternative)|r
 #next ac) Blood Elf Eversong Woods 2
 #defaultfor BloodElf !DK
+
 << Horde
+
 step
     #include RestedXP Speed Leveling\ab) Sunstrider Isle
 ]])
@@ -30818,7 +31061,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Eversong Woods
 #next b1) BfA Intro 2
 #defaultfor BloodElf !DK
+
 << Horde
+
 step
     #include RestedXP Speed Leveling\ac) Blood Elf Eversong Woods
 ]])
@@ -30835,7 +31080,9 @@ RXPGuides.RegisterGuide([[
 #next ac) Echo Isles2 2 << !Troll --Orc
 #next a) BfA Intro 2 << Troll
 #defaultfor Orc !DK/Troll !DK
+
 << Horde
+
 step << !Troll
     #include RestedXP Speed Leveling\ab) Valley of Trials1
 step << Troll
@@ -30854,7 +31101,9 @@ RXPGuides.RegisterGuide([[
 #next ab) Valley of Trials2 2 << Troll
 #next b1) BfA Intro 2 << !Troll
 #defaultfor Orc !DK/Troll !DK
+
 << Horde
+
 step << !Troll
     #include RestedXP Speed Leveling\ac) Echo Isles1
 step << Troll
@@ -30870,7 +31119,9 @@ RXPGuides.RegisterGuide([[
 #displayname Camp Narache |cRXP_ENEMY_(Alternative)|r
 #next ac) Tauren Camp Mulgore 2
 #defaultfor Tauren !DK
+
 << Horde
+
 step
     #include RestedXP Speed Leveling\ab) Camp Narache
 ]])
@@ -30884,7 +31135,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Mulgore
 #next b1) BfA Intro 2
 #defaultfor Tauren !DK
+
 << Horde
+
 step
     #include RestedXP Speed Leveling\ac) Tauren Camp Mulgore
 ]])
@@ -30899,7 +31152,9 @@ RXPGuides.RegisterGuide([[
 #title Deathknell
 #next ac) Undead Tirisfal Glades 2
 #defaultfor Undead !DK
+
 << Horde
+
 step
     #include RestedXP Speed Leveling\ab) Deathknell
 ]])
@@ -30913,7 +31168,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Tirisfal Glades
 #next b1) BfA Intro 2
 #defaultfor Undead !DK
+
 << Horde
+
 step
     #include RestedXP Speed Leveling\ac) Undead Tirisfal Glades
 ]])
@@ -30926,7 +31183,9 @@ RXPGuides.RegisterGuide([[
 #name ab) Goblin Intro 2
 #displayname Kezan & The Lost Isles |cRXP_ENEMY_(Alternative)|r
 #next b1) BfA Intro 2
+
 << Horde Goblin !DK
+
 step
     #include RestedXP Speed Leveling\ab) Goblin Intro
 ]])
@@ -30939,7 +31198,9 @@ RXPGuides.RegisterGuide([[
 #name a) HighmountainTauren 2
 #displayname |cFF1EFF001|r - Highmountain Tauren
 #next b1) BfA Intro 2
+
 << Horde HighmountainTauren !DK
+
 step
     #include RestedXP Speed Leveling\a) HighmountainTauren
 ]])
@@ -30952,7 +31213,9 @@ RXPGuides.RegisterGuide([[
 #name a) Nightborne Intro 2
 #displayname |cFF1EFF001|r - The Nighthold
 #next b1) BfA Intro 2
+
 << Horde Nightborne !DK
+
 step
     #include RestedXP Speed Leveling\a) Nightborne Intro
 ]])
@@ -30965,7 +31228,9 @@ RXPGuides.RegisterGuide([[
 #name a) ZandalariTroll Intro 2
 #displayname |cFF1EFF001|r - Dazar'alor
 #next b1) BfA Intro 2
+
 << Horde ZandalariTroll !DK
+
 step
     #include RestedXP Speed Leveling\a) ZandalariTroll Intro
 ]])
@@ -30978,7 +31243,9 @@ RXPGuides.RegisterGuide([[
 #name a) MagharOrc Intro 2
 #displayname |cFF1EFF001|r - Orgrimmar
 #next b1) BfA Intro 2
+
 << Horde MagharOrc !DK
+
 step
     #include RestedXP Speed Leveling\a) MagharOrc Intro
 ]])
@@ -30991,7 +31258,9 @@ RXPGuides.RegisterGuide([[
 #name a) Vulpera Intro 2
 #displayname |cFF1EFF001|r - Orgrimmar
 #next b1) BfA Intro 2
+
 << Horde Vulpera !DK
+
 step
     #include RestedXP Speed Leveling\a) Vulpera Intro
 ]])
@@ -31002,6 +31271,7 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Midnight
 #name a) Horde Legion Intro 2
 #internal
+
 step
     #include RestedXP Speed Leveling\a) Horde Legion Intro
 ]])

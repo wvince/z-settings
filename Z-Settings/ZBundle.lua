@@ -13,7 +13,6 @@ Z_VARS = {
   ["BagBrother"] = { "BrotherBags" },
   ["Baganator"] = { "BAGANATOR_CONFIG","BAGANATOR_DATA" },
   ["BetterBlizzFrames"] = { "BetterBlizzFramesDB" },
-  ["BetterBlizzPlates"] = { "BBPCVarBackupsDB","BetterBlizzPlatesDB" },
   ["Clique"] = { "CliqueDB","CliqueDB3" },
   ["DBM-Brawlers"] = { "DBMBrawlers_AllSavedVars" },
   ["DBM-Challenges"] = { "DBMChallenges_AllSavedVars" },
@@ -80,7 +79,7 @@ Z_VARS = {
   ["WhatsTraining"] = { "WT_FloatingFramePoint","WT_ProfessionIcon","WT_ProfessionTabPosition","WT_ScrollTwoPages","WT_ShowKnownWeaponSkills","WT_SideBySide","WT_SpellDisplay","WT_SpellbookIcon","WT_WaypointProvider","WT_WeaponGrouping" },
   ["Z-Settings"] = { "ZSettingsDB" },
 }
-Z_VARS_ID = "1226096357"
+Z_VARS_ID = "768998542"
 Z_CHARVARS = {
   ["Attune"] = { "AttuneLastViewed","TreeExpandStatus" },
   ["Auctionator"] = { "AUCTIONATOR_CHARACTER_CONFIG" },

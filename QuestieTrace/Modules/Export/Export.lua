@@ -207,12 +207,11 @@ end
 --- session rather than one that no longer exists.
 ---
 --- Note: Core.ShowExportWindow() already rotates the live session when encoding
---- succeeds, so the live session at deletion time is typically a fresh one that
---- was started after the payload snapshot. The equality check at line 225
---- (session == liveSession) will typically fail for the old session in the
---- payload, so DiscardCapture() is usually not called again here. This is
---- correct: the new live session has fresh events and should be preserved.
---- The check still exists for safety, in case rotation was skipped or failed.
+--- succeeds: it saves the live session and replaces it in `sourceSessions` with
+--- the saved record, so that record is deleted here like any other saved
+--- session. The live session at deletion time is then a fresh one started
+--- after the payload snapshot, and DiscardCapture() is usually not called. The
+--- live-session check still exists for safety, in case rotation was skipped or failed.
 ---@param sourceSessions SessionRecord[] Second return value of Core.BuildExportPayload()
 function Core.DeleteReportedSessions(sourceSessions)
   if type(sourceSessions) ~= "table" then return end
@@ -239,6 +238,79 @@ function Core.DeleteReportedSessions(sourceSessions)
       end
     end
   end
+end
+
+---------------------------------------------------------------------------
+-- Statistics
+---------------------------------------------------------------------------
+
+---@class ExportStats
+---@field eventCount integer Total events across every session in the payload.
+---@field timeRecorded number Total seconds recorded across every session in the payload.
+---@field questsAccepted integer QUEST_ACCEPTED events across every session in the payload.
+---@field questsTurnedIn integer QUEST_TURNED_IN events across every session in the payload.
+
+--- Seconds a session covers. The live session is copied into the payload
+--- before it is stopped, so it has no `duration` yet; its last event's
+--- session-relative time is the best lower bound the payload itself holds.
+---@param session SessionRecord
+---@return number
+local function _SessionDuration(session)
+  if type(session.duration) == "number" then
+    return session.duration
+  end
+  local events = session.events
+  local lastEvent = type(events) == "table" and events[#events] or nil
+  if type(lastEvent) == "table" and type(lastEvent.t) == "number" then
+    return lastEvent.t
+  end
+  return 0
+end
+
+--- Derive player-facing statistics from a payload previously built by
+--- Core.BuildExportPayload(), to show alongside the export string.
+---
+--- Returned separately rather than stored on the payload, so stats never end
+--- up inside the encoded string and the export format stays unchanged. The
+--- payload is only read, never modified.
+---@param payload table Result of Core.BuildExportPayload().
+---@return ExportStats
+function Core.BuildExportStats(payload)
+  local eventCount = 0
+  local timeRecorded = 0
+  local questsAccepted = 0
+  local questsTurnedIn = 0
+
+  local sessions = type(payload) == "table" and payload.sessions or nil
+  if type(sessions) == "table" then
+    for i = 1, #sessions do
+      local session = sessions[i]
+      if type(session) == "table" then
+        timeRecorded = timeRecorded + _SessionDuration(session)
+
+        local events = session.events
+        if type(events) == "table" then
+          eventCount = eventCount + #events
+          -- One pass over the events shared by every per-event stat.
+          for j = 1, #events do
+            local eventName = type(events[j]) == "table" and events[j].e or nil
+            if eventName == "QUEST_ACCEPTED" then
+              questsAccepted = questsAccepted + 1
+            elseif eventName == "QUEST_TURNED_IN" then
+              questsTurnedIn = questsTurnedIn + 1
+            end
+          end
+        end
+      end
+    end
+  end
+
+  return {
+    eventCount = eventCount,
+    timeRecorded = timeRecorded,
+    questsAccepted = questsAccepted,
+    questsTurnedIn = questsTurnedIn,
+  }
 end
 
 ---------------------------------------------------------------------------

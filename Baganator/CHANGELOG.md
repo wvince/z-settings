@@ -1,7 +1,7 @@
 # Baganator
 
-## [840](https://github.com/TheMouseNest/Baganator/tree/840) (2026-11-05)
-[Full Changelog](https://github.com/TheMouseNest/Baganator/compare/839...840) 
+## [841](https://github.com/TheMouseNest/Baganator/tree/841) (2026-11-05)
+[Full Changelog](https://github.com/TheMouseNest/Baganator/compare/840...841) 
 
-- Forever: ElvUI Skin: Fix icons disappearing  
-- Prevent loading in Talebound (no bags)  
+- Forever: Auto-initialize/purchase first bank tab  
+- Classic: Fix cached bank views  

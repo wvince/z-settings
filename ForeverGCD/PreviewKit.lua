@@ -162,7 +162,7 @@ end
 function Kit.PlaceTooltip(tip, owner)
     tip:ClearAllPoints()
     if not UIParent then
-        tip:SetPoint("BOTTOMLEFT", owner, "TOPRIGHT")
+        tip:SetPoint("BOTTOM", owner, "TOP")
         return
     end
     local window = owner
@@ -176,7 +176,7 @@ function Kit.PlaceTooltip(tip, owner)
     local windowScale, screen = Measure(window:GetEffectiveScale()), Measure(UIParent:GetRight())
     local parentScale = Measure(UIParent:GetEffectiveScale())
     if not (tipScale and ownerScale and width and ownerTop and left and right and top and windowScale and screen and parentScale) then
-        tip:SetPoint("BOTTOMLEFT", owner, "TOPRIGHT")
+        tip:SetPoint("BOTTOM", owner, "TOP")
         return
     end
     local gap = 4

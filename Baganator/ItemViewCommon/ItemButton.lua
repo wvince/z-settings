@@ -932,7 +932,7 @@ end
 function BaganatorClassicCachedItemButtonMixin:SetItemDetails(details)
   GetInfo(self, details)
 
-  self.icon:SetTexture(iconTexture);
+  self.icon:SetTexture(details.iconTexture);
   SetItemButtonQuality(self, details.quality); -- Doesn't do much
   ApplyQualityBorderClassic(self, details.quality)
   SetItemButtonCount(self, details.itemCount, details.itemCount and details.itemCount > 9999);

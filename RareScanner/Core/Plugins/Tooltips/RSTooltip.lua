@@ -272,8 +272,29 @@ local function AddLastTimeSeenTooltip(tooltip, pin, isLink)
 	end
 end
 
+local function GetRespawnWindowText(est)
+	if (est.secondsUntilWindowEnd <= 0) then
+		return RSUtils.TextColor(AL["MAP_TOOLTIP_RESPAWN_OVERDUE"], "00FF00")
+	end
+
+	if (est.secondsUntilWindowStart <= 0) then
+		local maxStr = RSUtils.TextColor(RSTimeUtils.FormatShortDuration(est.secondsUntilWindowEnd), "00FFCC")
+		return string.format(AL["MAP_TOOLTIP_RESPAWN_POSSIBLE"], maxStr)
+	end
+
+	local startStr = RSUtils.TextColor(RSTimeUtils.FormatShortDuration(est.secondsUntilWindowStart), "00FFCC")
+	if (est.isExactRespawn) then
+		return string.format(AL["MAP_TOOLTIP_RESPAWN_IN"], startStr)
+	elseif (est.minRespawn == est.maxRespawn) then
+		return string.format(AL["MAP_TOOLTIP_RESPAWN_IN_APPROX"], startStr)
+	end
+
+	local endStr = RSUtils.TextColor(RSTimeUtils.FormatShortDuration(est.secondsUntilWindowEnd), "00FFCC")
+	return string.format(AL["MAP_TOOLTIP_RESPAWN_IN_RANGE"], startStr, endStr)
+end
+
 local function AddTelemetryTooltip(tooltip, pin)
-	if (not RSConfigDB.IsShowingTooltipsRespawn()) then
+	if (not RSConfigDB.IsTelemetryEnabled() or not RSConfigDB.IsShowingTooltipsRespawn()) then
 		return
 	end
 	if (not pin or not pin.POI or not pin.POI.isNpc or not pin.POI.entityID) then
@@ -291,15 +312,22 @@ local function AddTelemetryTooltip(tooltip, pin)
 	elseif (est.secondsUntilNext and est.nextClock) then
 		local timeStr = RSUtils.TextColor(RSTimeUtils.FormatShortDuration(est.secondsUntilNext), "00FFCC")
 		text = string.format(AL["MAP_TOOLTIP_NEXT_SPAWN"], timeStr, RSUtils.TextColor(est.nextClock, "FFFFCC"))
+	elseif (est.hasRecentDeath) then
+		text = GetRespawnWindowText(est)
 	elseif (est.minRespawn and est.maxRespawn) then
 		if (est.isExactRespawn) then
 			local timeStr = RSUtils.TextColor(RSTimeUtils.FormatShortDuration(est.minRespawn), "00FFCC")
 			text = string.format(AL["MAP_TOOLTIP_RESPAWN_EXACT"], timeStr)
+		elseif (est.minRespawn == est.maxRespawn) then
+			local timeStr = RSUtils.TextColor(RSTimeUtils.FormatShortDuration(est.minRespawn), "00FFCC")
+			text = string.format(AL["MAP_TOOLTIP_RESPAWN_APPROX"], timeStr)
 		else
 			local minStr = RSUtils.TextColor(RSTimeUtils.FormatShortDuration(est.minRespawn), "00FFCC")
 			local maxStr = RSUtils.TextColor(RSTimeUtils.FormatShortDuration(est.maxRespawn), "00FFCC")
 			if (est.hasStaticConfig) then
 				text = string.format(AL["MAP_TOOLTIP_RESPAWN_RANGE"], minStr, maxStr)
+			elseif (est.respawnSamples > 0) then
+				text = string.format(AL["MAP_TOOLTIP_RESPAWN_ESTIMATE"], minStr, maxStr)
 			end
 		end
 	end
@@ -379,6 +407,25 @@ local function AddNotesTooltip(tooltip, pin)
 	end
 end
 
+-- Green arrow over the icon of the loot that is an upgrade
+local function SetUpgradeArrow(cell, isUpgrade)
+	if (isUpgrade and not cell.upgradeArrow) then
+		cell.upgradeArrow = cell:CreateTexture(nil, "OVERLAY")
+		cell.upgradeArrow:SetAtlas("bags-greenarrow")
+		cell.upgradeArrow:SetSize(12, 12)
+		cell.upgradeArrow:SetPoint("TOPLEFT", cell, "TOPLEFT", 1, -1)
+	end
+
+	if (cell.upgradeArrow) then
+		cell.upgradeArrow:SetShown(isUpgrade)
+	end
+end
+
+-- The label cells are reused by other tooltips
+function RareScannerMapTooltip.LabelPrototype:ReleaseCell()
+	SetUpgradeArrow(self, false)
+end
+
 local function AddLootTooltip(tooltip, pin, isLink)
 	local lootAdded = false
 	
@@ -407,14 +454,18 @@ local function AddLootTooltip(tooltip, pin, isLink)
 		for i, itemID in ipairs(itemsIDs) do
 			local itemLink, itemRarity, itemEquipLoc, iconFileDataID, itemClassID, itemSubClassID = RSGeneralDB.GetItemInfo(itemID)
 			if (iconFileDataID and not RSLoot.IsFiltered(pin.POI.entityID, itemID, itemLink, itemRarity, itemEquipLoc, itemClassID, itemSubClassID)) then
-				local itemInfo = { itemID, itemLink, itemRarity, itemEquipLoc, iconFileDataID, itemClassID, itemSubClassID }
+				local itemInfo = { itemID, itemLink, itemRarity, itemEquipLoc, iconFileDataID, itemClassID, itemSubClassID, RSLoot.IsUpgrade(itemID, itemLink) }
 				tinsert(itemsIDsFiltered, itemInfo)
 			end
 		end
 	end
 		
-	-- Sort loot by quality, then by drop chance and finally by name (same order as the explorer)
+	-- Sort loot by upgrades first, then by quality, then by drop chance and finally by name
 	table.sort(itemsIDsFiltered, function(a, b)
+		if (a[8] ~= b[8]) then
+			return a[8]
+		end
+
 		local qualityA, qualityB = a[3] or 1, b[3] or 1
 		if (qualityA ~= qualityB) then
 			return qualityA > qualityB
@@ -454,6 +505,7 @@ local function AddLootTooltip(tooltip, pin, isLink)
 			end
 
 			tooltip:SetCell(line, j, "|T"..iconFileDataID..":24|t", nil, "LEFT", 1, nil, nil, nil, nil, 20, 20)
+			SetUpgradeArrow(tooltip.lines[line].cells[j], itemInfo[8])
 			tooltip:SetCellScript(line, j, "OnEnter", showItemToolTip, { itemInfo[1], itemLink, itemClassID, itemSubClassID, isLink, tonumber(chances[itemInfo[1]]) });
 			tooltip:SetCellScript(line, j, "OnEvent", showHideItemComparationTooltip)
 			tooltip:SetCellScript(line, j, "OnLeave", hideItemToolTip)

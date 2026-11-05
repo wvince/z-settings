@@ -98,6 +98,8 @@ L["Craft %d× %s"] = "제작 %d× %s"
 L["Craft %s"] = "%s 제작"
 L["Craft next"] = "다음 제작"
 L["Crafted gear"] = "제작 장비"
+L["Crafting from the route works with a controller."] =
+	"경로에서 제작하기가 컨트롤러에서도 작동합니다."
 L["Crafts"] = "제작 횟수"
 L["Crafts %d now."] = "지금 %d개 제작합니다."
 L["Don't count it"] = "반영 안 함"
@@ -282,6 +284,8 @@ L["Subtract what the crafted item sells for from its cost. Auction prices need A
 	"제작 아이템의 판매 가격을 비용에서 뺍니다. 경매 가격은 Auctionator가 필요하고, 5% 수수료를 뺀 값이며, 팔리지 않을 수도 있습니다."
 L["Suggest my other Forever addons"] = "제 다른 Forever 애드온 추천"
 L["Taught by %s trainers."] = "%s 기술 전문가가 가르칩니다."
+L["The Forever addons are free, with nothing locked behind them. If they help, you can buy me a coffee."] =
+	"Forever 애드온은 무료이며 잠긴 기능이 없습니다. 도움이 되셨다면 커피 한 잔 사 주세요." -- mt
 L["The place this recipe is taught isn't known yet."] =
 	"이 제조법을 배우는 곳은 아직 알려지지 않았습니다."
 L["The rest comes from a vendor or your gathering."] = "나머지는 상인이나 채집으로 얻습니다."
@@ -486,5 +490,3 @@ L["/su share on|off - control sharing with guild and group"] =
 L["Share observed recipe totals with guild and group"] = "관찰한 제조법 합계를 길드 및 파티와 공유"
 L["On by default. Turn off to stop sending and receiving totals and hide other players. Local observations stay."] =
 	"기본적으로 켜져 있습니다. 끄면 합계 송수신이 중단되고 다른 플레이어가 숨겨집니다. 로컬 관찰 기록은 유지됩니다."
-
-L["Long lists in the Professions window scroll."] = "전문 기술 창의 긴 목록을 스크롤할 수 있습니다." -- mt

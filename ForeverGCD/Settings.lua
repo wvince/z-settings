@@ -117,7 +117,7 @@ local function Build()
     plates:DependsOn(plates:Tip(plates:Slider(C2, "size", 1, " px", SINGLE),
         "Icon size", "How large the icon is on plates (16 to 64 px)."),
         function() return ns.Get("plates") == true end)
-    local place = page.Row("Position and gap", "Left or right of the plate, the icon centred on its health bar, or above it. Show on screen plays samples on every plate up.")
+    local place = page.Row("Position and gap", "Left or right of the plate, the icon centred on its health bar, above it, or below it, under the plate's cast bar. Show on screen plays samples on every plate up.")
     place:Choice(C1, "position", POSITIONS)
     place:Tip(place:Slider(C2, "offset", 1, " px", SINGLE),
         "Gap", "Space between the plate and the icon (-20 to 60 px).")
@@ -127,7 +127,7 @@ local function Build()
     local fade = page.Row("Fade and up/down", "Fade: the icon fades with its plate, so on a plate the game shows faded (far away, or behind a wall) it is faded as much.")
     fade:Toggle(C1, "fade", nil, "Fade")
     fade:Tip(fade:Slider(C2, "lift", 1, " px", SINGLE),
-        "Up or down", "Moves the icon up (above 0) or down (below 0) from where Position puts it (-60 to 60 px), to line it up with plates from another addon that draws its health bar higher or lower than Blizzard's. Show on screen plays samples on every plate up.")
+        "Up or down", "Moves the icon up (above 0) or down (below 0) from where Position puts it (-400 to 400 px): with Below, down to the character's feet, or to line it up with plates from another addon that draws its health bar higher or lower than Blizzard's. Show on screen plays samples on every plate up.")
 
     page.Group("Look", false, function()
         return Tenths(ns.Get("tenths")) .. (ns.Get("name") and " · spell name" or "")

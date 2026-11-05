@@ -445,3 +445,16 @@ Baron Aquanis quest (6922), Strange Water Globe item-start, rewards, and practic
 - Wowhead quest pages confirm 544 -> 545 and 92434 -> 96984; Key to the City is a Horde quest from Magus Wordeen Voidglare requiring the Grimy Key (279469).
 - A current Wowhead comment on Blood in the Streets states Keeper Bel'varil's Stone Tokens (556) -> Bracers of Binding (557) branch is NOT required for the attunement, despite the news article recommending doing it alongside the route. The Journal therefore does not gate attunement on those quests.
 - Horde Heart of Disruption provides Dalaran Sewer Key (277507), requires Arcane Mote (251961), and offers Battle Spaulders (279842), Enchanted Sandals (279843), or Striking Staff (279844).
+
+
+2026-11-05 Maps for The Drowned City, Krol'dok Stronghold and Shaper's Terrace
+- Parchment maps: "Atlas de Azeroth: Forever" recreations by Santiago Reyes (2026); the credit stays in the art.
+- Entrance markers sit on the portal swirl drawn on each map. Shaper's Terrace shows two swirls and no source says which one is the entrance, so it has no marker yet.
+
+2026-11-05 The New Plague prerequisite chain
+- Live change: Theodore Griffs only offers The New Plague (95216) after the whole A Recipe For Death chain, 447 -> 450 -> 451 (https://www.wowhead.com/forever/quest=447/a-recipe-for-death).
+- Chain data (givers, objectives, items, drop sources, coordinates, rewards, XP): Forever client tables via QuestieDB (Forever) and Polestar forever-db; Berard's Journal in the Pyrewood Village inn per classicdb.ch quest 450 and warcraft.wiki.gg; localized quest, NPC and item names from the Forever client lookups.
+
+2026-11-05 The Wrath of Rath'mael prerequisite chain
+- Live change: Deathguard Kristof only offers The Wrath of Rath'mael (92422) after Rear Guard Patrol 356 -> 99156 (https://www.wowhead.com/forever/quest=356/rear-guard-patrol).
+- Chain data (Deathguard Linnea, kill targets and spawns at the Balnir Farmstead, Riptear's Heart, rewards, XP, money, official localized names): Forever client tables via Polestar forever-db and QuestieDB (Forever). Riptear (276020), level 13 elite in Venomweb Vale at 83.9, 44.0: https://warcraft.wiki.gg/wiki/Riptear ; group-quest notes: https://allthings.how/rear-guard-patrol-how-to-get-riptear-s-heart-in-wow-forever/

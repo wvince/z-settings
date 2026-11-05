@@ -22,6 +22,7 @@ local RSEntityStateHandler = private.ImportLib("RareScannerEntityStateHandler")
 local RareScannerBlizzardMapProvider
 local RSMacro = private.ImportLib("RareScannerMacro")
 local RSMinimapTracking = private.ImportLib("RareScannerMinimapTracking")
+local RSTelemetry = private.ImportLib("RareScannerTelemetry")
 
 -- RareScanner internal libraries
 local RSConstants = private.ImportLib("RareScannerConstants")
@@ -46,6 +47,7 @@ local function HandleEntityWithoutVignette(rareScannerButton, unitID, trackingSy
 	
 	local unitType, _, _, _, _, entityID = strsplit("-", unitGuid)
 	if (unitType == "Creature" or unitType == "Vehicle") then
+		RSTelemetry.OnCreatureSeen(unitGuid)
 		local npcID = entityID and tonumber(entityID) or nil
 		
 		-- Ignore if friendly
@@ -212,6 +214,23 @@ local function OnPartyKill(attackerUnitguid, targetGUID)
 end
 
 ---============================================================================
+-- Event: UNIT_DIED
+-- Fired when any unit dies
+---============================================================================
+
+local function OnUnitDied(unitGUID)
+	if (issecretvalue(unitGUID) or not unitGUID) then
+		return
+	end
+
+	local npcID = C_CreatureInfo.GetCreatureID(unitGUID)
+	if (npcID) then
+		RSTelemetry.OnEntityDied(npcID, unitGUID)
+	end
+end
+
+
+---============================================================================
 -- Event: PLAYER_TARGET_CHANGED
 -- Fired when changing the target
 ---============================================================================
@@ -252,7 +271,11 @@ local function OnPlayerSoftInteractChanged(rareScannerButton)
 	local unitExists = UnitExists("softinteract")
 	local unitIsPlayer = UnitIsUnit("player", "softinteract")
 	local unitIsDead = UnitIsDead("softinteract")
-	if (not issecretvalue(unitExists) and unitExists and not issecretvalue(unitIsPlayer) and not unitIsPlayer and not issecretvalue(unitIsDead) and not unitIsDead) then
+	local guid = UnitGUID("softinteract")
+
+	-- Game objects don't exist as units (UnitExists is false) but they have GUID
+	local isGameObject = guid and not issecretvalue(guid) and strsplit("-", guid) == "GameObject"
+	if (not issecretvalue(unitExists) and (unitExists or isGameObject) and not issecretvalue(unitIsPlayer) and not unitIsPlayer and not issecretvalue(unitIsDead) and not unitIsDead) then
 		HandleEntityWithoutVignette(rareScannerButton, "softinteract", RSConstants.TRACKING_SYSTEM.SOFT_INTERACT)
 	end
 end
@@ -921,15 +944,32 @@ local function HandleEvent(rareScannerButton, event, ...)
 	elseif (event == "HOUSE_DECOR_ADDED_TO_CHEST") then
 		OnHouseDecorAddedToChest(...)
 	elseif (event == "PLAYER_ENTERING_WORLD") then
+		local _, isReloadingUi = ...
+		RSTelemetry.OnZoneChanged(isReloadingUi)
 		OnPlayerEnteringWorld(rareScannerButton)
 	elseif (event == "PLAYER_STARTED_MOVING") then
 		OnPlayerStartedMoving()
 	elseif (event == "PLAYER_STOPPED_MOVING") then
 		OnPlayerStopsMoving()
 	elseif (event == "ZONE_CHANGED_NEW_AREA" or event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS") then
+		if (event == "ZONE_CHANGED_NEW_AREA") then
+			RSTelemetry.OnZoneChanged(false)
+		end
 		RSMacro.UpdateMacro(true)
 	elseif (event == "PARTY_KILL") then
 		OnPartyKill(...)
+	elseif (event == "UNIT_DIED") then
+		local unitGUID = ...
+		OnUnitDied(unitGUID)
+	elseif (event == "GROUP_ROSTER_UPDATE") then
+		RSTelemetry.OnGroupRosterUpdate()
+	elseif (event == "SHARD_TRANSFER") then
+		if (RSConstants.DEBUG_MODE) then
+			RSLogger:PrintTelemetryDebugMessage("Evento SHARD_TRANSFER")
+		end
+		RSTelemetry.OnZoneChanged(false)
+	elseif (event == "PLAYER_LOGOUT") then
+		RSTelemetry.OnLogout()
 	elseif (event == "UNIT_AURA") then
 		local unitTarget, updateInfo = ...
 		local cleanUpdateInfo = scrubsecretvalues(updateInfo)
@@ -939,8 +979,28 @@ local function HandleEvent(rareScannerButton, event, ...)
 	end
 end
 
+local scannerButton
+
+--- Registers or unregisters what the telemetry needs, depending on the option of the player
+function RSEventHandler.RefreshTelemetry()
+	if (RSConfigDB.IsTelemetryEnabled()) then
+		scannerButton:RegisterEvent("UNIT_DIED")
+		scannerButton:RegisterEvent("GROUP_ROSTER_UPDATE")
+		scannerButton:RegisterEvent("PLAYER_LOGOUT")
+		scannerButton:RegisterEvent("SHARD_TRANSFER")
+		RSTelemetry.InitializeComm()
+	else
+		scannerButton:UnregisterEvent("UNIT_DIED")
+		scannerButton:UnregisterEvent("GROUP_ROSTER_UPDATE")
+		scannerButton:UnregisterEvent("PLAYER_LOGOUT")
+		scannerButton:UnregisterEvent("SHARD_TRANSFER")
+		RSTelemetry.DisableComm()
+	end
+end
+
 function RSEventHandler.RegisterEvents(rareScannerButton, addon)
 	RareScanner = addon
+	scannerButton = rareScannerButton
 	rareScannerButton:RegisterEvent("PLAYER_LOGIN")
 	rareScannerButton:RegisterEvent("VIGNETTE_MINIMAP_UPDATED")
 	rareScannerButton:RegisterEvent("VIGNETTES_UPDATED")

@@ -1751,7 +1751,10 @@ function FDJ.SetRowMobs(row, sourceText)
         button.fdjMobName = name
         button:ClearAllPoints()
         button:SetPoint("RIGHT", row, "RIGHT", -10 - (#names - i) * 38, 0)
-        pcall(SetPortraitTextureFromCreatureDisplayID, button.portrait, FDJ.TRASH_MOB_DISPLAY_IDS[name])
+        local mobDisplayID = FDJ.TRASH_MOB_DISPLAY_IDS[name]
+        if not (FDJ.SetBakedPortrait and FDJ.SetBakedPortrait(button.portrait, mobDisplayID)) then
+            pcall(SetPortraitTextureFromCreatureDisplayID, button.portrait, mobDisplayID)
+        end
         button:Show()
     end
     for i = #names + 1, #row.fdjMobButtons do row.fdjMobButtons[i]:Hide() end

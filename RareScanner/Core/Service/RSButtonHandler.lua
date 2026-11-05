@@ -30,6 +30,7 @@ local RSEventHandler = private.ImportLib("RareScannerEventHandler")
 local RSRecentlySeenTracker = private.ImportLib("RareScannerRecentlySeenTracker")
 local RSWaypoints = private.ImportLib("RareScannerWaypoints")
 local RSAudioAlerts = private.ImportLib("RareScannerAudioAlerts")
+local RSTelemetry = private.ImportLib("RareScannerTelemetry")
 
 -- Timers
 local BUTTON_TIMER
@@ -571,6 +572,11 @@ function RSButtonHandler.AddAlert(button, vignetteInfo, isNavigating)
 	-- Apply filters
 	local mapID = RSGeneralDB.GetBestMapForUnit(entityID, vignetteInfo.atlasName)
 	local isInInstance, _ = IsInInstance()
+	
+	-- Telemetry tracking: record sighting before user/alert filters (validated internally)
+	if (not isNavigating) then
+		RSTelemetry.OnEntityFound(entityID, vignetteInfo, mapID)
+	end
 	
 	-- Check if ignored NPC
 	if (RSConstants.IsNpcAtlas(vignetteInfo.atlasName) and RSUtils.Contains(RSConstants.IGNORED_VIGNETTES_NPCS, entityID)) then

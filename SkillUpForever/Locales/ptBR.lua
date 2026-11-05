@@ -96,6 +96,7 @@ L["Craft %d× %s"] = "Criar %d× %s"
 L["Craft %s"] = "Criar %s"
 L["Craft next"] = "Criar a próxima"
 L["Crafted gear"] = "Equipamento criado"
+L["Crafting from the route works with a controller."] = "Criar pela rota funciona com um controle."
 L["Crafts"] = "Criações"
 L["Crafts %d now."] = "Cria %d agora."
 L["Don't count it"] = "Não contar"
@@ -277,6 +278,8 @@ L["Subtract what the crafted item sells for from its cost. Auction prices need A
 	"Subtrai do custo o valor de venda do item criado. Preços de leilão precisam do Auctionator, são após a taxa de 5% e podem não vender."
 L["Suggest my other Forever addons"] = "Sugerir meus outros AddOns Forever"
 L["Taught by %s trainers."] = "Ensinada por instrutores de %s."
+L["The Forever addons are free, with nothing locked behind them. If they help, you can buy me a coffee."] =
+	"Os addons Forever são gratuitos, sem nada bloqueado por pagamento. Se eles ajudarem, você pode me pagar um café." -- mt
 L["The place this recipe is taught isn't known yet."] = "Ainda não se sabe onde esta receita é ensinada."
 L["The rest comes from a vendor or your gathering."] = "O resto vem de um comerciante ou da sua coleta."
 L["The route asks for %d to reach %d in 9 runs of 10; a worse run needs more."] =
@@ -479,5 +482,3 @@ L["/su share on|off - control sharing with guild and group"] =
 L["Share observed recipe totals with guild and group"] = "Compartilhar totais de receitas observadas com guilda e grupo"
 L["On by default. Turn off to stop sending and receiving totals and hide other players. Local observations stay."] =
 	"Ativado por padrão. Desative para parar de enviar e receber totais e ocultar outros jogadores. As observações locais são mantidas."
-
-L["Long lists in the Professions window scroll."] = "As listas longas da janela de profissões rolam." -- mt

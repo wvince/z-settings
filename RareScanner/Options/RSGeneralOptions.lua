@@ -95,6 +95,18 @@ function RSGeneralOptions.GetGeneralOptions()
 			handler = RareScanner,
 			desc = AL["options"],
 			args = {
+				telemetry = {
+					order = 0,
+					name = AL["ENABLE_TELEMETRY"],
+					desc = AL["ENABLE_TELEMETRY_DESC"],
+					type = "toggle",
+					get = function() return RSConfigDB.IsTelemetryEnabled() end,
+					set = function(_, value)
+						RSConfigDB.SetTelemetryEnabled(value)
+						RSEventHandler.RefreshTelemetry()
+					end,
+					width = "full",
+				},
 				rescanTimer = {
 					order = 1,
 					type = "range",

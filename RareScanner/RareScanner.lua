@@ -29,6 +29,7 @@ local RSTimeUtils = private.ImportLib("RareScannerTimeUtils")
 local RSUtils = private.ImportLib("RareScannerUtils")
 local RSQuestTracker = private.ImportLib("RareScannerQuestTracker")
 local RSRoutines = private.ImportLib("RareScannerRoutines")
+local RSTelemetry = private.ImportLib("RareScannerTelemetry")
 local RSProvider = private.ImportLib("RareScannerProvider")
 local RSHyperlinks = private.ImportLib("RareScannerHyperlinks")
 local RSWorldMap = private.ImportLib("RareScannerWorldMap")
@@ -937,7 +938,12 @@ local function RefreshDatabaseData(previousDbVersion)
 		table.insert(routines, cleanCompletedEvents)
 		RSGeneralDB.SetLastCleanDb()
 	end
-		
+	
+	-- Clean the telemetry data and prepare the proposals for the spawn info database
+	if (RSConfigDB.IsTelemetryEnabled()) then
+		table.insert(routines, RSTelemetry.CreateMaintenanceRoutine())
+	end
+
 	-- Update entities state that are part of an achievement with criteria
 	local achievementCriteriaRoutine = RSRoutines.LoopRoutineNew()
 	achievementCriteriaRoutine:Init(
@@ -1151,11 +1157,8 @@ function RareScanner:InitializeDataBase()
 	private.dbchar = self.db.char
 	private.dbglobal = self.db.global
 
-	-- The telemetry is not available in this version, so the data saved by previous versions is removed
-	private.dbglobal.telemetry = nil
-	if (private.db.general) then
-		private.db.general.telemetry = nil
-	end
+	-- The option of the telemetry is already available, so it can be enabled or disabled
+	RSEventHandler.RefreshTelemetry()
 
 	-- Initialize char database
 	RSGeneralDB.InitCompletedQuestDB()

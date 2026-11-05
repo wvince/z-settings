@@ -224,6 +224,22 @@ FDJ.DUNGEON_MAPS = {
         },
     },
 
+    -- Announced dungeons (no boss data yet): the map is their only page.
+    ["The Drowned City"] = {
+        floors = { { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\DrownedCityMap", texBottom = 683 / 1024 } },
+        entrance = { floor = 1, x = 0.846, y = 0.521, angle = 0 }, -- the swirl in Sunken Hollow
+        bosses = {},
+    },
+    ["Krol'dok Stronghold"] = {
+        floors = { { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\KroldokMap", texBottom = 683 / 1024 } },
+        entrance = { floor = 1, x = 0.205, y = 0.807, angle = 180 }, -- the swirl where the trail comes in (south-west)
+        bosses = {},
+    },
+    ["Shaper's Terrace"] = {
+        floors = { { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\ShapersTerraceMap", texBottom = 683 / 1024 } },
+        bosses = {},
+    },
+
     ["Gnomeregan"] = {
         -- Cataclysm-era client art; its skulls are patched out and our own
         -- portraits mark the Classic/Forever boss rooms instead.
@@ -658,6 +674,13 @@ local function UpdateQuestActionButtonSizes()
         local iconPad = (frame.questMapButton.icon and frame.questMapButton.icon:IsShown()) and 20 or 0
         local width = math.max(96, math.min(frame.questMapButton.fdjLabelKey and 210 or 150, math.ceil(textWidth + 24 + iconPad)))
         frame.questMapButton:SetWidth(width)
+    end
+
+    if frame.questTurninMapButton then
+        frame.questTurninMapButton:SetText(L("SHOW_TURN_IN") or "")
+        local fs = frame.questTurninMapButton:GetFontString()
+        local textWidth = fs and fs:GetStringWidth() or 0
+        frame.questTurninMapButton:SetWidth(math.max(96, math.min(210, math.ceil(textWidth + 24 + 20))))
     end
 
     if frame.questChainButton then
@@ -2804,6 +2827,9 @@ local function ShowItemTooltip(row)
         itemTooltip:AddLine(" ")
         itemTooltip:AddLine(row.fdjSourceText, 1.00, 0.82, 0.10, true)
     end
+    if row.fdjMapLocation then
+        itemTooltip:AddLine(L("ITEM_CLICK_MAP"), 0.35, 1.00, 0.35, true)
+    end
     itemTooltip:Show()
     if FDJ.RefreshTooltipBacking then FDJ.RefreshTooltipBacking() end
     PositionPrimaryItemTooltip(row)
@@ -3304,6 +3330,21 @@ local function MakeQuestRewardButton(parent)
             return
         end
 
+        -- An item with a recorded place (for example a quest object): a plain
+        -- click marks that place on the map, like Show on Map.
+        if self.fdjMapLocation and not (IsModifiedClick and (IsModifiedClick("CHATLINK") or IsModifiedClick("DRESSUP"))) then
+            if itemTooltip then itemTooltip:Hide() end
+            HideComparisonTooltips()
+            local src = self.fdjMapLocation
+            local loc = {
+                mapID = src.mapID, x = src.x, y = src.y, markerType = src.markerType,
+                label = FDJ.LocalizeFreeText and FDJ.LocalizeFreeText(src.label) or src.label,
+                detail = FDJ.LocalizeFreeText and FDJ.LocalizeFreeText(src.detail) or src.detail,
+            }
+            ShowRecordedLocationOnMap(loc, loc.label)
+            return
+        end
+
         local _, link = ItemInfo(self.item[1])
         if link and IsModifiedClick and IsModifiedClick("CHATLINK") and ChatEdit_InsertLink then
             local used = ChatEdit_InsertLink(link)
@@ -3411,6 +3452,13 @@ local function UpdateDungeonHeaderTabs()
         else
             frame.mapTab:Hide()
         end
+    end
+    -- Announced dungeons: no boss or quest pages, so Map is the only tab.
+    if currentDungeon and currentDungeon.previewOnly and frame.mapTab and FDJ.DUNGEON_MAPS[selectedDungeon] then
+        frame.bossesTab:Hide()
+        frame.questsTab:Hide()
+        frame.mapTab:ClearAllPoints()
+        frame.mapTab:SetPoint("TOPRIGHT", -13, -14)
     end
     -- Keep "Items Data TBD" just left of the leftmost visible header button,
     -- clear of the title and its Show Location icon.
@@ -3699,6 +3747,15 @@ RefreshQuestList = function()
                         row.statusIcon:SetSize(12, 12)
                         row.statusIcon:Hide()
 
+                        -- "YOU HAVE IT" when this step is in the quest log.
+                        row.haveIt = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+                        row.haveIt:SetPoint("RIGHT", row, "RIGHT", -2, 0)
+                        row.haveIt:SetJustifyH("RIGHT")
+                        row.haveIt:SetTextColor(1.00, 0.82, 0.10)
+                        row.haveIt:SetShadowColor(0, 0, 0, 0.72)
+                        row.haveIt:SetShadowOffset(1, -1)
+                        row.haveIt:Hide()
+
                         row.selected = row:CreateTexture(nil, "BACKGROUND")
                         row.selected:SetAllPoints()
                         row.selected:SetTexture("Interface\\Buttons\\WHITE8X8")
@@ -3760,6 +3817,28 @@ RefreshQuestList = function()
                         row.text:SetTextColor(0.78, 0.74, 0.66)
                     end
                     row.text:SetText(prefix .. QuestField(step.id, "name", step.name))
+                    if row.haveIt then
+                        row.text:SetWidth(0)
+                        if step.id and not IsQuestFinished(step.id) and IsQuestInLog(step.id) then
+                            -- Same label as the quest rows; shrink long translations a little.
+                            row.haveIt:SetFontObject("GameFontNormalSmall")
+                            row.haveIt:SetScale(1)
+                            row.haveIt:SetText(L("YOU_HAVE_IT"))
+                            local labelWidth = row.haveIt:GetStringWidth() or 0
+                            if labelWidth > 88 then
+                                row.haveIt:SetScale(math.max(0.80, 88 / labelWidth))
+                                labelWidth = 88
+                            end
+                            row.haveIt:Show()
+                            -- Keep a long step title clear of the label.
+                            local room = (row:GetWidth() or 0) - labelWidth - 8
+                            if room > 40 and (row.text:GetStringWidth() or 0) > room then
+                                row.text:SetWidth(room)
+                            end
+                        else
+                            row.haveIt:Hide()
+                        end
+                    end
 
                     -- Put the prerequisite tick literally beside its title.
                     -- Example: "1. Underground Map  ✓"
@@ -3921,38 +4000,38 @@ local function GetLoadedQuestTitle(questID, fallback)
     return localizedFallback
 end
 
+-- Returns the rewards to show first, whether they are a choice, and the fixed
+-- rewards that come on top of a choice ("You will also receive").
 local function GetPrerequisiteRewardItems(questID)
-    local items = {}
-    local isChoice = false
+    local fixed, choices = {}, {}
 
-    local function addRewards(countFunc, infoFunc, choice)
+    local function addRewards(countFunc, infoFunc, list)
         if type(countFunc) ~= "function" or type(infoFunc) ~= "function" then return end
         local okCount, count = pcall(countFunc, questID)
         if not okCount or type(count) ~= "number" then return end
-        if choice and count > 0 then isChoice = true end
 
         for i = 1, count do
             local ok, name, texture, numItems, quality, isUsable, itemID = pcall(infoFunc, i, questID)
             if ok and type(itemID) == "number" and itemID > 0 then
-                items[#items + 1] = { itemID, name or ("Item " .. itemID), quality or 1 }
+                list[#list + 1] = { itemID, name or ("Item " .. itemID), quality or 1 }
             end
         end
     end
 
-    addRewards(GetNumQuestLogRewards, GetQuestLogRewardInfo, false)
-    addRewards(GetNumQuestLogChoices, GetQuestLogChoiceInfo, true)
+    addRewards(GetNumQuestLogRewards, GetQuestLogRewardInfo, fixed)
+    addRewards(GetNumQuestLogChoices, GetQuestLogChoiceInfo, choices)
 
-    if #items == 0 then
+    if #fixed == 0 and #choices == 0 then
         local fallback = PREREQ_REWARD_ITEMS_FALLBACK[questID]
         if fallback and fallback.items then
-            for _, item in ipairs(fallback.items) do
-                items[#items + 1] = item
-            end
-            isChoice = fallback.choice and true or false
+            local list = fallback.choice and choices or fixed
+            for _, item in ipairs(fallback.items) do list[#list + 1] = item end
+            for _, item in ipairs(fallback.also or {}) do fixed[#fixed + 1] = item end
         end
     end
 
-    return items, isChoice
+    if #choices > 0 then return choices, true, fixed end
+    return fixed, false, {}
 end
 
 local function GetPrerequisiteRewardXP(questID)
@@ -4081,6 +4160,7 @@ FDJ.HideStepItemButtons = function()
     for _, button in ipairs(frame.questStepItemButtons or {}) do
         button.item = nil
         button.fdjSourceText = nil
+        button.fdjMapLocation = nil
         button:Hide()
     end
     if frame.questProvidedItemHeader then frame.questProvidedItemHeader:Hide() end
@@ -4101,6 +4181,7 @@ FDJ.PlaceStepItemButtons = function(items, startIndex, cursorY, width)
         button.item = item
         if FDJ.UpdateFavouriteIndicator then FDJ.UpdateFavouriteIndicator(button, item[1]) end
         button.fdjSourceText = item[4] and FreeText(item[4]) or nil
+        button.fdjMapLocation = item.map
         button:SetSize(width, 42)
         button.icon:SetTexture(ItemIcon(item[1]))
         if C_Item and type(C_Item.RequestLoadItemDataByID) == "function" then
@@ -4151,7 +4232,7 @@ local function RefreshPrerequisiteQuestDetail(step)
         if type(GetQuestLogQuestText) == "function" then
             local ok, desc, obj = pcall(GetQuestLogQuestText, logIndex)
             if ok then
-                if not details.suppressDescription and not IsSecret(desc) and type(desc) == "string" and desc ~= "" then description = desc end
+                -- The game's quest description (story text) is left out on purpose.
                 if not IsSecret(obj) and type(obj) == "string" and obj ~= "" then objectiveText = obj end
             end
         end
@@ -4428,7 +4509,7 @@ local function RefreshPrerequisiteQuestDetail(step)
             cursorY = cursorY + (frame.questStartsText:GetStringHeight() or 24) + 7
         end
 
-        if details.map and not details.turninMap and frame.questMapButton then
+        if details.map and frame.questMapButton then
             frame.questMapButton:ClearAllPoints()
             frame.questMapButton.quest = nil
             frame.questMapButton.prereqLocation = (FDJ.LocalizeMapLocation and FDJ.LocalizeMapLocation(details.map)) or details.map
@@ -4457,19 +4538,24 @@ local function RefreshPrerequisiteQuestDetail(step)
         frame.questTurninText:Show()
         cursorY = cursorY + (frame.questTurninText:GetStringHeight() or 24) + 8
 
-        if details.turninMap and frame.questMapButton then
-            frame.questMapButton:ClearAllPoints()
-            frame.questMapButton.quest = nil
-            frame.questMapButton.prereqLocation = (FDJ.LocalizeMapLocation and FDJ.LocalizeMapLocation(details.turninMap)) or details.turninMap
-            frame.questMapButton.fdjQuestTitle = QuestField(questID, "name", step.name)
-            frame.questMapButton.fdjLabelKey = "SHOW_TURN_IN"
-            if frame.questMapButton.icon then frame.questMapButton.icon:Show() end
+        local startMap, turninMap = details.map, details.turninMap
+        local sameNPC = startMap and turninMap and startMap.mapID == turninMap.mapID
+            and math.abs((startMap.x or 0) - (turninMap.x or 0)) < 0.01
+            and math.abs((startMap.y or 0) - (turninMap.y or 0)) < 0.01
+        local turninButton = frame.questTurninMapButton or (not startMap and frame.questMapButton) or nil
+        if turninMap and not sameNPC and turninButton then
+            turninButton:ClearAllPoints()
+            turninButton.quest = nil
+            turninButton.prereqLocation = (FDJ.LocalizeMapLocation and FDJ.LocalizeMapLocation(turninMap)) or turninMap
+            turninButton.fdjQuestTitle = QuestField(questID, "name", step.name)
+            turninButton.fdjLabelKey = "SHOW_TURN_IN"
+            if turninButton.icon then turninButton.icon:Show() end
             if FDJ.MapMarkers and FDJ.MapMarkers.ConfigureTargetAndMarkAction then
-                FDJ.MapMarkers.ConfigureTargetAndMarkAction(frame.questMapButton, frame.questMapButton.prereqLocation, true)
+                FDJ.MapMarkers.ConfigureTargetAndMarkAction(turninButton, turninButton.prereqLocation, true)
             end
             UpdateQuestActionButtonSizes()
-            frame.questMapButton:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
-            frame.questMapButton:Show()
+            turninButton:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
+            turninButton:Show()
             cursorY = cursorY + 34
         end
     end
@@ -4510,10 +4596,12 @@ local function RefreshPrerequisiteQuestDetail(step)
         frame.questNotesText:Hide()
     end
 
-    local prereqRewardItems, prereqRewardChoice = GetPrerequisiteRewardItems(questID)
+    local prereqRewardItems, prereqRewardChoice, prereqAlsoItems = GetPrerequisiteRewardItems(questID)
+    prereqAlsoItems = prereqAlsoItems or {}
     local prereqXP = GetPrerequisiteRewardXP(questID)
     local prereqMoney = GetPrerequisiteRewardMoney(questID)
-    local hasPrereqRewards = (#prereqRewardItems > 0) or (prereqXP and prereqXP > 0) or (prereqMoney > 0)
+    local hasPrereqRewards = (#prereqRewardItems > 0) or (#prereqAlsoItems > 0) or (prereqXP and prereqXP > 0) or (prereqMoney > 0)
+    if frame.questRewardAlsoHeader then frame.questRewardAlsoHeader:Hide() end
 
     if hasPrereqRewards then
         frame.questRewardHeader:ClearAllPoints()
@@ -4528,17 +4616,20 @@ local function RefreshPrerequisiteQuestDetail(step)
         cursorY = cursorY + 22
 
         local rewardWidth = math.floor((detailWidth - 10) / 2)
-        local rowsUsed = 0
-        for i = 1, math.max(#questRewardButtons, #prereqRewardItems) do
-            local button = questRewardButtons[i]
-            if i <= #prereqRewardItems then
+        local buttonsUsed = 0
+        -- Two-column grid of item cards; the fixed rewards of a choice quest
+        -- get their own grid under "You will also receive".
+        local function PlaceRewardGrid(list)
+            local rowsUsed = 0
+            for i, item in ipairs(list) do
+                buttonsUsed = buttonsUsed + 1
+                local button = questRewardButtons[buttonsUsed]
                 if not button then
                     button = MakeQuestRewardButton(frame.questDetailContent)
-                    questRewardButtons[i] = button
+                    questRewardButtons[buttonsUsed] = button
                 end
 
                 button:SetWidth(rewardWidth)
-                local item = prereqRewardItems[i]
                 button.item = item
                 if FDJ.UpdateFavouriteIndicator then FDJ.UpdateFavouriteIndicator(button, item[1]) end
                 button.icon:SetTexture(ItemIcon(item[1]))
@@ -4561,12 +4652,25 @@ local function RefreshPrerequisiteQuestDetail(step)
                     col * (rewardWidth + 10), -(cursorY + row * 54))
                 button:Show()
                 rowsUsed = math.max(rowsUsed, row + 1)
-            elseif button then
+            end
+            if rowsUsed > 0 then cursorY = cursorY + rowsUsed * 54 + 4 end
+        end
+        PlaceRewardGrid(prereqRewardItems)
+        if #prereqAlsoItems > 0 and frame.questRewardAlsoHeader then
+            frame.questRewardAlsoHeader:SetText(L("ALSO_RECEIVE"))
+            frame.questRewardAlsoHeader:ClearAllPoints()
+            frame.questRewardAlsoHeader:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
+            frame.questRewardAlsoHeader:Show()
+            cursorY = cursorY + (frame.questRewardAlsoHeader:GetStringHeight() or 18) + 4
+            PlaceRewardGrid(prereqAlsoItems)
+        end
+        for i = buttonsUsed + 1, #questRewardButtons do
+            local button = questRewardButtons[i]
+            if button then
                 button.item = nil
                 button:Hide()
             end
         end
-        if rowsUsed > 0 then cursorY = cursorY + rowsUsed * 54 + 4 end
 
         local hasBar = false
         if frame.questXPReward and prereqXP and prereqXP > 0 then
@@ -4613,6 +4717,11 @@ RefreshQuestDetail = function()
     for _, button in ipairs(questNoteRewardButtons) do HideSearchItemHighlight(button) end
     if frame and frame.questNoteItemButton then HideSearchItemHighlight(frame.questNoteItemButton) end
     if not frame or not frame.questDetailText then return end
+    if frame.questTurninMapButton then
+        frame.questTurninMapButton.prereqLocation = nil
+        frame.questTurninMapButton:Hide()
+    end
+    if frame.questRewardAlsoHeader then frame.questRewardAlsoHeader:Hide() end
 
     if selectedPrereqStep then
         if RefreshPrerequisiteQuestDetail(selectedPrereqStep) then return end
@@ -6260,7 +6369,7 @@ local function MakeDungeonTab(parent, dungeonName, x)
 
     button:SetScript("OnClick", function()
         local dungeon = DB[dungeonName]
-        if dungeon and dungeon.previewOnly then return end
+        if dungeon and dungeon.previewOnly and not FDJ.DUNGEON_MAPS[dungeonName] then return end
         SelectDungeon(dungeonName)
     end)
 
@@ -6447,7 +6556,8 @@ local function MakeHomeDungeonCard(parent, dungeonName)
                 GameTooltip:AddLine(L("CLICK_HIDE_DUNGEON"), 1, 1, 1)
             end
         elseif dungeon and dungeon.previewOnly then
-            GameTooltip:AddLine("Boss, loot and quest data coming soon.", 0.82, 0.78, 0.68, true)
+            GameTooltip:AddLine(L("PREVIEW_DATA_SOON"), 0.82, 0.78, 0.68, true)
+            if FDJ.DUNGEON_MAPS[activeDungeonName] then GameTooltip:AddLine(L("PREVIEW_MAP_CLICK"), 1, 1, 1) end
         else
             GameTooltip:AddLine(L("CLICK_DUNGEON"), 1, 1, 1)
         end
@@ -7423,6 +7533,10 @@ RefreshAll = function()
     if selectedQuest > #quests then selectedQuest = 1 end
     if selectedBoss > #dungeon.bosses then selectedBoss = 1 end
 
+    if dungeon.previewOnly and FDJ.DUNGEON_MAPS[selectedDungeon] and ShowDungeonMap then
+        ShowDungeonMap()
+        return
+    end
     SetMode(selectedMode)
 end
 
@@ -7450,7 +7564,7 @@ end
 
 SelectDungeon = function(name)
     if not DB[name] then return end
-    if DB[name].previewOnly then return end
+    if DB[name].previewOnly and not FDJ.DUNGEON_MAPS[name] then return end
     -- RPG Mode: a dungeon stays locked until its final boss has been defeated.
     if FDJ.IsDungeonLocked and FDJ.IsDungeonLocked(name) then
         if FDJ.RPGLockedNotice then FDJ.RPGLockedNotice(name) end
@@ -8551,6 +8665,7 @@ local function CreateMainFrame()
     homeEmptyText:Hide()
 
     local homeLine = home:CreateTexture(nil, "ARTWORK")
+    frame.homeLine = homeLine
     homeLine:SetTexture("Interface\\Buttons\\WHITE8X8")
     homeLine:SetPoint("TOPLEFT", 18, -58)
     homeLine:SetPoint("TOPRIGHT", -31, -58)
@@ -9184,6 +9299,8 @@ local function CreateMainFrame()
     frame.questStartsHeader = MakeQuestSectionHeader(L("STARTS_AT"))
     frame.questTurninHeader = MakeQuestSectionHeader(L("TURN_IN"))
     frame.questNotesHeader = MakeQuestSectionHeader(L("NOTES"))
+    frame.questRewardAlsoHeader = MakeQuestSectionHeader(L("ALSO_RECEIVE"))
+    frame.questRewardAlsoHeader:Hide()
     frame.questDescHeader = MakeQuestSectionHeader(L("DESCRIPTION"))
     frame.questDescHeader:Hide()
     frame.questDescText = frame.questDetailContent:CreateFontString(nil, "OVERLAY")
@@ -9373,6 +9490,37 @@ local function CreateMainFrame()
     end)
     frame.questMapButton:SetScript("OnLeave", function() GameTooltip:Hide() end)
     frame.questMapButton:Hide()
+
+    -- Chain steps: "Show Turn In" under Turn in, next to "Show on Map" under
+    -- Starts at, when the turn-in NPC stands somewhere else.
+    do
+        local ok, button = pcall(CreateFrame, "Button", nil, frame.questDetailContent, "UIPanelButtonTemplate,InsecureActionButtonTemplate")
+        if ok and button then
+            button._fdjCanTarget = true
+        else
+            button = CreateFrame("Button", nil, frame.questDetailContent, "UIPanelButtonTemplate")
+            button._fdjCanTarget = false
+        end
+        frame.questTurninMapButton = button
+        button:SetSize(120, 24)
+        button.fdjLabelKey = "SHOW_TURN_IN"
+        button:SetText(L("SHOW_TURN_IN"))
+        button.icon = button:CreateTexture(nil, "OVERLAY")
+        button.icon:SetSize(17, 17)
+        button.icon:SetPoint("RIGHT", -7, 0)
+        button.icon:SetTexture("Interface\\GossipFrame\\ActiveQuestIcon")
+        button:RegisterForClicks("LeftButtonUp")
+        local openMap = frame.questMapButton:GetScript("PostClick") or frame.questMapButton:GetScript("OnClick")
+        if button._fdjCanTarget then
+            button:SetAttribute("useOnKeyDown", false)
+            button:SetScript("PostClick", openMap)
+        else
+            button:SetScript("OnClick", openMap)
+        end
+        button:SetScript("OnEnter", frame.questMapButton:GetScript("OnEnter"))
+        button:SetScript("OnLeave", frame.questMapButton:GetScript("OnLeave"))
+        button:Hide()
+    end
 
     frame.questChainButton = CreateFrame("Button", nil, frame.questDetailContent, "UIPanelButtonTemplate")
     frame.questChainButton:SetSize(132, 24)
@@ -10235,6 +10383,16 @@ end
 FDJ.events:SetScript("OnEvent", function(_, event, arg1, arg2)
     local questID, success = arg1, arg2
     if event == "PLAYER_LOGIN" then
+        -- SavedVariables load after this file runs, so the display-ID cache
+        -- captured at load time was a throwaway table. Rebind it to the real
+        -- saved table so resolved portraits persist between sessions.
+        ForeverDungeonJournalDB.displayIDs = ForeverDungeonJournalDB.displayIDs or {}
+        if displayIDCache ~= ForeverDungeonJournalDB.displayIDs then
+            for k, v in pairs(displayIDCache) do
+                if ForeverDungeonJournalDB.displayIDs[k] == nil then ForeverDungeonJournalDB.displayIDs[k] = v end
+            end
+            displayIDCache = ForeverDungeonJournalDB.displayIDs
+        end
         if UnitFactionGroup then
             local playerFaction = UnitFactionGroup("player")
             if playerFaction == "Horde" then
@@ -10260,7 +10418,7 @@ FDJ.events:SetScript("OnEvent", function(_, event, arg1, arg2)
         elseif GetAddOnMetadata then
             addonVersion = GetAddOnMetadata("ForeverDungeonJournal", "Version")
         end
-        addonVersion = (addonVersion and tostring(addonVersion)) or "1.6.5"
+        addonVersion = (addonVersion and tostring(addonVersion)) or "1.6.7"
         print("|cffd8a83cDungeon Journal by Exehn|r |cffffffffv" .. addonVersion .. "|r")
         return
     end

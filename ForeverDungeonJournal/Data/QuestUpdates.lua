@@ -252,3 +252,168 @@ do
         c.quests[3801].warning = text
     end
 end
+-- BEGIN roguejobs
+-- Rogue jobs from C (the Dead Drop beside Pyrewood Village). The journal entries are
+-- the payment quests; the dungeon jobs are their chain steps. The Eye of Bhossca is
+-- only offered after the whole Horn of Xelthos chain.
+do
+    local DEAD_DROP = {"Dead Drop", "Interface\\Icons\\INV_Box_02", "A chest in a hut beside Pyrewood Village, Silverpine Forest"}
+    local function DropMap() return { mapID = 1421, x = 0.471, y = 0.711, label = "Dead Drop — Pyrewood Village", detail = "A chest in a hut beside Pyrewood Village" } end
+    local WHERE = "Dead Drop, Pyrewood Village, Silverpine Forest"
+    local SOLO = "Solo job: you must do it alone, outside any group."
+    FDJ.QUEST_PREREQ_CHAINS[78307] = {
+        { id = 78261, name = "The Horn of Xelthos" },
+    }
+    FDJ.QUEST_PREREQ_CHAINS[78699] = {
+        { id = 78261, name = "The Horn of Xelthos" },
+        { id = 78307, name = "The Horn of Xelthos" },
+        { id = 78676, name = "The Eye of Bhossca" },
+    }
+    FDJ.QUEST_PREREQ_DETAILS[78261] = {
+        level = 23, requires = 20,
+        warning = SOLO,
+        objective = "Find The Horn of Xelthos inside of Shadowfang Keep. Then, return it to C's dead drop near Pyrewood Village. You must complete the job alone.",
+        requiredItems = {
+            {210186, "Breaching Charge", 1, "From Veenix, Stonetalon Mountains, for a Venture Co. Work Order. Blows open the courtyard gate of Shadowfang Keep", map = { mapID = 1442, x = 0.582, y = 0.517, label = "Veenix — Stonetalon Mountains", detail = "From Veenix, Stonetalon Mountains, for a Venture Co. Work Order. Blows open the courtyard gate of Shadowfang Keep" }},
+            {210209, "Twin Key", 1, "Combine the Sister's Half-Key and the Brother's Half-Key, picked from the sister (dining hall) and the brother (upstairs) in Shadowfang Keep. Combining them breaks stealth"},
+            {210183, "Horn of Xelthos", 1, "Found in: a locked chest in the courtyard stables of Shadowfang Keep. Open it with the Twin Key"},
+        },
+        startObject = DEAD_DROP, pickup = WHERE, turnin = WHERE, map = DropMap(),
+    }
+    FDJ.QUEST_PREREQ_DETAILS[78307] = {
+        level = 23, requires = 20,
+        objective = "Collect C's payment from the Dead Drop near Pyrewood Village.",
+        description = "Offered after C's next letter reaches you in a capital city.",
+        startObject = DEAD_DROP, pickup = WHERE, turnin = WHERE, map = DropMap(),
+    }
+    FDJ.QUEST_PREREQ_DETAILS[78676] = {
+        level = 35, requires = 25,
+        warning = SOLO,
+        objective = "Find The Eye of Bhossca inside of the Scarlet Monastery. Then, return it to C's dead drop near Pyrewood Village. You must complete the job alone.",
+        requiredItems = {
+            {210955, "Scarlet Initiate's Uniform", 1, "Found in: the Supply Locker in the stables behind the Scarlet Monastery. Wear it to pass the Scarlet Crusade"},
+            {210963, "Scryer's Key", 1, "Pick pocket a Scarlet Scryer in the first big room of the Scarlet Monastery Graveyard"},
+            {210967, "Confidential Message", 1, "Found in: the Personal Letterbox in Arcanist Doan's room, Scarlet Monastery Library. Open it with the Scryer's Key"},
+            {210968, "Reliquary Key", 1, "Found in: the Stone Coffer in the mausoleum on the north side of the Scarlet Monastery Graveyard. It opens after you sit on both benches between the two statues"},
+            {210953, "Eye of Bhossca", 1, "Found in: the Padlocked Reliquary in the first small room on the left of the Scarlet Monastery Library. Open it with the Reliquary Key"},
+        },
+        startObject = DEAD_DROP, pickup = WHERE, turnin = WHERE, map = DropMap(),
+    }
+    FDJ.QUEST_PREREQ_DETAILS[78699] = {
+        level = 35, requires = 25,
+        objective = "Collect C's payment from the Dead Drop near Pyrewood Village.",
+        description = "Offered after C's next letter reaches you in a capital city.",
+        startObject = DEAD_DROP, pickup = WHERE, turnin = WHERE, map = DropMap(),
+    }
+    FDJ.PREREQ_REWARD_ITEMS_FALLBACK[78307] = { items = { {277210, "Pyrewood Signet Ring", 3} }, choice = false }
+    FDJ.PREREQ_REWARD_ITEMS_FALLBACK[78699] = { items = { {277246, "Ruby-Adorned Blade", 3} }, choice = false }
+    FDJ.PREREQ_REWARD_MONEY_FALLBACK[78307] = 3000
+    FDJ.PREREQ_REWARD_MONEY_FALLBACK[78699] = 7500
+    FDJ.FOREVER_QUEST_XP_FALLBACK[78261] = 1850
+    FDJ.FOREVER_QUEST_XP_FALLBACK[78307] = 6900
+    FDJ.FOREVER_QUEST_XP_FALLBACK[78676] = 3450
+    FDJ.FOREVER_QUEST_XP_FALLBACK[78699] = 6900
+    -- Solo jobs started from a world object: they cannot be shared.
+    for _, id in ipairs({ 78261, 78307, 78676, 78699 }) do
+        FDJ.QUEST_SHAREABILITY_AUDIT[id] = false
+    end
+end
+-- END roguejobs
+
+-- BEGIN recipechain
+-- The New Plague (Horde, Ruins of Lordaeron): Theodore Griffs now only offers it after
+-- the whole A Recipe For Death chain (Apothecary Renferrel, The Sepulcher, and Master
+-- Apothecary Faranell, Undercity). The steps live only inside the chain.
+FDJ.QUEST_PREREQ_CHAINS[95216] = {
+    { id = 447, name = "A Recipe For Death" },
+    { id = 450, name = "A Recipe For Death" },
+    { id = 451, name = "A Recipe For Death" },
+}
+FDJ.QUEST_PREREQ_DETAILS[447] = {
+    level = 12, requires = 9,
+    objective = "Collect 6 Grizzled Bear Hearts and 6 samples of Skittering Blood and deliver them to Master Apothecary Faranell in the Undercity.",
+    pickup = "Apothecary Renferrel, The Sepulcher, Silverpine Forest", turnin = "Master Apothecary Faranell, Undercity",
+    map = { mapID = 1421, x = 0.428, y = 0.409, label = "Apothecary Renferrel — The Sepulcher", targetName = "Apothecary Renferrel" },
+    turninMap = { mapID = 1458, x = 0.488, y = 0.693, label = "Master Apothecary Faranell — Undercity", targetName = "Master Apothecary Faranell" },
+    requiredItems = {
+        {3253, "Grizzled Bear Heart", 1, "Dropped by Ferocious Grizzled Bears and Giant Grizzled Bears all over Silverpine Forest"},
+        {3254, "Skittering Blood", 1, "Dropped by Moss Stalkers and Mist Creepers in the Skittering Dark, north-west of the Sepulcher (around 35, 12)", map = { markerType = "location", mapID = 1421, x = 0.355, y = 0.120, label = "Moss Stalkers and Mist Creepers", detail = "Dropped by Moss Stalkers and Mist Creepers in the Skittering Dark, north-west of the Sepulcher (around 35, 12)" }},
+    },
+}
+FDJ.QUEST_PREREQ_DETAILS[450] = {
+    level = 15, requires = 9,
+    warning = "Group quest: the inn is in Pyrewood Village, among hostile villagers.",
+    objective = "Retrieve Apothecary Berard's journal from Pyrewood Village and take it to Apothecary Renferrel at the Sepulcher.",
+    pickup = "Master Apothecary Faranell, Undercity", turnin = "Apothecary Renferrel, The Sepulcher, Silverpine Forest",
+    map = { mapID = 1458, x = 0.488, y = 0.693, label = "Master Apothecary Faranell — Undercity", targetName = "Master Apothecary Faranell" },
+    turninMap = { mapID = 1421, x = 0.428, y = 0.409, label = "Apothecary Renferrel — The Sepulcher", targetName = "Apothecary Renferrel" },
+    requiredItems = {
+        {3255, "Berard's Journal", 1, "Found on Berard's Bookshelf in the Pyrewood Village inn (Silverpine Forest 43, 73)", map = { markerType = "location", mapID = 1421, x = 0.430, y = 0.732, label = "Berard's Bookshelf — Pyrewood Village", detail = "Found on Berard's Bookshelf in the Pyrewood Village inn (Silverpine Forest 43, 73)" }},
+    },
+}
+FDJ.QUEST_PREREQ_DETAILS[451] = {
+    level = 18, requires = 9,
+    objective = "Bring 6 samples of Lake Creeper Moss, 6 samples of Lake Skulker Moss and a Hardened Tumor to Master Apothecary Faranell in the Undercity.",
+    pickup = "Apothecary Renferrel, The Sepulcher, Silverpine Forest", turnin = "Master Apothecary Faranell, Undercity",
+    map = { mapID = 1421, x = 0.428, y = 0.409, label = "Apothecary Renferrel — The Sepulcher", targetName = "Apothecary Renferrel" },
+    turninMap = { mapID = 1458, x = 0.488, y = 0.693, label = "Master Apothecary Faranell — Undercity", targetName = "Master Apothecary Faranell" },
+    requiredItems = {
+        {3256, "Lake Skulker Moss", 1, "Dropped by Lake Skulkers and Elder Lake Skulkers on the Dawning Isles in Lordamere Lake (around 72, 35)", map = { markerType = "location", mapID = 1421, x = 0.720, y = 0.355, label = "Lake Skulkers — Lordamere Lake", detail = "Dropped by Lake Skulkers and Elder Lake Skulkers on the Dawning Isles in Lordamere Lake (around 72, 35)" }},
+        {3257, "Lake Creeper Moss", 1, "Dropped by Lake Creepers and Elder Lake Creepers on the Dawning Isles in Lordamere Lake (around 77, 25)", map = { markerType = "location", mapID = 1421, x = 0.770, y = 0.250, label = "Lake Creepers — Lordamere Lake", detail = "Dropped by Lake Creepers and Elder Lake Creepers on the Dawning Isles in Lordamere Lake (around 77, 25)" }},
+        {3258, "Hardened Tumor", 1, "Rare drop from Vile Fin murlocs around Lordamere Lake; the higher-level ones on the Dawning Isles and on the south-west shore behind Ambermill are the best bet", map = { markerType = "location", mapID = 1421, x = 0.785, y = 0.315, label = "Vile Fin murlocs — Lordamere Lake", detail = "Rare drop from Vile Fin murlocs around Lordamere Lake; the higher-level ones on the Dawning Isles and on the south-west shore behind Ambermill are the best bet" }},
+    },
+}
+FDJ.PREREQ_REWARD_ITEMS_FALLBACK[447] = { items = { {3448, "Senggin Root", 1} }, choice = false }
+-- 451: choose the concoction or the cloak; the two potions come with either.
+FDJ.PREREQ_REWARD_ITEMS_FALLBACK[451] = { items = { {3451, "Nightglow Concoction", 2}, {3582, "Acidproof Cloak", 2} }, choice = true,
+    also = { {2458, "Elixir of Minor Fortitude", 1}, {2459, "Swiftness Potion", 1} } }
+FDJ.PREREQ_REWARD_MONEY_FALLBACK[447] = 500
+FDJ.PREREQ_REWARD_MONEY_FALLBACK[450] = 1400
+FDJ.FOREVER_QUEST_XP_FALLBACK[447] = 900
+FDJ.FOREVER_QUEST_XP_FALLBACK[450] = 1350
+FDJ.FOREVER_QUEST_XP_FALLBACK[451] = 2050
+FDJ.QUEST_SHAREABILITY_AUDIT[447] = true
+FDJ.QUEST_SHAREABILITY_AUDIT[450] = true
+-- END recipechain
+
+-- BEGIN rearguard
+-- The Wrath of Rath'mael (Horde, Ruins of Lordaeron): Deathguard Kristof now only offers it
+-- after the Rear Guard Patrol chain from Deathguard Linnea (her camp south-east of Brill).
+FDJ.QUEST_PREREQ_CHAINS[92422] = {
+    { id = 356, name = "Rear Guard Patrol" },
+    { id = 99156, name = "Rear Guard Patrol" },
+}
+FDJ.QUEST_PREREQ_DETAILS[356] = {
+    level = 11, requires = 6,
+    objective = "Kill 8 Bleeding Horrors and 8 Wandering Spirits, then report back to Linnea at her camp.",
+    description = "Both are at the Balnir Farmstead, east of Linnea's camp.",
+    pickup = "Deathguard Linnea, camp south-east of Brill, Tirisfal Glades", turnin = "Deathguard Linnea, camp south-east of Brill, Tirisfal Glades",
+    map = { mapID = 1420, x = 0.655, y = 0.603, label = "Deathguard Linnea — Tirisfal Glades", targetName = "Deathguard Linnea" },
+}
+FDJ.QUEST_PREREQ_DETAILS[99156] = {
+    level = 13, requires = 6,
+    warning = "Group quest: Riptear is a level 13 elite.",
+    objective = "Kill Riptear in north-east Tirisfal Glades and bring Riptear's Heart to Deathguard Linnea.",
+    pickup = "Deathguard Linnea, camp south-east of Brill, Tirisfal Glades", turnin = "Deathguard Linnea, camp south-east of Brill, Tirisfal Glades",
+    map = { mapID = 1420, x = 0.655, y = 0.603, label = "Deathguard Linnea — Tirisfal Glades", targetName = "Deathguard Linnea" },
+    requiredItems = {
+        {286326, "Riptear's Heart", 1, "Dropped by Riptear (level 13 elite) in Venomweb Vale, north-east Tirisfal Glades (around 84, 44)", map = { mapID = 1420, x = 0.839, y = 0.440, label = "Riptear — Venomweb Vale", detail = "Dropped by Riptear (level 13 elite) in Venomweb Vale, north-east Tirisfal Glades (around 84, 44)" }},
+    },
+}
+FDJ.PREREQ_REWARD_ITEMS_FALLBACK[99156] = { items = { {286742, "Riptear's Cleaver", 2}, {286743, "Riptear's Spare Arm", 2}, {286744, "Thrice-Stitched Flesh", 2} }, choice = true }
+FDJ.PREREQ_REWARD_MONEY_FALLBACK[356] = 300
+FDJ.FOREVER_QUEST_XP_FALLBACK[356] = 650
+FDJ.FOREVER_QUEST_XP_FALLBACK[99156] = 900
+FDJ.QUEST_SHAREABILITY_AUDIT[356] = true
+FDJ.QUEST_SHAREABILITY_AUDIT[99156] = true
+-- END rearguard
+
+-- BEGIN lesstext
+-- Step pages show the objective, the quest givers and where to go. Notes that only
+-- give the step's place in its chain (the chain list already shows it) or story
+-- text are hidden, in every language.
+for _, id in ipairs({ 65, 132, 135, 141, 153, 155, 275, 276, 277, 303, 373, 389, 463, 545, 865, 870, 877, 880, 1100, 1109, 1198, 1489, 1490, 1806, 2041, 2842, 2926, 2947, 2949, 5726, 92432, 92742, 92744, 92745, 92748, 92750, 92751, 92752, 92819, 95647, 95663, 96391 }) do
+    local d = FDJ.QUEST_PREREQ_DETAILS[id]
+    if d then d.suppressDescription = true end
+end
+-- END lesstext

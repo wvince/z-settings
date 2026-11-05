@@ -1,8 +1,8 @@
 local _, ns = ...
 local Public, Yes = ns.Public, ns.Yes
 
--- A spot (Flash.lua) on every enemy nameplate: above it, or at its left or
--- right. Spots are attached on NAME_PLATE_UNIT_ADDED and released
+-- A spot (Flash.lua) on every enemy nameplate: above or below it, or at its
+-- left or right. Spots are attached on NAME_PLATE_UNIT_ADDED and released
 -- synchronously on NAME_PLATE_UNIT_REMOVED: the client reissues the same
 -- unit token to another plate within the frame, so a deferred release would
 -- draw a flash on the wrong enemy.
@@ -72,6 +72,12 @@ end
 -- right with the icon centred on the bar, so it sits beside the plate.
 -- Up/down then nudges it, for plate addons that draw their own bar away
 -- from Blizzard's (a player on Luna's plates, 22 October 2026).
+-- 0.8.0 Below (a player's request, 5 November 2026: under the plate, over
+-- the character, "since that area is always free") hangs from the plate
+-- frame's own bottom edge. Blizzard lays its cast bar out from there up
+-- (UpdateAnchors, Blizzard_NamePlateUnitFrame.lua on 1.60.1.70532), as
+-- Forever Cast's plate bar does, so the icon clears both; the engine sizes
+-- that frame, so a plate addon reshaping the bar does not move it.
 local function Place(frame, plate)
     local gap, position, size = ns.Get("offset"), ns.Get("position"), ns.Get("size")
     local lift = ns.Get("lift") or 0
@@ -81,6 +87,8 @@ local function Place(frame, plate)
         frame:SetPoint("TOPRIGHT", left, "LEFT", -gap, size / 2 + lift)
     elseif position == "right" then
         frame:SetPoint("TOPLEFT", right, "RIGHT", gap, size / 2 + lift)
+    elseif position == "below" then
+        frame:SetPoint("TOP", plate, "BOTTOM", 0, -gap + lift)
     else
         frame:SetPoint("BOTTOM", health, "TOP", 0, gap + lift)
     end

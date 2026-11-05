@@ -5905,3 +5905,478 @@ for lang, list in pairs(BREADCRUMB_QUESTS) do
         q.objective = q.objective or entry.objective
     end
 end
+-- BEGIN roguejobs
+-- Rogue jobs from C (The Horn of Xelthos, The Eye of Bhossca): quest names, texts and
+-- the Dead Drop place strings. Official names where the client has them.
+local ROGUEJOBS = {}
+ROGUEJOBS.deDE = { quests = {
+    [78261] = { name = "Das Horn von Xelthos", objective = "Findet das Horn von Xelthos in Burg Schattenfang. Bringt es anschließend zu Cs totem Briefkasten bei Lohenscheit. Ihr müsst den Auftrag allein erledigen.", warning = "Solo-Auftrag: Ihr müsst ihn allein erledigen, ohne Gruppe." },
+    [78307] = { name = "Das Horn von Xelthos", objective = "Holt Eure Bezahlung von C am Toten Briefkasten bei Lohenscheit ab.", description = "Wird angeboten, sobald Cs nächster Brief Euch in einer Hauptstadt erreicht.", note = "Schurken-Klassenquest. Cs Brief kommt mit Stufe 20 in einer Hauptstadt an; nehmt den Auftrag am Toten Briefkasten bei Lohenscheit an. Haltet einen Taschenplatz frei.", warning = "Solo-Auftrag: Ihr müsst ihn allein erledigen, ohne Gruppe." },
+    [78676] = { name = "Das Auge von Bhossca", objective = "Findet das Auge von Bhossca im Scharlachroten Kloster. Bringt es anschließend zu Cs totem Briefkasten bei Lohenscheit. Ihr müsst den Auftrag allein erledigen.", warning = "Solo-Auftrag: Ihr müsst ihn allein erledigen, ohne Gruppe." },
+    [78699] = { name = "Das Auge von Bhossca", objective = "Holt Eure Bezahlung von C am Toten Briefkasten bei Lohenscheit ab.", description = "Wird angeboten, sobald Cs nächster Brief Euch in einer Hauptstadt erreicht.", note = "Schurken-Klassenquest nach „Das Horn von Xelthos“; Cs nächster Brief (etwa mit Stufe 30) schickt Euch wieder zum Toten Briefkasten. Tragt in jedem Flügel die Uniform eines scharlachroten Initianden: Verstohlenheit oder ein Angriff entfernt sie.", warning = "Solo-Auftrag: Ihr müsst ihn allein erledigen, ohne Gruppe." },
+}, places = {
+    ["Dead Drop"] = "Toter Briefkasten",
+    ["A chest in a hut beside Pyrewood Village, Silverpine Forest"] = "Eine Truhe in einer Hütte neben Lohenscheit, Silberwald",
+    ["A chest in a hut beside Pyrewood Village"] = "Eine Truhe in einer Hütte neben Lohenscheit",
+    ["Found in: a locked chest in the courtyard stables of Shadowfang Keep. Open it with the Twin Key"] = "Fundort: eine verschlossene Truhe in den Ställen im Innenhof von Burg Schattenfang. Öffnet sie mit dem Zwillingsschlüssel",
+    ["From Veenix, Stonetalon Mountains, for a Venture Co. Work Order. Blows open the courtyard gate of Shadowfang Keep"] = "Von Veenix im Steinkrallengebirge für einen Arbeitsauftrag der Venture Co. Sprengt das Tor zum Innenhof von Burg Schattenfang auf",
+    ["Combine the Sister's Half-Key and the Brother's Half-Key, picked from the sister (dining hall) and the brother (upstairs) in Shadowfang Keep. Combining them breaks stealth"] = "Fügt den Schwesters Halbschlüssel und den Bruders Halbschlüssel zusammen, die Ihr in Burg Schattenfang der Schwester (Speisesaal) und dem Bruder (Obergeschoss) stehlt. Das Zusammenfügen beendet die Verstohlenheit",
+    ["Found in: the Padlocked Reliquary in the first small room on the left of the Scarlet Monastery Library. Open it with the Reliquary Key"] = "Fundort: das verschlossene Reliquiar im ersten kleinen Raum links in der Bibliothek des Scharlachroten Klosters. Öffnet es mit dem Reliquiarschlüssel",
+    ["Found in: the Supply Locker in the stables behind the Scarlet Monastery. Wear it to pass the Scarlet Crusade"] = "Fundort: der Vorratsspind in den Ställen hinter dem Scharlachroten Kloster. Tragt sie, um am Scharlachroten Kreuzzug vorbeizukommen",
+    ["Pick pocket a Scarlet Scryer in the first big room of the Scarlet Monastery Graveyard"] = "Bestehlt einen Scharlachroten Wahrsager im ersten großen Raum des Friedhofs im Scharlachroten Kloster",
+    ["Found in: the Personal Letterbox in Arcanist Doan's room, Scarlet Monastery Library. Open it with the Scryer's Key"] = "Fundort: der persönliche Briefkasten im Raum von Arkanist Doan, Bibliothek des Scharlachroten Klosters. Öffnet ihn mit dem Seherschlüssel",
+    ["Found in: the Stone Coffer in the mausoleum on the north side of the Scarlet Monastery Graveyard. It opens after you sit on both benches between the two statues"] = "Fundort: der Steinkasten im Mausoleum auf der Nordseite des Friedhofs im Scharlachroten Kloster. Er lässt sich öffnen, nachdem Ihr Euch auf beide Bänke zwischen den zwei Statuen gesetzt habt",
+    ["Veenix — Stonetalon Mountains"] = "Veenix — Steinkrallengebirge",
+} }
+ROGUEJOBS.frFR = { quests = {
+    [78261] = { name = "La Corne de Xelthos", objective = "Trouvez la Corne de Xelthos dans le donjon d’Ombrecroc. Rapportez-la ensuite à la boîte morte de C près de Bois-du-Bûcher. Vous devez accomplir ce travail seul.", warning = "Travail en solo : vous devez le faire seul, sans groupe." },
+    [78307] = { name = "La Corne de Xelthos", objective = "Récupérez le paiement de C au Piquet boîte morte près de Bois-du-Bûcher.", description = "Proposée une fois que la lettre suivante de C vous parvient dans une capitale.", note = "Quête de classe de voleur. La lettre de C arrive au niveau 20 dans une capitale ; acceptez le travail au Piquet boîte morte près de Bois-du-Bûcher. Gardez un emplacement de sac libre.", warning = "Travail en solo : vous devez le faire seul, sans groupe." },
+    [78676] = { name = "L’Œil de Bhossca", objective = "Trouvez l’Œil de Bhossca dans le Monastère écarlate. Rapportez-le ensuite à la boîte morte de C près de Bois-du-Bûcher. Vous devez accomplir ce travail seul.", warning = "Travail en solo : vous devez le faire seul, sans groupe." },
+    [78699] = { name = "L’Œil de Bhossca", objective = "Récupérez le paiement de C au Piquet boîte morte près de Bois-du-Bûcher.", description = "Proposée une fois que la lettre suivante de C vous parvient dans une capitale.", note = "Quête de classe de voleur après « La Corne de Xelthos » ; la lettre suivante de C (vers le niveau 30) vous renvoie au Piquet boîte morte. Portez l’Uniforme d’initié écarlate dans chaque aile : le Camouflage ou une attaque le retire.", warning = "Travail en solo : vous devez le faire seul, sans groupe." },
+}, places = {
+    ["Dead Drop"] = "Piquet boîte morte",
+    ["A chest in a hut beside Pyrewood Village, Silverpine Forest"] = "Un coffre dans une cabane à côté de Bois-du-Bûcher, Forêt des Pins-Argentés",
+    ["A chest in a hut beside Pyrewood Village"] = "Un coffre dans une cabane à côté de Bois-du-Bûcher",
+    ["Found in: a locked chest in the courtyard stables of Shadowfang Keep. Open it with the Twin Key"] = "Dans un coffre verrouillé des écuries de la cour du donjon d’Ombrecroc. Ouvrez-le avec la Clé jumelle",
+    ["From Veenix, Stonetalon Mountains, for a Venture Co. Work Order. Blows open the courtyard gate of Shadowfang Keep"] = "Donnée par Veenix, dans les Serres-Rocheuses, contre une Commande de la KapitalRisk. Fait sauter la grille de la cour du donjon d’Ombrecroc",
+    ["Combine the Sister's Half-Key and the Brother's Half-Key, picked from the sister (dining hall) and the brother (upstairs) in Shadowfang Keep. Combining them breaks stealth"] = "Combinez la Demi-clé de la sœur et la Demi-clé du frère, volées à la sœur (salle à manger) et au frère (étage) dans le donjon d’Ombrecroc. Les combiner annule le Camouflage",
+    ["Found in: the Padlocked Reliquary in the first small room on the left of the Scarlet Monastery Library. Open it with the Reliquary Key"] = "Dans le reliquaire cadenassé de la première petite salle à gauche de la Bibliothèque du Monastère écarlate. Ouvrez-le avec la Clé du reliquaire",
+    ["Found in: the Supply Locker in the stables behind the Scarlet Monastery. Wear it to pass the Scarlet Crusade"] = "Dans le casier de fournitures des écuries derrière le Monastère écarlate. Portez-le pour passer devant la Croisade écarlate",
+    ["Pick pocket a Scarlet Scryer in the first big room of the Scarlet Monastery Graveyard"] = "Faites les poches d’un Clairvoyant écarlate dans la première grande salle du Cimetière du Monastère écarlate",
+    ["Found in: the Personal Letterbox in Arcanist Doan's room, Scarlet Monastery Library. Open it with the Scryer's Key"] = "Dans la boîte aux lettres personnelle de la salle de l’Arcaniste Doan, Bibliothèque du Monastère écarlate. Ouvrez-la avec la Clé de clairvoyant",
+    ["Found in: the Stone Coffer in the mausoleum on the north side of the Scarlet Monastery Graveyard. It opens after you sit on both benches between the two statues"] = "Dans le coffre de pierre du mausolée côté nord du Cimetière du Monastère écarlate. Il s’ouvre une fois que vous vous êtes assis sur les deux bancs entre les deux statues",
+    ["Veenix — Stonetalon Mountains"] = "Veenix — Serres-Rocheuses",
+} }
+ROGUEJOBS.esES = { quests = {
+    [78261] = { name = "El cuerno de Xelthos", objective = "Encuentra el Cuerno de Xelthos en el Castillo de Colmillo Oscuro. Después, llévalo al escondite secreto de C cerca de Aldea Piroleña. Debes hacer el trabajo solo.", warning = "Trabajo en solitario: debes hacerlo solo, sin grupo." },
+    [78307] = { name = "El cuerno de Xelthos", objective = "Recoge el pago de C en el Escondite secreto cerca de Aldea Piroleña.", description = "Se ofrece cuando te llega la siguiente carta de C en una capital.", note = "Misión de clase de pícaro. La carta de C llega al nivel 20 en una capital; acepta el trabajo en el Escondite secreto cerca de Aldea Piroleña. Deja libre un hueco en las bolsas.", warning = "Trabajo en solitario: debes hacerlo solo, sin grupo." },
+    [78676] = { name = "El ojo de Bhossca", objective = "Encuentra el Ojo de Bhossca en el Monasterio Escarlata. Después, llévalo al escondite secreto de C cerca de Aldea Piroleña. Debes hacer el trabajo solo.", warning = "Trabajo en solitario: debes hacerlo solo, sin grupo." },
+    [78699] = { name = "El ojo de Bhossca", objective = "Recoge el pago de C en el Escondite secreto cerca de Aldea Piroleña.", description = "Se ofrece cuando te llega la siguiente carta de C en una capital.", note = "Misión de clase de pícaro tras «El cuerno de Xelthos»; la siguiente carta de C (hacia el nivel 30) te envía de nuevo al Escondite secreto. Lleva el Uniforme de iniciado Escarlata en cada ala: el Sigilo o un ataque te lo quitan.", warning = "Trabajo en solitario: debes hacerlo solo, sin grupo." },
+}, places = {
+    ["Dead Drop"] = "Escondite secreto",
+    ["A chest in a hut beside Pyrewood Village, Silverpine Forest"] = "Un cofre en una cabaña junto a Aldea Piroleña, Bosque de Argénteos",
+    ["A chest in a hut beside Pyrewood Village"] = "Un cofre en una cabaña junto a Aldea Piroleña",
+    ["Found in: a locked chest in the courtyard stables of Shadowfang Keep. Open it with the Twin Key"] = "En un cofre cerrado de los establos del patio del Castillo de Colmillo Oscuro. Ábrelo con la Llave gemela",
+    ["From Veenix, Stonetalon Mountains, for a Venture Co. Work Order. Blows open the courtyard gate of Shadowfang Keep"] = "Te la da Veenix, en la Sierra Espolón, a cambio de un Pedido de Ventura y Cía. Vuela la verja del patio del Castillo de Colmillo Oscuro",
+    ["Combine the Sister's Half-Key and the Brother's Half-Key, picked from the sister (dining hall) and the brother (upstairs) in Shadowfang Keep. Combining them breaks stealth"] = "Combina la Media llave de la hermana y la Media llave del hermano, robadas a la hermana (comedor) y al hermano (piso de arriba) en el Castillo de Colmillo Oscuro. Combinarlas rompe el Sigilo",
+    ["Found in: the Padlocked Reliquary in the first small room on the left of the Scarlet Monastery Library. Open it with the Reliquary Key"] = "En el relicario con candado de la primera sala pequeña a la izquierda de la Biblioteca del Monasterio Escarlata. Ábrelo con la Llave del relicario",
+    ["Found in: the Supply Locker in the stables behind the Scarlet Monastery. Wear it to pass the Scarlet Crusade"] = "En la taquilla de suministros de los establos detrás del Monasterio Escarlata. Póntelo para pasar ante la Cruzada Escarlata",
+    ["Pick pocket a Scarlet Scryer in the first big room of the Scarlet Monastery Graveyard"] = "Usa Robar con un Arúspice Escarlata en la primera sala grande del Cementerio del Monasterio Escarlata",
+    ["Found in: the Personal Letterbox in Arcanist Doan's room, Scarlet Monastery Library. Open it with the Scryer's Key"] = "En el buzón personal de la sala del Arcanista Doan, Biblioteca del Monasterio Escarlata. Ábrelo con la Llave del arúspice",
+    ["Found in: the Stone Coffer in the mausoleum on the north side of the Scarlet Monastery Graveyard. It opens after you sit on both benches between the two statues"] = "En el cofre de piedra del mausoleo del lado norte del Cementerio del Monasterio Escarlata. Se puede abrir después de sentarte en los dos bancos entre las dos estatuas",
+    ["Veenix — Stonetalon Mountains"] = "Veenix — Sierra Espolón",
+} }
+ROGUEJOBS.itIT = { quests = {
+    [78261] = { name = "Il Corno di Xelthos", objective = "Trova il Corno di Xelthos nel Forte di Zannascura. Poi portalo al punto di consegna segreto di C vicino a Boscovespro. Devi portare a termine il lavoro da solo.", warning = "Lavoro in solitaria: devi farlo da solo, senza gruppo." },
+    [78307] = { name = "Il Corno di Xelthos", objective = "Ritira il pagamento di C al Punto di consegna segreto vicino a Boscovespro.", description = "Disponibile quando ti arriva la lettera successiva di C in una capitale.", note = "Missione di classe del Ladro. La lettera di C arriva al livello 20 in una capitale; accetta il lavoro al Punto di consegna segreto vicino a Boscovespro. Tieni libero uno spazio nelle borse.", warning = "Lavoro in solitaria: devi farlo da solo, senza gruppo." },
+    [78676] = { name = "L'Occhio di Bhossca", objective = "Trova l'Occhio di Bhossca nel Monastero Scarlatto. Poi portalo al punto di consegna segreto di C vicino a Boscovespro. Devi portare a termine il lavoro da solo.", warning = "Lavoro in solitaria: devi farlo da solo, senza gruppo." },
+    [78699] = { name = "L'Occhio di Bhossca", objective = "Ritira il pagamento di C al Punto di consegna segreto vicino a Boscovespro.", description = "Disponibile quando ti arriva la lettera successiva di C in una capitale.", note = "Missione di classe del Ladro dopo «Il Corno di Xelthos»; la lettera successiva di C (verso il livello 30) ti rimanda al Punto di consegna segreto. Indossa l'Uniforme da iniziato Scarlatto in ogni ala: la Furtività o un attacco la rimuovono.", warning = "Lavoro in solitaria: devi farlo da solo, senza gruppo." },
+}, places = {
+    ["Dead Drop"] = "Punto di consegna segreto",
+    ["A chest in a hut beside Pyrewood Village, Silverpine Forest"] = "Un forziere in una capanna accanto a Boscovespro, Selva Pinargento",
+    ["A chest in a hut beside Pyrewood Village"] = "Un forziere in una capanna accanto a Boscovespro",
+    ["Found in: a locked chest in the courtyard stables of Shadowfang Keep. Open it with the Twin Key"] = "Si trova in un forziere chiuso a chiave nelle stalle del cortile del Forte di Zannascura. Aprilo con la Chiave gemella",
+    ["From Veenix, Stonetalon Mountains, for a Venture Co. Work Order. Blows open the courtyard gate of Shadowfang Keep"] = "La dà Veenix, nelle Vette di Petrartiglio, in cambio di un Ordine di lavoro della Venture Co. Fa saltare il cancello del cortile del Forte di Zannascura",
+    ["Combine the Sister's Half-Key and the Brother's Half-Key, picked from the sister (dining hall) and the brother (upstairs) in Shadowfang Keep. Combining them breaks stealth"] = "Unisci la Mezza chiave della sorella e la Mezza chiave del fratello, borseggiate alla sorella (sala da pranzo) e al fratello (piano di sopra) nel Forte di Zannascura. Unirle interrompe la Furtività",
+    ["Found in: the Padlocked Reliquary in the first small room on the left of the Scarlet Monastery Library. Open it with the Reliquary Key"] = "Si trova nel reliquiario con lucchetto della prima stanzetta a sinistra della Biblioteca del Monastero Scarlatto. Aprilo con la Chiave del reliquiario",
+    ["Found in: the Supply Locker in the stables behind the Scarlet Monastery. Wear it to pass the Scarlet Crusade"] = "Si trova nell'armadietto delle provviste nelle stalle dietro il Monastero Scarlatto. Indossala per passare tra la Crociata Scarlatta",
+    ["Pick pocket a Scarlet Scryer in the first big room of the Scarlet Monastery Graveyard"] = "Usa Borseggio su un Veggente Scarlatto nella prima grande sala del Cimitero del Monastero Scarlatto",
+    ["Found in: the Personal Letterbox in Arcanist Doan's room, Scarlet Monastery Library. Open it with the Scryer's Key"] = "Si trova nella cassetta delle lettere personale della stanza dell'Arcanista Doan, Biblioteca del Monastero Scarlatto. Aprila con la Chiave del veggente",
+    ["Found in: the Stone Coffer in the mausoleum on the north side of the Scarlet Monastery Graveyard. It opens after you sit on both benches between the two statues"] = "Si trova nel forziere di pietra del mausoleo sul lato nord del Cimitero del Monastero Scarlatto. Si apre dopo che ti sei seduto su entrambe le panche tra le due statue",
+    ["Veenix — Stonetalon Mountains"] = "Veenix — Vette di Petrartiglio",
+} }
+ROGUEJOBS.ptBR = { quests = {
+    [78261] = { name = "A Trompa de Xelthos", objective = "Encontre a Trompa de Xelthos na Bastilha da Presa Negra. Depois, leve-a ao esconderijo de C perto de Aldeia Piro. Você deve fazer o serviço sozinho.", warning = "Serviço solo: você deve fazê-lo sozinho, fora de qualquer grupo." },
+    [78307] = { name = "A Trompa de Xelthos", objective = "Receba o pagamento de C na Encomenda Escondida perto de Aldeia Piro.", description = "Oferecida quando a próxima carta de C chega a você numa capital.", note = "Missão de classe de ladino. A carta de C chega no nível 20 numa capital; aceite o serviço na Encomenda Escondida perto de Aldeia Piro. Mantenha um espaço livre nas bolsas.", warning = "Serviço solo: você deve fazê-lo sozinho, fora de qualquer grupo." },
+    [78676] = { name = "O Olho de Bhossca", objective = "Encontre o Olho de Bhossca no Monastério Escarlate. Depois, leve-o ao esconderijo de C perto de Aldeia Piro. Você deve fazer o serviço sozinho.", warning = "Serviço solo: você deve fazê-lo sozinho, fora de qualquer grupo." },
+    [78699] = { name = "O Olho de Bhossca", objective = "Receba o pagamento de C na Encomenda Escondida perto de Aldeia Piro.", description = "Oferecida quando a próxima carta de C chega a você numa capital.", note = "Missão de classe de ladino após \"A Trompa de Xelthos\"; a próxima carta de C (por volta do nível 30) leva você de volta à Encomenda Escondida. Vista o Uniforme de Iniciado Escarlate em cada ala: a Furtividade ou um ataque o remove.", warning = "Serviço solo: você deve fazê-lo sozinho, fora de qualquer grupo." },
+}, places = {
+    ["Dead Drop"] = "Encomenda Escondida",
+    ["A chest in a hut beside Pyrewood Village, Silverpine Forest"] = "Um baú numa cabana ao lado de Aldeia Piro, Floresta de Pinhaprata",
+    ["A chest in a hut beside Pyrewood Village"] = "Um baú numa cabana ao lado de Aldeia Piro",
+    ["Found in: a locked chest in the courtyard stables of Shadowfang Keep. Open it with the Twin Key"] = "Num baú trancado dos estábulos do pátio da Bastilha da Presa Negra. Abra-o com a Chave Gêmea",
+    ["From Veenix, Stonetalon Mountains, for a Venture Co. Work Order. Blows open the courtyard gate of Shadowfang Keep"] = "Dada por Veenix, na Cordilheira das Torres de Pedra, em troca de uma Ordem de Serviço da Empreendimentos S.A. Explode o portão do pátio da Bastilha da Presa Negra",
+    ["Combine the Sister's Half-Key and the Brother's Half-Key, picked from the sister (dining hall) and the brother (upstairs) in Shadowfang Keep. Combining them breaks stealth"] = "Combine a Metade de Chave da Irmã e a Metade de Chave do Irmão, furtadas da irmã (salão de jantar) e do irmão (andar de cima) na Bastilha da Presa Negra. Combiná-las quebra a Furtividade",
+    ["Found in: the Padlocked Reliquary in the first small room on the left of the Scarlet Monastery Library. Open it with the Reliquary Key"] = "No relicário com cadeado da primeira salinha à esquerda da Biblioteca do Monastério Escarlate. Abra-o com a Chave do Relicário",
+    ["Found in: the Supply Locker in the stables behind the Scarlet Monastery. Wear it to pass the Scarlet Crusade"] = "No armário de suprimentos dos estábulos atrás do Monastério Escarlate. Vista-o para passar pela Cruzada Escarlate",
+    ["Pick pocket a Scarlet Scryer in the first big room of the Scarlet Monastery Graveyard"] = "Use Furtar num Áugure Escarlate na primeira sala grande do Cemitério do Monastério Escarlate",
+    ["Found in: the Personal Letterbox in Arcanist Doan's room, Scarlet Monastery Library. Open it with the Scryer's Key"] = "Na caixa de correio pessoal da sala do Arcanista Doan, Biblioteca do Monastério Escarlate. Abra-a com a Chave dos Áugures",
+    ["Found in: the Stone Coffer in the mausoleum on the north side of the Scarlet Monastery Graveyard. It opens after you sit on both benches between the two statues"] = "No cofre de pedra do mausoléu do lado norte do Cemitério do Monastério Escarlate. Ele se abre depois que você se senta nos dois bancos entre as duas estátuas",
+    ["Veenix — Stonetalon Mountains"] = "Veenix — Cordilheira das Torres de Pedra",
+} }
+ROGUEJOBS.ruRU = { quests = {
+    [78261] = { name = "Рог Кселтоса", objective = "Найдите Рог Кселтоса в Крепости Темного Клыка. Затем отнесите его в тайник C у деревни Погребальных Костров. Работу нужно выполнить в одиночку.", warning = "Одиночная работа: выполняйте ее в одиночку, вне группы." },
+    [78307] = { name = "Рог Кселтоса", objective = "Заберите плату от C из тайника у деревни Погребальных Костров.", description = "Становится доступным, когда следующее письмо от C придет вам в столице.", note = "Классовое задание разбойника. Письмо от C приходит на 20-м уровне в столице; возьмитесь за работу у тайника рядом с деревней Погребальных Костров. Оставьте свободное место в сумках.", warning = "Одиночная работа: выполняйте ее в одиночку, вне группы." },
+    [78676] = { name = "Глаз Бхосски", objective = "Найдите Глаз Бхосски в Монастыре Алого ордена. Затем отнесите его в тайник C у деревни Погребальных Костров. Работу нужно выполнить в одиночку.", warning = "Одиночная работа: выполняйте ее в одиночку, вне группы." },
+    [78699] = { name = "Глаз Бхосски", objective = "Заберите плату от C из тайника у деревни Погребальных Костров.", description = "Становится доступным, когда следующее письмо от C придет вам в столице.", note = "Классовое задание разбойника после «Рога Кселтоса»; следующее письмо от C (около 30-го уровня) снова отправит вас к тайнику. Носите Форму посвященного из Алого ордена в каждом крыле: Незаметность или атака снимают ее.", warning = "Одиночная работа: выполняйте ее в одиночку, вне группы." },
+}, places = {
+    ["Dead Drop"] = "Тайник",
+    ["A chest in a hut beside Pyrewood Village, Silverpine Forest"] = "Сундук в хижине рядом с деревней Погребальных Костров, Серебряный бор",
+    ["A chest in a hut beside Pyrewood Village"] = "Сундук в хижине рядом с деревней Погребальных Костров",
+    ["Found in: a locked chest in the courtyard stables of Shadowfang Keep. Open it with the Twin Key"] = "В запертом сундуке в конюшнях во дворе Крепости Темного Клыка. Откройте его Парным ключом",
+    ["From Veenix, Stonetalon Mountains, for a Venture Co. Work Order. Blows open the courtyard gate of Shadowfang Keep"] = "Выдает Виеникс в Когтистых горах за Заказ Торговой Компании. Взрывает ворота во двор Крепости Темного Клыка",
+    ["Combine the Sister's Half-Key and the Brother's Half-Key, picked from the sister (dining hall) and the brother (upstairs) in Shadowfang Keep. Combining them breaks stealth"] = "Соедините Полуключ сестры и Полуключ брата, украденные у сестры (обеденный зал) и брата (верхний этаж) в Крепости Темного Клыка. Соединение снимает Незаметность",
+    ["Found in: the Padlocked Reliquary in the first small room on the left of the Scarlet Monastery Library. Open it with the Reliquary Key"] = "В реликварии с висячим замком в первой маленькой комнате слева в Библиотеке Монастыря Алого ордена. Откройте его Ключом реликвария",
+    ["Found in: the Supply Locker in the stables behind the Scarlet Monastery. Wear it to pass the Scarlet Crusade"] = "В ящике с припасами в конюшнях за Монастырем Алого ордена. Наденьте ее, чтобы пройти мимо Алого ордена",
+    ["Pick pocket a Scarlet Scryer in the first big room of the Scarlet Monastery Graveyard"] = "Обшарьте карманы Провидца из Алого ордена в первом большом зале Кладбища Монастыря Алого ордена",
+    ["Found in: the Personal Letterbox in Arcanist Doan's room, Scarlet Monastery Library. Open it with the Scryer's Key"] = "В личном почтовом ящике в комнате Чародея Доана, Библиотека Монастыря Алого ордена. Откройте его Ключом Провидцев",
+    ["Found in: the Stone Coffer in the mausoleum on the north side of the Scarlet Monastery Graveyard. It opens after you sit on both benches between the two statues"] = "В каменном ларце в мавзолее на северной стороне Кладбища Монастыря Алого ордена. Он открывается, после того как вы посидите на обеих скамьях между двумя статуями",
+    ["Veenix — Stonetalon Mountains"] = "Виеникс — Когтистые горы",
+} }
+ROGUEJOBS.koKR = { quests = {
+    [78261] = { name = "젤토스의 뿔", objective = "그림자송곳니 성채에서 젤토스의 뿔을 찾으십시오. 그런 다음 장작나무 마을 근처에 있는 C의 비밀 접선 지점으로 가져가야 합니다. 이 일은 혼자서 해내야 합니다.", warning = "단독 임무: 파티에 속하지 않은 상태로 혼자서 해야 합니다." },
+    [78307] = { name = "젤토스의 뿔", objective = "장작나무 마을 근처의 비밀 접선 지점에서 C의 보수를 받으십시오.", description = "대도시에서 C의 다음 편지를 받으면 받을 수 있습니다.", note = "도적 직업 퀘스트입니다. 20레벨에 대도시에서 C의 편지를 받으면 장작나무 마을 근처의 비밀 접선 지점에서 일을 받으십시오. 가방에 빈칸을 하나 남겨 두십시오.", warning = "단독 임무: 파티에 속하지 않은 상태로 혼자서 해야 합니다." },
+    [78676] = { name = "보스카의 눈", objective = "붉은십자군 수도원에서 보스카의 눈을 찾으십시오. 그런 다음 장작나무 마을 근처에 있는 C의 비밀 접선 지점으로 가져가야 합니다. 이 일은 혼자서 해내야 합니다.", warning = "단독 임무: 파티에 속하지 않은 상태로 혼자서 해야 합니다." },
+    [78699] = { name = "보스카의 눈", objective = "장작나무 마을 근처의 비밀 접선 지점에서 C의 보수를 받으십시오.", description = "대도시에서 C의 다음 편지를 받으면 받을 수 있습니다.", note = "젤토스의 뿔에 이어지는 도적 직업 퀘스트입니다. C의 다음 편지(30레벨 무렵)가 다시 비밀 접선 지점으로 보냅니다. 구역마다 붉은십자군 수습마법사의 제복을 입으십시오. 은신하거나 공격하면 벗겨집니다.", warning = "단독 임무: 파티에 속하지 않은 상태로 혼자서 해야 합니다." },
+}, places = {
+    ["Dead Drop"] = "비밀 접선 지점",
+    ["Pyrewood Village"] = "장작나무 마을",
+    ["Silverpine Forest"] = "은빛소나무 숲",
+    ["A chest in a hut beside Pyrewood Village, Silverpine Forest"] = "장작나무 마을 옆 오두막 안의 상자, 은빛소나무 숲",
+    ["A chest in a hut beside Pyrewood Village"] = "장작나무 마을 옆 오두막 안의 상자",
+    ["Found in: a locked chest in the courtyard stables of Shadowfang Keep. Open it with the Twin Key"] = "그림자송곳니 성채 안뜰 마구간의 잠긴 상자에서 얻습니다. 쌍둥이 열쇠로 여십시오",
+    ["From Veenix, Stonetalon Mountains, for a Venture Co. Work Order. Blows open the courtyard gate of Shadowfang Keep"] = "돌발톱 산맥의 비닉스가 투자개발회사 주문 의뢰서를 받고 줍니다. 그림자송곳니 성채의 안뜰 문을 폭파합니다",
+    ["Combine the Sister's Half-Key and the Brother's Half-Key, picked from the sister (dining hall) and the brother (upstairs) in Shadowfang Keep. Combining them breaks stealth"] = "그림자송곳니 성채의 자매(식당)와 형제(위층)에게서 훔친 자매의 반 열쇠와 형제의 반 열쇠를 합치십시오. 합치면 은신이 풀립니다",
+    ["Found in: the Padlocked Reliquary in the first small room on the left of the Scarlet Monastery Library. Open it with the Reliquary Key"] = "붉은십자군 수도원 도서관 왼쪽 첫 번째 작은 방의 자물쇠 달린 성물함에서 얻습니다. 성물함 열쇠로 여십시오",
+    ["Found in: the Supply Locker in the stables behind the Scarlet Monastery. Wear it to pass the Scarlet Crusade"] = "붉은십자군 수도원 뒤 마구간의 보급품 사물함에서 얻습니다. 입으면 붉은십자군 사이를 지나갈 수 있습니다",
+    ["Pick pocket a Scarlet Scryer in the first big room of the Scarlet Monastery Graveyard"] = "붉은십자군 수도원 묘지의 첫 번째 큰 방에서 붉은십자군 점술사에게 소매치기를 사용하십시오",
+    ["Found in: the Personal Letterbox in Arcanist Doan's room, Scarlet Monastery Library. Open it with the Scryer's Key"] = "붉은십자군 수도원 도서관, 신비술사 도안의 방에 있는 개인 우편함에서 얻습니다. 점술가의 열쇠로 여십시오",
+    ["Found in: the Stone Coffer in the mausoleum on the north side of the Scarlet Monastery Graveyard. It opens after you sit on both benches between the two statues"] = "붉은십자군 수도원 묘지 북쪽 영묘의 돌 궤짝에서 얻습니다. 두 석상 사이의 벤치 두 개에 모두 앉으면 열 수 있습니다",
+    ["Veenix — Stonetalon Mountains"] = "비닉스 — 돌발톱 산맥",
+} }
+ROGUEJOBS.zhCN = { quests = {
+    [78261] = { name = "谢尔索斯号角", objective = "在影牙城堡中找到谢尔索斯号角，然后把它送到焚木村附近C的秘密投放点。你必须独自完成这项工作。", warning = "单人任务：你必须独自完成，不能在队伍中。" },
+    [78307] = { name = "谢尔索斯号角", objective = "到焚木村附近的秘密投放点领取C的报酬。", description = "在主城收到C的下一封信后即可接取。", note = "盗贼职业任务。20级时在主城收到C的信；到焚木村附近的秘密投放点接下这份工作。请预留一个背包空位。", warning = "单人任务：你必须独自完成，不能在队伍中。" },
+    [78676] = { name = "波斯卡之眼", objective = "在血色修道院中找到波斯卡之眼，然后把它送到焚木村附近C的秘密投放点。你必须独自完成这项工作。", warning = "单人任务：你必须独自完成，不能在队伍中。" },
+    [78699] = { name = "波斯卡之眼", objective = "到焚木村附近的秘密投放点领取C的报酬。", description = "在主城收到C的下一封信后即可接取。", note = "盗贼职业任务，接在“谢尔索斯号角”之后；C的下一封信（约30级）会再次把你带到秘密投放点。每个区域都要穿上血色新兵的制服：潜行或攻击会让它失效。", warning = "单人任务：你必须独自完成，不能在队伍中。" },
+}, places = {
+    ["Dead Drop"] = "秘密投放点",
+    ["Pyrewood Village"] = "焚木村",
+    ["Silverpine Forest"] = "银松森林",
+    ["A chest in a hut beside Pyrewood Village, Silverpine Forest"] = "焚木村旁小屋里的箱子，银松森林",
+    ["A chest in a hut beside Pyrewood Village"] = "焚木村旁小屋里的箱子",
+    ["Found in: a locked chest in the courtyard stables of Shadowfang Keep. Open it with the Twin Key"] = "位于影牙城堡庭院马厩中一个上锁的箱子里。用双子钥匙打开",
+    ["From Veenix, Stonetalon Mountains, for a Venture Co. Work Order. Blows open the courtyard gate of Shadowfang Keep"] = "向石爪山脉的维尼克斯交付风险投资公司产品订单后获得。可以炸开影牙城堡的庭院大门",
+    ["Combine the Sister's Half-Key and the Brother's Half-Key, picked from the sister (dining hall) and the brother (upstairs) in Shadowfang Keep. Combining them breaks stealth"] = "把从影牙城堡的妹妹（餐厅）和哥哥（楼上）身上偷到的妹妹的半把钥匙和哥哥的半把钥匙合在一起。合成会打断潜行",
+    ["Found in: the Padlocked Reliquary in the first small room on the left of the Scarlet Monastery Library. Open it with the Reliquary Key"] = "位于血色修道院图书馆左侧第一个小房间里带挂锁的圣物匣中。用遗物匣钥匙打开",
+    ["Found in: the Supply Locker in the stables behind the Scarlet Monastery. Wear it to pass the Scarlet Crusade"] = "位于血色修道院后面马厩里的补给柜中。穿上它就能从血色十字军身边通过",
+    ["Pick pocket a Scarlet Scryer in the first big room of the Scarlet Monastery Graveyard"] = "在血色修道院墓地的第一个大房间里对血色占卜师使用偷窃",
+    ["Found in: the Personal Letterbox in Arcanist Doan's room, Scarlet Monastery Library. Open it with the Scryer's Key"] = "位于血色修道院图书馆奥法师杜安房间里的私人信箱中。用占卜师的秘钥打开",
+    ["Found in: the Stone Coffer in the mausoleum on the north side of the Scarlet Monastery Graveyard. It opens after you sit on both benches between the two statues"] = "位于血色修道院墓地北侧陵墓的石匣中。坐过两座雕像之间的两张长椅后即可打开",
+    ["Veenix — Stonetalon Mountains"] = "维尼克斯 — 石爪山脉",
+} }
+ROGUEJOBS.zhTW = { quests = {
+    [78261] = { name = "澤索司號角", objective = "在影牙城堡中找到澤索司號角，然後把它送到焚木村附近C的密件。你必須獨自完成這項工作。", warning = "單人任務：你必須獨自完成，不能在隊伍中。" },
+    [78307] = { name = "澤索司號角", objective = "到焚木村附近的密件領取C的報酬。", description = "在主城收到C的下一封信後即可接取。", note = "盜賊職業任務。20級時在主城收到C的信；到焚木村附近的密件接下這份工作。請預留一個背包空位。", warning = "單人任務：你必須獨自完成，不能在隊伍中。" },
+    [78676] = { name = "伯絲卡之眼", objective = "在血色修道院中找到伯絲卡之眼，然後把它送到焚木村附近C的密件。你必須獨自完成這項工作。", warning = "單人任務：你必須獨自完成，不能在隊伍中。" },
+    [78699] = { name = "伯絲卡之眼", objective = "到焚木村附近的密件領取C的報酬。", description = "在主城收到C的下一封信後即可接取。", note = "盜賊職業任務，接在「澤索司號角」之後；C的下一封信（約30級）會再次把你帶到密件。每個區域都要穿上血色新兵的制服：潛行或攻擊會讓它失效。", warning = "單人任務：你必須獨自完成，不能在隊伍中。" },
+}, places = {
+    ["Dead Drop"] = "密件",
+    ["Pyrewood Village"] = "焚木村",
+    ["Silverpine Forest"] = "銀松森林",
+    ["A chest in a hut beside Pyrewood Village, Silverpine Forest"] = "焚木村旁小屋裡的箱子，銀松森林",
+    ["A chest in a hut beside Pyrewood Village"] = "焚木村旁小屋裡的箱子",
+    ["Found in: a locked chest in the courtyard stables of Shadowfang Keep. Open it with the Twin Key"] = "位於影牙城堡庭院馬廄中一個上鎖的箱子裡。用成對鑰匙打開",
+    ["From Veenix, Stonetalon Mountains, for a Venture Co. Work Order. Blows open the courtyard gate of Shadowfang Keep"] = "向石爪山脈的維尼克斯交付風險投資公司訂單後取得。可以炸開影牙城堡的庭院大門",
+    ["Combine the Sister's Half-Key and the Brother's Half-Key, picked from the sister (dining hall) and the brother (upstairs) in Shadowfang Keep. Combining them breaks stealth"] = "把從影牙城堡的妹妹（餐廳）和哥哥（樓上）身上偷到的正部鑰匙和反部鑰匙合在一起。合成會打斷潛行",
+    ["Found in: the Padlocked Reliquary in the first small room on the left of the Scarlet Monastery Library. Open it with the Reliquary Key"] = "位於血色修道院圖書館左側第一個小房間裡帶掛鎖的聖物匣中。用匣子的鑰匙打開",
+    ["Found in: the Supply Locker in the stables behind the Scarlet Monastery. Wear it to pass the Scarlet Crusade"] = "位於血色修道院後面馬廄裡的補給櫃中。穿上它就能從血色十字軍身邊通過",
+    ["Pick pocket a Scarlet Scryer in the first big room of the Scarlet Monastery Graveyard"] = "在血色修道院墓地的第一個大房間裡對血色占卜者使用偷竊",
+    ["Found in: the Personal Letterbox in Arcanist Doan's room, Scarlet Monastery Library. Open it with the Scryer's Key"] = "位於血色修道院圖書館奧法師杜安房間裡的私人信箱中。用占卜者之鑰打開",
+    ["Found in: the Stone Coffer in the mausoleum on the north side of the Scarlet Monastery Graveyard. It opens after you sit on both benches between the two statues"] = "位於血色修道院墓地北側陵墓的石匣中。坐過兩座雕像之間的兩張長椅後即可打開",
+    ["Veenix — Stonetalon Mountains"] = "維尼克斯 — 石爪山脈",
+} }
+for lang, data in pairs(ROGUEJOBS) do
+    local target = FDJ.ContentLocales[lang] or {}
+    FDJ.ContentLocales[lang] = target
+    target.quests = target.quests or {}
+    target.places = target.places or {}
+    for id, entry in pairs(data.quests) do target.quests[id] = entry end
+    for key, value in pairs(data.places) do
+        if target.places[key] == nil then target.places[key] = value end
+    end
+end
+-- END roguejobs
+
+-- BEGIN recipechain
+-- A Recipe For Death chain (prerequisite of The New Plague): official quest names and
+-- objectives from the Forever client (Italian: own wording), plus the step texts.
+local RECIPECHAIN = {}
+RECIPECHAIN.deDE = { quests = {
+    [447] = { name = "Rezept für den Tod", objective = "Sammelt 6 Herzen von ergrauten Bären und 6 Proben Huschendes Blut und bringt diese zu Meisterapotheker Faranell nach Undercity.", pickup = "Apotheker Renferrel, Das Grabmal, Silberwald", turnin = "Apothekermeister Faranell, Unterstadt" },
+    [450] = { name = "Rezept für den Tod", objective = "Bergt Apotheker Berards Tagebuch aus Pyrewood und bringt es zu Apotheker Renferrel auf das Grabmal.", warning = "Gruppenquest: Das Gasthaus steht in Lohenscheit, mitten unter feindseligen Dorfbewohnern.", pickup = "Apothekermeister Faranell, Unterstadt", turnin = "Apotheker Renferrel, Das Grabmal, Silberwald" },
+    [451] = { name = "Rezept für den Tod", objective = "Bringt 6 Proben Seeschleicher-Moos, 6 Proben Seekrabbler-Moos und einen verhärteten Tumor zu Meisterapotheker Faranell nach Undercity.", pickup = "Apotheker Renferrel, Das Grabmal, Silberwald", turnin = "Apothekermeister Faranell, Unterstadt" },
+}, places = {
+    ["Apothecary Renferrel — The Sepulcher"] = "Apotheker Renferrel — Das Grabmal",
+    ["Master Apothecary Faranell — Undercity"] = "Apothekermeister Faranell — Unterstadt",
+    ["Dropped by Ferocious Grizzled Bears and Giant Grizzled Bears all over Silverpine Forest"] = "Beute von Wilden ergrauten Bären und Ergrauten Riesenbären im ganzen Silberwald",
+    ["Dropped by Moss Stalkers and Mist Creepers in the Skittering Dark, north-west of the Sepulcher (around 35, 12)"] = "Beute von Moospirschern und Nebelkrabblern nordwestlich des Grabmals (um 35, 12)",
+    ["Found on Berard's Bookshelf in the Pyrewood Village inn (Silverpine Forest 43, 73)"] = "Liegt in Berards Bücherregal im Gasthaus von Lohenscheit (Silberwald 43, 73)",
+    ["Dropped by Lake Skulkers and Elder Lake Skulkers on the Dawning Isles in Lordamere Lake (around 72, 35)"] = "Beute von Seeschleichern und Alten Seeschleichern auf den Inseln im Lordamere-See (um 72, 35)",
+    ["Dropped by Lake Creepers and Elder Lake Creepers on the Dawning Isles in Lordamere Lake (around 77, 25)"] = "Beute von Seekrabblern und Alten Seekrabblern auf den Inseln im Lordamere-See (um 77, 25)",
+    ["Rare drop from Vile Fin murlocs around Lordamere Lake; the higher-level ones on the Dawning Isles and on the south-west shore behind Ambermill are the best bet"] = "Seltene Beute der Murlocs der Finsterflossen am Lordamere-See; am ehesten von den höherstufigen auf den Inseln und am Südwestufer des Sees",
+    ["Moss Stalkers and Mist Creepers"] = "Moospirscher und Nebelkrabbler",
+    ["Berard's Bookshelf — Pyrewood Village"] = "Berards Bücherregal — Lohenscheit",
+    ["Lake Skulkers — Lordamere Lake"] = "Seeschleicher — Lordamere-See",
+    ["Lake Creepers — Lordamere Lake"] = "Seekrabbler — Lordamere-See",
+    ["Vile Fin murlocs — Lordamere Lake"] = "Murlocs der Finsterflossen — Lordamere-See",
+} }
+RECIPECHAIN.frFR = { quests = {
+    [447] = { name = "Une recette mortelle", objective = "Se rendre au Grouillement et y collecter 6 Cœurs de vieil ours et 6 échantillons de Sang du Grouillement, puis les apporter au maître apothicaire Faranell de la Société royale des apothicaires, à Undercity.", pickup = "Apothicaire Renferrel, Le Sépulcre, Forêt des Pins-Argentés", turnin = "Maître apothicaire Faranell, Fossoyeuse" },
+    [450] = { name = "Une recette mortelle", objective = "Récupérer le Journal de Berard à l’Auberge de Bois-du-Bûcher et le rapporter à l'apothicaire Renferrel au Sépulcre.", warning = "Quête de groupe : l'auberge se trouve à Bois-du-Bûcher, au milieu de villageois hostiles.", pickup = "Maître apothicaire Faranell, Fossoyeuse", turnin = "Apothicaire Renferrel, Le Sépulcre, Forêt des Pins-Argentés" },
+    [451] = { name = "Une recette mortelle", objective = "Apporter 6 Echantillons de Mousse de Rampant du lac, 6 échantillons de Mousse de Furtif du lac et une Tumeur durcie au Maître Apothicaire Faranell à Undercity.", pickup = "Apothicaire Renferrel, Le Sépulcre, Forêt des Pins-Argentés", turnin = "Maître apothicaire Faranell, Fossoyeuse" },
+}, places = {
+    ["Apothecary Renferrel — The Sepulcher"] = "Apothicaire Renferrel — Le Sépulcre",
+    ["Master Apothecary Faranell — Undercity"] = "Maître apothicaire Faranell — Fossoyeuse",
+    ["Dropped by Ferocious Grizzled Bears and Giant Grizzled Bears all over Silverpine Forest"] = "Butin des Vieux ours féroces et des Vieux ours géants dans toute la Forêt des Pins-Argentés",
+    ["Dropped by Moss Stalkers and Mist Creepers in the Skittering Dark, north-west of the Sepulcher (around 35, 12)"] = "Butin des Rôdeuses des sous-bois et des Rampants des brumes au Grouillement, au nord-ouest du Sépulcre (vers 35, 12)",
+    ["Found on Berard's Bookshelf in the Pyrewood Village inn (Silverpine Forest 43, 73)"] = "Sur l'Etagère de livres de Berard, dans l'auberge de Bois-du-Bûcher (Forêt des Pins-Argentés 43, 73)",
+    ["Dropped by Lake Skulkers and Elder Lake Skulkers on the Dawning Isles in Lordamere Lake (around 72, 35)"] = "Butin des Furtifs lacustres et des Anciens Furtifs lacustres sur les îles du lac Lordamere (vers 72, 35)",
+    ["Dropped by Lake Creepers and Elder Lake Creepers on the Dawning Isles in Lordamere Lake (around 77, 25)"] = "Butin des Rampants lacustres et des Anciens Rampants lacustres sur les îles du lac Lordamere (vers 77, 25)",
+    ["Rare drop from Vile Fin murlocs around Lordamere Lake; the higher-level ones on the Dawning Isles and on the south-west shore behind Ambermill are the best bet"] = "Butin rare des murlocs Aileron noir autour du lac Lordamere ; ceux de plus haut niveau, sur les îles et sur la rive sud-ouest, sont le meilleur choix",
+    ["Moss Stalkers and Mist Creepers"] = "Rôdeuses des sous-bois et Rampants des brumes",
+    ["Berard's Bookshelf — Pyrewood Village"] = "Etagère de livres de Berard — Bois-du-Bûcher",
+    ["Lake Skulkers — Lordamere Lake"] = "Furtifs lacustres — lac Lordamere",
+    ["Lake Creepers — Lordamere Lake"] = "Rampants lacustres — lac Lordamere",
+    ["Vile Fin murlocs — Lordamere Lake"] = "Murlocs Aileron noir — lac Lordamere",
+} }
+RECIPECHAIN.esES = { quests = {
+    [447] = { name = "Una fórmula mortal", objective = "Consigue 6 corazones de grisoso y 6 muestras de sangre de Celearácnida y llévaselas al maestro boticario Faranell en Entrañas.", pickup = "Boticario Renferrel, El Sepulcro, Bosque de Argénteos", turnin = "Maestro boticario Faranell, Entrañas" },
+    [450] = { name = "Una fórmula mortal", objective = "Recupera el Diario del boticario Berard de la Aldea Piroleña y llévaselo al boticario Renferrel en El Sepulcro.", warning = "Misión de grupo: la posada está en la Aldea Piroleña, rodeada de aldeanos hostiles.", pickup = "Maestro boticario Faranell, Entrañas", turnin = "Boticario Renferrel, El Sepulcro, Bosque de Argénteos" },
+    [451] = { name = "Una fórmula mortal", objective = "Lleva 6 muestras de musgo de trepador del Lago, 6 muestras de musgo de vigilante del Lago y un tumor endurecido al maestro boticario Faranell en Entrañas.", pickup = "Boticario Renferrel, El Sepulcro, Bosque de Argénteos", turnin = "Maestro boticario Faranell, Entrañas" },
+}, places = {
+    ["Apothecary Renferrel — The Sepulcher"] = "Boticario Renferrel — El Sepulcro",
+    ["Master Apothecary Faranell — Undercity"] = "Maestro boticario Faranell — Entrañas",
+    ["Dropped by Ferocious Grizzled Bears and Giant Grizzled Bears all over Silverpine Forest"] = "Botín de los Grisosos feroces y los Grisosos gigantes en todo el Bosque de Argénteos",
+    ["Dropped by Moss Stalkers and Mist Creepers in the Skittering Dark, north-west of the Sepulcher (around 35, 12)"] = "Botín de los Acechamusgos y los Trepanieblas al noroeste de El Sepulcro (hacia 35, 12)",
+    ["Found on Berard's Bookshelf in the Pyrewood Village inn (Silverpine Forest 43, 73)"] = "En la Estantería de Berard, en la posada de la Aldea Piroleña (Bosque de Argénteos 43, 73)",
+    ["Dropped by Lake Skulkers and Elder Lake Skulkers on the Dawning Isles in Lordamere Lake (around 72, 35)"] = "Botín de los Vigilantes del Lago y los Vagadores del Lago viejos en las islas del Lago Lordamere (hacia 72, 35)",
+    ["Dropped by Lake Creepers and Elder Lake Creepers on the Dawning Isles in Lordamere Lake (around 77, 25)"] = "Botín de los Trepadores del Lago y los Trepadores del Lago viejos en las islas del Lago Lordamere (hacia 77, 25)",
+    ["Rare drop from Vile Fin murlocs around Lordamere Lake; the higher-level ones on the Dawning Isles and on the south-west shore behind Ambermill are the best bet"] = "Botín raro de los múrlocs Anca Vil alrededor del Lago Lordamere; los de más nivel, en las islas y en la orilla suroeste, son la mejor opción",
+    ["Moss Stalkers and Mist Creepers"] = "Acechamusgos y Trepanieblas",
+    ["Berard's Bookshelf — Pyrewood Village"] = "Estantería de Berard — Aldea Piroleña",
+    ["Lake Skulkers — Lordamere Lake"] = "Vigilantes del Lago — Lago Lordamere",
+    ["Lake Creepers — Lordamere Lake"] = "Trepadores del Lago — Lago Lordamere",
+    ["Vile Fin murlocs — Lordamere Lake"] = "Múrlocs Anca Vil — Lago Lordamere",
+} }
+RECIPECHAIN.itIT = { quests = {
+    [447] = { name = "Una ricetta mortale", objective = "Raccogli 6 cuori di orso grigio e 6 campioni di sangue brulicante e consegnali al maestro speziale Faranell a Sepulcra.", pickup = "Speziale Renferrel, Il Sepolcro, Selva Pinargento", turnin = "Maestro speziale Faranell, Sepulcra" },
+    [450] = { name = "Una ricetta mortale", objective = "Recupera il diario dello speziale Berard a Boscovespro e portalo allo speziale Renferrel al Sepolcro.", warning = "Missione di gruppo: la locanda è a Boscovespro, tra abitanti ostili.", pickup = "Maestro speziale Faranell, Sepulcra", turnin = "Speziale Renferrel, Il Sepolcro, Selva Pinargento" },
+    [451] = { name = "Una ricetta mortale", objective = "Porta 6 campioni di muschio di strisciante del lago, 6 campioni di muschio di furtivo del lago e un tumore indurito al maestro speziale Faranell a Sepulcra.", pickup = "Speziale Renferrel, Il Sepolcro, Selva Pinargento", turnin = "Maestro speziale Faranell, Sepulcra" },
+}, places = {
+    ["Apothecary Renferrel — The Sepulcher"] = "Speziale Renferrel — Il Sepolcro",
+    ["Master Apothecary Faranell — Undercity"] = "Maestro speziale Faranell — Sepulcra",
+    ["Dropped by Ferocious Grizzled Bears and Giant Grizzled Bears all over Silverpine Forest"] = "Bottino degli orsi grigi feroci e degli orsi grigi giganti in tutta la Selva Pinargento",
+    ["Dropped by Moss Stalkers and Mist Creepers in the Skittering Dark, north-west of the Sepulcher (around 35, 12)"] = "Bottino dei predatori del muschio e degli striscianti della nebbia a nord-ovest del Sepolcro (verso 35, 12)",
+    ["Found on Berard's Bookshelf in the Pyrewood Village inn (Silverpine Forest 43, 73)"] = "Sulla libreria di Berard, nella locanda di Boscovespro (Selva Pinargento 43, 73)",
+    ["Dropped by Lake Skulkers and Elder Lake Skulkers on the Dawning Isles in Lordamere Lake (around 72, 35)"] = "Bottino dei furtivi del lago e dei furtivi del lago anziani sulle isole del Lago Lordamere (verso 72, 35)",
+    ["Dropped by Lake Creepers and Elder Lake Creepers on the Dawning Isles in Lordamere Lake (around 77, 25)"] = "Bottino degli striscianti del lago e degli striscianti del lago anziani sulle isole del Lago Lordamere (verso 77, 25)",
+    ["Rare drop from Vile Fin murlocs around Lordamere Lake; the higher-level ones on the Dawning Isles and on the south-west shore behind Ambermill are the best bet"] = "Bottino raro dei murloc Pinnavile intorno al Lago Lordamere; quelli di livello più alto, sulle isole e sulla riva sud-ovest, sono la scelta migliore",
+    ["Moss Stalkers and Mist Creepers"] = "Predatori del muschio e striscianti della nebbia",
+    ["Berard's Bookshelf — Pyrewood Village"] = "Libreria di Berard — Boscovespro",
+    ["Lake Skulkers — Lordamere Lake"] = "Furtivi del lago — Lago Lordamere",
+    ["Lake Creepers — Lordamere Lake"] = "Striscianti del lago — Lago Lordamere",
+    ["Vile Fin murlocs — Lordamere Lake"] = "Murloc Pinnavile — Lago Lordamere",
+} }
+RECIPECHAIN.ptBR = { quests = {
+    [447] = { name = "Receita mortal", objective = "Colete 6 Corações de Urso Cinzento e 6 amostras de Sangue de Pateante e leve-os para o Mestre-boticário Faranello na Cidade Baixa.", pickup = "Boticário Renferrel, O Sepulcro, Floresta de Pinhaprata", turnin = "Mestre-boticário Faranello, Cidade Baixa" },
+    [450] = { name = "Receita mortal", objective = "Recupere o Diário do Boticário Berardo em Vilarejo Lenhardente e leve-o ao Boticário Renferrel no Sepulcro.", warning = "Missão em grupo: a estalagem fica na Aldeia Piro, cercada de aldeões hostis.", pickup = "Mestre-boticário Faranello, Cidade Baixa", turnin = "Boticário Renferrel, O Sepulcro, Floresta de Pinhaprata" },
+    [451] = { name = "Receita mortal", objective = "Leve 6 amostras de Musgo de Rastejante do Lago, 6 amostras de Musgo de Sorrateiro do Lago e um Tumor Endurecido para o Mestre-boticário Faranello na Cidade Baixa.", pickup = "Boticário Renferrel, O Sepulcro, Floresta de Pinhaprata", turnin = "Mestre-boticário Faranello, Cidade Baixa" },
+}, places = {
+    ["Apothecary Renferrel — The Sepulcher"] = "Boticário Renferrel — O Sepulcro",
+    ["Master Apothecary Faranell — Undercity"] = "Mestre-boticário Faranello — Cidade Baixa",
+    ["Dropped by Ferocious Grizzled Bears and Giant Grizzled Bears all over Silverpine Forest"] = "Saque dos Ursos Cinzentos Ferozes e dos Ursos Cinzentos Gigantes em toda a Floresta de Pinhaprata",
+    ["Dropped by Moss Stalkers and Mist Creepers in the Skittering Dark, north-west of the Sepulcher (around 35, 12)"] = "Saque das Espreitadoras do Musgo e dos Rastejantes da Bruma a noroeste do Sepulcro (por volta de 35, 12)",
+    ["Found on Berard's Bookshelf in the Pyrewood Village inn (Silverpine Forest 43, 73)"] = "Na Prateleira de Livros de Berardo, na estalagem da Aldeia Piro (Floresta de Pinhaprata 43, 73)",
+    ["Dropped by Lake Skulkers and Elder Lake Skulkers on the Dawning Isles in Lordamere Lake (around 72, 35)"] = "Saque dos Sorrateiros do Lago e dos Sorrateiros Anciões do Lago nas ilhas do Lago Lordamere (por volta de 72, 35)",
+    ["Dropped by Lake Creepers and Elder Lake Creepers on the Dawning Isles in Lordamere Lake (around 77, 25)"] = "Saque dos Rastejantes do Lago e dos Rastejantes Anciões do Lago nas ilhas do Lago Lordamere (por volta de 77, 25)",
+    ["Rare drop from Vile Fin murlocs around Lordamere Lake; the higher-level ones on the Dawning Isles and on the south-west shore behind Ambermill are the best bet"] = "Saque raro dos murlocs Pinavil ao redor do Lago Lordamere; os de nível mais alto, nas ilhas e na margem sudoeste, são a melhor aposta",
+    ["Moss Stalkers and Mist Creepers"] = "Espreitadoras do Musgo e Rastejantes da Bruma",
+    ["Berard's Bookshelf — Pyrewood Village"] = "Prateleira de Livros de Berardo — Aldeia Piro",
+    ["Lake Skulkers — Lordamere Lake"] = "Sorrateiros do Lago — Lago Lordamere",
+    ["Lake Creepers — Lordamere Lake"] = "Rastejantes do Lago — Lago Lordamere",
+    ["Vile Fin murlocs — Lordamere Lake"] = "Murlocs Pinavil — Lago Lordamere",
+} }
+RECIPECHAIN.ruRU = { quests = {
+    [447] = { name = "Рецептура смерти", objective = "Соберите 6 сердец медведя и 6 образцов Летящей крови и принесите их мастеру-аптекарю Фаранеллу в Подгород.", pickup = "Аптекарь Ренферрел, Гробница, Серебряный бор", turnin = "Мастер аптекарь Фаранелл, Подгород" },
+    [450] = { name = "Рецептура смерти", objective = "Найдите в деревне Погребальных Костров записи Берарда и отнесите их в Гробницу аптекарю Ренферрелу.", warning = "Групповое задание: таверна находится в деревне Погребальных Костров, среди враждебных жителей.", pickup = "Мастер аптекарь Фаранелл, Подгород", turnin = "Аптекарь Ренферрел, Гробница, Серебряный бор" },
+    [451] = { name = "Рецептура смерти", objective = "Принесите 6 образцов мха озерного ползуна, 6 образцов мха озерного тихохода и твердую опухоль мастеру-аптекарю Фаранеллу в Подгород.", pickup = "Аптекарь Ренферрел, Гробница, Серебряный бор", turnin = "Мастер аптекарь Фаранелл, Подгород" },
+}, places = {
+    ["Apothecary Renferrel — The Sepulcher"] = "Аптекарь Ренферрел — Гробница",
+    ["Master Apothecary Faranell — Undercity"] = "Мастер аптекарь Фаранелл — Подгород",
+    ["Dropped by Ferocious Grizzled Bears and Giant Grizzled Bears all over Silverpine Forest"] = "Добыча с лютых седых медведей и гигантских седых медведей по всему Серебряному бору",
+    ["Dropped by Moss Stalkers and Mist Creepers in the Skittering Dark, north-west of the Sepulcher (around 35, 12)"] = "Добыча с мшистых пауков-ловцов и мглистых ползунов к северо-западу от Гробницы (около 35, 12)",
+    ["Found on Berard's Bookshelf in the Pyrewood Village inn (Silverpine Forest 43, 73)"] = "На книжной полке Берарда в таверне деревни Погребальных Костров (Серебряный бор 43, 73)",
+    ["Dropped by Lake Skulkers and Elder Lake Skulkers on the Dawning Isles in Lordamere Lake (around 72, 35)"] = "Добыча с озерных тихоходов и старых озерных тихоходов на островах озера Лордамир (около 72, 35)",
+    ["Dropped by Lake Creepers and Elder Lake Creepers on the Dawning Isles in Lordamere Lake (around 77, 25)"] = "Добыча с озерных ползунов и старых озерных ползунов на островах озера Лордамир (около 77, 25)",
+    ["Rare drop from Vile Fin murlocs around Lordamere Lake; the higher-level ones on the Dawning Isles and on the south-west shore behind Ambermill are the best bet"] = "Редкая добыча с мурлоков из племени Злобного Плавника у озера Лордамир; лучше всего бить тех, что выше уровнем, на островах и на юго-западном берегу",
+    ["Moss Stalkers and Mist Creepers"] = "Мшистые пауки-ловцы и мглистые ползуны",
+    ["Berard's Bookshelf — Pyrewood Village"] = "Книжная полка Берарда — деревня Погребальных Костров",
+    ["Lake Skulkers — Lordamere Lake"] = "Озерные тихоходы — озеро Лордамир",
+    ["Lake Creepers — Lordamere Lake"] = "Озерные ползуны — озеро Лордамир",
+    ["Vile Fin murlocs — Lordamere Lake"] = "Мурлоки из племени Злобного Плавника — озеро Лордамир",
+} }
+RECIPECHAIN.koKR = { quests = {
+    [447] = { name = "죽음의 비법", objective = "불곰 심장 6개와 땅거미 점액 6개를 모아 언더시티에 있는 수석 연금술사 파라넬에게 가져가야 합니다.", pickup = "연금술사 렌퍼럴, 공동묘지, 은빛소나무 숲", turnin = "수석 연금술사 파라넬, 언더시티" },
+    [450] = { name = "죽음의 비법", objective = "장작나무 마을에서 베랄드의 일지를 찾아 공동묘지에 있는 연금술사 렌퍼럴에게 가져가야 합니다.", warning = "파티 퀘스트: 여관은 적대적인 주민들이 있는 장작나무 마을에 있습니다.", pickup = "수석 연금술사 파라넬, 언더시티", turnin = "연금술사 렌퍼럴, 공동묘지, 은빛소나무 숲" },
+    [451] = { name = "죽음의 비법", objective = "호수늪지이끼 6개, 호수덤불이끼 6개, 그리고 굳어진 종양 1개를 언더시티에 있는 수석 연금술사 파라넬에게 가져가야 합니다.", pickup = "연금술사 렌퍼럴, 공동묘지, 은빛소나무 숲", turnin = "수석 연금술사 파라넬, 언더시티" },
+}, places = {
+    ["Apothecary Renferrel — The Sepulcher"] = "연금술사 렌퍼럴 — 공동묘지",
+    ["Master Apothecary Faranell — Undercity"] = "수석 연금술사 파라넬 — 언더시티",
+    ["Dropped by Ferocious Grizzled Bears and Giant Grizzled Bears all over Silverpine Forest"] = "은빛소나무 숲 곳곳의 사나운 불곰과 거대한 불곰에게서 얻습니다",
+    ["Dropped by Moss Stalkers and Mist Creepers in the Skittering Dark, north-west of the Sepulcher (around 35, 12)"] = "공동묘지 북서쪽(35, 12 부근)의 이끼땅거미와 안개땅거미에게서 얻습니다",
+    ["Found on Berard's Bookshelf in the Pyrewood Village inn (Silverpine Forest 43, 73)"] = "장작나무 마을 여관의 베랄드의 책장에 있습니다(은빛소나무 숲 43, 73)",
+    ["Dropped by Lake Skulkers and Elder Lake Skulkers on the Dawning Isles in Lordamere Lake (around 72, 35)"] = "로다메어 호수의 섬(72, 35 부근)에 있는 호수덤불괴물과 덩치큰 호수덤불괴물에게서 얻습니다",
+    ["Dropped by Lake Creepers and Elder Lake Creepers on the Dawning Isles in Lordamere Lake (around 77, 25)"] = "로다메어 호수의 섬(77, 25 부근)에 있는 호수늪지괴물과 덩치큰 호수늪지괴물에게서 얻습니다",
+    ["Rare drop from Vile Fin murlocs around Lordamere Lake; the higher-level ones on the Dawning Isles and on the south-west shore behind Ambermill are the best bet"] = "로다메어 호수 주변의 썩은지느러미멀록이 드물게 떨어뜨립니다. 섬과 남서쪽 호숫가의 레벨이 높은 멀록이 가장 좋습니다",
+    ["Moss Stalkers and Mist Creepers"] = "이끼땅거미와 안개땅거미",
+    ["Berard's Bookshelf — Pyrewood Village"] = "베랄드의 책장 — 장작나무 마을",
+    ["Lake Skulkers — Lordamere Lake"] = "호수덤불괴물 — 로다메어 호수",
+    ["Lake Creepers — Lordamere Lake"] = "호수늪지괴물 — 로다메어 호수",
+    ["Vile Fin murlocs — Lordamere Lake"] = "썩은지느러미멀록 — 로다메어 호수",
+} }
+RECIPECHAIN.zhCN = { quests = {
+    [447] = { name = "致命的配方", objective = "收集6个灰熊的心脏和6份粘稠的血液样本，并将这些东西送给幽暗城的大药剂师法拉尼尔。", pickup = "药剂师伦弗利尔，瑟伯切尔，银松森林", turnin = "大药剂师法拉尼尔，幽暗城" },
+    [450] = { name = "致命的配方", objective = "从焚木村的旅店中找到伯纳德的日记，把它交给瑟伯切尔的药剂师伦弗利尔。", warning = "组队任务：旅店位于焚木村，周围都是敌对的村民。", pickup = "大药剂师法拉尼尔，幽暗城", turnin = "药剂师伦弗利尔，瑟伯切尔，银松森林" },
+    [451] = { name = "致命的配方", objective = "收集6份湖岸爬行者苔藓的样本、6份湖岸潜藏者苔藓的样本和1块硬瘤，把它们交给幽暗城的大药剂师法拉尼尔。", pickup = "药剂师伦弗利尔，瑟伯切尔，银松森林", turnin = "大药剂师法拉尼尔，幽暗城" },
+}, places = {
+    ["Apothecary Renferrel — The Sepulcher"] = "药剂师伦弗利尔 — 瑟伯切尔",
+    ["Master Apothecary Faranell — Undercity"] = "大药剂师法拉尼尔 — 幽暗城",
+    ["Dropped by Ferocious Grizzled Bears and Giant Grizzled Bears all over Silverpine Forest"] = "银松森林各处的凶猛的灰斑熊和巨型灰斑熊掉落",
+    ["Dropped by Moss Stalkers and Mist Creepers in the Skittering Dark, north-west of the Sepulcher (around 35, 12)"] = "瑟伯切尔西北方（约35, 12）的苔藓阔步者和迷雾爬行者掉落",
+    ["Found on Berard's Bookshelf in the Pyrewood Village inn (Silverpine Forest 43, 73)"] = "在焚木村旅店里伯纳德的书架上（银松森林 43, 73）",
+    ["Dropped by Lake Skulkers and Elder Lake Skulkers on the Dawning Isles in Lordamere Lake (around 72, 35)"] = "洛丹米尔湖岛屿上（约72, 35）的湖岸潜藏者和老迈的湖岸潜藏者掉落",
+    ["Dropped by Lake Creepers and Elder Lake Creepers on the Dawning Isles in Lordamere Lake (around 77, 25)"] = "洛丹米尔湖岛屿上（约77, 25）的湖岸爬行者和老迈的湖岸爬行者掉落",
+    ["Rare drop from Vile Fin murlocs around Lordamere Lake; the higher-level ones on the Dawning Isles and on the south-west shore behind Ambermill are the best bet"] = "洛丹米尔湖周围的邪鳍鱼人稀有掉落；岛屿上和湖西南岸等级较高的鱼人最容易掉",
+    ["Moss Stalkers and Mist Creepers"] = "苔藓阔步者和迷雾爬行者",
+    ["Berard's Bookshelf — Pyrewood Village"] = "伯纳德的书架 — 焚木村",
+    ["Lake Skulkers — Lordamere Lake"] = "湖岸潜藏者 — 洛丹米尔湖",
+    ["Lake Creepers — Lordamere Lake"] = "湖岸爬行者 — 洛丹米尔湖",
+    ["Vile Fin murlocs — Lordamere Lake"] = "邪鳍鱼人 — 洛丹米尔湖",
+} }
+RECIPECHAIN.zhTW = { quests = {
+    [447] = { name = "致命的配方", objective = "收集6個灰熊的心臟和6份粘稠的血液樣本，並將這些東西送給幽暗城的大藥劑師法拉尼爾。", pickup = "藥劑師倫弗利爾，瑟伯切爾，銀松森林", turnin = "大藥劑師法拉尼爾，幽暗城" },
+    [450] = { name = "致命的配方", objective = "從焚木村的旅店中找到伯納德的日記，把它交給瑟伯切爾的藥劑師倫弗利爾。", warning = "組隊任務：旅店位於焚木村，周圍都是敵對的村民。", pickup = "大藥劑師法拉尼爾，幽暗城", turnin = "藥劑師倫弗利爾，瑟伯切爾，銀松森林" },
+    [451] = { name = "致命的配方", objective = "收集6份湖岸爬行者苔蘚的樣本、6份湖岸潛藏者苔蘚的樣本和1塊硬瘤，把它們交給幽暗城的大藥劑師法拉尼爾。", pickup = "藥劑師倫弗利爾，瑟伯切爾，銀松森林", turnin = "大藥劑師法拉尼爾，幽暗城" },
+}, places = {
+    ["Apothecary Renferrel — The Sepulcher"] = "藥劑師倫弗利爾 — 瑟伯切爾",
+    ["Master Apothecary Faranell — Undercity"] = "大藥劑師法拉尼爾 — 幽暗城",
+    ["Dropped by Ferocious Grizzled Bears and Giant Grizzled Bears all over Silverpine Forest"] = "銀松森林各處的兇猛的灰斑熊和巨型灰斑熊掉落",
+    ["Dropped by Moss Stalkers and Mist Creepers in the Skittering Dark, north-west of the Sepulcher (around 35, 12)"] = "瑟伯切爾西北方（約35, 12）的苔蘚闊步者和迷霧爬行者掉落",
+    ["Found on Berard's Bookshelf in the Pyrewood Village inn (Silverpine Forest 43, 73)"] = "在焚木村旅店裡的博拉爾德的書架上（銀松森林 43, 73）",
+    ["Dropped by Lake Skulkers and Elder Lake Skulkers on the Dawning Isles in Lordamere Lake (around 72, 35)"] = "洛丹米爾湖島嶼上（約72, 35）的湖岸潛藏者和老邁的湖岸潛藏者掉落",
+    ["Dropped by Lake Creepers and Elder Lake Creepers on the Dawning Isles in Lordamere Lake (around 77, 25)"] = "洛丹米爾湖島嶼上（約77, 25）的湖岸爬行者和老邁的湖岸爬行者掉落",
+    ["Rare drop from Vile Fin murlocs around Lordamere Lake; the higher-level ones on the Dawning Isles and on the south-west shore behind Ambermill are the best bet"] = "洛丹米爾湖周圍的邪鰭魚人稀有掉落；島嶼上和湖西南岸等級較高的魚人最容易掉",
+    ["Moss Stalkers and Mist Creepers"] = "苔蘚闊步者和迷霧爬行者",
+    ["Berard's Bookshelf — Pyrewood Village"] = "博拉爾德的書架 — 焚木村",
+    ["Lake Skulkers — Lordamere Lake"] = "湖岸潛藏者 — 洛丹米爾湖",
+    ["Lake Creepers — Lordamere Lake"] = "湖岸爬行者 — 洛丹米爾湖",
+    ["Vile Fin murlocs — Lordamere Lake"] = "邪鰭魚人 — 洛丹米爾湖",
+} }
+for lang, data in pairs(RECIPECHAIN) do
+    local target = FDJ.ContentLocales[lang] or {}
+    FDJ.ContentLocales[lang] = target
+    target.quests = target.quests or {}
+    target.places = target.places or {}
+    for id, entry in pairs(data.quests) do
+        local existing = target.quests[id] or {}
+        for field, value in pairs(entry) do existing[field] = value end
+        target.quests[id] = existing
+    end
+    for key, value in pairs(data.places) do
+        if target.places[key] == nil then target.places[key] = value end
+    end
+end
+-- END recipechain
+
+-- BEGIN rearguard
+-- Rear Guard Patrol chain (prerequisite of The Wrath of Rath'mael): official quest and NPC
+-- names from the Forever client (Italian: own wording), plus the step texts.
+local REARGUARD = {}
+REARGUARD.deDE = { quests = {
+    [356] = { name = "Patrouille zur Rückendeckung", objective = "Tötet 8 blutende Schrecken und 8 wandernde Geister und meldet Euch dann wieder bei Linnea in ihrem Lager.", description = "Beide findet Ihr auf dem Bauernhof östlich von Linneas Lager.", pickup = "Todeswache Linnea, Lager südöstlich von Brill, Tirisfal", turnin = "Todeswache Linnea, Lager südöstlich von Brill, Tirisfal" },
+    [99156] = { name = "Patrouille zur Rückendeckung", objective = "Tötet Reißer im Nordosten von Tirisfal und bringt Reißers Herz zu Todeswache Linnea.", warning = "Gruppenquest: Reißer ist ein Elitegegner der Stufe 13.", pickup = "Todeswache Linnea, Lager südöstlich von Brill, Tirisfal", turnin = "Todeswache Linnea, Lager südöstlich von Brill, Tirisfal" },
+}, places = {
+    ["Deathguard Linnea — Tirisfal Glades"] = "Todeswache Linnea — Tirisfal",
+    ["Dropped by Riptear (level 13 elite) in Venomweb Vale, north-east Tirisfal Glades (around 84, 44)"] = "Beute von Reißer (Elite, Stufe 13) im Nordosten von Tirisfal (um 84, 44)",
+    ["Riptear — Venomweb Vale"] = "Reißer — Nordosten von Tirisfal",
+} }
+REARGUARD.frFR = { quests = {
+    [356] = { name = "Patrouille d'arrière-garde", objective = "Tuer 8 Horreurs sanguinolentes et 8 Esprits vagabonds, puis revenez voir Linnea, à son camp.", description = "Les deux se trouvent à la ferme à l'est du camp de Linnea.", pickup = "Garde noir Linnea, camp au sud-est de Brill, Clairières de Tirisfal", turnin = "Garde noir Linnea, camp au sud-est de Brill, Clairières de Tirisfal" },
+    [99156] = { name = "Patrouille d’arrière-garde", objective = "Tuer Fendécorche au nord-est des Clairières de Tirisfal et rapporter le Cœur de Fendécorche au Garde noir Linnea.", warning = "Quête de groupe : Fendécorche est un élite de niveau 13.", pickup = "Garde noir Linnea, camp au sud-est de Brill, Clairières de Tirisfal", turnin = "Garde noir Linnea, camp au sud-est de Brill, Clairières de Tirisfal" },
+}, places = {
+    ["Deathguard Linnea — Tirisfal Glades"] = "Garde noir Linnea — Clairières de Tirisfal",
+    ["Dropped by Riptear (level 13 elite) in Venomweb Vale, north-east Tirisfal Glades (around 84, 44)"] = "Butin de Fendécorche (élite de niveau 13), au nord-est des Clairières de Tirisfal (vers 84, 44)",
+    ["Riptear — Venomweb Vale"] = "Fendécorche — nord-est des Clairières de Tirisfal",
+} }
+REARGUARD.esES = { quests = {
+    [356] = { name = "Patrulla de la retaguardia", objective = "Mata a 8 horrores sangrantes y a 8 espíritus deambulantes, y ve a informar a Linnea a su campamento.", description = "Ambos están en la granja al este del campamento de Linnea.", pickup = "Guardia de la Muerte Linnea, campamento al sureste de Rémol, Claros de Tirisfal", turnin = "Guardia de la Muerte Linnea, campamento al sureste de Rémol, Claros de Tirisfal" },
+    [99156] = { name = "Patrulla de la retaguardia", objective = "Mata a Rasgallanto en el noreste de los Claros de Tirisfal y lleva el Corazón de Rasgallanto a la Guardia de la Muerte Linnea.", warning = "Misión de grupo: Rasgallanto es un élite de nivel 13.", pickup = "Guardia de la Muerte Linnea, campamento al sureste de Rémol, Claros de Tirisfal", turnin = "Guardia de la Muerte Linnea, campamento al sureste de Rémol, Claros de Tirisfal" },
+}, places = {
+    ["Deathguard Linnea — Tirisfal Glades"] = "Guardia de la Muerte Linnea — Claros de Tirisfal",
+    ["Dropped by Riptear (level 13 elite) in Venomweb Vale, north-east Tirisfal Glades (around 84, 44)"] = "Botín de Rasgallanto (élite de nivel 13) en el noreste de los Claros de Tirisfal (hacia 84, 44)",
+    ["Riptear — Venomweb Vale"] = "Rasgallanto — noreste de los Claros de Tirisfal",
+} }
+REARGUARD.itIT = { quests = {
+    [356] = { name = "Pattuglia di retroguardia", objective = "Uccidi 8 orrori sanguinanti e 8 spiriti erranti, poi torna a fare rapporto a Linnea al suo accampamento.", description = "Si trovano entrambi nella fattoria a est dell'accampamento di Linnea.", pickup = "Guardia della Morte Linnea, accampamento a sud-est di Brill, Radure di Tirisfal", turnin = "Guardia della Morte Linnea, accampamento a sud-est di Brill, Radure di Tirisfal" },
+    [99156] = { name = "Pattuglia di retroguardia", objective = "Uccidi Riptear nel nord-est delle Radure di Tirisfal e porta il cuore di Riptear alla Guardia della Morte Linnea.", warning = "Missione di gruppo: Riptear è un élite di livello 13.", pickup = "Guardia della Morte Linnea, accampamento a sud-est di Brill, Radure di Tirisfal", turnin = "Guardia della Morte Linnea, accampamento a sud-est di Brill, Radure di Tirisfal" },
+}, places = {
+    ["Deathguard Linnea — Tirisfal Glades"] = "Guardia della Morte Linnea — Radure di Tirisfal",
+    ["Dropped by Riptear (level 13 elite) in Venomweb Vale, north-east Tirisfal Glades (around 84, 44)"] = "Bottino di Riptear (élite di livello 13) nel nord-est delle Radure di Tirisfal (verso 84, 44)",
+    ["Riptear — Venomweb Vale"] = "Riptear — nord-est delle Radure di Tirisfal",
+} }
+REARGUARD.ptBR = { quests = {
+    [356] = { name = "Patrulha da retaguarda", objective = "Mate 8 Horrores Sangrentos e 8 Espíritos Errantes. Depois, apresente seu relatório a Linnea no acampamento.", description = "Os dois ficam na fazenda a leste do acampamento de Linnea.", pickup = "Necroguarda Lina, acampamento a sudeste de Brill, Clareiras de Tirisfal", turnin = "Necroguarda Lina, acampamento a sudeste de Brill, Clareiras de Tirisfal" },
+    [99156] = { name = "Patrulha da retaguarda", objective = "Mate Talharretalha no nordeste das Clareiras de Tirisfal e leve o Coração de Talharretalha para a Necroguarda Lina.", warning = "Missão em grupo: Talharretalha é um elite de nível 13.", pickup = "Necroguarda Lina, acampamento a sudeste de Brill, Clareiras de Tirisfal", turnin = "Necroguarda Lina, acampamento a sudeste de Brill, Clareiras de Tirisfal" },
+}, places = {
+    ["Deathguard Linnea — Tirisfal Glades"] = "Necroguarda Lina — Clareiras de Tirisfal",
+    ["Dropped by Riptear (level 13 elite) in Venomweb Vale, north-east Tirisfal Glades (around 84, 44)"] = "Saque de Talharretalha (elite de nível 13) no nordeste das Clareiras de Tirisfal (por volta de 84, 44)",
+    ["Riptear — Venomweb Vale"] = "Talharretalha — nordeste das Clareiras de Tirisfal",
+} }
+REARGUARD.ruRU = { quests = {
+    [356] = { name = "Патруль в арьергарде", objective = "Убейте 8 кровоточащих ужасов и 8 странствующих духов, а потом доложите о своих успехах Линнее в ее лагере.", description = "Оба водятся на ферме к востоку от лагеря Линнеи.", pickup = "Страж смерти Линнея, лагерь к юго-востоку от Брилла, Тирисфальские леса", turnin = "Страж смерти Линнея, лагерь к юго-востоку от Брилла, Тирисфальские леса" },
+    [99156] = { name = "Патруль в арьергарде", objective = "Убейте Рвиреза на северо-востоке Тирисфальских лесов и принесите Сердце Рвиреза стражу смерти Линнее.", warning = "Групповое задание: Рвирез — элитный противник 13-го уровня.", pickup = "Страж смерти Линнея, лагерь к юго-востоку от Брилла, Тирисфальские леса", turnin = "Страж смерти Линнея, лагерь к юго-востоку от Брилла, Тирисфальские леса" },
+}, places = {
+    ["Deathguard Linnea — Tirisfal Glades"] = "Страж смерти Линнея — Тирисфальские леса",
+    ["Dropped by Riptear (level 13 elite) in Venomweb Vale, north-east Tirisfal Glades (around 84, 44)"] = "Добыча с Рвиреза (элитный, 13-й уровень) на северо-востоке Тирисфальских лесов (около 84, 44)",
+    ["Riptear — Venomweb Vale"] = "Рвирез — северо-восток Тирисфальских лесов",
+} }
+REARGUARD.koKR = { quests = {
+    [356] = { name = "후방 경비", objective = "피투성이 좀비 8명과 떠도는 영혼 8명을 처치한 다음 초소로 돌아가 리니아에게 보고해야 합니다.", description = "둘 다 리니아의 초소 동쪽 농장에 있습니다.", pickup = "죽음의경비병 리니아, 브릴 남동쪽 초소, 티리스팔 숲", turnin = "죽음의경비병 리니아, 브릴 남동쪽 초소, 티리스팔 숲" },
+    [99156] = { name = "후방 경비", objective = "티리스팔 숲 북동쪽에서 너덜토막을 처치하고 너덜토막의 심장을 죽음의경비병 리니아에게 가져가야 합니다.", warning = "파티 퀘스트: 너덜토막은 13레벨 정예입니다.", pickup = "죽음의경비병 리니아, 브릴 남동쪽 초소, 티리스팔 숲", turnin = "죽음의경비병 리니아, 브릴 남동쪽 초소, 티리스팔 숲" },
+}, places = {
+    ["Deathguard Linnea — Tirisfal Glades"] = "죽음의경비병 리니아 — 티리스팔 숲",
+    ["Dropped by Riptear (level 13 elite) in Venomweb Vale, north-east Tirisfal Glades (around 84, 44)"] = "티리스팔 숲 북동쪽(84, 44 부근)의 너덜토막(13레벨 정예)에게서 얻습니다",
+    ["Riptear — Venomweb Vale"] = "너덜토막 — 티리스팔 숲 북동쪽",
+} }
+REARGUARD.zhCN = { quests = {
+    [356] = { name = "巡查后方", objective = "杀死8个可怕的血僵尸和8个游荡的幽灵，然后向亡灵卫兵林奈汇报。", description = "两者都在林奈营地东边的农场。", pickup = "亡灵卫兵林奈，布瑞尔东南边的营地，提瑞斯法林地", turnin = "亡灵卫兵林奈，布瑞尔东南边的营地，提瑞斯法林地" },
+    [99156] = { name = "巡查后方", objective = "在提瑞斯法林地东北部杀死撕裂者，把撕裂者的心脏交给亡灵卫兵林奈。", warning = "组队任务：撕裂者是13级精英。", pickup = "亡灵卫兵林奈，布瑞尔东南边的营地，提瑞斯法林地", turnin = "亡灵卫兵林奈，布瑞尔东南边的营地，提瑞斯法林地" },
+}, places = {
+    ["Deathguard Linnea — Tirisfal Glades"] = "亡灵卫兵林奈 — 提瑞斯法林地",
+    ["Dropped by Riptear (level 13 elite) in Venomweb Vale, north-east Tirisfal Glades (around 84, 44)"] = "提瑞斯法林地东北部（约84, 44）的撕裂者（13级精英）掉落",
+    ["Riptear — Venomweb Vale"] = "撕裂者 — 提瑞斯法林地东北部",
+} }
+REARGUARD.zhTW = { quests = {
+    [356] = { name = "巡查後方", objective = "殺死8個可怕的血僵屍和8個遊蕩的幽靈，然後向亡靈衛兵林奈匯報。", description = "兩者都在林奈營地東邊的農場。", pickup = "亡靈衛兵林奈，布瑞爾東南邊的營地，提里斯法林地", turnin = "亡靈衛兵林奈，布瑞爾東南邊的營地，提里斯法林地" },
+    [99156] = { name = "巡查後方", objective = "在提里斯法林地東北部殺死撕裂者，把撕裂者的心臟交給亡靈衛兵林奈。", warning = "組隊任務：撕裂者是13級精英。", pickup = "亡靈衛兵林奈，布瑞爾東南邊的營地，提里斯法林地", turnin = "亡靈衛兵林奈，布瑞爾東南邊的營地，提里斯法林地" },
+}, places = {
+    ["Deathguard Linnea — Tirisfal Glades"] = "亡靈衛兵林奈 — 提里斯法林地",
+    ["Dropped by Riptear (level 13 elite) in Venomweb Vale, north-east Tirisfal Glades (around 84, 44)"] = "提里斯法林地東北部（約84, 44）的撕裂者（13級精英）掉落",
+    ["Riptear — Venomweb Vale"] = "撕裂者 — 提里斯法林地東北部",
+} }
+for lang, data in pairs(REARGUARD) do
+    local target = FDJ.ContentLocales[lang] or {}
+    FDJ.ContentLocales[lang] = target
+    target.quests = target.quests or {}
+    target.places = target.places or {}
+    for id, entry in pairs(data.quests) do
+        local existing = target.quests[id] or {}
+        for field, value in pairs(entry) do existing[field] = value end
+        target.quests[id] = existing
+    end
+    for key, value in pairs(data.places) do
+        if target.places[key] == nil then target.places[key] = value end
+    end
+end
+-- END rearguard

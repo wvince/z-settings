@@ -101,6 +101,8 @@ L["Craft %d× %s"] = "Создать %d× %s"
 L["Craft %s"] = "Создать %s"
 L["Craft next"] = "Создать следующее"
 L["Crafted gear"] = "Созданное снаряжение"
+L["Crafting from the route works with a controller."] =
+	"Создание по маршруту работает с контроллером."
 L["Crafts"] = "Созданий"
 L["Crafts %d now."] = "Создает %d сейчас."
 L["Don't count it"] = "Не учитывать"
@@ -293,6 +295,8 @@ L["Subtract what the crafted item sells for from its cost. Auction prices need A
 	"Вычитает из стоимости цену продажи созданного предмета. Для цен аукциона нужен Auctionator, они указаны за вычетом 5% комиссии, и предмет может не продаться."
 L["Suggest my other Forever addons"] = "Предлагать другие мои модификации Forever"
 L["Taught by %s trainers."] = "Обучают учителя (%s)."
+L["The Forever addons are free, with nothing locked behind them. If they help, you can buy me a coffee."] =
+	"Аддоны Forever бесплатны, и ничего в них не закрыто за оплатой. Если они вам помогают, можете угостить меня кофе." -- mt
 L["The place this recipe is taught isn't known yet."] =
 	"Где обучают этому рецепту, пока неизвестно."
 L["The rest comes from a vendor or your gathering."] =
@@ -508,6 +512,3 @@ L["Share observed recipe totals with guild and group"] =
 	"Делиться итогами наблюдений рецептов с гильдией и группой"
 L["On by default. Turn off to stop sending and receiving totals and hide other players. Local observations stay."] =
 	"По умолчанию включено. Отключите, чтобы прекратить отправку и приём итогов и скрыть других игроков. Локальные наблюдения сохраняются."
-
-L["Long lists in the Professions window scroll."] =
-	"Длинные списки в окне профессий прокручиваются." -- mt

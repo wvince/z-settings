@@ -47,7 +47,10 @@
 	<Include file="Service\Addons\RSWaypointUI.lua"/>
 	
 	<!-- Telemetry -->
+	<Include file="Plugins\TelemetryPlugin\RSTelemetryDB.lua"/>
+	<Include file="Plugins\TelemetryPlugin\RSTelemetryComm.lua"/>
 	<Include file="Plugins\TelemetryPlugin\RSTelemetryEngine.lua"/>
+	<Include file="Plugins\TelemetryPlugin\RSTelemetryExport.lua"/>
 	<Include file="Plugins\TelemetryPlugin\RSTelemetry.lua"/>
 	
 	<!-- Services -->

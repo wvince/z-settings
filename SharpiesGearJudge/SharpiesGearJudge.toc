@@ -2,7 +2,7 @@
 ## Title: |cff00ccffSharpie's Gear Judge|r
 ## Notes: The Final Verdict on your gear.
 ## Author: SuperSharpie
-## Version: 3.2.9
+## Version: 3.2.10
 ## SavedVariables: SGJ_Settings, SharpiesGearJudgeDB
 
 Libs\LibStub\LibStub.lua
@@ -59,6 +59,7 @@ Classes\Forever\Curves\Druid_Curves.lua
 Classes\Forever\Curves\Curves_Attach.lua
 Classes\Forever\GearPoints.lua
 Interface.lua
+LootToast.lua
 WhatsNew.lua
 AddonPanel.lua
 Judge.lua

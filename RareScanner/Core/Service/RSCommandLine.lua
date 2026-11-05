@@ -25,6 +25,7 @@ local RSProvider = private.ImportLib("RareScannerProvider")
 local RSMinimap = private.ImportLib("RareScannerMinimap")
 local RSRoute = private.ImportLib("RareScannerRoute")
 local RSMinimapTracking = private.ImportLib("RareScannerMinimapTracking")
+local RSTelemetry = private.ImportLib("RareScannerTelemetry")
 
 ---============================================================================
 -- Command line options
@@ -66,6 +67,17 @@ function RSCommandLine.PrintHelp()
 	PrintHelpSection("CMD_HELP_SECTION_ROUTES")
 	PrintHelpCommand(RSConstants.CMD_ROUTE, "CMD_HELP15")
 	PrintHelpCommand(RSConstants.CMD_ROUTE_CANCEL, "CMD_HELP16")
+
+	if (RSConfigDB.IsTelemetryEnabled()) then
+		PrintHelpSection("CMD_HELP_SECTION_TELEMETRY")
+
+		-- The options for development are only shown in debug mode
+		local arguments = "[npcID|"..RSConstants.CMD_TELEMETRY_EXPORT.."]"
+		if (RSConstants.DEBUG_MODE) then
+			arguments = "[npcID|"..RSConstants.CMD_TELEMETRY_EXPORT.."|"..RSConstants.CMD_TELEMETRY_STATS.."|"..RSConstants.CMD_TELEMETRY_STATS_RESET.."|"..RSConstants.CMD_TELEMETRY_PROPOSALS.."|"..RSConstants.CMD_TELEMETRY_SIMSYNC.."|"..RSConstants.CMD_TELEMETRY_SIMSYNC_CLEAR.."|"..RSConstants.CMD_TELEMETRY_SYNC.."]"
+		end
+		PrintHelpCommand(RSConstants.CMD_TELEMETRY, "CMD_HELP_TELEMETRY", arguments)
+	end
 end
 
 function RSCommandLine.SlashCommand(command, ...)
@@ -139,6 +151,9 @@ function RSCommandLine.SlashCommand(command, ...)
 		RSRoute.ToggleOrRestartRoute()
 	elseif (command == RSConstants.CMD_ROUTE_CANCEL) then
 		RSRoute.CancelRoute()
+	elseif (RSConfigDB.IsTelemetryEnabled() and RSUtils.Contains(command, RSConstants.CMD_TELEMETRY)) then
+		local _, targetNpc = strsplit(" ", command, 2)
+		RSTelemetry.PrintReport(targetNpc)
 	else
 		RSCommandLine.PrintHelp()
 	end

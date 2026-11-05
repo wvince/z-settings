@@ -17,9 +17,11 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.2.9
-    { forever = true, text = "Elemental and Restoration Shaman leveling weights follow the November 4 hotfix (2-second Chain Lightning), and the Talents plugin's Shaman builds were re-searched." },
-    { forever = true, text = "Leveling PvP builds and weights are being worked on." },
+    -- v3.2.10
+    { text = "New: an alert pops up when an item you loot or receive is an upgrade. Click it to equip the item." },
+    { text = "Bag upgrade arrows are now on by default. Untick Show Bag Upgrade Arrows in the options to hide them." },
+    { text = "Bag arrows now show on small upgrades too, the same items the tooltip calls an upgrade." },
+    { forever = true, text = "Quest rewards in DaylightUI's NPC window now get upgrade arrows too." },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

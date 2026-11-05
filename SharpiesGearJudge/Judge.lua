@@ -127,6 +127,9 @@ SlashCmdList["SHARPIESGEARJUDGE"] = function(msg)
         if MSC.OpenSettingsTab then MSC.OpenSettingsTab() end
     elseif cmd == "import" then
         if MSC.ShowImportWindow then MSC.ShowImportWindow() end
+    elseif cmd == "toasttest" then
+        -- shows the loot upgrade alert for an item you wear, to see how it looks (LootToast.lua)
+        if MSC.TestLootToast then MSC.TestLootToast() end
     elseif cmd == "hitcheck" and MSC.GetForeverHitPercent then
         -- Shows the pieces of the Forever hit reading, so it can be checked
         -- against the character sheet with a hit item on and off.

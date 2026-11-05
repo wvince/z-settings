@@ -215,7 +215,7 @@ local function WireGrip(grip)
     grip:SetScript("OnEnter", function(self)
         PaintGrip(self, GOLD)
         if self.drag then return end
-        GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT")
+        GameTooltip:SetOwner(self, "ANCHOR_TOP")
         GameTooltip:SetText(GRIP_HINT)
         GameTooltip:Show()
     end)

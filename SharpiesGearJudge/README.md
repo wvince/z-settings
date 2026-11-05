@@ -12,6 +12,13 @@ Unlike addons that give items static points (e.g. "Hit = 10 pts"), SGJ understan
 
 > **WoW Forever players:** leveling PvP builds and weights are being worked on.
 
+### 3.2.10
+
+- **Loot upgrade alerts:** an item you loot or receive that's an upgrade pops up a small alert with the gain. Click it to equip.
+- **Bag arrows on by default:** green and red arrows now show on bag items without turning them on (untick **Show Bag Upgrade Arrows** to hide them).
+- **Quest rewards in DaylightUI:** upgrade and downgrade arrows on quest rewards in DaylightUI's NPC window.
+- **Bag arrows on small upgrades:** arrows now show on every item the tooltip calls an upgrade or downgrade, small ones included.
+
 ### 3.2.9
 
 - **November 4 hotfix (WoW Forever):** Elemental and Restoration Shaman leveling weights rebuilt for the 2-second Chain Lightning.
@@ -71,12 +78,13 @@ Hover any item: world drops, vendor goods, quest rewards, dungeon loot or AH lis
 
 ### 🎒 Bag, Loot, Quest & Profession Overlays
 
-Turn the bag and loot arrows on in **Protocol → Interface Options**.
+Turn the bag and loot arrows and the loot alerts on or off in **Protocol → Interface Options**.
 
-- **Bag upgrade arrows** (**off** by default): green and red arrows on bag items. Works with Blizzard bags, **Bagnon**, **ElvUI**, **GudaBags**, **DaylightUI** (bags and bank, WoW Forever) and **XLoot**. Baganator: the arrow is a **Sharpie's Gear Judge** widget in Baganator's *Icons* tab, and SGJ can also be picked under *Upgrade detection* for the `upgrade` search.
+- **Bag upgrade arrows** (**on** by default): green and red arrows on bag items. Works with Blizzard bags, **Bagnon**, **ElvUI**, **GudaBags**, **DaylightUI** (bags and bank, WoW Forever) and **XLoot**. Baganator: the arrow is a **Sharpie's Gear Judge** widget in Baganator's *Icons* tab, and SGJ can also be picked under *Upgrade detection* for the `upgrade` search.
 - **Fast bag arrows** (on when bag arrows are enabled): quick single-slot scoring, with a full check for set pieces and weapons.
 - **Loot roll arrows** (**off** by default): highlights the best upgrade on group loot popups.
-- **Quest reward overlays:** marks the best choice among quest rewards.
+- **Loot upgrade alerts** (**on** by default): when an item you loot or receive is an upgrade, a small alert shows it with the gain. Click it to equip (out of combat), right-click to close.
+- **Quest reward overlays:** marks the best choice among quest rewards, in the game's quest window and in **DaylightUI**'s NPC window (WoW Forever).
 - **Profession arrows** (always on): recipes that craft an upgrade for you get a green arrow, in Forever's professions window and in the Classic profession and Enchanting windows (Era, TBC).
 
 ### 🧾 The Gear Receipt
@@ -175,9 +183,10 @@ Open **Protocol** from the Gear Judge window or with `/sgj config`.
 - **Show Only via Shift Key** — Verdicts appear only while holding Shift.
 - **Mute Error Sounds** — Stop the error sound when clicking invalid items.
 - **Disable Conflict Check** — Stop the chat warning about Pawn/Zygor.
-- **Show Bag Upgrade Arrows** — **Off by default.** Green/red arrows on bag items.
+- **Show Bag Upgrade Arrows** — **On by default.** Green/red arrows on bag items.
 - **Fast Bag Arrows** — On by default; only applies when bag arrows are enabled.
 - **Show Loot Roll Arrows** — **Off by default.** Arrows on group loot frames.
+- **Show Loot Upgrade Alerts** — **On by default.** An alert when an item you loot or receive is an upgrade.
 
 ### Tooltip Visuals
 
@@ -277,7 +286,7 @@ Set bonuses, meta requirements, weapon specialization, and raid-buff-adjusted ca
 ## Credits
 
 - **Author:** SuperSharpie
-- **Version:** 3.2.8 (Classic Era, TBC Anniversary & WoW Forever)
+- **Version:** 3.2.10 (Classic Era, TBC Anniversary & WoW Forever)
 - **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
 - **Discord:** [Join the Theorycrafting Hub](https://discord.gg/aYmhmtGxYs)
 - **Feedback:** Found a weight that feels off? Drop by the Discord or open an issue on GitHub!

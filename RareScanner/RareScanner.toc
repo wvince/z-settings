@@ -23,7 +23,7 @@
 ## Category-zhCN: 战团藏品
 ## Category-zhTW: 戰隊收藏
 ## Author: maqjav, Maciza-Tyrande
-## Version: 1.60.1.1
+## Version: 1.60.1.2
 ## SavedVariables: RareScannerDB
 ## X-Category: Achievements, Map, Miscellaneous
 ## X-Credits: maqjav, Maciza-Tyrande

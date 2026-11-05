@@ -15,9 +15,9 @@ function ns.Yes(value) return not issecretvalue(value) and value == true end
 function ns.Number(value) return not issecretvalue(value) and type(value) == "number" end
 function ns.Text(value) return not issecretvalue(value) and type(value) == "string" end
 
--- Where the icon sits on a plate.
-ns.POSITIONS = { "left", "right", "above" }
-ns.POSITION_LABELS = { above = "Above", left = "Left", right = "Right" }
+-- Where the icon sits on a plate. 0.8.0 adds Below (a player's request).
+ns.POSITIONS = { "left", "right", "above", "below" }
+ns.POSITION_LABELS = { above = "Above", below = "Below", left = "Left", right = "Right" }
 
 local defaults = { schema = SCHEMA,
     -- What flashes: an enemy's casts and instants (their hidden spell drawn
@@ -36,7 +36,9 @@ local defaults = { schema = SCHEMA,
     -- left corner in pixels from the middle of the screen.
     bar = false, barLocked = true, barSize = 45, barX = -20, barY = -120 }
 -- Whole numbers only, so a saved value always matches a slider notch.
-local limits = { size = { 16, 64 }, offset = { -20, 60 }, lift = { -60, 60 }, nameSize = { 8, 20 }, tenths = { 5, 40 },
+-- 0.8.0: Up or down reaches 400 px either way (60 until then), far enough
+-- to take a Below icon down to the character's feet.
+local limits = { size = { 16, 64 }, offset = { -20, 60 }, lift = { -400, 400 }, nameSize = { 8, 20 }, tenths = { 5, 40 },
     barSize = { 16, 64 }, barX = { -4000, 4000 }, barY = { -4000, 4000 } }
 local choices = { position = ns.POSITIONS }
 ns.Limits, ns.Choices = limits, choices

@@ -3,7 +3,7 @@
 ## Notes: What an enemy just did, as an icon and its name over their nameplate: their casts, their new buffs and, in duels, the debuffs they put on you. /fgcd
 ## Author: Tarolg
 ## Category: PvP
-## Version: 0.7.0
+## Version: 0.8.1
 ## SavedVariables: ForeverGCDDB
 ## OptionalDeps: ForeverSettings
 ## X-Curse-Project-ID: 1748744

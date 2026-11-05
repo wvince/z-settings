@@ -984,3 +984,308 @@ function FDJ.ShowModeChooser(force)
     end
     chooser:Show()
 end
+
+-- BEGIN rpgintro
+-- ------------------------------------------------- RPG Mode note and button
+-- RPG Mode is often picked at login without reading the warning, and the
+-- journal then looks empty. The first time a character sees the dungeon list
+-- in RPG Mode, a note over the cards says why, with a way to the option that
+-- turns it off. The RPG Mode button in the header opens the same note any
+-- time. Turning RPG Mode on again (options, /dj mode) shows the note once more.
+local intro
+
+-- Top of the Journey bar in its own (scaled) units. The header row of buttons
+-- (RPG Mode, Favourites, Loot Filter, Hide Dungeons) sits above it, and the
+-- separator line moves down to just under it. Used by ForeverFilter.lua too.
+FDJ.RPG_BAR_Y = 51
+
+-- The white journal book of the minimap button in RPG Mode: the addon's book
+-- icon, desaturated, with a brightening copy on top.
+local BOOK = "Interface\\Icons\\INV_Misc_Book_09"
+local function WhiteBook(parent, size)
+    local icon = parent:CreateTexture(nil, "ARTWORK")
+    icon:SetSize(size, size)
+    icon:SetTexture(BOOK)
+    icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+    icon:SetDesaturated(true)
+    local glow = parent:CreateTexture(nil, "ARTWORK", nil, 1)
+    glow:SetAllPoints(icon)
+    glow:SetTexture(BOOK)
+    glow:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+    glow:SetDesaturated(true)
+    glow:SetBlendMode("ADD")
+    glow:SetAlpha(0.6)
+    return icon
+end
+
+local function InkText(fs, r, g, b)
+    fs:SetTextColor(r, g, b)
+    fs:SetShadowColor(0, 0, 0, 0)
+end
+
+local function SizeIntroButton(btn)
+    local fs = btn:GetFontString()
+    local w = fs and fs:GetStringWidth() or 0
+    btn:SetWidth(math.max(150, math.ceil(w + 36)))
+    return btn:GetWidth() or 150
+end
+
+local function ModeTooltip(btn, titleKey, descKey)
+    btn:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
+        GameTooltip:SetText(L(titleKey), 1, 0.82, 0)
+        GameTooltip:AddLine(L(descKey), 1, 1, 1, true)
+        GameTooltip:Show()
+    end)
+    btn:SetScript("OnLeave", function() GameTooltip:Hide() end)
+end
+
+local function ClickSound()
+    if PlaySound and SOUNDKIT and SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON then
+        pcall(PlaySound, SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+    end
+end
+
+local function AnswerIntro(keepRPG)
+    CharDB().rpgIntroSeen = true
+    GameTooltip:Hide()
+    if intro then intro:Hide() end
+    ClickSound()
+    -- The player turns RPG Mode off themselves, so they learn where it lives.
+    if not keepRPG and FDJ.OpenSettingsAt then FDJ.OpenSettingsAt("OPT_RPG_MODE") end
+end
+
+-- Separator line under the header: lower in RPG Mode, where the Journey bar
+-- sits under the row of buttons.
+local function HeaderLineY(frame)
+    local bar = frame.rpgBar
+    if not (bar and FDJ.IsRPGMode()) then return -58 end
+    local s = bar:GetScale() or 1
+    return -math.floor(FDJ.RPG_BAR_Y * s + (bar:GetHeight() or 18) * s + 5 + 0.5)
+end
+
+local function BuildIntro(frame)
+    local home = frame.homePanel
+    -- Dark veil over the dungeon cards (the header with the Journey bar and
+    -- its buttons stays usable). It takes the clicks and the mouse wheel, so
+    -- the cards underneath wait until the note is answered.
+    local shade = CreateFrame("Frame", "ForeverDungeonJournalRPGIntro", home)
+    shade:Hide() -- so the first Show() runs OnShow below
+    shade:SetFrameLevel(home:GetFrameLevel() + 40)
+    shade:EnableMouse(true)
+    if shade.EnableMouseWheel then shade:EnableMouseWheel(true) end
+    shade:SetScript("OnMouseWheel", function() end)
+    local veil = shade:CreateTexture(nil, "BACKGROUND")
+    veil:SetAllPoints()
+    veil:SetColorTexture(0, 0, 0, 0.6)
+    -- The RPG Mode button stays lit while its note is open.
+    shade:SetScript("OnShow", function()
+        local b = frame.rpgModeButton
+        if b then b:SetBackdropBorderColor(1.00, 0.82, 0.30, 1) end
+    end)
+    shade:SetScript("OnHide", function()
+        local b = frame.rpgModeButton
+        if b then b:SetBackdropBorderColor(0.48, 0.40, 0.27, 1) end
+    end)
+
+    -- The note: the same parchment as the locked pages, in a gold frame.
+    local note = CreateFrame("Frame", nil, shade, "BackdropTemplate")
+    note:SetSize(460, 170)
+    note:SetPoint("CENTER", 0, 20)
+    note:SetBackdrop({
+        bgFile = "Interface\\Buttons\\WHITE8X8",
+        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Gold-Border",
+        edgeSize = 24,
+        insets = { left = 6, right = 6, top = 6, bottom = 6 },
+    })
+    note:SetBackdropColor(0.60, 0.51, 0.36, 1)
+    local paper = note:CreateTexture(nil, "BACKGROUND", nil, 1)
+    paper:SetPoint("TOPLEFT", 6, -6)
+    paper:SetPoint("BOTTOMRIGHT", -6, 6)
+    paper:SetTexture(MEDIA .. "Parchment")
+    paper:SetTexCoord(0, 1, 0, 176 / 256)
+    shade.note = note
+
+    -- "RPG Mode" with the RPG journal icon (the one from the mode chooser).
+    note.title = note:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge")
+    note.title:SetPoint("TOP", 22, -26) -- half the icon + gap, so the pair is centred
+    InkText(note.title, 0.30, 0.16, 0.04)
+    local iconFrame = CreateFrame("Frame", nil, note, "BackdropTemplate")
+    iconFrame:SetSize(36, 36)
+    iconFrame:SetPoint("RIGHT", note.title, "LEFT", -8, 0)
+    iconFrame:SetBackdrop({ edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", edgeSize = 12 })
+    iconFrame:SetBackdropBorderColor(0.55, 0.40, 0.18, 1)
+    local icon = iconFrame:CreateTexture(nil, "ARTWORK")
+    icon:SetPoint("TOPLEFT", 3, -3)
+    icon:SetPoint("BOTTOMRIGHT", -3, 3)
+    icon:SetTexture("Interface\\AddOns\\ForeverDungeonJournal\\Media\\RPGJournalIcon")
+    icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+
+    note.text = note:CreateFontString(nil, "OVERLAY", _G.GameFontHighlightMedium and "GameFontHighlightMedium" or "GameFontHighlight")
+    note.text:SetPoint("TOP", note, "TOP", 0, -66)
+    note.text:SetWidth(400)
+    note.text:SetJustifyH("CENTER")
+    if note.text.SetWordWrap then note.text:SetWordWrap(true) end
+    InkText(note.text, 0.17, 0.11, 0.05)
+
+    -- The way out on the left (as Gamer Mode is in the chooser), RPG on the right.
+    note.options = CreateFrame("Button", nil, note, "UIPanelButtonTemplate")
+    note.options:SetHeight(26)
+    note.options:SetPoint("BOTTOMRIGHT", note, "BOTTOM", -6, 22)
+    note.options:SetScript("OnClick", function() AnswerIntro(false) end)
+    ModeTooltip(note.options, "MODE_GAMER", "MODE_GAMER_DESC")
+    note.keep = CreateFrame("Button", nil, note, "UIPanelButtonTemplate")
+    note.keep:SetHeight(26)
+    note.keep:SetPoint("BOTTOMLEFT", note, "BOTTOM", 6, 22)
+    note.keep:SetScript("OnClick", function() AnswerIntro(true) end)
+    ModeTooltip(note.keep, "MODE_RPG", "MODE_RPG_DESC")
+    return shade
+end
+
+local function ShowIntro(frame)
+    local home = frame and frame.homePanel
+    if not home then return end
+    if not intro then intro = BuildIntro(frame) end
+    -- Cover the dungeon cards, from just under the header's separator line.
+    intro:ClearAllPoints()
+    intro:SetPoint("TOPLEFT", home, "TOPLEFT", 5, HeaderLineY(frame) - 2)
+    intro:SetPoint("BOTTOMRIGHT", home, "BOTTOMRIGHT", -5, 5)
+    local note = intro.note
+    note.title:SetText(L("MODE_RPG"))
+    note.text:SetText(L("RPG_INTRO_TEXT"))
+    note.options:SetText(L("RPG_INTRO_OPTIONS"))
+    note.keep:SetText(L("RPG_INTRO_KEEP"))
+    local w = SizeIntroButton(note.options) + SizeIntroButton(note.keep)
+    note:SetWidth(math.max(460, math.ceil(w + 12 + 60)))
+    -- Room for one or two lines of text (German and Russian wrap).
+    local textHeight = math.max(note.text:GetStringHeight() or 0, 16)
+    note:SetHeight(math.floor(66 + textHeight + 22 + 26 + 22 + 0.5))
+    intro:Show()
+end
+FDJ.ShowRPGIntro = function() ShowIntro(_G.ForeverDungeonJournalFrame) end
+
+-- "RPG Mode" button in the home header, left of Favourites, in the same dark
+-- and gold style as the buttons next to it, with the white journal book.
+local function RPGModeButton(frame)
+    if frame.rpgModeButton then return frame.rpgModeButton end
+    local b = CreateFrame("Button", nil, frame.homePanel, "BackdropTemplate")
+    b:SetSize(110, 28)
+    b:SetBackdrop({
+        bgFile = "Interface\\Buttons\\WHITE8X8",
+        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        edgeSize = 12,
+        insets = { left = 4, right = 4, top = 4, bottom = 4 },
+    })
+    b:SetBackdropColor(0.12, 0.115, 0.105, 0.98)
+    b:SetBackdropBorderColor(0.48, 0.40, 0.27, 1)
+    b:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
+    b.icon = WhiteBook(b, 16)
+    b.icon:SetPoint("LEFT", 10, 0)
+    b.text = b:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    b.text:SetPoint("LEFT", b.icon, "RIGHT", 6, 0)
+    b.text:SetTextColor(1.00, 0.82, 0.27)
+    b:SetScript("OnClick", function()
+        ClickSound()
+        if intro and intro:IsShown() then intro:Hide() else ShowIntro(frame) end
+    end)
+    frame.rpgModeButton = b
+    return b
+end
+
+local function PlaceRPGModeButton(frame)
+    local b = RPGModeButton(frame)
+    b.text:SetText(L("MODE_RPG"))
+    b:SetWidth(math.max(96, math.min(170, math.ceil((b.text:GetStringWidth() or 60) + 44))))
+    b:ClearAllPoints()
+    local right = frame.favouritesButton or frame.lootFilterButton or frame.hideDungeonsButton
+    if right then
+        b:SetPoint("RIGHT", right, "LEFT", -8, 0)
+    else
+        b:SetPoint("TOPRIGHT", frame.homePanel, "TOPRIGHT", -15, -13)
+    end
+    b:Show()
+end
+
+-- The home list calls UpdateRPGHeader after every refresh (opening the
+-- journal, mode or language change), so the header and note follow the mode.
+local UpdateHeaderWithoutIntro = FDJ.UpdateRPGHeader
+FDJ.UpdateRPGHeader = function(frame, ...)
+    local ok, err = pcall(UpdateHeaderWithoutIntro, frame, ...)
+    local home = frame and frame.homePanel
+    if home then
+        local rpg = FDJ.IsRPGMode()
+        if rpg then
+            PlaceRPGModeButton(frame)
+        elseif frame.rpgModeButton then
+            frame.rpgModeButton:Hide()
+        end
+        if frame.homeLine then
+            local y = HeaderLineY(frame)
+            frame.homeLine:ClearAllPoints()
+            frame.homeLine:SetPoint("TOPLEFT", home, "TOPLEFT", 18, y)
+            frame.homeLine:SetPoint("TOPRIGHT", home, "TOPRIGHT", -31, y)
+        end
+        if not rpg then
+            if intro then intro:Hide() end
+        elseif not CharDB().rpgIntroSeen or (intro and intro:IsShown()) then
+            ShowIntro(frame)
+        end
+    end
+    if not ok then error(err, 0) end
+end
+
+-- Turning RPG Mode on (chooser, options, /dj mode) shows the note again once.
+local SetJournalModeWithoutIntro = FDJ.SetJournalMode
+FDJ.SetJournalMode = function(mode, ...)
+    local db = CharDB()
+    if mode == "rpg" and db.journalMode ~= "rpg" then db.rpgIntroSeen = nil end
+    return SetJournalModeWithoutIntro(mode, ...)
+end
+
+-- Mode chooser (first login, /dj mode): RPG Mode is not switched on from
+-- here. Its button reads "Enable in Options" and opens the options on the
+-- RPG Mode box, which the player ticks themselves, so they know where it is.
+-- Until then the journal stays in Gamer Mode (and the chooser is answered).
+local ShowModeChooserWithoutOptions = FDJ.ShowModeChooser
+FDJ.ShowModeChooser = function(force, ...)
+    ShowModeChooserWithoutOptions(force, ...)
+    local chooser = _G.ForeverDungeonJournalModeChooser
+    local card = chooser and chooser.rpg
+    if not (card and card.pick) then return end
+    card.pick:SetText(L("MODE_RPG_ENABLE"))
+    local fs = card.pick:GetFontString()
+    card.pick:SetWidth(math.max(150, math.min(230, math.ceil((fs and fs:GetStringWidth() or 0) + 30))))
+    if card.fdjOptions then return end
+    card.fdjOptions = true
+    local function EnableInOptions()
+        if CharDB().journalMode == nil then FDJ.SetJournalMode("gamer") end
+        ClickSound()
+        chooser:Hide()
+        if FDJ.OpenSettingsAt then FDJ.OpenSettingsAt("OPT_RPG_MODE") end
+    end
+    card.pick:SetScript("OnClick", EnableInOptions)
+    card:SetScript("OnClick", EnableInOptions)
+end
+
+-- Dev: /dj devpopup puts this character back to its first login (no journal
+-- mode chosen, RPG note unseen; RPG progress is kept) and opens the mode
+-- chooser, to test the whole first-time flow.
+local SlashWithoutDevPopup = SlashCmdList and SlashCmdList.FOREVERDUNGEONJOURNAL
+if SlashWithoutDevPopup then
+    SlashCmdList.FOREVERDUNGEONJOURNAL = function(msg, ...)
+        local cmd = tostring(msg or ""):lower():gsub("^%s+", ""):gsub("%s+$", "")
+        if cmd == "devpopup" then
+            local db = CharDB()
+            db.journalMode = nil
+            db.rpgIntroSeen = nil
+            if intro then intro:Hide() end
+            if FDJ.RefreshHomeCards then pcall(FDJ.RefreshHomeCards) end
+            if FDJ.UpdateMinimapIcon then pcall(FDJ.UpdateMinimapIcon) end
+            print("|cffd8a83cDungeon Journal:|r first-login popup (dev): journal mode reset for this character, RPG progress kept.")
+            FDJ.ShowModeChooser(false)
+            return
+        end
+        return SlashWithoutDevPopup(msg, ...)
+    end
+end
+-- END rpgintro

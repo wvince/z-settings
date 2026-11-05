@@ -1259,6 +1259,46 @@ function ____exports.readItemLook(itemId)
 end
 return ____exports
  end,
+["packages.@wowkit.wow.src.utils.macro-text_utils"] = function(...) 
+local ____exports = {}
+--- The spells and items named on the cast lines of a macro (#showtooltip, /cast ...), without conditions and ranks.
+function ____exports.listMacroTokens(body)
+    local tokens = {}
+    for line in string.gmatch(body, "[^\r\n]+") do
+        do
+            local __continue3
+            repeat
+                local command = string.match(line, "^%s*#showtooltip%s+(.+)$")
+                if command == nil then
+                    command = string.match(line, "^%s*/%S+%s+(.+)$")
+                end
+                if command == nil then
+                    __continue3 = true
+                    break
+                end
+                local cleaned = string.gsub(command, "%b[]", " ")
+                for rawToken in string.gmatch(cleaned, "[^,;]+") do
+                    local token = string.gsub(
+                        strtrim(rawToken),
+                        "^!",
+                        ""
+                    )
+                    token = string.gsub(token, "%s*%([^)]*%)%s*$", "")
+                    if token ~= "" then
+                        tokens[#tokens + 1] = token
+                    end
+                end
+                __continue3 = true
+            until true
+            if not __continue3 then
+                break
+            end
+        end
+    end
+    return tokens
+end
+return ____exports
+ end,
 ["packages.@wowkit.wow.src.spell-book_service"] = function(...) 
 local ____lualib = require("lualib_bundle")
 local __TS__Class = ____lualib.__TS__Class
@@ -2624,7 +2664,10 @@ local ____core = require("packages.@wowkit.core.src.index")
 local trimText = ____core.trimText
 local ____item_2Dbutton_2Eutils = require("packages.@wowkit.wow.src.utils.item-button_utils")
 local findButtonItem = ____item_2Dbutton_2Eutils.findButtonItem
+local findItemUseSpell = ____item_2Dbutton_2Eutils.findItemUseSpell
 local getItemButtonKey = ____item_2Dbutton_2Eutils.getItemButtonKey
+local ____macro_2Dtext_2Eutils = require("packages.@wowkit.wow.src.utils.macro-text_utils")
+local listMacroTokens = ____macro_2Dtext_2Eutils.listMacroTokens
 local ____protected_2Dcall_2Eutils = require("packages.@wowkit.wow.src.utils.protected-call_utils")
 local attempt = ____protected_2Dcall_2Eutils.attempt
 local attemptMulti = ____protected_2Dcall_2Eutils.attemptMulti
@@ -2655,6 +2698,7 @@ function ActionBarsService.prototype.____constructor(self, clock, spells, bus, r
     self.buttonsByName = {}
     self.buttonsByNameKey = {}
     self.buttonsByIcon = {}
+    self.macroSpellNames = {}
     self.slotByButton = {}
     self.lastMapAt = 0
     self.mapGeneration = 0
@@ -2678,6 +2722,7 @@ function ActionBarsService.prototype.mapBars(self, isForced)
     self:clear(self.buttonsByNameKey)
     self:clear(self.buttonsByIcon)
     self:clear(self.slotByButton)
+    self:clear(self.macroSpellNames)
     self.lastMapAt = self.clock:getCurrentTime()
     local queue = self:listButtonsToMap()
     self.mapGeneration = self.mapGeneration + 1
@@ -2796,6 +2841,9 @@ function ActionBarsService.prototype.listSpellIdsOnBars(self)
     end
     return ids
 end
+function ActionBarsService.prototype.isInMacro(self, name)
+    return self.macroSpellNames[name] ~= nil
+end
 function ActionBarsService.prototype.getReadableSpellName(self, spellId)
     local id = getReadableId(spellId)
     if id == nil then
@@ -2852,37 +2900,18 @@ function ActionBarsService.prototype.addMacroSpells(self, macro, button)
     if body == nil or not isReadable(body) then
         return
     end
-    for line in string.gmatch(body, "[^\r\n]+") do
-        local command = string.match(line, "^%s*#showtooltip%s+(.+)$")
-        if command == nil then
-            command = string.match(line, "^%s*/%S+%s+(.+)$")
-        end
-        if command ~= nil then
-            local cleaned = string.gsub(command, "%b[]", " ")
-            for rawToken in string.gmatch(cleaned, "[^,;]+") do
-                self:addMacroToken(rawToken, button)
-            end
-        end
+    for ____, token in ipairs(listMacroTokens(body)) do
+        self:addMacroToken(token, button)
     end
 end
-function ActionBarsService.prototype.addMacroToken(self, rawToken, button)
-    local token = string.gsub(
-        strtrim(rawToken),
-        "^!",
-        ""
-    )
-    token = string.gsub(token, "%s*%([^)]*%)%s*$", "")
-    if token == "" then
-        return
-    end
+function ActionBarsService.prototype.addMacroToken(self, token, button)
     local info = attempt(C_Spell.GetSpellInfo, token)
     if info == nil or type(info) ~= "table" then
         return
     end
-    self:addSpellName(
-        isReadable(info.name) and info.name ~= "" and info.name or token,
-        button
-    )
+    local name = isReadable(info.name) and info.name ~= "" and info.name or token
+    self.macroSpellNames[name] = true
+    self:addSpellName(name, button)
     self:addSpell(info.spellID, button)
 end
 function ActionBarsService.prototype.addButton(self, button)
@@ -3059,19 +3088,8 @@ function ActionBarsService.prototype.getActionSlot(self, button)
     end
     return ____getValidSlot_result_11 or getValidSlot(button.action) or getValidSlot(tonumber(attempt(function() return button:GetAttribute("action") end)))
 end
-function ActionBarsService.prototype.findItemSpell(self, actionId)
-    local itemId = getReadableId(actionId)
-    local didReadItemSpell, ____, itemSpell = attemptMulti(function() return C_Item.GetItemSpell(itemId) end)
-    local ____didReadItemSpell_12
-    if didReadItemSpell then
-        ____didReadItemSpell_12 = getReadableId(itemSpell)
-    else
-        ____didReadItemSpell_12 = nil
-    end
-    return ____didReadItemSpell_12
-end
 function ActionBarsService.prototype.getSlotAction(self, slot)
-    local didSucceed, kind, actionId, ____, spellFromAction = attemptMulti(function() return GetActionInfo(slot) end)
+    local didSucceed, kind, actionId, subType, spellFromAction = attemptMulti(function() return GetActionInfo(slot) end)
     if not didSucceed then
         return nil, nil
     end
@@ -3079,19 +3097,30 @@ function ActionBarsService.prototype.getSlotAction(self, slot)
         return "spell", getReadableId(spellFromAction) or getReadableId(actionId)
     end
     if self:isToken(kind, "macro") then
-        return "macro", actionId
+        return self:readMacroAction(actionId, subType)
     end
-    local ____table_isToken_result_13
+    local ____table_isToken_result_12
     if self:isToken(kind, "item") then
-        ____table_isToken_result_13 = self:findItemSpell(actionId)
+        ____table_isToken_result_12 = findItemUseSpell(getReadableId(actionId))
     else
-        ____table_isToken_result_13 = nil
+        ____table_isToken_result_12 = nil
     end
-    local itemSpell = ____table_isToken_result_13
+    local itemSpell = ____table_isToken_result_12
     if itemSpell ~= nil then
         return "spell", itemSpell
     end
     return nil, nil
+end
+function ActionBarsService.prototype.readMacroAction(self, actionId, subType)
+    if not self:isToken(subType, "spell") then
+        return "macro", actionId
+    end
+    local spellId = getReadableId(actionId)
+    local name = self:getReadableSpellName(spellId)
+    if name ~= nil then
+        self.macroSpellNames[name] = true
+    end
+    return "spell", spellId
 end
 function ActionBarsService.prototype.getButtonAction(self, button, slot)
     local attrType = attempt(function() return button:GetAttribute("type") end)
@@ -4182,6 +4211,8 @@ local ____exports = {}
 local ____protected_2Dcall_2Eutils = require("packages.@wowkit.wow.src.utils.protected-call_utils")
 local attempt = ____protected_2Dcall_2Eutils.attempt
 ____exports.NOTICE_SECONDS = 10
+--- The kinds of sound file the game plays, in the order they are tried: the addon cannot see which one is there.
+local SOUND_FILE_EXTENSIONS = {"ogg", "mp3"}
 ____exports.NoticeService = __TS__Class()
 local NoticeService = ____exports.NoticeService
 NoticeService.name = "NoticeService"
@@ -4197,6 +4228,13 @@ function NoticeService.prototype.playSound(self, kitName, fallbackId)
     end
     local soundKitId = ____temp_0 or fallbackId
     attempt(C_Sound.PlaySound, soundKitId, nil, true)
+end
+function NoticeService.prototype.playSoundFile(self, pathWithoutExtension)
+    for ____, extension in ipairs(SOUND_FILE_EXTENSIONS) do
+        if attempt(PlaySoundFile, (pathWithoutExtension .. ".") .. extension) == true then
+            return
+        end
+    end
 end
 function NoticeService.prototype.printToChat(self, text)
     print(text)
@@ -5733,13 +5771,80 @@ return ____exports
 ["packages.@wowkit.ui.src.sounds_constants"] = function(...) 
 local ____lualib = require("lualib_bundle")
 local __TS__ArraySome = ____lualib.__TS__ArraySome
+local __TS__ArrayFind = ____lualib.__TS__ArrayFind
 local ____exports = {}
---- Is this a sound of the list? A saved choice may be from a time the list was longer.
+--- The key of a sound file of the player's own. It holds the folder, so the sound stays when the folder leaves the list.
+local function createCustomSoundKey(folder, soundNumber)
+    return (("custom:" .. folder) .. ":") .. tostring(soundNumber)
+end
+--- The folder and the number of a sound file of the player's own; the other sounds have none.
+function ____exports.findCustomSound(value)
+    if type(value) ~= "string" then
+        return nil
+    end
+    local folder, digits = string.match(value, "^custom:([^\\/:]+):(%d+)$")
+    local soundNumber = tonumber(digits)
+    return folder ~= nil and soundNumber ~= nil and ({folder = folder, soundNumber = soundNumber}) or nil
+end
+--- Is this a sound the player can have? A saved choice may be from a time the list was longer.
 function ____exports.isSoundKey(value)
-    return __TS__ArraySome(
+    return ____exports.findCustomSound(value) ~= nil or __TS__ArraySome(
         ____exports.SOUNDS,
         function(____, sound) return sound.key == value end
     )
+end
+--- The name of a folder in the Sound list, short enough for a button: without the part it shares with the main folder
+-- ("GlowingBars_My_Sounds" next to "GlowingBars_Sounds"), and with spaces.
+local function findFolderLabel(folder, mainFolder)
+    local prefix = string.match(mainFolder, "^(.-_)")
+    local isPrefixed = prefix ~= nil and #folder > #prefix and string.sub(folder, 1, #prefix) == prefix
+    local label = string.gsub(
+        isPrefixed and string.sub(folder, #prefix + 1) or folder,
+        "_",
+        " "
+    )
+    return label
+end
+--- The words of a sound: a file of the player's own goes by the name of its folder and its number.
+function ____exports.findSoundLabel(key, mainFolder)
+    local custom = ____exports.findCustomSound(key)
+    if custom == nil then
+        local ____opt_0 = __TS__ArrayFind(
+            ____exports.SOUNDS,
+            function(____, sound) return sound.key == key end
+        )
+        return ____opt_0 and ____opt_0.label or ""
+    end
+    return string.format(
+        "%s %d",
+        findFolderLabel(custom.folder, mainFolder),
+        custom.soundNumber
+    )
+end
+--- The sounds to pick from: the game's, then those of each folder; a folder entered twice counts once.
+function ____exports.listSoundChoices(folders, mainFolder)
+    local choices = {unpack(____exports.SOUNDS)}
+    for ____, ____value in ipairs(folders) do
+        local folder = ____value.folder
+        local count = ____value.count
+        do
+            local i = 1
+            while i <= count do
+                local key = createCustomSoundKey(folder, i)
+                if not __TS__ArraySome(
+                    choices,
+                    function(____, choice) return choice.key == key end
+                ) then
+                    choices[#choices + 1] = {
+                        key = key,
+                        label = ____exports.findSoundLabel(key, mainFolder)
+                    }
+                end
+                i = i + 1
+            end
+        end
+    end
+    return choices
 end
 --- The sounds the player can pick. The first entry is "no sound".
 ____exports.SOUNDS = {
@@ -5760,6 +5865,7 @@ local __TS__ArrayFind = ____lualib.__TS__ArrayFind
 local ____exports = {}
 local ____sounds_2Econstants = require("packages.@wowkit.ui.src.sounds_constants")
 local SOUNDS = ____sounds_2Econstants.SOUNDS
+local findCustomSound = ____sounds_2Econstants.findCustomSound
 ____exports.MessagesService = __TS__Class()
 local MessagesService = ____exports.MessagesService
 MessagesService.name = "MessagesService"
@@ -5768,6 +5874,11 @@ function MessagesService.prototype.____constructor(self, notice, title)
     self.title = title
 end
 function MessagesService.prototype.playAlertSound(self, key)
+    local custom = findCustomSound(key)
+    if custom ~= nil then
+        self.notice:playSoundFile(string.format("Interface\\AddOns\\%s\\custom%d", custom.folder, custom.soundNumber))
+        return
+    end
     local choice = __TS__ArrayFind(
         SOUNDS,
         function(____, sound) return sound.key == key end
@@ -8089,6 +8200,7 @@ local __TS__SparseArrayPush = ____lualib.__TS__SparseArrayPush
 local __TS__SparseArraySpread = ____lualib.__TS__SparseArraySpread
 local __TS__ArrayIncludes = ____lualib.__TS__ArrayIncludes
 local __TS__ArrayFilter = ____lualib.__TS__ArrayFilter
+local __TS__ArrayMap = ____lualib.__TS__ArrayMap
 local __TS__ArrayFind = ____lualib.__TS__ArrayFind
 local ____exports = {}
 local ____ui = require("packages.@wowkit.ui.src.index")
@@ -8129,6 +8241,7 @@ function ____exports.createDefaultSettings()
         fadedOpacity = 50,
         showTooltipIds = false,
         isTableAdvanced = false,
+        customSoundFolders = {{folder = ____exports.CUSTOM_SOUND_FOLDER, count = 0}},
         idOverrides = {},
         addedSpells = {},
         enabledReagents = {},
@@ -8245,6 +8358,10 @@ function ____exports.listWhenChoices(reminderType)
     end
     return ____temp_1
 end
+--- The folder in AddOns for sound files of the player's own that the table starts with: next to the addon, so an update leaves it alone.
+____exports.CUSTOM_SOUND_FOLDER = "GlowingBars_Sounds"
+--- What a folder added in the table starts as, to change into the player's own.
+____exports.NEW_SOUND_FOLDER = "GlowingBars_My_Sounds"
 --- The choices of how often a sound repeats while its glow is on (seconds; 0 = once).
 ____exports.REPEAT_CHOICES = {
     0,
@@ -8361,6 +8478,23 @@ end
 local function repairLimit(limit, byDefault)
     return type(limit) == "number" and limit >= 0 and limit or byDefault
 end
+--- The folders that make sense; there is always one to fill in.
+local function repairSoundFolders(saved, byDefault)
+    if type(saved) ~= "table" then
+        return byDefault
+    end
+    local folders = __TS__ArrayMap(
+        __TS__ArrayFilter(
+            saved,
+            function(____, entry) return type(entry) == "table" and type(entry.folder) == "string" and (string.find(entry.folder, "^[^\\/:]+$")) ~= nil end
+        ),
+        function(____, entry) return {
+            folder = entry.folder,
+            count = repairLimit(entry.count, 0)
+        } end
+    )
+    return #folders > 0 and folders or byDefault
+end
 --- Puts right what a saved look got wrong.
 function ____exports.repairSettings(values)
     tryCall(function() return convertOldSettings(values) end)
@@ -8377,6 +8511,7 @@ function ____exports.repairSettings(values)
     )
     values.reagentBelow = repairLimit(values.reagentBelow, defaults.reagentBelow)
     values.stockBelow = repairLimit(values.stockBelow, defaults.stockBelow)
+    values.customSoundFolders = repairSoundFolders(values.customSoundFolders, defaults.customSoundFolders)
     local old = values
     if old.showGreaterForOne == true then
         values.partyGroupFrom = 1
@@ -8620,6 +8755,12 @@ ____exports.TEXTS = {
     OPT_COOLDOWNS_FIGHT_START = "Also at the start of a fight",
     TIP_COOLDOWNS_FIGHT_START = "When a fight starts, every ready cooldown glows too, as a reminder to use it (Berserking, Recklessness...).",
     HDR_REMINDERS = "Reminders",
+    HDR_CUSTOM_SOUNDS = "Custom sounds",
+    OPT_CUSTOM_SOUNDS = "Sounds:",
+    OPT_CUSTOM_FOLDER = "Folder in AddOns:",
+    BTN_ADD_FOLDER = "Add folder",
+    TEXT_CUSTOM_TIP = "Tip: type /reload after adding a folder.",
+    TIP_CUSTOM_SOUNDS = "Sounds of your own for the Sound list. Make a folder next to this addon's folder, in AddOns, and enter its name here. Put your files in it, named custom1, custom2 and so on, as .ogg or .mp3, and enter how many there are. Restart the game if /reload is not enough.",
     OPT_TABLE = "Colors, sounds and on/off per spell",
     TIP_TABLE = "Set the color, glow, message and sound of each reminder type and each spell, and turn them on or off. Also /gb.",
     BTN_OPEN = "Open",
@@ -8732,27 +8873,8 @@ function OutdatedRanksService.prototype.____constructor(self, actionBars, spells
     self.settings = settings
 end
 function OutdatedRanksService.prototype.findOutdatedRanks(self)
-    local byName = {}
-    for ____, id in ipairs(self.actionBars:listSpellIdsOnBars()) do
-        local name = self.spells:getSpellName(id)
-        local ____temp_0
-        if name ~= nil and name ~= "" then
-            ____temp_0 = self.spells:getSpellRank(id)
-        else
-            ____temp_0 = nil
-        end
-        local rank = ____temp_0
-        local ____temp_3 = name ~= nil and rank ~= nil
-        if ____temp_3 then
-            local ____opt_1 = byName[name]
-            ____temp_3 = rank > (____opt_1 and ____opt_1.rank or -1)
-        end
-        if ____temp_3 then
-            byName[name] = {id = id, rank = rank}
-        end
-    end
     local outdated = {}
-    for name, entry in pairs(byName) do
+    for name, entry in pairs(self:findBestOnBars()) do
         local best = self.spells:getHighestRank(entry.id)
         if best ~= nil and best > entry.rank then
             outdated[#outdated + 1] = {id = entry.id, name = name, onBar = entry.rank, best = best}
@@ -8767,6 +8889,37 @@ function OutdatedRanksService.prototype.findOutdatedRanks(self)
         outdated,
         function(____, rank) return enabledRanks[rank.name] ~= false end
     )
+end
+function OutdatedRanksService.prototype.findBestOnBars(self)
+    local byName = {}
+    for ____, id in ipairs(self.actionBars:listSpellIdsOnBars()) do
+        do
+            local __continue9
+            repeat
+                local name = self.spells:getSpellName(id)
+                local ____temp_0
+                if name ~= nil and name ~= "" then
+                    ____temp_0 = self.spells:getSpellRank(id)
+                else
+                    ____temp_0 = nil
+                end
+                local rank = ____temp_0
+                if name == nil or rank == nil or self.actionBars:isInMacro(name) then
+                    __continue9 = true
+                    break
+                end
+                local ____opt_1 = byName[name]
+                if rank > (____opt_1 and ____opt_1.rank or -1) then
+                    byName[name] = {id = id, rank = rank}
+                end
+                __continue9 = true
+            until true
+            if not __continue9 then
+                break
+            end
+        end
+    end
+    return byName
 end
 return ____exports
  end,
@@ -12130,6 +12283,9 @@ return ____exports
  end,
 ["addons.glowing-bars.src.options.choice-menu"] = function(...) 
 local ____exports = {}
+--- How long a list may be before it scrolls, in lines; a line of the game's menu is 20 high.
+local MOST_LINES = 16
+local LINE_HEIGHT = 20
 --- A click on the button lists the choices; picking one closes the list.
 function ____exports.connectChoiceMenu(button, listChoices)
     button:SetScript(
@@ -12142,6 +12298,9 @@ function ____exports.connectChoiceMenu(button, listChoices)
             MenuUtil.CreateContextMenu(
                 button,
                 function(_owner, root)
+                    if #choices > MOST_LINES then
+                        root:SetScrollMode(MOST_LINES * LINE_HEIGHT)
+                    end
                     for ____, choice in ipairs(choices) do
                         root:CreateRadio(choice.label, choice.isChosen, choice.choose)
                     end
@@ -12430,9 +12589,10 @@ local __TS__Class = ____lualib.__TS__Class
 local __TS__ArrayMap = ____lualib.__TS__ArrayMap
 local ____exports = {}
 local ____ui = require("packages.@wowkit.ui.src.index")
-local SOUNDS = ____ui.SOUNDS
+local listSoundChoices = ____ui.listSoundChoices
 local ____settings_2Econstants = require("addons.glowing-bars.src.settings.settings_constants")
 local ANIMATION_CHOICES = ____settings_2Econstants.ANIMATION_CHOICES
+local CUSTOM_SOUND_FOLDER = ____settings_2Econstants.CUSTOM_SOUND_FOLDER
 local GLOW_TIME_CHOICES = ____settings_2Econstants.GLOW_TIME_CHOICES
 local REPEAT_CHOICES = ____settings_2Econstants.REPEAT_CHOICES
 local listWhenChoices = ____settings_2Econstants.listWhenChoices
@@ -12454,15 +12614,19 @@ local WHEN_TEXTS = {
 ____exports.StyleChoicesService = __TS__Class()
 local StyleChoicesService = ____exports.StyleChoicesService
 StyleChoicesService.name = "StyleChoicesService"
-function StyleChoicesService.prototype.____constructor(self, locale, styles, messages)
+function StyleChoicesService.prototype.____constructor(self, locale, styles, messages, settings)
     self.locale = locale
     self.styles = styles
     self.messages = messages
+    self.settings = settings
 end
 function StyleChoicesService.prototype.connectSoundMenu(self, button, getRow)
     local function listSounds()
         return __TS__ArrayMap(
-            SOUNDS,
+            listSoundChoices(
+                self.settings:get("customSoundFolders"),
+                CUSTOM_SOUND_FOLDER
+            ),
             function(____, sound) return {value = sound.key, label = sound.label} end
         )
     end
@@ -13227,10 +13391,285 @@ function ____exports.createText(frame, column, font)
 end
 return ____exports
  end,
+["addons.glowing-bars.src.options.custom-sounds-section"] = function(...) 
+local ____lualib = require("lualib_bundle")
+local __TS__Class = ____lualib.__TS__Class
+local __TS__ArrayForEach = ____lualib.__TS__ArrayForEach
+local __TS__SparseArrayNew = ____lualib.__TS__SparseArrayNew
+local __TS__SparseArrayPush = ____lualib.__TS__SparseArrayPush
+local __TS__SparseArraySpread = ____lualib.__TS__SparseArraySpread
+local __TS__ArrayFilter = ____lualib.__TS__ArrayFilter
+local __TS__ObjectAssign = ____lualib.__TS__ObjectAssign
+local __TS__ArrayMap = ____lualib.__TS__ArrayMap
+local ____exports = {}
+local ____settings_2Econstants = require("addons.glowing-bars.src.settings.settings_constants")
+local NEW_SOUND_FOLDER = ____settings_2Econstants.NEW_SOUND_FOLDER
+local ____style_2Dtable_2Econstants = require("addons.glowing-bars.src.options.style-table_constants")
+local HEADER_HEIGHT = ____style_2Dtable_2Econstants.HEADER_HEIGHT
+local ROW_HEIGHT = ____style_2Dtable_2Econstants.ROW_HEIGHT
+local TABLE_WIDTH = ____style_2Dtable_2Econstants.TABLE_WIDTH
+local FOLDER_LABEL_X = 38
+local FOLDER_X = 140
+local FOLDER_WIDTH = 200
+local COUNT_LABEL_X = 355
+local COUNT_X = 408
+local REMOVE_X = 448
+____exports.CustomSoundsSection = __TS__Class()
+local CustomSoundsSection = ____exports.CustomSoundsSection
+CustomSoundsSection.name = "CustomSoundsSection"
+function CustomSoundsSection.prototype.____constructor(self, locale, settings)
+    self.locale = locale
+    self.settings = settings
+    self.lines = {}
+end
+function CustomSoundsSection.prototype.drawLines(self, content, top)
+    self:showHover(content, top)
+    local folders = self.settings:get("customSoundFolders")
+    local firstLine = top + HEADER_HEIGHT
+    __TS__ArrayForEach(
+        folders,
+        function(____, _folder, index)
+            local line = self:takeLine(content, index)
+            line.frame:ClearAllPoints()
+            line.frame:SetPoint(
+                "TOPLEFT",
+                content,
+                "TOPLEFT",
+                0,
+                -(firstLine + index * ROW_HEIGHT)
+            )
+            line.frame:Show()
+            line.remove:SetShown(#folders > 1)
+            self:fillLine(line)
+        end
+    )
+    do
+        local i = #folders
+        while i < #self.lines do
+            self.lines[i + 1].frame:Hide()
+            i = i + 1
+        end
+    end
+    local afterLines = firstLine + #folders * ROW_HEIGHT
+    local addFolder = self.addFolder or self:createAddFolder(content)
+    addFolder:ClearAllPoints()
+    addFolder:SetPoint(
+        "TOPLEFT",
+        content,
+        "TOPLEFT",
+        FOLDER_LABEL_X,
+        -afterLines
+    )
+    return afterLines + ROW_HEIGHT
+end
+function CustomSoundsSection.prototype.showHover(self, content, top)
+    if self.hover == nil then
+        local hover = CreateFrame("Frame", nil, content)
+        hover:SetSize(200, HEADER_HEIGHT)
+        hover:EnableMouse(true)
+        hover:SetScript(
+            "OnEnter",
+            function()
+                GameTooltip:SetOwner(hover, "ANCHOR_RIGHT")
+                GameTooltip:SetText(
+                    self.locale:getText("TIP_CUSTOM_SOUNDS"),
+                    1,
+                    1,
+                    1,
+                    1,
+                    true
+                )
+                GameTooltip:Show()
+            end
+        )
+        hover:SetScript(
+            "OnLeave",
+            function() return GameTooltip:Hide() end
+        )
+        self.hover = hover
+    end
+    self.hover:ClearAllPoints()
+    self.hover:SetPoint(
+        "TOPLEFT",
+        content,
+        "TOPLEFT",
+        0,
+        -top
+    )
+end
+function CustomSoundsSection.prototype.createAddFolder(self, content)
+    local button = CreateFrame("Button", nil, content, "UIPanelButtonTemplate")
+    button:SetSize(100, 24)
+    button:SetText(self.locale:getText("BTN_ADD_FOLDER"))
+    button:SetScript(
+        "OnClick",
+        function()
+            local ____self_1 = self.settings
+            local ____self_1_change_2 = ____self_1.change
+            local ____array_0 = __TS__SparseArrayNew(unpack(self.settings:get("customSoundFolders")))
+            __TS__SparseArrayPush(____array_0, {folder = NEW_SOUND_FOLDER, count = 0})
+            ____self_1_change_2(
+                ____self_1,
+                "customSoundFolders",
+                {__TS__SparseArraySpread(____array_0)}
+            )
+        end
+    )
+    local tip = content:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    tip:SetPoint(
+        "LEFT",
+        button,
+        "RIGHT",
+        10,
+        0
+    )
+    tip:SetText(self.locale:getText("TEXT_CUSTOM_TIP"))
+    self.addFolder = button
+    return button
+end
+function CustomSoundsSection.prototype.takeLine(self, content, index)
+    local line = self.lines[index + 1] or self:createLine(content)
+    line.index = index
+    return line
+end
+function CustomSoundsSection.prototype.createLine(self, content)
+    local frame = CreateFrame("Frame", nil, content)
+    frame:SetSize(TABLE_WIDTH, ROW_HEIGHT)
+    self:createLabel(frame, FOLDER_LABEL_X, "OPT_CUSTOM_FOLDER")
+    self:createLabel(frame, COUNT_LABEL_X, "OPT_CUSTOM_SOUNDS")
+    local line = {
+        frame = frame,
+        folderBox = self:createBox(frame, FOLDER_X, FOLDER_WIDTH, 60),
+        countBox = self:createBox(frame, COUNT_X, 30, 2),
+        remove = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate"),
+        index = #self.lines
+    }
+    line.countBox:SetNumeric(true)
+    line.remove:SetSize(22, 22)
+    line.remove:SetPoint(
+        "LEFT",
+        frame,
+        "LEFT",
+        REMOVE_X,
+        0
+    )
+    line.remove:SetText("X")
+    line.remove:SetScript(
+        "OnClick",
+        function()
+            self.settings:change(
+                "customSoundFolders",
+                __TS__ArrayFilter(
+                    self.settings:get("customSoundFolders"),
+                    function(____, _folder, index) return index ~= line.index end
+                )
+            )
+        end
+    )
+    self:connectBox(
+        line,
+        line.folderBox,
+        function() return self:applyFolder(line) end
+    )
+    self:connectBox(
+        line,
+        line.countBox,
+        function() return self:applyCount(line) end
+    )
+    local ____self_lines_3 = self.lines
+    ____self_lines_3[#____self_lines_3 + 1] = line
+    return line
+end
+function CustomSoundsSection.prototype.createLabel(self, frame, x, text)
+    local label = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    label:SetPoint(
+        "LEFT",
+        frame,
+        "LEFT",
+        x,
+        0
+    )
+    label:SetText(self.locale:getText(text))
+end
+function CustomSoundsSection.prototype.createBox(self, frame, x, width, maxLetters)
+    local box = CreateFrame("EditBox", nil, frame, "InputBoxTemplate")
+    box:SetSize(width, 20)
+    box:SetPoint(
+        "LEFT",
+        frame,
+        "LEFT",
+        x,
+        0
+    )
+    box:SetAutoFocus(false)
+    box:SetMaxLetters(maxLetters)
+    return box
+end
+function CustomSoundsSection.prototype.connectBox(self, line, box, apply)
+    box:SetScript(
+        "OnEnterPressed",
+        function() return box:ClearFocus() end
+    )
+    box:SetScript(
+        "OnEditFocusLost",
+        function()
+            apply()
+            self:fillLine(line)
+        end
+    )
+    box:SetScript(
+        "OnEscapePressed",
+        function()
+            self:fillLine(line)
+            box:ClearFocus()
+        end
+    )
+end
+function CustomSoundsSection.prototype.fillLine(self, line)
+    local folder = self.settings:get("customSoundFolders")[line.index + 1]
+    if folder == nil then
+        return
+    end
+    line.folderBox:SetText(folder.folder)
+    line.countBox:SetText(string.format("%d", folder.count))
+end
+function CustomSoundsSection.prototype.applyFolder(self, line)
+    local folder = string.match(
+        line.folderBox:GetText(),
+        "^%s*([^\\/:]-)%s*$"
+    )
+    if folder ~= nil and folder ~= "" then
+        self:changeLine(line, {folder = folder})
+    end
+end
+function CustomSoundsSection.prototype.applyCount(self, line)
+    local count = tonumber(line.countBox:GetText())
+    if count ~= nil then
+        self:changeLine(line, {count = count})
+    end
+end
+function CustomSoundsSection.prototype.changeLine(self, line, change)
+    local folders = self.settings:get("customSoundFolders")
+    if folders[line.index + 1] == nil then
+        return
+    end
+    self.settings:change(
+        "customSoundFolders",
+        __TS__ArrayMap(
+            folders,
+            function(____, folder, index) return index == line.index and __TS__ObjectAssign({}, folder, change) or folder end
+        )
+    )
+end
+return ____exports
+ end,
 ["addons.glowing-bars.src.options.style-window_service"] = function(...) 
 local ____lualib = require("lualib_bundle")
 local __TS__Class = ____lualib.__TS__Class
+local __TS__New = ____lualib.__TS__New
 local ____exports = {}
+local ____custom_2Dsounds_2Dsection = require("addons.glowing-bars.src.options.custom-sounds-section")
+local CustomSoundsSection = ____custom_2Dsounds_2Dsection.CustomSoundsSection
 local ____style_2Dtable_2Econstants = require("addons.glowing-bars.src.options.style-table_constants")
 local BORDER_COLOR = ____style_2Dtable_2Econstants.BORDER_COLOR
 local COLUMN = ____style_2Dtable_2Econstants.COLUMN
@@ -13272,6 +13711,10 @@ function StyleWindowService.prototype.isAdvanced(self)
 end
 function StyleWindowService.prototype.setBelowShown(self, hasBelow)
     self.hasBelow = hasBelow
+end
+function StyleWindowService.prototype.drawCustomSounds(self, content, top)
+    self.customSounds = self.customSounds or __TS__New(CustomSoundsSection, self.locale, self.settings)
+    return self.customSounds:drawLines(content, top)
 end
 function StyleWindowService.prototype.getColumns(self)
     return findColumns(
@@ -13557,13 +14000,14 @@ local ____lualib = require("lualib_bundle")
 local __TS__Class = ____lualib.__TS__Class
 local __TS__DecorateLegacy = ____lualib.__TS__DecorateLegacy
 local __TS__ArraySome = ____lualib.__TS__ArraySome
-local __TS__ArrayFind = ____lualib.__TS__ArrayFind
 local __TS__ObjectAssign = ____lualib.__TS__ObjectAssign
 local ____exports = {}
 local ____core = require("packages.@wowkit.core.src.index")
 local OnEvent = ____core.OnEvent
 local ____ui = require("packages.@wowkit.ui.src.index")
-local SOUNDS = ____ui.SOUNDS
+local findSoundLabel = ____ui.findSoundLabel
+local ____settings_2Econstants = require("addons.glowing-bars.src.settings.settings_constants")
+local CUSTOM_SOUND_FOLDER = ____settings_2Econstants.CUSTOM_SOUND_FOLDER
 local ____style_2Dtable_2Econstants = require("addons.glowing-bars.src.options.style-table_constants")
 local BRONZE_TEXT = ____style_2Dtable_2Econstants.BRONZE_TEXT
 local COLUMN = ____style_2Dtable_2Econstants.COLUMN
@@ -13648,6 +14092,7 @@ function StyleTableService.prototype.showRows(self)
     local y = self:drawSection(content, "HDR_TABLE_DEFAULTS", typeRows, 0)
     y = self:drawSection(content, "HDR_TABLE_SPELLS", spellRows, y)
     y = self:drawAddRow(content, y)
+    y = self:drawCustomSounds(content, y)
     do
         local i = self.usedHeaders
         while i < #self.headers do
@@ -13749,6 +14194,19 @@ function StyleTableService.prototype.drawAddRow(self, content, top)
     self.addRow:Show()
     return top + HEADER_HEIGHT + ROW_HEIGHT + 10
 end
+function StyleTableService.prototype.drawCustomSounds(self, content, top)
+    local header = self:takeHeader(content)
+    header:SetPoint(
+        "TOPLEFT",
+        content,
+        "TOPLEFT",
+        0,
+        -top
+    )
+    header:SetText(self.locale:getText("HDR_CUSTOM_SOUNDS"))
+    header:Show()
+    return self.windows:drawCustomSounds(content, top)
+end
 function StyleTableService.prototype.takeHeader(self, content)
     local header = self.headers[self.usedHeaders + 1]
     if header == nil then
@@ -13786,13 +14244,7 @@ function StyleTableService.prototype.fill(self, widgets, row)
     widgets.swatchColor:SetColorTexture(style.color[1], style.color[2], style.color[3], 1)
     widgets.glowPercent:SetText(string.format("%d", style.glowPercent))
     widgets.message:SetChecked(style.isMessageOn)
-    local ____self_7 = widgets.sound
-    local ____self_7_SetText_8 = ____self_7.SetText
-    local ____opt_5 = __TS__ArrayFind(
-        SOUNDS,
-        function(____, sound) return sound.key == style.sound end
-    )
-    ____self_7_SetText_8(____self_7, ____opt_5 and ____opt_5.label or "")
+    widgets.sound:SetText(findSoundLabel(style.sound, CUSTOM_SOUND_FOLDER))
     self.choices:fillChoices(widgets.choices, row)
     widgets.reset:SetShown(isOverridden)
     widgets.remove:SetShown(row.isAdded == true)
@@ -14644,7 +15096,13 @@ function makeTable(addon, addonName, game, texts, buffs, reminders)
         reminders.tracking,
         reminders.fedBuffs
     ))
-    local choices = addon:register(__TS__New(StyleChoicesService, locale, styles, messages))
+    local choices = addon:register(__TS__New(
+        StyleChoicesService,
+        locale,
+        styles,
+        messages,
+        texts.settings
+    ))
     local windows = addon:register(__TS__New(StyleWindowService, locale, texts.settings))
     local switches = addon:register(__TS__New(
         EnabledService,

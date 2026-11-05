@@ -20,6 +20,7 @@ local RSZoneFiltersOptions = private.ImportLib("RareScannerZoneFiltersOptions")
 local RSLootOptions = private.ImportLib("RareScannerLootOptions")
 local RSMapOptions = private.ImportLib("RareScannerMapOptions")
 local RSChatOptions = private.ImportLib("RareScannerChatOptions")
+local RSEventHandler = private.ImportLib("RareScannerEventHandler")
 
 -----------------------------------------------------------------------
 -- Tooltip positions
@@ -39,6 +40,9 @@ private.TOOLTIP_POSITIONS = {
 
 function RareScanner:RefreshOptions(event, database, newProfileKey)
 	private.db = database.profile
+
+	-- Each profile has its own option of the telemetry
+	RSEventHandler.RefreshTelemetry()
 end
 
 function RareScanner:SetupOptions()

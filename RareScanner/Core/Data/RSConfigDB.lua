@@ -287,6 +287,14 @@ end
 -- Scanner filters database
 ---============================================================================
 
+function RSConfigDB.IsTelemetryEnabled()
+	return private.db.general.telemetry
+end
+
+function RSConfigDB.SetTelemetryEnabled(value)
+	private.db.general.telemetry = value
+end
+
 function RSConfigDB.IsScanningInInstances()
 	return private.db.general.scanInstances
 end

@@ -26,6 +26,7 @@ local RSMap = private.ImportLib("RareScannerMap")
 local RSNpcPOI = private.ImportLib("RareScannerNpcPOI")
 local RSContainerPOI = private.ImportLib("RareScannerContainerPOI")
 local RSLootTooltip = private.ImportLib("RareScannerLootTooltip")
+local RSLoot = private.ImportLib("RareScannerLoot")
 local RSTooltipScanners = private.ImportLib("RareScannerTooltipScanners")
 local RSRoutines = private.ImportLib("RareScannerRoutines")
 
@@ -1861,65 +1862,6 @@ local function EnsureCompareTooltips(tooltip)
 	end
 end
 
--- Equipment slots where each inventory type can be equipped
-local EQUIP_SLOTS = {
-	INVTYPE_HEAD = { 1 },
-	INVTYPE_NECK = { 2 },
-	INVTYPE_SHOULDER = { 3 },
-	INVTYPE_CHEST = { 5 },
-	INVTYPE_ROBE = { 5 },
-	INVTYPE_WAIST = { 6 },
-	INVTYPE_LEGS = { 7 },
-	INVTYPE_FEET = { 8 },
-	INVTYPE_WRIST = { 9 },
-	INVTYPE_HAND = { 10 },
-	INVTYPE_FINGER = { 11, 12 },
-	INVTYPE_TRINKET = { 13, 14 },
-	INVTYPE_CLOAK = { 15 },
-	INVTYPE_WEAPON = { 16, 17 },
-	INVTYPE_2HWEAPON = { 16 },
-	INVTYPE_WEAPONMAINHAND = { 16 },
-	INVTYPE_RANGED = { 16 },
-	INVTYPE_RANGEDRIGHT = { 16 },
-	INVTYPE_WEAPONOFFHAND = { 17 },
-	INVTYPE_SHIELD = { 17 },
-	INVTYPE_HOLDABLE = { 17 },
-}
-
--- Cheap check (no tooltips): the item level is higher than the equipped one of the same type
-local function IsUpgrade(itemID, itemLink)
-	local _, _, _, equipLoc, _, classID, subClassID = C_Item.GetItemInfoInstant(itemID)
-	local slots = EQUIP_SLOTS[equipLoc]
-	if (not slots) then
-		return false
-	end
-
-	local itemLevel = C_Item.GetDetailedItemLevelInfo(itemLink)
-	if (not itemLevel) then
-		return false
-	end
-
-	local lowestEquippedLevel
-	for _, slot in ipairs(slots) do
-		local equippedLink = GetInventoryItemLink("player", slot)
-		if (equippedLink) then
-			-- Only compares with items of the same type (cloth with cloth, swords with swords...)
-			local _, _, _, _, _, equippedClassID, equippedSubClassID = C_Item.GetItemInfoInstant(equippedLink)
-			if (equippedClassID == classID and equippedSubClassID == subClassID) then
-				local equippedLevel = C_Item.GetDetailedItemLevelInfo(equippedLink) or 0
-				if (not lowestEquippedLevel or equippedLevel < lowestEquippedLevel) then
-					lowestEquippedLevel = equippedLevel
-				end
-			end
-		-- Empty slots count only for items that don't need proficiency (jewelry, cloaks, trinkets)
-		elseif (classID == 4 and (subClassID == 0 or equipLoc == "INVTYPE_CLOAK")) then
-			return true
-		end
-	end
-
-	return lowestEquippedLevel ~= nil and itemLevel > lowestEquippedLevel
-end
-
 function RSExplorerRareLoot:OnElementInitialize(element, elementData)
 	local _, _, _, _, icon = C_Item.GetItemInfoInstant(elementData.itemID)
 	element.Icon:SetTexture(icon)
@@ -2023,7 +1965,7 @@ function RSExplorerRareLoot:Refresh(elementData)
 
 			-- Items without data in the client cannot be shown
 			if (name and link and classID) then
-				tinsert(items, { itemID = itemID, name = name, link = link, quality = item:GetItemQuality() or 1, chance = tonumber(chances[itemID]) or 0, classID = classID, subClassID = subClassID, isGear = EQUIP_SLOTS[equipLoc] ~= nil, isEquipable = restrictions.isEquipable, isUsable = restrictions.isUsable, isMyLevel = restrictions.isMyLevel, upgrade = IsUpgrade(itemID, link) })
+				tinsert(items, { itemID = itemID, name = name, link = link, quality = item:GetItemQuality() or 1, chance = tonumber(chances[itemID]) or 0, classID = classID, subClassID = subClassID, isGear = RSLoot.EQUIP_SLOTS[equipLoc] ~= nil, isEquipable = restrictions.isEquipable, isUsable = restrictions.isUsable, isMyLevel = restrictions.isMyLevel, upgrade = RSLoot.IsUpgrade(itemID, link) })
 			end
 			pending = pending - 1
 			if (pending == 0 and self.request == request) then

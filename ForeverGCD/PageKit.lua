@@ -524,7 +524,7 @@ local Text = Kit.Text
 -- UIParent), level with owner; right of the window when it fits, else left,
 -- else under owner (over it when owner is low on the screen). Call it once
 -- the tooltip is filled and shown, so its size is known. A secret or missing
--- measure falls back to owner's top right.
+-- measure falls back to centred above owner.
 local function Measure(value)
     if type(value) ~= "number" or (issecretvalue and issecretvalue(value)) then return nil end
     return value
@@ -532,7 +532,7 @@ end
 function Kit.PlaceTooltip(tip, owner)
     tip:ClearAllPoints()
     if not UIParent then
-        tip:SetPoint("BOTTOMLEFT", owner, "TOPRIGHT")
+        tip:SetPoint("BOTTOM", owner, "TOP")
         return
     end
     local window = owner
@@ -546,7 +546,7 @@ function Kit.PlaceTooltip(tip, owner)
     local windowScale, screen = Measure(window:GetEffectiveScale()), Measure(UIParent:GetRight())
     local parentScale = Measure(UIParent:GetEffectiveScale())
     if not (tipScale and ownerScale and width and ownerTop and left and right and top and windowScale and screen and parentScale) then
-        tip:SetPoint("BOTTOMLEFT", owner, "TOPRIGHT")
+        tip:SetPoint("BOTTOM", owner, "TOP")
         return
     end
     local gap = 4

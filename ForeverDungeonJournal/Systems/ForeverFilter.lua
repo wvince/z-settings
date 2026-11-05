@@ -143,10 +143,11 @@ local function Place(frame)
     local rpg = FDJ.IsRPGMode and FDJ.IsRPGMode()
     local emblemSize = 40
     if rpg and frame.rpgBar and frame.rpgBar:IsShown() then
-        -- RPG Mode: sits above the left end of the progress bar (the bar is
-        -- nudged down a little to make room for it).
+        -- RPG Mode: sits above the left end of the progress bar. The bar is
+        -- under the header's row of buttons (RPG Mode, Favourites...), so the
+        -- emblem lines up with them.
         frame.rpgBar:ClearAllPoints()
-        frame.rpgBar:SetPoint("TOPLEFT", home, "TOPLEFT", 26, -37)
+        frame.rpgBar:SetPoint("TOPLEFT", home, "TOPLEFT", 26, -(FDJ.RPG_BAR_Y or 37))
         btn:SetSize(22, 22)
         emblemSize = 22
         btn:SetPoint("BOTTOMLEFT", frame.rpgBar, "TOPLEFT", 2, 2)

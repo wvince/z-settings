@@ -32,8 +32,8 @@ RSConstants.LOOT_ITEM_ID = nil
 -- Current versions
 ---============================================================================
 
-RSConstants.CURRENT_DB_VERSION = 9
-RSConstants.CURRENT_LOOT_DB_VERSION = 9
+RSConstants.CURRENT_DB_VERSION = 10
+RSConstants.CURRENT_LOOT_DB_VERSION = 10
 
 ---============================================================================
 -- Current maps (newer)
@@ -160,6 +160,7 @@ RSConstants.TRACKING_SYSTEM = {
 RSConstants.PROFILE_DEFAULTS = {
 	profile = {
 		general = {
+			telemetry = true,
 			rescanTimer = 5,
 			scanRares = true,
 			scanContainers = true,
@@ -264,7 +265,7 @@ RSConstants.PROFILE_DEFAULTS = {
 			displayWeeklyRepNpcIcons = true,
 			displayProfessionRaresNpcIcons = true,
 			displayAchievementRaresNpcIcons = true,
-			displayMinieventsNpcIcons = { true, true, true, true, true, true, true, true, true, true, false, false, true, true, true, false, false, true, true, true },
+			displayMinieventsNpcIcons = { false },
 			displayCustomGroupNpcIcons = {},
 			displayOtherRaresNpcIcons = true,
 			displayRenownRaresNpcIcons = false,
@@ -436,6 +437,14 @@ RSConstants.CMD_IMPORT = "import"
 RSConstants.CMD_MIDNIGHT_PRE_PATCH = "midnight"
 RSConstants.CMD_ROUTE = "route"
 RSConstants.CMD_ROUTE_CANCEL = "croute"
+RSConstants.CMD_TELEMETRY = "telemetry"
+RSConstants.CMD_TELEMETRY_STATS = "stats"
+RSConstants.CMD_TELEMETRY_STATS_RESET = "stats reset"
+RSConstants.CMD_TELEMETRY_PROPOSALS = "proposals"
+RSConstants.CMD_TELEMETRY_SIMSYNC = "simsync"
+RSConstants.CMD_TELEMETRY_SIMSYNC_CLEAR = "simsync clear"
+RSConstants.CMD_TELEMETRY_SYNC = "sync"
+RSConstants.CMD_TELEMETRY_EXPORT = "export"
 
 ---============================================================================
 -- AtlasNames
@@ -746,3 +755,74 @@ end
 function RSConstants.IsContainerPvpAtlas(atlasName)
 	return atlasName == RSConstants.CONTAINER_PVP_AIRPLANE_OBJECT or atlasName == RSConstants.CONTAINER_PVP_FLAGS_OBJECT
 end
+
+---============================================================================
+-- Telemetry. These values are not meant to be changed
+---============================================================================
+
+RSConstants.DEBUG_TELEMETRY_LOOPBACK = false -- Processes the own messages, to test the communications without other players
+
+-- Telemetry limits (in seconds, except the sample limits)
+RSConstants.TELEMETRY_VERSION = 4 -- 4: the samples with the offline gap are marked, so the data of the version 3 (without the mark) is discarded
+RSConstants.TELEMETRY_MIN_RESPAWN_SECONDS = 30
+RSConstants.TELEMETRY_MAX_RESPAWN_SECONDS = 604800 -- 7 days
+RSConstants.TELEMETRY_MAX_SAMPLES_PER_NPC = 50
+RSConstants.TELEMETRY_MIN_SAMPLES_MAX_FILTER = 6 -- respawns needed to ignore the maximums that are too far from the median
+RSConstants.TELEMETRY_MAX_FILTER_FACTOR = 1.5 -- the maximums above the median multiplied by this are ignored
+RSConstants.TELEMETRY_MIN_FILTER_DIVISOR = 3 -- the minimums below the median divided by this are ignored
+RSConstants.TELEMETRY_IGNORED_CONTINENTS = { 9997, 9996, 9994, 9993 } -- Dungeons, raids, expedition islands and delves: their rares don't have a respawn time
+RSConstants.TELEMETRY_SESSION_BREAK_SECONDS = 15 -- the time offline that ends a session of the game (a reload is shorter, a restart is longer)
+RSConstants.TELEMETRY_MAX_SEEN_GUIDS = 300 -- creatures remembered in a session to know which ones are new
+RSConstants.TELEMETRY_OFFLINE_MIN_SECONDS = 60 -- the offline time shorter than this is not saved (quick reconnections)
+RSConstants.TELEMETRY_OFFLINE_GAP_SECONDS = 1800 -- offline time between a death and a spawn that always makes the respawn unreliable (the samples are marked and not used for the estimation)
+RSConstants.TELEMETRY_OFFLINE_GAP_RATIO = 0.5 -- it is also unreliable if the player was offline at least this part of the respawn measured
+RSConstants.TELEMETRY_HEARTBEAT_SECONDS = 300 -- the last time online is saved every 5 minutes, in case the game closes badly
+RSConstants.TELEMETRY_MAX_SAMPLES_PER_SENDER = 5
+RSConstants.TELEMETRY_OVERDUE_GRACE_SECONDS = 300
+RSConstants.TELEMETRY_STALE_RESPAWN_FACTOR = 2
+RSConstants.TELEMETRY_STATIC_TOLERANCE_FACTOR = 2 -- samples must be between min / 2 and max * 2 of the database
+RSConstants.TELEMETRY_MIN_SAMPLES_PROPOSAL = 5
+RSConstants.TELEMETRY_CLOCK_TOLERANCE_SECONDS = 60 -- a creature that just spawned can be a bit ahead of the clock of the player
+RSConstants.TELEMETRY_SHARD_UPDATE_SECONDS = 1
+
+-- Telemetry communications
+RSConstants.TELEMETRY_COMM_PREFIX = "RSTelemetry2"
+RSConstants.TELEMETRY_COMM_SEND_DELAY = 3 -- seconds before sending, to group several items in one message
+RSConstants.TELEMETRY_COMM_SEND_JITTER = 6 -- random seconds added, so players that see the same event don't all send it at once
+RSConstants.TELEMETRY_COMM_MAX_LENGTH = 230 -- the limit of a message is 255 characters
+RSConstants.TELEMETRY_COMM_MAX_QUEUE = 40
+RSConstants.TELEMETRY_COMM_MAX_ITEMS_PER_MINUTE = 40 -- per sender
+RSConstants.TELEMETRY_COMM_MAX_ITEMS_PER_SECOND = 60 -- in total, no matter how many players send them
+RSConstants.TELEMETRY_COMM_MAX_ERRORS = 5
+RSConstants.TELEMETRY_HOOK_MAX_ERRORS = 5
+RSConstants.TELEMETRY_MAX_RECENT_KILLS = 300
+
+-- Synchronization with the guild when the player connects
+RSConstants.TELEMETRY_SYNC_START_DELAY = 30 -- seconds after connecting before asking, to not ask while loading
+RSConstants.TELEMETRY_SYNC_COOLDOWN = 1800 -- the player asks at most once every 30 minutes
+RSConstants.TELEMETRY_SYNC_GROUP_DELAY = 5 -- seconds after joining a group before asking its members
+RSConstants.TELEMETRY_SYNC_GROUP_COOLDOWN = 60 -- seconds between the requests to groups
+RSConstants.TELEMETRY_SYNC_GROUP_DEBUG_COOLDOWN = 5 -- the same in debug mode
+RSConstants.TELEMETRY_SYNC_GROUP_RETRY_INTERVAL = 10 -- seconds to try again if the chat is restricted when joining a group
+RSConstants.TELEMETRY_SYNC_GROUP_MAX_ATTEMPTS = 6
+RSConstants.TELEMETRY_SYNC_RESPONSE_DELAY = 1 -- the guild members wait a random time before answering, so only a few of them answer
+RSConstants.TELEMETRY_SYNC_RESPONSE_JITTER = 5 -- the members with more samples answer in the first half of this time, the rest in the second half
+RSConstants.TELEMETRY_SYNC_SECOND_CHANCE_DELAY = 12 -- seconds that a member that was not chosen waits to answer if nobody has claimed the request
+RSConstants.TELEMETRY_SYNC_SECOND_CHANCE_MAX_JITTER = 60 -- maximum seconds that the second chance is spread when many members are online
+RSConstants.TELEMETRY_SYNC_MAX_ITEMS = 30 -- samples sent in an answer
+RSConstants.TELEMETRY_SYNC_EXPECTED_RESPONDERS = 3 -- members that should answer, no matter how many are online
+RSConstants.TELEMETRY_SYNC_MESSAGE_INTERVAL = 2 -- seconds between the messages of an answer
+RSConstants.TELEMETRY_SYNC_MAX_RESPONSES_PER_MINUTE = 2
+RSConstants.TELEMETRY_SYNC_REQUEST_MEMORY = 600 -- a player can't ask again to the same member in 10 minutes
+RSConstants.TELEMETRY_SYNC_RECEIVE_WINDOW = 180 -- seconds after asking where the answers are accepted
+RSConstants.TELEMETRY_MIN_SAMPLES_SCHEDULE = 6 -- more than the samples that a sender can add to a NPC
+RSConstants.TELEMETRY_SCHEDULE_MATCH_RATIO = 0.8
+RSConstants.TELEMETRY_MAX_SCHEDULE_MINUTES = 8
+RSConstants.TELEMETRY_MIN_SAMPLES_PERIOD = 8
+RSConstants.TELEMETRY_MIN_SAMPLES_EXACT = 6 -- more than the samples that a sender can add to a NPC
+RSConstants.TELEMETRY_MIN_SAMPLES_RELIABLE = 6 -- respawns needed to trust the maximum and discard the lost cycles (more than the samples that one sender can add)
+RSConstants.TELEMETRY_EXACT_TOLERANCE_SECONDS = 60
+RSConstants.TELEMETRY_PORTAL_URL = "https://rarescanner-telemetry.pages.dev/"
+RSConstants.TELEMETRY_GAME = "forever" -- game of the data in the export, so the portal can filter the data of each game
+RSConstants.TELEMETRY_EXPORT_VERSION = 2 -- version of the format that the portal reads
+RSConstants.TELEMETRY_EXPORT_MAX_LINES = 200000 -- 50 samples x all the rares fit (the portal accepts 200000); the newest ones go first if there are more

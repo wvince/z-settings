@@ -12,6 +12,17 @@ optional `### For addon authors` subsection after a version's player bullets.
 
 ## [Unreleased]
 
+## [1.0.17] - 2026-11-05
+
+- **Crafting from the route works with a controller.** The route's Craft button called the game's protected craft function from addon code, which tainted the client's own crafting path: the craft never finished and controller input stayed blocked until `/reload`. The button now asks a secure button to run the craft as the client's own, and the tracked-reagents menu opens the recipe so its native Craft button does the same. A redraw during a fight waits for the fight to end before it touches that secure button, so it cannot trip the same block itself.
+
+## [1.0.16] - 2026-11-05
+- **Tall tracker sections stay under your quests.** A section that fills the room left below the quest tracker now shows what fits there instead of the whole column jumping beside the tracker. Each section gets the room the ones above it left, less the gap under it, so the column never runs past the bottom of the screen. The column only moves above or beside the tracker when nothing fits below it at all.
+
+## [1.0.15] - 2026-11-05
+
+- **The Forever addons settings page ends with a Ko-fi link.** If the addons help you, its Copy link button shows the address, ready to paste into your browser. Nothing is locked behind it, and it shows nowhere else.
+
 ## [1.0.14] - 2026-11-05
 
 - **Long lists in the Professions window scroll.** The skipped and pinned route menus, the profession dropdown and a shopping list's block menu show 20 entries at a time and scroll the rest, so every entry stays reachable on any screen. The shared settings page also drops a dropdown helper nothing used.

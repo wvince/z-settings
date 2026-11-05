@@ -979,3 +979,55 @@ end
 function ForeverDungeonJournal_OnAddonCompartmentLeave()
     if GameTooltip then GameTooltip:Hide() end
 end
+
+-- BEGIN rpgintro
+-- Open the options on the page that holds one option and make its row pulse
+-- gold a few times (the RPG Mode note's "Disable in Options" button).
+local function PulseRow(check)
+    if not check.fdjPulse then
+        local page = check:GetParent()
+        local _, _, _, _, y = check:GetPoint(1)
+        local glow = page:CreateTexture(nil, "BACKGROUND", nil, 2)
+        glow:SetPoint("TOPLEFT", 10, (y or 0) + 2)
+        glow:SetPoint("TOPRIGHT", -10, (y or 0) + 2)
+        glow:SetHeight(32)
+        glow:SetTexture("Interface\\Buttons\\WHITE8X8")
+        glow:SetVertexColor(1.00, 0.78, 0.25, 0.35)
+        glow:SetAlpha(0)
+        local pulse = glow:CreateAnimationGroup()
+        pulse:SetLooping("BOUNCE")
+        local fade = pulse:CreateAnimation("Alpha")
+        fade:SetFromAlpha(0)
+        fade:SetToAlpha(1)
+        fade:SetDuration(0.4)
+        pulse:SetScript("OnLoop", function(self)
+            self.loops = (self.loops or 0) + 1
+            if self.loops >= 6 then self:Stop() end
+        end)
+        check.fdjPulse = pulse
+    end
+    check.fdjPulse.loops = 0
+    check.fdjPulse:Stop()
+    check.fdjPulse:Play()
+end
+
+function FDJ.OpenSettingsAt(label)
+    if not panel then CreatePanel() end
+    local pageIndex, pages = 1, 0
+    for _, option in ipairs(OPTIONS) do
+        if option.header then pages = pages + 1 end
+        if option.label == label then
+            pageIndex = math.max(1, pages)
+            break
+        end
+    end
+    panel.selectedTab = 1
+    panel.selectedPage = pageIndex
+    if panel:IsShown() then panel:Hide() end
+    panel:Show()
+    if panel.Raise then panel:Raise() end
+    for _, check in ipairs(panel.checks or {}) do
+        if check.option and check.option.label == label then PulseRow(check) end
+    end
+end
+-- END rpgintro

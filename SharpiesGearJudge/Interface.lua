@@ -926,7 +926,7 @@ function MSC.UpdateReceipt()
                         else
                             newScore, oldScore = MSC:EvaluateUpgrade(cachedItem.link, compSlot, weights, specName)
                         end
-                        if newScore and oldScore and newScore > oldScore + 0.1 then foundUpgrade = true end
+                        if newScore and oldScore and newScore > oldScore + MSC.VERDICT_EPS then foundUpgrade = true end
                     end
                end
             end
@@ -1055,8 +1055,8 @@ function MSC.UpdateAllQuestOverlays()
                 if slotID then
                     local newScore, oldScore = MSC:EvaluateUpgrade(link, slotID, weights, specName)
                     if newScore and oldScore then
-                        if (newScore > (oldScore + 0.1)) then overlayType = "UP"
-                        elseif (oldScore > (newScore + 0.1)) then overlayType = "DOWN" end
+                        if (newScore > (oldScore + MSC.VERDICT_EPS)) then overlayType = "UP"
+                        elseif (oldScore > (newScore + MSC.VERDICT_EPS)) then overlayType = "DOWN" end
                     end
                 end
             end
@@ -1122,9 +1122,9 @@ function MSC.UpdateMerchantOverlays()
                             if slotID then
                                  local newScore, oldScore = MSC:EvaluateUpgrade(link, slotID, weights, specName)
                                  if newScore and oldScore then
-                                     if (newScore > (oldScore + 0.1)) then
+                                     if (newScore > (oldScore + MSC.VERDICT_EPS)) then
                                          overlayType = "UP"
-                                     elseif (oldScore > (newScore + 0.1)) then
+                                     elseif (oldScore > (newScore + MSC.VERDICT_EPS)) then
                                          overlayType = "DOWN"
                                      end
                                  end
@@ -1184,9 +1184,9 @@ function MSC.UpdateLootRollOverlays()
                             if slotID then
                                 local newScore, oldScore = MSC:EvaluateUpgrade(link, slotID, weights, specName)
                                 if newScore and oldScore then
-                                    if (newScore > (oldScore + 0.1)) then
+                                    if (newScore > (oldScore + MSC.VERDICT_EPS)) then
                                         overlayType = "UP"
-                                    elseif (oldScore > (newScore + 0.1)) then
+                                    elseif (oldScore > (newScore + MSC.VERDICT_EPS)) then
                                         overlayType = "DOWN"
                                     end
                                 end
@@ -1233,7 +1233,7 @@ function MSC.IsCraftUpgrade(link, weights, specName)
     local compSlot = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
     if not compSlot then return false end
     local newScore, oldScore = MSC:EvaluateUpgrade(link, compSlot, weights, specName)
-    return newScore and oldScore and newScore > (oldScore + 0.1) or false
+    return newScore and oldScore and newScore > (oldScore + MSC.VERDICT_EPS) or false
 end
 
 -- Shows or hides the green arrow on a recipe row or the selected-recipe icon.
@@ -1429,6 +1429,10 @@ end
 -- =============================================================
 -- Shared by the Blizzard bags and every third-party bag integration below.
 -- Returns "UP", "DOWN" or nil for a bag item link.
+-- The smallest score change that counts as an upgrade or downgrade: the tooltip's own (Judge.lua, delta > 0.01), so a
+-- bag arrow shows for every item the tooltip calls an upgrade (2026-11-04: the bags used 0.1, so small upgrades had none).
+MSC.VERDICT_EPS = 0.01
+
 function MSC.GetBagArrowVerdict(link, weights, specName)
     if not link or not weights then return nil end
     local itemName, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
@@ -1447,8 +1451,8 @@ function MSC.GetBagArrowVerdict(link, weights, specName)
     end
     if not newScore or not oldScore then return nil end
 
-    if newScore > (oldScore + 0.1) then return "UP"
-    elseif oldScore > (newScore + 0.1) then return "DOWN" end
+    if newScore > (oldScore + MSC.VERDICT_EPS) then return "UP"
+    elseif oldScore > (newScore + MSC.VERDICT_EPS) then return "DOWN" end
     return nil
 end
 
@@ -2039,6 +2043,78 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
         duiEvents:SetScript("OnEvent", function()
             C_Timer.After(0.5, MSC.RefreshDaylightUIOverlays)
         end)
+    end
+
+    -- [[ 7. DAYLIGHTUI NPC WINDOW (quest rewards) ]]
+    -- DaylightUI's own NPC window (core addon, module "NPC", on by default)
+    -- replaces the quest frame, so the game's reward buttons that
+    -- MSC.UpdateAllQuestOverlays marks never show. Its page is redrawn by
+    -- ns.Window.Fill(page); the reward tiles are pooled in
+    -- page.stack.pools.tile, each with its spec (spec.link() = the quest item
+    -- link). After each fill, every tile with a link gets the same green/red
+    -- arrow as the game's reward buttons (full evaluation, always on), at the
+    -- icon's top-right corner (the count sits bottom-right). (2026-11-04)
+    local npcMod = DaylightUI and type(DaylightUI.GetModule) == "function" and DaylightUI:GetModule("NPC")
+    local npcWin = npcMod and npcMod.ns and npcMod.ns.Window
+    if npcWin and type(npcWin.Fill) == "function" then
+        local function MarkTile(b, overlayType)
+            if not overlayType then
+                if b.SGJ_NpcArrow then b.SGJ_NpcArrow:Hide() end
+                return
+            end
+            if not b.SGJ_NpcArrow then
+                local holder = CreateFrame("Frame", nil, b)
+                holder:SetAllPoints(b.edge or b.icon or b)
+                local tex = holder:CreateTexture(nil, "OVERLAY", nil, 7)
+                tex:SetSize(16, 16)
+                tex:SetPoint("TOPRIGHT", holder, "TOPRIGHT", 3, 3)
+                holder.tex = tex
+                b.SGJ_NpcArrow = holder
+            end
+            local holder = b.SGJ_NpcArrow
+            holder:SetFrameLevel(b:GetFrameLevel() + 10)
+            holder.tex:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. (overlayType == "UP" and "Upgrade.png" or "Downgrade.png"))
+            holder:Show()
+        end
+
+        local function MarkPage(page)
+            local pool = page and page.stack and page.stack.pools and page.stack.pools.tile
+            if not pool then return end
+            local weights, specName = MSC.GetCurrentWeights()
+            for i = 1, (pool.n or 0) do
+                local b = pool[i]
+                local spec = b and b.spec
+                local overlayType
+                if weights and spec and type(spec.link) == "function" then
+                    local ok, link = pcall(spec.link)
+                    if ok and type(link) == "string" then
+                        local itemName, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
+                        if itemName and equipLoc and equipLoc ~= "" and equipLoc ~= "INVTYPE_NON_EQUIP" and MSC.IsItemUsable(link) then
+                            local slotID = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
+                            if slotID then
+                                local newScore, oldScore = MSC:EvaluateUpgrade(link, slotID, weights, specName)
+                                if newScore and oldScore then
+                                    if newScore > oldScore + MSC.VERDICT_EPS then overlayType = "UP"
+                                    elseif oldScore > newScore + MSC.VERDICT_EPS then overlayType = "DOWN" end
+                                end
+                            end
+                        end
+                    end
+                end
+                if b then MarkTile(b, overlayType) end
+            end
+            -- tiles past this fill's count are hidden by DaylightUI; clear their arrows for the next reuse
+            for i = (pool.n or 0) + 1, #pool do if pool[i] then MarkTile(pool[i], nil) end end
+        end
+
+        -- Npc.Fill is called directly on refills; the page tables (TALK, and SCENE_TALK for
+        -- the immersive look) hold their own copy of it, which the window calls when a page
+        -- opens. Each is hooked (marking twice is harmless). The item info can arrive a
+        -- moment later; DaylightUI refills then too.
+        hooksecurefunc(npcWin, "Fill", MarkPage)
+        for _, def in ipairs({ npcWin.TALK, npcWin.SCENE_TALK }) do
+            if type(def) == "table" and type(def.Fill) == "function" then hooksecurefunc(def, "Fill", MarkPage) end
+        end
     end
 end)
 
@@ -3050,8 +3126,9 @@ function MSC.InitSettingsView(parent)
     cbBagArrows:HookScript("OnClick", function() MSC.BagCacheDirty = true; if RequestUpdate then RequestUpdate() end end)
     local cbFastBag = CreateCheck(MSC.L["Fast Bag Arrows"], "FastBagArrows", MSC.L["Single-slot scoring for bag arrows (full eval for sets/weapons)."], cbBagArrows, 20, -5)
     local cbLootArrows = CreateCheck(MSC.L["Show Loot Roll Arrows"], "ShowLootArrows", MSC.L["Shows green upgrade arrows on group loot popups."], cbFastBag, -20, -5)
+    local cbLootToast = CreateCheck(MSC.L["Show Loot Upgrade Alerts"], "ShowLootToast", MSC.L["Shows a small alert when an item you loot or receive is an upgrade. Click it to equip the item."], cbLootArrows, 0, -5)
     -- SGJ_API.lua: answer loot council / loot distribution addons' score requests (addon prefix "SGJ")
-    CreateCheck(MSC.L["Share Scores With Group Addons"], "ShareScores", MSC.L["Lets loot council and loot distribution addons in your group ask Sharpie's Gear Judge how much an item would upgrade you. Only your upgrade % and scores are sent."], cbLootArrows, 0, -5)
+    CreateCheck(MSC.L["Share Scores With Group Addons"], "ShareScores", MSC.L["Lets loot council and loot distribution addons in your group ask Sharpie's Gear Judge how much an item would upgrade you. Only your upgrade % and scores are sent."], cbLootToast, 0, -5)
 
     -- ==========================================
     -- SECTION 2: TOOLTIP VISUALS (left column)
@@ -3915,9 +3992,10 @@ function MSC.ApplySettingsDefaults()
         SimplifyStats = false,
         TrackedSpecs = {},
         GearProfiles = {},
-        ShowBagArrows = false,
+        ShowBagArrows = true,  -- on by default since 3.2.10 (see the one-time switch below)
         FastBagArrows = true,
         ShowLootArrows = false,
+        ShowLootToast = true,  -- LootToast.lua: an alert when an item you loot or receive is an upgrade (3.2.10)
         ShareScores = true,    -- SGJ_API.lua: answer group addons' score requests
         AssumeRaidBuffs = false,
         AssumeWorldBuffs = false,
@@ -3939,6 +4017,12 @@ function MSC.ApplySettingsDefaults()
         if SGJ_Settings[key] == nil then
             SGJ_Settings[key] = value
         end
+    end
+    -- 3.2.10: bag arrows are on by default. Until now the old default (off) was saved for everyone, so a saved "off"
+    -- can't tell a choice from the old default: turn them on once for every account; unticking it afterwards sticks.
+    if not SGJ_Settings.BagArrowsDefaultOn then
+        SGJ_Settings.ShowBagArrows = true
+        SGJ_Settings.BagArrowsDefaultOn = true
     end
     if MSC.BuffEngine and MSC.BuffEngine.InitSettings then MSC.BuffEngine:InitSettings() end
 

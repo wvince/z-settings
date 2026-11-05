@@ -1,4 +1,4 @@
-DungeonJournal 1.6.5
+DungeonJournal 1.6.7
 
 INSTALLATION
 Exit WoW, then extract this ZIP so
@@ -9,6 +9,41 @@ SETTINGS
 The addon folder, keybinding and saved-variable names are unchanged, so existing
 preferences carry over. Character progress is read from the game.
 Command: /dj.
+
+CHANGES IN 1.6.7
+- RPG Mode explains itself. In the mode chooser at first login, RPG Mode's
+  button is now "Enable in Options": it opens the options on the Dungeon
+  list page (the RPG Mode box pulses gold) and you tick the box there, so you
+  know where to switch modes later. The journal stays in Gamer Mode until
+  then.
+- The first time you open the journal in RPG Mode, a note over the dungeon
+  cards says dungeons stay locked until you kill their final boss, with
+  "Disable in Options" and "Keep RPG Mode". The new RPG Mode button in the
+  dungeon list header (left of Favourites) opens it any time. The Journey bar
+  now sits just under the header buttons.
+- New Rogue class quests from C's Dead Drop near Pyrewood Village:
+  The Horn of Xelthos (Shadowfang Keep) and The Eye of Bhossca (Scarlet
+  Monastery: Graveyard and Library). Each page shows the whole chain, the
+  route through the dungeon, where every key and tool comes from, and the
+  rewards (Pyrewood Signet Ring, Ruby-Adorned Blade). Rogues see them (other
+  classes too with "Show all class quests" on).
+- The New Plague (Ruins of Lordaeron, Horde) now needs the whole A Recipe For
+  Death chain first, and The Wrath of Rath'mael needs the Rear Guard Patrol
+  chain first, as on live. Both chains show every step: who gives it, where
+  to go, and the rewards.
+- Quest chain steps: Show on Map for the quest giver, and Show Turn In when
+  someone else takes the quest. YOU HAVE IT shows when a step is in your
+  quest log. Click an item to mark where it is on the map (for example
+  Berard's Journal); where items drop is in their tooltips.
+- Less text on quest chain steps: the objective (with your progress), where
+  to go, and who starts and takes the quest. Rewards you get on top of the
+  one you choose are listed separately.
+- Maps for three announced dungeons: The Drowned City, Krol'dok Stronghold
+  and Shaper's Terrace. Click their Coming Soon card to open the map.
+- Boss and trash portraits for the original dungeons load instantly, and
+  portraits the journal looks up are remembered between sessions.
+- Fixed: the new-version reminder could keep naming a version that isn't out.
+- Everything new is translated into every supported language.
 
 CHANGES IN 1.6.5
 - New options panel in the style of the game's own Options window: Options

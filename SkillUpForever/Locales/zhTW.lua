@@ -95,6 +95,7 @@ L["Craft %d× %s"] = "製造%d× %s"
 L["Craft %s"] = "製造%s"
 L["Craft next"] = "製造下一個"
 L["Crafted gear"] = "製造裝備"
+L["Crafting from the route works with a controller."] = "使用路線進行製造現在支援控制器。"
 L["Crafts"] = "製造次數"
 L["Crafts %d now."] = "現在製造%d個。"
 L["Don't count it"] = "不計入"
@@ -274,6 +275,8 @@ L["Subtract what the crafted item sells for from its cost. Auction prices need A
 	"從成本中減去製造物品的售價。拍賣價需要Auctionator，已扣除5%手續費，且不一定能賣出。"
 L["Suggest my other Forever addons"] = "推薦我的其他Forever插件"
 L["Taught by %s trainers."] = "由%s訓練師教授。"
+L["The Forever addons are free, with nothing locked behind them. If they help, you can buy me a coffee."] =
+	"Forever 插件全部免費，沒有任何付費才能使用的內容。如果它們對你有幫助，可以請我喝杯咖啡。" -- mt
 L["The place this recipe is taught isn't known yet."] = "尚不清楚在哪裡學習此配方。"
 L["The rest comes from a vendor or your gathering."] = "其餘來自商人或你的採集。"
 L["The route asks for %d to reach %d in 9 runs of 10; a worse run needs more."] =
@@ -469,5 +472,3 @@ L["/su share on|off - control sharing with guild and group"] = "/su share on|off
 L["Share observed recipe totals with guild and group"] = "與公會和隊伍共享觀察到的配方總數"
 L["On by default. Turn off to stop sending and receiving totals and hide other players. Local observations stay."] =
 	"預設開啟。關閉後停止收發總數並隱藏其他玩家。本機觀察紀錄會保留。"
-
-L["Long lists in the Professions window scroll."] = "專業視窗中的長列表可以捲動." -- mt

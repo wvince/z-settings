@@ -1356,4 +1356,40 @@ do
   Z_BUNDLE = nil
 end
 
+-- 13. tables of the exporter's own data stay home; their options still travel
+do
+  local lock = newChar("Zeroshin", "Lock", newAccount(), {})
+  lock.addons = { Syndicator = true, DataStore = true, Details = true, Loot = true, ["Z-Settings"] = true }
+  SVS = { Syndicator = "SYNDICATOR_CONFIG, SYNDICATOR_DATA, SYNDICATOR_SUMMARIES",
+    DataStore = "DataStore_Containers_Characters, DataStore_Mails_Options", Details = "__details_backup",
+    Loot = "ForeverLootSparklesDB", ["Z-Settings"] = "ZSettingsDB" }
+  useChar(lock, { SYNDICATOR_CONFIG = { show_inventory_tooltips = true }, SYNDICATOR_DATA = { Characters = { me = 1 } },
+    SYNDICATOR_SUMMARIES = { Characters = { me = 1 } }, DataStore_Containers_Characters = { me = 1 },
+    DataStore_Mails_Options = { ScanMailBody = true }, __details_backup = { _instance_backup = { 1 } },
+    ForeverLootSparklesDB = { sparkleHerbs = true, savedCVars = { SoftTargetInteract = "3" } } })
+  ZSettingsDB = nil
+  SlashCmdList.ZSETTINGS("export"); pressKeys("Q")
+  local d = C_EncodingUtil.DeserializeCBOR(C_EncodingUtil.DecompressString(C_EncodingUtil.DecodeBase64(ZSettingsDB.export:sub(5))))
+  local st = d.settings
+  check("13 Syndicator's bag data stays home", st.SYNDICATOR_DATA == nil and st.SYNDICATOR_SUMMARIES == nil)
+  check("13 Syndicator's options travel", st.SYNDICATOR_CONFIG ~= nil)
+  check("13 DataStore's character data stays home", st.DataStore_Containers_Characters == nil)
+  check("13 DataStore's options travel", st.DataStore_Mails_Options ~= nil)
+  check("13 Details' window backup stays home", st.__details_backup == nil)
+  local loot = st.ForeverLootSparklesDB and C_EncodingUtil.DeserializeCBOR(st.ForeverLootSparklesDB.data)
+  check("13 a table's saved interface settings are cut, its options travel", loot and loot.sparkleHerbs == true and loot.savedCVars == nil)
+  -- a setup published earlier still carries them: they don't land
+  d.settings.SYNDICATOR_DATA = { addon = "Syndicator", data = C_EncodingUtil.SerializeCBOR({ Characters = { me = 1 } }) }
+  d.settings.ForeverLootSparklesDB = { addon = "Loot", data = C_EncodingUtil.SerializeCBOR({ sparkleHerbs = false, savedCVars = { a = "1" } }) }
+  local old = "ZS1:" .. C_EncodingUtil.EncodeBase64(C_EncodingUtil.CompressString(C_EncodingUtil.SerializeCBOR(d)))
+  local bud = newChar("Buddy", "Pal", newAccount(), {})
+  bud.addons = lock.addons
+  useChar(bud, { SYNDICATOR_DATA = { Characters = { bud = 1 } }, ForeverLootSparklesDB = { sparkleHerbs = true, savedCVars = { b = "2" } } })
+  ZSettingsDB, Z_BUNDLE = nil, old
+  SlashCmdList.ZSETTINGS("import"); pressKeys("A")
+  check("13 an older setup's bag data doesn't land", SYNDICATOR_DATA.Characters.bud == 1 and SYNDICATOR_DATA.Characters.me == nil)
+  check("13 an older setup's options land, their saved interface settings stay", ForeverLootSparklesDB.sparkleHerbs == false and ForeverLootSparklesDB.savedCVars.b == "2")
+  Z_BUNDLE = nil
+end
+
 io.write(("%d passed, %d failed\n"):format(passed, failed))

@@ -16,6 +16,10 @@ local MAX_ACCOUNT_MACROS = (Constants and Constants.MacroConsts and Constants.Ma
 -- Baganator's settings too: how bags look is each player's own, so theirs stay as they are.
 local DATA_TABLES = { Attune_DB = true, RXPData = true, AUCTIONATOR_POSTING_HISTORY = true,
   BAGANATOR_CONFIG = true, BAGANATOR_DATA = true,
+  -- your characters' bags, Details' backup of your windows, your item hunts and recipes, character lists
+  SYNDICATOR_DATA = true, SYNDICATOR_SUMMARIES = true, __details_backup = true, __details_debug = true,
+  GearQuestForeverDB = true, SkillUpForeverDB = true, Details_StreamerDB = true, DrpulseProfilesDB = true,
+  QuestieTraceDumps = true,
   AUCTIONATOR_SHOPPING_LISTS = true, AUCTIONATOR_SELLING_GROUPS = true, AUCTIONATOR_RECENT_SEARCHES = true,
   AUCTIONATOR_VENDOR_PRICE_CACHE = true, AUCTIONATOR_PRICE_DATABASE = true, AUCTIONATOR_SAVEDVARS = true,
   DBM_ModsToLoadWithFullTestSupport = true, DBM_TestResults_Export = true, DBM_Test_DefaultTimeWarp = true,
@@ -26,8 +30,22 @@ local DATA_TABLES = { Attune_DB = true, RXPData = true, AUCTIONATOR_POSTING_HIST
 -- AceDB tables it travels as one profile (see addon profiles), never whole. Replacing it under a running
 -- Details also broke its logout save, which then wrote its live windows out (1.9 GB).
 local PROFILE_TABLES = { _detalhes_global = true }
+-- DataStore (Altoholic's database) is every character's bags, mail and auctions; only its options are settings
 local function shareable(var, value)
+  if var:match("^DataStore") and not var:match("_Options$") then return false end
   return not DATA_TABLES[var] and not PROFILE_TABLES[var] and not (type(value) == "table" and value.profileKeys ~= nil)
+end
+
+-- keys inside a shared table that are state, not settings: never exported, and the friend's own stay.
+-- ForeverLootSparkles keeps the interface settings it changed, to put them back later.
+local STATE_KEYS = { ForeverLootSparklesDB = { savedCVars = true } }
+local function withoutState(var, value, theirs)
+  local keys = STATE_KEYS[var]
+  if not keys or type(value) ~= "table" then return value end
+  local out = {}
+  for k, v in pairs(value) do if not keys[k] then out[k] = v end end
+  for k in pairs(keys) do if type(theirs) == "table" then out[k] = theirs[k] end end
+  return out
 end
 -- macros an addon owns and rewrites as you play (RareScanner's last rare, RXPGuides' guide target): addon
 -- state, not setup. Never shared, applied or compared, so the addon rewriting them can't bring the popup back.
@@ -371,7 +389,7 @@ end
 local function readAddonSettings()
   local out, skipped = {}, {}
   for _, t in ipairs(addonTables()) do
-    local value = _G[t.var]
+    local value = withoutState(t.var, _G[t.var])
     if value ~= nil and shareable(t.var, value) then
       local ok, packed = pcall(C_EncodingUtil.SerializeCBOR, value)
       if ok and packed and #packed <= MAX_ADDON_TABLE then out[t.var] = { addon = t.addon, data = packed }
@@ -531,7 +549,7 @@ local function settingsToApply(settings)
     if not KEEP_ADDONS[e.addon] then
       if loaded[e.addon] then
         local ok, value = pcall(C_EncodingUtil.DeserializeCBOR, e.data)
-        if ok and shareable(var, value) then out[var] = { addon = e.addon, value = value } end
+        if ok and shareable(var, value) then out[var] = { addon = e.addon, value = withoutState(var, value, _G[var]) } end
       else
         missing[e.addon] = true
       end

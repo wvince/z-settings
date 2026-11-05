@@ -22,12 +22,13 @@ Requires [Git for Windows](https://git-scm.com/download/win) and collaborator ac
 ## Update
 
 1. Close WoW.
-2. In `AddOns`, run `git pull`.
+2. In `AddOns`, double-click `update.cmd`. What CurseForge or another updater changed in a shared addon
+   is replaced by the published version; addons that aren't in the repo stay.
 3. Start WoW and click Apply. The popup lists only the parts that differ from your UI, all ticked; untick
    one to keep yours. With nothing different there is no popup. Each character gets its own popup.
 
-A new addon needs a full client restart. Let only git manage this folder: CurseForge or WowUp updates
-block `git pull`. If `git pull` reports local changes, `git reset --hard origin/main` discards them.
+A new addon needs a full client restart. `git pull` works too, but stops with "your local changes" once
+an updater has changed a shared addon.
 
 ## Commands
 

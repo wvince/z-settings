@@ -150,3 +150,14 @@ def test_hook_ignores_addons_that_are_never_shared(tmp_path):
     subprocess.run(["git", "add", "README.md"], cwd=addons, check=True)
     r = run_hook(addons)
     assert r.returncode == 0, r.stderr
+
+
+def test_hook_drops_a_tocs_load_conditions_from_the_names(tmp_path):
+    addons = fake_install(tmp_path, {"2#3": "ZS1:x"})
+    (addons / "Trainer").mkdir()
+    (addons / "Trainer" / "Trainer.toc").write_text(
+        "## SavedVariables: WT_Icon, WT_Waypoint [AllowLoadGameType classic][ExcludeLoadGameType camelot]\n"
+        "## SavedVariables: WT_Icon, WT_Profession [AllowLoadGameType camelot]\n")
+    run_hook(addons)
+    bundle = (addons / "Z-Settings" / "ZBundle.lua").read_text()
+    assert '["Trainer"] = { "WT_Icon","WT_Profession","WT_Waypoint" },' in bundle

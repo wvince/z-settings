@@ -22,7 +22,8 @@ table() {
   for dir in "$root"/*/; do
     addon=$(basename "$dir")
     git -C "$root" check-ignore -q "$addon/" && continue
-    names=$(cat "$dir"*.toc 2>/dev/null | tr -d '\r' | sed -n "s/^## *$2 *: *//p" |
+    # a line can end in load conditions, "[AllowLoadGameType classic]": they are no part of a name
+    names=$(cat "$dir"*.toc 2>/dev/null | tr -d '\r' | sed -n "s/^## *$2 *: *//p" | sed 's/\[[^]]*\]//g' |
       tr ',' '\n' | sed 's/^[[:space:]]*//; s/[[:space:]]*$//' | grep -v '^$' | sort -u |
       sed 's/.*/"&"/' | paste -sd, - || true)
     [ -n "$names" ] && echo "  [\"$addon\"] = { $names },"

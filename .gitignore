@@ -1,9 +1,5 @@
 # Zeroshin's own addons, never shared
 SpyGodMode/
-# updated by friends' own updaters, which then blocked git pull: each player installs them
-ForeverDungeonJournal/
-RareScanner/
-SharpiesGearJudge/
 # your saved characters, written by ./characters
 Z-Settings/ZCharacters.lua
 __pycache__/

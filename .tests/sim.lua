@@ -1208,4 +1208,130 @@ do
   Z_CHARACTERS = nil
 end
 
+-- 10. addons with a profile per character (AceDB: Dominos, Questie): the exporter's active profile
+-- travels and lands as "Zeroshin UI", selected on the character that applies it
+do
+  AceDBLib = { db_registry = {} }
+  LibStub = function(name) if name == "AceDB-3.0" then return AceDBLib end end
+  local function aceRegister(var, key)
+    local db = { sv = _G[var], keys = { char = key, profile = (_G[var].profileKeys or {})[key] or "Default" } }
+    function db:GetCurrentProfile() return self.keys.profile end
+    function db:SetProfile(name) self.keys.profile = name; self.sv.profileKeys = self.sv.profileKeys or {}; self.sv.profileKeys[self.keys.char] = name end
+    AceDBLib.db_registry = { [db] = true }
+    return db
+  end
+  local lockAcc, budAcc = newAccount(), newAccount()
+  local lock = newChar("Zeroshin", "Lock", lockAcc, {})
+  lock.addons = { Guide = true, Details = true, ["Z-Settings"] = true }
+  SVS = { Guide = "GuideDB", Details = "_detalhes_global", ["Z-Settings"] = "ZSettingsDB" }
+  -- Details keeps every character's profile in its account table and picks one per character
+  Details = { GetCurrentProfileName = function() return _detalhes_database.active_profile end,
+    -- like Details: switching first saves the live windows into the profile being left
+    ApplyProfile = function(self, name, noSave)
+      if not _detalhes_global.__profiles[name] then return false end
+      if not noSave then self:SaveProfile() end
+      _detalhes_database.active_profile = name; self.live = _detalhes_global.__profiles[name].win; return true end,
+    SaveProfile = function(self) if self.live then _detalhes_global.__profiles[_detalhes_database.active_profile] = { win = self.live } end end }
+  useChar(lock, { GuideDB = { profileKeys = { ["Zeroshin Lock"] = "Warlock", ["Alt Lock"] = "Default" },
+    profiles = { Warlock = { bars = 5 }, Default = { bars = 1 } },
+    namespaces = { Progress = { profiles = { Warlock = { xp = true } } } } },
+    _detalhes_global = { __profiles = { ["Zeroshin-Lock"] = { win = 7 } } }, _detalhes_database = { active_profile = "Zeroshin-Lock" } })
+  aceRegister("GuideDB", "Zeroshin Lock")
+  ZSettingsDB = nil
+  SlashCmdList.ZSETTINGS("export"); pressKeys("Q")
+  local d = C_EncodingUtil.DeserializeCBOR(C_EncodingUtil.DecompressString(C_EncodingUtil.DecodeBase64(ZSettingsDB.export:sub(5))))
+  local p = d.profiles and d.profiles.GuideDB and C_EncodingUtil.DeserializeCBOR(d.profiles.GuideDB.data)
+  check("10 the active profile is exported", p and p.profile.bars == 5)
+  check("10 its namespaces travel with it", p and p.namespaces.Progress.xp == true)
+  check("10 the whole table still isn't shared", d.settings.GuideDB == nil)
+  local dp = d.profiles and d.profiles._detalhes_global and C_EncodingUtil.DeserializeCBOR(d.profiles._detalhes_global.data)
+  check("10 Details: the active profile is exported", dp and dp.win == 7)
+  check("10 Details: its account table isn't shared whole", d.settings._detalhes_global == nil)
+  local shared = ZSettingsDB.export
+  _detalhes_global.__profiles["Zeroshin-Lock"].win = 8; Details.live = 8
+  SlashCmdList.ZSETTINGS("export"); pressKeys("Q")
+  local shared8 = ZSettingsDB.export
+
+  local bud = newChar("Buddy", "Pal", budAcc, {})
+  bud.addons = { Guide = true, ["Z-Settings"] = true }
+  useChar(bud, { GuideDB = { profileKeys = { ["Buddy Pal"] = "Mine", ["Other Pal"] = "Mine" }, profiles = { Mine = { bars = 9 } } },
+    _detalhes_global = { __profiles = { ["Buddy-Pal"] = { win = 1 } } }, _detalhes_database = { active_profile = "Buddy-Pal" } })
+  local db = aceRegister("GuideDB", "Buddy Pal")
+  Details.live = 1
+  ZSettingsDB, Z_BUNDLE = nil, shared
+  SlashCmdList.ZSETTINGS("import"); pressKeys("A")
+  check("10 the profile lands as Zeroshin UI", GuideDB.profiles["Zeroshin UI"] and GuideDB.profiles["Zeroshin UI"].bars == 5)
+  check("10 and is selected on this character", db:GetCurrentProfile() == "Zeroshin UI" and GuideDB.profileKeys["Buddy Pal"] == "Zeroshin UI")
+  local nsp = GuideDB.namespaces and GuideDB.namespaces.Progress and GuideDB.namespaces.Progress.profiles
+  check("10 namespace profile lands too", nsp and nsp["Zeroshin UI"] and nsp["Zeroshin UI"].xp == true)
+  check("10 their own profiles stay", GuideDB.profiles.Mine.bars == 9 and GuideDB.profileKeys["Other Pal"] == "Mine")
+  check("10 Details: profile lands and is selected", _detalhes_global.__profiles["Zeroshin UI"] and _detalhes_global.__profiles["Zeroshin UI"].win == 7 and _detalhes_database.active_profile == "Zeroshin UI")
+  check("10 Details: their own profile stays", _detalhes_global.__profiles["Buddy-Pal"] and _detalhes_global.__profiles["Buddy-Pal"].win == 1)
+  SlashCmdList.ZSETTINGS("undo")
+  check("10 undo selects their profile again", db:GetCurrentProfile() == "Mine" and GuideDB.profileKeys["Buddy Pal"] == "Mine")
+  check("10 undo removes the shared profile nobody else uses", GuideDB.profiles["Zeroshin UI"] == nil)
+  check("10 Details: undo selects their profile again", _detalhes_database.active_profile == "Buddy-Pal")
+
+  GuideDB.profileKeys["Other Pal"] = "Zeroshin UI"
+  GuideDB.profiles["Zeroshin UI"] = { bars = 4 }
+  SlashCmdList.ZSETTINGS("import"); pressKeys("A")
+  SlashCmdList.ZSETTINGS("undo")
+  check("10 undo keeps the shared profile another character uses", GuideDB.profiles["Zeroshin UI"] and GuideDB.profiles["Zeroshin UI"].bars == 4 and GuideDB.profileKeys["Other Pal"] == "Zeroshin UI")
+  SlashCmdList.ZSETTINGS("import"); pressKeys("A")
+  check("10 Details: re-applied", _detalhes_database.active_profile == "Zeroshin UI" and Details.live == 7)
+  Z_BUNDLE = shared8
+  SlashCmdList.ZSETTINGS("import"); pressKeys("A")
+  check("10 Details: a newer setup replaces the selected shared profile", _detalhes_global.__profiles["Zeroshin UI"].win == 8 and Details.live == 8)
+  SlashCmdList.ZSETTINGS("undo")
+  check("10 Details: undo puts the earlier shared profile back", _detalhes_global.__profiles["Zeroshin UI"].win == 7 and Details.live == 7)
+  Z_BUNDLE = shared
+  LibStub, AceDBLib, Z_BUNDLE, Details = nil, nil, nil, nil
+end
+
+-- 11. windows the player moved (WoW keeps them per character in layout-local.txt) travel by name
+do
+  local function placed(name, point, x, y, user)
+    local f = { name = name, pt = { point, UIParent, point, x, y }, user = user }
+    function f:GetName() return self.name end
+    function f:IsUserPlaced() return self.user end
+    function f:IsMovable() return true end
+    function f:GetNumPoints() return 1 end
+    function f:GetPoint() return unpack(self.pt) end
+    function f:ClearAllPoints() self.pt = {} end
+    function f:SetPoint(p, rel, rp, px, py) self.pt = { p, rel, rp, px, py } end
+    function f:SetUserPlaced(b) self.user = b end
+    _G[name] = f
+    return f
+  end
+  local list
+  EnumerateFrames = function(prev)
+    if not prev then return list[1] end
+    for i, f in ipairs(list) do if f == prev then return list[i + 1] end end
+  end
+  local lock = newChar("Zeroshin", "Lock", newAccount(), {})
+  lock.addons = { ["Z-Settings"] = true }
+  SVS = { ["Z-Settings"] = "ZSettingsDB" }
+  useChar(lock, {})
+  list = { placed("RXPFrame", "TOPRIGHT", -217, -72, true), placed("Minimap", "TOPRIGHT", 0, 0, false) }
+  ZSettingsDB = nil
+  SlashCmdList.ZSETTINGS("export"); pressKeys("Q")
+  local d = C_EncodingUtil.DeserializeCBOR(C_EncodingUtil.DecompressString(C_EncodingUtil.DecodeBase64(ZSettingsDB.export:sub(5))))
+  check("11 a moved window's position is exported", d.positions and d.positions.RXPFrame and d.positions.RXPFrame[3] == -217)
+  check("11 a window nobody moved isn't", d.positions and d.positions.Minimap == nil)
+  local shared = ZSettingsDB.export
+
+  local bud = newChar("Buddy", "Pal", newAccount(), {})
+  bud.addons = { ["Z-Settings"] = true }
+  useChar(bud, {})
+  local rxp = placed("RXPFrame", "CENTER", 5, 5, true)
+  list = { rxp }
+  RareFrame = nil
+  ZSettingsDB, Z_BUNDLE = nil, shared
+  SlashCmdList.ZSETTINGS("import"); pressKeys("A")
+  check("11 the window moves there", rxp.pt[1] == "TOPRIGHT" and rxp.pt[4] == -217 and rxp.pt[5] == -72 and rxp.user == true)
+  SlashCmdList.ZSETTINGS("undo")
+  check("11 undo puts it back", rxp.pt[1] == "CENTER" and rxp.pt[4] == 5)
+  EnumerateFrames, RXPFrame, Minimap, Z_BUNDLE = nil, nil, nil, nil
+end
+
 io.write(("%d passed, %d failed\n"):format(passed, failed))

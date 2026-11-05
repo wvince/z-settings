@@ -20,8 +20,12 @@ local DATA_TABLES = { Attune_DB = true, RXPData = true, AUCTIONATOR_POSTING_HIST
   DBM_Test_PersistentImports = true, DBM_Test_Settings = true }
 -- Tables with per-character profiles (AceDB's profileKeys) can't be shared either: the friend's
 -- characters aren't in them, so they'd start on defaults and lose their own profiles.
+-- Details keeps every character's profile in _detalhes_global and picks one per character: like the
+-- AceDB tables it travels as one profile (see addon profiles), never whole. Replacing it under a running
+-- Details also broke its logout save, which then wrote its live windows out (1.9 GB).
+local PROFILE_TABLES = { _detalhes_global = true }
 local function shareable(var, value)
-  return not DATA_TABLES[var] and not (type(value) == "table" and value.profileKeys ~= nil)
+  return not DATA_TABLES[var] and not PROFILE_TABLES[var] and not (type(value) == "table" and value.profileKeys ~= nil)
 end
 -- macros an addon owns and rewrites as you play (RareScanner's last rare, RXPGuides' guide target): addon
 -- state, not setup. Never shared, applied or compared, so the addon rewriting them can't bring the popup back.
@@ -375,6 +379,135 @@ local function readAddonSettings()
   return out, skipped
 end
 
+-- addon profiles --------------------------------------------------------------------------------
+-- An AceDB table (Dominos, Questie) holds a profile per character, so it is never shared whole. The
+-- exporter's active profile travels instead and lands as PROFILE_NAME, selected on the character that
+-- applies it; their own profiles stay. The running AceDB object is asked for the character's key and
+-- profile: Forever's regional names make the key "Name Surname" in current AceDB, "Name - Realm" in
+-- older copies, so it can't be built from the name.
+local PROFILE_NAME = LAYOUT_NAME
+local function aceDB(var)
+  local lib = LibStub and LibStub("AceDB-3.0", true)
+  local sv = _G[var]
+  if not lib or type(sv) ~= "table" then return end
+  for db in pairs(lib.db_registry or {}) do
+    if type(db) == "table" and not db.parent and rawequal(db.sv, sv) then return db end
+  end
+end
+
+local function readProfile(sv, name)
+  local p = { profile = sv.profiles and sv.profiles[name] or {}, namespaces = {} }
+  for ns, n in pairs(type(sv.namespaces) == "table" and sv.namespaces or {}) do
+    if type(n) == "table" and type(n.profiles) == "table" and n.profiles[name] ~= nil then p.namespaces[ns] = n.profiles[name] end
+  end
+  return p
+end
+
+local function writeProfile(sv, p)
+  sv.profiles = sv.profiles or {}
+  sv.profiles[PROFILE_NAME] = p.profile or {}
+  for ns, prof in pairs(p.namespaces or {}) do
+    sv.namespaces = sv.namespaces or {}
+    sv.namespaces[ns] = sv.namespaces[ns] or {}
+    sv.namespaces[ns].profiles = sv.namespaces[ns].profiles or {}
+    sv.namespaces[ns].profiles[PROFILE_NAME] = prof
+  end
+end
+
+local function removeProfile(sv)
+  if type(sv.profiles) == "table" then sv.profiles[PROFILE_NAME] = nil end
+  for _, n in pairs(type(sv.namespaces) == "table" and sv.namespaces or {}) do
+    if type(n) == "table" and type(n.profiles) == "table" then n.profiles[PROFILE_NAME] = nil end
+  end
+end
+
+local function details()
+  local g = _G._detalhes_global
+  if type(Details) == "table" and type(Details.GetCurrentProfileName) == "function" and type(Details.ApplyProfile) == "function"
+    and type(g) == "table" and type(g.__profiles) == "table" then return Details, g.__profiles end
+end
+
+local function readProfiles()
+  local out = {}
+  local d, profiles = details()
+  if d then
+    pcall(d.SaveProfile, d)   -- the windows as they are now, not as they were at login
+    local name = d:GetCurrentProfileName()
+    local ok, packed = pcall(C_EncodingUtil.SerializeCBOR, profiles[name] or {})
+    if ok and packed and #packed <= MAX_ADDON_TABLE then out._detalhes_global = { addon = "Details", details = true, data = packed } end
+  end
+  for _, t in ipairs(addonTables()) do
+    local db = not DATA_TABLES[t.var] and aceDB(t.var)
+    if db then
+      local ok, packed = pcall(C_EncodingUtil.SerializeCBOR, readProfile(db.sv, db:GetCurrentProfile()))
+      if ok and packed and #packed <= MAX_ADDON_TABLE then out[t.var] = { addon = t.addon, data = packed } end
+    end
+  end
+  return next(out) and out or nil   -- no profile addon running: no part to offer
+end
+
+-- an addon that isn't running has no AceDB object here: its profile waits for a later apply
+local function applyProfiles(profiles)
+  local done = 0
+  for var, e in pairs(profiles) do
+    local db = not KEEP_ADDONS[e.addon] and not e.details and aceDB(var)
+    local d, dprofiles
+    if e.details then d, dprofiles = details() end
+    local ok, p = pcall(C_EncodingUtil.DeserializeCBOR, e.data)
+    if d and ok and type(p) == "table" then
+      -- switching saves the live windows into the profile being left: not over the one arriving
+      local leaving = d:GetCurrentProfileName()
+      if leaving ~= PROFILE_NAME then pcall(d.SaveProfile, d) end
+      dprofiles[PROFILE_NAME] = p
+      if pcall(d.ApplyProfile, d, PROFILE_NAME, true) then done = done + 1 end
+    elseif db and ok and type(p) == "table" then
+      writeProfile(db.sv, p)
+      db:SetProfile(PROFILE_NAME)
+      done = done + 1
+    end
+  end
+  return done
+end
+
+-- window positions ------------------------------------------------------------------------------
+-- Windows the player dragged, which WoW remembers per character (layout-local.txt), travel by frame
+-- name as { point, relativePoint, x, y } on the screen. A window anchored to another frame follows that
+-- frame, so it stays out. One the friend's addons haven't created by the apply is skipped.
+local function framePosition(f)
+  local ok, point, rel, relPoint, x, y = pcall(f.GetPoint, f)
+  if ok and point and (rel == nil or rel == UIParent) and f:GetNumPoints() == 1 then return { point, relPoint, x, y } end
+end
+
+local function readPositions()
+  if type(EnumerateFrames) ~= "function" then return end
+  local out, f = {}, EnumerateFrames()
+  while f do
+    local okName, name = pcall(f.GetName, f)
+    local okPlaced, placed = pcall(f.IsUserPlaced, f)
+    if okName and type(name) == "string" and okPlaced and placed then out[name] = framePosition(f) end
+    f = EnumerateFrames(f)
+  end
+  return next(out) and out or nil
+end
+
+local function placeFrame(name, p, userPlaced)
+  local f = _G[name]
+  if type(f) ~= "table" or type(f.SetPoint) ~= "function" then return false end
+  -- a protected frame (action bars) moved from here would be tainted; Dominos places its own bars
+  if type(f.IsProtected) == "function" and f:IsProtected() then return false end
+  return (pcall(function()
+    f:ClearAllPoints()
+    f:SetPoint(p[1], UIParent, p[2], p[3], p[4])
+    if f:IsMovable() then f:SetUserPlaced(userPlaced ~= false) end
+  end))
+end
+
+local function applyPositions(positions)
+  local done = 0
+  for name, p in pairs(positions) do if placeFrame(name, p) then done = done + 1 end end
+  return done
+end
+
 -- imported addon tables stay assigned until the game saves them at /reload or logout; CLEAR puts
 -- back a table that didn't exist before
 local pending, CLEAR = {}, {}
@@ -477,7 +610,7 @@ local function capture(forSharing)
     format = 1, made = date("%Y-%m-%d %H:%M"), by = UnitName("player"),
     cvars = readCVars(), binds = readBinds(), editmode = readEditMode(forSharing), chat = readChat(),
     addons = readAddons(), macros = readGeneralMacros(forSharing), clicks = readClicks(forSharing),
-    settings = settings,
+    settings = settings, profiles = readProfiles(), positions = readPositions(),
   }, skipped
 end
 
@@ -493,6 +626,8 @@ local PARTS = {
   { key = "chat", label = "Chat windows", compare = "applied", scope = "character" },
   { key = "addons", label = "Addons on or off", compare = "live" },
   { key = "settings", label = "Addon settings", compare = "applied", scope = "account" },
+  { key = "profiles", label = "Addon profiles (Dominos, Questie and others)", compare = "applied", scope = "character" },
+  { key = "positions", label = "Window positions", compare = "applied", scope = "character" },
   { key = "macros", label = "General macros", compare = "live" },
   { key = "clicks", label = "Click casting", compare = "live" },
 }
@@ -506,6 +641,8 @@ local function applyPart(key, data)
   elseif key == "chat" then applyChat(data.chat)
   elseif key == "addons" then return applyAddons(data.addons, playerKey())
   elseif key == "macros" then return applyGeneralMacros(data.macros)
+  elseif key == "profiles" then return applyProfiles(data.profiles)
+  elseif key == "positions" then return applyPositions(data.positions)
   elseif key == "clicks" then applyClicks(data.clicks) end
 end
 
@@ -722,6 +859,35 @@ local function snapshot(data, chosen)
     snap.macros = { before = before, owned = owned }
   end
   if chosen.clicks and data.clicks then snap.clicks = readClicks(true) end   -- target and menu clicks only
+  if chosen.positions and data.positions then
+    snap.positions = {}
+    for name in pairs(data.positions) do
+      local f = _G[name]
+      local p = type(f) == "table" and type(f.GetPoint) == "function" and framePosition(f)
+      if p then
+        local ok, placed = pcall(f.IsUserPlaced, f)
+        p[5] = ok and placed or false
+        snap.positions[name] = p
+      end
+    end
+  end
+  if chosen.profiles and data.profiles then
+    snap.profiles = {}
+    for var, e in pairs(data.profiles) do
+      local db = not e.details and aceDB(var)
+      local d, dprofiles
+      if e.details then d, dprofiles = details() end
+      if d then
+        local ok, packed = pcall(C_EncodingUtil.SerializeCBOR, dprofiles[PROFILE_NAME] or {})
+        snap.profiles[var] = { addon = e.addon, details = true, active = d:GetCurrentProfileName(),
+          had = dprofiles[PROFILE_NAME] ~= nil and ok and packed or false }
+      elseif db then
+        local had = type(db.sv.profiles) == "table" and db.sv.profiles[PROFILE_NAME] ~= nil
+        local ok, packed = pcall(C_EncodingUtil.SerializeCBOR, readProfile(db.sv, PROFILE_NAME))
+        snap.profiles[var] = { addon = e.addon, active = db:GetCurrentProfile(), had = had and ok and packed or false }
+      end
+    end
+  end
   return snap
 end
 
@@ -800,6 +966,32 @@ local function restore(snap)
     ZSettingsDB.owned = owned
   end
   if snap.clicks then applyClicks(snap.clicks) end   -- spell and macro clicks stay as they are now
+  for name, p in pairs(snap.positions or {}) do placeFrame(name, p, p[5]) end
+  -- the profile selected before comes back; the shared one goes unless another character still uses it
+  for var, e in pairs(snap.profiles or {}) do
+    local db = not e.details and aceDB(var)
+    local d, dprofiles
+    if e.details then d, dprofiles = details() end
+    if d then
+      -- the shared Details profile stays: another character may have it selected, and Details can't say
+      local ok, p = false, nil
+      if e.had then ok, p = pcall(C_EncodingUtil.DeserializeCBOR, e.had) end
+      if ok and type(p) == "table" then dprofiles[PROFILE_NAME] = p end
+      pcall(d.ApplyProfile, d, e.active, true)
+    elseif db then
+      db:SetProfile(e.active)
+      local ok, p = false, nil
+      if e.had then ok, p = pcall(C_EncodingUtil.DeserializeCBOR, e.had) end
+      if ok and type(p) == "table" then writeProfile(db.sv, p)
+      elseif not e.had then
+        local used = false
+        for key, name in pairs(type(db.sv.profileKeys) == "table" and db.sv.profileKeys or {}) do
+          if name == PROFILE_NAME and key ~= db.keys.char then used = true end
+        end
+        if not used then removeProfile(db.sv) end
+      end
+    end
+  end
 end
 
 local function encode(data, prefix)
@@ -851,7 +1043,7 @@ local function applySetup(text, layout, chosen)
   -- reload) joins the first step: one undo reverts the whole update. The earliest state wins.
   local prev = decode(ZSettingsDB.undo[charKey()])
   if prev and prev.setup == snap.setup then
-    for _, key in ipairs({ "cvars", "binds", "addons", "settings" }) do
+    for _, key in ipairs({ "cvars", "binds", "addons", "settings", "profiles", "positions" }) do
       if prev[key] then
         snap[key] = snap[key] or {}
         for k, v in pairs(prev[key]) do snap[key][k] = v end

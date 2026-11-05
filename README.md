@@ -52,11 +52,15 @@ also after Later.
 |---|---|
 | Interface settings, nameplates, keybinds, chat windows | Anything on action bars, Cooldown Manager |
 | Enabled addons and their settings | Class macros, macros that cast a spell, RareScanner and RXP macros |
-| Target and menu click casting, General macros without spells | Graphics, sound, addon data and per-character profiles |
+| Target and menu click casting, General macros without spells | Graphics, sound, addon data, per-character addon tables |
+| Your active profile in Dominos, Questie, Details and other profile addons | Your other profiles |
+| Windows you dragged into place (guide window, RareScanner button) | Action bars you moved |
 
 The publisher's active Edit Mode layout arrives as a layout named `Zeroshin UI` and is selected; your
 other layouts stay. With every account slot taken it becomes a character layout; with every slot taken
-Edit Mode is left alone. A macro an earlier import brought and the setup no longer has is deleted; your
+Edit Mode is left alone. Addons that keep a profile per character work the same way: your active profile
+arrives as `Zeroshin UI` and is selected on that character, their own profiles stay, and `/z undo`
+selects theirs again. A macro an earlier import brought and the setup no longer has is deleted; your
 own macros never are, even one sharing a name with a shared macro.
 
 ## Character copy

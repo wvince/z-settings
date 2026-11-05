@@ -52,7 +52,7 @@ also after Later.
 |---|---|
 | Interface settings, nameplates, keybinds, chat windows | Anything on action bars, Cooldown Manager |
 | Enabled addons and their settings | Class macros, macros that cast a spell, RareScanner and RXP macros |
-| Target and menu click casting, General macros without spells | Graphics, sound, addon data, per-character addon tables, Baganator |
+| Target and menu click casting, General macros without spells | Graphics, sound, addon data, per-character addon tables, Baganator, Clique's click spells |
 | Your active profile in Dominos, Questie, Details and other profile addons | Your other profiles |
 | Windows you dragged into place (guide window, RareScanner button) | Action bars you moved |
 

@@ -41,8 +41,15 @@ local function accountId()
   return ZSettingsDB.accountId
 end
 
--- the character key AceDB files profiles and character data under
-local function aceKey() return (UnitName("player") or "?") .. " - " .. (GetRealmName() or "?") end
+-- The character key AceDB files profiles and character data under, asked of a running AceDB: on
+-- Forever it is "Name Surname" (the regional name), which can't be built from the name and realm.
+local function aceKey()
+  local lib = LibStub and LibStub("AceDB-3.0", true)
+  for db in pairs(lib and lib.db_registry or {}) do
+    if type(db) == "table" and type(db.keys) == "table" and type(db.keys.char) == "string" then return db.keys.char end
+  end
+  return (UnitName("player") or "?") .. " - " .. (GetRealmName() or "?")
+end
 
 -- action bars: buttons are stored by what they hold (spell name, macro name, item id), not by id ----------
 
@@ -183,19 +190,20 @@ local function readState()
     editmode = ns.readEditMode(false), cdm = readCDM(), chat = ns.readChat(), addons = ns.readAddons() }
 end
 
--- a part the state lacks stays as it is
+-- a part the state lacks stays as it is; failed lists the parts that threw
 local function applyState(s)
-  applyMacros(s.charMacros or {}, "c")   -- first: buttons and clicks find macros by name
-  if s.generalMacros then applyMacros(s.generalMacros, "g") end
-  local missing = applyBars(s.bars or {})
-  if s.binds then ns.applyBinds(s.binds, s.bindSet) end   -- saved into the same kind of set, account or character
-  applyClicks(s.clicks or {})
-  ns.applyCVars(s.cvars or {})
-  applyEditMode(s.editmode)
+  local failed, try = {}, ns.try
+  try(failed, "character macros", applyMacros, s.charMacros or {}, "c")   -- first: buttons and clicks find macros by name
+  if s.generalMacros then try(failed, "General macros", applyMacros, s.generalMacros, "g") end
+  local missing = try(failed, "action bars", applyBars, s.bars or {}) or {}
+  if s.binds then try(failed, "keybinds", ns.applyBinds, s.binds, s.bindSet) end   -- saved into the same kind of set, account or character
+  try(failed, "click casting", applyClicks, s.clicks or {})
+  try(failed, "interface settings", ns.applyCVars, s.cvars or {})
+  try(failed, "Edit Mode", applyEditMode, s.editmode)
   if s.cdm ~= nil then pcall(C_CooldownViewer.SetLayoutData, s.cdm) end
-  if s.chat then ns.applyChat(s.chat) end
-  if s.addons then ns.applyAddons(s.addons, ns.playerKey()) end
-  return missing
+  if s.chat then try(failed, "chat windows", ns.applyChat, s.chat) end
+  if s.addons then try(failed, "addons on or off", ns.applyAddons, s.addons, ns.playerKey()) end
+  return missing, failed
 end
 
 -- addon settings ----------------------------------------------------------------------------------------
@@ -382,7 +390,7 @@ local function copyFrom(key, text)
   before.applied = ZSettingsDB.applied[ns.charKey()] or false
   if type(ZSettingsDB.undo) ~= "table" then ZSettingsDB.undo = {} end
   ZSettingsDB.undo[ns.charKey()] = ns.encode(before)
-  local missing = applyState(data)
+  local missing, failed = applyState(data)
   applyTables(changes)
   -- this character now has the source's layout and chat, so the setup popup compares against the source's
   ZSettingsDB.applied[ns.charKey()] = deepcopy(data.applied)
@@ -390,6 +398,7 @@ local function copyFrom(key, text)
   ZSettingsDB.copyWaiting[ns.charKey()] = next(waiting) and { from = key, addons = waiting } or nil
   note(("copied %s, saved %s, onto this character"):format(key, data.made or "?"))
   if #missing > 0 then note("not available on this character, left off the bars: " .. table.concat(missing, ", ")) end
+  if #failed > 0 then note("couldn't copy, the rest went through: " .. table.concat(failed, ", ")) end
   if next(waiting) then note("one more reload follows for the settings of: " .. table.concat(sortedKeys(waiting), ", ")) end
   note("/z undo puts this character back as it was")
   ReloadUI()
@@ -481,7 +490,8 @@ end
 
 -- /z undo after a copy
 function ns.restoreCopy(u)
-  applyState(u)
+  local _, failed = applyState(u)
+  if #failed > 0 then note("couldn't put back: " .. table.concat(failed, ", ")) end
   if u.applied ~= nil then
     ZSettingsDB.applied = ZSettingsDB.applied or {}
     ZSettingsDB.applied[ns.charKey()] = u.applied or nil

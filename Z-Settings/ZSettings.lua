@@ -30,10 +30,15 @@ local DATA_TABLES = { Attune_DB = true, RXPData = true, AUCTIONATOR_POSTING_HIST
 -- AceDB tables it travels as one profile (see addon profiles), never whole. Replacing it under a running
 -- Details also broke its logout save, which then wrote its live windows out (1.9 GB).
 local PROFILE_TABLES = { _detalhes_global = true }
+-- Settings that are yours alone: never shared with a friend, still copied between your own characters.
+-- Clique's click casting holds spells, so it belongs to a class. BetterBlizzPlates' backup holds the
+-- nameplate settings from before it changed them, which it puts back when it is switched off.
+local OWN_TABLES = { CliqueDB = true, CliqueDB3 = true, BBPCVarBackupsDB = true }
 -- DataStore (Altoholic's database) is every character's bags, mail and auctions; only its options are settings
 local function shareable(var, value)
   if var:match("^DataStore") and not var:match("_Options$") then return false end
-  return not DATA_TABLES[var] and not PROFILE_TABLES[var] and not (type(value) == "table" and value.profileKeys ~= nil)
+  return not DATA_TABLES[var] and not PROFILE_TABLES[var] and not OWN_TABLES[var]
+    and not (type(value) == "table" and value.profileKeys ~= nil)
 end
 
 -- keys inside a shared table that are state, not settings: never exported, and the friend's own stay.
@@ -75,6 +80,14 @@ local CVAR_SKIP = { "^CACHE", "^last", "Tutorial", "closedInfoFrames", "hardTrac
   "^GamepadCameraSaved" }
 
 local function say(...) print("|cff8788eeZ-Settings|r:", ...) end
+
+-- Runs one part of an export, apply or copy. A part that throws (an addon half loaded, full macro
+-- slots) is listed in failed as "label (error)" and gives nil, so the parts after it still run.
+local function try(failed, label, fn, ...)
+  local result = { pcall(fn, ...) }
+  if result[1] then return unpack(result, 2) end
+  failed[#failed + 1] = ("%s (%s)"):format(label, (tostring(result[2]):gsub("^.-:%d+: ", "")))
+end
 -- a reload clears the chat, so these lines are kept and printed again once the UI is back
 local function note(line)
   say(line)
@@ -335,6 +348,7 @@ end
 local function applyGeneralMacros(wanted)
   ZSettingsDB = ZSettingsDB or {}
   local owned, changed = ZSettingsDB.owned or {}, 0
+  ZSettingsDB.owned = owned   -- stored first: a macro made before a later one throws is still known as brought
   for name in pairs(owned) do
     if not wanted[name] and not ADDON_MACROS[name] then
       local i = findMacro(name, false)
@@ -451,15 +465,16 @@ local function readProfiles()
   local out = {}
   local d, profiles = details()
   if d then
-    pcall(d.SaveProfile, d)   -- the windows as they are now, not as they were at login
-    local name = d:GetCurrentProfileName()
-    local ok, packed = pcall(C_EncodingUtil.SerializeCBOR, profiles[name] or {})
+    local ok, packed = pcall(function()
+      pcall(d.SaveProfile, d)   -- the windows as they are now, not as they were at login
+      return C_EncodingUtil.SerializeCBOR(profiles[d:GetCurrentProfileName()] or {})
+    end)
     if ok and packed and #packed <= MAX_ADDON_TABLE then out._detalhes_global = { addon = "Details", details = true, data = packed } end
   end
   for _, t in ipairs(addonTables()) do
-    local db = not DATA_TABLES[t.var] and aceDB(t.var)
+    local db = not DATA_TABLES[t.var] and not OWN_TABLES[t.var] and aceDB(t.var)
     if db then
-      local ok, packed = pcall(C_EncodingUtil.SerializeCBOR, readProfile(db.sv, db:GetCurrentProfile()))
+      local ok, packed = pcall(function() return C_EncodingUtil.SerializeCBOR(readProfile(db.sv, db:GetCurrentProfile())) end)
       if ok and packed and #packed <= MAX_ADDON_TABLE then out[t.var] = { addon = t.addon, data = packed } end
     end
   end
@@ -470,7 +485,8 @@ end
 local function applyProfiles(profiles)
   local done = 0
   for var, e in pairs(profiles) do
-    local db = not KEEP_ADDONS[e.addon] and not e.details and aceDB(var)
+    -- an older setup may still carry a table that now stays home
+    local db = not KEEP_ADDONS[e.addon] and not DATA_TABLES[var] and not OWN_TABLES[var] and not e.details and aceDB(var)
     local d, dprofiles
     if e.details then d, dprofiles = details() end
     local ok, p = pcall(C_EncodingUtil.DeserializeCBOR, e.data)
@@ -624,14 +640,18 @@ end
 
 -- the whole shareable state -------------------------------------------------------------------
 
+-- failed: the parts that threw, left out of the export
 local function capture(forSharing)
-  local settings, skipped = readAddonSettings()
+  local failed = {}
+  local settings, skipped = try(failed, "Addon settings", readAddonSettings)
   return {
     format = 1, made = date("%Y-%m-%d %H:%M"), by = UnitName("player"),
-    cvars = readCVars(), binds = readBinds(), editmode = readEditMode(forSharing), chat = readChat(),
-    addons = readAddons(), macros = readGeneralMacros(forSharing), clicks = readClicks(forSharing),
-    settings = settings, profiles = readProfiles(), positions = readPositions(),
-  }, skipped
+    cvars = try(failed, "Interface settings", readCVars), binds = try(failed, "Keybinds", readBinds),
+    editmode = try(failed, "Edit Mode layout", readEditMode, forSharing), chat = try(failed, "Chat windows", readChat),
+    addons = try(failed, "Addons on or off", readAddons), macros = try(failed, "General macros", readGeneralMacros, forSharing),
+    clicks = try(failed, "Click casting", readClicks, forSharing), settings = settings,
+    profiles = try(failed, "Addon profiles", readProfiles), positions = try(failed, "Window positions", readPositions),
+  }, skipped or {}, failed
 end
 
 -- the setup in parts ----------------------------------------------------------------------------
@@ -1087,29 +1107,35 @@ local function applySetup(text, layout, chosen)
   ZSettingsDB.undo[charKey()] = encode(snap)
   local tables, missing = {}, {}
   if chosen.settings and data.settings then tables, missing = settingsDiff(data.settings) end
-  local done, macros, settingsDone, addons = {}, 0, 0, 0
+  local done, failed, macros, settingsDone, addons = {}, {}, 0, 0, 0
   for _, p in ipairs(PARTS) do
     if chosen[p.key] and data[p.key] ~= nil then
-      local a
+      local before, a = #failed, nil
       if p.key == "settings" then
-        a = applyAddonSettings(tables)
-        local seen = seenSettings()
-        for var, t in pairs(tables) do seen[var] = t.hash end
+        a = try(failed, p.label, applyAddonSettings, tables)
+        if #failed == before then
+          local seen = seenSettings()
+          for var, t in pairs(tables) do seen[var] = t.hash end
+        end
       else
-        a = applyPart(p.key, data)
+        a = try(failed, p.label, applyPart, p.key, data)
       end
-      if p.key == "macros" then macros = a or 0
-      elseif p.key == "settings" then settingsDone = a or 0
-      elseif p.key == "addons" then addons = a or 0 end
-      if p.compare == "applied" and p.key ~= "settings" and (p.key ~= "editmode" or a) then
-        appliedFor(p.scope)[p.key] = hashes[p.key]
+      -- a part that failed isn't remembered as applied, so the popup offers it again
+      if #failed == before then
+        if p.key == "macros" then macros = a or 0
+        elseif p.key == "settings" then settingsDone = a or 0
+        elseif p.key == "addons" then addons = a or 0 end
+        if p.compare == "applied" and p.key ~= "settings" and (p.key ~= "editmode" or a) then
+          appliedFor(p.scope)[p.key] = hashes[p.key]
+        end
+        done[#done + 1] = p.label:lower()
       end
-      done[#done + 1] = p.label:lower()
     end
   end
   laterFor()[charKey()] = nil
   note(("applied %s's setup (%s): %s"):format(data.by or "?", data.made or "?", table.concat(done, ", ")))
   note(("%d macros, %d addon settings, %d addons switched"):format(macros, settingsDone, addons))
+  if #failed > 0 then note("couldn't apply, /z update offers it again: " .. table.concat(failed, ", ")) end
   local skipped = {}
   for addon in pairs(missing) do skipped[#skipped + 1] = addon end
   table.sort(skipped)
@@ -1377,7 +1403,7 @@ SlashCmdList.ZSETTINGS = function(msg)
   cmd = cmd:lower()
   if InCombatLockdown() and cmd ~= "" then say("not in combat") return end
   if cmd == "export" then
-    local data, skipped = capture(true)
+    local data, skipped, failed = capture(true)
     data.note = rest ~= "" and rest or nil
     showPrompt("Z-Settings: export your setup")
     askLayout(function(layout)
@@ -1387,6 +1413,7 @@ SlashCmdList.ZSETTINGS = function(msg)
       ZSettingsDB.export, ZSettingsDB.exportMade, ZSettingsDB.exportVars = encode(data), data.made, Z_VARS_ID
       note(("your keyboard: %s. Friends on another layout get their keybinds converted."):format(LAYOUT_NAMES[layout] or "unknown"))
       if #skipped > 0 then note("not included (too large or not shareable): " .. table.concat(skipped, ", ")) end
+      if #failed > 0 then note("not included, it threw an error: " .. table.concat(failed, ", ")) end
       note("export saved: commit and push the AddOns folder")
       window:Hide()
       ReloadUI()
@@ -1444,4 +1471,4 @@ ns.readBinds, ns.applyBinds, ns.readCVars, ns.applyCVars = readBinds, applyBinds
 ns.readEditMode, ns.readChat, ns.applyChat, ns.readAddons, ns.applyAddons = readEditMode, readChat, applyChat, readAddons, applyAddons
 ns.findMacro, ns.charKey, ns.playerKey, ns.assignPending = findMacro, charKey, playerKey, assignPending
 ns.pending, ns.CLEAR, ns.DATA_TABLES, ns.KEEP_ADDONS, ns.MAX_ADDON_TABLE, ns.PRESETS = pending, CLEAR, DATA_TABLES, KEEP_ADDONS, MAX_ADDON_TABLE, PRESETS
-ns.MAX_ACCOUNT_MACROS = MAX_ACCOUNT_MACROS
+ns.MAX_ACCOUNT_MACROS, ns.try = MAX_ACCOUNT_MACROS, try

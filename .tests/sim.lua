@@ -1392,4 +1392,109 @@ do
   Z_BUNDLE = nil
 end
 
+-- 14. what goes wrong in one place never stops the rest, and class-bound or backup tables stay home
+do
+  AceDBLib = { db_registry = {} }
+  LibStub = function(name) if name == "AceDB-3.0" then return AceDBLib end end
+  local function aceRegister(regs)
+    AceDBLib.db_registry = {}
+    for var, key in pairs(regs) do
+      local db = { sv = _G[var], keys = { char = key, profile = (_G[var].profileKeys or {})[key] or "Default" } }
+      function db:GetCurrentProfile() return self.keys.profile end
+      function db:SetProfile(name) self.keys.profile = name; self.sv.profileKeys = self.sv.profileKeys or {}; self.sv.profileKeys[self.keys.char] = name end
+      AceDBLib.db_registry[db] = true
+    end
+  end
+  local lock = newChar("Zeroshin", "Lock", newAccount(), {})
+  lock.addons = { Clique = true, BetterBlizzPlates = true, Details = true, ["Z-Settings"] = true }
+  SVS = { Clique = "CliqueDB3", BetterBlizzPlates = "BetterBlizzPlatesDB, BBPCVarBackupsDB", Details = "_detalhes_global", ["Z-Settings"] = "ZSettingsDB" }
+  local clique = { profileKeys = { ["Zeroshin Lock"] = "Default" }, profiles = { Default = { bindings = { { key = "BUTTON1", type = "spell", spell = "Shadow Bolt" } } } } }
+  useChar(lock, { CliqueDB3 = deepcopy(clique), BetterBlizzPlatesDB = { enemyScale = 2 }, BBPCVarBackupsDB = { nameplateMaxScale = "0.9" },
+    _detalhes_global = { __profiles = { a = {} } }, _detalhes_database = {} })
+  aceRegister({ CliqueDB3 = "Zeroshin Lock" })
+  -- Details half loaded: asking its profile throws
+  Details = { GetCurrentProfileName = function() error("Details not ready") end, ApplyProfile = function() end, SaveProfile = function() end }
+  ZSettingsDB = nil
+  printed = {}
+  SlashCmdList.ZSETTINGS("export"); pressKeys("Q")
+  check("14 an addon that throws doesn't stop the export", ZSettingsDB.export ~= nil)
+  local d = ZSettingsDB.export and decodeSetup(ZSettingsDB.export) or { settings = {} }
+  check("14 Clique's click spells stay home", (d.profiles == nil or d.profiles.CliqueDB3 == nil) and d.settings.CliqueDB3 == nil)
+  check("14 BetterBlizzPlates' settings travel", d.settings.BetterBlizzPlatesDB ~= nil)
+  check("14 BetterBlizzPlates' backup of the old settings stays home", d.settings.BBPCVarBackupsDB == nil)
+  Details = nil
+
+  -- an older setup that still carries them: they don't land
+  d.profiles = { CliqueDB3 = { addon = "Clique", data = C_EncodingUtil.SerializeCBOR({ profile = clique.profiles.Default, namespaces = {} }) } }
+  d.settings.BBPCVarBackupsDB = { addon = "BetterBlizzPlates", data = C_EncodingUtil.SerializeCBOR({ nameplateMaxScale = "0.9" }) }
+  -- and the friend's macro slots are full, so creating a macro throws
+  d.macros = { NewOne = { 1, "/wave" } }
+  d.binds = { F5 = "TOGGLEBAG1" }
+  local old = encodeSetup(d)
+  local bud = newChar("Buddy", "Pal", newAccount(), {})
+  bud.addons = lock.addons
+  useChar(bud, { CliqueDB3 = { profileKeys = { ["Buddy Pal"] = "Healer" }, profiles = { Healer = { bindings = {} } } },
+    BBPCVarBackupsDB = { nameplateMaxScale = "1.4" } })
+  aceRegister({ CliqueDB3 = "Buddy Pal" })
+  local create = CreateMacro
+  CreateMacro = function() error("too many macros") end
+  ZSettingsDB, Z_BUNDLE = nil, old
+  printed, reloads = {}, 0
+  SlashCmdList.ZSETTINGS("import"); pressKeys("A")
+  CreateMacro = create
+  check("14 their Clique profile stays selected", CliqueDB3.profileKeys["Buddy Pal"] == "Healer" and CliqueDB3.profiles["Zeroshin UI"] == nil)
+  check("14 their BetterBlizzPlates backup stays", BBPCVarBackupsDB.nameplateMaxScale == "1.4")
+  check("14 a part that fails doesn't stop the others", keyOf(bud.account, "TOGGLEBAG1") == "F5")
+  check("14 the failed part is named", said("General macros") and said("too many macros"))
+  check("14 the apply still finishes and reloads", reloads == 1)
+  check("14 the failed part counts as not applied", ZSettingsDB.owned == nil or ZSettingsDB.owned.NewOne == nil)
+  Z_BUNDLE = nil
+end
+
+-- 15. /z copy on Forever: AceDB files characters as "Name Surname", which the running AceDB knows
+do
+  AceDBLib = { db_registry = {} }
+  LibStub = function(name) if name == "AceDB-3.0" then return AceDBLib end end
+  local function aceRegister(var, key)
+    local db = { sv = _G[var], keys = { char = key, profile = "Default" } }
+    function db:GetCurrentProfile() return self.keys.profile end
+    AceDBLib.db_registry = { [db] = true }
+  end
+  SVS = { Guide = "GuideDB", ["Z-Settings"] = "ZSettingsDB" }
+  SVCS = {}
+  local acc = newAccount()
+  local src = newChar("Zeroshin", "Lock", acc, {})
+  local dst = newChar("Stealthy", "Drood", acc, {})
+  src.addons = { Guide = true, ["Z-Settings"] = true }
+  dst.addons = src.addons
+  src.bars = { [4] = { kind = "item", id = 6948 } }   -- a save waits for the bars to load
+  local guide = { profileKeys = { ["Zeroshin Lock"] = "Zeroshin Lock" }, profiles = { ["Zeroshin Lock"] = { size = 5 } }, char = { ["Zeroshin Lock"] = { seen = 1 } } }
+  useChar(src, { GuideDB = deepcopy(guide) })
+  aceRegister("GuideDB", "Zeroshin Lock")
+  ZSettingsDB = nil
+  SlashCmdList.ZSETTINGS("save")
+  local db = ZSettingsDB
+  useChar(dst, { GuideDB = deepcopy(guide) })
+  aceRegister("GuideDB", "Stealthy Drood")
+  ZSettingsDB = db
+  printed, reloads = {}, 0
+  SlashCmdList.ZSETTINGS("copy zeroshin")
+  check("15 the profile choice moves under AceDB's own key", GuideDB.profileKeys["Stealthy Drood"] == "Stealthy Drood" and GuideDB.profiles["Stealthy Drood"] and GuideDB.profiles["Stealthy Drood"].size == 5)
+  check("15 character data moves too", GuideDB.char["Stealthy Drood"] and GuideDB.char["Stealthy Drood"].seen == 1)
+
+  -- one step of the copy failing doesn't stop the rest
+  local set = C_ClickBindings.SetProfileByInfo
+  C_ClickBindings.SetProfileByInfo = function() error("click casting unavailable") end
+  useChar(dst, { GuideDB = deepcopy(guide) })
+  aceRegister("GuideDB", "Stealthy Drood")
+  ZSettingsDB = db
+  db.undo = nil
+  printed, reloads = {}, 0
+  SlashCmdList.ZSETTINGS("copy zeroshin")
+  C_ClickBindings.SetProfileByInfo = set
+  check("15 a step that fails doesn't stop the copy", reloads == 1 and GuideDB.profileKeys["Stealthy Drood"] == "Stealthy Drood")
+  check("15 the failed step is named", said("click casting unavailable"))
+  LibStub, AceDBLib = nil, nil
+end
+
 io.write(("%d passed, %d failed\n"):format(passed, failed))

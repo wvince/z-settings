@@ -1334,4 +1334,26 @@ do
   EnumerateFrames, RXPFrame, Minimap, Z_BUNDLE = nil, nil, nil, nil
 end
 
+-- 12. Baganator's settings stay each player's own: never exported, and an older setup that carries
+-- them doesn't overwrite theirs
+do
+  local lock = newChar("Zeroshin", "Lock", newAccount(), {})
+  lock.addons = { Baganator = true, ["Z-Settings"] = true }
+  SVS = { Baganator = "BAGANATOR_CONFIG", ["Z-Settings"] = "ZSettingsDB" }
+  useChar(lock, { BAGANATOR_CONFIG = { bag_view_type = "category" } })
+  ZSettingsDB = nil
+  SlashCmdList.ZSETTINGS("export"); pressKeys("Q")
+  local d = C_EncodingUtil.DeserializeCBOR(C_EncodingUtil.DecompressString(C_EncodingUtil.DecodeBase64(ZSettingsDB.export:sub(5))))
+  check("12 Baganator settings not exported", d.settings.BAGANATOR_CONFIG == nil)
+  d.settings.BAGANATOR_CONFIG = { addon = "Baganator", data = C_EncodingUtil.SerializeCBOR({ bag_view_type = "category" }) }
+  local old = "ZS1:" .. C_EncodingUtil.EncodeBase64(C_EncodingUtil.CompressString(C_EncodingUtil.SerializeCBOR(d)))
+  local bud = newChar("Buddy", "Pal", newAccount(), {})
+  bud.addons = { Baganator = true, ["Z-Settings"] = true }
+  useChar(bud, { BAGANATOR_CONFIG = { bag_view_type = "single" } })
+  ZSettingsDB, Z_BUNDLE = nil, old
+  SlashCmdList.ZSETTINGS("import"); pressKeys("A")
+  check("12 an older setup's Baganator settings don't land", BAGANATOR_CONFIG.bag_view_type == "single")
+  Z_BUNDLE = nil
+end
+
 io.write(("%d passed, %d failed\n"):format(passed, failed))

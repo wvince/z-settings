@@ -12,8 +12,10 @@ local _, ns = ...
 
 local FORMAT = "ZS1:"
 local MAX_ACCOUNT_MACROS = (Constants and Constants.MacroConsts and Constants.MacroConsts.MAX_ACCOUNT_MACROS) or 120
--- addon tables that hold your data or state, not settings: copying them would replace the friend's own
+-- addon tables that hold your data or state, not settings: copying them would replace the friend's own.
+-- Baganator's settings too: how bags look is each player's own, so theirs stay as they are.
 local DATA_TABLES = { Attune_DB = true, RXPData = true, AUCTIONATOR_POSTING_HISTORY = true,
+  BAGANATOR_CONFIG = true, BAGANATOR_DATA = true,
   AUCTIONATOR_SHOPPING_LISTS = true, AUCTIONATOR_SELLING_GROUPS = true, AUCTIONATOR_RECENT_SEARCHES = true,
   AUCTIONATOR_VENDOR_PRICE_CACHE = true, AUCTIONATOR_PRICE_DATABASE = true, AUCTIONATOR_SAVEDVARS = true,
   DBM_ModsToLoadWithFullTestSupport = true, DBM_TestResults_Export = true, DBM_Test_DefaultTimeWarp = true,

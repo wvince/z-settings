@@ -1589,7 +1589,7 @@ step
     .goto The Barrens,52.26,31.93
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_图加|r 对话
     .turnin 870 >>交任务  遗忘之池
-    .accept 877 >>接受任务 死水绿洲
+    .accept 877 >>接受任务死水绿洲
     .target 图加·符文图腾
 step
     #label EcheyakeePickup
@@ -2572,7 +2572,7 @@ step
     .goto The Barrens,62.98,37.22
     .turnin 865 >>交任务  一定是因为角
     .turnin 1069 >>交任务  深苔蜘蛛的卵
-    .accept 1491 >>接受任务 智慧饮料
+    .accept 1491 >>接受任务智慧饮料
     .target 麦伯克·米希瑞克斯
     .goto The Barrens,62.37,37.62
     .turnin 821 >>交任务  老陈的空酒桶
@@ -2590,7 +2590,7 @@ step
     .turnin 1069 >>交任务  深苔蜘蛛的卵
     .target 麦伯克·米希瑞克斯
     .goto The Barrens,62.37,37.62
-    .turnin 821 >>交任务 老陈的空酒桶
+    .turnin 821 >>交任务  老陈的空酒桶
     --.accept 822 >>Accept Chen's Empty Keg
     .target 酿酒师德罗恩
     .goto The Barrens,62.27,38.39
@@ -2668,7 +2668,7 @@ step
     .target 曼科里克
     .goto The Barrens,51.95,31.58
     .turnin 880 >>交任务  变异的生物
-    .accept 1489 >>接受任务哈缪尔·符文图腾
+    .accept 1489 >>接受任务 哈缪尔·符文图腾
     .accept 3301 >>接受任务 茉拉·符文图腾
     .target 图加·符文图腾
     .goto The Barrens,52.26,31.93
@@ -3652,7 +3652,7 @@ step
     .dungeon WC
 step
     #completewith GShard
-    .hs >> 炉石返回棘齿城
+    .hs >> 使用炉石返回棘齿城
     .use 6948
     .dungeon WC
     .bindlocation 392,1
@@ -3886,6 +3886,7 @@ step
     >>击杀 |cRXP_ENEMY_督军克罗姆扎|r当他出现后。拾取他掉落在地上的 |cRXP_PICK_旗帜|r
     >>|cRXP_WARN_小心！他是一个强力精英，并且至少有两个|r |cRXP_ENEMY_科卡尔|r |cRXP_WARN_怪物守卫|r
     >>|cRXP_WARN_他可能需要最长 3 分钟才会刷新|r
+    .link https://www.youtube.com/watch?v=xrm0PWe5wf4 >>|cRXP_WARN_点击此处查看如何风筝的指南视频|r |cRXP_ENEMY_督军克罗姆扎|r
     .complete 4021,1 --Piece of Krom'zar's Banner (1)
     .unitscan 督军克罗姆扎
     .isOnQuest 4021
@@ -4061,7 +4062,7 @@ step
     .accept 6563 >>接受任务 阿库麦尔的精华
     .target 耶努萨克雷
     .goto Ashenvale,11.56,34.29
-    .accept 216 >>接受任务 蓟皮熊怪的麻烦
+    .accept 216 >>接受任务蓟皮熊怪的麻烦
     .target 卡拉恩·阿玛卡
     .goto Ashenvale,11.90,34.53
     .accept 6462 >>接受任务巨魔符咒
@@ -4397,7 +4398,7 @@ step
     #xprate <1.5
     .goto Ashenvale,11.56,34.29
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_耶努萨克雷|r 对话
-    .turnin 6563 >>交任务  阿库麦尔的精华
+    .turnin 6563 >>交任务阿库麦尔的精华
     .turnin 6564 >>交任务  上古之神的仆从
     .target 耶努萨克雷
 step
@@ -4594,7 +4595,7 @@ step
     #xprate <1.5
     .goto The Barrens,62.37,37.62
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_麦伯克|r 对话
-    .turnin 1491 >>交任务  智慧饮料
+    .turnin 1491 >>交任务智慧饮料
     .target 麦伯克·米希瑞克斯
     .dungeon !WC
 step
@@ -4614,7 +4615,7 @@ step << Shaman
     .target 水之先知伊斯伦
     .goto The Barrens,65.83,43.78
     .turnin 874 >>交任务  玛伦·星眼
-    .accept 873 >>接受任务依沙瓦克
+    .accept 873 >>接受任务 依沙瓦克
     .target 玛伦·星眼
     .goto The Barrens,65.83,43.86
     .isOnQuest 1529
@@ -4626,7 +4627,7 @@ step << Shaman
     .target 水之先知伊斯伦
     .goto The Barrens,65.83,43.78
     .turnin 874 >>交任务  玛伦·星眼
-    .accept 873 >>接受任务依沙瓦克
+    .accept 873 >>接受任务 依沙瓦克
     .target 玛伦·星眼
     .goto The Barrens,65.83,43.86
     .isOnQuest 1528
@@ -4638,7 +4639,7 @@ step << Shaman
     .target 水之先知伊斯伦
     .goto The Barrens,65.83,43.78
     .turnin 874 >>交任务  玛伦·星眼
-    .accept 873 >>接受任务依沙瓦克
+    .accept 873 >>接受任务 依沙瓦克
     .target 玛伦·星眼
     .goto The Barrens,65.83,43.86
     .isQuestTurnedIn 1529
@@ -4651,7 +4652,7 @@ step << Shaman
     .target 水之先知伊斯伦
     .goto The Barrens,65.83,43.78
     .turnin 874 >>交任务  玛伦·星眼
-    .accept 873 >>接受任务依沙瓦克
+    .accept 873 >>接受任务 依沙瓦克
     .target 玛伦·星眼
     .goto The Barrens,65.83,43.86
     .isQuestTurnedIn 1528

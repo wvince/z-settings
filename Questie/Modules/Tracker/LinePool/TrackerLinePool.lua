@@ -11,6 +11,8 @@ local TrackerUtils = QuestieLoader:ImportModule("TrackerUtils")
 local TrackerItemButton = QuestieLoader:ImportModule("TrackerItemButton")
 ---@type TrackerLine
 local TrackerLine = QuestieLoader:ImportModule("TrackerLine")
+---@type TrackerLayout
+local TrackerLayout = QuestieLoader:ImportModule("TrackerLayout")
 ---@type QuestieLib
 local QuestieLib = QuestieLoader:ImportModule("QuestieLib")
 ---@type TrackerData
@@ -59,7 +61,7 @@ function TrackerLinePool.Initialize(questFrame)
 
     -- create buttonPool for quest items
     for i = 1, C_QuestLog.GetMaxNumQuestsCanAccept() do
-        local btn = TrackerItemButton.New("Questie_ItemButton" .. i)
+        local btn = TrackerItemButton.New("Questie_ItemButton" .. i, TrackerLinePool.OnHighlightEnter, TrackerLinePool.OnHighlightLeave)
 
         buttonPool[i] = btn
         buttonPool[i]:Hide()
@@ -81,6 +83,7 @@ function TrackerLinePool.ResetLinesForChange()
 
     for _, line in pairs(linePool) do
         line.mode = nil
+        line.Recipe = nil
         line.trackTimedQuest = nil
         line.questHasSecondaryQIB = false
         if line.expandQuest then
@@ -98,8 +101,10 @@ function TrackerLinePool.ResetLinesForChange()
         end
         if line.playButton then
             line.playButton.mode = nil
-            line.playButton:SetAlpha(0)
             line.playButton:Hide()
+        end
+        if line.questFocus then
+            line.questFocus:Hide()
         end
     end
 
@@ -139,12 +144,9 @@ function TrackerLinePool.UpdateQuestTitleLines(callback)
 end
 
 function TrackerLinePool.UpdateWrappedLineWidths(trackerLineWidth)
-    local trackerFontSizeQuest = Questie.db.profile.trackerFontSizeQuest
-    local trackerMarginLeft = 14
-    local trackerMarginRight = 30
-    local questMarginLeft = (trackerMarginLeft + trackerMarginRight) - (18 - trackerFontSizeQuest)
-    local objectiveMarginLeft = questMarginLeft + trackerFontSizeQuest
-    local questItemButtonSize = 12 + trackerFontSizeQuest
+    local margins = TrackerLayout.GetMargins()
+    local objectiveMarginLeft = margins.objective
+    local questItemButtonSize = margins.itemButtonSize
 
     -- Updates all the line.label widths in the linePool for wrapped text only
     for _, line in pairs(linePool) do
@@ -177,120 +179,6 @@ function TrackerLinePool.GetNextLine()
     end
 
     return linePool[lineIndex]
-end
-
----@param zoneName string
----@return TrackerLineFrame|nil
-function TrackerLinePool.GetZoneLine(zoneName)
-    local line = TrackerLinePool.GetNextLine()
-    if (not line) then
-        return nil
-    end
-
-    line:SetMode("zone")
-    line:SetZone(zoneName)
-    line.expandQuest:Hide()
-    line.criteriaMark:Hide()
-    line.playButton:Hide()
-
-    line.label:ClearAllPoints()
-    line.label:SetPoint("TOPLEFT", line, "TOPLEFT", 0, 0)
-
-    return line
-end
-
----@param quest Quest
----@param lineWidth number
----@return TrackerLineFrame|nil
-function TrackerLinePool.GetQuestTitleLine(quest, lineWidth)
-    local line = TrackerLinePool.GetNextLine()
-    if (not line) then
-        return nil
-    end
-
-    line:SetMode("quest")
-    line:SetOnClick("quest")
-    line:SetQuest(quest)
-    line:SetObjective(nil)
-    line.expandZone:Hide()
-    line.criteriaMark:Hide()
-
-    line.label:ClearAllPoints()
-    line.label:SetPoint("TOPLEFT", line, "TOPLEFT", lineWidth, 0)
-
-    return line
-end
-
----@param quest Quest
----@param objective QuestObjective|nil
----@param lineWidth number
----@return TrackerLineFrame|nil
-function TrackerLinePool.GetQuestObjectiveLine(quest, objective, lineWidth)
-    local line = TrackerLinePool.GetNextLine()
-    if (not line) then
-        return nil
-    end
-
-    line:SetMode("objective")
-    line:SetOnClick("quest")
-    line:SetQuest(quest)
-    line:SetObjective(objective)
-    line.expandZone:Hide()
-    line.expandQuest:Hide()
-    line.criteriaMark:Hide()
-    line.playButton:Hide()
-
-    line.label:ClearAllPoints()
-    line.label:SetPoint("TOPLEFT", line, "TOPLEFT", lineWidth, 0)
-
-    return line
-end
-
----@param achieve Achievement
----@param lineWidth number
----@return TrackerLineFrame|nil
-function TrackerLinePool.GetAchievementTitleLine(achieve, lineWidth)
-    local line = TrackerLinePool.GetNextLine()
-    if (not line) then
-        return nil
-    end
-
-    line:SetMode("achieve")
-    line:SetOnClick("achieve")
-    line:SetQuest(achieve)
-    line:SetObjective(nil)
-    line.expandZone:Hide()
-    line.criteriaMark:Hide()
-    line.playButton:Hide()
-
-    line.label:ClearAllPoints()
-    line.label:SetPoint("TOPLEFT", line, "TOPLEFT", lineWidth, 0)
-
-    return line
-end
-
----@param achieve Achievement
----@param lineWidth number
----@return TrackerLineFrame|nil
-function TrackerLinePool.GetAchievementObjectiveLine(achieve, lineWidth)
-    local line = TrackerLinePool.GetNextLine()
-    if (not line) then
-        return nil
-    end
-
-    line:SetMode("objective")
-    line:SetOnClick("achieve")
-    line:SetQuest(achieve)
-    line:SetObjective(nil)
-    line.expandZone:Hide()
-    line.expandQuest:Hide()
-    line.criteriaMark:Hide()
-    line.playButton:Hide()
-
-    line.label:ClearAllPoints()
-    line.label:SetPoint("TOPLEFT", line, "TOPLEFT", lineWidth, 0)
-
-    return line
 end
 
 ---@return table|nil buttonIndex buttonPool[buttonIndex]
@@ -348,6 +236,7 @@ function TrackerLinePool.HideUnusedLines()
             line.mode = nil
             line.ZoneId = nil
             line.Quest = nil
+            line.Recipe = nil
             line.Objective = nil
             line.Button = nil
             line.altButton = nil
@@ -395,43 +284,18 @@ function TrackerLinePool.GetHighestIndex()
 end
 
 ---@param alpha number
-function TrackerLinePool.SetAllPlayButtonAlpha(alpha)
-    if TrackerUtils:IsVoiceOverLoaded() then
-        local highestIndex = TrackerLinePool.GetHighestIndex()
-        for i = 1, highestIndex do
-            local line = linePool[i]
-            local questId = line.playButton.mode
-            local button = VoiceOver.QuestOverlayUI.questPlayButtons[questId]
-            local sound = VoiceOver.DataModules:PrepareSound({event = 1, questID = questId})
-
-            if button then
-                local isPlaying = button.soundData and VoiceOver.SoundQueue:Contains(button.soundData)
-                local texturePath = isPlaying and "Interface\\Addons\\Questie\\Icons\\QuestLogStopButton" or "Interface\\Addons\\Questie\\Icons\\QuestLogPlayButton"
-
-                line.playButton:SetNormalTexture(texturePath)
-            end
-
-            if IsShiftKeyDown() then
-                if sound then
-                    line.playButton:SetAlpha(alpha)
-                else
-                    line.playButton:SetAlpha(0.33)
-                end
-
-                line.playButton:SetFrameLevel(200)
-            else
-                line.playButton:SetAlpha(alpha)
-                line.playButton:SetFrameLevel(0)
-            end
-        end
-    end
-end
-
----@param alpha number
 function TrackerLinePool.SetAllExpandQuestAlpha(alpha)
     local highestIndex = TrackerLinePool.GetHighestIndex()
     for i = 1, highestIndex do
         linePool[i].expandQuest:SetAlpha(alpha)
+    end
+end
+
+---@param alpha number
+function TrackerLinePool.SetAllQuestFocusAlpha(alpha)
+    local highestIndex = TrackerLinePool.GetHighestIndex()
+    for i = 1, highestIndex do
+        linePool[i].questFocus:SetAlpha(alpha)
     end
 end
 
@@ -458,7 +322,8 @@ TrackerLinePool.OnHighlightEnter = function(self)
         local line = linePool[i]
         line:SetAlpha(0.5)
 
-        if (line.Quest ~= nil and line.Quest == self.Quest) or (line.expandZone ~= nil and self:GetParent().expandZone ~= nil and line.expandZone.zoneId == self:GetParent().expandZone.zoneId) then
+        if (line.Quest ~= nil and line.Quest == self.Quest) or (line.Recipe ~= nil and line.Recipe == self.Recipe)
+            or (line.expandZone ~= nil and self:GetParent().expandZone ~= nil and line.expandZone.zoneId == self:GetParent().expandZone.zoneId) then
             line:SetAlpha(1)
         end
     end
@@ -468,6 +333,46 @@ TrackerLinePool.OnHighlightLeave = function()
     local highestIndex = TrackerLinePool.GetHighestIndex()
     for i = 1, highestIndex do
         linePool[i]:SetAlpha(1)
+    end
+end
+
+---The buttons in front of a title can reach beyond the line frame.
+---@param line TrackerLineFrame
+---@return boolean
+local function _IsButtonHovered(line)
+    for _, button in ipairs({line.questFocus, line.playButton, line.expandQuest}) do
+        if button:IsVisible() and button:IsMouseOver() then
+            return true
+        end
+    end
+    -- Quest item buttons are taller than a line, so they reach into the next line
+    for i = 1, math.min(buttonIndex, buttonPoolSize) do
+        local button = buttonPool[i]
+        if button and button:GetParent() == line and button:IsVisible() and button:IsMouseOver() then
+            return true
+        end
+    end
+    return false
+end
+
+---Lines are reused for other quests on a redraw, so the highlight must follow the line now under the mouse.
+function TrackerLinePool.RefreshHighlight()
+    TrackerLinePool.OnHighlightLeave()
+
+    local highestIndex = TrackerLinePool.GetHighestIndex()
+    for i = 1, highestIndex do
+        local line = linePool[i]
+        if line:IsVisible() and (line:IsMouseOver() or _IsButtonHovered(line)) then
+            -- A zone header highlights its zone, like hovering its expand zone button does.
+            -- The header line is taller than the button, so the bottom strip only hits the line.
+            local expandZone = line.expandZone
+            if expandZone and expandZone:IsVisible() then
+                TrackerLinePool.OnHighlightEnter(expandZone)
+            else
+                TrackerLinePool.OnHighlightEnter(line)
+            end
+            return
+        end
     end
 end
 

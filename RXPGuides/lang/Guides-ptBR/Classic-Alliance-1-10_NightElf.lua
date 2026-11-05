@@ -7,8 +7,8 @@ RXPGuides.RegisterGuide([[
 #tbc
 #season 0,1
 << Alliance
-#name 1-6 Shadowglen
-#displayname 1-7 Shadowglen << sod
+#name 1-6 Umbravale
+#displayname 1-7 Umbravale << sod
 #version 1
 #group RestedXP Aliança 1-20
 #groupid RXP-SRGCE-A1
@@ -22,31 +22,31 @@ step
     .goto Teldrassil,58.695,44.266
     .target Conservator Ilthalaine
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Ilthalaine|r
-    .accept 456 >> Aceite O Equilíbrio da Natureza
+    .accept 456 >> Aceite O equilíbrio da natureza
 step
     #sticky
     #label balance1
     #completewith GoodProtector
-    >>Abate os |cRXP_ENEMY_Jovens Nightsabers|r e os |cRXP_ENEMY_Jovens Thistle Boars|r
+    >>Mate |cRXP_ENEMY_Sabres-da-noite Jovem|r e |cRXP_ENEMY_Javalis-espinho Jovem|r
     .goto Teldrassil,62.0,42.6,0,0
     .complete 456,1 --Kill Young Nightsaber (x7)
     .mob +Young Nightsaber
     .complete 456,2 --Kill Young Thistle Boar (x4)
     .mob +Young Thistle Boar
 step
-    >>Saqueie os inimigos que você mata, certifique-se de ter pelo menos 10 cobre em sucata de vendedor, você precisará disso para treinar |T132333:0|t[Brado de Batalha]<< Warrior
+    >>Saqueie os inimigos que você matar e junte pelo menos 10 de cobre em itens para vender. Você vai precisar desse dinheiro para treinar |T132333:0|t[Brado de Batalha]<< Warrior
     .xp 2 >> Farme até o nível 2
 step << !sod/Warrior
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Dirânia Pratafulge|r e |cRXP_FRIENDLY_Melithar Guenelmo|r
     #label GoodProtector
-    .accept 4495 >> Aceite Um Bom Amigo
+    .accept 4495 >> Aceite Um bom amigo
     .target +Dirania Silvershine
     .goto Teldrassil,60.899,41.961
-    .accept 458 >> Aceite A Protetora dos Bosques
+    .accept 458 >> Aceite O Protetor da Floresta
 	.goto Teldrassil,59.924,42.474
     .target +Melithar Staghelm
 step
-    >>Abate os |cRXP_ENEMY_Jovens Nightsabers|r e os |cRXP_ENEMY_Jovens Thistle Boars|r
+    >>Mate |cRXP_ENEMY_Sabres-da-noite Jovem|r e |cRXP_ENEMY_Javalis-espinho Jovem|r
     .goto Teldrassil,62.0,42.6,0,0
     .complete 456,1 --Kill Young Nightsaber (x7)
     .mob +Young Nightsaber
@@ -57,9 +57,9 @@ step << Hunter
     #requires balance1
 	.goto Teldrassil,58.695,44.266
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Ilthalaine|r
-    .turnin 456,1 >> Entregue O Equilíbrio da Natureza << Hunter
+    .turnin 456,1 >> Entregue O equilíbrio da natureza << Hunter
     .target Conservator Ilthalaine
-    .accept 457 >> Aceite O Equilíbrio da Natureza
+    .accept 457 >> Aceite O equilíbrio da natureza
 step << Hunter
 #xprate >1.99
     .goto Teldrassil,59.8,34.1
@@ -71,28 +71,28 @@ step << Hunter
 step << Hunter
     #season 0,1
     .goto Teldrassil,59.8,34.1
-    .xp 4-610 >> Farme até estar a 610 XP do nível 4 (790/1400)
+    .xp 4-610 >> Mate inimigos até estar a 610 XP do nível 4 (790/1400)
 step << Hunter
     .goto Teldrassil,54.593,32.992
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Iverron|r
-    .turnin 4495 >> Entregue Um Bom Amigo
+    .turnin 4495 >> Entregue Um bom amigo
     .target Iverron
     .accept 3519 >> Aceite Um Amigo em Necessidade
 step << Hunter
     #completewith next
-    .hs >> Use sua Pedra de Retorno para ir a Shadowglen
+    .hs >> Use sua Pedra de Retorno para ir a Umbravale
 step << Hunter
     .goto Teldrassil,57.9,45.1
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Tarindrella|r
     .turnin 458 >> Entregue A Protetora dos Bosques
     .target Tarindrella
-    .accept 459 >> Aceite A Protetora dos Bosques
+    .accept 459 >> Aceite O Protetor da Floresta
 step << Hunter
 #xprate >1.99
     #requires balance1
 	.goto Teldrassil,58.695,44.266
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Ilthalaine|r
-    .turnin 457 >> Entregue O Equilíbrio da Natureza
+    .turnin 457 >> Entregue O equilíbrio da natureza
     .target Conservator Ilthalaine
 	.accept 3117 >> Aceite O Selo Cinzelado
 step << Druid
@@ -107,10 +107,10 @@ step
     #requires balance1
 	.goto Teldrassil,58.695,44.266
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Ilthalaine|r
-    .turnin 456,1 >> Entregue O Equilíbrio da Natureza << Hunter
-    .turnin 456 >> Entregue O Equilíbrio da Natureza << !Hunter
+    .turnin 456,1 >> Entregue O equilíbrio da natureza << Hunter
+    .turnin 456 >> Entregue O equilíbrio da natureza << !Hunter
     .target Conservator Ilthalaine
-    .accept 457 >> Aceite O Equilíbrio da Natureza
+    .accept 457 >> Aceite O equilíbrio da natureza
 	.accept 3116 >> Aceite O Selo Simples << Warrior
 	.accept 3117 >> Aceite O Selo Cinzelado << Hunter
 --	.accept 3118 >> Accept Encrypted Sigil << Rogue
@@ -141,30 +141,30 @@ step << !Hunter
     #season 0 << Warrior
     .goto Teldrassil,54.593,32.992
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Iverron|r
-    .turnin 4495 >> Entregue Um Bom Amigo
+    .turnin 4495 >> Entregue Um bom amigo
     .target Iverron
     .accept 3519 >> Aceite Um Amigo em Necessidade
 step << !Hunter !Warrior
     #season 2
     #completewith next
-    .hs >> Use sua Pedra de Retorno para ir a Shadowglen
+    .hs >> Use sua Pedra de Retorno para ir a Umbravale
 step << !Hunter
     #season 0
     #completewith next
-    .hs >> Use sua Pedra de Retorno para ir a Shadowglen
+    .hs >> Use sua Pedra de Retorno para ir a Umbravale
 step << !Hunter
     #season 0 << Druid/Warrior
     .goto Teldrassil,57.9,45.1
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Tarindrella|r
     .turnin 458 >> Entregue A Protetora dos Bosques
     .target Tarindrella
-    .accept 459 >> Aceite A Protetora dos Bosques
+    .accept 459 >> Aceite O Protetor da Floresta
 step << !Hunter
     #season 0 << Druid
     .goto Teldrassil,58.695,44.266
     .target Conservator Ilthalaine
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Ilthalaine|r
-    .turnin 457 >> Entregue O Equilíbrio da Natureza
+    .turnin 457 >> Entregue O equilíbrio da natureza
 step
     .goto Teldrassil,60.899,41.961
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Dirânia Pratafulge|r
@@ -388,7 +388,7 @@ step << Hunter
     .goto Teldrassil,58.695,44.266
     .target Conservator Ilthalaine
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Ilthalaine|r
-    .turnin 457,2 >> Entregue O Equilíbrio da Natureza
+    .turnin 457,2 >> Entregue O equilíbrio da natureza
 step << Priest
     #requires vial1
     .goto Teldrassil,59.2,40.5
@@ -551,7 +551,7 @@ step << Rogue
 step << Druid
     .goto Teldrassil,56.308,59.488
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Shalomon|r
-    >>|cRXP_BUY_Compre e equipe uma|r |T135145:0|t[Bengala] |cRXP_BUY_se você pode pagar (5s 4c), se não, pule este passo|r
+    >>|cRXP_BUY_Compre e equipe uma|r |T135145:0|t[Bengala] |cRXP_BUY_se puder pagá-la (5s 4c), caso contrário, pule este passo|r
     .collect 2495,1 --Walking Stick (1)
     .target Shalomon
     .money <0.0504
@@ -854,7 +854,7 @@ step << Rogue
 step << Druid
     .goto Teldrassil,56.308,59.488
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Shalomon|r
-    >>|cRXP_BUY_Compre e equipe uma|r |T135145:0|t[Bengala] |cRXP_BUY_se você pode pagar (5s 4c), se não, pule este passo|r
+    >>|cRXP_BUY_Compre e equipe uma|r |T135145:0|t[Bengala] |cRXP_BUY_se puder pagá-la (5s 4c), caso contrário, pule este passo|r
     .collect 2495,1 --Walking Stick (1)
     .target Shalomon
     .money <0.0504
@@ -1057,7 +1057,7 @@ step
     #label SpiderLegsEnd
     .goto Teldrassil,57.121,61.296
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Zarrin|r
-    .train 2550 >>Treinar Culinária
+    .train 2550 >>Treine Culinária
     .accept 4161 >> Aceite Recipe of the Kaldorei
     .turnin 4161 >> Entregue Recipe of the Kaldorei
     .target Zarrin
@@ -1114,7 +1114,7 @@ step << Hunter
 #xprate >1.99
     .goto Teldrassil,56.676,59.489
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Dazalar|r
-    .turnin 6063 >> Entregue Adestramento da Fera - Missão
+    .turnin 6063 >> Entregue Domando a fera
     .target Dazalar
     .accept 6101 >> Aceite Adestramento da Fera - Missão
 step << Hunter
@@ -1128,7 +1128,7 @@ step << Hunter
 #xprate >1.99
     .goto Teldrassil,56.676,59.489
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Dazalar|r
-    .turnin 6101 >> Entregue Adestramento da Fera - Missão
+    .turnin 6101 >> Entregue Domando a fera
     .target Dazalar
     .accept 6102 >> Aceite Adestramento da Fera - Missão
 step << Hunter
@@ -1142,7 +1142,7 @@ step << Hunter
 #xprate >1.99
     .goto Teldrassil,56.676,59.489
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Dazalar|r
-    .turnin 6102 >> Entregue Adestramento da Fera - Missão
+    .turnin 6102 >> Entregue Domando a fera
     .target Dazalar
     .accept 6103 >> Aceite Treinamento da Fera - Missão
     .train 1130 >> |cRXP_WARN_Certifique-se de ter treinado Marca do Caçador. Você precisará dela para obter uma runa em breve|r
@@ -1348,7 +1348,7 @@ step << Druid
     .goto Darnassus,35.38,8.40
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Mathrengyl Ursivagus|r no nível intermediário
     .turnin -5923 >> Entregue Heeding the Call - Missão
-    .accept 5921 >> Aceite Moonglade
+    .accept 5921 >> Aceite Clareira da Lua
 	.trainer >> Treine suas magias de classe
     .target Mathrengyl Bearwalker
 step << Hunter
@@ -1405,7 +1405,7 @@ step << Hunter
 step
 	#xprate 1.49-1.99
     .goto Teldrassil,57.121,61.296
-    .train 2550 >>Treinar Culinária
+    .train 2550 >>Treine Culinária
     .target Zarrin
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Zarrin|r
     .accept 4161 >> Aceite Recipe of the Kaldorei
@@ -1448,7 +1448,7 @@ step << Hunter
     #requires beast2
     .goto Teldrassil,56.676,59.489
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Dazalar|r
-    .turnin 6063 >> Entregue Adestramento da Fera - Missão
+    .turnin 6063 >> Entregue Domando a fera
     .target Dazalar
     .accept 6101 >> Aceite Adestramento da Fera - Missão
 step
@@ -1534,7 +1534,7 @@ step << Hunter
 #xprate <1.99
     .goto Teldrassil,56.676,59.489
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Dazalar|r
-    .turnin 6063 >> Entregue Adestramento da Fera - Missão
+    .turnin 6063 >> Entregue Domando a fera
     .target Dazalar
     .accept 6101 >> Aceite Adestramento da Fera - Missão
 step << Hunter
@@ -1548,7 +1548,7 @@ step << Hunter
 #xprate <1.99
     .goto Teldrassil,56.676,59.489
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Dazalar|r
-    .turnin 6101 >> Entregue Adestramento da Fera - Missão
+    .turnin 6101 >> Entregue Domando a fera
     .target Dazalar
     .accept 6102 >> Aceite Adestramento da Fera - Missão
 step << Hunter
@@ -1562,7 +1562,7 @@ step << Hunter
 #xprate <1.99
     .goto Teldrassil,56.676,59.489
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Dazalar|r
-    .turnin 6102 >> Entregue Adestramento da Fera - Missão
+    .turnin 6102 >> Entregue Domando a fera
     .target Dazalar
     .accept 6103 >> Aceite Treinamento da Fera - Missão
 step << Warrior

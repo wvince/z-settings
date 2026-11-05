@@ -7,8 +7,6 @@ RXPGuides.RegisterGuide([[
 #name Molten Blast - 8 (Mulgore)
 #title Molten Blast
 #next Lava Lash - 10 (Mulgore)
-
-
 step
     +|cRXP_WARN_You should be at least level 8 in order to acquire|r |T133816:0|t[Engrave Gloves - Molten Blast] |cRXP_WARN_in Mulgore alone|r
     >>|cRXP_WARN_You MUST be at least level 3 to equip the|r |T134918:0|t|cRXP_LOOT_[Sulfurous Icon]|r
@@ -172,7 +170,6 @@ step
     .train 425344,1
     .xp <3,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Shaman SoD
@@ -181,8 +178,6 @@ RXPGuides.RegisterGuide([[
 #name Molten Blast - 10 (Durotar)
 #title Molten Blast
 #next Way of Earth - 12 (The Barrens)
-
-
     --Rune of Molten Blast
 step
     +|cRXP_WARN_You MUST be at least level 10 in order to acquire|r |T133816:0|t[Engrave Gloves - Molten Blast] |cRXP_WARN_as it is the level requirement of training|r |T135813:0|t[Flame Shock]
@@ -367,7 +362,6 @@ step
     .xp <10,1
 --XX Cast ID may be wrong, may need to be checked
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Shaman SoD
@@ -376,8 +370,6 @@ RXPGuides.RegisterGuide([[
 #name Lava Lash - 10 (Mulgore)
 #title Lava Lash
 #next Ancestral Guidance - 10 (Mulgore)
-
-
     --Rune of Lava Lash
 --XX Worth mentioning "Dual Wield Skill" in the name? Cuts off ingame due to it being 3 lines though
 step
@@ -600,7 +592,6 @@ step
     .train 410104,1
     .xp <4,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Shaman SoD
@@ -609,8 +600,6 @@ RXPGuides.RegisterGuide([[
 #name Water Shield - 20 (The Barrens)
 #title Water Shield
 #next Greater Ghost Wolf - 25 (Stonetalon Mountains)
-
-
 step
     +|cRXP_WARN_You MUST be at least level 20 in order to acquire|r |T133816:0|t[Engrave Gloves - Water Shield] |cRXP_WARN_as it is the level requirement of training|r |T135849:0|t[Frost Shock]
     >>|cRXP_WARN_You need to level up more before even attempting to acquire|r |T133816:0|t[Engrave Gloves - Water Shield]
@@ -813,7 +802,6 @@ step
     .train 410097,1
     .xp <20,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Shaman SoD
@@ -822,7 +810,6 @@ RXPGuides.RegisterGuide([[
 #name Water Shield - 20 (Silverpine Forest)
 #title Water Shield
 #next Greater Ghost Wolf - 25 (Stonetalon Mountains)
-
 step
     +|cRXP_WARN_You MUST be at least level 20 in order to acquire|r |T133816:0|t[Engrave Gloves - Water Shield] |cRXP_WARN_as it is the level requirement of training|r |T135849:0|t[Frost Shock]
     >>|cRXP_WARN_You need to level up more before even attempting to acquire|r |T133816:0|t[Engrave Gloves - Water Shield]
@@ -1019,7 +1006,6 @@ step
     .train 410095,1
     .xp <25,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Shaman SoD
@@ -1028,8 +1014,6 @@ RXPGuides.RegisterGuide([[
 #name Lava Burst - 25 (Hillsbrad Foothills)
 #title Lava Burst
 #next Earth Shield - 25 (Azeroth)
-
-
 step
     +|cRXP_WARN_You should be at least level 25 in order to acquire|r |T133816:0|t[Engrave Gloves - Lava Burst] |cRXP_WARN_in Hillsbrad alone|r
     .train 410095,1
@@ -1079,7 +1063,6 @@ step
     .itemStat 18,QUALITY,2
     .train 410095,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Shaman SoD
@@ -1088,7 +1071,6 @@ RXPGuides.RegisterGuide([[
 #name Overload - 3 (Durotar)
 #title Overload
 #next Shield Mastery - 6 (Durotar)
-
     --Rune of Overload
 step
     +|cRXP_WARN_You MUST be at least level 3 in order to acquire|r |T133815:0|t[Engrave Chest - Overload] |cRXP_WARN_as it is the level requirement of equipping the|r |T134918:0|t|cRXP_LOOT_[Dyadic Icon]|r
@@ -1242,7 +1224,6 @@ step << !Tauren skip
     .target Shikrik
     .xp <3,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Shaman SoD
@@ -1251,8 +1232,6 @@ RXPGuides.RegisterGuide([[
 #name Overload - 3 (Mulgore)
 #title Overload
 #next Shield Mastery - 6 (Mulgore)
-
-
     --Rune of Overload
 step
     +|cRXP_WARN_You MUST be at least level 3 in order to acquire|r |T133815:0|t[Engrave Chest - Overload] |cRXP_WARN_as it is the level requirement of equipping the|r |T134918:0|t|cRXP_LOOT_[Dyadic Icon]|r
@@ -1318,7 +1297,6 @@ step << Tauren skip
     .target Meela Dawnstrider
     .xp <3,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Shaman SoD
@@ -1327,7 +1305,6 @@ RXPGuides.RegisterGuide([[
 #name Shield Mastery - 6 (Durotar)
 #title Shield Mastery
 #next Molten Blast - 10 (Durotar)
-
 step
     +|cRXP_WARN_You should be at least level 6 in order to acquire|r |T133815:0|t[Engrave Chest - Shield Mastery] |cRXP_WARN_in Durotar alone|r
     >>|cRXP_WARN_You MUST be at least level 3 as it is the level requirement of equipping the|r |T134918:0|t|cRXP_LOOT_[Galvanic Icon]|r
@@ -1491,7 +1468,6 @@ step
     .xp <3,1
 --XX Cast ID may be wrong, may need to be checked
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Shaman SoD
@@ -1500,8 +1476,6 @@ RXPGuides.RegisterGuide([[
 #name Shield Mastery - 6 (Mulgore)
 #title Shield Mastery
 #next Molten Blast - 8 (Mulgore)
-
-
     --Rune of Shield Mastery
  step
     +|cRXP_WARN_You should be at least level 6 in order to acquire|r |T133815:0|t[Engrave Chest - Shield Mastery] |cRXP_WARN_in Mulgore alone|r
@@ -1701,7 +1675,6 @@ step
     .xp <3,1
 --XX Cast ID may be wrong, may need to be checked
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Shaman SoD
@@ -1710,7 +1683,6 @@ RXPGuides.RegisterGuide([[
 #name Ancestral Guidance - 6 (Durotar)
 #title Ancestral Guidance
 #next Molten Blast - 10 (Durotar)
-
     --Rune of Ancestral Guidance
 step
     +|cRXP_WARN_You should be at least level 6 in order to acquire|r |T134596:0|t[Engrave Pants - Ancestral Guidance] |cRXP_WARN_in Durotar with another player|r
@@ -1754,7 +1726,6 @@ step
     .train 410099,1
     .xp <3,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Shaman SoD
@@ -1763,10 +1734,7 @@ RXPGuides.RegisterGuide([[
 #name Ancestral Guidance - 10 (Mulgore)
 #title Ancestral Guidance
 #next Way of Earth - 12 (The Barrens)
-
-
     --Rune of Ancestral Guidance
-
 step
     +|cRXP_WARN_You should be at least level 10 in order to acquire|r |T134596:0|t[Engrave Pants - Ancestral Guidance] |cRXP_WARN_in Mulgore with another player|r
     >>|cRXP_WARN_You MUST be at least level 3 as it is the level requirement of using the|r |T237571:0|t|cRXP_LOOT_[Echo of the Ancestors]|r
@@ -1829,7 +1797,6 @@ step
     .train 410099,1
     .xp <3,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Shaman SoD
@@ -1838,9 +1805,6 @@ RXPGuides.RegisterGuide([[
 #name Way of Earth - 12 (The Barrens)
 #title Way of Earth
 #next Water Shield - 20 (The Barrens)
-
-
-
 step
     +|cRXP_WARN_You MUST be at least level 12 in order to acquire|r |T134596:0|t[Engrave Pants - Way of Earth] |cRXP_WARN_as it is the level requirement of training|r |T136075:0|t[Purge]
     >>|cRXP_WARN_You need to level up more before even attempting to acquire|r |T134596:0|t[Engrave Pants - Way of Earth]
@@ -1913,7 +1877,6 @@ step
     .train 410107,1
     .xp <12,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Shaman SoD
@@ -1922,7 +1885,6 @@ RXPGuides.RegisterGuide([[
 #name Way of Earth - 14 (Silverpine Forest)
 #title Way of Earth
 #next Water Shield - 20 (Silverpine Forest)
-
 step
     +|cRXP_WARN_You should be at least level 14 in order to acquire|r |T134596:0|t[Engrave Pants - Way of Earth] |cRXP_WARN_in Silverpine Forest alone|r
     >>|cRXP_WARN_You need to level up more before even attempting to acquire|r |T134596:0|t[Engrave Pants - Way of Earth]
@@ -1977,7 +1939,6 @@ step
     .itemcount 208758,1 --Earthen Rune (1)
     .train 410107,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Shaman SoD
@@ -1986,8 +1947,6 @@ RXPGuides.RegisterGuide([[
 #name Greater Ghost Wolf - 25 (Stonetalon Mountains)
 #title Greater Ghost Wolf
 #next Dual Wield Specialization - 25 (Ratchet)
-
-
 step
     +|cRXP_WARN_You should be at least level 25 in order to acquire|r |T134596:0|t[Engrave Pants - Greater Ghost Wolf] |cRXP_WARN_in Stonetalon Mountains alone|r
     .train 425343,1
@@ -2017,7 +1976,6 @@ step
     .itemcount 210811,1 --Rune of Primordial Fury (1)
     .train 425343,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Shaman SoD
@@ -2027,8 +1985,6 @@ RXPGuides.RegisterGuide([[
 #title Earth Shield
 #next Overload - 3 (Durotar) << Orc Shaman/Troll Shaman
 #next Overload - 3 (Mulgore) << Tauren Shaman
-
-
 step
     +|cRXP_WARN_You MUST be at least level 25 in order to acquire|r |T134596:0|t[Engrave Pants - Earth Shield] |cRXP_WARN_as it is the level requirement of entering Blackfathom Deeps|r
     .train 410101,1
@@ -2334,7 +2290,6 @@ step << skip
     .train 425344,3 --Molten Blast
     .xp <25,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Shaman SoD
@@ -2342,9 +2297,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Belt
 #name Fire Nova - 35 (Azeroth)
 #title Fire Nova
-
 -- Fire Nova
-
 step
     #completewith next
     .zone Desolace >>Travel to |cFFfa9602Desolace|r
@@ -2417,7 +2370,6 @@ step
     .collect 213558,1
     .target Keeper Remulos
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Shaman SoD
@@ -2425,9 +2377,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Belt
 #name Maelstrom Weapon - 40 (Azeroth)
 #title Maelstrom Weapon
-
 -- Maelstrom Weapon
-
 step
     .train 410100,1
     #completewith next
@@ -2602,7 +2552,6 @@ step
 step
     .train 410100 >>|cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of the Storm|r] to learn |T136032:0|t[Maelstrom Weapon]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Shaman SoD
@@ -2610,9 +2559,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Belt
 #name Power Surge - 30 (Arathi Highlands)
 #title Power Surge
-
 -- Power Surge
-
 step
     .train 416054,1
     #completewith next
@@ -2645,7 +2592,6 @@ step
 step
     .train 416054 >>|cRXP_WARN_Use the|r |T134419:0|t[Rune of Power] |cRXP_WARN_to learn|r |T134337:0|t[Power Surge]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Shaman SoD
@@ -2653,9 +2599,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Boots
 #title Decoy Totem
 #name Decoy Totem - 27 (Thousand Needles)
-
 -- Decoy Totem
-
 step
     .train 425882,1
     .zone Thousand Needles >>Travel to |cFFfa9602Thousand Needles|r
@@ -2725,7 +2669,6 @@ step
     .train 425882 >>|cRXP_WARN_Use the|r |T134419:0|t|cRXP_FRIENDLY_Rune of Decoys|r |cRXP_WARN_to learn|r |T134508:0|t[Decoy Totem]
     .use 213096
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Shaman SoD
@@ -2733,9 +2676,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Boots
 #title Spirit of the Alpha
 #name Spirit of the Alpha - 27 (Thousand Needles)
-
 -- Spirit of the Alpha
-
 step
     .train 410103,1
     .zone Thousand Needles >>Travel to |cFFfa9602Thousand Needles|r
@@ -2753,7 +2694,6 @@ step
     .train 410103 >>|cRXP_WARN_Use the|r |T136095:0|t|cRXP_FRIENDLY_Echo of the Alpha|r |cRXP_WARN_to learn|r |T408696:0|t[Spirit of the Alpha]
     .use 206985
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Shaman SoD
@@ -2761,10 +2701,8 @@ RXPGuides.RegisterGuide([[
 #subgroup Bracers
 #title Rolling Thunder
 #name Rolling Thunder - 41 (Tanaris)
-
 -- Rolling Thunder
 -- PERMOK: Needs better waypoints
-
 step
     #completewith next
     .zone Tanaris >>Travel to Tanaris
@@ -2784,7 +2722,6 @@ step
     .use 220613
     .train 432236 >>|cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of Rolling Thunder|r] |cRXP_WARN_to learn|r |T136111:0|t[Rolling Thunder]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Shaman SoD
@@ -2792,9 +2729,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Bracers
 #title Static Shock
 #name Static Shock - 44 (Feralas)
-
 -- PERMOK: Needs better waypoints
-
 step
     #completewith ChargedAir
     +|cRXP_WARN_You have to be in a group with another player who can help you in order to obtain this rune|r
@@ -2823,7 +2758,6 @@ step
     .use 220614
     .train 432238 >>|cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of Static Shock|r] |cRXP_WARN_to learn|r |T237587:0|t[Static Shock]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Shaman SoD
@@ -2831,9 +2765,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Helmet
 #title Tidal Waves
 #name Tidal Waves - 42 (Feralas)
-
 -- PERMOK: Needs better waypoints
-
 step
     #completewith next
     .zone Feralas >>Travel to Feralas
@@ -2855,7 +2787,6 @@ step
     .use 220612
     .train 432234 >>|cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of Tidal Waves|r] |cRXP_WARN_to learn|r |T237590:0|t[Tidal Waves]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Shaman SoD
@@ -2863,7 +2794,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Bracers
 #title Tidal Waves
 #name Tidal Waves - 45 (Azeroth)
-
 --x shiek: needs better coordinates
 step
     #completewith next
@@ -3094,7 +3024,6 @@ step
 step
     .train 432241 >> |cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of Overcharged|r] |cRXP_WARN_to train|r |T132213:0|t[Overcharged]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Shaman SoD
@@ -3102,7 +3031,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Cloak
 #title Storm, Earth, and Fire
 #name Storm, Earth, and Fire - 52 (Felwood)
-
 step
     .train 440634,1
     #completewith next
@@ -3129,7 +3057,6 @@ step
     .use 225838
     .train 440634 >>|cRXP_WARN_Use the|r |T134918:0|t[|cRXP_LOOT_Voltaic Icon|r] |cRXP_WARN_to learn|r |T237588:0|t[Storm, Earth, and Fire]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Shaman SoD
@@ -3137,7 +3064,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Cloak
 #title Coherence
 #name Coherence - 55 (Burning Steppes)
-
 step
     .train 416062,1
     #completewith next
@@ -3173,7 +3099,6 @@ step
     .use 225740
     .train 416062 >>|cRXP_WARN_Use the|r |T134419:0|t[|cRXP_LOOT_Rune of Composure|r] |cRXP_WARN_to learn|r |T237586:0|t[Coherence]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Shaman SoD
@@ -3181,7 +3106,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Cloak
 #title Feral Spirit
 #name Feral Spirit - 60 (Winterspring)
-
 step
     .train 440630,1
     #completewith next

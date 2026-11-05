@@ -812,7 +812,7 @@ step << Tauren Warrior
 step << Tauren Warrior
     #optional
     #completewith BarenLongshore
-    +Équipez le [Marteau en pierre] lorsque vous passez niveau 16
+    +Équipez le [Marteau en pierre] lorsque vous passez au niveau 16
     .use 2026
     .itemcount 2026,1
     .itemStat 16,QUALITY,<7
@@ -985,7 +985,7 @@ step << Tauren Warrior
 step << Tauren Warrior
     #optional
     #completewith FlyToXroads1
-    +Équipez le [Marteau en pierre] lorsque vous passez niveau 16
+    +Équipez le [Marteau en pierre] lorsque vous passez au niveau 16
     .use 2026
     .itemcount 2026,1
     .itemStat 16,QUALITY,<7
@@ -1046,7 +1046,7 @@ step
     .goto The Barrens,52.63,38.07,80,0
     .goto The Barrens,49.49,37.20,80,0
     .goto The Barrens,48.33,36.75,80,0
-    >>Tuez tous les |cRXP_ENEMY_Zhevra|r que vous croisez. Dépouillez-les pour leur |cRXP_LOOT_Hooves|r
+    >>Terminez de tuer tous les |cRXP_ENEMY_Zhévras|r que vous croisez. Dépouillez-les pour leur |cRXP_LOOT_Sabots|r
     .complete 845,1 --Zhevra Hooves (4)
     .mob Zhevra Runner
 step
@@ -1436,7 +1436,7 @@ step << Warlock
     .xp >18,1
 step << Warlock
     .goto Orgrimmar,47.54,46.75
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Kurgul|r et achetez un [Grimoire d’Éclair de feu(Rang 3)]
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Kurgul|r et achetez le [Grimoire d’Éclair de feu (Rang 3)]
     .collect 16316,1,896,1 --Grimoire of Firebolt (Rank 3) (Rank 1) (1)
     .target Kurgul
     .xp <18,1
@@ -1495,7 +1495,7 @@ step << Priest
     .xp <18,1
 step << Mage
     .goto Orgrimmar,38.36,85.54
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |r |cRXP_FRIENDLY_Pephredo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à|r |cRXP_FRIENDLY_Pephredo|r
     .train 2120 >> Apprenez vos sorts de classe
     .target Pephredo
     .xp <16,1
@@ -1503,7 +1503,7 @@ step << Mage
 step << Mage
     #optional
     .goto Orgrimmar,38.36,85.54
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |r |cRXP_FRIENDLY_Pephredo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à|r |cRXP_FRIENDLY_Pephredo|r
     .train 3140 >> Apprenez vos sorts de classe
     .target Pephredo
     .xp <18,1
@@ -2059,7 +2059,7 @@ step
     .target +Tonga Runetotem
     .goto The Barrens,52.26,31.93
     .turnin 905 >>Rendez la quête Les Faucheurs furieux
-    .accept 3261 >>Acceptez la quête Jorn Skyseer
+    .accept 3261 >>Acceptez la quête Jorn Œil-des-cieux
     .target +Sergra Darkthorn
     .goto The Barrens,52.24,31.01
     .turnin 3281 >>Rendez la quête Argent volé
@@ -2159,7 +2159,7 @@ step
     .goto Stonetalon Mountains,75.89,87.49,30 >>Montez le chemin jusqu'au bûcher
 step
     .goto Stonetalon Mountains,73.65,86.13
-    >>Tuez |cRXP_ENEMY_Grundig Darkcloud|r et |cRXP_ENEMY_Grimtotem Brutes|r
+    >>Tuez les |cRXP_ENEMY_Grundig Darkcloud|r et les |cRXP_ENEMY_Grimtotem Brutes|r
     >>Tuez bien les 6 |cRXP_ENEMY_Grimtotem Brutes|r avant de commencer la quête à l'intérieur
     .complete 6629,1 --Kill Grundig Darkcloud (x1)
     .mob +Grundig Darkcloud
@@ -2471,7 +2471,7 @@ step
 step
     .goto The Barrens,44.85,59.14
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Jorn Skyseer|r
-    .turnin 3261 >>Rendez la quête Jorn Skyseer
+    .turnin 3261 >>Rendez la quête Jorn Œil-des-cieux
     .accept 882 >>Acceptez la quête Ishamuhale
     .target Jorn Skyseer
 step
@@ -2481,7 +2481,7 @@ step
     .mob Stormsnout
 step
     #completewith next
-    >>Tuez les |cRXP_ENEMY_Hurans Dos-hirsutse|r. Dépouillez-les pour leurs |cRXP_LOOT_Défenses|r. Gardez les |T134128:0|t[|cRXP_LOOT_Joyaux de sang|r] que vous récupérez
+    >>Tuez les |cRXP_ENEMY_Hurans Dos-hirsutes|r. Dépouillez-les pour leurs |cRXP_LOOT_Défenses|r. Gardez les |T134128:0|t[|cRXP_LOOT_Joyaux de sang|r] que vous récupérez
 	.complete 878,1 --Kill Bristleback Water Seeker (x6)
     .mob +Bristleback Water Seeker
     .complete 878,2 --Kill Bristleback Thornweaver (x12)
@@ -2503,7 +2503,7 @@ step
     .goto The Barrens,45.93,49.08,80,0
     .goto The Barrens,47.43,51.37,80,0
     .goto The Barrens,50.10,53.34,80,0
-	>>Tuez |cRXP_ENEMY_Lakota'mani|r. Dépouillez-le pour la [|cRXP_LOOT_Hoof of Lakota'mani|r]
+	>>Tuez |cRXP_ENEMY_Lakota'mani|r. Dépouillez-le pour sa [|cRXP_LOOT_Hoof of Lakota'mani|r]
     >>|cRXP_WARN_Utilisez le [|cRXP_LOOT_Hoof of Lakota'mani|r] pour commencer la quête|r
     >>Il a 4 possibles points d'apparition (marqués sur la carte)
     >>Passez cette étape si vous n'arrivez pas à le trouver
@@ -2538,7 +2538,7 @@ step
     .goto The Barrens,52.41,53.07,60,0
     .goto The Barrens,52.32,53.71,60,0
     .goto The Barrens,51.39,54.22,60,0
-    >>Tuez les |cRXP_ENEMY_Hurans Dos-hirsutse|r. Dépouillez-les pour leurs |cRXP_LOOT_Défenses|r. Gardez les |T134128:0|t[|cRXP_LOOT_Joyaux de sang|r] que vous récupérez
+    >>Tuez les |cRXP_ENEMY_Hurans Dos-hirsutes|r. Dépouillez-les pour leurs |cRXP_LOOT_Défenses|r. Gardez les |T134128:0|t[|cRXP_LOOT_Joyaux de sang|r] que vous récupérez
 	.complete 878,1 --Kill Bristleback Water Seeker (x6)
     .mob +Bristleback Water Seeker
     .complete 878,2 --Kill Bristleback Thornweaver (x12)
@@ -2692,7 +2692,7 @@ step << Warrior
 step << Rogue/Hunter/Warrior/Shaman/Druid
     #optional
     #completewith FlytoXroads
-    +Équipez les [|cRXP_FRIENDLY_Wolf Bracers|r]
+    +Équipez le [|cRXP_FRIENDLY_Wolf Bracers|r]
     .use 4794
     .itemcount 4794,1
     .itemStat 9,ITEM_MOD_ARMOR_SHORT,<37
@@ -2880,7 +2880,7 @@ step << Warlock
     .dungeon DM
 step << Mage
     .goto Orgrimmar,38.36,85.54
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |r |cRXP_FRIENDLY_Pephredo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à|r |cRXP_FRIENDLY_Pephredo|r
     .train 3140 >> Apprenez vos sorts de classe
     .target Pephredo
     .xp <18,1
@@ -2889,7 +2889,7 @@ step << Mage
 step << Mage
     #optional
     .goto Orgrimmar,38.36,85.54
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |r |cRXP_FRIENDLY_Pephredo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à|r |cRXP_FRIENDLY_Pephredo|r
     .train 1953 >> Apprenez vos sorts de classe
     .target Pephredo
     .xp <20,1
@@ -3229,11 +3229,11 @@ step
     .goto The Barrens,44.85,59.14
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Jorn Skyseer|r
     .turnin 913 >>Rendez la quête Le cri du faucon-tonnerre
-    .accept 874 >>Acceptez la quête Mahren Skyseer
+    .accept 874 >>Acceptez la quête Mahren Œil-des-cieux
     .target Jorn Skyseer
 step << !Tauren
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Mangletooth|r
-    .aura 16618 >>Si il vous reste 10 [|cRXP_LOOT_Blood Shards|r, utilisez les pour obtenir [L'esprit du vent] à |cRXP_FRIENDLY_Mangletooth|r
+    .aura 16618 >>|cRXP_WARN_S'il vous reste 10|r |T134128:0|t[|cRXP_LOOT_Joyaux de sang|r] |cRXP_WARN_, utilisez-les pour obtenir|r |T136022:0|t[L'esprit du vent] |cRXP_WARN_auprès de|r |cRXP_FRIENDLY_Mutiledent|r
     >>Passez cette étape si vous pouvez voler jusqu'à Pitons-du-Tonnerre
     .itemcount 5075,10
     .target Mangletooth
@@ -3366,8 +3366,8 @@ step
     .goto Thunder Bluff,29.68,21.19
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à|r |cRXP_FRIENDLY_Pand|r
     >>Passez cette étape si vous n'avez pas assez d'[Etoffe de lin] pour atteindre une compétence de 80
-    .train 3277 >> Apprenez  [Bandage en laine]
-    .train 7934 >> Apprenez [Anti-venin] << Rogue
+    .train 3277 >> Apprenez [Bandage en laine]
+    .train 7934 >> Apprenez [Anti-Venin] << Rogue
     .target Pand Stonebinder
     .skill firstaid,<1,1
 step << Rogue
@@ -3381,7 +3381,7 @@ step
 step
     .goto Thunder Bluff,78.61,28.55
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Hamuul|r
-    .turnin 1489 >> Rendez la quête Hamuul Runetotem
+    .turnin 1489 >> Rendez la quête Hamuul Totem-runique
     .accept 1490 >> Acceptez la quête Nara Wildmane
     .target Arch Druid Hamuul Runetotem
 step
@@ -3573,7 +3573,7 @@ step << Hunter
 step << Hunter
     .goto Thunder Bluff,46.98,45.69
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|cRXP_BUY_Parlez à|r |cRXP_FRIENDLY_Kuna|r
-    >>|cRXP_BUY_Achetez des|r [Flèche grossières] |cRXP_BUY_à Kuna|r
+    >>|cRXP_BUY_Achetez des|r [Flèche grossières] |cRXP_BUY_à Narina|r
     .collect 2515,1600,493,1 << Hunter --Sharp Arrow (1600)
     .target Kuna Corne-Tonnerre
 step
@@ -3770,7 +3770,7 @@ step
 step
     #requires Gems
     #completewith next
-    +|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez au |cRXP_FRIENDLY_Disciple of Naralex|r à l'entrée des Cavernes des Lamentations. Escortez-le jusqu'à |cRXP_FRIENDLY_Naralex|r
+    +|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez au |cRXP_FRIENDLY_Disciple of Naralex|r à l'entrée des Cavernes des lamentations. Escortez-le jusqu'à |cRXP_FRIENDLY_Naralex|r
     .target Disciple of Naralex
     .skipgossip
     .dungeon WC
@@ -4733,7 +4733,7 @@ step << Warlock
     .use 6626
 step << Warlock
     .goto Orgrimmar,49.66,50.15
-    >>Tuez les |cRXP_ENEMY_Summoned Succubus|r
+    >>Tuez la |cRXP_ENEMY_Summoned Succubus|r
     .complete 1513,1 --Kill Summoned Succubus (1)
     .mob Summoned Succubus
     .use 6626
@@ -4807,7 +4807,7 @@ step << Priest/Warlock
     .target Katis
 step << Mage
     .goto Orgrimmar,38.36,85.54
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |r |cRXP_FRIENDLY_Pephredo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à|r |cRXP_FRIENDLY_Pephredo|r
     .train 2138 >> Apprenez vos sorts de classe
     .target Pephredo
     .xp <22,1
@@ -4815,7 +4815,7 @@ step << Mage
 step << Mage
     #optional
     .goto Orgrimmar,38.36,85.54
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |r |cRXP_FRIENDLY_Pephredo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à|r |cRXP_FRIENDLY_Pephredo|r
     .train 2121 >> Apprenez vos sorts de classe
     .target Pephredo
     .xp <24,1
@@ -4898,7 +4898,7 @@ step << Rogue
     .goto The Barrens,54.77,5.57
     >>Au sommet de la tour vous trouverez |cRXP_ENEMY_Gallywix|r. Dépouillez-le pour sa |cRXP_LOOT_Tête|r
     >>Utilisez [Embuscade] pour réduire ses PV de moitié. Utilisez [Suriner] pour récupérer votre énergie et utiliser [Évasion]
-	>>Rappelez-vous d'utiliser une potion et un [Thé aux chardons] si nécessaire
+	>>N'oubliez pas d'utiliser une Potion et un [Thé aux chardons] si nécessaire
     .complete 2478,4 --Gallywix's Head (1)
     .mob Grand Foreman Puzik Gallywix
     --VV Video?

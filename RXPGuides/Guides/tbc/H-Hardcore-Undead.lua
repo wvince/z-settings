@@ -8,8 +8,6 @@ RXPGuides.RegisterGuide([[
 #subgroup RXP TBC Survival Guide 1-30
 #defaultfor Scourge
 #next 6-10 Eversong Woods
-
-
 step << !Undead
     #completewith next
     +|cRXP_WARN_You have selected a guide meant for Undead. It is recommended you choose the same starter zone that you start in|r

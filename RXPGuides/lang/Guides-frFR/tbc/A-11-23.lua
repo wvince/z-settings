@@ -3813,7 +3813,7 @@ step
 step
     .isQuestComplete 2139
     .goto 1439,38.843,43.416
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Tharnariun Treetender|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Tharnariun Soigneflore|r
     .turnin 2139 >> Rendez la quête Espoir de Tharnariun
     .target Tharnariun Treetender
 step
@@ -4614,7 +4614,7 @@ step
 step
 .dungeon BFD
     #label Thaelrid
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à|cRXP_FRIENDLY_Argent Guard Thaelrid|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Argent Guard Thaelrid|r
     .turnin -1198 >> Rendez À la recherche de Thaelrid
     .accept 1200 >> Acceptez la quête L'infamie de Brassenoire
 step
@@ -4628,7 +4628,7 @@ step
 #requires manuscript
 .dungeon BFD
     #label Kelris
-    >>Tuez  |cRXP_ENEMY_Twilight Lord Kelris|r. Dépouillez-le pour sa |cRXP_LOOT_Head|r
+    >>Tuez|cRXP_ENEMY_Twilight Lord Kelris|r. Dépouillez-le pour sa |cRXP_LOOT_Tête|r
     .complete 1200,1 -- Head of Kelris (1)
     .isOnQuest 1200
 step
@@ -5386,7 +5386,7 @@ step
 step
 .dungeon BFD
     #label Thaelrid
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à|cRXP_FRIENDLY_Argent Guard Thaelrid|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Argent Guard Thaelrid|r
     .turnin -1198 >> Rendez À la recherche de Thaelrid
     .accept 1200 >> Acceptez la quête L'infamie de Brassenoire
 step
@@ -5400,7 +5400,7 @@ step
 #requires manuscript
 .dungeon BFD
     #label Kelris
-    >>Tuez  |cRXP_ENEMY_Twilight Lord Kelris|r. Dépouillez-le pour sa |cRXP_LOOT_Head|r
+    >>Tuez|cRXP_ENEMY_Twilight Lord Kelris|r. Dépouillez-le pour sa |cRXP_LOOT_Tête|r
     .complete 1200,1 -- Head of Kelris (1)
     .isOnQuest 1200
 step

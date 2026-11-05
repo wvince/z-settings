@@ -9,7 +9,6 @@ RXPGuides.RegisterGuide([[
 #subgroup RestedXP Alliance 1-20
 #defaultfor Draenei
 #next 12-20 Bloodmyst (Draenei)
-
 step
     .goto Azuremyst Isle,82.96,43.88
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Megelon|r
@@ -287,10 +286,7 @@ step << Hunter
 	.turnin 9288 >> Turn in Hunter Training
     .train 1978 >>Train |T132204:0|t[Serpent Sting]
     .target Keilnei
-
-
 --xx
-
 step << Priest
 	.goto Azuremyst Isle,79.254,50.887
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ryosh|r
@@ -298,10 +294,7 @@ step << Priest
     .collect 159,10 --Collect Refreshing Spring Water (x15)
     .target Ryosh
     .xp >5,1
-
 --xx
-
-
 step << Shaman/Hunter
 	#completewith next
 	.goto Azuremyst Isle,79.188,50.928
@@ -1488,7 +1481,6 @@ step
     .goto Bloodmyst Isle,63.5,88.8
 	.zone Bloodmyst Isle >> Travel to Bloodmyst Isle
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -1499,7 +1491,6 @@ RXPGuides.RegisterGuide([[
 #subgroup RestedXP Alliance 1-20
 #defaultfor Draenei
 #next 20-21 Darkshore (Draenei);21-23 Ashenvale (Draenei)
-
 step
     .goto Bloodmyst Isle,63.426,88.787
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Aonar|r
@@ -3502,7 +3493,6 @@ step
 step
     .goto Azuremyst Isle,20.405,54.184
     .zone Darkshore >> Take the boat to Darkshore
-
 --Continued below is .dungeon DM only
 step
 .dungeon DM
@@ -4014,7 +4004,6 @@ step
     >>|cRXP_BUY_Buy food if needed|r << Warrior/Rogue
     .zoneskip Darkshore
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -4026,7 +4015,6 @@ RXPGuides.RegisterGuide([[
 #subgroup RestedXP Alliance 20-32
 #defaultfor Draenei
 #next 21-23 Ashenvale (Draenei)
-
 step
     .goto Darkshore,36.097,44.932
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gubber Blump|r
@@ -4415,7 +4403,6 @@ step
     .isOnQuest 945
     .target Therylune
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -4426,7 +4413,6 @@ RXPGuides.RegisterGuide([[
 #subgroup RestedXP Alliance 20-32
 #defaultfor Draenei
 #next 23-24 Wetlands;24-27 Redridge/Duskwood
-
 step
 #xprate >1.49
     .isOnQuest 9633

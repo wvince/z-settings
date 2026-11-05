@@ -741,7 +741,7 @@ step
 step
     .goto Teldrassil,58.40,94.02
     .fp Teldrassil >> 开启泰达希尔的飞行路径
-    .fly Auberdine >> 飞往奥伯丁，黑海岸
+    .fly Auberdine >> 飞往奥伯丁
 step
     .goto Darkshore,32.42,43.75,50,0
     .zone Wetlands >> 乘船前往米奈希尔
@@ -851,7 +851,7 @@ step
     .goto Redridge Mountains,29.72,44.26
 .target 拜里弗·科纳彻尔
 >>与|cRXP_FRIENDLY_拜里弗·科纳彻尔|r交谈
-    .accept 91 >>接受任务 所罗门的律法
+    .accept 91 >>接受任务所罗门的律法
 step
     .goto Redridge Mountains,29.99,44.45
     >>进入建筑内
@@ -948,7 +948,7 @@ step
     #completewith hsLakeshire
     #label WFFP
     .goto Westfall,56.55,52.65
-    .fp Westfall >> 开启西部荒野的飞行路径 << Gnome
+    .fp Westfall >> 解锁西部荒野飞行路线 << Gnome
     .fly Redridge >> 飞往 Redridge
 step
     #requires WFFP
@@ -967,7 +967,7 @@ step
     .accept 143 >>接受任务 送往西部荒野的信
 .target 拜里弗·科纳彻尔
 >>与|cRXP_FRIENDLY_拜里弗·科纳彻尔|r交谈
-    .accept 91 >>接受任务 所罗门的律法
+    .accept 91 >>接受任务所罗门的律法
 step
     >>进入旅馆的顶楼
     .goto Redridge Mountains,26.47,45.35

@@ -9,8 +9,6 @@ RXPGuides.RegisterGuide([[
 #subgroup RestedXP Horde 1-30
 #defaultfor Tauren
 #next 6-10 Mulgore
-
-
 step << !Tauren
     #completewith next
     .goto Mulgore,44.92,77.12
@@ -462,9 +460,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Antur|r
     .accept 1656 >>Accept A Task Unfinished
     .target Antur Fallow
-
     ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -476,7 +472,6 @@ RXPGuides.RegisterGuide([[
 #defaultfor Tauren
 #next 10-12 Eversong Woods << !Shaman
 #next 10-13 Mulgore << Shaman
-
 step
     #softcore
 	#completewith BloodhoofHome
@@ -2341,7 +2336,6 @@ step
     #optional
     #label EndGuide
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -2352,7 +2346,6 @@ RXPGuides.RegisterGuide([[
 #subgroup RestedXP Horde 1-30
 #defaultfor Tauren Shaman
 #next 13-18 The Barrens
-
 step
     #xprate <1.5
     .goto Thunder Bluff,60.0,51.7
@@ -2723,5 +2716,4 @@ step << Warrior
     .turnin 1498 >>Turn in Path of Defense
     .accept 1502 >>Accept Thun'grim Firegaze
     .target Uzzek
-
 ]])

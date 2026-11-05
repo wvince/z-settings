@@ -383,7 +383,7 @@ step
     .isQuestTurnedIn 13712
 step
     #completewith DorDanilDen
-    >>Tötet |cRXP_ENEMY_Scharfkralle|r und sammelt |T136063:0|t[|cRXP_LOOT_Klaue von Scharfkralle|r] von ihm, um die Quest zu starten
+    >>Tötet |cRXP_ENEMY_Scharfkralle|r. Plündert ihn für |T136063:0|t[|cRXP_LOOT_Klaue von Scharfkralle|r] und benutzt sie, um die Quest zu starten
     .collect 16305,1,2 --Sharptalon's Claw (1)
     .accept 2 >> Akzeptiert die Quest Klaue von Scharfkralle
     .unitscan Sharptalon
@@ -391,7 +391,7 @@ step
     .maxlevel 24
 step
     #completewith next
-    >>Tötet |cRXP_ENEMY_Ashenvale Outrunners|r
+    >>Tötet |cRXP_ENEMY_Die Kundschafter von Ashenvale|r
     >>|cRXP_WARN_Sie sind versteckt in der Nähe der Bäume|r
     .complete 6503,1 --9/9 Ashenvale Outrunners Killed
     .unitscan Ashenvale Outrunner
@@ -429,7 +429,7 @@ step
     .isQuestTurnedIn 13712
 step
     #completewith next
-    >>Tötet |cRXP_ENEMY_Scharfkralle|r und sammelt |T136063:0|t[|cRXP_LOOT_Klaue von Scharfkralle|r] von ihm, um die Quest zu starten
+    >>Tötet |cRXP_ENEMY_Scharfkralle|r. Plündert ihn für |T136063:0|t[|cRXP_LOOT_Klaue von Scharfkralle|r] und benutzt sie, um die Quest zu starten
     .collect 16305,1,2 --Sharptalon's Claw (1)
     .accept 2 >> Akzeptiert die Quest Klaue von Scharfkralle
     .unitscan Sharptalon
@@ -463,7 +463,7 @@ step
     .waypoint 1440/1,-2416.10010,1835.40002,40,0
     .waypoint 1440/1,-2387.90015,1787.09998,40,0
     .waypoint 1440/1,-2480.90015,1737.70007,40,0
-    >>Tötet |cRXP_ENEMY_Scharfkralle|r und sammelt |T136063:0|t[|cRXP_LOOT_Klaue von Scharfkralle|r] von ihm, um die Quest zu starten
+    >>Tötet |cRXP_ENEMY_Scharfkralle|r. Plündert ihn für |T136063:0|t[|cRXP_LOOT_Klaue von Scharfkralle|r] und benutzt sie, um die Quest zu starten
     .collect 16305,1,2 --Sharptalon's Claw (1)
     .accept 2 >> Akzeptiert die Quest Klaue von Scharfkralle
     .unitscan Sharptalon
@@ -517,7 +517,7 @@ step
 step
     .goto 63,73.56,60.85
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Kuray'bin|r
-    .turnin 6503 >>Gebt die Quest Die Kundschafter des Eschentals ab
+    .turnin 6503 >>Gebt die Quest Die Kundschafter von Ashenvale ab
     .target Kuray'bin
     .isQuestTurnedIn 13712
 step
@@ -1058,7 +1058,7 @@ step
     .mob Thistlefur Avenger
 step
     #completewith next
-    .goto 63,38.37,30.59,40 >>Betretet Höhle der Distelfelle
+    .goto 63,38.37,30.59,40 >>Betretet die Höhle der Distelfelle
 step
     #loop
     .goto 1440/1,-627.70001,3394.69995,0
@@ -1068,7 +1068,7 @@ step
     .waypoint 1440/1,-574.70001,3385.60010,15,0
     .waypoint 1440/1,-676.70001,3314.19995,15,0
     .waypoint 1440/1,-683.60004,3359.00000,15,0
-	>>Beute die |cRXP_PICK_Trollkisten|r auf dem Boden für |cRXP_LOOT_Trollamulett|r
+	>>Plündert die |cRXP_PICK_Trolltruhe|r vom Boden für |cRXP_LOOT_Troll-Glücksbringer|r
 	.complete 6462,1 --Collect Troll Charm (x8)
 step
     .goto 63,41.49,34.50
@@ -1084,7 +1084,7 @@ step
     .goto 63,37.30,34.49,30,0
     .goto 63,38.73,36.86,50,0
     .goto 63,38.35,38.55
-    >>Begleitet |cRXP_FRIENDLY_Ruul|r aus Lager der Distelfelle
+    >>Begleitet |cRXP_FRIENDLY_Ruul|r aus dem Lager der Distelfelle
     >>|cFFFCDC00Vorsicht! 3|r |cRXP_ENEMY_Thistlefurs|r |cFFFCDC00 werden spawnen, wenn ihr etwa in der Mitte der Höhle seid, und weitere 3 außerhalb des Tores von Lager der Distelfelle|r
     .complete 6482,1 --Escort Ruul from the Thistlefurs
     .target Ruul Snowhoof
@@ -1115,7 +1115,7 @@ step
 step
     .goto 63,38.89,42.38
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Mitsuwa|r
-    .turnin 6462 >>Gebt die Quest Trollglücksbringer ab
+    .turnin 6462 >>Gebt die Quest Troll-Glücksbringer ab
     .target Mitsuwa
 step
     .goto 63,38.47,44.22
@@ -1362,7 +1362,7 @@ step
     .mob Befouled Water Elemental
 step
     .goto 1440/1,-1079.70007,1994.20007
-    >>Tötet |cRXP_ENEMY_Tideress|r. Beute sie für die |T136222:0|t[|cRXP_LOOT_Besudelt Wasserkugel|r]. Benutzen es um die Quest zu beginnen
+    >>Tötet |cRXP_ENEMY_Tideress|r. Plündert sie für die |T136222:0|t[|cRXP_LOOT_Beschmutzte Wasserkugel|r] und benutzt es, um die Quest zu starten
     .complete 25,2 --1/1 Tideress slain
     .collect 16408,1,1918 --Collect Befouled Water Globe (x1)
     .accept 1918 >>Akzeptiert die Quest Das beschmutzte Element
@@ -1386,8 +1386,8 @@ step
     .target Foreman Jinx
 step
     #completewith KillAssassins
-    >>Tötet |cRXP_ENEMY_Ursangus|r. Beute ihn für |T132941:0|t[|cRXP_LOOT_Ursangus' Tatze|r] und benutzen es um die Quest zu beginnen
-    >>|cRXP_WARN_Er patrouilliert leicht in der Gegend|r
+    >>Tötet |cRXP_ENEMY_Ursangous|r. Plündert ihn für |T132941:0|t[|cRXP_LOOT_Ursangus' Tatze|r] und benutzt sie, um die Quest zu starten
+    >>|cRXP_WARN_Er patrouilliert ein wenig umher|r
     .collect 16303,1,23 --Collect Ursangous's Paw (x1)
     .accept 23 >> Akzeptiert die Quest Ursangus' Tatze
     .unitscan Ursangous
@@ -1434,8 +1434,8 @@ step
     .waypoint 1440/1,-597.40002,2149.40015,30,0
     .waypoint 1440/1,-653.40002,2121.30005,30,0
     .waypoint 1440/1,-693.90002,2149.00000,30,0
-    >>Tötet |cRXP_ENEMY_Ursangus|r. Beute ihn für |T132941:0|t[|cRXP_LOOT_Ursangus' Tatze|r] und benutzen es um die Quest zu beginnen
-    >>|cRXP_WARN_Er patrouilliert leicht in der Gegend|r
+    >>Tötet |cRXP_ENEMY_Ursangous|r. Plündert ihn für |T132941:0|t[|cRXP_LOOT_Ursangus' Tatze|r] und benutzt sie, um die Quest zu starten
+    >>|cRXP_WARN_Er patrouilliert ein wenig umher|r
     .collect 16303,1,23 --Collect Ursangous's Paw (x1)
     .accept 23 >> Akzeptiert die Quest Ursangus' Tatze
     .unitscan Ursangous
@@ -1468,8 +1468,8 @@ step
     .target Thagg
 step
     #completewith next
-    >>Tötet |cRXP_ENEMY_Schattumbra|r. Beute sie für |T132225:0|t[|cRXP_LOOT_Schattumbra's Kopf|r] und benutzen es um die Quest zu beginnen
-    >>|cRXP_ENEMY_Schattumbra|r patrouilliert leicht umher
+    >>Tötet |cRXP_ENEMY_Schattumbra|r. Plündert sie für |T132225:0|t[|cRXP_LOOT_Schattumbras Kopf|r] und benutzt ihn um die Quest zu starten
+    >>|cRXP_ENEMY_Schattumbra|r patrouilliert in der Gegend herum
     .collect 16304,1,24 --Collect Shadumbra's Head
 	.accept 24 >> Akzeptiert die Quest Schattumbras Kopf
 	.unitscan Shadumbra
@@ -1485,7 +1485,7 @@ step
     .waypoint 1440/1,-1867.09998,2752.19995,30,0
     .waypoint 1440/1,-1825.50000,2708.69995,30,0
     .waypoint 1440/1,-1857.90002,2660.80005,30,0
-    >>Tötet |cRXP_ENEMY_Schattumbra|r. Beute sie für |T132225:0|t[|cRXP_LOOT_Schattumbra's Kopf|r] und benutzen es um die Quest zu beginnen
+    >>Tötet |cRXP_ENEMY_Schattumbra|r. Plündert sie für |T132225:0|t[|cRXP_LOOT_Schattumbras Kopf|r] und benutzt ihn um die Quest zu starten
     >>|cRXP_ENEMY_Schattumbra|r patrouilliert um das Gebäude herum
     .collect 16304,1,24 --Collect Shadumbra's Head
 	.accept 24 >> Akzeptiert die Quest Schattumbras Kopf
@@ -1581,8 +1581,8 @@ step << Mage Cata
     .goto 1454/1,-4128.89990,1692.09998
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprecht mit |cRXP_FRIENDLY_Zirazi die Sternenseherin|r
     .train 3567 >>Erlernt |T135759:0|t[Teleportieren: Orgrimmar]
-    .train 3563 >>Erlernen |T135766:0|t[Teleportierenieren: Unterstadt]
-    .train 3566 >>Erlernen |T135765:0|t[Teleportierenieren: Donnerfels]
+    .train 3563 >>Erlernt |T135766:0|t[Teleportieren: Unterstadt]
+    .train 3566 >>Erlernt |T135765:0|t[Teleportieren: Donnerfels]
     .train 32272 >>Erlernen |T135761:0|t[Teleportierenieren: Silbermond]
     .target Zirazi the Star-Gazer
     .xp <24,1

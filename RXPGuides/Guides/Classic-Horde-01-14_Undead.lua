@@ -1,6 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #classic
@@ -13,7 +12,6 @@ RXPGuides.RegisterGuide([[
 #defaultfor Undead
 #name 1-6 Tirisfal Glades
 #next 6-11 Tirisfal Glades
-
 step << !Undead
     #completewith next
     +|cRXP_WARN_You have selected a guide meant for Undead. It is recommended you choose the same starter zone that you start in|r
@@ -778,9 +776,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Calvin|r
     .accept 8 >> Accept A Rogue's Deal
     .target Calvin Montague
-
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
@@ -792,7 +788,6 @@ RXPGuides.RegisterGuide([[
 #groupid RXP-SRGCE-H1
 #defaultfor Undead
 #next 12-14 Silverpine Forest; 12-17 The Barrens
-
 step
     .goto Tirisfal Glades,40.91,54.17
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Simmer|r
@@ -3319,10 +3314,7 @@ step << Warrior
     .train 425447 >>|cRXP_WARN_Use the|r |T134419:0|t[|cRXP_FRIENDLY_Rune of Frenzied Assault|r]
     .use 204716
     .itemcount 204716,1
-
 --XX Start of <1.5x section (undercity hs)
-
-
 step
     #xprate <1.5
     #completewith UndercityLS2
@@ -3686,11 +3678,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gretchen|r
     .turnin 375 >>Turn in The Chill of Death
     .target Gretchen Dedmar
-
     --XX End of <1.5x section
-
-
-
 step << Priest
     .goto Tirisfal Glades,61.57,52.19
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Beryl|r on the second floor
@@ -3732,11 +3720,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Linnea|r
     .turnin 356 >>Turn in Rear Guard Patrol
     .target Deathguard Linnea
-
 --XX Optional Undercity Section Start: If Priest needs wand, Rogue/Warrior needs vendor wep
-
-
-
 step << Priest/Rogue/Warrior
     #optional
     #completewith LesserMagicWand << Priest
@@ -4077,16 +4061,13 @@ step << Rogue/Warrior/Priest
     .zone Tirisfal Glades >> Leave Undercity through the Sewers
     .zoneskip Tirisfal Glades
     .isQuestAvailable 1978
-
 --XX Optional Undercity Section End: If Priest needs wand, Rogue/Warrior needs vendor wep
-
 step
     #label Entersilverpine
     .goto Tirisfal Glades,53.20,75.82
     .zone Silverpine Forest >> Travel to Silverpine Forest
     .zoneskip Silverpine Forest
 ]])
-
 RXPGuides.RegisterGuide([[
 #group RestedXP Horde 1-22
 #groupid RXP-SRGCE-H1
@@ -4099,8 +4080,6 @@ RXPGuides.RegisterGuide([[
 #era/som--h
 #name 12-14 Silverpine Forest
 #next 12-17 The Barrens
-
-
 step << Undead Warrior
     #season 2
     #sticky
@@ -4604,17 +4583,7 @@ step << Undead
     .use 6948
     .zoneskip Undercity
     .bindlocation 1497,1
-
-
-
-
-
     --XX Start of Undercity clown fiesta section
-
-
-
-
-
 step << Undead
     .goto Undercity,61.48,41.81
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gordon|r
@@ -5045,21 +5014,8 @@ step << skip --Undead !Rogue !Warrior
     >>|cRXP_WARN_If you can't do this, just run out of Undercity normally|r
     .zoneskip Undercity,1
     .dungeon !RFC
-
-
-
 --XX End of Undercity clown fiesta section
-
-
-
-
-
 --XX Start of 1.5x Brill Train section
-
-
-
-
-
 step << Undead
     #xprate >1.49
     #completewith ZeptoDurotar
@@ -5133,17 +5089,7 @@ step << Undead Warlock
     .train 1455 >> Train your class spells
     .target Rupert Boch
     .xp <16,1
-
-
-
-
-
 --XX End of 1.5x Brill Train section
-
-
-
-
-
 step << Undead
     #sticky
     #completewith EnterRFC
@@ -5436,11 +5382,8 @@ step << !Undead
 step << Mage
     +If you're planning on leveling via AoE, choose the Barrens AoE Guide manually. Otherwise, complete this step
 ]])
-
-
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
-
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
@@ -5452,7 +5395,6 @@ RXPGuides.RegisterGuide([[
 #defaultfor Undead
 #name 1-7 Tirisfal Glades
 #next 7-13 Tirisfal Glades
-
 step << !Undead
     #completewith next
     +|cRXP_WARN_You have selected a guide meant for Undead. It is recommended you choose the same starter zone that you start in|r
@@ -6505,9 +6447,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Calvin|r
     .accept 8 >> Accept A Rogue's Deal
     .target Calvin Montague
-
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
@@ -6519,7 +6459,6 @@ RXPGuides.RegisterGuide([[
 #groupid RXP-SRGCE-H1
 #defaultfor Undead
 #next 13-20 The Barrens
-
 step
     .goto Tirisfal Glades,40.91,54.17
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Simmer|r
@@ -7935,7 +7874,6 @@ step
     #optional
     #label Brill3
     --150% route does Agamand Mills after UC
-
 step << Warrior
     #xprate <2.1
     #season 2
@@ -8877,9 +8815,7 @@ step << Warrior
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Coleman|r
     .turnin 1820 >>Turn in Speak with Coleman
     .target Coleman Farthing
-
     --150% route Agamand Mills here
-
 step
     #xprate >2.09
     #label AgamandStart
@@ -9866,5 +9802,4 @@ step
     .turnin 840 >>Turn in Conscript of the Horde
     .accept 842 >>Accept Crossroads Conscription
     .target Kargal Battlescar
-
 ]])

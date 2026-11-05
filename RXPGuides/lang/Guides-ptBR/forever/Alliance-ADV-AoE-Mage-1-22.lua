@@ -416,14 +416,14 @@ step << Human
     #season 2
     #optional
     #completewith next
-    .goto 1429,48.79,41.58,12,0
-    .goto 1429,48.975,41.146,12,0
-    .goto 1429,49.262,40.633,12,0
-    .goto 1429,49.510,40.095,6,0
-    .goto 1429,49.691,40.230,6,0
-    .goto 1429,49.595,40.673,6,0
-    .goto 1429,49.324,40.492,6,0
-    .goto 1429,49.436,39.881,10,0
+    .goto 1429/0,-158.00,-8901.99,12,0--c:1429,48.79,41.58
+    .goto 1429/0,-164.42,-8891.94,12,0--c:1429,48.975,41.146
+    .goto 1429/0,-174.39,-8880.07,12,0--c:1429,49.262,40.633
+    .goto 1429/0,-182.99,-8867.62,6,0--c:1429,49.510,40.095
+    .goto 1429/0,-189.28,-8870.74,6,0--c:1429,49.691,40.230
+    .goto 1429/0,-185.94,-8880.99,6,0--c:1429,49.595,40.673
+    .goto 1429/0,-176.54,-8876.80,6,0--c:1429,49.324,40.492
+    .goto 1429/0,-180.42,-8862.66,10,0--c:1429,49.436,39.881
     .goto 1429/0,-188.23,-8851.58,12 >>Desça, depois vá para |cRXP_FRIENDLY_Gaspar Melchior|r
     .isQuestComplete 77620
 step << Human
@@ -1462,16 +1462,16 @@ step
     .accept 179 >> Aceite Equipadores Anões
     .target Sten Stoutarm
 step
-    .goto 1426,29.529,73.286,0
-    .goto 1426,28.117,75.088,0
-    .goto 1426,28.557,72.487,0
-    .goto 1426,29.529,73.286,60,0
-    .goto 1426,29.054,74.608,60,0
-    .goto 1426,28.558,75.781,60,0
-    .goto 1426,28.117,75.088,60,0
-    .goto 1426,27.562,74.331,60,0
-    .goto 1426,27.793,73.123,60,0
-    .goto 1426,28.557,72.487,60,0
+    .goto 1426/0,347.78,-6283.31,0--c:1426,29.529,73.286
+    .goto 1426/0,417.32,-6342.47,0--c:1426,28.117,75.088
+    .goto 1426/0,395.65,-6257.07,0--c:1426,28.557,72.487
+    .goto 1426/0,347.78,-6283.31,60,0--c:1426,29.529,73.286
+    .goto 1426/0,371.17,-6326.71,60,0--c:1426,29.054,74.608
+    .goto 1426/0,395.60,-6365.23,60,0--c:1426,28.558,75.781
+    .goto 1426/0,417.32,-6342.47,60,0--c:1426,28.117,75.088
+    .goto 1426/0,444.65,-6317.62,60,0--c:1426,27.562,74.331
+    .goto 1426/0,433.28,-6277.96,60,0--c:1426,27.793,73.123
+    .goto 1426/0,395.65,-6257.07,60,0--c:1426,28.557,72.487
     >>Mate os |cRXP_ENEMY_Ragged Young Wolves|r. Saqueie-os para obter |cRXP_LOOT_Tough Lobo Carne|r
     .complete 179,1 --Collect Tough Wolf Meat (x8)
     .mob Ragged Young Wolf
@@ -1521,15 +1521,15 @@ step
     #season 2
     #xprate <1.1
     #completewith EnterAnvilmar
-    .goto 1426,27.096,72.545,0
-    .goto 1426,26.620,73.548,0
-    .goto 1426,25.722,72.261,0
-    .goto 1426,24.878,72.329,0
-    .goto 1426,24.100,73.749,0
-    .goto 1426,24.920,74.697,0
-    .goto 1426,21.813,72.584,0
-    .goto 1426,19.578,72.086,0
-    .goto 1426,20.627,70.415,0
+    .goto 1426/0,467.61,-6258.98,0--c:1426,27.096,72.545
+    .goto 1426/0,491.05,-6291.91,0--c:1426,26.620,73.548
+    .goto 1426/0,535.27,-6249.65,0--c:1426,25.722,72.261
+    .goto 1426/0,576.84,-6251.89,0--c:1426,24.878,72.329
+    .goto 1426/0,615.16,-6298.51,0--c:1426,24.100,73.749
+    .goto 1426/0,574.77,-6329.63,0--c:1426,24.920,74.697
+    .goto 1426/0,727.79,-6260.26,0--c:1426,21.813,72.584
+    .goto 1426/0,837.87,-6243.91,0--c:1426,19.578,72.086
+    .goto 1426/0,786.20,-6189.04,0--c:1426,20.627,70.415
     >>Mate os |cRXP_ENEMY_Troggs Pedraqueixo|r e os |cRXP_ENEMY_Troggs Pedraqueixo Parrudo|r
     .complete 170,1 --Kill Rockjaw Trogg (x6)
     .mob +Rockjaw Trogg
@@ -1553,8 +1553,8 @@ step
     #label EnterAnvilmar
     #optional
     #completewith next
-    .goto 1426,28.792,68.804,12,0
-    .goto 1426,28.642,68.375,12 >> Entre em Anvilmar
+    .goto 1426/0,384.08,-6136.15,12,0--c:1426,28.792,68.804
+    .goto 1426/0,391.46,-6122.06,12 >> Entre em Anvilmar--c:1426,28.642,68.375
 step
     #season 2
     .goto 1426/0,388.17,-6056.10
@@ -1581,20 +1581,20 @@ step
     #season 2
     #optional
     #completewith Talin
-    .goto 1426,28.792,68.804,12 >> Saia de Anvilmar
+    .goto 1426/0,384.08,-6136.15,12 >> Saia de Anvilmar--c:1426,28.792,68.804
     .subzoneskip 77,1
 step
     #xprate <1.1
     #completewith Rockjaw
-    .goto 1426,27.096,72.545,0
-    .goto 1426,26.620,73.548,0
-    .goto 1426,25.722,72.261,0
-    .goto 1426,24.878,72.329,0
-    .goto 1426,24.100,73.749,0
-    .goto 1426,24.920,74.697,0
-    .goto 1426,21.813,72.584,0
-    .goto 1426,19.578,72.086,0
-    .goto 1426,20.627,70.415,0
+    .goto 1426/0,467.61,-6258.98,0--c:1426,27.096,72.545
+    .goto 1426/0,491.05,-6291.91,0--c:1426,26.620,73.548
+    .goto 1426/0,535.27,-6249.65,0--c:1426,25.722,72.261
+    .goto 1426/0,576.84,-6251.89,0--c:1426,24.878,72.329
+    .goto 1426/0,615.16,-6298.51,0--c:1426,24.100,73.749
+    .goto 1426/0,574.77,-6329.63,0--c:1426,24.920,74.697
+    .goto 1426/0,727.79,-6260.26,0--c:1426,21.813,72.584
+    .goto 1426/0,837.87,-6243.91,0--c:1426,19.578,72.086
+    .goto 1426/0,786.20,-6189.04,0--c:1426,20.627,70.415
     >>Mate os |cRXP_ENEMY_Troggs Pedraqueixo|r e os |cRXP_ENEMY_Troggs Pedraqueixo Parrudo|r
     .complete 170,1 --Kill Rockjaw Trogg (x6)
     .mob +Rockjaw Trogg
@@ -1611,21 +1611,21 @@ step
     .target Talin Keeneye
 step
     #loop
-    .goto 1426,22.276,72.549,0
-    .goto 1426,20.924,70.393,0
-    .goto 1426,22.662,69.331,0
-    .goto 1426,24.358,72.591,0
-    .goto 1426,22.276,72.549,45,0
-    .goto 1426,21.209,72.266,45,0
-    .goto 1426,20.880,71.470,45,0
-    .goto 1426,20.924,70.393,45,0
-    .goto 1426,21.330,69.261,45,0
-    .goto 1426,22.035,69.231,45,0
-    .goto 1426,22.662,69.331,45,0
-    .goto 1426,24.317,68.026,45,0
-    .goto 1426,24.754,69.257,45,0
-    .goto 1426,24.878,71.191,45,0
-    .goto 1426,24.358,72.591,45,0
+    .goto 1426/0,704.99,-6259.11,0--c:1426,22.276,72.549
+    .goto 1426/0,771.58,-6188.32,0--c:1426,20.924,70.393
+    .goto 1426/0,685.98,-6153.45,0--c:1426,22.662,69.331
+    .goto 1426/0,602.45,-6260.49,0--c:1426,24.358,72.591
+    .goto 1426/0,704.99,-6259.11,45,0--c:1426,22.276,72.549
+    .goto 1426/0,757.54,-6249.82,45,0--c:1426,21.209,72.266
+    .goto 1426/0,773.74,-6223.68,45,0--c:1426,20.880,71.470
+    .goto 1426/0,771.58,-6188.32,45,0--c:1426,20.924,70.393
+    .goto 1426/0,751.58,-6151.15,45,0--c:1426,21.330,69.261
+    .goto 1426/0,716.86,-6150.17,45,0--c:1426,22.035,69.231
+    .goto 1426/0,685.98,-6153.45,45,0--c:1426,22.662,69.331
+    .goto 1426/0,604.47,-6110.60,45,0--c:1426,24.317,68.026
+    .goto 1426/0,582.95,-6151.02,45,0--c:1426,24.754,69.257
+    .goto 1426/0,576.84,-6214.52,45,0--c:1426,24.878,71.191
+    .goto 1426/0,602.45,-6260.49,45,0--c:1426,24.358,72.591
     >>Mate os |cRXP_ENEMY_Javalis Pequenos do Penhasco|r
     .complete 183,1 --Kill Small Crag Boar (x12)
     .mob Small Crag Boar
@@ -1636,10 +1636,10 @@ step
     .target Talin Keeneye
 step
     #label Rockjaw
-    .goto 1426,25.077,75.711
+    .goto 1426/0,567.04,-6362.93--c:1426,25.077,75.711
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Grolin Barbabranca|r
     .turnin 234 >> Entregue Coldridge Valley Malha Entrega
-    .accept 182 >> Aceite The Trolls Cave
+    .accept 182 >> Aceite A Caverna dos Trolls
     .target Grelin Whitebeard
 step
     #completewith next
@@ -1762,17 +1762,17 @@ step
     #xprate <1.1
     #sticky
     #label TroggEnd
-    .goto 1426,27.858,76.482,0
-    .goto 1426,30.727,76.831,0
-    .goto 1426,29.280,75.500,0
-    .waypoint 1426,27.858,76.482,50,0
-    .waypoint 1426,28.946,77.153,50,0
-    .waypoint 1426,29.716,77.605,50,0
-    .waypoint 1426,30.727,76.831,50,0
-    .waypoint 1426,32.814,75.221,50,0
-    .waypoint 1426,31.138,74.048,50,0
-    .waypoint 1426,30.077,74.479,50,0
-    .waypoint 1426,29.280,75.500,50,0
+    .goto 1426/0,430.08,-6388.24,0--c:1426,27.858,76.482
+    .goto 1426/0,288.78,-6399.70,0--c:1426,30.727,76.831
+    .goto 1426/0,360.04,-6356.00,0--c:1426,29.280,75.500
+    .waypoint 1426/0,430.08,-6388.24,50,0--c:1426,27.858,76.482
+    .waypoint 1426/0,376.49,-6410.27,50,0--c:1426,28.946,77.153
+    .waypoint 1426/0,338.57,-6425.11,50,0--c:1426,29.716,77.605
+    .waypoint 1426/0,288.78,-6399.70,50,0--c:1426,30.727,76.831
+    .waypoint 1426/0,185.99,-6346.84,50,0--c:1426,32.814,75.221
+    .waypoint 1426/0,268.54,-6308.33,50,0--c:1426,31.138,74.048
+    .waypoint 1426/0,320.79,-6322.48,50,0--c:1426,30.077,74.479
+    .waypoint 1426/0,360.04,-6356.00,50,0--c:1426,29.280,75.500
     >>|cRXP_WARN_Abate TODOS os |cRXP_ENEMY_Rockjaw Troggs|r que você vir e TODOS os |rBurly Pedraqueixo Troggs|cRXP_ENEMY_|r
     .complete 170,1 --Kill Rockjaw Trogg (x6)
     .mob +Rockjaw Trogg
@@ -7043,7 +7043,7 @@ step
     .target Vesprystus
 step
     #completewith next
-    .goto 1438,55.885,89.350
+    .goto 1438/1,969.11,8798.93--c:1438,55.885,89.350
     .zone Darnassus >> Atravesse o portal roxo para Darnassus
 step
     #completewith next
@@ -7320,7 +7320,7 @@ step
     .vendor 958 >> |cRXP_BUY_Compre sem inteligência|r |T134943:0|t[Pergaminhos]|cRXP_BUY_,|r |T134850:0|t[Mana Menor Potions]|cRXP_BUY_, e|r |T134830:0|t[Lesser Cura Potions] |cRXP_BUY_dela (se estiverem disponíveis)|r
     >>|cRXP_WARN_NÃO vá abaixo de 11s 38c|r
     .money <0.1138
-    .target Dawn Brightstar
+    .target Estela Dalva
     .itemcount 4371,1
 step
     #sticky
@@ -7330,7 +7330,7 @@ step
     .vendor 958 >> |cRXP_BUY_Compre não-Intelecto|r |T134943:0|t[Pergaminhos]|cRXP_BUY_,|r |T134850:0|t[Poções de Mana Menor]|cRXP_BUY_, e|r |T134830:0|t[Poções de Cura Menores] |cRXP_BUY_dela (se estiverem disponíveis)|r
     >>|cRXP_WARN_NÃO vá abaixo de 19s 38c|r
     .money <0.1938
-    .target Dawn Brightstar
+    .target Estela Dalva
     .itemcount 4371,<1
 step
     #label Theo
@@ -7364,7 +7364,7 @@ step
     .goto 1431/0,-1200.85,-10593.99
     >>Fale com |cRXP_FRIENDLY_Elaine|r
     .accept 163 >>Aceite Monte Corvo
-    .accept 164 >>Aceite Deliveries to Sven
+    .accept 164 >>Aceite A vingança de Noel
     .accept 165 >>Aceite O Eremita
     .target Elaine Carevin
 step
@@ -7456,7 +7456,7 @@ step
     .goto 1433/0,-1893.64,-9592.880,60,0
     .goto 1433/0,-1938.36,-9591.440
     >>Fale com |cRXP_FRIENDLY_Parker|r
-    .accept 244 >>Aceite Encroaching Gnolls
+    .accept 244 >>Aceite Gnolls Invasores
     .target Guard Parker
 step << skip
     #label AoE1
@@ -7479,7 +7479,7 @@ step
     #label Gnolls
     .goto 1433/0,-2238.15,-9443.60
     >>Fale com |cRXP_FRIENDLY_Feldon|r
-    .turnin 244 >>Entregue Encroaching Gnolls
+    .turnin 244 >>Entregue Gnolls Invasores
     .accept 246 >>Aceite Assessing the Ameaça
     .target Deputy Feldon
 step
@@ -7507,7 +7507,7 @@ step
     >>Fale com |cRXP_FRIENDLY_Conacher|r
 --  .accept 120 >>Accept Messenger to Stormwind
 --  .goto 1433/0,-2221.87,-9218.60
-    .accept 91 >>Aceite Solomon's Law
+    .accept 91 >>Aceite A lei de Salomão
     .goto 1433/0,-2216.00,-9215.85
 --  .target Magistrate Solomon
     .target Bailiff Conacher
@@ -7515,7 +7515,7 @@ step
     >>Fale com |cRXP_FRIENDLY_Baren|r e o |cRXP_PICK_Wanted Poster|r
     .accept 127 >>Aceite O lago está para peixe
     .goto 1433/0,-2172.59,-9261.02
-    .accept 180 >>Aceite Procurado: General Mordente
+    .accept 180 >>Aceite Procura-se: Tenente Mordente
     .goto 1433/0,-2151.53,-9247.12
     .target Dockmaster Baren
 step
@@ -8098,5 +8098,5 @@ step
     .fly Menethil >> Voe para Menethil Harbor
     .target Gryth Thurden
 step
-    .zone Wetlands >> Viagem para Pantanal
+    .zone Wetlands >> Voe para Pantanal
 ]])

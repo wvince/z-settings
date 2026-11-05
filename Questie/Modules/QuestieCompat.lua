@@ -302,18 +302,20 @@ end
 ---handler sets the map. Calling WorldMapFrame:SetMapID ourselves would leave the map's state tainted for the session,
 ---so Blizzard's map navigation later gets its pins blocked in combat. Older clients lack it and set the map directly.
 ---@param uiMapId number
+---@return boolean opened False when combat blocks opening the map.
 function QuestieCompat.OpenWorldMap(uiMapId)
     if (not C_Map.OpenWorldMap) then
         if (not WorldMapFrame:IsShown()) then
             WorldMapFrame:Show()
         end
         WorldMapFrame:SetMapID(uiMapId)
-        return
+        return true
     end
     if InCombatLockdown() then
-        return
+        return false
     end
     C_Map.OpenWorldMap(uiMapId)
+    return true
 end
 
 ---@class CalendarTime
@@ -852,6 +854,108 @@ function QuestieCompat.GetQuestLink(arg)
     error(errorMsg, 2)
 end
 
+---[Documentation](https://warcraft.wiki.gg/wiki/API_C_SuperTrack.SetSuperTrackedQuestID)
+---Blizzard super tracking drives the native quest POI highlight and navigation marker. Forever has it; Classic does not.
+---@return boolean
+function QuestieCompat.IsSuperTrackingSupported()
+    return (C_SuperTrack and C_SuperTrack.SetSuperTrackedQuestID) ~= nil
+end
+
+---@return QuestId|nil questId The super tracked quest, or nil when none is or the client has no super tracking.
+function QuestieCompat.GetSuperTrackedQuestID()
+    if (not QuestieCompat.IsSuperTrackingSupported()) then
+        return nil
+    end
+    local questId = C_SuperTrack.GetSuperTrackedQuestID()
+    if questId == 0 then
+        return nil
+    end
+    return questId
+end
+
+---Does nothing on clients without super tracking.
+---@param questId QuestId
+function QuestieCompat.SetSuperTrackedQuestID(questId)
+    if QuestieCompat.IsSuperTrackingSupported() then
+        C_SuperTrack.SetSuperTrackedQuestID(questId)
+    end
+end
+
+---Does nothing on clients without super tracking.
+function QuestieCompat.ClearSuperTrackedQuest()
+    if QuestieCompat.IsSuperTrackingSupported() then
+        C_SuperTrack.SetSuperTrackedQuestID(0)
+    end
+end
+
+---[C_SkillInfo Documentation](https://warcraft.wiki.gg/wiki/Category:API_systems/SkillInfo)
+---Forever replaced the global skill line API with C_SkillInfo; Classic clients keep the globals.
+---@return number numSkillLines
+function QuestieCompat.GetNumSkillLines()
+    if C_SkillInfo and C_SkillInfo.GetNumSkillLines then
+        return C_SkillInfo.GetNumSkillLines()
+    end
+    return GetNumSkillLines()
+end
+
+---@param index number
+---@return string? name
+---@return boolean? isHeader
+---@return number? rank
+---@return number? skillLineId Only on clients with C_SkillInfo.
+function QuestieCompat.GetSkillLineInfo(index)
+    if C_SkillInfo and C_SkillInfo.GetSkillLineInfo then
+        local skillLine = C_SkillInfo.GetSkillLineInfo(index)
+        if (not skillLine) then
+            return nil
+        end
+        return skillLine.name, skillLine.isHeader, skillLine.rank, skillLine.skillID
+    end
+    local name, isHeader, _, rank = GetSkillLineInfo(index)
+    return name, isHeader, rank
+end
+
+---Expands all skill line headers, so their skill lines are listed.
+function QuestieCompat.ExpandAllSkillHeaders()
+    if C_SkillInfo and C_SkillInfo.ExpandSkillHeader then
+        -- Back to front: expanding a header adds lines after it and would shift the indices still to check.
+        for index = C_SkillInfo.GetNumSkillLines(), 1, -1 do
+            local skillLine = C_SkillInfo.GetSkillLineInfo(index)
+            if skillLine and skillLine.isHeader and skillLine.isCollapsed then
+                C_SkillInfo.ExpandSkillHeader(index)
+            end
+        end
+        return
+    end
+    -- Expanding fires SKILL_LINES_CHANGED, which updates the professions again, so only expand when needed.
+    for index = 1, GetNumSkillLines() do
+        local _, isHeader, isExpanded = GetSkillLineInfo(index)
+        if isHeader and (not isExpanded) then
+            ExpandSkillHeader(0)
+            return
+        end
+    end
+end
+
+---[Documentation](https://warcraft.wiki.gg/wiki/API_GetQuestUiMapID)
+---Blizzard's map for a logged quest, for quests Questie has no map data for. The waypoint fallback may point to a
+---neighbouring zone on the way to the quest.
+---@param questId QuestId
+---@return number|nil uiMapId Nil when the client knows no map for the quest or lacks both APIs.
+function QuestieCompat.GetQuestUiMapID(questId)
+    local uiMapId
+    if GetQuestUiMapID then
+        uiMapId = GetQuestUiMapID(questId)
+    end
+    if ((not uiMapId) or uiMapId == 0) and C_QuestLog and C_QuestLog.GetNextWaypoint then
+        uiMapId = C_QuestLog.GetNextWaypoint(questId)
+    end
+    if uiMapId == 0 then
+        return nil
+    end
+    return uiMapId
+end
+
 ---[Documentation](https://warcraft.wiki.gg/wiki/API_GetQuestResetTime)
 ---Returns the number of seconds until the next daily quest reset.
 ---@return number secondsUntilReset
@@ -1154,24 +1258,6 @@ end
 function QuestieCompat.AchievementFrameAchievements_ForceUpdate()
     if AchievementFrameAchievements_ForceUpdate then
         return AchievementFrameAchievements_ForceUpdate()
-    end
-end
-
----Returns the achievement IDs tracked by Blizzard as separate return values.
----@return number ... Achievement IDs.
-function QuestieCompat.GetTrackedAchievements()
-    -- No API means no returned values, so callers collect an empty table.
-    if GetTrackedAchievements then
-        return GetTrackedAchievements()
-    end
-end
-
----Removes an achievement from Blizzard's tracked achievements, if supported.
----@param achieveId number
----@param isQuestie boolean? True prevents Questie's removal hook from also untracking it in Questie.
-function QuestieCompat.RemoveTrackedAchievement(achieveId, isQuestie)
-    if RemoveTrackedAchievement then
-        return RemoveTrackedAchievement(achieveId, isQuestie)
     end
 end
 

@@ -1334,7 +1334,7 @@ step << Mage
     .goto Elwynn Forest,43.25,66.19
     .trainer >> Treine suas magias de classe
 step << Priest
-	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com a |cRXP_FRIENDLY_Sacerdotisa Joselita|r
+	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|t Fale com |cRXP_FRIENDLY_Sacerdotisa Joselita|r
 	.target Priestess Josetta
     .goto Elwynn Forest,43.283,65.721
     .turnin 5623 >> Entregue Em Favor da Luz
@@ -1996,7 +1996,7 @@ step << Mage
     .trainer >> Treine suas magias de classe
 step << Priest
     .goto Elwynn Forest,43.283,65.721
-	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com a |cRXP_FRIENDLY_Sacerdotisa Joselita|r
+	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|t Fale com |cRXP_FRIENDLY_Sacerdotisa Joselita|r
 	.target Priestess Josetta
     .turnin 5624 >> Entregue Vestes da Luz
     .trainer >> Treine suas magias de classe
@@ -2824,7 +2824,7 @@ step << !Warlock
     #optional
     .goto Redridge Mountains,17.4,69.6
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Capitão da Guarda Florestan|r
-    .accept 244 >> Aceite Encroaching Gnolls
+    .accept 244 >> Aceite Gnolls Invasores
     .target Guard Parker
     .xp <11,1
 step << !Warlock
@@ -2844,7 +2844,7 @@ step << !Warlock
     #optional
     .goto Redridge Mountains,30.73,59.99
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Subdelegado David|r
-    .turnin 244 >> Entregue Encroaching Gnolls
+    .turnin 244 >> Entregue Gnolls Invasores
     .target Deputy Feldon
     .isOnQuest 244
     .xp <11,1
@@ -2878,7 +2878,7 @@ step << Paladin
     .goto Redridge Mountains,30.590,59.410
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Ariena Penafúria|r
     .fp Redridge Mountains >> Aprenda a rota de voo para Montanhas Cristarrubra
-    .fly Stormwind >> Voe para Cidade de Ventobravo
+    .fly Stormwind >> Voe para a Cidade de Ventobravo
     .target Ariena Stormfeather
     .train 410015,1
 step << Paladin
@@ -3083,7 +3083,7 @@ step << Priest
     #optional
     #requires GoldshireVendor
     .goto Elwynn Forest,43.283,65.721
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com a |cRXP_FRIENDLY_Sacerdotisa Joselita|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t Fale com |cRXP_FRIENDLY_Sacerdotisa Joselita|r
     .accept 5635 >> Aceite Prece Desesperada
     .trainer >> Treine suas magias de classe
     .target Priestess Josetta
@@ -3622,7 +3622,7 @@ step
     #xprate <1.5
     .goto StormwindClassic,52.623,65.701
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Estalajadeira Cristine|r
-    .home >> Defina sua Pedra de Retorno em Ventobravo
+    .home >> Defina sua Pedra de Retorno na Cidade de Ventobravo
     .target Innkeeper Allison
 step << skip --Warrior
     #season 2
@@ -3892,7 +3892,7 @@ step << Warlock
     #requires SoulShards
     .goto Redridge Mountains,17.4,69.6
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Capitão da Guarda Florestan|r
-    .accept 244 >> Aceite Encroaching Gnolls
+    .accept 244 >> Aceite Gnolls Invasores
     .target Guard Parker
 step << Warlock
     .goto Redridge Mountains,18.581,69.208,15,0
@@ -3904,7 +3904,7 @@ step << Warlock
 step << Warlock
     .goto Redridge Mountains,30.733,59.996
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Subdelegado David|r
-    .turnin 244 >> Entregue Encroaching Gnolls
+    .turnin 244 >> Entregue Gnolls Invasores
 step << Warlock
     .goto Redridge Mountains,30.590,59.410
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Ariena Penafúria|r
@@ -4640,7 +4640,7 @@ step << skip --logout skip
 step
     .goto 1426,53.47,35.02
     >>Saia de Altaforja
-    .zone Dun Morogh >> Vá para Dun Morogh
+    .zone Dun Morogh >> Viagem para Dun Morogh
 --logout skip - remove if logout skips re-added
 step
     #optional
@@ -5634,7 +5634,7 @@ step << Warlock
 step << Warlock
     #xprate <1.5
     .goto StormwindClassic,25.665,77.649
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Spackle Cardopomo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com Spackle Cardopomo|r
     .vendor >> |cRXP_BUY_Compre|r |T133738:0|t[Grimório of Consumir Sombras (Rank 1)] |cRXP_BUY_e|r |T133738:0|t[Grimório de Sacrificar (Rank 1)] |cRXP_BUY_se você conseguir pagá-los. Se não, você pode comprá-los mais tarde|r
     .target Spackle Thornberry
 step << Mage
@@ -5916,7 +5916,7 @@ step << Priest/Warlock
     .goto Ironforge,22.837,17.094,8,0
     .goto Ironforge,21.131,17.276,5,0
     .goto Ironforge,23.135,15.936
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Harick Batesseixo|r embaixo
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Harick Batesseixo|r lá embaixo
     >>|cRXP_BUY_Compre uma|r |T135468:0|t[Varinha Fumegante] |cRXP_BUY_dele|r
     .collect 5208,1 --Smoldering Wand (1)
     .target Harick Boulderdrum
@@ -6106,7 +6106,7 @@ step << Dwarf/Gnome
     #completewith DarkshoreBoat
     .goto Ironforge,55.501,47.742
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Grif Trovino|r
-    .fly Wetlands>> Voe para Pantanal
+    .fly Wetlands>> Voe para Terras do Interior
     .target Gryth Thurden
 step
     #xprate >1.49
@@ -6213,8 +6213,8 @@ step << Human
     #label WetlandsDS2
     .goto 1415,44.733,51.882,-1
     .goto 1437,11.730,43.304,-1
-    >>|cRXP_WARN_Salto da montanha em direção ao norte ou noroeste|r
-    .deathskip >> Morra e reviva na Baía Baradin |cRXP_FRIENDLY_Anjo da Cura|r
+    >>|cRXP_WARN_Pule da montanha em direção ao norte ou noroeste|r
+    .deathskip >> Morra e ressurja no |cRXP_FRIENDLY_Anjo da Cura|r de Baradin Bay
     .target Anjo da Cura
     .subzoneskip 150 --Menethil Harbor
     .isQuestAvailable 984

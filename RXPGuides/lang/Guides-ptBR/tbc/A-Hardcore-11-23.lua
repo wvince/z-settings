@@ -68,7 +68,7 @@ step << !NightElf !Draenei
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com um |cRXP_FRIENDLY_Leiloeiro de Ironforge|r
     >>|cRXP_BUY_Compre os itens a seguir para entregas mais rápidas em Costa Negra em breve:|r
     >>Se você não quiser ou não puder fazer isso, pule esta etapa
-    >>|T133912:0|t[Costa Negra Grouper]
+    >>|T133912:0|t[Garoupa da Costa Negra]
     .collect 12238,6,1141,1 -- Darkshore Grouper (6)
     .target Auctioneer Lympkin
     .target Auctioneer Redmuse
@@ -84,14 +84,14 @@ step << !NightElf !Draenei
     .goto Ironforge,24.200,74.600,-1
     .goto Ironforge,23.800,71.800,-1
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com um |cRXP_FRIENDLY_Leiloeiro de Ironforge|r
-    >>|cRXP_BUY_Compre|r |T133970:0|t|cRXP_LOOT_[Naco de Carne de Javali]|r |cRXP_BUY_e/ou|r |T133970:0|t|cRXP_LOOT_[Stringy Lobo Carne]|r |cRXP_BUY_para elevar sua|r |T133971:0|t[Culinária] |cRXP_BUY_depois|r
-    >>|cRXP_WARN_Você precisa de 50|r |T133971:0|t[Culinária] |cRXP_WARN_para uma missão em Darkshire depois|r
+    >>|cRXP_BUY_Compre|r |T133970:0|t|cRXP_LOOT_[Nacos de Carne de Javali]|r |cRXP_BUY_e/ou|r |T133970:0|t|cRXP_LOOT_[Acém de Lobo]|r |cRXP_BUY_para aumentar sua habilidade de|r |T133971:0|t[Culinária] |cRXP_BUY_mais tarde|r
+    >>|cRXP_WARN_Você precisará de 50 em|r |T133971:0|t[Culinária] |cRXP_WARN_para uma missão em Vila Sombria mais tarde|r
     >>Se você não quiser ou não puder fazer isso, pule esta etapa
     >>|cRXP_BUY_Compre os itens a seguir para entregas mais rápidas em Costa Negra em breve:|r
-    >>|T133972:0|t[Strider Carne]
-    >>|T133912:0|t[Costa Negra Grouper]
-    >>|T133970:0|t|cRXP_LOOT_[Naco de Carne de Javali]|r
-    >>|T133970:0|t|cRXP_LOOT_[Stringy Lobo Carne]|r
+    >>|T133972:0|t[Carne de Moa]
+    >>|T133912:0|t[Garoupa da Costa Negra]
+    >>|T133970:0|t|cRXP_LOOT_[Nacos de Carne de Javali]|r
+    >>|T133970:0|t|cRXP_LOOT_[Acém de Lobo]|r
     .collect 5469,5,2178,1 -- Strider Meat (5)
     .collect 12238,6,1141,1 -- Darkshore Grouper (6)
     .collect 769,50,2178,1,0x20,cooking --Chunk of Boar Meat (1-50)
@@ -663,7 +663,7 @@ step << Druid
     .goto Moonglade,44.1444,45.227
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Silva Fil'naveth|r
     .skipgossip
-    .fly Teldrassil >> Voe para Vila de Rut’theran
+    .fly Teldrassil >> Voe para a Vila de Rut'theran
     .target Silva Fil'naveth
     .zoneskip Darnassus
 step << Druid
@@ -1895,7 +1895,7 @@ step << Warrior/Paladin/Shaman
     .xp <16,1
 step
 	.isOnQuest 9699,9584,9643,9580,10063
-    .hs >> Use a Pedra de Regresso para O Entreposto Rubro
+    .hs >> Usar Pedra de Regresso para Vigília Rubra
     >>|cRXP_BUY_Compre comida/água se necessário|r << !Warrior !Rogue
 	>>|cRXP_BUY_Compre comida se necessário|r << Warrior/Rogue
     .cooldown item,6948,>2,1
@@ -2548,7 +2548,7 @@ step << Druid
     .goto Moonglade,44.1444,45.227
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Silva Fil'naveth|r
     .skipgossip
-    .fly Teldrassil >> Voe para Vila de Rut’theran
+    .fly Teldrassil >> Voe para a Vila de Rut'theran
     .target Silva Fil'naveth
     .zoneskip Darnassus
 step << Druid
@@ -2598,7 +2598,7 @@ step << Druid
     .target Tajarri
 step
     .isOnQuest 9748,9669,9741,9711
-    .hs >> Use a Pedra de Regresso para O Entreposto Rubro
+    .hs >> Usar Pedra de Regresso para Vigília Rubra
     >>|cRXP_BUY_Compre comida/água se necessário|r << !Warrior !Rogue
 	>>|cRXP_BUY_Compre comida se necessário|r << Warrior/Rogue
     .cooldown item,6948,>2,1
@@ -2945,7 +2945,7 @@ step << Warrior
 step << Shaman
     .goto The Exodar,32.450,23.996
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Sulaa|r
-    .accept 9502 >> Aceite Chamado da Água
+    .accept 9502 >> Aceite Clamor da água
     .trainer >> Treine suas magias de classe
     .target Sulaa
 step << Shaman
@@ -2957,7 +2957,7 @@ step << Shaman
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Clarividente Nobambo|r
     >>|cRXP_FRIENDLY_Clarividente Nobambo|r |cRXP_WARN_patrulha levemente|r
     .turnin 9502 >> Entregue Clamor da água
-    .accept 9501 >> Aceite Chamado da Água
+    .accept 9501 >> Aceite Clamor da água
     .target Farseer Nobundo
 step << Mage
     .goto The Exodar,47.228,62.305
@@ -3103,7 +3103,7 @@ step << Shaman
     .goto Bloodmyst Isle,32.302,16.198
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tConverse com |cRXP_FRIENDLY_Aquos|r submerso
     .turnin 9501 >> Entregue Clamor da água
-    .accept 9503 >> Aceite Chamado da Água
+    .accept 9503 >> Aceite Clamor da água
     .target Aqueous
 step << Shaman
     #loop
@@ -3120,11 +3120,11 @@ step << Shaman
     .goto Bloodmyst Isle,32.302,16.198
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tConverse com |cRXP_FRIENDLY_Aquos|r submerso
     .turnin 9503 >> Entregue Clamor da água
-    .accept 9504 >> Aceite Chamado da Água
+    .accept 9504 >> Aceite Clamor da água
     .target Aqueous
 step << Shaman
     .isOnQuest 9504
-    .hs >> Use a Pedra de Regresso para O Entreposto Rubro
+    .hs >> Usar Pedra de Regresso para Vigília Rubra
     >>|cRXP_BUY_Compre comida/água se necessário|r << !Warrior !Rogue
 	>>|cRXP_BUY_Compre comida se necessário|r << Warrior/Rogue
     .cooldown item,6948,>2,1
@@ -3955,7 +3955,7 @@ step << Rogue
     >>|T133644:0|t[Bater de Carteira] o |cRXP_ENEMY_Drone Défias Malformado|r. Saqueie-o para obter a |cRXP_LOOT_Chave da Torre Défias|r
     >>Você deve estar em [Furtividade] para usar [Bater Carteira]
     >>|cRXP_WARN_O |cRXP_ENEMY_Drone Défias Malformado|r surge na entrada da torre, depois patrulha ao redor da parte externa|r
-    >>|cRXP_WARN_Tenha cuidado, pois ele causa MUITO dano. Se o seu|r |T132320:0|t[Furtividade] |cRXP_WARN_interrompa, use rapidamente|r |T132307:0|t[Disparada] |cRXP_WARN_e fuja|r
+    >>Tome cuidado, pois ele causa MUITO dano. Se sua [Furtividade] quebrar, use rapidamente [Disparada] e fuja
     .complete 2359,2 --Collect Defias Tower Key (x1)
     .link https://www.youtube.com/watch?v=5sIew15IcG0 >> Clique AQUI para o guia em vídeo
     .mob Malformed Defias Drone
@@ -4968,7 +4968,7 @@ step
     .goto Ashenvale,36.61,49.58
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_a Raene Correlobos|r
     .turnin -10752 >> Entregue em Rumo a Vale Gris
-    .accept 991 >> Aceite A Purificação de Raene
+    .accept 991 >> Aceite a Purificação de Raene
     .accept 1054 >> Aceite Expurgo a Ameaça
     .target Raene Wolfrunner
 step
@@ -5032,7 +5032,7 @@ step
 .dungeon WC
     #completewith EnterWC
     >>Mate todos os tipos de criaturas |cRXP_ENEMY_Desviantes|r. Saqueie-as para obter seus |cRXP_LOOT_Pelegos Anormal|r
-    >>Isso pode ser concluído DENTRO e FORA das Cavernas do Lamento
+    >>Isso pode ser concluído DENTRO e FORA da Caverna Ululante
     .complete 1486,1 -- Deviate Hide (20)
     .isOnQuest 1486
 step
@@ -5048,7 +5048,7 @@ step
     .goto 1414/1,-2003.0622,-656.5599
     >>Mate |cRXP_ENEMY_Maluc Insano|r. Saqueie-o para obter o |cRXP_LOOT_Xerez de 99 Anos|r
     >>|cRXP_ENEMY_Maluc Insano|r pode surgir em alguns locais
-    >>Esta missão é concluída FORA das Cavernas do Lamento
+    >>Esta missão é concluída FORA da Caverna Ululante
     .complete 959,1 -- 99-Year-Old Port (1)
     .isOnQuest 959
     .mob Mad Magglish
@@ -5056,7 +5056,7 @@ step
 .dungeon WC
     #label EnterWC
     .goto 1414/1,-2205.4612,-742.4261
-    +Entre na Caverna Ululante
+    +Entre nas Cavernas do Lamento
     .zoneskip 1414,1 -- similar to stockades, no subzone for WC
 step
 .dungeon WC
@@ -5098,7 +5098,7 @@ step
 step
 .dungeon WC
     >>Mate todos os tipos de criaturas |cRXP_ENEMY_Desviantes|r. Saqueie-as para obter seus |cRXP_LOOT_Pelegos Anormal|r
-    >>Isso pode ser concluído DENTRO e FORA das Cavernas do Lamento
+    >>Isso pode ser concluído DENTRO e FORA da Caverna Ululante
     .complete 1486,1 -- Deviate Hide (20)
     .isOnQuest 1486
 step
@@ -5223,7 +5223,7 @@ step
     .goto Ashenvale,20.31,42.33
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Cadáver de Teronis|r
 	.turnin 991 >> Entregue Purificação de Raene
-    .accept 1023 >> Aceite A Purificação de Raene
+    .accept 1023 >> Aceite a Purificação de Raene
     .target Teronis' Corpse
 step
     #loop
@@ -5280,7 +5280,7 @@ step
 step
 .dungeon BFD
     #completewith RuuzelTurnin
-    +Comece a procurar um grupo para Profundezas Negras enquanto conclui os próximos passos. Muito em breve você estará fazendo Profundezas de Blackfathom
+    +Comece a procurar um grupo para Profundezas Negras enquanto conclui os próximos passos. Muito em breve você estará fazendo Profundezas Negras
 step
     .goto Ashenvale,7.00,15.20,0
     .goto Ashenvale,14.46,17.15,0
@@ -5724,7 +5724,7 @@ step << Warlock
     .turnin 1716 >> Entregue Devorador de Almas
     .target Takar the Seer
     .accept 1738 >> Aceite Palocórdio
-    .accept 65602 >> Aceite What is Love?
+    .accept 65602 >> Aceite O que é o amor?
 step << Warlock
     #completewith RatchetFP
     .goto The Barrens,62.98,37.21,100 >> Vá para Vila Catraca
@@ -5835,7 +5835,7 @@ step
     #completewith next
     >>Mate alguns |cRXP_ENEMY_Guerreiros Torpeflora|r e |cRXP_ENEMY_Totêmicos Torpeflora|r antes de seguir para o sul em direção ao |cRXP_ENEMY_Elementais da Água|r
     >>|cRXP_WARN_Tenha cuidado, pois os|r |cRXP_ENEMY_Ursinos Torpeflora|r |cRXP_WARN_podem|r |T132152:0|t[usar Chicotada] |cRXP_WARN_atingindo você 3 vezes de uma vez|r
-    >>|cRXP_WARN_Você matará os demais após terminar a missão Retaking Mystral Lake|r
+    >>|cRXP_WARN_Você matará o restante depois de concluir a missão das Braçadeiras Elementais.|r
     .complete 1025,4,5 -- Foulweald Warrior slain (12)
     .mob +Foulweald Warrior
     .goto Ashenvale,50.08,59.94,70,0

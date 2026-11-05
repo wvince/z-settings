@@ -190,7 +190,7 @@ step << Warrior
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Harutt|r
     .turnin 3091 >>Entregue Bilhete
     .accept 27020 >>Aceite A Primeira Lição
-    .train 100 >> Treine |T132337:0|t[Carga] << Cata
+    .train 100 >> Aprenda |T132337:0|t[Investida] << Cata
     .target Harutt Thunderhorn
 step << Paladin
     .goto 7,44.96,75.34
@@ -443,7 +443,7 @@ step << Tauren
     .target Tak
 step
     .goto 1412/1,-347.39999,-2365.30005
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Estalajadeiro Kauth|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Estalajadeiro Kauth|r
     .vendor >>|cRXP_BUY_Compre até 20|r |T132815:0|t[Leite Gelado] |cRXP_BUY_e|r |T133968:0|t[Pão Fresquinho] << !Warrior !Hunter
     .vendor >>|cRXP_BUY_Compre até 20|r |T133968:0|t[Pão Fresquinho] << Warrior/Hunter
     .target Innkeeper Kauth
@@ -485,7 +485,7 @@ step
     .target Mull Thunderhorn
 step << Warrior Cata
     .goto 7,49.55,59.97
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Krang|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Krang Casco de Pedra|r
     .train 34428 >> Treine suas magias de classe
     .target Krang Stonehoof
 step
@@ -677,7 +677,7 @@ step
     .target Mull Thunderhorn
 step << Warrior Cata
     .goto 7,49.55,59.97
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Krang|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Krang Casco de Pedra|r
     .train 84939 >> Treine suas magias de classe
     .target Krang Stonehoof
     .xp <7,1
@@ -707,7 +707,7 @@ step << Paladin Cata
     .xp <7,1
 step
     .goto 1412/1,-347.39999,-2365.30005
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Estalajadeiro Kauth|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Estalajadeiro Kauth|r
     .vendor >>|cRXP_BUY_Compre até 20|r |T132815:0|t[Leite Gelado] |cRXP_BUY_e|r |T133968:0|t[Pão Fresquinho] << !Warrior !Hunter
     .vendor >>|cRXP_BUY_Compre até 20|r |T133968:0|t[Pão Fresquinho] << Warrior/Hunter
     .itemcount 1179,<20 << !Warrior !Hunter
@@ -874,7 +874,7 @@ step
     .target Harken Windtotem
 step << Warrior Cata
     .goto 7,49.55,59.97
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Krang|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Krang Casco de Pedra|r
     .train 84939 >> Treine suas magias de classe
     .target Krang Stonehoof
 step << Shaman Cata
@@ -1047,7 +1047,7 @@ step << Hunter Cata
     .xp <10,1
 step << Warrior Cata
     .goto 7,49.55,59.97
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Krang|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Krang Casco de Pedra|r
     .train 71 >> Treine suas magias de classe
     .target Krang Stonehoof
     .xp <10,1
@@ -1079,7 +1079,7 @@ step
     #xprate <1.2
     .goto 7,47.889,57.097
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Zarlman Duas Luas|r
-    .turnin 24457 >>Entregue Rito de Visão
+    .turnin 24457 >>Entregue Rito de visão
     .accept 20441 >>Aceite Rito de visão
     .target Zarlman Two-Moons
 step
@@ -1096,7 +1096,7 @@ step
     #xprate <1.2
     .goto 7,49.370,17.324
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Una|r
-    .turnin 20441 >>Entregue Rito de Visão
+    .turnin 20441 >>Entregue Rito de visão
     .accept 24523 >>Aceite Totem de Juba Agreste
     .target Una Wildmane
 step

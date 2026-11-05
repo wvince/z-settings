@@ -96,7 +96,7 @@ step << Warlock
     .target Ursula Deline
 step << Warlock
     .goto Elwynn Forest,44.397,65.989
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Spackle Cardopomo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com Spackle Cardopomo|r
     >> |cRXP_BUY_Compre o |T133738:0|t[Grimório de Consumir Sombras (Rank 1)]|r
     .collect 16357,1
     .target Spackle Thornberry
@@ -148,7 +148,7 @@ step << Rogue
     #completewith next
     .goto StormwindClassic,74.90,54.00,20,0
     .goto StormwindClassic,78.43,60.15,20,0
-    .goto StormwindClassic,78.67,60.13,5 >> Entre na Sede da SI:7. Suba as escadas em direção a |cRXP_FRIENDLY_Renzik, "O Bicudo"|r
+    .goto StormwindClassic,78.67,60.13,5 >> Entre na Sede do SI:7. Suba as escadas em direção a |cRXP_FRIENDLY_Renzik, "O Bicudo"|r
 step << Rogue
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Renzik, "O Bicudo"|r
     .accept 2281 >> Aceite Encontro em Cristarrubra
@@ -294,12 +294,12 @@ step << !Warlock
 step
     .goto Redridge Mountains,17.4,69.6
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Capitão da Guarda Florestan|r
-    .accept 244 >> Aceite Encroaching Gnolls
+    .accept 244 >> Aceite Gnolls Invasores
     .target Guard Parker
 step
     .goto Redridge Mountains,30.73,59.99
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Subdelegado David|r
-    .turnin 244 >> Entregue Encroaching Gnolls
+    .turnin 244 >> Entregue Gnolls Invasores
     .accept 246 >> Aceite Assessing the Ameaça
     .target Deputy Feldon
 step << !Warlock
@@ -509,7 +509,7 @@ step
 step
     .goto Redridge Mountains,29.31,45.33,15,0
     .goto Redridge Mountains,29.98,44.45
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Magistrado Salomão|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Magistrado Salomão|r
 	.target Magistrate Solomon
     .accept 120 >> Aceite Mensageiro para Ventobravo
 step
@@ -777,7 +777,7 @@ step
     .accept 124 >> Aceite A Baying of Gnolls
     .accept 122 >> Aceite Underbelly Escamoso
 step
-	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Magistrado Salomão|r
+	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Magistrado Salomão|r
 	.target Magistrate Solomon
     .goto Redridge Mountains,29.31,45.33,15,0
     .goto Redridge Mountains,29.98,44.45
@@ -785,12 +785,12 @@ step
 step
     .goto Redridge Mountains,29.71,44.26
     .target Bailiff Conacher
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tConverse com o |cRXP_FRIENDLY_Meirinho Conacher|r
-    .accept 91 >> Aceite Solomon's Law
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Meirinho Conacher|r
+    .accept 91 >> Aceite A lei de Salomão
 step
     .goto Redridge Mountains,26.75,46.43
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tClique em |cRXP_FRIENDLY_O Cartaz Procurado|r
-    .accept 180 >> Aceite Procurado: General Mordente
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tClique em |cRXP_FRIENDLY_O Cartaz de Procurado|r
+    .accept 180 >> Aceite Procura-se: Tenente Mordente
 step
     .goto Redridge Mountains,21.85,46.32
     .target Martie Jainrose
@@ -877,7 +877,7 @@ step
 	.target Verner Osgood
     .goto Redridge Mountains,31.00,47.30
     .turnin 124 >> Entregue A Baying of Gnolls
-    .accept 126 >> Aceite Howling in the Hills
+    .accept 126 >> Aceite O gnoll de Vila Plácida
 step
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Encarregado Oslow|r
 	.target Foreman Oslow
@@ -1288,7 +1288,7 @@ step << Warlock
 step
     #loop
     >>Mate |cRXP_ENEMY_Brutos Rocha Negra|r e |cRXP_ENEMY_Vanguardeiros Rocha Negra|r. Saqueie-os em busca de seus |cRXP_LOOT_Machados|r
-	>>|cRXP_WARN_Cuidado com o |cRXP_ENEMY_Blackrock Outrunners|r que lançará |T132149:0|t[Rede] em você|r
+	>>|cRXP_WARN_Cuidado, os |cRXP_ENEMY_Blackrock Outrunners|r lançarão |T132149:0|t[Rede] em você|r
     .goto Redridge Mountains,74.00,79.00,60,0
     .goto Redridge Mountains,76.18,83.39,60,0
     .goto Redridge Mountains,77.80,68.50,60,0
@@ -1366,11 +1366,11 @@ step
     .goto Redridge Mountains,30.59,59.42
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Ariena Penafúria|r
 	.target Ariena Stormfeather
-    .fly Stormwind >> Voe para Cidade de Ventobravo
+    .fly Stormwind >> Voe para a Cidade de Ventobravo
 step << !Mage/Paladin/Warlock
     .goto StormwindClassic,52.623,65.701
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Estalajadeira Cristine|r
-    .home >> Defina sua Pedra de Retorno em Ventobravo
+    .home >> Defina sua Pedra de Retorno na Cidade de Ventobravo
     .target Innkeeper Allison
 step << Mage
     .goto Stormwind City,39.681,79.538

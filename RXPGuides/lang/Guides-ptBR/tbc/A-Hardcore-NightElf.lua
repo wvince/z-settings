@@ -17,11 +17,11 @@ step
     .goto Teldrassil,58.695,44.266
     .target Conservator Ilthalaine
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Ilthalaine|r
-    .accept 456 >> Aceite O Equilíbrio da Natureza
+    .accept 456 >> Aceite O equilíbrio da natureza
 step
     #sticky
     #label balance1
-    >>Mate os |cRXP_ENEMY_Nightsabers Jovens|r e os |cRXP_ENEMY_Thistle Boars|r
+    >>Mate |cRXP_ENEMY_Sabres-da-noite Jovem|r e |cRXP_ENEMY_Javalis-espinho Jovem|r
     .goto Teldrassil,62.0,42.6
     .complete 456,1 --Kill Young Nightsaber (x7)
     .mob +Young Nightsaber
@@ -31,10 +31,10 @@ step
     .xp 2
 step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Dirânia Pratafulge|r e |cRXP_FRIENDLY_Melithar Guenelmo|r
-    .accept 4495 >> Aceite A Good Amigo
+    .accept 4495 >> Aceite Um bom amigo
     .goto Teldrassil,60.899,41.961
     .target +Dirania Silvershine
-    .accept 458 >> Aceite The Protector of the Woods
+    .accept 458 >> Aceite O Protetor da Floresta
 	.goto Teldrassil,59.924,42.474
     .target +Melithar Staghelm
 step << Hunter
@@ -43,18 +43,18 @@ step << Hunter
 step << Hunter
     .goto Teldrassil,54.593,32.992
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Iverron|r
-    .turnin 4495 >> Entregue Um Bom Amigo
+    .turnin 4495 >> Entregue Um bom amigo
     .target Iverron
-    .accept 3519 >> Aceite A Amigo in Need
+    .accept 3519 >> Aceite Um amigo em apuros
 step << Hunter
     #completewith next
-    .hs >> Use sua Pedra de Retorno para ir a Shadowglen
+    .hs >> Use sua Pedra de Retorno para ir a Umbravale
 step << Hunter
     .goto Teldrassil,57.9,45.1
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Tarindrella|r
     .turnin 458 >> Entregue A Protetora dos Bosques
     .target Tarindrella
-    .accept 459 >> Aceite The Protector of the Woods
+    .accept 459 >> Aceite O Protetor da Floresta
 step << Druid/Priest
     .goto Teldrassil,59.602,40.696
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Delailah|r
@@ -66,15 +66,15 @@ step
     #requires balance1
 	.goto Teldrassil,58.695,44.266
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Ilthalaine|r
-    .turnin 456,1 >> Entregue O Equilíbrio da Natureza << Hunter
-    .turnin 456 >> Entregue O Equilíbrio da Natureza << !Hunter
+    .turnin 456,1 >> Entregue O equilíbrio da natureza << Hunter
+    .turnin 456 >> Entregue O equilíbrio da natureza << !Hunter
     .target Conservator Ilthalaine
-    .accept 457 >> Aceite O Equilíbrio da Natureza
-	.accept 3116 >> Aceite The Simple Seal << Warrior
-	.accept 3117 >> Aceite The Chiseled Seal << Hunter
+    .accept 457 >> Aceite O equilíbrio da natureza
+	.accept 3116 >> Aceite O Selo Simples << Warrior
+	.accept 3117 >> Aceite O Selo Cinzelado << Hunter
 --	.accept 3118 >> Accept Encrypted Sigil << Rogue
-	.accept 3119 >> Aceite The Sacred Seal << Priest
-	.accept 3120 >> Aceite The Verdant Seal << Druid
+	.accept 3119 >> Aceite O Selo Sagrado << Priest
+	.accept 3120 >> Aceite O Selo Verdejante << Druid
 step << Warrior
     .goto Teldrassil,59.306,41.091
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Keina|r
@@ -96,27 +96,27 @@ step << !Hunter
 step << !Hunter
     .goto Teldrassil,54.593,32.992
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Iverron|r
-    .turnin 4495 >> Entregue Um Bom Amigo
+    .turnin 4495 >> Entregue Um bom amigo
     .target Iverron
-    .accept 3519 >> Aceite A Amigo in Need
+    .accept 3519 >> Aceite Um amigo em apuros
 step << !Hunter
     #completewith next
-    .hs >> Use sua Pedra de Retorno para ir a Shadowglen
+    .hs >> Use sua Pedra de Retorno para ir a Umbravale
 step << !Hunter
     .goto Teldrassil,57.9,45.1
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Tarindrella|r
     .turnin 458 >> Entregue A Protetora dos Bosques
     .target Tarindrella
-    .accept 459 >> Aceite The Protector of the Woods
+    .accept 459 >> Aceite O Protetor da Floresta
 step << !Hunter
     .goto Teldrassil,58.6,44.3
     .target Conservator Ilthalaine
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Ilthalaine|r
-    .turnin 457 >> Entregue O Equilíbrio da Natureza
+    .turnin 457 >> Entregue O equilíbrio da natureza
 step
     .goto Teldrassil,60.899,41.961
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Dirânia Pratafulge|r
-    .turnin 3519 >> Entregue A Amigo in Need
+    .turnin 3519 >> Entregue Um amigo em apuros
     .target Dirania Silvershine
     .accept 3521 >> Aceite O Antídoto de Iverron
 step
@@ -267,7 +267,7 @@ step << Hunter
     .goto Teldrassil,58.6,44.3
     .target Conservator Ilthalaine
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Ilthalaine|r
-    .turnin 457,2 >> Entregue O Equilíbrio da Natureza
+    .turnin 457,2 >> Entregue O equilíbrio da natureza
 step << Priest
     #requires vial1
     .goto Teldrassil,59.2,40.5
@@ -966,7 +966,7 @@ step << !Rogue
 step << Druid
     .goto Darnassus,35.38,8.40
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tConverse com |cRXP_FRIENDLY_Mathrengyl Ursivagus|r no nível intermediário
-    .accept 5921 >> Aceite Moonglade
+    .accept 5921 >> Aceite Clareira da Lua
 	.trainer >> Treine suas magias de classe
     .target Mathrengyl Bearwalker
 step << !Rogue
@@ -1042,7 +1042,7 @@ step << Hunter
 step << Hunter
     .goto Teldrassil,56.676,59.489
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Dazalar|r
-    .turnin 6063 >> Entregue Domar a Fera - Missão
+    .turnin 6063 >> Entregue Domando a fera
     .target Dazalar
     .accept 6101 >> Aceite Domando a Fera
 step << !Rogue
@@ -1071,7 +1071,7 @@ step << !Rogue
 step << Hunter
     .goto Teldrassil,56.676,59.489
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Dazalar|r
-    .turnin 6101 >> Entregue Domar a Fera - Missão
+    .turnin 6101 >> Entregue Domando a fera
     .target Dazalar
     .accept 6102 >> Aceite Domando a Fera
 step << Hunter
@@ -1083,7 +1083,7 @@ step << Hunter
 step << Hunter
     .goto Teldrassil,56.676,59.489
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Dazalar|r
-    .turnin 6102 >> Entregue Domar a Fera - Missão
+    .turnin 6102 >> Entregue Domando a fera
     .target Dazalar
     .accept 6103 >> Aceite Treinando a Fera
     .train 1130 >> |cRXP_WARN_Certifique-se de que você treinou Marca do Caçador. Você vai precisar dela para obter uma runa em breve|r
@@ -1138,7 +1138,7 @@ step << Rogue
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Jannok Brisacanto|r
     .accept 2241 >> Aceite The Maçã Falls
 	.trainer >> Treine suas magias de classe
-    .train 5171 >> Treine |T132306:0|t[Retalhar]
+    .train 5171 >> Aprenda |T132306:0|t[Retalhar]
     .train 921 >> Treine |T133644:0|t[Bater Carteira] também, necessário para a missão de Ladino de nível 10
     .target Jannok Breezesong
 step << Rogue
@@ -1390,7 +1390,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Leiloeiro de Darnassus|r
     >>|cRXP_BUY_Compre os itens a seguir para entregas mais rápidas em Costa Negra em breve:|r
     >>Se você não quiser ou não puder fazer isso, pule esta etapa
-    >>|T133912:0|t[Costa Negra Grouper]
+    >>|T133912:0|t[Garoupa da Costa Negra]
     >>|T134187:0|t[Earthroot] << Druid
     .collect 12238,6,1141,1 -- Darkshore Grouper (6)
     .collect 2449,5,6123,1 << Druid
@@ -1405,8 +1405,8 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Leiloeiro de Darnassus|r
     >>|cRXP_BUY_Compre os itens a seguir para entregas mais rápidas em Costa Negra em breve:|r
     >>Se você não quiser ou não puder fazer isso, pule esta etapa
-    >>|T133972:0|t[Strider Carne]
-    >>|T133912:0|t[Costa Negra Grouper]
+    >>|T133972:0|t[Carne de Moa]
+    >>|T133912:0|t[Garoupa da Costa Negra]
     >>|T134187:0|t[Earthroot] << Druid
     .collect 5469,5,2178,1 -- Strider Meat (5)
     .collect 12238,6,1141,1 -- Darkshore Grouper (6)

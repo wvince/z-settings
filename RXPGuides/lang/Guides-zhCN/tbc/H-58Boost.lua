@@ -76,7 +76,7 @@ step
     #label UCflightpath1
     .isQuestAvailable 5211
     .goto Undercity,63.25,48.56
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_迈克尔 |r 对话
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_麦克尔|r 对话
     .fp Undercity >> 获得幽暗城的飞行路径
     .target 迈克尔·加勒特
 step
@@ -520,11 +520,11 @@ step
     .isQuestTurnedIn 5149
 step
 	#completewith RottingUndead
-	.subzone 2264 >> 前往考林路口
+	.subzone 2264 >> Travel to Corin's Crossing (NOT TRANSLATED IN :zhCN YET)
 step
 	#completewith next
-	>>击杀 |cRXP_ENEMY_亡灵|r 拾取它们的 |cRXP_LOOT_生命腐质|r。
-	>>|cRXP_WARN_北边和东边的道路上有多组精英怪巡逻。科林路口里面有隐形怪巡逻，所以尽量把怪拉出来打|r
+	>>击杀 |cRXP_ENEMY_亡灵|r。拾取它们的 |cRXP_LOOT_生命腐质|r。
+	>>|cRXP_WARN_Groups of elites patrol the north and east road. Invisible mobs patrol inside of Corin's Crossing, so try to pull mobs out|r (NOT TRANSLATED IN :zhCN YET)
 	.collect 15447,7 --Living Rot (7)
 	.mob 憎恨吟唱者
 	.mob 天灾看守

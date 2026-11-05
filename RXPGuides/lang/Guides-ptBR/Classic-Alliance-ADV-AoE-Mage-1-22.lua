@@ -1639,7 +1639,7 @@ step
     .goto 1426,25.077,75.711
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Grolin Barbabranca|r
     .turnin 234 >> Entregue Coldridge Valley Malha Entrega
-    .accept 182 >> Aceite The Trolls Cave
+    .accept 182 >> Aceite A Caverna dos Trolls
     .target Grelin Whitebeard
 step
     #completewith next
@@ -7320,7 +7320,7 @@ step
     .vendor 958 >> |cRXP_BUY_Compre sem inteligência|r |T134943:0|t[Pergaminhos]|cRXP_BUY_,|r |T134850:0|t[Mana Menor Potions]|cRXP_BUY_, e|r |T134830:0|t[Lesser Cura Potions] |cRXP_BUY_dela (se estiverem disponíveis)|r
     >>|cRXP_WARN_NÃO vá abaixo de 11s 38c|r
     .money <0.1138
-    .target Dawn Brightstar
+    .target Estela Dalva
     .itemcount 4371,1
 step
     #sticky
@@ -7330,7 +7330,7 @@ step
     .vendor 958 >> |cRXP_BUY_Compre sem inteligência|r |T134943:0|t[Pergaminhos]|cRXP_BUY_,|r |T134850:0|t[Mana Menor Potions]|cRXP_BUY_, e|r |T134830:0|t[Lesser Cura Potions] |cRXP_BUY_dela (se estiverem disponíveis)|r
     >>|cRXP_WARN_NÃO vá abaixo de 19s 38c|r
     .money <0.1938
-    .target Dawn Brightstar
+    .target Estela Dalva
     .itemcount 4371,<1
 step
     #label Theo
@@ -7364,7 +7364,7 @@ step
     .goto Duskwood,75.34,48.74
     >>Fale com |cRXP_FRIENDLY_Elaine|r
     .accept 163 >>Aceite Monte Corvo
-    .accept 164 >>Aceite Deliveries to Sven
+    .accept 164 >>Aceite A vingança de Noel
     .accept 165 >>Aceite O Eremita
     .target Elaine Carevin
 step
@@ -7456,7 +7456,7 @@ step
     .goto Redridge Mountains,14.87,70.30,60,0
     .goto Redridge Mountains,16.93,70.20
     >>Fale com |cRXP_FRIENDLY_Parker|r
-    .accept 244 >>Aceite Encroaching Gnolls
+    .accept 244 >>Aceite Gnolls Invasores
     .target Guard Parker
 step << skip
     #label AoE1
@@ -7479,7 +7479,7 @@ step
     #label Gnolls
     .goto Redridge Mountains,30.74,59.99
     >>Fale com |cRXP_FRIENDLY_Feldon|r
-    .turnin 244 >>Entregue Encroaching Gnolls
+    .turnin 244 >>Entregue Gnolls Invasores
     .accept 246 >>Aceite Assessing the Ameaça
     .target Deputy Feldon
 step
@@ -7507,7 +7507,7 @@ step
     >>Fale com |cRXP_FRIENDLY_Conacher|r
 --  .accept 120 >>Accept Messenger to Stormwind
 --  .goto Redridge Mountains,29.99,44.45
-    .accept 91 >>Aceite Solomon's Law
+    .accept 91 >>Aceite A lei de Salomão
     .goto Redridge Mountains,29.72,44.26
 --  .target Magistrate Solomon
     .target Bailiff Conacher
@@ -7515,7 +7515,7 @@ step
     >>Fale com |cRXP_FRIENDLY_Baren|r e o |cRXP_PICK_Wanted Poster|r
     .accept 127 >>Aceite O lago está para peixe
     .goto Redridge Mountains,27.72,47.38
-    .accept 180 >>Aceite Procurado: General Mordente
+    .accept 180 >>Aceite Procura-se: Tenente Mordente
     .goto Redridge Mountains,26.75,46.42
     .target Dockmaster Baren
 step
@@ -8098,5 +8098,5 @@ step
     .fly Menethil >> Voe para Menethil Harbor
     .target Gryth Thurden
 step
-    .zone Wetlands >> Viagem para Pantanal
+    .zone Wetlands >> Voe para Pantanal
 ]])

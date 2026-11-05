@@ -229,7 +229,7 @@ step << Warlock/Mage
     .itemcount 221499,1 << Warlock --Rune of the Felguard
     .itemcount 223147,1 << Mage --Spell Notes: Balefire Bolt
     .train 427733 >>|cRXP_WARN_Benutzt die|r |T134419:0|t[|cRXP_FRIENDLY_Rune der Teufelswache|r] |cRXP_WARN_um |r |T136216:0|t[Teufelswache beschwören] zu erlernen << Warlock
-    .train 428878 >>|cRXP_WARN_Benutzt die|r |T134939:0|t[|cRXP_FRIENDLY_Zaubernotizen: Qualfeuerblitz|r |cRXP_WARN_zum Trainieren von|r |T135809:0|t[Qualfeuerblitz] << Mage
+    .train 428878 >>|cRXP_WARN_Benutzt die|r |T134939:0|t[|cRXP_FRIENDLY_Zaubernotizen: Qualfeuerblitz|r] |cRXP_WARN_zum Trainieren|r |T135809:0|t[Qualfeuerblitz] << Mage
     .use 221499 << Warlock
     .use 223147 << Mage
 step
@@ -2474,7 +2474,7 @@ step
     #optional
 	#xprate <1.5 --<< !NightElf/Hunter
     .goto 1439,51.288,24.554
-    >>Klickt auf die |cRXP_PICK_Dröhnkiste 323|r auf dem Boden
+    >>Klickt auf die|cRXP_PICK_Dröhnkiste 323|r auf dem Boden
     .turnin 1002 >> Gebt die Quest Dröhnkiste 323 ab
     .accept 1003 >> Akzeptiert die Quest Dröhnkiste 525
     .isQuestComplete 1002
@@ -3575,7 +3575,7 @@ step << Warlock/Mage
     .itemcount 221499,1 << Warlock --Rune of the Felguard
     .itemcount 223147,1 << Mage --Spell Notes: Balefire Bolt
     .train 427733 >>|cRXP_WARN_Benutzt die|r |T134419:0|t[|cRXP_FRIENDLY_Rune der Teufelswache|r] |cRXP_WARN_um |r |T136216:0|t[Teufelswache beschwören] zu erlernen << Warlock
-    .train 428878 >>|cRXP_WARN_Benutzt die|r |T134939:0|t[|cRXP_FRIENDLY_Zaubernotizen: Qualfeuerblitz|r |cRXP_WARN_zum Trainieren von|r |T135809:0|t[Qualfeuerblitz] << Mage
+    .train 428878 >>|cRXP_WARN_Benutzt die|r |T134939:0|t[|cRXP_FRIENDLY_Zaubernotizen: Qualfeuerblitz|r] |cRXP_WARN_zum Trainieren|r |T135809:0|t[Qualfeuerblitz] << Mage
     .use 221499 << Warlock
     .use 223147 << Mage
 step
@@ -3873,7 +3873,7 @@ step
     .goto Darkshore,61.40,9.40,45,0
     .goto Darkshore,62.42,7.67
     >>Tötet |cRXP_ENEMY_Mondpirscherpatriarch|r und |cRXP_ENEMY_Mondpirschermatriarchin|r. Plündert sie für ihre |cRXP_LOOT_Pelze|r
-    >>|cRXP_WARN_Seid vorsichtig vor |cRXP_ENEMY_Moonstalker Matriarchs|r. Sie greifen immer mit einem |cRXP_ENEMY_Mondpirscherwicht|r an ihrer Seite an|r
+    >>|cRXP_WARN_Seid vorsichtig vor den |cRXP_ENEMY_Mondpirschermatriarchin|r. Sie greifen immer mit einem |cRXP_ENEMY_Mondpirscherwicht|r an ihrer Seite an|r
     .complete 986,1 -- Fine Moonstalker Pelt (5)
     .mob Moonstalker Sire
     .mob Moonstalker Matriarch
@@ -3891,7 +3891,7 @@ step << !sod/Hunter/Druid
     #optional
     #completewith next
     .goto 1439,55.802,18.290
-    .gossipoption 95406 >> Sprecht mit dem |cRXP_FRIENDLY_Dreschonator 4100|r um die Eskorte zu starten
+    .gossipoption 95406 >> Sprecht mit |cRXP_FRIENDLY_Der Dreschonator 4100|r um die Eskorte zu beginnen
 --  .gossipoption 87696 >> Talk to |cRXP_FRIENDLY_The Threshwackonator 4100|r to start the escort
     >>|cRXP_WARN_Diese Quest ist SEHR schwierig|r
     .target The Threshwackonator 4100
@@ -5066,7 +5066,7 @@ step << Dwarf Rogue
     #optional
     #sticky
     #label AntiVenomEnd2
-    .cast 20594 >>|cRXP_WARN_Wirkt|T136225:0|t[Steingestalt],um|T136230:0|t[Berührung von Zanzil] Debuff zu entfernen|r
+    .cast 20594 >>|cRXP_WARN_Wirkt |T136225:0|t[Steingestalt], um |T136230:0|t[Berührung von Zanzil]-Debuff zu entfernen|r
     .aura -9991
     .dungeon !DM
 step << Rogue
@@ -6071,7 +6071,7 @@ step << Mage
     .goto 1453,38.035,81.729,6,0
     .goto 1453,37.550,82.500,10,0
     >>Besteigt den Magierturm. Geht durch das grüne Portal
-    .goto Stormwind City,39.681,79.538,15 >>Reist in Richtung |cRXP_FRIENDLY_Larimaine Purdue|r
+    .goto Stormwind City,39.681,79.538,15 >>Reisen in Richtung |cRXP_FRIENDLY_Larimaine Purdue|r
     .dungeon DM
 step << Mage
     #xprate >1.59
@@ -6419,7 +6419,7 @@ step << Dwarf Rogue
     #optional
     #sticky
     #label AntiVenomEnd2
-    .cast 20594 >>|cRXP_WARN_Wirkt|T136225:0|t[Steingestalt],um|T136230:0|t[Berührung von Zanzil] Debuff zu entfernen|r
+    .cast 20594 >>|cRXP_WARN_Wirkt |T136225:0|t[Steingestalt], um |T136230:0|t[Berührung von Zanzil]-Debuff zu entfernen|r
     .aura -9991
     .dungeon DM
 step

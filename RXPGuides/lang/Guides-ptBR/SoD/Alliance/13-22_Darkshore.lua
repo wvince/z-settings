@@ -229,7 +229,7 @@ step << Warlock/Mage
     .itemcount 221499,1 << Warlock --Rune of the Felguard
     .itemcount 223147,1 << Mage --Spell Notes: Balefire Bolt
     .train 427733 >>|cRXP_WARN_Use a|r |T134419:0|t[|cRXP_FRIENDLY_Runa da Guarda Vil|r] |cRXP_WARN_para aprender|r |T136216:0|t[Evocar Guarda Vil] << Warlock
-    .train 428878 >>|cRXP_WARN_Use as|r |T134939:0|t[|cRXP_FRIENDLY_Anotações de Feitiços: Seta Incendiária|r] |cRXP_WARN_para aprender|r |T135809:0|t[Seta Incendiária] << Mage
+    .train 428878 >>|cRXP_WARN_Use o|r |T134939:0|t[|cRXP_FRIENDLY_Anotações de Feitiços: Seta Incendiária|r] |cRXP_WARN_para treinar|r |T135809:0|t[Seta Incendiária] << Mage
     .use 221499 << Warlock
     .use 223147 << Mage
 step
@@ -1152,7 +1152,7 @@ step << !Warrior !Rogue
 step << !Warrior !Rogue
     #season 2
     .goto Darkshore,50.81,25.50
-    >>Use o [Tubo de Amostragem Vazio] na base do Rio Fontescarpa
+    >>Use o [Tubo de Amostragem Vazio] na base do **Rio Fontescarpa**
     .complete 4762,1 --Cliffspring River Sample (1)
     .use 12350
 step << !Warrior !Rogue
@@ -2296,7 +2296,7 @@ step
 step
     .goto Darkshore,50.81,25.50
     #season 0 << !Warrior !Rogue
-    >>Use o [Tubo de Amostragem Vazio] na base do Rio Fontescarpa
+    >>Use o [Tubo de Amostragem Vazio] na base do **Rio Fontescarpa**
     .complete 4762,1 --Cliffspring River Sample (1)
     .use 12350
 ----Start of Hunter/Druid 1x and SoD Warrior/Rogue early Althalaxx section (for money+xp)----
@@ -3575,7 +3575,7 @@ step << Warlock/Mage
     .itemcount 221499,1 << Warlock --Rune of the Felguard
     .itemcount 223147,1 << Mage --Spell Notes: Balefire Bolt
     .train 427733 >>|cRXP_WARN_Use a|r |T134419:0|t[|cRXP_FRIENDLY_Runa da Guarda Vil|r] |cRXP_WARN_para aprender|r |T136216:0|t[Evocar Guarda Vil] << Warlock
-    .train 428878 >>|cRXP_WARN_Use as|r |T134939:0|t[|cRXP_FRIENDLY_Anotações de Feitiços: Seta Incendiária|r] |cRXP_WARN_para aprender|r |T135809:0|t[Seta Incendiária] << Mage
+    .train 428878 >>|cRXP_WARN_Use o|r |T134939:0|t[|cRXP_FRIENDLY_Anotações de Feitiços: Seta Incendiária|r] |cRXP_WARN_para treinar|r |T135809:0|t[Seta Incendiária] << Mage
     .use 221499 << Warlock
     .use 223147 << Mage
 step
@@ -4379,7 +4379,7 @@ step << Rogue
     .goto Wetlands,10.6,57.2,25,0
     .goto 1437,10.760,56.721
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Nélio Allen|r
-    .vendor >> |cRXP_WARN_compre um|r |T133024:0|t[Tubo de Bronze]
+    .vendor >> |cRXP_WARN_Compre um|r |T133024:0|t[Tubo de Bronze]
     >>|cRXP_WARN_Este é um item de suprimento limitado. Pule esta etapa se o|cRXP_FRIENDLY_ Nélio Allen|r não tiver uma|r
 	.target Neal Allen
     .bronzetube
@@ -5281,7 +5281,7 @@ step << NightElf Rogue
     #completewith next
     .goto Ironforge,55.491,47.751
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Grif Trovino|r
-    .fly Menethil >> Voe para Pantanal
+    .fly Menethil >> Voe para Terras do Interior
     .zoneskip Ironforge,1
     .cooldown item,6948,<0
     .dungeon !DM
@@ -6039,7 +6039,7 @@ step << Warlock
     #sticky
     #label Torment2DM
     .goto StormwindClassic,25.665,77.649
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Spackle Cardopomo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com Spackle Cardopomo|r
     .vendor >>|cRXP_BUY_Compre o|r |T133738:0|t[Grimório of Tormento (Rank 2)] |cRXP_BUY_dela|r
     .target Spackle Thornberry
     .itemcount 16346,<1 --Grimoire of Torment (<1)
@@ -6876,7 +6876,7 @@ step
     #xprate >1.59 << !Hunter
     #softcore
     #completewith DeadminesEnd
-    .deathskip >> Morra e renasça no |cRXP_FRIENDLY_Anjo da Cura|r
+    .deathskip >> Morra e ressuscite no |cRXP_FRIENDLY_Anjo da Cura|r
     .target Anjo da Cura
     .dungeon DM
 step << Paladin/Warrior

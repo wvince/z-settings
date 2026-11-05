@@ -4,7 +4,7 @@ RXPGuides.RegisterGuide([[
 #version 7
 #group RXP TBC 生存指南 (H)
 << Horde
-#name 1-6 永歌森林
+#name 1-6级 永歌森林
 #version 7
 #subgroup RXP TBC Survival Guide 1-30
 #defaultfor BloodElf
@@ -594,7 +594,7 @@ step
     .goto Eversong Woods,45.97,43.35,40,0
     .goto Eversong Woods,46.57,35.10,40,0
     .goto Eversong Woods,43.62,34.88,40,0
-    .xp 5+2690 >> 刷怪达到 2690+/2800 经验
+    .xp 5+2690 >> 刷怪达到2690+/2800经验
 ]])
 
 RXPGuides.RegisterGuide([[
@@ -718,7 +718,7 @@ step << Warrior/Paladin/Rogue
 step << Rogue
     .goto Eversong Woods,48.49,45.91
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_盖隆|r 对话 对话
-    .vendor >> 卖掉灰色垃圾物品。卖掉当前武器后金币如果足够，购买|T135641:0|t[卷刃的剑] (3银 82铜). 如果钱还不够，稍后再回来购买
+    .vendor >> 卖掉灰色垃圾物品。卖掉当前武器后金币如果足够，购买|T135641:0|t[卷刃的剑] (3s 82c). 如果钱还不够，稍后再回来购买
     .target 盖隆
     .itemStat 16,QUALITY,<7
     .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<3.3
@@ -872,7 +872,7 @@ step << Warrior/Paladin/Rogue
 step << Rogue
     .goto Eversong Woods,48.49,45.91
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_盖隆|r 对话 对话
-    .vendor >> 卖掉灰色垃圾物品。卖掉当前武器后金币如果足够，购买|T135641:0|t[卷刃的剑] (3银 82铜). 如果钱还不够，稍后再回来购买
+    .vendor >> 卖掉灰色垃圾物品。卖掉当前武器后金币如果足够，购买|T135641:0|t[卷刃的剑] (3s 82c). 如果钱还不够，稍后再回来购买
     .target 盖隆
     .itemStat 16,QUALITY,<7
     .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<3.3
@@ -1181,7 +1181,7 @@ step << Rogue
 step << Rogue
     .goto Eversong Woods,48.49,45.91
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_盖隆|r 对话 对话
-    .vendor >> 卖掉灰色垃圾物品。卖掉当前武器后金币如果足够，购买|T135641:0|t[卷刃的剑] (3银 82铜). 如果钱还不够，稍后再回来购买
+    .vendor >> 卖掉灰色垃圾物品。卖掉当前武器后金币如果足够，购买|T135641:0|t[卷刃的剑] (3s 82c). 如果钱还不够，稍后再回来购买
     .target 盖隆
     .itemStat 16,QUALITY,<7
     .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<3.3
@@ -1638,7 +1638,7 @@ step << Undead Warlock/Undead Warrior
     .goto Silvermoon City,62.89,31.26,30,0
     .goto Silvermoon City,51.83,17.91,30,0
     .goto Silvermoon City,49.45,15.00
-    .zone Undercity >>使用|cRXP_PICK_传送宝珠|r 前往幽暗城
+    .zone Undercity >>使用|cRXP_PICK_传送宝珠|r 回到幽暗城
     .isQuestAvailable 1473 << Warlock
     .isQuestAvailable 1819 << Warrior
 step << Undead Warlock
@@ -1871,7 +1871,7 @@ step << Warrior/Paladin/Rogue
 step << Rogue
     .goto Eversong Woods,48.49,45.91
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_盖隆|r 对话 对话
-    .vendor >> 卖掉灰色垃圾物品。卖掉当前武器后金币如果足够，购买|T135641:0|t[卷刃的剑] (3银 82铜). 如果钱还不够，稍后再回来购买
+    .vendor >> 卖掉灰色垃圾物品。卖掉当前武器后金币如果足够，购买|T135641:0|t[卷刃的剑] (3s 82c). 如果钱还不够，稍后再回来购买
     .target 盖隆
     .itemStat 16,QUALITY,<7
     .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<3.3
@@ -3397,7 +3397,7 @@ step << Rogue
     .goto Silvermoon City,62.89,31.26,30,0
     .goto Silvermoon City,51.83,17.91,30,0
     .goto Silvermoon City,49.45,15.00
-    .zone Undercity >>使用|cRXP_PICK_传送宝珠|r 前往幽暗城
+    .zone Undercity >>使用|cRXP_PICK_传送宝珠|r 回到幽暗城
     .itemStat 16,QUALITY,<7
     .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<6.8
 step << Rogue
@@ -3413,8 +3413,8 @@ step << Rogue
 step << !Undead Rogue
     #completewith Louis
     .goto Undercity,63.25,48.56
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_迈克尔 |r 对话
-    .fp Undercity >> 获得幽暗城的飞行路径
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_麦克尔|r 对话
+    .fp Undercity >> 获取幽暗城的飞行路线
     .target 迈克尔·加勒特
 step << Rogue
     #optional
@@ -3550,7 +3550,7 @@ RXPGuides.RegisterGuide([[
 #name 12-14 幽魂之地
 #version 7
 #subgroup RXP TBC Survival Guide 1-30
-#next 14-16 The Barrens
+#next 14-16级 贫瘠之地
 
 
 step
@@ -4534,7 +4534,7 @@ step << !Orc !Troll !Tauren
     .goto Silvermoon City,62.89,31.26,30,0
     .goto Silvermoon City,51.83,17.91,30,0
     .goto Silvermoon City,49.45,15.00
-    .zone Undercity >>使用|cRXP_PICK_传送宝珠|r 前往幽暗城
+    .zone Undercity >>使用|cRXP_PICK_传送宝珠|r 回到幽暗城
     .zoneskip Tirisfal Glades
     .zoneskip Durotar
     .zoneskip Orgrimmar
@@ -4554,7 +4554,7 @@ step << !Orc !Troll !Tauren
     .goto Undercity,45.32,78.32,10,0
     .goto Undercity,46.26,83.91,10,0
     .goto Undercity,49.03,87.92,10,0
-    .goto Undercity,52.94,89.60,10 >>进入皇家区
+    .goto Undercity,52.94,89.60,10 >>进入皇室区
     .dungeon RFC
 step << !Orc !Troll !Tauren
     #label RFCPowerPickup
@@ -7341,7 +7341,7 @@ step << Priest
     .goto Silvermoon City,60.65,63.45,15,0
     .goto Silvermoon City,65.92,53.71
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_维娜|r 对话
-    >>|cRXP_BUY_购买1根|r |T135144:0|t[强效魔法杖] |cRXP_BUY_从拍卖行。如果它便宜|r
+    >>|cRXP_BUY_从拍卖行购买1根|r |T135144:0|t[强效魔法杖] |cRXP_BUY_如果它便宜|r
     >>|cRXP_WARN_如果价格都太贵，可以跳过此步骤|r
     .collect 11288,1,496,1 --Greater Magic Wand
     .target 维纳 <拍卖师>
@@ -7582,7 +7582,7 @@ step
     #completewith UndercitySM
     .goto Silvermoon City,51.83,17.91,30,0
     .goto Silvermoon City,49.45,15.00
-    .zone Undercity >>使用|cRXP_PICK_传送宝珠|r 前往幽暗城
+    .zone Undercity >>使用|cRXP_PICK_传送宝珠|r 回到幽暗城
 step
     #completewith UndercitySM
     .goto Undercity,59.81,11.33,20,0
@@ -7595,8 +7595,8 @@ step
     .goto Undercity,71.88,40.45,10 >>乘电梯下去到幽暗城 << Undead Mage
 step << !Undead
     .goto Undercity,63.25,48.56
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_迈克尔 |r 对话
-    .fp Undercity >> 获得幽暗城的飞行路径
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_麦克尔|r 对话
+    .fp Undercity >> 获取幽暗城的飞行路线
     .target 迈克尔·加勒特
 step << Mage
     #completewith next

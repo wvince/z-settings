@@ -294,7 +294,7 @@ step
     .mob Mosshide Scout
 step
     .goto 48,25.444,17.963
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez au |cRXP_FRIENDLY_Mountaineer Stormpike|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Mountaineer Stormpike|r
     .turnin 13636 >>Rendez la quête Les ordres des Foudrepiques
     .accept 26843 >>Acceptez la quête Un commandant petit, mais malin
     .target Mountaineer Stormpike
@@ -305,7 +305,7 @@ step
     .mob "Commander" Nazrim
 step
     .goto 48,25.444,17.963
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez au |cRXP_FRIENDLY_Mountaineer Stormpike|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Mountaineer Stormpike|r
     .turnin 26843 >>Rendez la quête Un commandant petit, mais malin
     .accept 26844 >>Acceptez la quête À Kobold, Kobold et demi
     .target Mountaineer Stormpike
@@ -982,7 +982,7 @@ step
 step
 #questguide
     .goto 48,64.085,26.707
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Ashlan Rictus-de-pierre|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Ashlan Stonesmirk|r
     .target Ashlan Stonesmirk
     .turnin 27074 >>Rendre la quête Combattre le Marteau
     .accept 27075 >>Accepter Les serviteurs de Cho’gall
@@ -1006,7 +1006,7 @@ step
 step
 #questguide
     .goto 48,64.049,26.693
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Ashlan Rictus-de-pierre|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Ashlan Stonesmirk|r
     .target Ashlan Stonesmirk
     .turnin 27075 >>Rendre la quête Les serviteurs de Cho’gall
     .turnin 27077 >>Rendre la quête Prendre le chaos à la gorge
@@ -1023,7 +1023,7 @@ step
 step
 #questguide
     .goto 48,64.145,26.705
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Ashlan Rictus-de-pierre|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Ashlan Stonesmirk|r
     .target Ashlan Stonesmirk
     .turnin 27078 >>Rendre la quête Gor’kresh
     .accept 27115 >>Accepter L'appel d'Ando
@@ -1037,7 +1037,7 @@ step
 step
 #questguide
     .goto 48,25.444,17.963
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez au |cRXP_FRIENDLY_Mountaineer Stormpike|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Mountaineer Stormpike|r
     .target Mountaineer Stormpike
     .turnin 27116 >>Rendre la quête Les vents du loch Modan
     .accept 26137 >>Accepter Inspection-surprise

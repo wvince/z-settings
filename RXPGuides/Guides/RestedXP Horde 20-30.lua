@@ -1,6 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #tbc
@@ -12,7 +11,6 @@ RXPGuides.RegisterGuide([[
 #groupid RXP-SRGCE-H1
 #next 23-27 Hillsbrad / Ashenvale
 #xprate <1.5
-
 step << Mage
     #completewith Horthus
     .goto Orgrimmar,49.59,94.74,30,0
@@ -1665,7 +1663,6 @@ step << Warlock
 step << wotlk
     +If you have access to gold on this server, mail yourself gold for mount training soon!
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -1676,7 +1673,6 @@ RXPGuides.RegisterGuide([[
 #groupid RXP-SRGCE-H1
 #next 25-26 Stonetalon; 26-30 Ashenvale / Thousand Needles
 #xprate <1.5
-
 step << Orc !Warlock wotlk
 	.money <5.00
 	.goto Orgrimmar,63.3,12.8
@@ -2993,7 +2989,6 @@ step
 >>Talk to |cRXP_FRIENDLY_Thork|r
     .turnin 906 >> Turn in Betrayal from Within
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -3004,7 +2999,6 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Horde 1-30
 #groupid RXP-SRGCE-H1
 #xprate <1.5
-
 step
     .goto The Barrens,51.5,30.3
     .fly Sun Rock >> Fly to Stonetalon Mountains
@@ -3139,8 +3133,6 @@ step
 >>Talk to |cRXP_FRIENDLY_Tammra Windfield|r
     .turnin 6381 >> Turn in New Life
 ]])
-
-
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -3151,7 +3143,6 @@ RXPGuides.RegisterGuide([[
 #groupid RXP-SRGCE-H1
 #next RestedXP Horde 30-45\30-33 Hillsbrad / Arathi / Shimmering Flats
 #xprate <1.5
-
 step
     .goto Stonetalon Mountains,45.2,69.8,-1
     .goto The Barrens,51.6,30.4,-1
@@ -4484,13 +4475,11 @@ step
     .accept 1182 >> Accept Goblin Sponsorship
 step << Rogue
     .xp <33,1
-
 	#completewith next
     .goto Stranglethorn Vale,26.8,77.2
 	.trainer >> Go and train your class spells
 step
     .xp <33,1
-
     .goto Stranglethorn Vale,26.9,77.0
     .fp Booty Bay >> Get the Booty Bay flight path
 step
@@ -4737,7 +4726,6 @@ step << Undead !Warlock tbc
     .zone Stranglethorn Vale >> Board the Zeppelin to Stranglethorn Vale
     .zoneskip Tirisfal Glades,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -4748,7 +4736,6 @@ RXPGuides.RegisterGuide([[
 #groupid RXP-SRGCE-H1
 #next 25-27 Ashenvale JJ
 #xprate >1.4999
-
 step << Orc Shaman wotlk/Orc Warrior wotlk
     .goto Orgrimmar,69.41,13.11
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kildar|r
@@ -6560,8 +6547,6 @@ step << !Shaman !Warrior
     .itemcount 17031,1 << Troll Mage
     .train 3567,1 << Troll Mage
 ]])
-
-
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -6572,7 +6557,6 @@ RXPGuides.RegisterGuide([[
 #groupid RXP-SRGCE-H1
 #next 27-28 Southern Barrens JJ
 #xprate >1.4999
-
 step << Shaman/Warrior
     #completewith OrgTrain
     .hs >> Hearth to Orgrimmar
@@ -8459,7 +8443,6 @@ step << Shaman/Warrior
 	.turnin 1067 >> Turn in Return to Thunder Bluff
     .target Apothecary Zamah
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -8470,7 +8453,6 @@ RXPGuides.RegisterGuide([[
 #groupid RXP-SRGCE-H1
 #next 28-30 Thousand Needles JJ
 #xprate >1.4999
-
 step << Hunter
     .goto Thunder Bluff,59.14,86.87
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Urek|r
@@ -9279,7 +9261,6 @@ step
     .turnin 849 >> Turn in Revenge of Gann
     .target Gann Stonespire
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -9290,7 +9271,6 @@ RXPGuides.RegisterGuide([[
 #groupid RXP-SRGCE-H1
 #next RestedXP Horde 30-45\30-32 Hillsbrad/Arathi JJ
 #xprate >1.4999
-
 step
     .goto Thousand Needles,32.24,22.18
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Moonhorn|r

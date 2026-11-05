@@ -1,6 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Horde" then return end
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #tbc
@@ -395,7 +394,6 @@ step
 .goto Dun Morogh,34.1,71.6,20,0
 .goto Dun Morogh,35.7,66.0,20 >>Go through the tunnel
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -1587,7 +1585,6 @@ step << wotlk
     .goto StormwindNew,21.8,56.2
     .zone Darkshore >> Head to the Stormwind Harbor and take the boat to Darkshore
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -2898,7 +2895,6 @@ step << wotlk
     >> Head to Stormwind
     .zone Darkshore >> Take the boat to Darkshore
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 << Alliance Warlock
@@ -3260,7 +3256,6 @@ step
     #label Azuremyst
     .zone Azuremyst Isle >>Get onto the boat when it comes
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk

@@ -54,7 +54,7 @@ step << !Mage
     .skill herbalism,115,1
     .cooldown item,6948,<0,1
 step << !Mage
-    .hs >> 炉石返回达拉然
+    .hs >> 炉石返回到达拉然
     .zoneskip Undercity
     .skill herbalism,115,1
 step << !Mage
@@ -189,7 +189,7 @@ step << !Mage
 step
     #completewith Ruak
     .goto Shattrath City,64.1,41.1
-    .fly Thrallmar >> 飞往萨尔玛，地狱火半岛
+    .fly Thrallmar >> 飞往萨尔玛
     .skill herbalism,325,1
     .skill riding,300,1
     .zoneskip Hellfire Peninsula
@@ -221,7 +221,7 @@ step << !Mage
     .cooldown item,6948,<0,1
 step << !Mage
     #completewith next
-    .hs >> 炉石返回达拉然
+    .hs >> 炉石返回到达拉然
     .zoneskip Shattrath City
     .skill herbalism,350,1
 step << !Mage

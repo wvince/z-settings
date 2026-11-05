@@ -157,7 +157,7 @@ step << Warrior/Mage/Hunter
     .train 410122 >> 使用 |T134419:0|t[|cRXP_FRIENDLY_独来独往符文|r] 来学习 |T132266:0|t[独来独往] << Hunter
     .train 416086 >> 使用 |T134419:0|t[|cRXP_FRIENDLY_短兵相接符文|r] 来学习 |T132394:0|t[近战专家] << Hunter
     .train 440563 >> 使用 |T134419:0|t[|cRXP_FRIENDLY_游击符文|r] 来学习 |T132171:0|t[一击脱离] << Hunter
-    .train 415423 >> 使用 |T133739:0|t[论述：蝰蛇守护|cRXP_FRIENDLY_] 来学习 |T132160:0|t[蝰蛇守护]|r] << Hunter
+    .train 415423 >> Use the |T133739:0|t[|cRXP_FRIENDLY_Treatise on Aspect of the Viper to train |T132160:0|t[Aspect of the Viper]|r] << Hunter
     .train 416009 >> 使用 |T134419:0|t[|cRXP_FRIENDLY_战术符文|r] 来学习 |T136150:0|t[恶魔战术] << Warlock
     .train 425476 >> 使用 |T134419:0|t[|cRXP_FRIENDLY_契约符文|r] 来训练 |T237562:0|t[恶魔契约] << Warlock
     .train 416015 >> 使用 |T134419:0|t[|cRXP_FRIENDLY_烧尽符文|r] 来训练 |T135789:0|t[烧尽] << Warlock
@@ -192,7 +192,7 @@ step << !Priest !Mage !Warlock !Warrior !Rogue
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_艾德林·怒流|r 对话
     >>把垃圾物品卖给商人 << Hunter
     >>|cRXP_BUY_从他那里|r|cRXP_BUY_购买 600发|r |T132384:0|t[轻弹丸] << Hunter
-    .vendor >> 出售垃圾物品 << !Hunter
+    .vendor >> |cRXP_WARN_出售垃圾物品|r << !Hunter
     .collect 2516,600 << Hunter --Light Shot (600)
     .target 艾德林·怒流
     .xp >6,1
@@ -385,7 +385,7 @@ step << Rogue
     .turnin 3109 >> 交任务 密文符文 << Dwarf
     .turnin 3113 >> 交任务 密文备忘录 << Gnome
     .accept 77658 >> 接受任务 三度失窃 << Dwarf
-    .turn in 77658 >> 交任务 三度失窃 << Dwarf
+    .turnin 77658 >> 交任务 三度失窃 << Dwarf
     .accept 77659 >> 接受任务 三度失窃 << Gnome
     .turnin 77659 >> 交任务 三度失窃 << Gnome
     .train 1784 >>学习 |T132320:0|t[潜行]
@@ -954,7 +954,7 @@ step << Gnome Mage
     #xprate <1.59
     #season 2
     #completewith next
-    .train 401760 >>|cRXP_WARN_使用|r |T134939:0|t|cRXP_LOOT_法术笔记：NNGABIIHGQSU]|r |cRXP_WARN_学习|r |T133816:0|t[铭刻手套 - 冰枪术]
+    .train 401760 >>|cRXP_WARN_Use the|r |T134939:0|t|cRXP_LOOT_[Spell Notes: CALE ENCI]|r |cRXP_WARN_to learn|r |T133816:0|t[Engrave Gloves - Ice Lance]
     .use 203751
     .itemcount 203751,1 -- Spell Notes: CALE ENCI (1)
 step << Gnome Mage

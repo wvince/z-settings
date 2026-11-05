@@ -7,8 +7,8 @@ RXPGuides.RegisterGuide([[
 #disabledungeons
 #season 0,1
 << Alliance
-#name 1-6 Shadowglen
-#displayname 1-7 Shadowglen << sod
+#name 1-6 Umbravale
+#displayname 1-7 Umbravale << sod
 #version 1
 #group RestedXP Forever Guia (A)
 #subgroup Speedrun Guia 1-20
@@ -18,27 +18,27 @@ RXPGuides.RegisterGuide([[
 step << !NightElf
     #sticky
     #completewith next
-    +Você selecionou um guia destinado a Elfos Noturnos. Você deve escolher a mesma zona inicial em que começa
+    +Você selecionou um guia destinado a Elfos Noturnos. Você deve escolher a zona inicial que corresponda à zona em que você começa
 step
     .goto 1438/1,826.03,10328.97
     .target Conservator Ilthalaine
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Conservador Ilthalaine|r
-    .accept 456 >> Aceite O Equilíbrio da Natureza
+    .accept 456 >> Aceite O equilíbrio da natureza
 step << !Druid
     #sticky
     #label balance1
     #completewith GoodProtector
-    >>Abate os |cRXP_ENEMY_Jovens Nightsabers|r e os |cRXP_ENEMY_Jovens Thistle Boars|r
+    >>Abate os |cRXP_ENEMY_Sabres-da-noite Jovens|r e os |cRXP_ENEMY_Javalis-espinho Jovens|r
     .goto 1438/1,657.75,10385.51,0,0
     .complete 456,1 --Kill Young Nightsaber (x7)
     .mob +Young Nightsaber
     .complete 456,2 --Kill Young Thistle Boar (x4)
     .mob +Young Thistle Boar
 step << !Druid
-    >>Saqueie os inimigos que você mata, certifique-se de ter pelo menos 10 cobre em sucata de vendedor, você precisará disso para treinar |T132333:0|t[Brado de Batalha]<< Warrior
-    .xp 2 >> Farme até o nível 2
+    >>Saqueie os inimigos que você matar e junte pelo menos 10 de cobre em itens para vender. Você vai precisar desse dinheiro para treinar |T132333:0|t[Brado de Batalha]<< Warrior
+    .xp 2 >> Mate inimigos até o level 2
 step << Druid
-    >>Abate os |cRXP_ENEMY_Jovens Nightsabers|r e os |cRXP_ENEMY_Jovens Thistle Boars|r
+    >>Mate |cRXP_ENEMY_Sabres-da-noite Jovem|r e |cRXP_ENEMY_Javalis-espinho Jovem|r
     .goto 1438/1,669.500,10387.300
     .complete 456,1 --Kill Young Nightsaber (x7)
     .mob +Young Nightsaber
@@ -46,14 +46,14 @@ step << Druid
     .mob +Young Thistle Boar
 step << Druid
     #completewith next
-    +|cRXP_WARN_Garanta que você tenha pelo menos 96 cobre em valor de lixo de vendedor|r, você pode contar seu cajado que vende por 9c
+    +|cRXP_WARN_garanta que você tem pelo menos 1 prata 2 cobre de sucata de vendedor|r, você pode contar com seu bastão que vende por 9c
 step << !sod/Warrior
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Dirânia Pratafulge|r e |cRXP_FRIENDLY_Melithar Guenelmo|r
     #label GoodProtector
-    .accept 4495 >> Aceite Um Bom Amigo
+    .accept 4495 >> Aceite Um bom amigo
     .target +Dirania Silvershine
     .goto 1438/1,713.81,10407.20
-    .accept 458 >> Aceite A Protetora dos Bosques
+    .accept 458 >> Aceite O Protetor da Floresta
 	.goto 1438/1,763.45,10389.79
     .target +Melithar Staghelm
 step << Priest
@@ -64,7 +64,7 @@ step << Priest
     .collect 159,15 --Collect Refreshing Spring Water (x15)
     .target Dellylah
 step << !Druid
-    >>Abate os |cRXP_ENEMY_Jovens Nightsabers|r e os |cRXP_ENEMY_Jovens Thistle Boars|r
+    >>Mate |cRXP_ENEMY_Sabres-da-noite Jovem|r e |cRXP_ENEMY_Javalis-espinho Jovem|r
     .goto 1438/1,657.75,10385.51,0,0
     .complete 456,1 --Kill Young Nightsaber (x7)
     .mob +Young Nightsaber
@@ -82,22 +82,22 @@ step << Warrior
     .trainer >> Treine |T132333:0|t[Brado de Batalha]
 step << Hunter/Warrior
     .goto 1438/1,769.77,10673.98
-    .xp 4-610 >> Farme até estar a 610 XP do nível 4 (790/1400)
+    .xp 4-610 >> Mate inimigos até estar a 610 XP do nível 4 (790/1400)
 step << Hunter/Warrior
     .goto 1438/1,1034.89,10711.58
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Iverron|r
-    .turnin 4495 >> Entregue Um Bom Amigo
+    .turnin 4495 >> Entregue Um bom amigo
     .target Iverron
-    .accept 3519 >> Aceite Um Amigo em Necessidade
+    .accept 3519 >> Aceite Um amigo em apuros
 step << Hunter/Warrior
     #completewith next
-    .hs >> Use sua Pedra de Retorno para ir a Shadowglen
+    .hs >> Use sua Pedra de Retorno para ir a Umbravale
 step << Hunter/Warrior
     .goto 1438/1,866.51,10300.67
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Tarindrella|r
-    .turnin 458 >> Entregue A Protetora dos Bosques
+    .turnin 458 >> Entregue A protetora dos bosques
     .target Tarindrella
-    .accept 459 >> Aceite A Protetora dos Bosques
+    .accept 459 >> Aceite A protetora dos bosques
     .accept 97977 >>Aceite O Chamado da Natureza
 step << Druid
 	.goto 1438/1,820.68,10487.33--c:Teldrassil,58.8,39.6
@@ -110,10 +110,10 @@ step << !Priest !Rogue
     #requires balance1
 	.goto 1438/1,826.03,10328.97
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Conservador Ilthalaine|r
-    .turnin 456,1 >> Entregue O Equilíbrio da Natureza << Hunter
-    .turnin 456 >> Entregue O Equilíbrio da Natureza << !Hunter
+    .turnin 456,1 >> Entregue O equilíbrio da natureza << Hunter
+    .turnin 456 >> Entregue O equilíbrio da natureza << !Hunter
     .target Conservator Ilthalaine
-    .accept 457 >> Aceite O Equilíbrio da Natureza
+    .accept 457 >> Aceite O equilíbrio da natureza
 	.accept 3116 >> Aceite O Selo Simples << Warrior
 	.accept 3117 >> Aceite O Selo Cinzelado << Hunter
 --	.accept 3118 >> Accept Encrypted Sigil << Rogue
@@ -121,31 +121,32 @@ step << !Priest !Rogue
 	.accept 3120 >> Aceite O Selo Verdejante << Druid
 step << !Hunter !Druid !Warrior
     #completewith next
-    >>Abate os |cRXP_ENEMY_Javalis Thistle|r a caminho de Iverron
+    >>Mate os |cRXP_ENEMY_Javalis-espinho|r a caminho de Iverron. Você não precisa completar isto agora.
     .complete 457,2 --Kill Thistle Boar (x7)
     .mob +Thistle Boar
 step << !Hunter !Druid !Warrior
     .goto 1438/1,1034.89,10711.58
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Iverron|r
-    .turnin 4495 >> Entregue Um Bom Amigo
+    .turnin 4495 >> Entregue Um bom amigo
     .target Iverron
-    .accept 3519 >> Aceite Um Amigo em Necessidade
+    .accept 3519 >> Aceite Um amigo em apuros
 step << !Hunter !Druid !Warrior
     #completewith next
-    .hs >> Use sua Pedra de Retorno para ir a Shadowglen
+    .hs >> Use sua Pedra de Retorno para ir a Umbravale
 step << !Hunter !Warrior
     .goto 1438/1,866.51,10300.67
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Tarindrella|r
     --@TODO add herbalism note for druid for earthroot
-    .turnin 458 >> Entregue A Protetora dos Bosques
+    .turnin 458 >> Entregue A protetora dos bosques
     .target Tarindrella
-    .accept 459 >> Aceite A Protetora dos Bosques
+    .accept 459 >> Aceite A protetora dos bosques
     .accept 97977 >>Aceite O Chamado da Natureza
 step << Priest/Rogue
     #requires balance1
 	.goto 1438/1,826.03,10328.97
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Conservator Ilthalaine|r
-    .turnin 456 >> Entregue O Equilíbrio da Natureza
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Conservador Ilthalaine|r
+    .turnin 456 >> Entregue O equilíbrio da natureza
+    .accept 457 >> Aceite O equilíbrio da natureza
     .target Conservator Ilthalaine
 	.accept 3119 >> Aceite O Selo Sagrado << Priest
 step << Druid
@@ -162,31 +163,31 @@ step << Druid
     .mob Grellkin
 step << Druid
     #completewith next
-    >>Abate os |cRXP_ENEMY_Javalis Thistle|r a caminho de Iverron
+    >>Mate os |cRXP_ENEMY_Thistle Boars|r a caminho de Iverron. Você não precisa completar isto agora.
     .complete 457,2 --Kill Thistle Boar (x7)
     .mob +Thistle Boar
 step << Druid
     .goto 1438/1,1034.89,10711.58
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Iverron|r
-    .turnin 4495 >> Entregue Um Bom Amigo
+    .turnin 4495 >> Entregue Um bom amigo
     .target Iverron
-    .accept 3519 >> Aceite Um Amigo em Necessidade
+    .accept 3519 >> Aceite Um amigo em apuros
 step << Druid
     #completewith next
-    .hs >> Use sua Pedra de Retorno para ir a Shadowglen
+    .hs >> Use sua Pedra de Retorno para ir a Umbravale
 step << Druid
     .goto 1438/1,871.60,10300.67
     .target Tarindrella
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Tarindrella|r
     >>DICA: |cRXP_WARN_Pegue as perneiras como recompensa e guarde-as. Você as utilizará para engravar uma runa depois|r << sod Hunter/sod Rogue/sod Warrior/sod Druid
-    .turnin 459,1 >> Entregue A Protetora dos Bosques
+    .turnin 459,1 >> Entregue A protetora dos bosques
     .turnin 97977 >>Entregue O Chamado da Natureza
 step
     .goto 1438/1,713.81,10407.20
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Dirânia Pratafulge|r
-    .turnin 3519 >> Entregue Um Amigo Necessitado
+    .turnin 3519 >> Entregue Um amigo em apuros
     .target Dirania Silvershine
-    .accept 3521 >> Aceite O Antídoto de Iverron
+    .accept 3521 >> Aceite O antídoto de Iverron
 step << Warrior
     .xp 4-40
 step << Hunter/Druid/Warrior
@@ -257,7 +258,7 @@ step
     .mob Webwood Spider
 step
     #completewith next
-    >>Abate os |cRXP_ENEMY_Javalis Thistle|r a caminho dos Capetas
+    >>Mate os |cRXP_ENEMY_Thistle Boars|r a caminho de Grells. Você não precisa completar isto agora.
     .complete 457,2 --Kill Thistle Boar (x7)
     .mob +Thistle Boar
 step << !Druid
@@ -284,7 +285,7 @@ step
     .turnin 97977 >>Entregue O Chamado da Natureza
 step
     #completewith next
-    >>Abate os |cRXP_ENEMY_Javalis Thistle|r a caminho de Iverron
+    >>Mate os |cRXP_ENEMY_Thistle Boars|r a caminho de Iverron. Você não precisa completar isto agora.
     .complete 457,2 --Kill Thistle Boar (x7)
     .mob +Thistle Boar
 step
@@ -320,7 +321,7 @@ step << Hunter/Rogue
     .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<2.05
 step
     #completewith next
-    >>Abate os |cRXP_ENEMY_Javalis Thistle|r a caminho de Iverron
+    >>Mate os |cRXP_ENEMY_Thistle Boars|r a caminho de Iverron. Você não precisa completar isto agora.
     .complete 457,2 --Kill Thistle Boar (x7)
     .mob +Thistle Boar
 step
@@ -391,7 +392,7 @@ step << Hunter/Druid
     .goto 1438/1,826.03,10328.97
     .target Conservator Ilthalaine
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Ilthalaine|r
-    .turnin 457,2 >> Entregue O Equilíbrio da Natureza
+    .turnin 457,2 >> Entregue O equilíbrio da natureza
 step
     #requires vial1
     .goto 1438/1,871.6,10440.83,25,0
@@ -433,7 +434,7 @@ step
     .goto 1438/1,826.03,10328.97
     .target Conservator Ilthalaine
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Conservador Ilthalaine|r
-    .turnin 457,2 >> Entregue O Equilíbrio da Natureza
+    .turnin 457,2 >> Entregue O equilíbrio da natureza
     .isQuestComplete 457
 step
     .goto 1438/1,700.57,10214.33
@@ -491,6 +492,8 @@ step
 step
     .goto 1438/1,882.300,9909.101
     >>Usar o gesto |cRXP_WARN_/sit|r ao lado da fogueira e |cRXP_WARN_fique parado por 1 minuto|r para completar o objetivo
+    >>|cRXP_WARN_Se você não receber crédito de missão por se sentar, abandone-a e aceite-a novamente!|r
+    .complete 96606,1 --Sit
     .complete 96606,2 --Gain the Boosted Rest buff
 step
     .goto 1438/1,879.700,9907.601
@@ -599,7 +602,7 @@ step << Rogue
 step << Druid
     .goto 1438/1,947.57,9812.38
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Shalomon|r
-    >>|cRXP_BUY_Compre e equipe uma|r |T135145:0|t[Bengala] |cRXP_BUY_se você tiver como pagar (4s 79c), caso contrário, pule este passo|r
+    >>|cRXP_BUY_Compre e equipe uma|r |T135145:0|t[Bengala] |cRXP_BUY_se puder pagá-la (5s 4c), caso contrário, pule este passo|r
     .collect 2495,1 --Walking Stick (1)
     .target Shalomon
     .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<4.20
@@ -638,7 +641,7 @@ step
 step
     .goto 1438/1,906.17,9751.02
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Zarrin|r
-    .train 2550 >>Treinar Culinária
+    .train 2550 >>Treine Culinária
     .accept 4161 >> Aceite Recipe of the Kaldorei
     .turnin 96634 >> Entregue Acampamento 101: Culinária
     .target Zarrin
@@ -917,7 +920,7 @@ step << Rogue
 step << Druid
     .goto 1438/1,947.57,9812.38
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Shalomon|r
-    >>|cRXP_BUY_Compre e equipe uma|r |T135145:0|t[Bengala] |cRXP_BUY_se você pode pagar (5s 4c), se não, pule este passo|r
+    >>|cRXP_BUY_Compre e equipe uma|r |T135145:0|t[Bengala] |cRXP_BUY_se puder pagá-la (5s 4c), caso contrário, pule este passo|r
     .collect 2495,1 --Walking Stick (1)
     .target Shalomon
     .money <0.0504
@@ -1132,7 +1135,7 @@ step
     #label SpiderLegsEnd
     .goto 1438/1,906.17,9751.02
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Zarrin|r
-    .train 2550 >>Treinar Culinária
+    .train 2550 >>Treine Culinária
     .turnin 96634 >> Entregue Acampamento 101: Culinária
     .accept 4161 >> Aceite Recipe of the Kaldorei
     .turnin 4161 >> Entregue Receita dos Kaldorei
@@ -1406,7 +1409,7 @@ step << Druid/Priest
     .accept 940 >> Aceite Teldrassil
 step << Druid/Priest
     #label xp10
-    .xp 10-900 >> Farme até estar a 900 XP do nível 10 (5600/6500)
+    .xp 10-870 >> Farme até estar a 870 xp do nível 10 (5630/6500)
 step << Hunter
     #completewith xp10
     #label mist1
@@ -1580,7 +1583,7 @@ step << Druid NightElf
     .goto 1457/1,2563.92,10179.040
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Mathrengyl Ursivagus|r no nível intermediário
     .turnin 5923 >> Entregue Heeding the Call - Missão
-    .accept 5921 >> Aceite Moonglade
+    .accept 5921 >> Aceite Clareira da Lua
 	.trainer >> Treine suas magias de classe
     .target Mathrengyl Bearwalker
 step << Druid NightElf
@@ -1588,13 +1591,13 @@ step << Druid NightElf
     .goto 1457/1,2563.92,10179.040
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Mathrengyl Ursivagus|r no nível intermediário
     .turnin 5925 >> Entregue Heeding the Call - Missão
-    .accept 5921 >> Aceite Moonglade
+    .accept 5921 >> Aceite Clareira da Lua
 	.trainer >> Treine suas magias de classe
     .target Mathrengyl Bearwalker
 step << Druid NightElf
     .goto 1457/1,2563.92,10179.040
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Mathrengyl Ursivagus|r no nível intermediário
-    .accept 5921 >> Aceite Moonglade
+    .accept 5921 >> Aceite Clareira da Lua
     .target Mathrengyl Bearwalker
 step << !Rogue
     .goto 1457/1,2508.68,9605.98--c:Darnassus,40.6,89.6
@@ -1608,7 +1611,7 @@ step << !Rogue
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com a |cRXP_FRIENDLY_Sacerdotisa A'mura|r no andar de cima
     .accept 2518 >> Aceite Lágrima da Lua
 step << Priest
-    .goto Darnassus,40.0,80.0
+    .goto 1457/1,2515.0296,9673.7323
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com a |cRXP_FRIENDLY_Sacerdotisa Alathea|r no andar de cima
     .accept 5627 >>Aceite Cinturão Estelar de Elune
     .turnin 5627 >>Entregue Cinturão Estelar de Elune
@@ -1729,7 +1732,7 @@ step
 step << Hunter
     .goto 1438/1,947.57,9812.38
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Shalomon|r
-    >>|cRXP_BUY_Compre e equipe uma|r |T135145:0|t[Bengala] |cRXP_BUY_se você pode pagar (5s 4c), se não, pule este passo|r
+    >>|cRXP_BUY_Compre e equipe uma|r |T135145:0|t[Bengala] |cRXP_BUY_se puder pagá-la (5s 4c), caso contrário, pule este passo|r
     .collect 2495,1 --Walking Stick (1)
     .target Shalomon
     .money <0.0504
@@ -1776,7 +1779,7 @@ step << Hunter
     #requires beast2
     .goto 1438/1,928.83,9812.34
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Dazalar|r
-    .turnin 6063 >> Entregue Adestramento da Fera - Missão
+    .turnin 6063 >> Entregue Domando a fera
     .target Dazalar
     .accept 6101 >> Aceite Adestramento da Fera - Missão
 step
@@ -1894,7 +1897,7 @@ step << Hunter
 step << Hunter
     .goto 1438/1,928.83,9812.34
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Dazalar|r
-    .turnin 6063 >> Entregue Adestramento da Fera - Missão
+    .turnin 6063 >> Entregue Domando a fera
     .target Dazalar
     .accept 6101 >> Aceite Adestramento da Fera - Missão
 step << Hunter
@@ -1922,7 +1925,7 @@ step << !Druid
 step << Hunter
     .goto 1438/1,928.83,9812.34
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Dazalar|r
-    .turnin 6101 >> Entregue Adestramento da Fera - Missão
+    .turnin 6101 >> Entregue Domando a fera
     .target Dazalar
     .accept 6102 >> Aceite Adestramento da Fera - Missão
 step << Hunter
@@ -1934,7 +1937,7 @@ step << Hunter
 step << Hunter
     .goto 1438/1,928.83,9812.34
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Dazalar|r
-    .turnin 6102 >> Entregue Adestramento da Fera - Missão
+    .turnin 6102 >> Entregue Domando a fera
     .target Dazalar
     .accept 6103 >> Aceite Treinamento da Fera - Missão
 step << Warrior
@@ -2040,9 +2043,6 @@ step
     #loop
     .goto 1438/1,1828.600,10964.800
     >>Mate |cRXP_ENEMY_Lady Sathrah|r. Saqueie-a pelo seu |cRXP_LOOT_Spinnerets|r
-    >>|cRXP_ENEMY_Lady Sathrah|r |cRXP_WARN_pode aparecer em 3 locais diferentes, verifique seu mapa para um caminho recomendado|r
-    >>|cRXP_WARN_Cabeça para o norte ao longo do rio e verifique o ponto de desova mais ao leste primeiro. Trabalhe na|r |T134339:0|t[Tumors]|cRXP_WARN_ missão conforme você avança|r
-    >>|cRXP_WARN_Se ela não estiver a leste do rio complete a|r |T134339:0|t[Tumors]|cRXP_WARN_ missão antes de ir para o oeste|r
     .complete 2518,1 --Collect Silvery Spinnerets (x1)
     .mob Lady Sathrah
 step
@@ -2126,22 +2126,20 @@ step
     >>Vá para o |cRXP_FRIENDLY_Oracle Árvore Latido|r
     .turnin 98398 >> Entregue O Oráculo Árvore
     .accept 940 >> Aceite Teldrassil
-step
+step << !Warrior --remove warrior tag if they fix the ress sickness
     #softcore
 	#completewith darn << era
     #completewith darnSoD << sod
     .deathskip >>Morra e renasça no cemitério de Darnassus
     >>|cRXP_WARN_Certifique-se de que você está no lado oeste do rio ou você pode acabar indo pelo caminho errado|r << sod
     .target Anjo da Cura
-step
-    #hardcore
+step << Warrior --remove warrior tag if they fix the ress sickness
     #completewith next
     .goto 1457/1,2070.42,9979.310
     .zone Darnassus >> Viagem para Darnassus
-step
+step << !Warrior --remove warrior tag if they fix the ress sickness 
     #hardcore
     #completewith next
-    #season 2
     .goto 1457/1,2070.42,9979.310
     .zone Darnassus >> Viagem para Darnassus
 step << !Warrior
@@ -2318,14 +2316,12 @@ step << Hunter
     >>|cRXP_WARN_Você precisará dela para alimentar sua coruja, elas apenas comem carne e não há vendedor de carne em Costa Negra|r
     .collect 117,15
     .target Jaeana
-step << Hunter/Warrior/Priest/Sod Rogue
+step << Hunter/Warrior/Priest
     .goto 1457/1,2329.19,9908.53
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Ilyenia Flameluna|r
     .skipgossipid 96881
     .train 227 >>Treine Cajados << Hunter/Warrior/Priest
-    .train 265 >>Treine Arcos << Sod Rogue
     >>Se você tem um Cajado na mochila, equipe-o << Hunter
-    >>Se você tem um Arco na mochila, equipe-o << Rogue
     .target Ilyenia Moonfire
 step << Hunter
     #optional

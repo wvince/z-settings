@@ -1,6 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #classic
@@ -13,8 +12,6 @@ RXPGuides.RegisterGuide([[
 #groupid RXP-SRGCE-H1
 #defaultfor Troll/Orc
 #next 6-10 Durotar
-
-
 step << !Orc !Troll
     #completewith next
     +|cRXP_WARN_You have selected a guide meant for Orcs and Trolls. You should choose the same starter zone that you start in|r
@@ -1532,7 +1529,6 @@ step
     .goto Durotar,49.90,68.43,25 >>Exit the Valley of Trials
     .isOnQuest 805
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
@@ -1544,7 +1540,6 @@ RXPGuides.RegisterGuide([[
 #groupid RXP-SRGCE-H1
 #defaultfor Troll/Orc
 #next 10-12 Durotar
-
 step
     .goto Durotar,52.06,68.30
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ukor|r
@@ -3759,7 +3754,6 @@ step << Rogue
     .train 674 >> Train your class spells
     .target Kaplak
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
@@ -3772,8 +3766,6 @@ RXPGuides.RegisterGuide([[
 #defaultfor Troll/Orc
 #next 10-12 Tirisfal << Troll Rogue/Orc Rogue/Orc Warlock/Troll Mage/Troll Priest
 #next 12-17 The Barrens << Troll !Rogue !Mage !Priest/Orc !Rogue !Warlock
-
-
 step << Warrior/Shaman
     .goto Durotar,50.8,43.6
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Takrin|r
@@ -5169,8 +5161,6 @@ step
     #optional
     .abandon 816 >>Abandon Lost But Not Forgotten
 ]])
-
-
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
@@ -5182,7 +5172,6 @@ RXPGuides.RegisterGuide([[
 #groupid RXP-SRGCE-H1
 #defaultfor Troll Rogue/Orc Rogue/Orc Warlock/Troll Mage/Troll Priest
 #next 12-14 Silverpine Forest << Undead/Troll Rogue/Orc Rogue/Orc Warlock/Troll Mage/Troll Priest
-
 step << Orc Rogue/Troll Rogue
     #completewith Swordtraining1
     .goto Tirisfal Glades,61.80,65.06,20,0
@@ -6996,11 +6985,8 @@ step
     .zone Silverpine Forest >> Travel to Silverpine Forest
     .zoneskip Silverpine Forest
 ]])
-
-
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
-
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
@@ -7012,8 +6998,6 @@ RXPGuides.RegisterGuide([[
 #groupid RXP-SRGCE-H1
 #defaultfor Troll/Orc
 #next 7-13 Durotar
-
-
 step << !Orc !Troll
     #completewith next
     +|cRXP_WARN_You have selected a guide meant for Orcs and Trolls. You should choose the same starter zone that you start in|r
@@ -8470,7 +8454,6 @@ step
     .goto Durotar,49.90,68.43,25 >>Exit the Valley of Trials
     .isOnQuest 805
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
@@ -8482,7 +8465,6 @@ RXPGuides.RegisterGuide([[
 #groupid RXP-SRGCE-H1
 #defaultfor Troll/Orc
 #next 13-20 The Barrens
-
 step
     .goto Durotar,52.06,68.30
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ukor|r
@@ -9899,7 +9881,6 @@ step
     .fly Orgrimmar >>Fly to Orgrimmar
     .target Devrak
     .zoneskip Orgrimmar
-
     --Mage/Shaman dont need to go ORG 100% route
 step
     #xprate >2.09

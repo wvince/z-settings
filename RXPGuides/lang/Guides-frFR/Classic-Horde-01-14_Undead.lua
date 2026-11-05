@@ -28,7 +28,7 @@ step
     #completewith next
     .goto Tirisfal Glades,30.04,72.78,8,0
     .goto Tirisfal Glades,30.27,72.78,8,0
-    .goto Tirisfal Glades,30.22,71.65,10 >> Sortez de la crypte vers  |cRXP_FRIENDLY_Mordo|r
+    .goto Tirisfal Glades,30.22,71.65,10 >> Sortez de la crypte vers |cRXP_FRIENDLY_Mordo|r
 step
     .goto Tirisfal Glades,30.22,71.65
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Mordo|r
@@ -387,7 +387,7 @@ step << Priest
 step << Priest
     .goto Tirisfal Glades,31.11,66.02
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Duesten|r
-    .train 2052 >> Apprenez [Soins inférieurs Rank 2]
+    .train 2052 >> Apprenez [Soins inférieurs Rang 2]
     .train 589 >> Apprenez [Mot de l'ombre : Douleur]
     .target Dark Cleric Duesten
     .money <0.02
@@ -915,7 +915,7 @@ step << Priest
     .accept 5650 >> Acceptez la quête Vêtements des ténèbres
 	.train 591 >>Apprenez [Châtiment]
     .train 17 >>Apprenez [Mot de pouvoir : Bouclier]
-    .train 2052 >>Apprenez [Soins inférieurs Rank 2]
+    .train 2052 >>Apprenez [Soins inférieurs Rang 2]
     .target Dark Cleric Beryl
 step << Mage
     .goto Tirisfal Glades,61.97,52.47
@@ -2513,7 +2513,7 @@ step << Warlock
     .goto Undercity,27.39,30.23,35,0
     .goto Undercity,21.89,43.35,35,0
     .goto Tirisfal Glades,51.10,71.53,50,0
-    .zone Tirisfal Glades >> Sortez de Fossoyeuse par les Égouts
+    .zone Tirisfal Glades >> Quittez Undercity par les Égouts
     .zoneskip Tirisfal Glades
 step << Rogue
     #season 2
@@ -3375,8 +3375,8 @@ step << Rogue
     #xprate <1.5
     .goto Undercity,77.08,49.40
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Charles Seaton|r au Quartier des Voleurs
-    >>|cRXP_BUY_Achetez un|r [Coutelas] |cRXP_BUY_à Gunther|r
-    >>Sinon, vous pouvez regarder à l'Hôtel des Ventes si vous trouvez une alternative meilleure ou moins onéreuse
+    >>|cRXP_BUY_Achetez-lui un|r |T135346:0|t[Coutelas] |cRXP_BUY_|r
+    >>|cRXP_WARN_Sinon, vous pouvez regarder à l'Hôtel des Ventes si vous trouvez une alternative meilleure ou moins onéreuse|r
     .collect 851,1,372,1 --Collect Cutlass (1)
     .money <0.2023
     .itemStat 16,QUALITY,<7
@@ -4074,7 +4074,7 @@ step << Rogue/Warrior/Priest
     .goto Undercity,27.39,30.23,35,0
     .goto Undercity,21.89,43.35,35,0
     .goto Tirisfal Glades,51.10,71.53,50,0
-    .zone Tirisfal Glades >> Sortez de Fossoyeuse par les Égouts
+    .zone Tirisfal Glades >> Quittez Undercity par les Égouts
     .zoneskip Tirisfal Glades
     .isQuestAvailable 1978
 
@@ -4168,7 +4168,7 @@ step
 step
     #softcore
     #completewith ProveyourWorth
-    .deathskip >> Mourez et ressuscitez au |cRXP_FRIENDLY_Gardien des âmes|r
+    .deathskip >> Mourez et ressuscitez au |cRXP_FRIENDLY_Gardien des âmes|r.
 step
     #hardcore
     #completewith next
@@ -5467,7 +5467,7 @@ step
     #completewith next
     .goto Tirisfal Glades,30.04,72.78,8,0
     .goto Tirisfal Glades,30.27,72.78,8,0
-    .goto Tirisfal Glades,30.22,71.65,10 >> Sortez de la crypte vers  |cRXP_FRIENDLY_Mordo|r
+    .goto Tirisfal Glades,30.22,71.65,10 >> Sortez de la crypte vers |cRXP_FRIENDLY_Mordo|r
 step
     .goto Tirisfal Glades,30.22,71.65
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Mordo|r
@@ -6141,7 +6141,7 @@ step << Priest
 step << Priest
     .goto Tirisfal Glades,31.11,66.02
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Duesten|r
-    .train 2052 >> Apprenez [Soins inférieurs Rank 2]
+    .train 2052 >> Apprenez [Soins inférieurs Rang 2]
     .train 589 >> Apprenez [Mot de l'ombre : Douleur]
     .target Dark Cleric Duesten
     .money <0.02
@@ -6642,7 +6642,7 @@ step << Priest
     .accept 5650 >> Acceptez la quête Vêtements des ténèbres
 	.train 591 >>Apprenez [Châtiment]
     .train 17 >>Apprenez [Mot de pouvoir : Bouclier]
-    .train 2052 >>Apprenez [Soins inférieurs Rank 2]
+    .train 2052 >>Apprenez [Soins inférieurs Rang 2]
     .target Dark Cleric Beryl
 step << Mage
     .goto Tirisfal Glades,61.97,52.47
@@ -8434,7 +8434,7 @@ step << Warlock
     .goto Undercity,27.39,30.23,35,0
     .goto Undercity,21.89,43.35,35,0
     .goto Tirisfal Glades,51.10,71.53,50,0
-    .zone Tirisfal Glades >> Sortez de Fossoyeuse par les Égouts
+    .zone Tirisfal Glades >> Quittez Undercity par les Égouts
     .zoneskip Tirisfal Glades
 step << Warrior
     #season 2

@@ -752,7 +752,7 @@ step
     .goto 1437/0,-819.67,-3691.42,15,0
     .goto 1437/0,-807.26,-3716.22,15,0
     .goto 1437/0,-827.94,-3724.49,15,0
-    .goto 1437,10.760,56.721
+    .goto 1437/0,-834.55,-3711.29--c:1437,10.760,56.721
     >> Se você tem 8s, verifique o Tubo de Bronze com Nélio Allen e compre se estiver disponível. Caso contrário, pule este passo.
     .collect 4371,1,175,1
 step
@@ -820,13 +820,13 @@ step
     .goto 1429/0,-1902.44,-9609.56
 .target Guard Parker
 >>Fale com o |cRXP_FRIENDLY_Guarda Capitão da Guarda Florestan|r
-    .accept 244 >>Aceite Encroaching Gnolls
+    .accept 244 >>Aceite Gnolls Invasores
 step
     #sticky
     #label Gnolls
     .goto 1433/0,-2238.15,-9443.60
 >>Fale com o |cRXP_FRIENDLY_Subdelegado David|r
-    .turnin 244 >>Entregue Encroaching Gnolls
+    .turnin 244 >>Entregue Gnolls Invasores
 .target Deputy Feldon
     .accept 246 >>Aceite Assessing the Ameaça
 step
@@ -853,7 +853,7 @@ step
     .goto 1433/0,-2216.00,-9215.85
 .target Bailiff Conacher
 >>Fale com o |cRXP_FRIENDLY_Meirinho Conacher|r
-    .accept 91 >>Aceite Solomon's Law
+    .accept 91 >>Aceite A lei de Salomão
 step
     .goto 1433/0,-2221.87,-9218.60
     >>Entre no prédio
@@ -867,7 +867,7 @@ step
     .accept 127 >>Aceite O lago está para peixe
 step
     .goto 1433/0,-2151.53,-9247.12
-    .accept 180 >>Aceite Procurado: General Mordente
+    .accept 180 >>Aceite Procura-se: Tenente Mordente
 step
     >>Entre na Estalagem
     .goto 1433/0,-2158.91,-9235.97
@@ -969,7 +969,7 @@ step
     .accept 143 >>Aceite Messenger to Cerro Oeste
 .target Bailiff Conacher
 >>Fale com o |cRXP_FRIENDLY_Meirinho Conacher|r
-    .accept 91 >>Aceite Solomon's Law
+    .accept 91 >>Aceite A lei de Salomão
 step
     >>Entre no andar superior da Estalagem
     .goto 1433/0,-2145.45,-9231.63
@@ -1149,7 +1149,7 @@ step
 >>Fale com |cRXP_FRIENDLY_Vervo Obom|r
     .turnin 124 >>Entregue A Baying of Gnolls
 .target Verner Osgood
-    .accept 126 >>Aceite Howling in the Hills
+    .accept 126 >>Aceite O gnoll de Vila Plácida
 step
     .goto 1433/0,-2158.91,-9235.97
 .target Darcy

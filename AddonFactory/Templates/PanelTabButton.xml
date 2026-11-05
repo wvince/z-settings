@@ -1,0 +1,98 @@
+<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="PanelTabButton.lua"></Script>
+	
+	<Button name="AddonFactory_PanelTabButtonTemplate" motionScriptsWhileDisabled="true" parentArray="Tabs" virtual="true" >
+		<Size x="10" y="32"/>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="LeftActive" atlas="uiframe-activetab-left" useAtlasSize="true" parentArray="TabTextures">
+					<Anchors>
+						<Anchor point="TOPLEFT" x="-1"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="RightActive" atlas="uiframe-activetab-right" useAtlasSize="true" parentArray="TabTextures">
+					<Anchors>
+						<Anchor point="TOPRIGHT" x="8"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="MiddleActive" atlas="_uiframe-activetab-center" useAtlasSize="true" horizTile="true" parentArray="TabTextures">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.LeftActive" relativePoint="TOPRIGHT"/>
+						<Anchor point="TOPRIGHT" relativeKey="$parent.RightActive" relativePoint="TOPLEFT"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="Left" atlas="uiframe-tab-left" useAtlasSize="true" parentArray="TabTextures">
+					<Anchors>
+						<Anchor point="TOPLEFT" x="-3"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="Right" atlas="uiframe-tab-right" useAtlasSize="true" parentArray="TabTextures">
+					<Anchors>
+						<Anchor point="TOPRIGHT" x="7"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="Middle" atlas="_uiframe-tab-center" useAtlasSize="true" horizTile="true" parentArray="TabTextures">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.Left" relativePoint="TOPRIGHT"/>
+						<Anchor point="TOPRIGHT" relativeKey="$parent.Right" relativePoint="TOPLEFT"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			
+			<Layer level="HIGHLIGHT">
+				<Texture parentKey="LeftHighlight" atlas="uiframe-tab-left" useAtlasSize="true" alphaMode="ADD" alpha="0.4" parentArray="TabTextures">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.Left"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="MiddleHighlight" atlas="_uiframe-tab-center" useAtlasSize="true" horizTile="true" alphaMode="ADD" alpha="0.4" parentArray="TabTextures">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.Middle" relativePoint="TOPLEFT"/>
+						<Anchor point="TOPRIGHT" relativeKey="$parent.Middle" relativePoint="TOPRIGHT"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="RightHighlight" atlas="uiframe-tab-right" useAtlasSize="true" alphaMode="ADD" alpha="0.4" parentArray="TabTextures">
+					<Anchors>
+						<Anchor point="TOPRIGHT" relativeKey="$parent.Right"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		
+		<Scripts>
+			<OnLoad>
+				LibStub("LibMVC-1.0"):BindViewToController(self, "AddonFactory.PanelTabButton")
+			</OnLoad>
+			<OnEvent>
+				if self:IsVisible() then
+					local parent = self:GetParent()
+			
+					self:Resize(parent.tabPadding, nil, parent.minTabWidth, parent.maxTabWidth)
+				end
+			</OnEvent>
+			<OnShow>
+				local parent = self:GetParent()
+			
+				self:Resize(parent.tabPadding, nil, parent.minTabWidth, parent.maxTabWidth)
+			</OnShow>
+			<!-- <OnEnter>
+				AddonFactory_Tooltip:ShowInfo(self, self.Text:GetText())
+			</OnEnter>
+			<OnLeave>
+				AddonFactory_Tooltip:Hide()
+			</OnLeave>
+			-->
+		</Scripts>
+		
+		<ButtonText parentKey="Text">
+			<Size x="0" y="10"/>
+			<Anchors>
+				<Anchor point="CENTER" x="0" y="2"/>
+			</Anchors>
+		</ButtonText>
+		
+		<NormalFont style="GameFontNormalSmall"/>
+		<HighlightFont style="GameFontHighlightSmall"/>
+		<DisabledFont style="GameFontHighlightSmall"/>
+	</Button>	
+</Ui>

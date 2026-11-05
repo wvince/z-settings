@@ -1,0 +1,3 @@
+local addonName = ...
+local L = AddonFactory:SetLocale(addonName, "koKR")
+if not L then return end

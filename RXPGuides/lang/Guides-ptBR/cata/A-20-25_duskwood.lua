@@ -38,7 +38,7 @@ step
 step
     .goto 47,75.56,45.37,8,0
     .goto 47,75.83,45.26
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com [Name] dentro da casa
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com a |cRXP_FRIENDLY_Madame Eva|r dentro da casa
     .turnin 26653 >>Entregue Suprimentos de Vila Sombria
     .accept 26652 >>Aceite Linha de Cabelo de Fantasma
 	.target Madame Eva
@@ -209,7 +209,7 @@ step
 step
     .goto 47,75.56,45.37,8,0
     .goto 47,75.83,45.26
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com [Name] dentro da casa
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com a |cRXP_FRIENDLY_Madame Eva|r dentro da casa
     .turnin 26654 >>Entregue Devolver o Pente
     .accept 26655 >>Aceite Entregue a Linha
 	.target Madame Eva
@@ -322,7 +322,7 @@ step
 step
     .goto 47,74.09,44.71
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Smitts|r
-    .turnin 26661 >>Entregue Flores do Mal
+    .turnin 26661 >>Entregue Coleta de flores do mal
     .accept 26676 >>Aceite Alguém Pediu um Suco?
 	.target Tavernkeep Smitts
 step
@@ -476,7 +476,7 @@ step
 	.mob Splinter Fist Warrior
 step
     .goto 47,33.52,75.33
-    >>Saqueie |cRXP_LOOT_Caixote de Abercrombie|r no chão
+    >>Saqueie o |cRXP_LOOT_Caixote do Abercrombie|r no chão
     .complete 26680,1 --1/1 Abercrombie's Crate
 step
     #completewith next
@@ -484,7 +484,7 @@ step
 step
 	#label Zzarc
     .goto 47,37.87,84.33
-    >>Mate |cRXP_ENEMY_Zzarc' Vul|r. Saqueie-o pelo |cRXP_LOOT_Monóculo|r
+    >>Mate |cRXP_ENEMY_Zzarc' Vul|r. Saqueie-o para obter seus |cRXP_LOOT_Monóculo|r
     .complete 26685,1 --1/1 Ogre's Monocle
 	.unitscan Zzarc' Vul
 step
@@ -681,7 +681,7 @@ step
     .goto 47,87.43,35.21
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Abercrombie|r
     .turnin 26677 >>Entregue Boneco de Carniçal
-    .accept 26681 >>Aceite Carta ao Alcaide
+    .accept 26681 >>Aceite Carta ao prefeito
 	.target Abercrombie
     .maxlevel 28
 step
@@ -705,7 +705,7 @@ step
     .maxlevel 28
 step
     .goto 47,74.17,46.47
-    >>Abate |cRXP_ENEMY_Stitches|r.
+    >>Abata |cRXP_ENEMY_Stitches.|r
     .complete 26727,1 --1/1 Stitches slain
 	.mob Stitches
     .maxlevel 28
@@ -762,7 +762,7 @@ step
 step
 #optional
     #completewith LightforgedRod
-    >>Mate |cRXP_ENEMY_Mor'Ladim|r. Saque-o para seu |cRXP_LOOT_Crânio|r
+    >>Mate |cRXP_ENEMY_Mor'Ladim|r. Saqueie-o para obter o seu |cRXP_LOOT_Crânio|r
     >>|cRXP_ENEMY_Mor'Ladim|r |cRXP_WARN_patrulha o cemitério de Corvo Hill|r
     .complete 26795,1 --Mor'Ladim's Skull (1)
     .unitscan Mor'Ladim
@@ -827,7 +827,7 @@ step
     .goto 47,16.20,33.17,40,0
     .goto 47,14.27,41.46,40,0
     .goto 47,22.922,37.687,0
-    >>Mate |cRXP_ENEMY_Mor'Ladim|r. Saque-o para seu |cRXP_LOOT_Crânio|r
+    >>Mate |cRXP_ENEMY_Mor'Ladim|r. Saqueie-o para obter o seu |cRXP_LOOT_Crânio|r
     >>|cRXP_ENEMY_Mor'Ladim|r |cRXP_WARN_patrulha o cemitério de Corvo Hill|r
     .complete 26795,1 --Mor'Ladim's Skull (1)
 	.unitscan Mor'Ladim

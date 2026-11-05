@@ -185,12 +185,12 @@ step << NightElf
     #label GParker
     .goto Redridge Mountains,15.27,71.45
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Capitão da Guarda Florestan|r
-    .accept 244 >> Aceite Encroaching Gnolls
+    .accept 244 >> Aceite Gnolls Invasores
     .target Guard Parker
 step << NightElf
     .goto Redridge Mountains,30.73,59.99
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Subdelegado David|r
-    .turnin 244 >> Entregue Encroaching Gnolls
+    .turnin 244 >> Entregue Gnolls Invasores
     .target Deputy Feldon
     .accept 246 >> Aceite Assessing the Ameaça
 step
@@ -206,7 +206,7 @@ step
 step
     .goto Redridge Mountains,29.31,45.33,15,0
     .goto Redridge Mountains,29.98,44.45
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Magistrado Salomão|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Magistrado Salomão|r
 	.target Magistrate Solomon
     .accept 120 >> Aceite Mensageiro para Ventobravo
 step
@@ -267,7 +267,7 @@ step
 step
     .goto Westfall,56.55,52.64
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Thor|r
-    .fly Stormwind >> Voe para Cidade de Ventobravo
+    .fly Stormwind >> Voe para a Cidade de Ventobravo
     .target Thor
 step
     .goto StormwindClassic,63.982,75.338
@@ -623,7 +623,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Estela Dalva|r
     .vendor >> |cRXP_FRIENDLY_Estela Dalva|r |cRXP_BUY_tem itens de estoque limitado, como|r |T134938:0|t|T134937:0|t|T134943:0|t[Pergaminhos] |cRXP_BUY_e|r |T134850:0|t|T134830:0|t[Potions] |cRXP_BUY_, que você deve comprar se disponíveis|r << !Warrior !Rogue
     .vendor >> |cRXP_FRIENDLY_Estela Dalva|r |cRXP_BUY_tem itens de estoque limitado, como|r |T134938:0|t|T134937:0|t|T134943:0|t[Pergaminhos] |cRXP_BUY_e|r |T134830:0|t[Potions] |cRXP_BUY_, que você deve comprar se disponíveis|r << Warrior/Rogue
-    .target Dawn Brightstar
+    .target Estela Dalva
     .subzoneskip 91,1
 step
 .dungeon DM
@@ -642,7 +642,7 @@ step
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Capitão da Guarda Florestan|r
 	.target Guard Parker
     .goto Redridge Mountains,15.30,71.50
-    .accept 244 >> Aceite Encroaching Gnolls
+    .accept 244 >> Aceite Gnolls Invasores
 step
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Capitão da Guarda Florestan|r
 	.target Guard Parker
@@ -653,7 +653,7 @@ step
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Subdelegado David|r
 	.target Deputy Feldon
     .goto Redridge Mountains,30.70,60.00
-    .turnin 244 >> Entregue Encroaching Gnolls
+    .turnin 244 >> Entregue Gnolls Invasores
     .accept 246 >> Aceite Assessing the Ameaça
 step
     .isQuestTurnedIn 343
@@ -769,7 +769,7 @@ step
     .goto Redridge Mountains,31.00,47.30
     .turnin 122 >> Entregue Underbelly Escamoso
 step
-	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Magistrado Salomão|r
+	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Magistrado Salomão|r
 	.target Magistrate Solomon
     .goto Redridge Mountains,29.31,45.33,15,0
     .goto Redridge Mountains,29.98,44.45
@@ -804,7 +804,7 @@ step
     .goto Redridge Mountains,30.59,59.42
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Ariena Penafúria|r
 	.target Ariena Stormfeather
-    .fly Stormwind >> Voe para Cidade de Ventobravo
+    .fly Stormwind >> Voe para a Cidade de Ventobravo
 step << Warlock
     #completewith next
     .goto StormwindClassic,29.2,74.0,20,0
@@ -816,7 +816,7 @@ step << Warlock
     .target Ursula Deline
 step << Warlock
     .goto StormwindClassic,25.665,77.649
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Spackle Cardopomo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com Spackle Cardopomo|r
     .vendor >> |cRXP_BUY_Compre|r |T133738:0|t[Grimório of Tormento (Rank 2)]
     .target Spackle Thornberry
 step << Warlock
@@ -999,7 +999,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Estela Dalva|r
     .vendor >> |cRXP_FRIENDLY_Estela Dalva|r |cRXP_BUY_tem itens de estoque limitado, como|r |T134938:0|t|T134937:0|t|T134943:0|t[Pergaminhos] |cRXP_BUY_e|r |T134850:0|t|T134830:0|t[Potions] |cRXP_BUY_, que você deve comprar se disponíveis|r << !Warrior !Rogue
     .vendor >> |cRXP_FRIENDLY_Estela Dalva|r |cRXP_BUY_tem itens de estoque limitado, como|r |T134938:0|t|T134937:0|t|T134943:0|t[Pergaminhos] |cRXP_BUY_e|r |T134830:0|t[Potions] |cRXP_BUY_, que você deve comprar se disponíveis|r << Warrior/Rogue
-    .target Dawn Brightstar
+    .target Estela Dalva
     .subzoneskip 91,1
 step
     #completewith TravelRM

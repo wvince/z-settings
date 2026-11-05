@@ -1633,7 +1633,7 @@ step << Priest
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Tai'jin|r
     .turnin 5649 >> Rendez la quête Au service de la spiritualité
     .accept 5648 >> Acceptez la quête Vêtements de la spiritualité
-    .train 2052 >> Apprenez [Soins inférieurs Rank 2]
+    .train 2052 >> Apprenez [Soins inférieurs Rang 2]
     .target Tai'jin
 step << Priest
     .goto Durotar,53.10,46.46

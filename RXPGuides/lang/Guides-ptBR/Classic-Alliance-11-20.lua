@@ -458,7 +458,7 @@ step << Dwarf !Paladin/Gnome
     #completewith DarkshoreBoat
     .goto Loch Modan,33.94,50.95
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Thorgrum Borrelson|r
-    .fly Wetlands >> Voe para Pantanal
+    .fly Wetlands >> Voe para Terras do Interior
     .target Thorgrum Borrelson
 step << Dwarf !Paladin/Gnome
     #hardcore
@@ -552,7 +552,7 @@ step << Dwarf Paladin
     #completewith DarkshoreBoat
     .goto Ironforge,55.501,47.742
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Grif Trovino|r
-    .fly Wetlands>> Voe para Pantanal
+    .fly Wetlands>> Voe para Terras do Interior
     .target Gryth Thurden
 step
     #hardcore << !Human
@@ -613,7 +613,7 @@ step
     .goto Wetlands,10.6,57.2,15,0
     .goto 1437,10.760,56.721
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Nélio Allen|r
-    .vendor 1448 >> |cRXP_WARN_compre um|r |T133024:0|t[Tubo de Bronze]
+    .vendor 1448 >> |cRXP_WARN_Compre um|r |T133024:0|t[Tubo de Bronze]
     >>|cRXP_WARN_Este é um item de suprimento limitado. Pule esta etapa se o|cRXP_FRIENDLY_ Nélio Allen|r não tiver uma|r
 	.target Neal Allen
     .bronzetube
@@ -2593,7 +2593,7 @@ step
 step
     .goto Darkshore,50.81,25.50
     #season 0 << !Warrior !Rogue
-    >>Use o [Tubo de Amostragem Vazio] na base do Rio Fontescarpa
+    >>Use o [Tubo de Amostragem Vazio] na base do **Rio Fontescarpa**
     .complete 4762,1 --Cliffspring River Sample (1)
     .use 12350
 step
@@ -3216,7 +3216,7 @@ step << NightElf !Druid
 step
     .goto Darkshore,37.21,44.22
     #season 0
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tClique em |cRXP_FRIENDLY_O Cartaz Procurado|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tClique em |cRXP_FRIENDLY_O Cartaz de Procurado|r
     .accept 4740 >> Aceite PROCURADO: Lodofundo!
 step << NightElf
     .goto 1439,37.439,41.839
@@ -5438,7 +5438,7 @@ step << Warlock
     #sticky
     #label Torment2NoDM
     .goto StormwindClassic,25.665,77.649
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Spackle Cardopomo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com Spackle Cardopomo|r
     .vendor >>|cRXP_BUY_Compre o|r |T133738:0|t[Grimório of Tormento (Rank 2)] |cRXP_BUY_dela|r
     .target Spackle Thornberry
     .itemcount 16346,<1 --Grimoire of Torment (<1)
@@ -5664,7 +5664,7 @@ step << NightElf Rogue
     #completewith next
     .goto Ironforge,55.491,47.751
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Grif Trovino|r
-    .fly Menethil >> Voe para Pantanal
+    .fly Menethil >> Voe para Terras do Interior
     .zoneskip Ironforge,1
     .cooldown item,6948,<0
     .dungeon !DM
@@ -6829,7 +6829,7 @@ step << Warlock
     #sticky
     #label Torment2DM
     .goto StormwindClassic,25.665,77.649
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Spackle Cardopomo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com Spackle Cardopomo|r
     .vendor >>|cRXP_BUY_Compre o|r |T133738:0|t[Grimório of Tormento (Rank 2)] |cRXP_BUY_dela|r
     .target Spackle Thornberry
     .itemcount 16346,<1 --Grimoire of Torment (<1)
@@ -7674,7 +7674,7 @@ step
     #xprate >1.59 << !Hunter
     #softcore
     #completewith DeadminesEnd
-    .deathskip >> Morra e renasça no |cRXP_FRIENDLY_Anjo da Cura|r
+    .deathskip >> Morra e ressuscite no |cRXP_FRIENDLY_Anjo da Cura|r
     .target Anjo da Cura
     .dungeon DM
 step << Paladin/Warrior
@@ -8166,7 +8166,7 @@ step << !NightElf !Hunter
     .goto Wetlands,10.6,57.2,25,0
     .goto 1437,10.760,56.721
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Nélio Allen|r
-    .vendor >> |cRXP_WARN_compre um|r |T133024:0|t[Tubo de Bronze]
+    .vendor >> |cRXP_WARN_Compre um|r |T133024:0|t[Tubo de Bronze]
     >>|cRXP_WARN_Este é um item de suprimento limitado. Pule esta etapa se o|cRXP_FRIENDLY_ Nélio Allen|r não tiver uma|r
 	.target Neal Allen
     .bronzetube
@@ -8203,7 +8203,7 @@ step << !Hunter NightElf
     .goto Wetlands,10.6,57.2,25,0
     .goto 1437,10.760,56.721
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Nélio Allen|r
-    .vendor >> |cRXP_WARN_compre um|r |T133024:0|t[Tubo de Bronze]
+    .vendor >> |cRXP_WARN_Compre um|r |T133024:0|t[Tubo de Bronze]
     >>|cRXP_WARN_Este é um item de suprimento limitado. Pule esta etapa se o|cRXP_FRIENDLY_ Nélio Allen|r não tiver uma|r
 	.target Neal Allen
     .bronzetube
@@ -8284,7 +8284,7 @@ step << !Hunter NightElf
     #xprate <1.59
     .goto Loch Modan,21.30,68.60,40,0
     .goto Loch Modan,19.11,62.11,25,0
-    .goto Dun Morogh,86.04,51.05,20 >> Vá para Dun Morogh
+    .goto Dun Morogh,86.04,51.05,20 >> Viagem para Dun Morogh
     .zoneskip Ironforge
     .zoneskip Dun Morogh
 step << !Hunter NightElf
@@ -8322,7 +8322,7 @@ step << !Hunter
     #completewith next
     .goto Ironforge,67.84,42.50
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Cortarroda Rodagiros|r
-    .vendor >> |cRXP_WARN_compre um|r |T133024:0|t[Tubo de Bronze]
+    .vendor >> |cRXP_WARN_Compre um|r |T133024:0|t[Tubo de Bronze]
     >>|cRXP_WARN_Este é um item de suprimento limitado. Pule esta etapa se o|cRXP_FRIENDLY_ Cortarroda Rodagiros|r não tiver um|r
 --  >>You will need 2 bronze tubes for a quest later << Rogue
     .bronzetube
@@ -8363,7 +8363,7 @@ step
     #completewith BMenace
     .goto StormwindClassic,55.21,7.04
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Billibub Rodagiros|r
-    .vendor >> |cRXP_WARN_compre um|r |T133024:0|t[Tubo de Bronze]
+    .vendor >> |cRXP_WARN_Compre um|r |T133024:0|t[Tubo de Bronze]
     >>|cRXP_WARN_Este é um item de suprimento limitado. Pule esta etapa se o|cRXP_FRIENDLY_ Bilubub Rodagiros|r não tiver um|r
 --    >>You will need 2 bronze tubes for a quest later << Rogue
     .bronzetube
@@ -8446,7 +8446,7 @@ step << Rogue
     #completewith next
     .goto StormwindClassic,74.90,54.00,20,0
     .goto StormwindClassic,78.43,60.15,20,0
-    .goto StormwindClassic,78.67,60.13,5 >> Entre na Sede da SI:7. Suba as escadas em direção a |cRXP_FRIENDLY_Renzik, "O Bicudo"|r
+    .goto StormwindClassic,78.67,60.13,5 >> Entre na Sede do SI:7. Suba as escadas em direção a |cRXP_FRIENDLY_Renzik, "O Bicudo"|r
 step << Rogue
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Renzik, "O Bicudo"|r
     .accept 2281 >> Aceite Encontro em Cristarrubra
@@ -8625,13 +8625,13 @@ step << !Human !Warlock
     #xprate >1.49 << Gnome/Dwarf
     .goto Redridge Mountains,15.27,71.45
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Capitão da Guarda Florestan|r
-    .accept 244 >> Aceite Encroaching Gnolls
+    .accept 244 >> Aceite Gnolls Invasores
     .target Guard Parker
 step << !Human !Warlock
     #xprate >1.49 << Gnome/Dwarf
     .goto Redridge Mountains,30.73,59.99
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Subdelegado David|r
-    .turnin 244 >> Entregue Encroaching Gnolls
+    .turnin 244 >> Entregue Gnolls Invasores
     .target Deputy Feldon
 step << NightElf
     #xprate <1.5
@@ -8651,7 +8651,7 @@ step
 .dungeon DM
     .goto Redridge Mountains,29.31,45.33,15,0
     .goto Redridge Mountains,29.98,44.45
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Magistrado Salomão|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Magistrado Salomão|r
 	.target Magistrate Solomon
     .accept 120 >> Aceite Mensageiro para Ventobravo
 step
@@ -9104,7 +9104,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Estela Dalva|r
     .vendor >> |cRXP_FRIENDLY_Estela Dalva|r |cRXP_BUY_tem itens de estoque limitado, como|r |T134938:0|t|T134937:0|t|T134943:0|t[Pergaminhos] |cRXP_BUY_e|r |T134850:0|t|T134830:0|t[Potions] |cRXP_BUY_, que você deve comprar se disponíveis|r << !Warrior !Rogue
     .vendor >> |cRXP_FRIENDLY_Estela Dalva|r |cRXP_BUY_tem itens de estoque limitado, como|r |T134938:0|t|T134937:0|t|T134943:0|t[Pergaminhos] |cRXP_BUY_e|r |T134830:0|t[Potions] |cRXP_BUY_, que você deve comprar se disponíveis|r << Warrior/Rogue
-    .target Dawn Brightstar
+    .target Estela Dalva
     .subzoneskip 91,1
 step
 .dungeon DM
@@ -9118,14 +9118,14 @@ step
     #label GParker
     .goto Redridge Mountains,15.27,71.45
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Capitão da Guarda Florestan|r
-    .accept 244 >> Aceite Encroaching Gnolls
+    .accept 244 >> Aceite Gnolls Invasores
     .target Guard Parker
 step
 .dungeon DM
     #xprate <1.5
     .goto Redridge Mountains,30.73,59.99
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Subdelegado David|r
-    .turnin 244 >> Entregue Encroaching Gnolls
+    .turnin 244 >> Entregue Gnolls Invasores
     .target Deputy Feldon
 
 
@@ -9173,7 +9173,7 @@ step
 .dungeon !DM
     .goto Redridge Mountains,29.31,45.33,15,0
     .goto Redridge Mountains,29.98,44.45
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Magistrado Salomão|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Magistrado Salomão|r
 	.target Magistrate Solomon
     .accept 120 >> Aceite Mensageiro para Ventobravo
 step
@@ -9278,7 +9278,7 @@ step
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Capitão da Guarda Florestan|r
 	.target Guard Parker
     .goto Redridge Mountains,15.30,71.50
-    .accept 244 >> Aceite Encroaching Gnolls
+    .accept 244 >> Aceite Gnolls Invasores
 step
     #xprate <1.5
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Capitão da Guarda Florestan|r
@@ -9291,7 +9291,7 @@ step
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Subdelegado David|r
 	.target Deputy Feldon
     .goto Redridge Mountains,30.70,60.00
-    .turnin 244 >> Entregue Encroaching Gnolls
+    .turnin 244 >> Entregue Gnolls Invasores
     .accept 246 >> Aceite Assessing the Ameaça
 step
     #xprate <1.5
@@ -9332,7 +9332,7 @@ step
 step
     #label orcs
     >>Mate |cRXP_ENEMY_Brutos Rocha Negra|r e |cRXP_ENEMY_Vanguardeiros Rocha Negra|r. Saqueie-os em busca de seus |cRXP_LOOT_Machados|r
-	>>|cRXP_WARN_Cuidado com o |cRXP_ENEMY_Blackrock Outrunners|r que lançará |T132149:0|t[Rede] em você|r
+	>>|cRXP_WARN_Cuidado, os |cRXP_ENEMY_Blackrock Outrunners|r lançarão |T132149:0|t[Rede] em você|r
     .goto Redridge Mountains,74.00,79.00,60,0
     .goto Redridge Mountains,76.18,83.39,60,0
     .goto Redridge Mountains,77.80,68.50,60,0
@@ -9434,7 +9434,7 @@ step
 step << Rogue
     #optional
 	#completewith InRR
-	.destroy 7907 >> Destrua a |T134328:0|t[Certificate of Thievery]. Você não precisa disso
+	.destroy 7907 >> Destrua o |T134328:0|t[Certificate of Thievery]. Você não precisa disso
 step
     #xprate <1.5
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Subdelegado David|r
@@ -9460,7 +9460,7 @@ step
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Ariena Penafúria|r
 	.target Ariena Stormfeather
     .fp Redridge Mountains >> Aprenda a rota de voo para Montanhas Cristarrubra << !Human !Warlock
-    .fly Stormwind >> Voe para Cidade de Ventobravo
+    .fly Stormwind >> Voe para a Cidade de Ventobravo
 step << Rogue
 .dungeon !DM
     #ah
@@ -9855,7 +9855,7 @@ step
     .accept 122 >> Aceite Underbelly Escamoso
 step
     #label FlyR
-	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Magistrado Salomão|r
+	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Magistrado Salomão|r
 	.target Magistrate Solomon
     .goto Redridge Mountains,29.31,45.33,15,0
     .goto Redridge Mountains,29.98,44.45
@@ -10445,7 +10445,7 @@ step
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_a Raene Correlobos|r
 	.target Raene Wolfrunner
     .goto Ashenvale,36.61,49.58
-    .accept 991 >> Aceite A Purificação de Raene
+    .accept 991 >> Aceite a Purificação de Raene
     .accept 1054 >> Aceite Expurgo a Ameaça
 step
     #label HCHunterNoHS --hidden step for #include
@@ -10641,7 +10641,7 @@ step
 	.target Teronis' Corpse
     .goto Ashenvale,20.31,42.33
     .turnin 991 >> Entregue Purificação de Raene
-    .accept 1023 >> Aceite A Purificação de Raene
+    .accept 1023 >> Aceite a Purificação de Raene
 step
     #sticky
     #completewith GlowingGem
@@ -11416,7 +11416,7 @@ step
     #xprate <1.59
     .goto Ashenvale,36.61,49.58
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_a Raene Correlobos|r
-    .accept 991 >> Aceite A Purificação de Raene
+    .accept 991 >> Aceite a Purificação de Raene
     .accept 1054 >> Aceite Expurgo a Ameaça
     .target Raene Wolfrunner
 step << !Warlock

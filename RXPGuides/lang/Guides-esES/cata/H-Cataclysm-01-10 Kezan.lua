@@ -1605,14 +1605,14 @@ step
     .complete 25122,4 --6/6 Other goblin's minds freed
     .target Kezan Citizen
 step
-    #title Liberar As
+    #title Libera a As
     >>Selecciona a |cRXP_FRIENDLY_As|r y usa la |T132808:0|t[|cRXP_LOOT_Kaja'Cola Zero-Uno|r]
     .goto 174,57.1,36.9
     .use 52484
     .complete 25122,1 --1/1 Ace's mind freed
     .target Ace
 step
-    #title Liberar Izzy
+    #title Libera a Izzy
     >>Selecciona a |cRXP_FRIENDLY_Izzy|r y usa la |T132808:0|t[|cRXP_LOOT_Kaja'Cola Zero-Uno|r]
     .goto 174,57.01,35.02
     .use 52484
@@ -1808,7 +1808,7 @@ step
     .complete 25251,1 --1/1 Ultimate Footbomb Uniform
     .target Ultimate Footbomb Uniform
 step
-    >>Selecciona a |cRXP_ENEMY_Príncipe mercante Gallywix|r y usa todas tus habilidades cada vez que esté disponible
+    >>Selecciona al |cRXP_ENEMY_Príncipe mercante Gallywix|r y usa todas tus habilidades cuando estén disponibles
     .goto 174,41.87,17.61,10,0
     .goto 174,43.4,19.9
     .complete 25251,2 --1/1 Trade Prince Gallywix dealt with

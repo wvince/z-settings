@@ -213,10 +213,32 @@ events:SetScript("OnEvent", function(self, event, arg1)
     if event == "ADDON_LOADED" then
         if arg1 ~= addonName then return end
         self:UnregisterEvent("ADDON_LOADED")
-        if ForeverGCDDB == nil then ForeverGCDDB = { schema = SCHEMA } end
-        if not Migrate(ForeverGCDDB) then
-            print("Forever GCD: unsupported or invalid settings; original preserved. Paused.")
-            return
+        -- 0.7.0: a save left by another addon with our folder and save name
+        -- is kept aside and we start fresh (SaveGuard.lua); without the kit
+        -- file, the save loads as before. Migrate fills the table it is given
+        -- and leaves a table it refuses as it was.
+        if ns.SaveGuard then
+            local saved, _, foreign = ns.SaveGuard.Load(ForeverGCDDB, { schema = SCHEMA, load = function(t)
+                t = t or { schema = SCHEMA }
+                if Migrate(t) then return t end
+                return nil, "unsupported or invalid settings"
+            end })
+            if foreign then ns.SaveGuard.Notice("Forever GCD", "Options > AddOns > Forever GCD") end
+            if not saved then
+                print("Forever GCD: unsupported or invalid settings; original preserved. Paused.")
+                return
+            end
+            ForeverGCDDB = saved
+        -- An empty table ({}, a file cut short) is a first install (the user,
+        -- 31 October 2026); a table with any key still goes through Migrate.
+        else
+            if ForeverGCDDB == nil or (type(ForeverGCDDB) == "table" and next(ForeverGCDDB) == nil) then
+                ForeverGCDDB = { schema = SCHEMA }
+            end
+            if not Migrate(ForeverGCDDB) then
+                print("Forever GCD: unsupported or invalid settings; original preserved. Paused.")
+                return
+            end
         end
         -- Headings opened or closed by a click: UI state, not a setting, so a
         -- damaged table is replaced, never a pause.

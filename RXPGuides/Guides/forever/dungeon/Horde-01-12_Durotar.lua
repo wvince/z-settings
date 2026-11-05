@@ -1,6 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
@@ -12,13 +11,10 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-H1
 #defaultfor Troll/Orc
 #next 6-10 Durotar
-
-
 step
 .enabledungeon RFC
 #include RestedXP Forever Guide (H)\1-6 Durotar
 ]])
-
 RXPGuides.RegisterGuide([[
 #forever
 << Horde
@@ -29,12 +25,10 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-H1
 #defaultfor Troll/Orc
 #next 10-12 Durotar
-
 step
 .enabledungeon RFC
 #include RestedXP Forever Guide (H)\6-10 Durotar
 ]])
-
 RXPGuides.RegisterGuide([[
 #forever
 << Horde
@@ -46,14 +40,10 @@ RXPGuides.RegisterGuide([[
 #defaultfor Troll/Orc
 #next 10-12 Tirisfal (Orc/Troll) << !Hunter !Shaman !Tauren !Skyborne
 #next 12-16 The Barrens << Orc Hunter/Troll Hunter/Orc Shaman/Troll Shaman
-
-
 step
 .enabledungeon RFC
 #include RestedXP Forever Guide (H)\10-12 Durotar
 ]])
-
-
 RXPGuides.RegisterGuide([[
 #forever
 << Horde
@@ -64,7 +54,6 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-H1
 #defaultfor !Hunter !Shaman !Tauren !Skyborne !Undead
 #next 12-14 Silverpine Forest << !Hunter !Shaman !Tauren !Skyborne !Undead
-
 step
 .enabledungeon RFC
 #include RestedXP Forever Guide (H)\10-12 Tirisfal (Orc/Troll)

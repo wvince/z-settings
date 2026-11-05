@@ -13,6 +13,8 @@ RXPGuides.RegisterGuide([[
 #subgroup Guia do Conjunto de Heroísmo << Warrior
 #subgroup Guia do Conjunto da Virtude << Priest
 #name Parte 1: Braçadeiras
+#guideKind gearset
+#guideIcon rxp-icon-quest
 #next Parte 2: Cinto e Luvas
 
 
@@ -148,7 +150,7 @@ step << Horde
     .target Mokvar
 step << Horde
     #completewith next
-    .zone Silithus >>Voe para |cFFfa9602Silithus|r
+    .zone Silithus >>Vá a |cFFfa9602Silithus|r
 step << Horde
     #loop
     .goto Silithus,64.82,41.47,0
@@ -229,6 +231,8 @@ RXPGuides.RegisterGuide([[
 #subgroup Guia do Conjunto de Heroísmo << Warrior
 #subgroup Guia do Conjunto da Virtude << Priest
 #name Parte 2: Cinto e Luvas
+#guideKind gearset
+#guideIcon rxp-icon-quest
 #next Parte 3: Calças, Ombros e Botas
 
 
@@ -364,7 +368,7 @@ step
     .target Mux Manascrambler
 step
     #completewith next
-    .zone Burning Steppes >>Voe para |cFFfa9602Estepes Ardentes|r
+    .zone Burning Steppes >>Vá às |cFFfa9602Estepes Ardentes|r
 step
     #loop
     .goto Burning Steppes,71.87,29.57,0
@@ -504,7 +508,7 @@ step
     .target Mux Manascrambler
 step
     #completewith next
-    .zone Burning Steppes >>Voe para |cFFfa9602Estepes Ardentes|r
+    .zone Burning Steppes >>Vá às |cFFfa9602Estepes Ardentes|r
 step
     .goto Burning Steppes,35.38,57.73
     >>Mate o |cRXP_ENEMY_Bokk, Senhor do Magmático|r. Saqueie-o para obter seu |cRXP_LOOT_Núcleo Magmático|r
@@ -673,6 +677,8 @@ RXPGuides.RegisterGuide([[
 #subgroup Guia do Conjunto de Heroísmo << Warrior
 #subgroup Guia do Conjunto da Virtude << Priest
 #name Parte 3: Calças, Ombros e Botas
+#guideKind gearset
+#guideIcon rxp-icon-quest
 #next Parte 4: Elmo & Peito
 
 step
@@ -1155,6 +1161,8 @@ RXPGuides.RegisterGuide([[
 #subgroup Guia do Conjunto de Heroísmo << Warrior
 #subgroup Guia do Conjunto da Virtude << Priest
 #name Parte 4: Elmo & Peito
+#guideKind gearset
+#guideIcon rxp-icon-quest
 
 
 step
@@ -1324,7 +1332,7 @@ step
     .mob Lord Incendius
 step
     #completewith DukeofCynders
-    .zone Silithus >>Voe para |cFFfa9602Silithus|r
+    .zone Silithus >>Vá a |cFFfa9602Silithus|r
 step
     #loop
     .goto Silithus,38.31,46.42,0

@@ -8,7 +8,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Zutrittsvoraussetzungen
 #name Onyxias Zutrittsvoraussetzungen (A)
 #guideKind attunement
-
+#guideIcon rxp-icon-ony
 
 step
     #completewith next
@@ -164,7 +164,7 @@ step
 step
     .isQuestTurnedIn 4182
     .goto Burning Steppes,84.744,69.015
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Marshal Maxwell|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Marschall Maxwell|r
     >>|cRXP_WARN_Die Questreihe macht hier Pause, bis ihr|r |T134331:0|t[Eine zusammengeknüllte Notiz] |cRXP_WARN_in der BRD findet|r
     .turnin 4242 >> Gebt die Quest Verlorene Hoffnung ab
     .target Marshal Maxwell
@@ -191,7 +191,7 @@ step
     .accept 4282 >> Akzeptiert die Quest Ein Funken Hoffnung
 step
     .isQuestTurnedIn 4264
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Marshal Windsor|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Marschall Windsor|r
     .accept 4282 >> Akzeptiert die Quest Ein Funken Hoffnung
 step
     .isOnQuest 4282
@@ -337,6 +337,7 @@ step
     .target Haleh
 
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
@@ -346,6 +347,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Zutrittsvoraussetzungen
 #name Onyxias Zutrittsvoraussetzungen (H)
 #guideKind attunement
+#guideIcon rxp-icon-ony
 
 step
     #completewith next
@@ -787,8 +789,6 @@ step
 
 ]])
 
-
-
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
@@ -797,6 +797,7 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Endgame Guides
 #name Geschmolzener Kern Zutrittsvoraussetzung
 #guideKind attunement
+#guideIcon rxp-icon-mc
 
 step
     #completewith next
@@ -834,8 +835,6 @@ step
 
 ]])
 
-
-
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
@@ -844,6 +843,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Zutrittsvoraussetzungen
 #name Pechschwingenhort Zutrittsvorraussetzungen
 #guideKind attunement
+#guideIcon rxp-icon-bwl
 
 step
     #completewith next
@@ -879,8 +879,6 @@ step
     .turnin 7761 >>Gebt die Quest Blackhands Befehl ab
 
 ]])
-
-
 
 RXPGuides.RegisterGuide([[
 #classic
@@ -972,8 +970,6 @@ step
     .target Vaelan
 
 ]])
-
-
 
 RXPGuides.RegisterGuide([[
 #classic
@@ -1234,8 +1230,6 @@ step
 
 ]])
 
-
-
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
@@ -1246,7 +1240,6 @@ RXPGuides.RegisterGuide([[
 #name Scholomance Schlüssel (H)
 #guideKind key
 #guideIcon rxp-icon-key-2
-
 
 step
     #sticky
@@ -1505,7 +1498,6 @@ RXPGuides.RegisterGuide([[
 #guideKind key
 #guideIcon rxp-icon-key-3
 
-
 step
     #completewith next
     .subzone 254 >>Reist zum |cFFfa9602Der Schwarzfels|r
@@ -1554,12 +1546,11 @@ step
     .isOnQuest 3802
 step
     >>Lauf zurück zur Location über dem Ring des Gesetzes
-    >>Klickt das |cRXP_PICK_Denkmal für Franclorn Forgewright|r
+    >>Zwickt |cRXP_PICK_Denkmal für Franclorn Forgewright|r
     .turnin 3802 >> Gebt die Quest Dunkeleisenerbe ab
     .isQuestComplete 3802
 
-    ]])
-
+]])
 
 RXPGuides.RegisterGuide([[
 #classic
@@ -1569,7 +1560,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Schlüssel
 #name Düsterbruch Schlüssel
 #guideKind key
-
 
 step
     #completewith next
@@ -1664,7 +1654,6 @@ step
     .isQuestAvailable 9123 --The Dread Citadel - Naxxramas
 
 ]])
-
 
 RXPGuides.RegisterGuide([[
 #classic

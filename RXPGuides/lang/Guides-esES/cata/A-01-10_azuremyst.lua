@@ -202,7 +202,7 @@ step
     .target Botanist Taerix
 step << Mage
     .goto Azuremyst Isle,79.662,46.427
-    >>|cRXP_WARN_Lanza|r |T135812:0|t[Bola de Fuego] |cRXP_WARN_sobre el |cRXP_ENEMY_Muñeco de Entrenamiento|r hasta que obtengas un|r |T135731:0|t[Arcano Missles!] |cRXP_WARN_proc, luego lanza|r |T136096:0|t[Misiles Arcanos]|cRXP_WARN_. Repite esto dos veces|r
+    >>|cRXP_WARN_Lanza|r |T135812:0|t[Bola de Fuego] |cRXP_WARN_en el |cRXP_ENEMY_Entrenamiento Muñeco|r hasta que obtengas un |T135731:0|t[¡Misiles Arcanos!]|r |cRXP_WARN_proc, luego lanza|r |T136096:0|t[Misiles Arcanos]|cRXP_WARN_. Repite esto dos veces|r
     >>|cRXP_WARN_Lanza|r |T135848:0|t[Vigía del pozo Solanian] |cRXP_WARN_sobre el |cRXP_ENEMY_Muñeco de Entrenamiento|r. Repite esto dos veces|r
     .complete 26968,1 << cata -- Practice Arcane Missiles (1)
     .complete 26968,2 << !cata -- Practice Frost Nova (1)
@@ -1005,7 +1005,7 @@ step << Warrior/Paladin
 step << Shaman
     .goto The Exodar,69.945,90.749
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con |cRXP_FRIENDLY_Ven|r
-    >>|cRXP_BUY_Compra una|r |T132402:0|t[Hachuela] |cRXP_BUY_a él|r
+    >>|cRXP_BUY_Compra una|r |T132402:0|t[Hachuela] |cRXP_BUY_a este vendedor|r
     >>|cRXP_WARN_Alternativamente, busca en la Casa de subastas algo mejor o más barato|r
     .collect 853,1 -- Hatchet (1)
     .money <0.1927

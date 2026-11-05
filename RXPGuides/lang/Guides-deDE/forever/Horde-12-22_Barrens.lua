@@ -1052,7 +1052,7 @@ step << Tauren
     .cooldown item,6948,>0
     .use 6948
 step << Tauren
-    .goto Thunder Bluff,45.6,55.9
+    .goto 1456/1,40.72,-1238.97--c:Thunder Bluff,45.6,55.9
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprecht mit |cRXP_FRIENDLY_Ahanu|r
     .turnin 6362 >>Gebt die Quest Flug nach Donnerfels ab
     .accept 6363 >>Akzeptiert die Quest Tal der Windreitermeister
@@ -1102,7 +1102,7 @@ step << Tauren Warrior
     .target Torm Ragetotem
     .xp <16,1
 step << Tauren
-    .goto Thunder Bluff,47.00,49.82
+    .goto 1456/1,26.10,-1196.66--c:Thunder Bluff,47.00,49.82
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Tal|r
     .turnin 6363 >>Gebt die Quest Tal der Windreitermeister ab
     .accept 6364 >>Akzeptiert die Quest Rückkehr zu Jahan
@@ -1675,6 +1675,7 @@ step << Orc/Troll
     .target Doras
     .isOnQuest 6385
 step << Orc/Troll
+    #optional
     .goto 1454/1,-4313.46,1676.25--c:Orgrimmar,45.120,63.889
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |r |cRXP_FRIENDLY_Doras|r
     .accept 6386 >> Akzeptiert die Quest Kehrt nach Crossroads zurück
@@ -2484,6 +2485,7 @@ step
     >>Tötet |cRXP_ENEMY_Kriegsherr Krom'zar|r, sobald er erscheint. Plündert die |cRXP_PICK_Flagge|r, welche er auf dem Boden fallen lässt
     >>|cRXP_WARN_Seid vorsichtig! Er ist ein starker Elite und wird von mindestens zwei|r |cRXP_ENEMY_Kolkar|r |cRXP_WARN_mobs|r beschützt
     >>|cRXP_WARN_Es kann bis zu 3 Minuten dauern, bis er erscheint|r
+    .link https://www.youtube.com/watch?v=xrm0PWe5wf4 >>|cRXP_WARN_Klickt hier für ein Anleitungsvideo zum Kiten|r |cRXP_ENEMY_Kriegsherr Krom'zar|r
     .complete 4021,1 --Piece of Krom'zar's Banner (1)
     .unitscan Warlord Krom'zar
     .isOnQuest 4021
@@ -3463,7 +3465,7 @@ step
     .subzoneskip 380,1
 step
     .goto 1413/1,-2515.7,-2076.41
-    >>Tötet |cRXP_ENEMY_Stacheleber der Borstennacken|r. Plündert sie für einen |T134128:0|t[|cRXP_LOOT_Blutsplitter|r
+    >>Kill |cRXP_ENEMY_Bristleback Quilboars|r. Loot them for a |T134128:0|t[|cRXP_LOOT_Blood Shard|r]
     .collect 5075,1,5052,1 --Blood Shard (1)
     .mob Bristleback Water Seeker
     .mob Bristleback Thornweaver
@@ -3520,7 +3522,7 @@ step
     .unitscan Owatanka
 step
     #label SleepingBag1
-    .goto The Barrens,46.361,73.904
+    .goto 1413/1,-2075.00,-3380.64--c:The Barrens,46.361,73.904
     >>Klickt die |cRXP_PICK_Verbrannten Überreste|r auf dem Boden an
     .accept 79007 >> Nehmt an ...und diese Notiz, die Ihr gefunden habt.
 step
@@ -3659,7 +3661,7 @@ step
 step << !Tauren !Skyborne
     .goto 1413/1,-1891.48,-2391.93
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Quetschzahn|r
-    .aura 16618 >>|cRXP_WARN_Falls ihr 10|r |T134128:0|t[|cRXP_LOOT_Blutsplitter|r übrig habt, benutzt sie, um|cRXP_WARN_ |T136022:0|t[Geist des Windes] |rvon|cRXP_WARN_ Quetschzahn|r |cRXP_FRIENDLY_zu erhalten|r
+    .aura 16618 >>|cRXP_WARN_Falls ihr 10 habt|r |T134128:0|t[|cRXP_LOOT_Blutsplitter|r] |cRXP_WARN_übrig, benutzt sie, um|r |T136022:0|t[Geist des Windes] |cRXP_WARN_von|r |cRXP_FRIENDLY_Quetschzahn|r zu erhalten
     >>|cRXP_WARN_Überspringen diesen Schritt, falls ihr die Donnerfels-Flugroute habt|r
     .itemcount 5075,10
     .target Mangletooth
@@ -3739,6 +3741,38 @@ step
     .target Innkeeper Pala
     .bindlocation 1638
     .isQuestAvailable 6442
+step << Hunter
+    #completewith HunterTraining2
+    .goto 1456/1,-123.26,-1394.49,60 >> Reist zur Anhöhe der Jäger
+step << Hunter
+    .goto 1456/1,-100.50,-1454.75
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Urek|r
+    .train 5118 >> Trainiere deine Klassenfähigkeiten
+    .target Urek Thunderhorn
+    .xp <20,1
+    .xp >22,1
+step << Hunter
+    #label HunterTraining2
+    #optional
+    .goto 1456/1,-100.50,-1454.75
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Urek|r
+    .train 5118 >> Trainiere deine Klassenfähigkeiten
+    .target Urek Thunderhorn
+    .xp <22,1
+step << Hunter
+    .goto 1456/1,-47.69,-1434.64
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Hesuwa|r
+    .train 24494 >> Erlernt eure Begleiterfähigkeiten
+    .target Hesuwa Thunderhorn
+step << Warrior
+    #completewith next
+    .goto 1456/1,-123.26,-1394.49,60 >> Reist zur Anhöhe der Jäger
+step << Warrior
+    .goto 1456/1,-81.09,-1457.74
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Torm|r
+    .train 845 >>Trainiere deine Klassenfähigkeiten
+    .accept 1823 >>Akzeptiert die Quest Gespräch mit Ruga
+    .target Torm Ragetotem
 step
     #completewith next
     .goto 1456/1,222.96,-1079.42,40,0
@@ -3955,38 +3989,6 @@ step << Druid
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Turak|r
     .turnin 98362 >>Gebt die Quest Nach Donnerfels ab
     .target Turak Runetotem
-step << Hunter
-    #completewith HunterTraining2
-    .goto 1456/1,-123.26,-1394.49,60 >> Reist zur Anhöhe der Jäger
-step << Hunter
-    .goto 1456/1,-100.50,-1454.75
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Urek|r
-    .train 5118 >> Trainiere deine Klassenfähigkeiten
-    .target Urek Thunderhorn
-    .xp <20,1
-    .xp >22,1
-step << Hunter
-    #label HunterTraining2
-    #optional
-    .goto 1456/1,-100.50,-1454.75
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Urek|r
-    .train 5118 >> Trainiere deine Klassenfähigkeiten
-    .target Urek Thunderhorn
-    .xp <22,1
-step << Hunter
-    .goto 1456/1,-47.69,-1434.64
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Hesuwa|r
-    .train 24494 >> Erlernt eure Begleiterfähigkeiten
-    .target Hesuwa Thunderhorn
-step << Warrior
-    #completewith next
-    .goto 1456/1,-123.26,-1394.49,60 >> Reist zur Anhöhe der Jäger
-step << Warrior
-    .goto 1456/1,-81.09,-1457.74
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Torm|r
-    .train 845 >>Trainiere deine Klassenfähigkeiten
-    .accept 1823 >>Akzeptiert die Quest Gespräch mit Ruga
-    .target Torm Ragetotem
 step << Rogue
     .goto 1456/1,-36.52,-1244.05
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|cRXP_BUY_Sprecht mit|r |cRXP_FRIENDLY_Kard|r|cRXP_BUY_. Kauft ein|r |T135324:0|t[Langschwert] |cRXP_BUY_von ihm.|r
@@ -4106,6 +4108,7 @@ step
     >>Tötet |cRXP_ENEMY_Kriegsherr Krom'zar|r, sobald er erscheint. Plündert die |cRXP_PICK_Flagge|r, welche er auf dem Boden fallen lässt
     >>|cRXP_WARN_Seid vorsichtig! Er ist ein starker Elite und wird von mindestens zwei|r |cRXP_ENEMY_Kolkar|r |cRXP_WARN_mobs|r beschützt
     >>|cRXP_WARN_Es kann bis zu 3 Minuten dauern, bis er erscheint|r
+    .link https://www.youtube.com/watch?v=xrm0PWe5wf4 >>|cRXP_WARN_Klickt hier für ein Anleitungsvideo zum Kiten|r |cRXP_ENEMY_Kriegsherr Krom'zar|r
     .complete 4021,1 --Piece of Krom'zar's Banner (1)
     .unitscan Warlord Krom'zar
     .isQuestTurnedIn 852
@@ -5104,6 +5107,12 @@ step << Troll Warrior/Undead Warrior/Tauren Warrior/Undead Paladin
     .goto 1454/1,-4824.00,2090.540
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Hanashi|r
     .train 197 >>Erlernt Zweihandäxte
+    .train 2567 >> Erlernt Wurfwaffen << !Paladin
+    .target Hanashi
+step << Orc Warrior
+    .goto 1454/1,-4824.00,2090.540
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Hanashi|r
+    .train 2567 >> Erlernt Wurfwaffen
     .target Hanashi
 step << Warrior
     .goto 1454/1,-4801.42,1980.53
@@ -5190,4 +5199,13 @@ step
 step
     #optional
     .abandon 6563 >>Brecht die Quest Die Essenz von Aku'mai ab
+step
+    #optional
+    .abandon 97003 >>Brecht die Quest Chol'aruk the Ravener ab
+step
+    .zone Durotar >> Verlass Orgrimmar
+    .zoneskip Tirisfal Glades
+    .zoneskip Undercity
+    .zoneskip Silverpine Forest
+    .zoneskip Hillsbrad Foothills
 ]])

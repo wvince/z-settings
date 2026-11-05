@@ -818,13 +818,13 @@ step
     .goto Elwynn Forest,99.05,72.15
 .target Guard Parker
 >>Fale com o |cRXP_FRIENDLY_Guarda Capitão da Guarda Florestan|r
-    .accept 244 >>Aceite Encroaching Gnolls
+    .accept 244 >>Aceite Gnolls Invasores
 step
     #sticky
     #label Gnolls
     .goto Redridge Mountains,30.74,59.99
 >>Fale com o |cRXP_FRIENDLY_Subdelegado David|r
-    .turnin 244 >>Entregue Encroaching Gnolls
+    .turnin 244 >>Entregue Gnolls Invasores
 .target Deputy Feldon
     .accept 246 >>Aceite Assessing the Ameaça
 step
@@ -851,7 +851,7 @@ step
     .goto Redridge Mountains,29.72,44.26
 .target Bailiff Conacher
 >>Fale com o |cRXP_FRIENDLY_Meirinho Conacher|r
-    .accept 91 >>Aceite Solomon's Law
+    .accept 91 >>Aceite A lei de Salomão
 step
     .goto Redridge Mountains,29.99,44.45
     >>Entre no prédio
@@ -865,7 +865,7 @@ step
     .accept 127 >>Aceite O lago está para peixe
 step
     .goto Redridge Mountains,26.75,46.42
-    .accept 180 >>Aceite Procurado: General Mordente
+    .accept 180 >>Aceite Procura-se: Tenente Mordente
 step
     >>Entre na Estalagem
     .goto Redridge Mountains,27.09,45.65
@@ -967,7 +967,7 @@ step
     .accept 143 >>Aceite Messenger to Cerro Oeste
 .target Bailiff Conacher
 >>Fale com o |cRXP_FRIENDLY_Meirinho Conacher|r
-    .accept 91 >>Aceite Solomon's Law
+    .accept 91 >>Aceite A lei de Salomão
 step
     >>Entre no andar superior da Estalagem
     .goto Redridge Mountains,26.47,45.35
@@ -1147,7 +1147,7 @@ step
 >>Fale com |cRXP_FRIENDLY_Vervo Obom|r
     .turnin 124 >>Entregue A Baying of Gnolls
 .target Verner Osgood
-    .accept 126 >>Aceite Howling in the Hills
+    .accept 126 >>Aceite O gnoll de Vila Plácida
 step
     .goto Redridge Mountains,27.09,45.65
 .target Darcy

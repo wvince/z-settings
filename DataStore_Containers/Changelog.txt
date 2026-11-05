@@ -1,0 +1,160 @@
+DataStore Changelog (dates in dd/mm/yyyy)
+===================
+
+
+Version 2026.10.14 (14/10/2026)
+
+- Updated ToC for 12.1.5.
+
+Version 2026.10.07 (07/10/2026)
+
+- Fixed Classic Era ToC number, now 11509.
+- Added guards to properly get the number of purchased slots in Forever.
+
+Version 2026.10.02 (02/10/2026)
+
+- Moved build information to AddonFactory to centralize version detection.
+- Updated UI version detection to support WoW Forever.
+- Updated for Altoholic Forever v1.60.002.
+- Fixed a lua error when visiting the bank.
+
+Version 2026.09.30 (30/09/2026)
+
+- Replaced all calls to UnitName("player") by AddonFactory:GetPlayerName() for WoW Forever.
+- Updated for Altoholic Forever v1.60.001
+
+Version 2026.08.16 (16/08/2026)
+
+- Updated ToC for 12.1.
+
+Version 2026.07.10 (10/07/2026)
+
+- GitHub workflow version update.
+
+Version 2026.07.06 (06/07/2026)
+
+- Updated ToC for 12.0.7.
+- Fixes & TBC support (Thanks GovtGeek!)
+
+Version 2026.01.21 (21/01/2026)
+
+- Updated ToC for 12.0.
+
+Version 2025.10.19 (19/10/2025)
+
+- Updated ToC for 11.2.5.
+
+Version 2025.09.25 (25/09/2025)
+
+- Updated ToC for Mists of Pandaria 5.5.1.
+
+Version 2025.09.22 (22/09/2025)
+
+- Added IterateWarbandBank().
+
+Version 2025.09.01 (01/09/2025)
+
+- Fixed a lua error when searching bags.
+- Fixed a lua error when opening the Warband Bank using the Distance Inhibitor.
+
+Version 2025.08.24 (24/08/2025)
+
+- Cleared data from old the seventh bank bag (= bag 12).
+- Adjusted the format of bank information to account for larger size of tabs versus the older bags.
+There is still no need to clear the saved variables, but you definitely need to visit the bank again with all your alts.
+Sorry about this, and I know many of your have a ton of alts, but this could not be avoided.
+
+Version 2025.08.22 (22/08/2025)
+
+- MoP fixes for reagent bank & void storage.
+- Fixed ScanBankSlotsInfo() for MoP.
+
+Version 2025.08.21 (21/08/2025)
+
+- Updated ToC for Mists of Pandaria and 11.2.
+- Reagent Bank and Void Storage removed.
+
+Version 2025.02.28 (28/02/2025)
+
+- ToC Update.
+
+Version 2024.11.11 (11/11/2024)
+
+- ToC Update.
+
+Version 2024.09.15 (15/09/2024)
+
+- ToC Update.
+
+Version 2024.08.25 (25/08/2024)
+
+- Added proper support to delete a guild bank.
+
+Version 2024.08.14 (14/08/2024)
+
+- Fixed a lua error when changing the settings of an account bank tab.
+- Fixed an issue that deletes the content of the reagent bank at logon.
+
+Version 2024.08.14 (14/08/2024)
+
+- ToC Update.
+- Added support for the warband bank.
+
+Version 2024.07.28 (28/07/2024)
+
+- ToC Update.
+
+Version 2024.06.26 (26/06/2024)
+
+- Fixed a nasty bug when leaving the bank, unregistering the event was not properly done by DataStore (and scope Tag was missing).
+
+Version 2024.06.23 (23/06/2024)
+
+- ToC Update for Cataclysm Release 4.4.001
+- Fixed an error on GetNumBagSlots
+
+Version 2024.06.20 (20/06/2024)
+
+- Disabled the scanning of the keyring (Cataclysm).
+
+Version 2024.06.16 (16/06/2024)
+
+- Item count now properly fixed.
+
+Version 2024.06.16 (16/06/2024)
+
+- Reverting yesterday's change, needs further analysis.
+
+Version 2024.06.15 (15/06/2024)
+
+- Fixed the count of items which can be stacked by more than 2047 (such as the Polished Pet Charm ! ..which I thought could stack up to 2000, but it's 5000).
+
+Version 2024.06.09 (09/06/2024)
+
+- Fixed the count of items which can be stacked by more than 1023 (such as the Polished Pet Charm).
+
+Version 2024.05.20 (05/20/2024)
+
+- Stopped using Ace libraries
+- Using locals for all global functions
+- Using new tables in the SV file. 
+- Each 'domain' is now in its own file, under the API folder.
+
+Version 2023.12.10 (10/12/2023)
+
+- Fixed Bag5 being treated as the reagent bag in non-retail, causing the proper count not to be displayed for the first bank bag.
+
+Version 2023.11.20 (20/11/2023)
+
+- Fixed COMMON_NUM_BAG_SLOTS to be NUM_BAG_SLOTS + 1 for retail, and NUM_BAG_SLOTS for non-retail, instead of the opposite.
+
+Version 2023.11.17 (17/11/2023)
+
+- Removed the WOW_PROJECT_ID test in ScanBankSlotsInfo()
+- Removed an invalid test when closing a bank frame.
+
+Version 2023.11.14 (14/11/2023)
+
+- As of this version, this DataStore module will be released in a single package compatible with all versions of the game.
+- As of this version, the version number will no longer be 1.x or 9.x, but rather a date that clearly identifies when the release took place.
+

@@ -1052,7 +1052,7 @@ step << Tauren
     .cooldown item,6948,>0
     .use 6948
 step << Tauren
-    .goto Thunder Bluff,45.6,55.9
+    .goto 1456/1,40.72,-1238.97--c:Thunder Bluff,45.6,55.9
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Ahanu|r
     .turnin 6362 >>Entregue Voo para o Penhasco do Trovão
     .accept 6363 >>Aceite Tal, o Mestre de Mantícoras
@@ -1102,7 +1102,7 @@ step << Tauren Warrior
     .target Torm Ragetotem
     .xp <16,1
 step << Tauren
-    .goto Thunder Bluff,47.00,49.82
+    .goto 1456/1,26.10,-1196.66--c:Thunder Bluff,47.00,49.82
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Tal|r
     .turnin 6363 >>Entregue Tal, o Mestre de Mantícoras
     .accept 6364 >>Aceite Fale novamente com Jahan
@@ -1312,13 +1312,13 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Vrang Sanguebravo|r
     .accept 95494 >>Aceite Perna e orgulho feridos
     .accept 95507 >>Aceite A caça de Vrang
-    .target Vrang Wildgore
+    .target Vrang Sanguebravo
 step
     .goto 1413/1,-1815.48,786.89
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Vrang Sanguebravo|r
     >>|cRXP_FRIENDLY_Vrang Sanguebravo|r |cRXP_WARN_vende|r |T133476:0|t[|cRXP_FRIENDLY_Maça Pesada com Pontas|r] |cRXP_WARN_com estoque limitado|r << Tauren Warrior/Tauren Shaman/Druid
 	.vendor	>> Venda os lixos e repare seu equipamento
-    .target Vrang Wildgore
+    .target Vrang Sanguebravo
     .isQuestAvailable 95494,95507
 step
     #completewith next
@@ -1372,7 +1372,7 @@ step
     .turnin 95494 >>Entregue Perna e orgulho feridos
     .turnin 95507 >>Entregue A caça de Vrang
     .accept 95495 >>Aceite O curtumeiro ermitão
-    .target Vrang Wildgore
+    .target Vrang Sanguebravo
     .isQuestComplete 95494
 step
     #completewith next
@@ -1675,6 +1675,7 @@ step << Orc/Troll
     .target Doras
     .isOnQuest 6385
 step << Orc/Troll
+    #optional
     .goto 1454/1,-4313.46,1676.25--c:Orgrimmar,45.120,63.889
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com|r |cRXP_FRIENDLY_Doraso|r
     .accept 6386 >> Aceite Retorno à Encruzilhada
@@ -2484,6 +2485,7 @@ step
     >>Mate |cRXP_ENEMY_Senhor da Guerra Krom'zar|r (elite nível 20) quando aparecer. Pegue o |cRXP_PICK_Estandarte|r que ele deixa no chão
     >>|cRXP_WARN_Cuidado! Ele é forte e protegido por pelo menos dois|r |cRXP_ENEMY_inimigos|r |cRXP_WARN_Kolkar|r
     >>|cRXP_WARN_Ele pode levar até 3 minutos para aparecer|r
+    .link https://www.youtube.com/watch?v=xrm0PWe5wf4 >>|cRXP_WARN_Clique aqui para um vídeo de guia sobre como você pode kitar|r |cRXP_ENEMY_Senhor da Guerra Krom'zar|r
     .complete 4021,1 --Piece of Krom'zar's Banner (1)
     .unitscan Warlord Krom'zar
     .isOnQuest 4021
@@ -3520,8 +3522,8 @@ step
     .unitscan Owatanka
 step
     #label SleepingBag1
-    .goto The Barrens,46.361,73.904
-    >>Clique em |cRXP_PICK_Burned-Saída Remains|r no chão
+    .goto 1413/1,-2075.00,-3380.64--c:The Barrens,46.361,73.904
+    >>Clique em |cRXP_PICK_Restos Queimados|r no chão
     .accept 79007 >> Aceite ...e aquele bilhete que você encontrou
 step
     #label LizardBlood
@@ -3659,7 +3661,7 @@ step
 step << !Tauren !Skyborne
     .goto 1413/1,-1891.48,-2391.93
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Denterroto|r
-    .aura 16618 >>|cRXP_WARN_Se você tem 10|r |T134128:0|t[|cRXP_LOOT_Estilhaços de Sangue|r |cRXP_WARN_sobrando, use-os para obter|r |T136022:0|t[Espírito do vento] |cRXP_WARN_de|r |cRXP_FRIENDLY_Denterroto|r
+    .aura 16618 >>|cRXP_WARN_Se você tem 10|r |T134128:0|t[|cRXP_LOOT_Fragmentos Sanguíneos|r] |cRXP_WARN_restantes, use-os para obter|r |T136022:0|t[Espírito of the Vento - Missão - Missão] |cRXP_WARN_de|r |cRXP_FRIENDLY_Denterroto|r
     >>|cRXP_WARN_Pule esta etapa se tiver a rota de voo de Penhasco do Trovão|r
     .itemcount 5075,10
     .target Mangletooth
@@ -3739,6 +3741,38 @@ step
     .target Innkeeper Pala
     .bindlocation 1638
     .isQuestAvailable 6442
+step << Hunter
+    #completewith HunterTraining2
+    .goto 1456/1,-123.26,-1394.49,60 >> Vá ao Platô dos Caçadores
+step << Hunter
+    .goto 1456/1,-100.50,-1454.75
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Urek Chifre Troante|r
+    .train 5118 >> Treine suas magias de classe
+    .target Urek Thunderhorn
+    .xp <20,1
+    .xp >22,1
+step << Hunter
+    #label HunterTraining2
+    #optional
+    .goto 1456/1,-100.50,-1454.75
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Urek Chifre Troante|r
+    .train 5118 >> Treine suas magias de classe
+    .target Urek Thunderhorn
+    .xp <22,1
+step << Hunter
+    .goto 1456/1,-47.69,-1434.64
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Hesuwa Chifre Troante|r
+    .train 24494 >> Treine as magias do seu mascote
+    .target Hesuwa Thunderhorn
+step << Warrior
+    #completewith next
+    .goto 1456/1,-123.26,-1394.49,60 >> Vá ao Platô dos Caçadores
+step << Warrior
+    .goto 1456/1,-81.09,-1457.74
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Torm Totem da Fúria|r
+    .train 845 >>Treine suas magias de classe
+    .accept 1823 >>Aceite Fale com Ruga
+    .target Torm Ragetotem
 step
     #completewith next
     .goto 1456/1,222.96,-1079.42,40,0
@@ -3955,38 +3989,6 @@ step << Druid
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Turak Runa Totem|r
     .turnin 98362 >>Entregue Penhasco do Trovão
     .target Turak Runetotem
-step << Hunter
-    #completewith HunterTraining2
-    .goto 1456/1,-123.26,-1394.49,60 >> Vá ao Platô dos Caçadores
-step << Hunter
-    .goto 1456/1,-100.50,-1454.75
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Urek Chifre Troante|r
-    .train 5118 >> Treine suas magias de classe
-    .target Urek Thunderhorn
-    .xp <20,1
-    .xp >22,1
-step << Hunter
-    #label HunterTraining2
-    #optional
-    .goto 1456/1,-100.50,-1454.75
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Urek Chifre Troante|r
-    .train 5118 >> Treine suas magias de classe
-    .target Urek Thunderhorn
-    .xp <22,1
-step << Hunter
-    .goto 1456/1,-47.69,-1434.64
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Hesuwa Chifre Troante|r
-    .train 24494 >> Treine as magias do seu mascote
-    .target Hesuwa Thunderhorn
-step << Warrior
-    #completewith next
-    .goto 1456/1,-123.26,-1394.49,60 >> Vá ao Platô dos Caçadores
-step << Warrior
-    .goto 1456/1,-81.09,-1457.74
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Torm Totem da Fúria|r
-    .train 845 >>Treine suas magias de classe
-    .accept 1823 >>Aceite Fale com Ruga
-    .target Torm Ragetotem
 step << Rogue
     .goto 1456/1,-36.52,-1244.05
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|cRXP_BUY_Fale com|r |cRXP_FRIENDLY_Kard Totem da Fúria|r|cRXP_BUY_. Compre uma|r |T135324:0|t[Espada Longa] |cRXP_BUY_dele.|r
@@ -4106,6 +4108,7 @@ step
     >>Mate |cRXP_ENEMY_Senhor da Guerra Krom'zar|r quando aparecer. Pegue o |cRXP_PICK_Estandarte|r que ele deixa no chão
     >>|cRXP_WARN_Cuidado! Ele é um elite forte e protegido por pelo menos dois|r |cRXP_ENEMY_inimigos|r |cRXP_WARN_Kolkar|r
     >>|cRXP_WARN_Ele pode levar até 3 minutos para aparecer|r
+    .link https://www.youtube.com/watch?v=xrm0PWe5wf4 >>|cRXP_WARN_Clique aqui para um vídeo de guia sobre como você pode kitar|r |cRXP_ENEMY_Senhor da Guerra Krom'zar|r
     .complete 4021,1 --Piece of Krom'zar's Banner (1)
     .unitscan Warlord Krom'zar
     .isQuestTurnedIn 852
@@ -4162,7 +4165,7 @@ step
     .turnin 95494 >>Entregue Perna e orgulho feridos
     .turnin 95507 >>Entregue A caça de Vrang
     .accept 95495 >>Aceite O curtumeiro ermitão
-    .target Vrang Wildgore
+    .target Vrang Sanguebravo
     .isQuestComplete 95494
 step
     #completewith next
@@ -5104,6 +5107,12 @@ step << Troll Warrior/Undead Warrior/Tauren Warrior/Undead Paladin
     .goto 1454/1,-4824.00,2090.540
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Hanashi|r
     .train 197 >>Aprenda a usar Machados de Duas Mãos
+    .train 2567 >> Treine Arremesso << !Paladin
+    .target Hanashi
+step << Orc Warrior
+    .goto 1454/1,-4824.00,2090.540
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Hanashi|r
+    .train 2567 >> Treine Arremesso
     .target Hanashi
 step << Warrior
     .goto 1454/1,-4801.42,1980.53
@@ -5190,4 +5199,13 @@ step
 step
     #optional
     .abandon 6563 >>Abandone A essência de Aku'mai
+step
+    #optional
+    .abandon 97003 >>Abandone Chol'aruk, o Devorador
+step
+    .zone Durotar >> Saia de Orgrimmar
+    .zoneskip Tirisfal Glades
+    .zoneskip Undercity
+    .zoneskip Silverpine Forest
+    .zoneskip Hillsbrad Foothills
 ]])

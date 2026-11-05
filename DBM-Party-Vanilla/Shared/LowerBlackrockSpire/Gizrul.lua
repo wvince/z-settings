@@ -1,0 +1,14 @@
+local mod	= DBM:NewMod(395, "DBM-Party-Vanilla", DBM:IsPostCata() and 5 or 3, 229)
+local L		= mod:GetLocalizedStrings()
+
+mod:SetRevision("20261019224209")
+if DBM:IsForever() then
+	mod:EnableGenericTrash()
+end
+mod:SetCreatureID(10268)
+mod:SetEncounterID(273)
+mod:SetModelID(9564)
+mod:SetZone(229)
+
+mod:RegisterCombat("combat")
+

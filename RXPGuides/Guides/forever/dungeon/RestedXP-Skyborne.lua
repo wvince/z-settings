@@ -12,14 +12,12 @@ RXPGuides.RegisterGuide([[
 #subgroup Dungeon Guide 1-22 << Horde
 #defaultfor Skyborne
 #next 9-13 Zephras Isle
-
 step << Horde
     .enabledungeon RFC
     #include RestedXP Forever Guide (H)\1-9 Zephras Isle
 step << Alliance
     #include RestedXP Forever Guide (A)\1-9 Zephras Isle
 ]])
-
 RXPGuides.RegisterGuide([[
 #forever
 #version 1
@@ -34,11 +32,9 @@ RXPGuides.RegisterGuide([[
 #next 13-15 Westfall << Alliance
 #next 12-14 Silverpine Forest << Horde !Hunter
 #next 12-16 The Barrens << Horde Hunter
-
 step << Horde
     .enabledungeon RFC
     #include RestedXP Forever Guide (H)\9-13 Zephras Isle
 step << Alliance
     #include RestedXP Forever Guide (A)\9-13 Zephras Isle
 ]])
-

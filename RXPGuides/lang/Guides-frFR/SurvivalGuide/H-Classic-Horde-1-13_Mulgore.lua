@@ -658,7 +658,7 @@ step
     .unitscan Snagglespear
 step
     .goto Mulgore,47.63,61.49
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Jhawna|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Jhwana|r
     >>|cRXP_BUY_Achetez du|r [Lait frais] |cRXP_BUY_à Delaniel|r << Shaman/Druid
     >>|cRXP_BUY_Achetez des|r [Pain sorti du four] |cRXP_BUY_à Delaniel|r << Warrior
     .vendor >> Vendez tout ce dont nous n'avez pas besoin
@@ -899,7 +899,7 @@ step << Hunter
     .itemStat 18,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<3.0
 step << Hunter
     .goto Mulgore,45.86,57.67
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|cRXP_BUY_Talk to|r |cRXP_FRIENDLY_Moorat|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|cRXP_BUY_Parlez à|r |cRXP_FRIENDLY_Loorat|r
     .collect 2516,1000,743,1 << Hunter --Light Shot (1000)
     .target Moorat Longstride
     .itemcount 2512,<800 << Hunter
@@ -1367,7 +1367,7 @@ step << Hunter
     .goto Mulgore,46.65,47.22,50,0
     .goto Mulgore,48.18,45.27,50,0
     .goto Mulgore,49.49,42.27,50,0
-    .use 15915 >> Utilisez votre [Bâtonnet de domptage] sur un |cRXP_ENEMY_Prairie Stalker|r à la portée maximale
+    .use 15915 >> Utilisez votre [Taming Rod] sur un |cRXP_ENEMY_Prairie Stalker|r à distance maximale
     .complete 6087,1 --Tame a Prairie Stalker (1)
     .mob Prairie Stalker
 step << Hunter
@@ -1394,7 +1394,7 @@ step << Hunter
     .target Yaw Sharpmane
 step
     .goto Mulgore,47.63,61.49
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Jhawna|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Jhwana|r
     >>|cRXP_BUY_Achetez du|r [Lait frais] |cRXP_BUY_à Delaniel|r << Shaman/Druid
     >>|cRXP_BUY_Achetez des|r [Pain sorti du four] |cRXP_BUY_à Delaniel|r << Warrior
     .collect 1179,20,818,1 << Shaman/Druid --Ice Cold Milk (20)
@@ -2037,7 +2037,7 @@ step
     #completewith next
     >>Tuez |cRXP_ENEMY_Zalazane|r. Dépouillez-le pour sa |cRXP_LOOT_Tête|r
     >>Gardez votre [Horion de terre] pour quand il lance [Vague de soins] << Shaman
-    >>Gardez votre [Suriner] pour lorsqu'il lance [Vague de soins] << Rogue
+    >>Gardez votre [Suriner] pour quand il lance [Vague de soins] << Rogue
     >>Faites attention. Il peut lancer [Vague de soins]. Utilisez votre [Potion] si nécessaire << !Shaman !Rogue
     .complete 826,3 --Zalazane's Head (1)
     .mob Zalazane
@@ -2050,7 +2050,7 @@ step
     .goto Durotar,67.4,87.8
     >>Tuez |cRXP_ENEMY_Zalazane|r. Dépouillez-le pour sa |cRXP_LOOT_Tête|r
     >>Gardez votre [Horion de terre] pour quand il lance [Vague de soins] << Shaman
-    >>Gardez votre [Suriner] pour lorsqu'il lance [Vague de soins] << Rogue
+    >>Gardez votre [Suriner] pour quand il lance [Vague de soins] << Rogue
     >>Faites attention. Il peut lancer [Vague de soins]. Utilisez votre [Potion] si nécessaire << !Shaman !Rogue
     .complete 826,3 --Zalazane's Head (1)
     .mob Zalazane
@@ -2082,7 +2082,7 @@ step
     #completewith next
     >>Tuez |cRXP_ENEMY_Pygmy Surf Crawlers|r et les |cRXP_ENEMY_Surf Crawlers|r. Dépouillez-les pour leur |cRXP_LOOT_Mucus|r
     >>Tuez les |cRXP_ENEMY_Coquillards makrura|r et les |cRXP_ENEMY_Claqueur makrura|r. Dépouillez-les pour leurs |cRXP_LOOT_Yeux|r
-    >>Allez aux îles du sud si vous n'avez pas encore bientôt terminé cette quête à ce moment. De nombreux |cRXP_ENEMY_Crawlers|r et de |cRXP_ENEMY_Makruras|r peuvent être trouvé ici
+    >>|cRXP_WARN_Allez aux îles du sud si vous n'avez pas encore bientôt terminé cette quête à ce moment. De nombreux|r |cRXP_ENEMY_Clampants|r |cRXP_WARN_et de|r |cRXP_ENEMY_Makruras|r |cRXP_WARN_peuvent être trouvé ici|r
     .complete 818,2 --Crawler Mucus (8)
     .mob +Pygmy Surf Crawler
     .mob +Surf Crawler
@@ -2154,7 +2154,7 @@ step
     .goto Durotar,55.95,73.93
 step
     #completewith Stolensupplies
-    +Mettez dans vos barres votre [Crâne au faible rougeoiement] et votre [Colle très collante]. Gardez-les pour des situations d'urgence
+    +|cRXP_WARN_Mettez dans vos barres votre|r |T133728:0|t[Crâne au faible rougeoiement] |cRXP_WARN_et la|r |T134712:0|t[Colle très collante]. |cRXP_WARN_Gardez-les pour les situations d'urgence|r
 step
     #loop
     .goto Durotar,49.22,48.96,0
@@ -2190,7 +2190,7 @@ step
     .complete 837,4 --Razormane Battleguard (4)
     .mob +Razormane Battleguard
 step
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à|r |cRXP_FRIENDLY_Torka|r, |cRXP_FRIENDLY_Orgnil|r et |cRXP_FRIENDLY_Gar'Thok|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à|r |cRXP_FRIENDLY_Torka|r, à |cRXP_FRIENDLY_Orgnil|r et à |cRXP_FRIENDLY_Gar'Thok|r
     .turnin 815 >>Rendez la quête Des œufs pour l'omelette
     .target +Cook Torka
     .goto Durotar,51.12,42.46
@@ -2206,7 +2206,7 @@ step
     .goto Durotar,51.95,43.50
     .group
 step
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à|r |cRXP_FRIENDLY_Torka|r, |cRXP_FRIENDLY_Orgnil|r et |cRXP_FRIENDLY_Gar'Thok|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à|r |cRXP_FRIENDLY_Torka|r, à |cRXP_FRIENDLY_Orgnil|r et à |cRXP_FRIENDLY_Gar'Thok|r
     .turnin 815 >>Rendez la quête Des œufs pour l'omelette
     .target +Cook Torka
     .goto Durotar,51.12,42.46
@@ -2227,7 +2227,7 @@ step << Hunter
     .xp <12,1
 step
     .goto Durotar,51.51,41.64
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |r |cRXP_FRIENDLY_Innkeeper Grosk|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |r |cRXP_FRIENDLY_Grosk l'aubergiste|r
     .turnin 2161 >>Rendez la quête Un Fardeau de Péon
     .target Innkeeper Grosk
 step
@@ -2691,7 +2691,7 @@ step << !Shaman
     .goto Durotar,34.27,47.02,50,0
     .goto Durotar,34.71,42.30
     >>Voyagez au sud le long de la rivière vers le poste de Guet-Lointain
-    >>Tuez les |cRXP_ENEMY_Dreadmaw Crocolisks|r sur le chemin. Dépouillez-les pour la |cRXP_LOOT_Kron's Amulet|r
+    >>Tuez les |cRXP_ENEMY_Crocilisques Gueule-d'effrois|r sur la route. Dépouillez-les pour l' |cRXP_LOOT_Amulette de Kron|r
     >>|cRXP_WARN_Passez et abandonnez cette quête si elle ne tombe pas|r
     .complete 816,1 --Kron's Amulet (1)
     .mob Dreadmaw Crocolisk
@@ -3254,7 +3254,7 @@ step
     .goto Undercity,34.80,33.19,15,0
     .goto Undercity,27.39,30.23,35,0
     .goto Undercity,21.89,43.35,35,0
-    .goto Tirisfal Glades,51.10,71.53,50 >> Sortez de Fossoyeuse par les Égouts
+    .goto Tirisfal Glades,51.10,71.53,50 >> Quittez Undercity par les Égouts
     .zoneskip Tirisfal Glades
     .zoneskip Tirisfal Glades
 step

@@ -230,7 +230,7 @@ step << Warlock
     .goto Elwynn Forest,49.873,42.649
     .turnin 3105 >> Entregue Carta Corrompida
     .xp 4 >> Suba até o nível 4
-    .trainer >>Treine |T136118:0|t[Corrupção]
+    .trainer >>Treine |T136118:0|t [Corrupção]
 step
     .goto Elwynn Forest,53.9,49.2,50,0
     .goto Elwynn Forest,55.5,42.1,50,0
@@ -443,7 +443,7 @@ step << Mage
     .goto Elwynn Forest,43.25,66.19
     .trainer >> Treine suas magias de classe
 step << Priest
-	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com a |cRXP_FRIENDLY_Sacerdotisa Joselita|r
+	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|t Fale com |cRXP_FRIENDLY_Sacerdotisa Joselita|r
 	.target Priestess Josetta
     .goto Elwynn Forest,43.283,65.721
     .turnin 5623 >> Entregue Em Favor da Luz
@@ -451,7 +451,7 @@ step << Priest
     .trainer >> Treine suas magias de classe
 step << Rogue
     .money <0.01
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Anabela Cabreira|r
+    >>|interface/worldmap/chatbubble_64grey.blp:20|t Fale com |cRXP_FRIENDLY_Anabela Cabreira|r
     .target Keryn Sylvius
     .goto Elwynn Forest,43.872,65.937
     .trainer >> Treine suas magias de classe
@@ -747,12 +747,12 @@ step << Mage
     .trainer >> Treine suas magias de classe
 step << Priest
     .goto Elwynn Forest,43.283,65.721
-	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com a |cRXP_FRIENDLY_Sacerdotisa Joselita|r
+	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|t Fale com |cRXP_FRIENDLY_Sacerdotisa Joselita|r
 	.target Priestess Josetta
     .turnin 5624 >> Entregue Vestes da Luz
     .trainer >> Treine suas magias de classe
 step << Rogue
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Anabela Cabreira|r
+    >>|interface/worldmap/chatbubble_64grey.blp:20|t Fale com |cRXP_FRIENDLY_Anabela Cabreira|r
     .target Keryn Sylvius
     .goto Elwynn Forest,43.872,65.937
     .trainer >> Treine suas magias de classe
@@ -988,7 +988,7 @@ step
     >>|interface/worldmap/chatbubble_64grey.blp:20|t Fale com |cRXP_FRIENDLY_Durval Pilão|r
     .goto Elwynn Forest,43.318,65.705
     .turnin 112 >> Entregue Coletando Alga
-    .accept 114 >> Aceite A Fuga
+    .accept 114 >> Aceite A fuga
     .target William Pestle
 step
     #completewith next
@@ -1048,7 +1048,7 @@ step << Mage/Priest/Rogue
 step << Priest
     .goto Elwynn Forest,43.283,65.721
     .target Priestess Josetta
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com a |cRXP_FRIENDLY_Sacerdotisa Joselita|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t Fale com |cRXP_FRIENDLY_Sacerdotisa Joselita|r
     .accept 5635 >> Aceite Prece Desesperada
     .trainer >> Treine suas magias de classe
 step << Mage
@@ -1057,12 +1057,12 @@ step << Mage
     .goto Elwynn Forest,43.25,66.19
     .trainer >> Treine suas magias de classe
 step << Rogue
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Anabela Cabreira|r
+    >>|interface/worldmap/chatbubble_64grey.blp:20|t Fale com |cRXP_FRIENDLY_Anabela Cabreira|r
     .target Keryn Sylvius
     .goto Elwynn Forest,43.872,65.937
     .trainer >> Treine suas magias de classe
     >>|cRXP_WARN_Treine|r |T132147:0|t[Empunhar Duas Armas] |cRXP_WARN_e|r |T132307:0|t[Disparada] |cRXP_WARN_no mínimo. Não treine habilidades em excesso. Economize seu dinheiro|r
-    .train 674 >> Treine |T132147:0|t[Empunhar Duas Armas]
+    .train 674 >> Aprenda |T132147:0|t[Empunhar Duas Armas]
     .train 2983 >> Treine |T132307:0|t[Disparada]
 step << Rogue
     #era
@@ -1469,7 +1469,7 @@ step << Warlock
 step << Human
     .goto StormwindClassic,74.312,47.240
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Larso Norde|r
-    >>|cRXP_WARN_Não aceite a próxima|r
+    >>|cRXP_WARN_Não aceite o acompanhamento.|r
     .turnin 6281 >> Entregue Siga para Ventobravo
     .target Osric Strang
 step << Warrior
@@ -1816,7 +1816,7 @@ step
 step
     .goto Loch Modan,24.764,18.397
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Montanhista Lançatroz|r
-    >>|cRXP_WARN_Não aceite a próxima|r
+    >>|cRXP_WARN_Não aceite o acompanhamento.|r
     .turnin 353 >> Entregue Entrega para Lançatroz
     .target Mountaineer Stormpike
 

@@ -565,7 +565,7 @@ step
     .dungeon RFC
 step
     .goto Durotar,50.8,13.8,40 >>Sube a la Torre del Zepelín
-    .zone Tirisfal Glades >>Toma el zepelín hacia Claros de Tirisfal
+    .zone Tirisfal Glades >>Toma el zepelín hacia los Claros de Tirisfal
     .zoneskip Tirisfal Glades
     .isQuestComplete 5725
     .dungeon RFC
@@ -1481,7 +1481,7 @@ step << Hunter
     .target Hanashi
 step << Priest
     .goto Orgrimmar,35.59,87.80
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con |cRXP_FRIENDLY_Ur'kyo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con|r |cRXP_FRIENDLY_Ur'kyo|r
     .train 8102 >> Aprende tus hechizos de clase
     .target Ur'kyo
     .xp <16,1
@@ -1489,7 +1489,7 @@ step << Priest
 step << Priest
     #optional
     .goto Orgrimmar,35.59,87.80
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con |cRXP_FRIENDLY_Ur'kyo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con|r |cRXP_FRIENDLY_Ur'kyo|r
     .train 970 >> Aprende tus hechizos de clase
     .target Ur'kyo
     .xp <18,1
@@ -2896,7 +2896,7 @@ step << Mage
     .dungeon DM
 step << Priest
     .goto Orgrimmar,35.59,87.80
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con |cRXP_FRIENDLY_Ur'kyo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con|r |cRXP_FRIENDLY_Ur'kyo|r
     .train 970 >> Aprende tus hechizos de clase
     .target Ur'kyo
     .xp <18,1
@@ -2905,7 +2905,7 @@ step << Priest
 step << Priest
     #optional
     .goto Orgrimmar,35.59,87.80
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con |cRXP_FRIENDLY_Ur'kyo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con|r |cRXP_FRIENDLY_Ur'kyo|r
     .train 14914 >> Aprende tus hechizos de clase
     .target Ur'kyo
     .xp <20,1
@@ -3233,7 +3233,7 @@ step
     .target Jorn Skyseer
 step << !Tauren
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con |cRXP_FRIENDLY_Quebrantadientes|r
-    .aura 16618 >>|cRXP_WARN_Si te quedan 10|r |T134128:0|t[|cRXP_LOOT_Esquirlas de sangre|r |cRXP_WARN_, úsalas para obtener|r |T136022:0|t[Espíritu del viento] |cRXP_WARN_de|r |cRXP_FRIENDLY_Quebrantadientes|r
+    .aura 16618 >>|cRXP_WARN_Si te quedan 10|r |T134128:0|t[|cRXP_LOOT_Esquirlas de sangre|r] |cRXP_WARN_, úsalas para obtener|r |T136022:0|t[Espíritu del viento] |cRXP_WARN_de|r |cRXP_FRIENDLY_Quebrantadientes|r
     >>|cRXP_WARN_Omite este paso si tienes la ruta de vuelo de Cima del Trueno|r
     .itemcount 5075,10
     .target Mangletooth
@@ -4826,13 +4826,13 @@ step << Mage
     .target Thuul
 step << Troll Priest
     .goto Orgrimmar,35.59,87.80
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con |cRXP_FRIENDLY_Ur'kyo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con|r |cRXP_FRIENDLY_Ur'kyo|r
     .turnin 5642 >> Entrega la misión Guardia de las Sombras
     .trainer >> Aprende tus hechizos de clase
     .target Ur'kyo
 step << Undead Priest
     .goto Orgrimmar,35.59,87.80
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con |cRXP_FRIENDLY_Ur'kyo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con|r |cRXP_FRIENDLY_Ur'kyo|r
     .train 8103 >> Aprende tus hechizos de clase
     .target Ur'kyo
     .xp <22,1
@@ -4840,7 +4840,7 @@ step << Undead Priest
 step << Undead Priest
     #optional
     .goto Orgrimmar,35.59,87.80
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con |cRXP_FRIENDLY_Ur'kyo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con|r |cRXP_FRIENDLY_Ur'kyo|r
     .train 3747 >> Aprende tus hechizos de clase
     .target Ur'kyo
     .xp <24,1
@@ -5078,7 +5078,7 @@ step
     .zoneskip Durotar
 step
     .goto Durotar,50.8,13.8,40 >>Sube a la Torre del Zepelín
-    .zone Tirisfal Glades >>Toma el zepelín hacia Claros de Tirisfal
+    .zone Tirisfal Glades >>Toma el zepelín hacia los Claros de Tirisfal
     .zoneskip Tirisfal Glades
     .zoneskip Undercity
 

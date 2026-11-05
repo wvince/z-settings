@@ -521,7 +521,7 @@ step
     .goto 1426,25.077,75.711
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Grolin Barbabranca|r
     .turnin 234 >> Entregue Coldridge Valley Malha Entrega
-    .accept 182 >> Aceite The Trolls Cave
+    .accept 182 >> Aceite A Caverna dos Trolls
     .target Grelin Whitebeard
 step << Hunter
     #completewith next
@@ -1217,7 +1217,7 @@ step << Warrior
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Thran Khorman|r
     .turnin 3106 >> Entregue Runa Simples << Dwarf
     .turnin 3112 >> Entregue Memorando Simples << Gnome
-    .train 100 >> Treine |T132337:0|t[Carga]
+    .train 100 >> Aprenda |T132337:0|t[Investida]
     .train 772 >> Aprenda |T132155:0|t[Dilacerar]
     .target Thran Khorman
 step << Warrior
@@ -1227,7 +1227,7 @@ step << Warrior
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Thran Khorman|r
     .turnin 77655 >> Entregue A Runa Perdida << Dwarf
     .turnin 77656 >> Entregue A Runa Perdida << Gnome
-    .train 100 >> Treine |T132337:0|t[Carga]
+    .train 100 >> Aprenda |T132337:0|t[Investida]
     .train 772 >> Aprenda |T132155:0|t[Dilacerar]
     .target Thran Khorman
 
@@ -2671,8 +2671,8 @@ step
     #label WetlandsDS2
     .goto 1415,44.733,51.882,-1
     .goto 1437,11.730,43.304,-1
-    >>|cRXP_WARN_Salto da montanha em direção ao norte ou noroeste|r
-    .deathskip >> Morra e reviva na Baía Baradin |cRXP_FRIENDLY_Anjo da Cura|r
+    >>|cRXP_WARN_Pule da montanha em direção ao norte ou noroeste|r
+    .deathskip >> Morra e ressurja no |cRXP_FRIENDLY_Anjo da Cura|r de Baradin Bay
     .isQuestAvailable 983
     .target Anjo da Cura
 step
@@ -2750,7 +2750,7 @@ step << Dwarf Hunter
     #xprate >1.59
     .goto Dun Morogh,45.810,53.039
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Grif Selvacuore|r
-    .turnin 6064 >>Entregue Adestramento da Fera - Missão
+    .turnin 6064 >>Entregue Domando a fera
     .accept 6084 >>Aceite Adestramento da Fera - Missão
     .target Grif Wildheart
 step << Dwarf Hunter
@@ -2763,7 +2763,7 @@ step << Dwarf Hunter
     #xprate >1.59
     .goto Dun Morogh,45.810,53.039
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Grif Selvacuore|r
-    .turnin 6084 >>Entregue Adestramento da Fera - Missão
+    .turnin 6084 >>Entregue Domando a fera
     .accept 6085 >>Aceite Adestramento da Fera - Missão
     .target Grif Wildheart
 step << Dwarf Hunter
@@ -2776,7 +2776,7 @@ step << Dwarf Hunter
     #xprate >1.59
     .goto Dun Morogh,45.810,53.039
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Grif Selvacuore|r
-    .turnin 6085 >>Entregue Adestramento da Fera - Missão
+    .turnin 6085 >>Entregue Domando a fera
     .accept 6086 >>Aceite Treinamento da Fera - Missão
     .target Grif Wildheart
 step << Warlock
@@ -3304,7 +3304,7 @@ step << Hunter
     #xprate 1.49-1.59
     .goto Dun Morogh,45.810,53.039
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Grif Selvacuore|r
-    .turnin 6064 >>Entregue Adestramento da Fera - Missão
+    .turnin 6064 >>Entregue Domando a fera
     .accept 6084 >>Aceite Adestramento da Fera - Missão
     .target Grif Wildheart
 step << Hunter
@@ -3317,7 +3317,7 @@ step << Hunter
     #xprate 1.49-1.59
     .goto Dun Morogh,45.810,53.039
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Grif Selvacuore|r
-    .turnin 6084 >>Entregue Adestramento da Fera - Missão
+    .turnin 6084 >>Entregue Domando a fera
     .accept 6085 >>Aceite Adestramento da Fera - Missão
     .target Grif Wildheart
 step << Hunter
@@ -3330,7 +3330,7 @@ step << Hunter
     #xprate 1.49-1.59
     .goto Dun Morogh,45.810,53.039
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Grif Selvacuore|r
-    .turnin 6085 >>Entregue Adestramento da Fera - Missão
+    .turnin 6085 >>Entregue Domando a fera
     .accept 6086 >>Aceite Treinamento da Fera - Missão
     .target Grif Wildheart
 step << Rogue
@@ -3840,7 +3840,7 @@ step
     .goto 1432,21.106,65.007,20,0
     .goto 1432,21.388,66.357,20,0
     .goto 1432,21.498,67.840
-    .subzone 924 >> Vá através da Passagem do Portão Sul até Loch Modan
+    .subzone 924 >> Viaje pelo Portal do Sul para Loch Modan
 step
     .goto Loch Modan,22.071,73.127
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Montanhista Sapatorro|r
@@ -4971,7 +4971,7 @@ step
 step
     .goto Redridge Mountains,17.4,69.6
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Capitão da Guarda Florestan|r
-    .accept 244 >> Aceite Encroaching Gnolls
+    .accept 244 >> Aceite Gnolls Invasores
     .target Guard Parker
 step
     #xprate >1.49
@@ -5008,14 +5008,14 @@ step
     #xprate >1.49
     .goto Redridge Mountains,30.733,59.996
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Subdelegado David|r
-    .turnin 244 >> Entregue Encroaching Gnolls
+    .turnin 244 >> Entregue Gnolls Invasores
     .target Deputy Feldon
 step
     #xprate <1.49
     .goto Redridge Mountains,30.733,59.996
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Subdelegado David|r
     >>|cRXP_WARN_Cuidado com os inimigos de nível alto no caminho|r
-    .turnin 244 >> Entregue Encroaching Gnolls
+    .turnin 244 >> Entregue Gnolls Invasores
     .target Deputy Feldon
 step
     .goto Redridge Mountains,30.590,59.410
@@ -5568,12 +5568,12 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Capitão da Guarda Florestan|r
     .target Guard Parker
     .goto Redridge Mountains,17.4,69.6
-    .accept 244 >> Aceite Encroaching Gnolls
+    .accept 244 >> Aceite Gnolls Invasores
 step
     .goto Redridge Mountains,30.733,59.996
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Subdelegado David|r
     >>|cRXP_WARN_Cuidado com os inimigos de nível alto no caminho|r
-    .turnin 244 >> Entregue Encroaching Gnolls
+    .turnin 244 >> Entregue Gnolls Invasores
     .target Deputy Feldon
 step
     .goto Redridge Mountains,30.590,59.410
@@ -5712,7 +5712,7 @@ step << Rogue
     .trainer >> Treine suas magias de classe
 step << Priest
     .goto Elwynn Forest,43.283,65.719
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com a |cRXP_FRIENDLY_Sacerdotisa Joselita|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t Fale com |cRXP_FRIENDLY_Sacerdotisa Joselita|r
     .target Priestess Josetta
     .trainer >> Treine suas magias de classe
 step
@@ -6588,7 +6588,7 @@ step << Dwarf Paladin
     .goto 1432,19.594,62.735,20,0
     .goto 1432,16.342,58.520,20,0
     .goto 1426,84.262,51.367
-    .zone Dun Morogh >> Vá para Dun Morogh
+    .zone Dun Morogh >> Viagem para Dun Morogh
 step << Dwarf Paladin
     #completewith next
     .goto Dun Morogh,78.321,58.088
@@ -6617,7 +6617,7 @@ step << Mage/Priest/Warlock
     .goto Ironforge,22.837,17.094,8,0
     .goto Ironforge,21.131,17.276,5,0
     .goto Ironforge,23.135,15.936
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Harick Batesseixo|r embaixo
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Harick Batesseixo|r lá embaixo
     >>|cRXP_WARN_Compre uma|r |T135468:0|t[Varinha Fumegante] |cRXP_WARN_dela|r
     .collect 5208,1 --Smoldering Wand (1)
     .target Harick Boulderdrum
@@ -6827,7 +6827,7 @@ step << !Paladin
 step << Dwarf Paladin
     #xprate <1.5
 	#completewith PaladinTrainSW
-    .hs >> Use sua Pedra de Retorno para ir a Ventobravo
+    .hs >> Use a Pedra de Regresso para Ventobravo
 step << Paladin
     #xprate <1.5
     #ah
@@ -7163,7 +7163,7 @@ step << Mage/Priest/Warlock
     .goto Ironforge,22.837,17.094,8,0
     .goto Ironforge,21.131,17.276,5,0
     .goto Ironforge,23.135,15.936
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Harick Batesseixo|r embaixo
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Harick Batesseixo|r lá embaixo
     >>|cRXP_WARN_Compre uma|r |T135468:0|t[Varinha Fumegante] |cRXP_WARN_dela|r
     .collect 5208,1 --Smoldering Wand (1)
     .target Harick Boulderdrum
@@ -7318,7 +7318,7 @@ step << Mage/Priest/Warlock
     .goto Ironforge,22.837,17.094,8,0
     .goto Ironforge,21.131,17.276,5,0
     .goto Ironforge,23.135,15.936
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Harick Batesseixo|r embaixo
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Harick Batesseixo|r lá embaixo
     >>|cRXP_WARN_Compre uma|r |T135468:0|t[Varinha Fumegante] |cRXP_WARN_dela|r
     .collect 5208,1 --Smoldering Wand (1)
     .target Harick Boulderdrum
@@ -7345,7 +7345,7 @@ step << Dwarf/Gnome
     #completewith DarkshoreBoat
     .goto Ironforge,55.501,47.742
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Grif Trovino|r
-    .fly Wetlands>> Voe para Pantanal
+    .fly Wetlands>> Voe para Terras do Interior
     .target Gryth Thurden
 step
     #xprate >1.49
@@ -7414,8 +7414,8 @@ step << Human
     #completewith next
     .goto 1415,44.733,51.882,-1
     .goto 1437,11.730,43.304,-1
-    >>|cRXP_WARN_Salto da montanha em direção ao norte ou noroeste|r
-    .deathskip >> Morra e reviva na Baía Baradin |cRXP_FRIENDLY_Anjo da Cura|r
+    >>|cRXP_WARN_Pule da montanha em direção ao norte ou noroeste|r
+    .deathskip >> Morra e ressurja no |cRXP_FRIENDLY_Anjo da Cura|r de Baradin Bay
     .isQuestAvailable 984
     .target Anjo da Cura
 step << Human
@@ -8003,7 +8003,7 @@ step << Hunter
 #xprate >1.49
     .goto Dun Morogh,45.810,53.039
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Grif Selvacuore|r
-    .turnin 6064 >>Entregue Adestramento da Fera - Missão
+    .turnin 6064 >>Entregue Domando a fera
     .target Grif Wildheart
     .accept 6084 >>Aceite Adestramento da Fera - Missão
 step << Hunter
@@ -8016,7 +8016,7 @@ step << Hunter
 #xprate >1.49
     .goto Dun Morogh,45.810,53.039
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Grif Selvacuore|r
-    .turnin 6084 >>Entregue Adestramento da Fera - Missão
+    .turnin 6084 >>Entregue Domando a fera
     .target Grif Wildheart
     .accept 6085 >>Aceite Adestramento da Fera - Missão
 step << Hunter
@@ -8029,7 +8029,7 @@ step << Hunter
 #xprate >1.49
     .goto Dun Morogh,45.810,53.039
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Grif Selvacuore|r
-    .turnin 6085 >>Entregue Adestramento da Fera - Missão
+    .turnin 6085 >>Entregue Domando a fera
     .target Grif Wildheart
     .accept 6086 >>Aceite Treinamento da Fera - Missão
 step
@@ -8203,7 +8203,7 @@ step << Hunter
 #xprate <1.5
     .goto Dun Morogh,45.810,53.039
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Grif Selvacuore|r
-    .turnin 6064 >>Entregue Adestramento da Fera - Missão
+    .turnin 6064 >>Entregue Domando a fera
     .target Grif Wildheart
     .accept 6084 >>Aceite Adestramento da Fera - Missão
 step << Hunter
@@ -8216,7 +8216,7 @@ step << Hunter
 #xprate <1.5
     .goto Dun Morogh,45.810,53.039
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Grif Selvacuore|r
-    .turnin 6084 >>Entregue Adestramento da Fera - Missão
+    .turnin 6084 >>Entregue Domando a fera
     .target Grif Wildheart
     .accept 6085 >>Aceite Adestramento da Fera - Missão
 step << Hunter
@@ -8229,7 +8229,7 @@ step << Hunter
 #xprate <1.5
     .goto Dun Morogh,45.810,53.039
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Grif Selvacuore|r
-    .turnin 6085 >>Entregue Adestramento da Fera - Missão
+    .turnin 6085 >>Entregue Domando a fera
     .target Grif Wildheart
     .accept 6086 >>Aceite Treinamento da Fera - Missão
 step
@@ -8755,7 +8755,7 @@ step
     #softcore
     .goto Loch Modan,33.938,50.954
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Thorgrum|r
-    .fly Wetlands >> Voe para Pantanal
+    .fly Wetlands >> Voe para Terras do Interior
     .target Thorgrum Borrelson
 step << skip --logout skip
     #hardcore

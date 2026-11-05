@@ -1,5 +1,14 @@
 # OlympusMute Changelog
 
+## 2.0.0
+
+### New
+- **Ready for WoW Forever's live servers.** OlympusMute 2.0 is the live-server release. It has everything from the beta versions (1.0 through 1.3.2): muting by guild, name and word, unmute while grouped, the muted messages log with reporting, ignore list import, list sharing, and asking before trades.
+- Coming from the beta? If the live game is installed in a different folder than the beta, your settings and mute list start fresh there. Have a friend on live send you their guild list with `/omute share`, or add your guilds again in the options.
+
+### Thanks
+- Everyone who tested, reported bugs and suggested features during the beta, on CurseForge, Twitter, Twitch and the forums.
+
 ## 1.3.2
 
 ### Fixed

@@ -8,7 +8,7 @@ RXPGuides.RegisterGuide([[
 << Horde
 #name 1-6级 杜隆塔尔
 #version 11
-#group RestedXP 永久指南 (H)
+#group RestedXP 无限指南 (部落)
 #subgroup 速通指南 1-22级
 --#groupid RXP-SRGCE-H1
 #defaultfor Troll/Orc
@@ -34,7 +34,7 @@ step << Warrior/Shaman/Warlock/Mage/Priest
     .money >0.01
 step << Warlock
     .goto 1411/1,-4214.45,-623.92.00
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_鲁赞|r 对话
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t 与 |cRXP_FRIENDLY_鲁赞|r 对话
     .accept 1485 >>接受任务 邪灵劣魔
     .target Ruzan
 step << Warrior/Shaman
@@ -60,7 +60,7 @@ step << Warrior/Shaman
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_弗朗恩|r 对话 << Warrior
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_史克里克|r 对话 << Shaman
     .train 6673 >>学习 |T132333:0|t[战斗怒吼] << Warrior
-    .train 8017 >>学习 |T136086:0|t[石化武器] << Shaman
+    .train 8017 >>影袭 |T136086:0|t[石化武器] << Shaman
     .target 弗朗恩 << Warrior
     .target 史克里克 << Shaman
 step << Warlock
@@ -154,7 +154,7 @@ step << Warlock
     .goto 1411/1,-4319.67,-169.190,40,0
     .goto 1411/1,-4303.28,-186.46,40,0
     .goto 1411/1,-4281.07,-148.75,40,0
-    >>击杀 |cRXP_ENEMY_邪灵劣魔|r。拾取他们的 |cRXP_LOOT_邪灵劣魔的头颅|r
+    >>击杀 |cRXP_ENEMY_邪灵劣魔|r，拾取 |cRXP_LOOT_邪灵劣魔的徽记|r
     .complete 1485,1 --Vile Familiar Head (6)
     .mob 邪灵劣魔
 step
@@ -257,7 +257,7 @@ step << Rogue
 step << Warlock
     #label Ruzan2
     .goto 1411/1,-4214.400,-624.000
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_鲁赞|r 对话
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t 与 |cRXP_FRIENDLY_鲁赞|r 对话
     .turnin 1485 >>交任务 邪灵劣魔
     .accept 1499 >>接受任务 邪灵劣魔
     .target Ruzan
@@ -1102,7 +1102,7 @@ RXPGuides.RegisterGuide([[
 << Horde
 #name 6-10级 杜隆塔尔
 #version 11
-#group RestedXP 永久指南 (H)
+#group RestedXP 无限指南 (部落)
 #subgroup 速通指南 1-22级
 --#groupid RXP-SRGCE-H1
 #defaultfor Troll/Orc
@@ -1660,8 +1660,8 @@ step
 step
     #hardcore
     .goto 1411/1,-4665.400,311.900
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_烹饪 厨师托尔卡|r 对话
-    .accept 96825 >>接受任务 This Fruit Could 撕咬 后退
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_厨师托尔卡|r 对话
+    .accept 96825 >>接受任务 这果子会咬人
     .target Cook Torka
 step
     #hardcore
@@ -1713,7 +1713,7 @@ step -- (Barracks)
     #label RazorHill1
     .goto 1411/1,-4815.200,306.800
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_图罗克|r 对话
-    .accept 96822 >>接受任务 For 荣誉
+    .accept 96822 >>接受任务 为了荣耀！
     .target Turroc
 step << Warrior/Rogue
     #hardcore
@@ -1797,7 +1797,7 @@ step --south/west of keep
     .goto 1411/1,-5101.700,-178.500,0
     .goto 1411/1,-5101.700,-178.500,25,0
     .goto 1411/1,-4992.700,-234.400,25,0
-    >>在地上拾取 |cRXP_PICK_Raider's Bow|r
+    >>拾取地上的 |cRXP_PICK_狼骑兵的弓|r
     >>|cRXP_WARN_它有两个不同的刷新位置|r
     .complete 96822,1 --|1/1 Raider's Bow
 step  --northern tower
@@ -1966,6 +1966,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与|r |cRXP_FRIENDLY_加索克|r 对话
     .turnin 784 >>交任务 背信弃义的人类
     .turnin 830 >>交任务 将军的命令
+    .turnin 96821 >>交任务 赶路
     .accept 825 >>接受任务 海底沉船
     .accept 831 >>接受任务 将军的命令
     .target 加索克
@@ -2183,7 +2184,7 @@ step << !Mage !Hunter !Druid
     .train 284,3 << Warrior
 step
     .goto 1411/1,-4815.400,306.500
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_Turroc|r 对话
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_图罗克|r 对话
     .turnin 96822 >>交任务 为了荣誉
     .target Turroc
 step << Warrior
@@ -2630,7 +2631,7 @@ step << Hunter
 	.goto 1411/1,-4208.1,98.71,50,0
 	.goto 1411/1,-4300.1,57.11,50,0
 	.goto 1411/1,-4456.61,65.57,50,0
-    .xp 9+4960 >> 升级至 4960+/6500 xp
+    .xp 9+4960 >> 刷怪升级到4960+/6500点经验
 step
     .goto 1411/1,-4709.36,274.960
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与|r |cRXP_FRIENDLY_加索克|r 对话
@@ -3186,7 +3187,7 @@ RXPGuides.RegisterGuide([[
 << Horde
 #name 10-12级 杜隆塔尔
 #version 11
-#group RestedXP 永久指南 (H)
+#group RestedXP 无限指南 (部落)
 #subgroup 速通指南 1-22级
 --#groupid RXP-SRGCE-H1
 #defaultfor Troll/Orc
@@ -3606,7 +3607,6 @@ step
 step
     .goto 1454/1,-4293.600,1949.900
     >>拾取地上的橙色 |cRXP_PICK_巨石|r
-    >>|cRXP_WARN_如果做任务的人很多，就跳过这个任务！没有那么多 |cRXP_PICK_岩石|r 而且它们不会快速刷新|r
     .complete 97326,1 --|8/8 Smooth Boulder
     .isOnQuest 97326
 step
@@ -3695,7 +3695,7 @@ step << skip --!Shaman !Hunter
     #softcore
     #completewith ZeptoUC1
     .goto 1411/1,-4450.27,1188.64
-    .deathskip >> 死掉并在|cRXP_FRIENDLY_灵魂医者|r 处复生
+    .deathskip >> 死亡并在 |cRXP_FRIENDLY_灵魂医者|r 处重生
 step << !Shaman !Hunter
     --#hardcore
     #completewith ZeptoUC1
@@ -3710,7 +3710,7 @@ step << skip --Shaman/Hunter
     #softcore
     #completewith FoundtheCure
     .goto 1411/1,-4450.27,1188.64
-    .deathskip >> 死掉并在|cRXP_FRIENDLY_灵魂医者|r 处复生
+    .deathskip >> 死亡并在 |cRXP_FRIENDLY_灵魂医者|r 处重生
 step << Shaman/Hunter
     --#hardcore
     #completewith FoundtheCure
@@ -3764,6 +3764,27 @@ step << Shaman/Hunter
     .turnin 926 >>交任务 有瑕疵的能量石
     .isOnQuest 924
 step << !Shaman !Hunter
+    #completewith Gazzuz
+    >>击杀 |cRXP_ENEMY_火刃兽人|r，拾取他们掉落的 |cRXP_LOOT_军官的徽章|r
+    >>|cRXP_WARN_这是怒焰裂谷的前置任务，掉落率很低。|r
+    .complete 5726,1 --Lieutenant's Insignia (1)
+    .mob 火刃狂热者
+    .mob 火刃学徒
+    .dungeon RFC
+step << !Shaman !Hunter
+    #label Gazzuz
+    .goto 1411/1,-4701.42,1455.83
+    >>击杀 |cRXP_ENEMY_加祖兹|r。拾取他的 |T134085:0|t[|cRXP_LOOT_燃影之眼|r]
+    >>|cRXP_WARN_小心，他非常困难。如果你无法组队或独自击杀他，可以跳过此任务|r
+    >>|cRXP_WARN_使用 |T134085:0|t[|cRXP_LOOT_燃影之眼|r] 以开启任务|r
+    >>|cRXP_WARN_使用视线（视野范围）来躲避 |cRXP_ENEMY_加祖兹|r 的暗影箭|r
+    >>|cRXP_WARN_在击杀 |r加祖兹|cRXP_ENEMY_ 后，你可以跑到洞穴内的水体中以躲避 |r|cRXP_WARN_虚空行者|r|cRXP_ENEMY_|r
+    .collect 4903,1,832,1 --Collect Eye of Burning Shadow
+    .accept 832 >>接受任务 燃影之眼
+    .use 4903
+	.unitscan 加祖兹
+    .dungeon RFC
+step << !Shaman !Hunter
     #loop
     .goto 1411/1,-4805.59,1495.67,0
     .goto 1411/1,-4855.82,1498.84,15,0
@@ -3777,11 +3798,11 @@ step << !Shaman !Hunter
     .goto 1411/1,-4684.50,1466.06,15,0
     .goto 1411/1,-4805.59,1495.67,15,0
     >>击杀 |cRXP_ENEMY_火刃兽人|r，拾取他们掉落的 |cRXP_LOOT_军官的徽章|r
+    >>|cRXP_WARN_这是怒焰裂谷的前置任务，掉落率很低。|r
     .complete 5726,1 --Lieutenant's Insignia (1)
     .mob 火刃狂热者
     .mob 火刃学徒
     .dungeon RFC
-    .isOnQuest 5726
 step << !Shaman !Hunter
     #label ZeptoUC1
     .goto 1411/1,-4648.55,1321.88,40 >>登上飞艇塔
@@ -3800,7 +3821,7 @@ RXPGuides.RegisterGuide([[
 << Horde
 #name 10-12级 提瑞斯法 （兽人/巨魔）
 #version 11
-#group RestedXP 永久指南 (H)
+#group RestedXP 无限指南 (部落)
 #subgroup 速通指南 1-22级
 --#groupid RXP-SRGCE-H1
 #defaultfor !Hunter !Shaman !Tauren !Skyborne !Undead
@@ -3928,6 +3949,7 @@ step
     .accept 96897 >>接受任务 诅咒神教
     .accept 96898 >>接受任务 战争的残迹
     .target Hadric Harlson
+    .maxlevel 11
 step
     .goto 1420/0,-130.500,1907.800
     >>击杀 |cRXP_ENEMY_黑暗执行者|r 和 |cRXP_ENEMY_黑暗新教徒|r。拾取它们的 |cRXP_LOOT_死灵水晶碎片|r
@@ -3938,6 +3960,7 @@ step
     .complete 96897,1 --|8/8 Dark Neophyte slain
     .mob +Dark Neophyte
     .complete 96898,1 --|12/12 Necrotic Crystal Fragment
+    .isOnQuest 96897,96898
 step
     #label HorrorsandSpirits
     #loop
@@ -3962,8 +3985,23 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_哈德里克·哈尔森|r 对话
     .turnin 96897 >>交任务 诅咒神教
     .turnin 96898 >>交任务 战争的残迹
-    --.accept 96899 >>Accept Bandarion Keep
     .target Hadric Harlson
+    .isQuestComplete 96897
+    .isQuestComplete 96898
+step
+    #optional
+    .goto 1420/0,54.500,1996.400
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_哈德里克·哈尔森|r 对话
+    .turnin 96897 >>交任务 诅咒神教
+    .target Hadric Harlson
+    .isQuestComplete 96897
+step
+    #optional
+    .goto 1420/0,54.500,1996.400
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_哈德里克·哈尔森|r 对话
+    .turnin 96898 >>交任务 战争的残迹
+    .target Hadric Harlson
+    .isQuestComplete 96898
 step
     #label LinneaTurnin
     .goto 1420/0,74.00,2022.47
@@ -3987,7 +4025,7 @@ step
 step << !Undead
     #label UCflightpath1
     .goto 1458/0,266.39,1567.11
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_迈克尔 |r 对话
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_麦克尔|r 对话
     .fp Undercity >> 获得幽暗城的飞行路径
     .target 迈克尔·加勒特
 step << Orc Rogue/Troll Rogue
@@ -4061,7 +4099,7 @@ step
     .goto 1458/0,224.300,1648.200
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_拍卖师凯恩|r 对话
     >>|cRXP_BUY_从拍卖行|r |cRXP_BUY_购买三个|r |T133884:0|t[鱼人的眼球]
-    >>|cRXP_WARN_如果你愿意，可以跳过这一步，这只能节省一点点时间|r
+    >>|cRXP_WARN_如果你愿意的话可以跳过，这只是个小捷径|r
     .collect 730,3,91920,1 --Collect Murloc Eyes (x3)
     .target Auctioneer Cain
     .zoneskip Undercity,1

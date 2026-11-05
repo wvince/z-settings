@@ -95,7 +95,7 @@ step
     .money <0.05 << Mage/Warlock/Priest/Shaman/Druid
 step << Undead
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Sacerdote Sombrio Allister|r e |cRXP_FRIENDLY_Necroguarda Rodrigo|r
-    .accept 477 >>Aceite Border Crossings
+    .accept 477 >>Aceite Cruzando fronteiras
     .target +Shadow Priest Allister
     .goto Silverpine Forest,43.98,40.93
     .accept 6321 >>Aceite Supplying the Sepulcher
@@ -105,7 +105,7 @@ step
     #label BorderCrossings
     .goto Silverpine Forest,43.98,40.93
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Allister|r
-    .accept 477 >>Aceite Border Crossings
+    .accept 477 >>Aceite Cruzando fronteiras
     .target Shadow Priest Allister
 step
     #completewith next
@@ -226,7 +226,7 @@ step
     .unitscan Son of Arugal
 step
     #completewith next
-    >>Mate as |cRXP_ENEMY_Aranhas|r. Saque-as para obter seu |cRXP_LOOT_Sanguíneo|r
+    >>Mate |cRXP_ENEMY_Aranhas|r. Saqueie-as para pegar seu |cRXP_LOOT_Sangue|r
     >>|cRXP_WARN_Cuidado se|r |cRXP_ENEMY_Krethis Umbrateia|r |cRXP_WARN_está ativa, ELA VAI TE MATAR! Ela tem um escudo de 130 de dano com recarga de 15s e uma habilidade de choque instantâneo de 110 de dano|r
     .complete 447,2 --Skittering Blood (6)
     .mob Moss Stalker
@@ -250,7 +250,7 @@ step
 	.goto Silverpine Forest,35.06,14.50,50,0
 	.goto Silverpine Forest,35.85,13.83,50,0
 	.goto Silverpine Forest,36.33,14.20,50,0
-    >>Mate as |cRXP_ENEMY_Aranhas|r. Saque-as para obter seu |cRXP_LOOT_Sanguíneo|r
+    >>Mate |cRXP_ENEMY_Aranhas|r. Saqueie-as para pegar seu |cRXP_LOOT_Sangue|r
     >>|cRXP_WARN_Cuidado se|r |cRXP_ENEMY_Krethis Umbrateia|r |cRXP_WARN_está ativa, ELA VAI TE MATAR! Ela tem um escudo de 130 de dano com recarga de 15s e uma habilidade de choque instantâneo de 110 de dano|r
     .complete 447,2 --Skittering Blood (6)
     .mob Moss Stalker
@@ -611,7 +611,7 @@ step
     #label ZingeAndFaranell
 step << Mage
     .goto Undercity,85.14,10.02
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Anastasia|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Anastácia Cordato|r
     .train 2137 >> Treine suas magias de classe
     .target Anastasia Hartwell
     .xp <14,1
@@ -619,7 +619,7 @@ step << Mage
 step << Mage
     #optional
     .goto Undercity,85.14,10.02
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Anastasia|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Anastácia Cordato|r
     .train 2120 >> Treine suas magias de classe
     .target Anastasia Hartwell
     .xp <16,1

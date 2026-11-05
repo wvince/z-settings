@@ -1,6 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Horde" then return end
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #classic
@@ -16,7 +15,6 @@ RXPGuides.RegisterGuide([[
 #next 6-11 Dun Morogh << !Hunter
 #next 6-11 Dun Morogh (Hunter);6-11 Dun Morogh << Hunter
 #defaultfor Dwarf/Gnome
-
 step << !Gnome !Dwarf
     #completewith next
     +You have selected a guide meant for Gnomes and Dwarves. You should choose the same starter zone that you start in
@@ -315,7 +313,6 @@ step << Gnome Warlock/Dwarf Priest
     .engrave 10 >>|cRXP_WARN_Engrave your|r |T132961:0|t[Tattered Cloth Gloves] with|r |T133816:0|t[Engrave Gloves - Penance] << Priest
     .train 402862,3 << Priest
     .train 403919,3 << Warlock
-
 step << Warlock
     #season 0,1
     #requires FrostmaneC1
@@ -999,15 +996,7 @@ step << !Paladin !Warlock !Hunter
 --  .vendor >> Vendor Trash
     .target Durnan Furcutter
     .isQuestAvailable 317
-
-
-
-
 ----Start of >1.59x training section----
-
-
-
-
 step << Mage
     #xprate >1.59
     #season 0,1
@@ -1114,18 +1103,8 @@ step << Warrior
     .turnin 77656 >> Turn in The Lost Rune << Gnome
     .trainer >> Train your class spells
     .target Thran Khorman
-
-
-
-
-
 ----End of >1.59x training section----
 ----Start of <1.59x training section----
-
-
-
-
-
 step << Mage
     #xprate <1.59
     #season 0,1
@@ -1230,16 +1209,7 @@ step << Warrior
     .train 100 >> Train |T132337:0|t[Charge]
     .train 772 >> Train |T132155:0|t[Rend]
     .target Thran Khorman
-
-
-
-
 ----End of <1.59x training section----
-
-
-
-
-
 step << !Paladin !Warlock !Hunter
     #optional
     #completewith Stolen
@@ -1321,7 +1291,6 @@ step
     .subzoneskip 800,1
     .isOnQuest 2160
 ]])
-
 RXPGuides.RegisterGuide([[
 #xprate >1.49 << Hunter
 #era/som--h
@@ -1336,7 +1305,6 @@ RXPGuides.RegisterGuide([[
 #displayname 6-12 Dun Morogh << sod !Warlock
 #next 11-12 Elwynn (Dwarf/Gnome);11-12 Voidwalker Quest;12-14 Loch Modan (Dwarf/Gnome);11-13 Loch Modan (Hunter)
 #defaultfor Dwarf/Gnome
-
 step
     #optional
     #label BoarMeatQuest
@@ -4830,7 +4798,6 @@ step << Dwarf Paladin
     .home >> Set your Hearthstone to Stormwind
     .target Innkeeper Allison
 ]])
-
 RXPGuides.RegisterGuide([[
 #xprate >1.49
 #classic
@@ -4843,7 +4810,6 @@ RXPGuides.RegisterGuide([[
 #name 11-12 Voidwalker Quest
 #displayname 12-13 Voidwalker Quest << SoD
 #next 12-14 Loch Modan (Dwarf/Gnome)
-
 step
     #completewith next
     .goto StormwindClassic,29.2,74.0,20,0
@@ -5100,7 +5066,6 @@ step
     .turnin 1689 >> Turn in The Binding
     .target Gakin the Darkbinder
 ]])
-
 RXPGuides.RegisterGuide([[
 #xprate <1.5
 #classic
@@ -5114,7 +5079,6 @@ RXPGuides.RegisterGuide([[
 #defaultfor Gnome/Dwarf
 #next 12-14 Loch Modan (Dwarf/Gnome)
 --#era << !Warlock
-
 step << Warlock
     #softcore
     #optional
@@ -5810,7 +5774,6 @@ step << Dwarf Paladin
     .goto StormwindClassic,64.0,8.10
     .zone Ironforge >> Enter the Deeprun Tram. Take the Tram to Ironforge
 ]])
-
 RXPGuides.RegisterGuide([[
 #era/som--h
 #classic
@@ -5825,8 +5788,6 @@ RXPGuides.RegisterGuide([[
 #displayname 13-15 Loch Modan << SoD Warlock
 #next 13-15 Westfall;14-16 Darkshore
 #defaultfor Gnome/Dwarf
-
-
 step << Rogue
     #xprate >1.49
     #ah
@@ -6608,9 +6569,7 @@ step << Dwarf Paladin
     >>Kill |cRXP_ENEMY_Dark Iron Spies|r. Loot them for the |cRXP_LOOT_Dark Iron Script|r
     .complete 1784,1 --Dark Iron Script (1)
     .mob Dark Iron Spy
-
 ----Start of <1.5x IF->Westfall Section----
-
 step << Mage/Priest/Warlock
     #xprate <1.5
     #ssf
@@ -7060,10 +7019,8 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Dungar Longdrink|r
     .fly Westfall >> Fly to Westfall
     .target Dungar Longdrink
-
 ----End of <1.5x IF->Westfall Section----
 ----Start of >1.5x+ IF->Darkshore Section----
-
 step << skip --logout skip << Dwarf Paladin
     #xprate >1.49
     .goto Dun Morogh,70.66,56.70,40,0
@@ -7559,12 +7516,8 @@ step
     .goto 1437,4.370,56.762
     >>|cRXP_WARN_Level your|r |T135966:0|t[First Aid] |cRXP_WARN_while waiting for the boat to Darkshore if needed|r
     .zone Darkshore >> Take the boat to Darkshore
-
     ----End of >1.5x+ IF->Darkshore Section----
-
 ]])
-
-
 RXPGuides.RegisterGuide([[
 #xprate <1.5
 #classic
@@ -7579,9 +7532,6 @@ RXPGuides.RegisterGuide([[
 #displayname 6-11 Dun Morogh
 #next 11-13 Loch Modan (Hunter)
 #defaultfor Dwarf Hunter
-
-
-
 step
     #completewith ribs1
     >>Kill |cRXP_ENEMY_Crag Boars|r and |cRXP_ENEMY_Large Crag Boars|r. Loot them for their |T133970:0|t|cRXP_LOOT_[Chunks of Boar Meat]|r and |cRXP_LOOT_Crag Boar Ribs|r
@@ -8265,7 +8215,6 @@ step
     .turnin 413 >> Turn in Shimmer Stout
     .accept 414 >> Accept Stout to Kadrell
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
@@ -8280,7 +8229,6 @@ RXPGuides.RegisterGuide([[
 #displayname 12-15 Loch Modan << SoD
 #next 14-16 Darkshore
 #defaultfor Dwarf
-
 step
     #completewith next
     .goto Dun Morogh,86.203,51.260,15,0

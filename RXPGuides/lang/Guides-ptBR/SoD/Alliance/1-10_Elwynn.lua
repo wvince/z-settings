@@ -591,7 +591,7 @@ step << Warrior
     .turnin 3100 >> Entregue Carta Simples
     .accept 77616 >> Aceite A Runa Perdida << Human
     .turnin 77616 >> Entregue A Runa Perdida << Human
-    .train 100 >> Treine |T132337:0|t[Carga]
+    .train 100 >> Aprenda |T132337:0|t[Investida]
     .target Llane Beshere
 step << Paladin
     #xprate >1.59
@@ -1042,7 +1042,7 @@ step << Mage
     .goto Elwynn Forest,43.25,66.19
     .trainer >> Treine suas magias de classe
 step << Priest
-	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com a |cRXP_FRIENDLY_Sacerdotisa Joselita|r
+	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|t Fale com |cRXP_FRIENDLY_Sacerdotisa Joselita|r
 	.target Priestess Josetta
     .goto Elwynn Forest,43.283,65.721
     .turnin 5623 >> Entregue Em Favor da Luz
@@ -1634,7 +1634,7 @@ step << Mage
     .trainer >> Treine suas magias de classe
 step << Priest
     .goto Elwynn Forest,43.283,65.721
-	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com a |cRXP_FRIENDLY_Sacerdotisa Joselita|r
+	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|t Fale com |cRXP_FRIENDLY_Sacerdotisa Joselita|r
 	.target Priestess Josetta
     .turnin 5624 >> Entregue Vestes da Luz
     .trainer >> Treine suas magias de classe
@@ -2053,7 +2053,7 @@ step << Priest/Rogue
     #optional
     .goto Redridge Mountains,17.4,69.6
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Capitão da Guarda Florestan|r
-    .accept 244 >> Aceite Encroaching Gnolls
+    .accept 244 >> Aceite Gnolls Invasores
     .target Guard Parker
     .xp <11,1
     .subzoneskip 87 --Skip the Quick Draw steps if the user went back to goldshire instead
@@ -2076,7 +2076,7 @@ step << Priest/Rogue
     #optional
     .goto Redridge Mountains,30.73,59.99
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Subdelegado David|r
-    .turnin 244 >> Entregue Encroaching Gnolls
+    .turnin 244 >> Entregue Gnolls Invasores
     .target Deputy Feldon
     .isOnQuest 244
     .xp <11,1
@@ -2191,7 +2191,7 @@ step << Priest
     #optional
     #requires GoldshireVendor
     .goto Elwynn Forest,43.283,65.721
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com a |cRXP_FRIENDLY_Sacerdotisa Joselita|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t Fale com |cRXP_FRIENDLY_Sacerdotisa Joselita|r
     .accept 5635 >> Aceite Prece Desesperada
     .trainer >> Treine suas magias de classe
     .target Priestess Josetta
@@ -2555,7 +2555,7 @@ step << Warlock
 step
     .goto StormwindClassic,52.623,65.701
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Estalajadeira Cristine|r
-    .home >> Defina sua Pedra de Retorno em Ventobravo
+    .home >> Defina sua Pedra de Retorno na Cidade de Ventobravo
     .target Innkeeper Allison
 step << Human Paladin
     #xprate >1.59
@@ -2746,14 +2746,14 @@ step << Warlock
 step << Warlock
     .goto Redridge Mountains,17.4,69.6
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Capitão da Guarda Florestan|r
-    .accept 244 >> Aceite Encroaching Gnolls
+    .accept 244 >> Aceite Gnolls Invasores
     .target Guard Parker
 step << Warlock
     #softcore
     .goto Redridge Mountains,30.733,59.996
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Subdelegado David|r
     >>|cRXP_WARN_Cuidado com inimigos no caminho|r
-    .turnin 244 >> Entregue Encroaching Gnolls
+    .turnin 244 >> Entregue Gnolls Invasores
     .target Deputy Feldon
 step << Warlock
     #hardcore
@@ -2763,7 +2763,7 @@ step << Warlock
     .goto Redridge Mountains,30.733,59.996
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Subdelegado David|r
     >>|cRXP_WARN_MANTENHA-SE NA ESTRADA PRINCIPAL E EVITE QUALQUER INIMIGO PRÓXIMO NO CAMINHO|r
-    .turnin 244 >> Entregue Encroaching Gnolls
+    .turnin 244 >> Entregue Gnolls Invasores
     .target Deputy Feldon
 step << Warlock
     .goto Redridge Mountains,30.590,59.410

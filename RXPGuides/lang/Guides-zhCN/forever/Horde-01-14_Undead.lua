@@ -7,7 +7,7 @@ RXPGuides.RegisterGuide([[
 #disabledungeons
 << Horde
 #version 11
-#group RestedXP 永久指南 (H)
+#group RestedXP 无限指南 (部落)
 #subgroup 速通指南 1-22级
 --#groupid RXP-SRGCE-H1
 #defaultfor Undead
@@ -24,7 +24,7 @@ step
     #completewith next
     .goto 1420/0,1675.90,1645.00,8,0
     .goto 1420/0,1665.51,1645.00,8,0
-    .goto 1420/0,1667.77,1679.04,10 >> 跑出地穴，朝 |cRXP_FRIENDLY_摩尔多|r 的方向前进
+    .goto 1420/0,1667.77,1679.04,10 >> 从地穴跑出来，朝 |cRXP_FRIENDLY_摩尔多|r 方向前进
 step
     .goto 1420/0,1667.77,1679.04
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_莫多|r 对话
@@ -38,8 +38,8 @@ step << Warrior/Warlock/Priest/Mage
     .goto 1420/0,1714.76,1760.68,40,0 << Priest/Mage
     .goto 1420/0,1718.38,1799.24,40,0 << Priest/Mage
     .goto 1420/0,1669.12,1869.73,40,0 << Priest/Mage
-    +|cRXP_WARN_击杀 |cRXP_ENEMY_食腐狼幼崽|r 和 |cRXP_ENEMY_夜行蝙蝠|r。拾取它们的掉落，直到你拥有价值60铜币的可出售物品（包括你的护甲）|r << Mage
-    +|cRXP_WARN_击杀 |cRXP_ENEMY_食腐狼幼崽|r 和 |cRXP_ENEMY_夜行蝙蝠|r。拾取它们的掉落，直到你拥有价值50铜币的可出售物品（包括你的护甲）|r << Priest
+    +|cRXP_WARN_击杀 |cRXP_ENEMY_食腐狼幼崽|r 和 |cRXP_ENEMY_夜行蝙蝠|r，拾取它们的掉落，直到你拥有价值60铜币的可出售物品（包括你的护甲）|r << Mage
+    +|cRXP_WARN_击杀 |cRXP_ENEMY_食腐狼幼崽|r 和 |cRXP_ENEMY_夜行蝙蝠|r，拾取它们的掉落，直到你拥有价值50铜币的可出售物品（包括你的护甲）|r << Priest
     +|cRXP_WARN_击杀 |cRXP_ENEMY_食腐狼幼崽|r 和 |cRXP_ENEMY_夜行蝙蝠|r，拾取它们的掉落，直到你拥有价值10铜币的可出售物品（包括你的护甲）|r << Warrior/Warlock
     .mob 食腐狼幼崽
     .mob 夜行蝙蝠
@@ -132,7 +132,7 @@ step << Warlock
     .goto 1420/0,1499.67,1975.47,30,0
     .goto 1420/0,1487.47,1938.12,30,0
     .goto 1420/0,1541.69,1939.32,30,0
-    >>击杀 |cRXP_ENEMY_断骨骷髅|r。拾取他们的 |cRXP_LOOT_断骨骷髅的颅骨|r
+    >>击杀 |cRXP_ENEMY_断骨骷髅|r，拾取他们的 |cRXP_LOOT_断骨骷髅的颅骨|r
     .complete 1470,1 --Rattlecage Skull (3)
     .mob 断骨骷髅
 step << Warlock
@@ -549,9 +549,9 @@ step << Warlock
 step << skip
     #hardcore
     #completewith next
-    .goto 1420,26.027,60.607,-1
-    .goto 1420,24.508,59.360,-1
-    .goto 1420,23.572,59.239,-1
+    .goto 1420/0,1857.24,2011.71,-1--c:1420,26.027,60.607
+    .goto 1420/0,1925.88,2049.28,-1--c:1420,24.508,59.360
+    .goto 1420/0,1968.17,2052.92,-1--c:1420,23.572,59.239
     .goto 1420/0,1628.91,1882.99,30 >>|cRXP_WARN_在洞穴内执行跳过操作：跳上切割机、水井或卡在墙上的木板，然后退出并重新登录|r
     >>|cRXP_WARN_或者，返回丧钟镇|r
 step
@@ -711,7 +711,7 @@ RXPGuides.RegisterGuide([[
 #name 6-12级 提瑞斯法林地
 #displayname 6-13级 提瑞斯法林地 << Paladin
 #version 11
-#group RestedXP 永久指南 (H)
+#group RestedXP 无限指南 (部落)
 #subgroup 速通指南 1-22级
 --#groupid RXP-SRGCE-H1
 #defaultfor Undead
@@ -2981,7 +2981,7 @@ step
     .goto 1458/0,224.300,1648.200
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_拍卖师凯恩|r 对话
     >>|cRXP_BUY_从拍卖行|r |cRXP_BUY_购买三个|r |T133884:0|t[鱼人的眼球]
-    >>|cRXP_WARN_如果你愿意，可以跳过这一步，这只能节省一点点时间|r
+    >>|cRXP_WARN_如果你愿意的话可以跳过，这只是个小捷径|r
     .collect 730,3,91920,1 --Collect Murloc Eyes (x3)
     .target Auctioneer Cain
 step << Mage
@@ -3141,10 +3141,10 @@ step << Paladin
     .goto 1458/0,438.40,1376.62,10,0--c:Undercity,45.32,78.32
     .goto 1458/0,429.39,1340.83,10,0--c:Undercity,46.26,83.91
     .goto 1458/0,402.81,1315.17,10,0--c:Undercity,49.03,87.92
-    .goto 1458/0,365.30,1304.41,10 >>进入皇家区--c:Undercity,52.94,89.60
+    .goto 1458/0,365.30,1304.41,10 >>进入皇室区--c:Undercity,52.94,89.60
 step << Paladin
     .goto 1458/0,316.200,1290.600
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_希尔瓦娜斯·风行者|r对话
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_希尔瓦娜斯·风行者|r 对话
     .turnin 95803 >>交任务 善意的信物
     .target Lady Sylvanas Windrunner
 
@@ -3279,7 +3279,7 @@ step
 
 
 RXPGuides.RegisterGuide([[
-#group RestedXP 永久指南 (H)
+#group RestedXP 无限指南 (部落)
 #subgroup 速通指南 1-22级
 --#groupid RXP-SRGCE-H1
 << Horde
@@ -3291,9 +3291,6 @@ RXPGuides.RegisterGuide([[
 #displayname 13-15级 银松森林 << Paladin
 #next 12-17级 贫瘠之地
 
-step << Skyborne
-    #optional
-    .maxlevel 13,Silverpineskip
 step << Undead Rogue
     #sticky
     #completewith RotHideCluesTurnIn
@@ -3413,7 +3410,7 @@ step
     .goto 1421/0,1602.84,549.75
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_艾德温|r 对话
     >>|cRXP_BUY_购买|r |T132815:0|t[冰镇牛奶]|cRXP_BUY_从他那里|r << Mage/Warlock/Priest/Shaman/Druid
-    .vendor >> |cRXP_BUY_购买|r |T134830:0|t|T134830:0|t[次级治疗药水] |cRXP_BUY_从他那里（如果有货的话）|r
+    .vendor >> |cRXP_BUY_从他那里购买|r|T134830:0|t[次级治疗药水] |cRXP_BUY_（如果有货的话）|r
     >>|cRXP_WARN_不要卖掉你的|r |T133884:0|t[|cRXP_LOOT_鱼人的眼球|r]
     .collect 1179,20,421,1 << Mage/Warlock/Priest/Shaman/Druid --Ice Cold Milk (20)
     .target Edwin Harly
@@ -3445,6 +3442,11 @@ step
     .accept 3221 >>接受任务 与伦弗利尔会面
     .accept 437 >>接受任务 亡者农场
     .target 高级执行官哈德瑞克
+step << Mage/Priest/Warlock
+    .goto 1421/0,1626.100,511.500
+    >>拾取在地上的|cRXP_PICK_发光的书籍|r
+    .collect 210177,1,79096,1 --Ataeric: On Arcane Curiosities
+    --Other classes won't be nearby turnin in UC, probably not worth since it's only 160xp
 step
     .goto 1421/0,1652.82,522.31
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_伦弗利尔|r 对话
@@ -3468,6 +3470,11 @@ step
     .accept 430 >>接受任务 回到奎恩身旁
     .target 药剂师伦弗利尔
     .addquestitem 3164,429
+step
+    #completewith next
+    >>杀死 |cRXP_ENEMY_熊|r。拾取它们的 |cRXP_LOOT_心|r
+    .complete 447,1 --Grizzled Bear Heart (6)
+    .mob Ferocious Grizzled Bear
 step
     #loop
     .goto 1421/0,1386.96,638.51,0
@@ -3499,6 +3506,11 @@ step
     .goto 1421/0,1231.14,866.99
     >>进入房子，上到二楼。拾取地上的|cRXP_PICK_暗色法术书|r
     .complete 422,1 --Remedy of Arugal (1)
+step
+    #completewith next
+    >>杀死 |cRXP_ENEMY_熊|r。拾取它们的 |cRXP_LOOT_心|r
+    .complete 447,1 --Grizzled Bear Heart (6)
+    .mob Ferocious Grizzled Bear
 step
     #completewith next
     .goto 1421/0,1207.62,1293.71,80,0
@@ -3647,7 +3659,7 @@ step
     .goto 1421/0,1602.84,549.75
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_艾德温|r 对话
     >>|cRXP_BUY_购买|r |T132815:0|t[冰镇牛奶]|cRXP_BUY_从他那里|r << Warlock/Priest/Shaman/Druid
-    .vendor >> |cRXP_BUY_购买|r |T134830:0|t|T134830:0|t[次级治疗药水] |cRXP_BUY_从他那里（如果有货的话）|r
+    .vendor >> |cRXP_BUY_从他那里购买|r|T134830:0|t[次级治疗药水] |cRXP_BUY_（如果有货的话）|r
     .collect 1179,20,423,1 << Warlock/Priest/Shaman/Druid --Ice Cold Milk (20)
     .target Edwin Harly
 step << Warlock/Mage/Priest
@@ -3848,7 +3860,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_卡鲁斯|r 对话
     .turnin 6321 >>交任务 资助墓穴 << Undead
     .accept 6323 >>接受任务 飞往幽暗城 << Undead
-    .fp Sepulcher >> 获得瑟伯切尔飞行路径 << !Undead
+    .fp Sepulcher >> 获取泰雷多尔的飞行路径 << !Undead
     .fly Undercity >> 飞往幽暗城 << !Undead
     .target 卡洛斯·拉佐克
     .zoneskip Undercity
@@ -3894,7 +3906,7 @@ step << Rogue
     .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<8.6
 step << Undead
     .goto 1458/0,266.20,1567.17
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_迈克尔 |r 对话
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_麦克尔|r 对话
     .turnin 6322 >>交任务 迈克尔·加勒特
     .target 迈克尔·加勒特
 step << Rogue/Warrior
@@ -3976,12 +3988,12 @@ step
 step
     #completewith next
     #optional
-    .goto 1458,54.383,73.014,50,0 << !Undead/!Rogue
-    .goto 1458,52.837,77.725,20,0
-    .goto 1458,52.275,79.254,15,0
-    .goto 1458,51.279,79.923,15,0
-    .goto 1458,49.693,78.903,15,0
-    .goto 1458,47.951,76.171,15 >>前往炼金房
+    .goto 1458/0,351.46,1410.58,50,0 << !Undead/!Rogue--c:1458,54.383,73.014
+    .goto 1458/0,366.29,1380.42,20,0--c:1458,52.837,77.725
+    .goto 1458/0,371.68,1370.64,15,0--c:1458,52.275,79.254
+    .goto 1458/0,381.23,1366.35,15,0--c:1458,51.279,79.923
+    .goto 1458/0,396.45,1372.88,15,0--c:1458,49.693,78.903
+    .goto 1458/0,413.16,1390.37,15 >>前往炼金房--c:1458,47.951,76.171
 step
     .goto 1458/0,426.100,1403.600
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_马丁·费尔本|r 对话
@@ -3998,7 +4010,7 @@ step
     .target +Apothecary Zinge
     .goto 1458/0,391.97,1442.87
 step
-    .goto Undercity,56.2,96.2
+    .goto 1458/0,334.02,1262.17--c:Undercity,56.2,96.2
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_瓦里玛萨斯|r 对话
     .accept 5725 >>接受任务《物归己用》 毁灭之力
     .target 瓦里玛萨斯
@@ -4086,10 +4098,16 @@ step << Paladin
     .target Garen Largo
     .xp <16,1
 step << Priest/Mage/Warlock
+    .goto 1458/0,168.200,1663.100
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_欧文·萨德::211022|r对话
+    .target Owen Thadd::211022
+    .turnin 79096 >>交任务 阿塔瑞克：论奥术奇迹
+    .itemcount 210177,1
+step << Priest/Mage/Warlock
     #ssf
     .goto 1458/0,206.04,1705.57
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|Tinterface/worldmap/chatbubble_64grey.blp:20|t与魔法区的|cRXP_FRIENDLY_赞恩·布拉德福德|r交谈
-    >>|cRXP_BUY_从他那里|r购买1把|cRXP_BUY_ |T135468:0|t[烟尘魔杖]|r
+    >>|cRXP_BUY_购买1根|r |T135468:0|t[烟尘魔杖] |cRXP_BUY_从他那里|r
     .collect 5208,1 --Smoldering Wand (1)
     .money <0.3515
     .itemStat 18,QUALITY,<7
@@ -4099,7 +4117,7 @@ step << Priest/Mage/Warlock
     #ah
     .goto 1458/0,206.04,1705.57
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|Tinterface/worldmap/chatbubble_64grey.blp:20|t与魔法区的|cRXP_FRIENDLY_赞恩·布拉德福德|r交谈
-    >>|cRXP_BUY_从他那里|r购买1把|cRXP_BUY_ |T135468:0|t[烟尘魔杖]|r
+    >>|cRXP_BUY_购买1根|r |T135468:0|t[烟尘魔杖] |cRXP_BUY_从他那里|r
     >>|cRXP_WARN_或者你也可以稍后去拍卖行看看是否有更好或更便宜的替代品|r
     .collect 5208,1 --Smoldering Wand (1)
     .itemStat 18,QUALITY,<7
@@ -4176,9 +4194,6 @@ step << Skyborne
     .use 6948
     .zoneskip Orgrimmar
     .bindlocation 1637,1
-step << Skyborne
-    #optional
-    #label Silverpineskip
 step << Undead
     #completewith HiddenEnemiesPickup
     .goto 1454/1,-4367.46,1405.44,50,0
@@ -4198,14 +4213,49 @@ step << Undead/Skyborne
     .target 萨尔
     .dungeon RFC
 step << Undead/Skyborne
-    #completewith next
+    #completewith Gazzuz
     .goto 1454/1,-4367.46,1405.44,50,0
     .zone Durotar >> 离开奥格瑞玛
     .dungeon RFC
 step << Undead/Skyborne
-    .goto 1411/1,-4769.10,1484.39,0
-    >>在骷髅石击杀|cRXP_ENEMY_火刃氏族|r 小怪，直到掉落|cRXP_LOOT_军官的徽章|r
+    #completewith Gazzuz
+    >>击杀 |cRXP_ENEMY_火刃兽人|r，拾取他们掉落的 |cRXP_LOOT_军官的徽章|r
+    >>|cRXP_WARN_这是怒焰裂谷的前置任务，掉落率很低。|r
     .complete 5726,1 --Lieutenant's Insignia (1)
+    .mob 火刃狂热者
+    .mob 火刃学徒
+    .dungeon RFC
+step << Undead/Skyborne
+    #label Gazzuz
+    .goto 1411/1,-4701.42,1455.83
+    >>击杀 |cRXP_ENEMY_加祖兹|r。拾取他的 |T134085:0|t[|cRXP_LOOT_燃影之眼|r]
+    >>|cRXP_WARN_使用 |T134085:0|t[|cRXP_LOOT_燃影之眼|r] 以开启任务|r
+    >>|cRXP_WARN_使用视线（视野范围）来躲避 |cRXP_ENEMY_加祖兹|r 的暗影箭|r
+    >>|cRXP_WARN_在击杀 |r加祖兹|cRXP_ENEMY_ 后，你可以跑到洞穴内的水体中以躲避 |r|cRXP_WARN_虚空行者|r|cRXP_ENEMY_|r
+    >>|cRXP_WARN_注意他比较难对付，如有需要可以跳过这个任务|r
+    .collect 4903,1,832,1 --Collect Eye of Burning Shadow
+    .accept 832 >>接受任务 燃影之眼
+    .use 4903
+	.unitscan 加祖兹
+    .dungeon RFC
+step << Undead/Skyborne
+    #loop
+    .goto 1411/1,-4805.59,1495.67,0
+    .goto 1411/1,-4855.82,1498.84,15,0
+    .goto 1411/1,-4833.08,1494.96,15,0
+    .goto 1411/1,-4805.59,1495.67,15,0
+    .goto 1411/1,-4784.44,1535.85,15,0
+    .goto 1411/1,-4750.60,1531.62,15,0
+    .goto 1411/1,-4734.21,1505.54,15,0
+    .goto 1411/1,-4693.49,1519.64,15,0
+    .goto 1411/1,-4679.75,1501.31,15,0
+    .goto 1411/1,-4684.50,1466.06,15,0
+    .goto 1411/1,-4805.59,1495.67,15,0
+    >>击杀 |cRXP_ENEMY_火刃兽人|r，拾取他们掉落的 |cRXP_LOOT_军官的徽章|r
+    >>|cRXP_WARN_这是怒焰裂谷的前置任务，掉落率很低。|r
+    .complete 5726,1 --Lieutenant's Insignia (1)
+    .mob 火刃狂热者
+    .mob 火刃学徒
     .dungeon RFC
 step << Undead/Skyborne
     #completewith Conscript

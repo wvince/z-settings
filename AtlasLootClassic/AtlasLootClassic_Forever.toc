@@ -37,7 +37,7 @@
 ## Category-zhTW: 戰利品
 
 ## Author: sliccer
-## Version: Forever 1.60.1
+## Version: v1.2.9
 ## Group: AtlasLootClassic
 ## IconTexture: Interface\Icons\INV_Box_01
 ## SavedVariables: AtlasLootClassicDB

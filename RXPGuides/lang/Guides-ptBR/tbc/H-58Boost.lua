@@ -32,18 +32,18 @@ step << Druid
     .zoneskip Orgrimmar
 step << Mage
     .goto Orgrimmar,38.66,85.41
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com|r |cRXP_FRIENDLY_Thuul|r no topo da cabana
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Thuul|r no topo da cabana
     .train 3567 >> Aprenda |T135759:0|t[Teleporte: Orgrimmar]
-    .train 11417 >> |T135744:0|tAprenda Portal: Orgrimmar
+    .train 11417 >> Aprenda |T135744:0|t[Portal: Orgrimmar]
     .target Thuul
 step << Warlock
     .goto Orgrimmar,47.52,46.73
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Kurgul|r
-	.vendor >>Compre qualquer melhoria de mascote que possa pagar
+	.vendor >>Compre as melhorias para seu ajudante que puder pagar
 	.target Kurgul
 step
     .goto Orgrimmar,54.65,67.65
-	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Taberneiro Morag|r
+	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Taberneiro Morag|r
 	.vendor >>|cRXP_BUY_Compre 2 lotes de comida|r << !Rogue !Warrior
     .vendor >>|cRXP_BUY_Compre 2 lotes de comida e água|r << Rogue/Warrior
 	.target Barkeep Morag
@@ -85,11 +85,11 @@ step
 step
     .goto Tirisfal Glades,83.15,68.92
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tVoe para o Baluarte, depois fale com |cRXP_FRIENDLY_Derrington|r.
-    .accept 5096 >>Aceite Scarlet Diversions
+    .accept 5096 >>Aceite Distrações escarlate
 	.target High Executor Derrington
 step
 	.goto Western Plaguelands,26.55,56.18
-	>>Clique na |cRXP_PICK_Caixa de Incendiários|r perto do fogo
+	>>Clique na |cRXP_PICK_Caixa de Explosivos|r perto da fogueira
 	.collect 12814,1,5096,1 --Flame in a Bottle (1)
 step
     .goto Tirisfal Glades,83.19,68.45
@@ -118,7 +118,7 @@ step
     .goto Tirisfal Glades,83.15,68.92
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com Derrington|r
     .turnin 5096 >>Entregue Diversões Escarlates
-    .accept 5098 >>Aceite Em Todas as Torres de Vigia
+    .accept 5098 >>Aceite Você não vê as torres?
     .accept 5228 >>Aceite Os Caldeirões do Flagelo
 	.target High Executor Derrington
 step
@@ -520,11 +520,11 @@ step
     .isQuestTurnedIn 5149
 step
 	#completewith RottingUndead
-	.subzone 2264 >> Vá para Corin's Crossing
+	.subzone 2264 >> Travel to Corin's Crossing (NOT TRANSLATED IN :ptBR YET)
 step
 	#completewith next
-	>>Abate os |cRXP_ENEMY_Mortos-vivos|r. Saque-os por seus |cRXP_LOOT_Putrefação Viva|r.
-	>>|cRXP_WARN_Grupos de elites patrulham as estradas ao norte e a leste. Inimigos invisíveis patrulham o Cruzamento de Corin, então tente atrair os inimigos para fora|r
+	>>Mate |cRXP_ENEMY_Mortos-vivos|r. Pegue deles a |cRXP_LOOT_Putrefação Viva|r.
+	>>|cRXP_WARN_Groups of elites patrol the north and east road. Invisible mobs patrol inside of Corin's Crossing, so try to pull mobs out|r (NOT TRANSLATED IN :ptBR YET)
 	.collect 15447,7 --Living Rot (7)
 	.mob Hate Shrieker
 	.mob Scourge Warder
@@ -849,7 +849,7 @@ step << skip
 step << skip
     .goto Stranglethorn Vale,32.5,29.3
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Thysta|r
-	.fly Stonard >> Fly to Pedregal
+	.fly Stonard >> Voe para Pedregal
 	.target Thysta
     .subzoneskip 75
 step << skip

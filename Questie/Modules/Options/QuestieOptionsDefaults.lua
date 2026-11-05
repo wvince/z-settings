@@ -87,6 +87,7 @@ function QuestieOptionsDefaults:Load()
             trackerShowCompleteQuests = true,
             trackerShowQuestLevel = true,
             collapseCompletedQuests = false,
+            trackerShowQuestFocusButtons = true,
             hideCompletedQuestObjectives = false,
             hideBlizzardCompletionText = false,
             hideCompletedAchieveObjectives = true,
@@ -101,6 +102,7 @@ function QuestieOptionsDefaults:Load()
             hideTrackerInPetBattles = true,
             trackerFadeMinMaxButtons = false,
             trackerFadeQuestItemButtons = false,
+            trackerFadeQuestFocusButtons = false,
             trackerDisableHoverFade = false,
             trackerBackdropEnabled = false,
             currentBackdropEnabled = false,
@@ -246,7 +248,6 @@ function QuestieOptionsDefaults:Load()
             collapsedZones = {},
             minAllQuestsInZone = {},
             collapsedQuests = {},
-            trackedAchievementIds = {},
         },
         global = {
             questieLocale = "enUS",

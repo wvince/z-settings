@@ -28,8 +28,12 @@ local QuestieTracker = QuestieLoader:ImportModule("QuestieTracker")
 local TrackerBaseFrame = QuestieLoader:ImportModule("TrackerBaseFrame")
 ---@type TrackerQuestFrame
 local TrackerQuestFrame = QuestieLoader:ImportModule("TrackerQuestFrame")
+---@type TrackerRecipes
+local TrackerRecipes = QuestieLoader:ImportModule("TrackerRecipes")
 ---@type TrackerUtils
 local TrackerUtils = QuestieLoader:ImportModule("TrackerUtils")
+---@type TrackerSuperTrack
+local TrackerSuperTrack = QuestieLoader:ImportModule("TrackerSuperTrack")
 ---@type QuestieReputation
 local QuestieReputation = QuestieLoader:ImportModule("QuestieReputation")
 ---@type QuestieNameplate
@@ -60,6 +64,8 @@ local QuestieMenu = QuestieLoader:ImportModule("QuestieMenu")
 local WatchFrameHook = QuestieLoader:ImportModule("WatchFrameHook")
 ---@type AutoCompleteFrame
 local AutoCompleteFrame = QuestieLoader:ImportModule("AutoCompleteFrame")
+---@type QuestieOptionsEngine
+local QuestieOptionsEngine = QuestieLoader:ImportModule("QuestieOptionsEngine")
 
 local questAcceptedMessage = string.gsub(ERR_QUEST_ACCEPTED_S, "(%%s)", "(.+)")
 local questCompletedMessage = string.gsub(ERR_QUEST_COMPLETE_S, "(%%s)", "(.+)")
@@ -125,10 +131,8 @@ function EventHandler:RegisterLateEvents()
             _EventHandler.ChatMsgSkill()
         end, 2)
     end)
-    if not GetSkillLineInfo then
-        -- Modern unlearning need not print CHAT_MSG_SKILL and has no legacy AbandonSkill hook.
-        Questie:RegisterBucketEvent("SKILL_LINES_CHANGED", 2, _EventHandler.ChatMsgSkill)
-    end
+    -- Learning or unlearning a profession need not print CHAT_MSG_SKILL
+    Questie:RegisterBucketEvent("SKILL_LINES_CHANGED", 2, _EventHandler.ChatMsgSkill)
     Questie:RegisterBucketEvent("CHAT_MSG_COMBAT_FACTION_CHANGE", 2, function()
         QuestEventHandler.ReputationChange()
         _EventHandler:ChatMsgCompatFactionChange()
@@ -198,9 +202,17 @@ function EventHandler:RegisterLateEvents()
         QuestgiverFrame.RecheckGossip()
     end)
     Questie:RegisterEvent("QUEST_WATCH_UPDATE", function(_, questId) QuestEventHandler.QuestWatchUpdate(questId) end)
+    if QuestieCompat.IsSuperTrackingSupported() then
+        Questie:RegisterEvent("SUPER_TRACKING_CHANGED", TrackerSuperTrack.OnSuperTrackingChanged)
+    end
     Questie:RegisterEvent("QUEST_AUTOCOMPLETE", function(_, questId) QuestEventHandler.QuestAutoComplete(questId) end)
     Questie:RegisterEvent("UNIT_QUEST_LOG_CHANGED", function(_, unitTarget) QuestEventHandler.UnitQuestLogChanged(unitTarget) end)
-    Questie:RegisterEvent("CURRENCY_DISPLAY_UPDATE", QuestEventHandler.CurrencyDisplayUpdate)
+    Questie:RegisterEvent("CURRENCY_DISPLAY_UPDATE", function(...)
+        QuestEventHandler.CurrencyDisplayUpdate(...)
+        if TrackerRecipes.HasCurrencyReagents() then
+            _EventHandler.UpdateTracker()
+        end
+    end)
     Questie:RegisterEvent("CRITERIA_UPDATE", QuestEventHandler.CriteriaUpdate)
     Questie:RegisterEvent("PLAYER_INTERACTION_MANAGER_FRAME_HIDE", function(_, eventType) QuestEventHandler.PlayerInteractionManagerFrameHide(eventType) end)
 
@@ -262,13 +274,11 @@ function EventHandler:RegisterLateEvents()
 
     -- UI Achievement Events
     if Expansions.Current >= Expansions.Wotlk and Questie.db.profile.trackerEnabled then
-        Questie:RegisterEvent("ACHIEVEMENT_EARNED", function(_, achieveId)
-            AchievementEventHandler.AchievementEarned(achieveId)
-        end)
+        Questie:RegisterEvent("ACHIEVEMENT_EARNED", AchievementEventHandler.AchievementEarned)
 
         Questie:RegisterEvent("TRACKED_ACHIEVEMENT_UPDATE", AchievementEventHandler.TrackedAchievementUpdate)
-        Questie:RegisterEvent("TRACKED_ACHIEVEMENT_LIST_CHANGED", function(_, achieveId)
-            AchievementEventHandler.TrackedAchievementListChanged(achieveId)
+        Questie:RegisterEvent("TRACKED_ACHIEVEMENT_LIST_CHANGED", function(_, achievementId)
+            AchievementEventHandler.TrackedAchievementListChanged(achievementId)
         end)
 
         -- This fires pretty often, multiple times for a single Achievement change and also for things most likely not related to Achievements at all.
@@ -278,6 +288,22 @@ function EventHandler:RegisterLateEvents()
         Questie:RegisterEvent("CHAT_MSG_MONEY", AchievementEventHandler.ChatMsgMoney)
         Questie:RegisterEvent("CHAT_MSG_TEXT_EMOTE", AchievementEventHandler.ChatMsgTextEmote)
         Questie:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", AchievementEventHandler.PlayerEquipmentChanged)
+    end
+
+    if TrackerRecipes.IsSupported() then
+        Questie:RegisterEvent("TRACKED_RECIPE_UPDATE", _EventHandler.UpdateTracker)
+        -- A bucket, because QuestieTracker temporarily registers BAG_UPDATE_DELAYED as a plain event for quest items
+        Questie:RegisterBucketEvent("BAG_UPDATE_DELAYED", 0.5, function()
+            if TrackerRecipes.HasTrackedRecipes() then
+                _EventHandler.UpdateTracker()
+            end
+        end)
+        -- C_Item.RequestLoadItemDataByID answers with ITEM_DATA_LOAD_RESULT, not GET_ITEM_INFO_RECEIVED
+        Questie:RegisterEvent("ITEM_DATA_LOAD_RESULT", function(_, itemId, success)
+            if success and TrackerRecipes.OnItemInfoReceived(itemId) then
+                _EventHandler.UpdateTracker()
+            end
+        end)
     end
 
     if Expansions.Current >= Expansions.MoP then
@@ -535,11 +561,6 @@ function _EventHandler:ModifierStateChanged(key, down)
         end
     end
 
-    if QuestieTracker.started then
-        -- AI_VoiceOver PlayButtons
-        TrackerUtils:ShowVoiceOverPlayButtons()
-    end
-
     if Questie.db.profile.trackerLocked then
         if QuestieTracker.started then
             -- This is a safety catch for race conditions to prevent the Tracker Sizer
@@ -567,7 +588,7 @@ function _EventHandler:ModifierStateChanged(key, down)
     end
 end
 
----Refreshes skill-gated quests after skill chat or modern skill-line changes.
+---Refreshes skill-gated quests after skill chat or skill line changes.
 function _EventHandler:ChatMsgSkill()
     Questie.Debug(Questie.DEBUG_DEVELOP, "[EVENT] Profession skills changed")
 
@@ -576,7 +597,6 @@ function _EventHandler:ChatMsgSkill()
     if isProfUpdate or isNewProfession then
         AvailableQuests.CalculateAndDrawAll()
     end
-    -- Classic's AbandonSkill hook already dropped the profession, so Update() reports no change; sync either way.
     if Questie.db.profile.townsfolkKnownProfessions then
         QuestieMenu.RefreshKnownProfessionTrainers()
     end
@@ -627,6 +647,13 @@ function _EventHandler:PlayerRegenDisabled()
             QuestieJourney:ToggleJourneyWindow()
         end
     end
+
+    -- The Native settings panel can be shown in combat, unlike Ace, but some of its options
+    -- (like toggling the tracker) cannot be changed in combat, so we disable those ones in combat.
+    -- Changing their enabled/disabled visible state requires calling RefreshStates(),
+    -- so we refresh them at the start and end of combat if the settings panel is visible.
+    -- There is a delay here because InCombatLockdown() doesn't return accurately immediately following PLAYER_REGEN_DISABLED.
+    C_Timer.After(0.1, function() QuestieOptionsEngine:RefreshIfShown() end)
 end
 
 function _EventHandler:PlayerRegenEnabled()
@@ -643,4 +670,12 @@ function _EventHandler:PlayerRegenEnabled()
         QuestieJourney:ToggleJourneyWindow()
         journeyHiddenByCombat = false
     end
+
+    C_Timer.After(0.1, function() QuestieOptionsEngine:RefreshIfShown() end)
+end
+
+function _EventHandler.UpdateTracker()
+    QuestieCombatQueue:Queue(function()
+        QuestieTracker:Update()
+    end)
 end

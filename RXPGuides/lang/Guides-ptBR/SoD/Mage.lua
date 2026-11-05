@@ -122,7 +122,7 @@ step
     .xp >2,1
 step
     #completewith next
-    .zone Dun Morogh >> Vá para Dun Morogh
+    .zone Dun Morogh >> Viagem para Dun Morogh
     .train 401760,1
     .xp <2,1
 step
@@ -701,7 +701,7 @@ step
     .train 401765,1
 step
     #completewith next
-    .zone Dun Morogh >>Vá para Dun Morogh
+    .zone Dun Morogh >>Viagem para Dun Morogh
     .train 401765,1
 step
     #loop
@@ -858,7 +858,7 @@ step
     .xp >6,1
 step
     #completewith next
-    .zone Dun Morogh >>Vá para Dun Morogh
+    .zone Dun Morogh >>Viagem para Dun Morogh
     .train 401759,1
 step
     .goto 1426,69.369,58.311
@@ -1211,7 +1211,7 @@ step
     .isQuestAvailable 78147
 step
     #completewith next
-    .zone Swamp of Sorrows >>Vá para |cFFfa9602Pântano das Mágoas|r
+    .zone Swamp of Sorrows >>Vá ao |cFFfa9602Pântano das Mágoas|r
     .fly Swamp of Sorrows >>Pegue a rota de voo para |cFFfa9602Pântano das Mágoas|r |cRXP_WARN_se você a tem desbloqueada e ainda não está lá.|r
     .disablecheckbox
     .isQuestAvailable 79953
@@ -1526,7 +1526,7 @@ step
     .isQuestAvailable 79949
 step
     #completewith next
-    .zone The Hinterlands >>Vá para |cFFfa9602Terras Agrestes|r
+    .zone The Hinterlands >>Vá às |cFFfa9602Terras Agrestes|r
     .fly The Hinterlands >>Aprenda a rota de voo para |cFFfa9602Terras Agrestes|r |cRXP_WARN_se você a tem desbloqueada.|r
     .disablecheckbox
     .isQuestAvailable 81954
@@ -1576,7 +1576,7 @@ step
     .accept 79093 >>Vire em Rumi de Gnomeregan: Trabalhos Reunidos
     .accept 79094 >>Vire em As Lições de Ta'zo
     .accept 79095 >>Entregue A Cartilha Metafísica do Boticário
-    .accept 79096 >>Vire em Ataeric: Sobre Curiosidades Arcanas
+    .accept 79096 >>Entregue Ataeric: Sobre Curiosidades Arcanas
     .accept 79097 >>Entregue Baxtan: Sobre Magias Destrutivas
     .accept 79535 >>Vire em Basiliscos: quem tem medo de virar pedra?
     .accept 79947 >>Vire em Geomancia: a verdade nua e crua
@@ -1836,7 +1836,7 @@ step
     .isQuestAvailable 79948
 step
     #completewith next
-    .zone The Hinterlands >>Vá para |cFFfa9602Terras Agrestes|r
+    .zone The Hinterlands >>Vá às |cFFfa9602Terras Agrestes|r
     .fly Hinterlands >>Pegue a rota de voo para |cFFfa9602Terras Agrestes|r |cRXP_WARN_se você a tem desbloqueada.|r
     .disablecheckbox
     .isQuestAvailable 81954
@@ -1903,7 +1903,7 @@ step
     .isQuestAvailable 78147
 step
     #completewith next
-    .zone Swamp of Sorrows >>Vá para |cFFfa9602Pântano das Mágoas|r
+    .zone Swamp of Sorrows >>Vá ao |cFFfa9602Pântano das Mágoas|r
     .fly Swamp of Sorrows >>Pegue a rota de voo para |cFFfa9602Pântano das Mágoas|r |cRXP_WARN_se você a tem desbloqueada e ainda não está lá.|r
     .disablecheckbox
     .isQuestAvailable 79953
@@ -1927,7 +1927,7 @@ step
     .isQuestAvailable 79953
 step
     #completewith next
-    .zone Swamp of Sorrows >>Vá para |cFFfa9602Pântano das Mágoas|r
+    .zone Swamp of Sorrows >>Vá ao |cFFfa9602Pântano das Mágoas|r
     .fly Swamp of Sorrows >>Pegue a rota de voo para |cFFfa9602Pântano das Mágoas|r |cRXP_WARN_se você a tem desbloqueada e ainda não está lá.|r
     .disablecheckbox
     .isQuestAvailable 81947
@@ -2000,7 +2000,7 @@ step
     .accept 78149 >>Vire em Fúria da terra
     .accept 79094 >>Vire em As Lições de Ta'zo
     .accept 79095 >>Entregue A Cartilha Metafísica do Boticário
-    .accept 79096 >>Vire em Ataeric: Sobre Curiosidades Arcanas
+    .accept 79096 >>Entregue Ataeric: Sobre Curiosidades Arcanas
     .accept 79097 >>Entregue Baxtan: Sobre Magias Destrutivas
     .accept 79535 >>Vire em Basiliscos: quem tem medo de virar pedra?
     .accept 79947 >>Vire em Geomancia: a verdade nua e crua
@@ -2690,7 +2690,7 @@ RXPGuides.RegisterGuide([[
 step
     .train 401749,1
     #completewith next
-    .zone Arathi Highlands >> Vá para Planalto Arathi
+    .zone Arathi Highlands >> Vá ao Planalto Arathi
 step
     .train 401749,1
     .goto Arathi Highlands,67.46,28.79,40,0
@@ -2892,7 +2892,7 @@ step
     .collect 223147,1 --Spell Notes: Balefire Bolt
     .mob Fel Interloper
 step
-    .train 429311 >>|cRXP_WARN_Use as|r |T134939:0|t[|cRXP_FRIENDLY_Anotações de Feitiços: Seta Incendiária|r] |cRXP_WARN_para aprender|r |T135809:0|t[Seta Incendiária]
+    .train 429311 >>|cRXP_WARN_Use o|r |T134939:0|t[|cRXP_FRIENDLY_Anotações de Feitiços: Seta Incendiária|r] |cRXP_WARN_para treinar|r |T135809:0|t[Seta Incendiária]
     .use 223147
 ]])
 
@@ -2945,7 +2945,7 @@ step
     .collect 223147,1 --Spell Notes: Balefire Bolt
     .mob Fel Interloper
 step
-    .train 429311 >>|cRXP_WARN_Use as|r |T134939:0|t[|cRXP_FRIENDLY_Anotações de Feitiços: Seta Incendiária|r |cRXP_WARN_para aprender|r |T135809:0|t[Seta Incendiária.]
+    .train 429311 >>|cRXP_WARN_Use o|r |T134939:0|t[|cRXP_FRIENDLY_Anotações de Feitiços: Seta Incendiária|r] |cRXP_WARN_para treinar|r |T135809:0|t[Seta Incendiária.]
     .use 223147
 ]])
 
@@ -2998,7 +2998,7 @@ step
     .collect 223147,1 --Spell Notes: Balefire Bolt
     .mob Fel Interloper
 step
-    .train 429311 >>|cRXP_WARN_Use as|r |T134939:0|t[|cRXP_FRIENDLY_Anotações de Feitiços: Seta Incendiária|r |cRXP_WARN_para aprender|r |T135809:0|t[Seta Incendiária.]
+    .train 429311 >>|cRXP_WARN_Use o|r |T134939:0|t[|cRXP_FRIENDLY_Anotações de Feitiços: Seta Incendiária|r] |cRXP_WARN_para treinar|r |T135809:0|t[Seta Incendiária.]
     .use 223147
 ]])
 
@@ -3049,7 +3049,7 @@ step
     .collect 223147,1 --Spell Notes: Balefire Bolt
     .mob Fel Interloper
 step
-    .train 429311 >>|cRXP_WARN_Use as|r |T134939:0|t[|cRXP_FRIENDLY_Anotações de Feitiços: Seta Incendiária|r |cRXP_WARN_para aprender|r |T135809:0|t[Seta Incendiária.]
+    .train 429311 >>|cRXP_WARN_Use o|r |T134939:0|t[|cRXP_FRIENDLY_Anotações de Feitiços: Seta Incendiária|r] |cRXP_WARN_para treinar|r |T135809:0|t[Seta Incendiária.]
     .use 223147
 ]])
 
@@ -3100,7 +3100,7 @@ step
     .collect 223147,1 --Spell Notes: Balefire Bolt
     .mob Fel Interloper
 step
-    .train 429311 >>|cRXP_WARN_Use as|r |T134939:0|t[|cRXP_FRIENDLY_Anotações de Feitiços: Seta Incendiária|r |cRXP_WARN_para aprender|r |T135809:0|t[Seta Incendiária.]
+    .train 429311 >>|cRXP_WARN_Use o|r |T134939:0|t[|cRXP_FRIENDLY_Anotações de Feitiços: Seta Incendiária|r] |cRXP_WARN_para treinar|r |T135809:0|t[Seta Incendiária.]
     .use 223147
 ]])
 
@@ -3159,7 +3159,7 @@ step
     .collect 223147,1 --Spell Notes: Balefire Bolt
     .mob Fel Interloper
 step
-    .train 429311 >>|cRXP_WARN_Use as|r |T134939:0|t[|cRXP_FRIENDLY_Anotações de Feitiços: Seta Incendiária|r |cRXP_WARN_para aprender|r |T135809:0|t[Seta Incendiária.]
+    .train 429311 >>|cRXP_WARN_Use o|r |T134939:0|t[|cRXP_FRIENDLY_Anotações de Feitiços: Seta Incendiária|r] |cRXP_WARN_para treinar|r |T135809:0|t[Seta Incendiária.]
     .use 223147
 ]])
 
@@ -3210,7 +3210,7 @@ step
     .collect 223147,1 --Spell Notes: Balefire Bolt
     .mob Fel Interloper
 step
-    .train 429311 >>|cRXP_WARN_Use as|r |T134939:0|t[|cRXP_FRIENDLY_Anotações de Feitiços: Seta Incendiária|r |cRXP_WARN_para aprender|r |T135809:0|t[Seta Incendiária.]
+    .train 429311 >>|cRXP_WARN_Use o|r |T134939:0|t[|cRXP_FRIENDLY_Anotações de Feitiços: Seta Incendiária|r] |cRXP_WARN_para treinar|r |T135809:0|t[Seta Incendiária.]
     .use 223147
 ]])
 
@@ -3261,7 +3261,7 @@ step
     .collect 223147,1 --Spell Notes: Balefire Bolt
     .mob Fel Interloper
 step
-    .train 429311 >>|cRXP_WARN_Use as|r |T134939:0|t[|cRXP_FRIENDLY_Anotações de Feitiços: Seta Incendiária|r |cRXP_WARN_para aprender|r |T135809:0|t[Seta Incendiária.]
+    .train 429311 >>|cRXP_WARN_Use o|r |T134939:0|t[|cRXP_FRIENDLY_Anotações de Feitiços: Seta Incendiária|r] |cRXP_WARN_para treinar|r |T135809:0|t[Seta Incendiária.]
     .use 223147
 ]])
 
@@ -3325,7 +3325,7 @@ step
     .collect 223147,1 --Spell Notes: Balefire Bolt
     .mob Fel Interloper
 step
-    .train 429311 >>|cRXP_WARN_Use as|r |T134939:0|t[|cRXP_FRIENDLY_Anotações de Feitiços: Seta Incendiária|r |cRXP_WARN_para aprender|r |T135809:0|t[Seta Incendiária.]
+    .train 429311 >>|cRXP_WARN_Use o|r |T134939:0|t[|cRXP_FRIENDLY_Anotações de Feitiços: Seta Incendiária|r] |cRXP_WARN_para treinar|r |T135809:0|t[Seta Incendiária.]
     .use 223147
 ]])
 
@@ -3375,7 +3375,7 @@ step
     .collect 223147,1 --Spell Notes: Balefire Bolt
     .mob Fel Interloper
 step
-    .train 429311 >>|cRXP_WARN_Use as|r |T134939:0|t[|cRXP_FRIENDLY_Anotações de Feitiços: Seta Incendiária|r |cRXP_WARN_para aprender|r |T135809:0|t[Seta Incendiária.]
+    .train 429311 >>|cRXP_WARN_Use o|r |T134939:0|t[|cRXP_FRIENDLY_Anotações de Feitiços: Seta Incendiária|r] |cRXP_WARN_para treinar|r |T135809:0|t[Seta Incendiária.]
     .use 223147
 ]])
 

@@ -1,0 +1,42 @@
+## Interface: 16001
+## Title: GearQuest Forever
+## Notes: Leveling gear upgrades for WoW Forever - click a slot, pick a hunt, track it in the log.
+## Author: Henrik8210
+## Version: 1.0.7
+## IconTexture: Interface\AddOns\GearQuestForever\Art\GearQuest-Icon
+## X-Curse-Project-ID: 1698950
+## SavedVariables: GearQuestForeverDB
+## SavedVariablesPerCharacter: GearQuestForeverCharDB
+
+Core.lua
+Spec.lua
+CustomSpec.lua
+Preview.lua
+Equip.lua
+Data.lua
+Enchant.lua
+_generated/StatWeights.generated.lua
+_generated/ScoringWeights.generated.lua
+_generated/Data.ItemStats.generated.lua
+_generated/CraftSkills.generated.lua
+_generated/Data.ForeverAudit.generated.lua
+_generated/Data.ScoredStats.generated.lua
+_generated/Data.Coordinates.generated.lua
+_generated/Data.QuestFaction.generated.lua
+_generated/Data.HuntFacts.generated.lua
+_generated/Data.ForeverNew.generated.lua
+Map.lua
+Pins.lua
+DataAdapter.lua
+Compare.lua
+Indicator.lua
+Log.lua
+PortraitGuide.lua
+Gamepad.lua
+Toast.lua
+Tracker.lua
+Guide.lua
+Popup.lua
+PaperDoll.lua
+Minimap.lua
+Commands.lua

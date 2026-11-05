@@ -1,7 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
-
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #classic
@@ -15,8 +13,6 @@ RXPGuides.RegisterGuide([[
 #groupid RXP-SRGCE-H1
 #defaultfor Tauren
 #next 6-12 Mulgore;6-13 Mulgore
-
-
 step << !Tauren
     #completewith next
     .goto Mulgore,44.92,77.12
@@ -576,8 +572,6 @@ step
     .accept 1656 >>Accept A Task Unfinished
     .target Antur Fallow
 ]])
-
-
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
@@ -589,8 +583,6 @@ RXPGuides.RegisterGuide([[
 #groupid RXP-SRGCE-H1
 #defaultfor Tauren
 #next 12-17 The Barrens
-
-
 step << Druid
     #season 2
     .goto Mulgore,35.72,69.57
@@ -2934,14 +2926,9 @@ step << Warrior
     .turnin 1498 >>Turn in Path of Defense
     .accept 1502 >>Accept Thun'grim Firegaze
     .target Uzzek
-
 ]])
-
-
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
-
-
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
@@ -2953,8 +2940,6 @@ RXPGuides.RegisterGuide([[
 #name 1-7 Mulgore
 #next 7-13 Mulgore
 #defaultfor Tauren
-
-
 step << !Tauren
     #completewith next
     .goto Mulgore,44.92,77.12
@@ -3638,8 +3623,6 @@ step
     .accept 1656 >>Accept A Task Unfinished
     .target Antur Fallow
 ]])
-
-
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
@@ -3651,8 +3634,6 @@ RXPGuides.RegisterGuide([[
 #name 7-13 Mulgore
 #next 13-20 The Barrens
 #defaultfor Tauren
-
-
 step << Druid
     #season 2
     .goto Mulgore,35.72,69.57

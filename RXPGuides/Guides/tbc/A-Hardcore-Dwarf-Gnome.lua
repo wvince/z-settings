@@ -8,7 +8,6 @@ RXPGuides.RegisterGuide([[
 #subgroup RXP Survival Guide 1-20
 #name 1-10 Dun Morogh
 #next 10-12 Elwynn Forest
-
 step << !Gnome !Dwarf
     #sticky
     #completewith next
@@ -1453,7 +1452,6 @@ step
     .target Innkeeper Firebrew
     .bindlocation 1537
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -1463,7 +1461,6 @@ RXPGuides.RegisterGuide([[
 #subgroup RXP Survival Guide 1-20
 #name 10-12 Elwynn Forest
 #next 12-14 Darkshore
-
 step
     #completewith next
     .goto Ironforge,78.00,51.40

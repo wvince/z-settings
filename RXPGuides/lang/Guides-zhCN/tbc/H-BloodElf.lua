@@ -4165,7 +4165,7 @@ step << Priest/Mage/Warlock/Rogue/Druid/Warrior
     #xprate <1.5 << !Warrior
     #softcore
     #completewith SuncrownTurnin
-    .deathskip >> 死掉并在|cRXP_FRIENDLY_灵魂医者|r 处复生
+    .deathskip >> 死亡并在 |cRXP_FRIENDLY_灵魂医者|r 处重生
     .target 灵魂医者
 step << Priest/Mage/Warlock/Rogue/Druid/Warrior
     #hardcore
@@ -6494,7 +6494,7 @@ step
     .goto Undercity,45.32,78.32,10,0
     .goto Undercity,46.26,83.91,10,0
     .goto Undercity,49.03,87.92,10,0
-    .goto Undercity,52.94,89.60,10 >>进入皇家区
+    .goto Undercity,52.94,89.60,10 >>进入皇室区
     .dungeon RFC
 step
     #label RFCPowerPickup
@@ -8659,7 +8659,7 @@ step
 step
     #softcore
     #completewith HeroSindorei
-    .deathskip >> 死掉并在|cRXP_FRIENDLY_灵魂医者|r 处复生
+    .deathskip >> 死亡并在 |cRXP_FRIENDLY_灵魂医者|r 处重生
     .target 灵魂医者
 step
     #hardcore
@@ -8930,7 +8930,7 @@ step << Priest
     .goto Silvermoon City,60.65,63.45,15,0
     .goto Silvermoon City,65.92,53.71
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_维娜|r 对话
-    >>|cRXP_BUY_购买1根|r |T135144:0|t[强效魔法杖] |cRXP_BUY_从拍卖行。如果它便宜|r
+    >>|cRXP_BUY_从拍卖行购买1根|r |T135144:0|t[强效魔法杖] |cRXP_BUY_如果它便宜|r
     >>|cRXP_WARN_如果价格都太贵，可以跳过此步骤|r
     .collect 11288,1,496,1 --Greater Magic Wand
     .target 维纳 <拍卖师>

@@ -2826,7 +2826,7 @@ step << Rogue
 step << skip --!Shaman
     .goto Orgrimmar,54.10,68.42
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Gryshka l'aubergiste|r
-    .home >> Liez votre Pierre de foyer à Orgrimmar
+    .home >> Liez votre Pierre de Foyer à Orgrimmar
 	.target Innkeeper Gryshka
     .bindlocation 1637
     .train 3567,1 << Mage --Skips if Teleport Orgrimmar is trained
@@ -5461,7 +5461,7 @@ step
     .subzone 2797,2 >> Prenez la route pour le portail de l'instance Profondeurs de Brassenoire, prenez-le quand vous êtes arrivés
     .dungeon BFD
 step
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à|cRXP_FRIENDLY_Argent Guard Thaelrid|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Argent Guard Thaelrid|r
     .accept 6561 >>Acceptez la quête L'infamie de Brassenoire
     .target Argent Guard Thaelrid
     .dungeon BFD
@@ -5491,7 +5491,7 @@ step
     .isOnQuest 6921
     .dungeon BFD
 step
-    >>Tuez  |cRXP_ENEMY_Twilight Lord Kelris|r. Dépouillez-le pour sa |cRXP_LOOT_Head|r
+    >>Tuez|cRXP_ENEMY_Twilight Lord Kelris|r. Dépouillez-le pour sa |cRXP_LOOT_Tête|r
     .complete 6561,1 --Head of Kelris (1)
     .mob Twilight Lord Kelris
     .isOnQuest 6561
@@ -6014,7 +6014,7 @@ step
 step
     .goto The Barrens,44.55,59.27
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Mangletooth|r
-    .aura 16618 >>Si il vous reste 10 [|cRXP_LOOT_Blood Shards|r, utilisez les pour obtenir [L'esprit du vent] à |cRXP_FRIENDLY_Mangletooth|r
+    .aura 16618 >>|cRXP_WARN_S'il vous reste 10|r |T134128:0|t[|cRXP_LOOT_Joyaux de sang|r] |cRXP_WARN_, utilisez-les pour obtenir|r |T136022:0|t[L'esprit du vent] |cRXP_WARN_auprès de|r |cRXP_FRIENDLY_Mutiledent|r
     .itemcount 5075,10
     .target Mangletooth
     .train 783,1 << Druid --Travel form
@@ -6024,7 +6024,7 @@ step << Druid/Shaman/Hunter
     #optional
     .goto The Barrens,44.55,59.27
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Mangletooth|r
-    +|cRXP_WARN_Si vous avez des|r |T134128:0|t[|cRXP_LOOT_Joyaux de sang|r |cRXP_WARN_en trop, utilisez-les pour obtenir les buffs de votre choix auprès de|r |cRXP_FRIENDLY_Mangletooth|r
+    +|cRXP_WARN_If you have|r |T134128:0|t[|cRXP_LOOT_Blood Shards|r] |cRXP_WARN_left, use them to obtain buffs of your choice from|r |cRXP_FRIENDLY_Mangletooth|r (NOT TRANSLATED IN :frFR YET)
     .itemcount 5075,4
     .target Mangletooth
     .train 783,3 << Druid --Travel form
@@ -6645,39 +6645,17 @@ step
 step
     #loop
     .line Thousand Needles,14.34,30.13,15.08,31.63,15.67,31.56,16.59,30.34,17.19,29.60,17.82,27.50,18.48,26.74,18.64,25.90,18.68,24.68,18.57,24.07,18.11,23.65,17.66,22.98,17.24,22.32,17.54,21.49,17.87,20.78,17.96,20.18,17.66,19.46,17.28,18.93,16.70,18.61,16.20,18.53,15.69,18.65,14.49,20.04,12.89,19.97,11.88,20.90,11.50,21.61,11.20,22.29,11.16,23.21,11.49,24.07,11.55,24.44,11.91,25.02,13.01,26.31,13.36,26.97,13.75,28.54,14.34,30.13
-    .goto Thousand Needles,11.50,21.61,0
-    .goto Thousand Needles,11.50,21.61,40,0
-    .goto Thousand Needles,11.88,20.90,40,0
-    .goto Thousand Needles,12.89,19.97,40,0
-    .goto Thousand Needles,14.49,20.04,40,0
-    .goto Thousand Needles,15.69,18.65,40,0
-    .goto Thousand Needles,16.20,18.53,40,0
-    .goto Thousand Needles,16.70,18.61,40,0
-    .goto Thousand Needles,17.28,18.93,40,0
-    .goto Thousand Needles,17.66,19.46,40,0
-    .goto Thousand Needles,17.96,20.18,40,0
-    .goto Thousand Needles,17.87,20.78,40,0
-    .goto Thousand Needles,17.54,21.49,40,0
-    .goto Thousand Needles,17.24,22.32,40,0
-    .goto Thousand Needles,17.66,22.98,40,0
-    .goto Thousand Needles,18.11,23.65,40,0
-    .goto Thousand Needles,18.57,24.07,40,0
-    .goto Thousand Needles,18.68,24.68,40,0
-    .goto Thousand Needles,18.64,25.90,40,0
-    .goto Thousand Needles,18.48,26.74,40,0
-    .goto Thousand Needles,17.82,27.50,40,0
-    .goto Thousand Needles,17.19,29.60,40,0
-    .goto Thousand Needles,15.67,31.56,40,0
-    .goto Thousand Needles,15.08,31.63,40,0
-    .goto Thousand Needles,14.34,30.13,40,0
-    .goto Thousand Needles,13.75,28.54,40,0
-    .goto Thousand Needles,13.36,26.97,40,0
-    .goto Thousand Needles,13.01,26.31,40,0
-    .goto Thousand Needles,11.91,25.02,40,0
-    .goto Thousand Needles,11.55,24.44,40,0
-    .goto Thousand Needles,11.49,24.07,40,0
-    .goto Thousand Needles,11.16,23.21,40,0
-    .goto Thousand Needles,11.20,22.29,40,0
+    .goto 1441/1,-1200.300,-4617.700,0
+    .goto 1441/1,-1200.300,-4617.700,50,0
+    .goto 1441/1,-1209.500,-4538.400,50,0
+    .goto 1441/1,-1132.900,-4505.800,50,0
+    .goto 1441/1,-1053.200,-4554.600,50,0
+    .goto 1441/1,-977.200,-4563.400,50,0
+    .goto 1441/1,-920.300,-4635.000,50,0
+    .goto 1441/1,-979.500,-4719.800,50,0
+    .goto 1441/1,-1088.500,-4871.300,50,0
+    .goto 1441/1,-1195.600,-4825.600,50,0
+    .goto 1441/1,-1256.300,-4693.300,50,0
     >>Tuez |cRXP_ENEMY_Steelsnap|r. Dépouillez-le pour la |cRXP_LOOT_Steelsnap's Rib|r
     >>Il patrouille en sens antihoraire
     >>|cRXP_WARN_Soyez prudent, il a deux |cRXP_ENEMY_Hyènes|r qui le défendent !|r

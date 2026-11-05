@@ -2,7 +2,6 @@ local _,addon = ...
 if addon.gameVersion < 40000 or addon.player.faction == 'Horde' then return end
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
-
 #version 1
 #group RXP Cataclysm 1-80 (A) << cata
 #group RXP MoP 1-80 (A) << mop
@@ -13,9 +12,7 @@ RXPGuides.RegisterGuide([[
 #next 10-18 Darkshore
 #defaultfor !DK
 #next 10-18 Darkshore
-
 << Worgen
-
 step
     .goto 202,59.130,23.865
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Prince Liam Greymane|r

@@ -1,5 +1,5 @@
 ## Interface: 38002, 30403
-## Version: 0.8.32
+## Version: 0.8.33
 ## Title: DarkMode by |cff55d2ffD4KiR |T132115:16:16:0:0|t
 ## Notes: Darkens or colors the user interface/windows
 ## Notes-deDE: Verdunkelt oder färbt die Benutzeroberfläche/Fenster ein

@@ -1,0 +1,14 @@
+local mod	= DBM:NewMod(380, "DBM-Party-Vanilla", 2, 228)
+local L		= mod:GetLocalizedStrings()
+
+mod:SetRevision("20261019224209")
+if DBM:IsForever() then
+	mod:EnableGenericTrash()
+end
+mod:SetCreatureID(9537)
+mod:SetEncounterID(238)
+mod:SetModelID(8658)
+mod:SetZone(230)
+
+mod:RegisterCombat("combat")
+

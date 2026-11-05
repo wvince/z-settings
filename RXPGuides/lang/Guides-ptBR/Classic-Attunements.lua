@@ -5,9 +5,10 @@ RXPGuides.RegisterGuide([[
 
 << Alliance
 #group Guias de Fim de Jogo
-#subgroup Sintonias
+#subgroup Sintonizações
 #name Sintonia de Onyxia (A)
-
+#guideKind attunement
+#guideIcon rxp-icon-ony
 
 step
     #completewith next
@@ -61,7 +62,7 @@ step
 step
     .isQuestTurnedIn 4182
     .goto Redridge Mountains,29.98,44.45
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Magistrado Salomão|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Magistrado Salomão|r
     .turnin 4183 >> Entregue Os Verdadeiros Mestres
     .accept 4184 >> Aceite Os Verdadeiros Mestres
     .target Magistrate Solomon
@@ -103,7 +104,7 @@ step
 step
     .isQuestTurnedIn 4182
     .goto Redridge Mountains,29.98,44.45
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Magistrado Salomão|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Magistrado Salomão|r
     .turnin 4186 >> Entregue Os Verdadeiros Mestres
     .accept 4223 >> Aceite Os Verdadeiros Mestres
     .target Magistrate Solomon
@@ -336,14 +337,17 @@ step
     .target Haleh
 
 ]])
+
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
 
 << Horde
 #group Guias de Fim de Jogo
-#subgroup Sintonias
+#subgroup Sintonizações
 #name Sintonização de Onyxia (H)
+#guideKind attunement
+#guideIcon rxp-icon-ony
 
 step
     #completewith next
@@ -390,7 +394,7 @@ step
     .goto Badlands,5.81,47.52
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Senhor da Guerra Trincador|r
     .turnin 4903 >>Entregue O comando do Senhor da Guerra
-    .accept 4941 >>Aceite Sabedoria de Eitrigg
+    .accept 4941 >>Aceite A sabedoria de Eitrigg
     .target Warlord Goretooth
 step
     #completewith next
@@ -575,7 +579,7 @@ step
     .unitscan Scryer
 step
     #completewith next
-    .zone Swamp of Sorrows >>Vá para |cFFfa9602Pântano das Mágoas|r
+    .zone Swamp of Sorrows >>Vá ao |cFFfa9602Pântano das Mágoas|r
 step
     #loop
     .goto Swamp of Sorrows,85.85,52.28,0
@@ -785,15 +789,15 @@ step
 
 ]])
 
-
-
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
 
-#subgroup Sintonias
+#subgroup Sintonizações
 #group Guias de Fim de Jogo
 #name Sintonização com o Núcleo Derretido
+#guideKind attunement
+#guideIcon rxp-icon-mc
 
 step
     #completewith next
@@ -831,15 +835,15 @@ step
 
 ]])
 
-
-
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
 
 #group Guias de Fim de Jogo
-#subgroup Sintonias
+#subgroup Sintonizações
 #name Harmonização com o Blackwing Lair
+#guideKind attunement
+#guideIcon rxp-icon-bwl
 
 step
     #completewith next
@@ -876,8 +880,6 @@ step
 
 ]])
 
-
-
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
@@ -885,6 +887,8 @@ RXPGuides.RegisterGuide([[
 #group Guias de Fim de Jogo
 #subgroup Chaves
 #name Chave do Pico da Rocha Negra Superior
+#guideKind key
+#guideIcon rxp-icon-ring
 
 step
     #completewith next
@@ -967,8 +971,6 @@ step
 
 ]])
 
-
-
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
@@ -977,6 +979,8 @@ RXPGuides.RegisterGuide([[
 #group Guias de Fim de Jogo
 #subgroup Chaves
 #name Scolomântia Chave (A)
+#guideKind key
+#guideIcon rxp-icon-key-2
 
 step
     #sticky
@@ -1077,7 +1081,7 @@ step
 step
     .goto Western Plaguelands,42.702,84.031
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Comandante Ashlam Punhobom|r
-    .accept 5098 >> Aceite All Along the Watchtowers
+    .accept 5098 >> Aceite Você não vê as torres?
     .target Commander Ashlam Valorfist
 step
     .goto Western Plaguelands,46.681,71.135,-1
@@ -1226,8 +1230,6 @@ step
 
 ]])
 
-
-
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
@@ -1236,7 +1238,8 @@ RXPGuides.RegisterGuide([[
 #group Guias de Fim de Jogo
 #subgroup Chaves
 #name Scolomântia Chave (H)
-
+#guideKind key
+#guideIcon rxp-icon-key-2
 
 step
     #sticky
@@ -1277,7 +1280,7 @@ step
     .goto Tirisfal Glades,83.15,68.92
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Derrington|r
     .turnin 5093 >>Vire em A Chamado às Armas: The Plaguelands!
-    .accept 5096 >>Aceite Scarlet Diversions
+    .accept 5096 >>Aceite Distrações escarlate
 	.target High Executor Derrington
     .isOnQuest 5093
 step
@@ -1285,7 +1288,7 @@ step
     #requires ThoriumBars
     .goto Tirisfal Glades,83.15,68.92
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Derrington|r
-    .accept 5096 >>Aceite Scarlet Diversions
+    .accept 5096 >>Aceite Distrações escarlate
 	.target High Executor Derrington
     .isQuestTurnedIn 5093
 step
@@ -1294,7 +1297,7 @@ step
     .goto Tirisfal Glades,83.15,68.92
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Derrington|r
     .turnin 5094 >>Vire em A Chamado às Armas: The Plaguelands!
-    .accept 5096 >>Aceite Scarlet Diversions
+    .accept 5096 >>Aceite Distrações escarlate
 	.target High Executor Derrington
     .isOnQuest 5094
 step
@@ -1302,7 +1305,7 @@ step
     #requires ThoriumBars
     .goto Tirisfal Glades,83.15,68.92
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Derrington|r
-    .accept 5096 >>Aceite Scarlet Diversions
+    .accept 5096 >>Aceite Distrações escarlate
 	.target High Executor Derrington
     .isQuestTurnedIn 5094
 step
@@ -1310,12 +1313,12 @@ step
     .goto Tirisfal Glades,83.15,68.92
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Derrington|r
     .turnin 5095 >>Vire em A Chamado às Armas: The Plaguelands!
-    .accept 5096 >>Aceite Scarlet Diversions
+    .accept 5096 >>Aceite Distrações escarlate
 	.target High Executor Derrington
     .isOnQuest 5095
 step
 	.goto Western Plaguelands,26.55,56.18
-	>>Clique em |cRXP_PICK_Box of Incendiaries|r perto do fogo
+	>>Clique na |cRXP_PICK_Caixa de Explosivos|r perto da fogueira
 	.collect 12814,1,5095,1 --Flame in a Bottle (1)
     .isOnQuest 5095
 step
@@ -1323,7 +1326,7 @@ step
     #requires ThoriumBars
     .goto Tirisfal Glades,83.15,68.92
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Derrington|r
-    .accept 5096 >>Aceite Scarlet Diversions
+    .accept 5096 >>Aceite Distrações escarlate
 	.target High Executor Derrington
     .isQuestTurnedIn 5095
 step
@@ -1335,7 +1338,7 @@ step
     .goto Tirisfal Glades,83.15,68.92
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Derrington|r
     .turnin 5096 >>Entregue Scarlet Diversions
-    .accept 5098 >>Aceite All Along the Watchtowers
+    .accept 5098 >>Aceite Você não vê as torres?
 	.target High Executor Derrington
 step
     .goto Western Plaguelands,46.681,71.135,-1
@@ -1492,7 +1495,8 @@ RXPGuides.RegisterGuide([[
 #group Guias de Fim de Jogo
 #subgroup Chaves
 #name Chave das Profundezas Rocha Negra
-
+#guideKind key
+#guideIcon rxp-icon-key-3
 
 step
     #completewith next
@@ -1546,8 +1550,7 @@ step
     .turnin 3802 >> Entregue Legado dos Ferros Negros
     .isQuestComplete 3802
 
-    ]])
-
+]])
 
 RXPGuides.RegisterGuide([[
 #classic
@@ -1556,6 +1559,7 @@ RXPGuides.RegisterGuide([[
 #group Guias de Fim de Jogo
 #subgroup Chaves
 #name Chave do Martelo do Gládio Cruel
+#guideKind key
 
 step
     #completewith next
@@ -1584,7 +1588,8 @@ RXPGuides.RegisterGuide([[
 
 #group Guias de Fim de Jogo
 #name Sintonia de Naxxramas
-#subgroup Sintonias
+#guideKind attunement
+#subgroup Sintonizações
 
 step
     >>|cRXP_BUY_Coletar os seguintes itens|r:
@@ -1650,14 +1655,14 @@ step
 
 ]])
 
-
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
 
 #group Guias de Fim de Jogo
 #name Sintonia do Cânion do Demônio Caído
-#subgroup Sintonias
+#guideKind attunement
+#subgroup Sintonizações
 <<sod
 
 step

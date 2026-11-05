@@ -6,8 +6,6 @@ RXPGuides.RegisterGuide([[
 #name Ice Lance - 2 (Elwynn Forest)
 #title Ice Lance
 << Human Mage SoD
-
-
 step
     +|cRXP_WARN_You MUST be at least level 2 in order to acquire|r |T133816:0|t[Engrave Gloves - Ice Lance] |cRXP_WARN_as it is the level requirement of obtaining the|r |T133736:0|t[Comprehension Primer]
     >>|cRXP_WARN_You need to level up more before even attempting to acquire|r |T133816:0|t[Engrave Gloves - Ice Lance]
@@ -104,17 +102,13 @@ step
     .isQuestComplete 77620
     .xp <2,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Gloves
 #name Ice Lance - 2 (Dun Morogh)
 #title Ice Lance
-
 << Gnome Mage SoD
-
-
 step
     +|cRXP_WARN_You MUST be at least level 2 in order to acquire|r |T133816:0|t[Engrave Gloves - Ice Lance] |cRXP_WARN_as it is the level requirement of obtaining the|r |T133736:0|t[Comprehension Primer]
     >>|cRXP_WARN_You need to level up more before even attempting to acquire|r |T133816:0|t[Engrave Gloves - Ice Lance]
@@ -176,17 +170,13 @@ step
     .isQuestComplete 77667
     .xp <2,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Gloves
 #name Ice Lance - 2 (Durotar)
 #title Ice Lance
-
 << Troll Mage SoD
-
-
 step
     +|cRXP_WARN_You MUST be at least level 2 in order to acquire|r |T133816:0|t[Engrave Gloves - Ice Lance] |cRXP_WARN_as it is the level requirement of obtaining the|r |T133736:0|t[Comprehension Primer]
     >>|cRXP_WARN_You need to level up more before even attempting to acquire|r |T133816:0|t[Engrave Gloves - Ice Lance]
@@ -252,7 +242,6 @@ step
     .isQuestComplete 77643
     .xp <2,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
@@ -260,8 +249,6 @@ RXPGuides.RegisterGuide([[
 #name Ice Lance - 2 (Tirisfal)
 #title Ice Lance
 << Undead Mage SoD
-
-
 step
     +|cRXP_WARN_You MUST be at least level 2 in order to acquire|r |T133816:0|t[Engrave Gloves - Ice Lance] |cRXP_WARN_as it is the level requirement of obtaining the|r |T133736:0|t[Comprehension Primer]
     >>|cRXP_WARN_You need to level up more before even attempting to acquire|r |T133816:0|t[Engrave Gloves - Ice Lance]
@@ -330,17 +317,13 @@ step
     .isQuestComplete 77671
     .xp <2,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Chest
 #name Regeneration - 12 (Westfall)
 #title Regeneration
-
 << Alliance Mage SoD
-
-
 step
     +|cRXP_WARN_You should be at least level 12 in order to acquire|r |T133815:0|t[Engrave Chest - Regeneration] |cRXP_WARN_in Westfall alone|r
     .train 401767,1
@@ -404,17 +387,13 @@ step
     .use 208754
     .itemcount 208754,1 --Spell Notes: TENGI RONEERA (1)
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Chest
 #name Regeneration - 13 (Loch Modan)
 #title Regeneration
-
 << Alliance Mage SoD
-
-
 step
     +|cRXP_WARN_You should be at least level 13 in order to acquire|r |T133815:0|t[Engrave Chest - Regeneration] |cRXP_WARN_in Loch Modan alone|r
     .train 401767,1
@@ -463,17 +442,13 @@ step
     .use 208754
     .itemcount 208754,1 --Spell Notes: TENGI RONEERA (1)
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Chest
 #name Regeneration - 12 (The Barrens)
 #title Regeneration
-
 << Horde Mage SoD
-
-
 step
     +|cRXP_WARN_You should be at least level 12 in order to acquire|r |T133815:0|t[Engrave Chest - Regeneration] |cRXP_WARN_in The Barrens alone|r
     .train 401767,1
@@ -543,7 +518,6 @@ step
     .use 208754
     .itemcount 208754,1 --Spell Notes: TENGI RONEERA (1)
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
@@ -551,8 +525,6 @@ RXPGuides.RegisterGuide([[
 #name Regeneration - 12 (Silverpine Forest)
 #title Regeneration
 << Horde Mage SoD
-
-
 step
     +|cRXP_WARN_You should be at least level 12 in order to acquire|r |T133815:0|t[Engrave Chest - Regeneration] |cRXP_WARN_in Silverpine Forest alone|r
     .train 401767,1
@@ -606,17 +578,13 @@ step
     .use 208754
     .itemcount 208754,1 --Spell Notes: TENGI RONEERA (1)
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Chest
 #name Fingers of Frost - 10 (Elwynn Forest)
 #title Fingers of Frost
-
 << Alliance Mage SoD
-
-
 step
     +|cRXP_WARN_You should be at least level 10 in order to acquire|r |T133815:0|t[Engrave Chest - Fingers of Frost] |cRXP_WARN_in Elwynn Forest alone|r
     .train 401765,1
@@ -664,7 +632,6 @@ step
     .use 203753
     .itemcount 203753,1 --Spell Notes: RING SEFF OSTROF (1)
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
@@ -672,8 +639,6 @@ RXPGuides.RegisterGuide([[
 #name Fingers of Frost - 5 (Dun Morogh)
 #title Fingers of Frost
 << Alliance Mage SoD
-
-
 step
     +|cRXP_WARN_You should be at least level 5 in order to acquire|r |T133815:0|t[Engrave Chest - Fingers of Frost] |cRXP_WARN_in Dun Morogh alone|r
     .train 401765,1
@@ -736,7 +701,6 @@ step
     .use 203753
     .itemcount 203753,1 --Spell Notes: RING SEFF OSTROF (1)
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
@@ -744,8 +708,6 @@ RXPGuides.RegisterGuide([[
 #name Fingers of Frost - 8 (Tirisfal Glades)
 #title Fingers of Frost
 << Horde Mage SoD
-
-
 step
     +|cRXP_WARN_You should be at least level 8 in order to acquire|r |T133815:0|t[Engrave Chest - Fingers of Frost] |cRXP_WARN_in Tirisfal Glades alone|r
     .train 401765,1
@@ -787,7 +749,6 @@ step
     .use 203753
     .itemcount 203753,1 --Spell Notes: RING SEFF OSTROF (1)
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Horde Mage SoD
@@ -795,8 +756,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Chest
 #name Fingers of Frost - 8 (Durotar)
 #title Fingers of Frost
-
-
 step
     +|cRXP_WARN_You should be at least level 8 in order to acquire|r |T133815:0|t[Engrave Chest - Fingers of Frost] |cRXP_WARN_in Durotar alone|r
     .train 401765,1
@@ -841,17 +800,13 @@ step
     .use 203753
     .itemcount 203753,1 --Spell Notes: RING SEFF OSTROF (1)
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Chest
 #name Burnout - 6 (Dun Morogh)
 #title Burnout
-
 << Alliance Mage SoD
-
-
 step
     +|cRXP_WARN_You should be at least level 6 in order to acquire|r |T132686:0|t[Engrave Chest - Burnout] |cRXP_WARN_in Dun Morogh with another player|r
     .train 401759,1
@@ -872,16 +827,13 @@ step
     .use 203748
     .itemcount 203748,1 --Spell Notes: Burnout (1)
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Chest
 #name Burnout - 6 (Elwynn Forest)
 #title Burnout
-
 << Alliance Mage SoD
-
 step
     +|cRXP_WARN_You should be at least level 6 in order to acquire|r |T132686:0|t[Engrave Chest - Burnout] |cRXP_WARN_in Elwynn Forest with another player|r
     .train 401759,1
@@ -902,16 +854,13 @@ step
     .use 203748
     .itemcount 203748,1 --Spell Notes: Burnout (1)
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Chest
 #name Burnout - 6 (Durotar)
 #title Burnout
-
 << Horde Mage SoD
-
 step
     +|cRXP_WARN_You should be at least level 6 in order to acquire|r |T132686:0|t[Engrave Chest - Burnout] |cRXP_WARN_in Durotar with another player|r
     .train 401759,1
@@ -932,17 +881,13 @@ step
     .use 203748
     .itemcount 203748,1 --Spell Notes: Burnout (1)
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Chest
 #name Burnout - 6 (Tirisfal Glades)
 #title Burnout
-
 << Horde Mage SoD
-
-
 step
     +|cRXP_WARN_You should be at least level 6 in order to acquire|r |T132686:0|t[Engrave Chest - Burnout] |cRXP_WARN_in Tirisfal Glades with another player|r
     .train 401759,1
@@ -963,17 +908,13 @@ step
     .use 203748
     .itemcount 203748,1 --Spell Notes: Burnout (1)
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Chest
 #name Enlightenment - 8 (Elwynn Forest)
 #title Enlightenment
-
 << Alliance Mage SoD
-
-
 step
     +|cRXP_WARN_You MUST be at least level 8 in order to acquire|r |T133815:0|t[Engrave Chest - Enlightenment] |cRXP_WARN_as it is the level requirement of training|r |T136071:0|t[Polymorph]
     >>|cRXP_WARN_You need to level up more before even attempting to acquire|r |T133815:0|t[Engrave Chest - Enlightenment]
@@ -1052,16 +993,13 @@ step
     .itemcount 203749,1 --Spell Notes: Enlightenment (1)
     .xp <8,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Chest
 #name Enlightenment - 8 (Tirisfal Glades)
 #title Enlightenment
-
 << Horde Mage SoD
-
 step
     +|cRXP_WARN_You MUST be at least level 8 in order to acquire|r |T133815:0|t[Engrave Chest - Enlightenment] |cRXP_WARN_as it is the level requirement of training|r |T136071:0|t[Polymorph]
     >>|cRXP_WARN_You need to level up more before even attempting to acquire|r |T133815:0|t[Engrave Chest - Enlightenment]
@@ -1118,7 +1056,6 @@ step
     .use 203749
     .itemcount 203749,1 --Spell Notes: Enlightenment (1)
 ]])
-
 RXPGuides.RegisterGuide[[
 #classic
 #group RestedXP Rune & Books Guide
@@ -1126,12 +1063,10 @@ RXPGuides.RegisterGuide[[
 #subgroup Legs/Boots/Helm
 #name Icy Veins/Spell Power/Deep Freeze - 40 (Azeroth)
 #title Icy Veins & Spell Power & Deep Freeze
-
 --x Shiek: The guide is specifically tailored for players who have reached level 25, rather than being intended for use during the leveling process.
 --x Shiek: Although there are a total of 16 books in the game, only 10 are necessary for this particular purpose. The additional books, while not included in the current version of the guide, have been noted and could be referenced later if needed.
 --x Shiek: Furthermore, I have created distinct routes for both Horde and Alliance players. These routes are designed to be generally effective, considering the varying locations and book possessions players might have when they start following this guide.
 --QQQ WIP to here
-
 step
     .zone Stormwind City >> Travel to |cFFfa9602Stormwind.|r
     .cast 3561 >>Use [Teleport Stormwind] |cRXP_WARN_If you have|r |T134419:0|t[Rune of Teleportation]
@@ -1604,7 +1539,6 @@ step
     .bankdeposit 209850,203755,208860,209845,209849,203754,208860,209848,209843,209851,209844,215817,215822,215683,215815,215816,215820,213165,215824,216523 >> |cRXP_WARN_Deposit the remaining Books .|r
     .target Newton Burnside
 ]]
-
 RXPGuides.RegisterGuide[[
 #classic
 #group RestedXP Rune & Books Guide
@@ -1612,13 +1546,10 @@ RXPGuides.RegisterGuide[[
 #subgroup Legs/Boots/Helm
 #name Icy Veins/Spell Power/Deep Freeze - 40 (Azeroth)
 #title Icy Veins & Spell Power & Deep Freeze
-
 << Horde Mage SoD
-
 --x Shiek: The guide is specifically tailored for players who have reached level 25, rather than being intended for use during the leveling process.
 --x Shiek: Although there are a total of 16 books in the game, only 10 are necessary for this particular purpose. The additional books, while not included in the current version of the guide, have been noted and could be referenced later if needed.
 --x Shiek: Furthermore, I have created distinct routes for both Horde and Alliance players. These routes are designed to be generally effective, considering the varying locations and book possessions players might have when they start following this guide.
-
 step
     #completewith next
     .zone Orgrimmar >>Travel to |cFFfa9602Orgrimmar|r
@@ -2031,17 +1962,13 @@ step
     .target Komawa
     .target Soran
 ]]
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Legs
 #name Living Flame - 6 (Elwynn Forest)
 #title Living Flame
-
 << Alliance Mage SoD
-
-
 step
     .train 401768,1
     .goto Stormwind City,55.8,65.2,-1
@@ -2080,17 +2007,13 @@ step
 -- step
     --.engrave 7,401556 >> Open your character sheet and engrave your legs with |T135820:0|t[Living Flame.] |cRXP_WARN_highly recommended.|r
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Legs
 #name Living Flame - 7 (Dun Morogh)
 #title Living Flame
-
 << Alliance Mage SoD
-
-
 step
     .train 401768,1
     .goto Stormwind City,55.8,65.2,-1
@@ -2132,17 +2055,13 @@ step
 -- step
     --.engrave 7,401556 >> Open your character sheet and engrave your legs with |T135820:0|t[Living Flame.] |cRXP_WARN_highly recommended.|r
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Legs
 #name Living Flame - 6 (Durotar)
 #title Living Flame
-
 << Horde Mage SoD
-
-
 step
     .train 401768,1
     .goto Orgrimmar,45.6,56.8,
@@ -2183,17 +2102,13 @@ step
     .train 401768 >>|cRXP_WARN_Use|r|T134939:0|t[|cRXP_FRIENDLY_Spell Notes: MILEGIN VALF|r] |cRXP_WARN_to learn|r |T135820:0|t[Living Flame]
     .use 203752
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Legs
 #name Living Flame - 6 (Tirisfal Glades)
 #title Living Flame
-
 << Horde Mage SoD
-
-
 step
     .train 401768,1
     .goto Orgrimmar,45.6,56.8,
@@ -2238,16 +2153,13 @@ step
     .train 401768 >>|cRXP_WARN_Use|r|T134939:0|t[|cRXP_FRIENDLY_Spell Notes: MILEGIN VALF|r] |cRXP_WARN_to learn|r |T135820:0|t[Living Flame]
     .use 203752
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Gloves
 #name Arcane Blast - 18 (Ashenvale)
 #title Arcane Blast
-
 << Mage SoD
-
 step << Alliance
     .train 401757,1
     .goto Stormwind City,55.8,65.2,-1
@@ -2303,17 +2215,13 @@ step
     #optional
     .destroy 211777 >> Destroy the |T133737:0|t[Naga Manuscript]. You no longer need it
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Gloves
 #name Living Bomb - 11 (Loch Modan)
 #title Living Bomb
-
 << Alliance Mage SoD
-
-
 step
     +|cRXP_WARN_You should be at least level 11 in order to acquire|r |T236220:0|t[Living Bomb] |cRXP_WARN_in Loch Modan alone|r
     .train 415936,1
@@ -2364,17 +2272,13 @@ step
 -- step
     --.engrave 9,400613 >> Open your character sheet and engrave your gloves with |T236220:0|t[Living Bomb.]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Gloves
 #name Living Bomb - 18 (Westfall)
 #title Living Bomb
-
 << Alliance Mage SoD
-
-
 step
     .train 415936,1
     .goto Stormwind City,55.8,65.2,-1
@@ -2437,16 +2341,13 @@ step
     .train 415936 >>|T134939:0|t[|cRXP_FRIENDLY_Chewed Spell Notes|r] to learn |T236220:0|t[Living Bomb]
     .use 208854
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Gloves
 #name Living Bomb - 17 (Silverpine Forest)
 #title Living Bomb
-
 << Horde Mage SoD
-
 step
     .train 415936,1
     #completewith next
@@ -2489,16 +2390,13 @@ step
     .train 415936 >>|cRXP_WARN_You will automatically train the rune by turning in the quest|r
     .target Bethor Iceshard
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Gloves
 #name Living Bomb - 20 (The Barrens)
 #title Living Bomb
-
 << Horde Mage SoD
-
 step
     #optional
     .train 415936,1
@@ -2538,7 +2436,6 @@ step
     .goto The Barrens,44.80,81.37
     .train 415936 >>|cRXP_WARN_Cast|r |T135736:0|t[Blink] |cRXP_WARN_onto the green circles one by one. At the end, blink against the|r |cRXP_PICK_Etched Carving|r |cRXP_WARN_to train|r |T236220:0|t[Living Bomb]
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Mage SoD
@@ -2546,7 +2443,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Belt
 #title Spellfrost Bolt/Frostfire Bolt
 #name Spellfrost Bolt/Frostfire Bolt - 37 (Stranglethorn Vale)
-
 step << Alliance
     .train 415948,1
     .train 401762,1
@@ -2642,7 +2538,6 @@ step
     .use 213127
     .use 217161
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Mage SoD
@@ -2650,9 +2545,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Helmet
 #name Hot Streak - 32 (Alterac Mountains)
 #title Hot Streak
-
 -- Hot Streak
-
 step
     #optional
     .train 401749,1
@@ -2676,7 +2569,6 @@ step
     .train 401749 >> |cRXP_WARN_Use the|r |T134939:0|t[|cRXP_LOOT_Spell Notes: Hot Streak|r] |cRXP_WARN_to train|r |T236218:0|t[Hot Streak]
     .use 213113
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Mage SoD
@@ -2684,9 +2576,7 @@ RXPGuides.RegisterGuide([[
 #subgroup Belt
 #name Hot Streak - 37 (Arathi Highlands)
 #title Hot Streak
-
 -- Hot Streak
-
 step
     .train 401749,1
     #completewith next
@@ -2706,7 +2596,6 @@ step
     .train 401749 >> |cRXP_WARN_Use the|r |T134939:0|t[|cRXP_LOOT_Spell Notes: Hot Streak|r] |cRXP_WARN_to train|r |T236218:0|t[Hot Streak]
     .use 213113
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Mage SoD
@@ -2714,7 +2603,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Boots
 #name Chronostatic Preservation - 30 (Thousand Needles)
 #title Chronostatic Preservation
-
 step
     .train 416028,1
     #completewith SpellNotes
@@ -2774,16 +2662,12 @@ step
     .train 425189 >>|cRXP_WARN_Use the|r |T134939:0|t[|cRXP_FRIENDLY_Spell Notes: Chronostatic Preservation|r |cRXP_WARN_to train|r |T135729:0|t[Chronostatic Preservation]
     .use 213116
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Helmet
 #name Temporal Anomaly - 42 (Azeroth)
-
-
 << Mage SoD
-
 step
     .train 429306,1
     .zone Feralas >>Travel to Feralas
@@ -2829,15 +2713,12 @@ step << Alliance
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Garion Wendell|r |cFFfa9602in Stormwind, Mage Tower.|r
     .accept 82054
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Bracers(Balefire Bolt)
 #name Balefire Bolt - 15 (Westfall)
-
 << Mage SoD
-
 step << Alliance
     .train 429311,1
     #completewith Scroll of Spatial Mending
@@ -2895,15 +2776,12 @@ step
     .train 429311 >>|cRXP_WARN_Use the|r |T134939:0|t[|cRXP_FRIENDLY_Spell Notes: Balefire Bolt|r] |cRXP_WARN_to train|r |T135809:0|t[Balefire Bolt]
     .use 223147
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Bracers(Balefire Bolt)
 #name Balefire Bolt - 35 (Desolace)
-
 << Mage SoD
-
 step << Alliance
     .train 429311,1
     #completewith Scroll of Spatial Mending
@@ -2948,15 +2826,12 @@ step
     .train 429311 >>|cRXP_WARN_Use the|r |T134939:0|t[|cRXP_FRIENDLY_Spell Notes: Balefire Bolt|r] |cRXP_WARN_to train|r |T135809:0|t[Balefire Bolt.]
     .use 223147
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Bracers(Balefire Bolt)
 #name Balefire Bolt - 45 (Feralas)
-
 << Mage SoD
-
 step << Alliance
     .train 429311,1
     #completewith Scroll of Spatial Mending
@@ -3001,15 +2876,12 @@ step
     .train 429311 >>|cRXP_WARN_Use the|r |T134939:0|t[|cRXP_FRIENDLY_Spell Notes: Balefire Bolt|r] |cRXP_WARN_to train|r |T135809:0|t[Balefire Bolt.]
     .use 223147
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Bracers(Balefire Bolt)
 #name Balefire Bolt - 45 (Azshara)
-
 << Mage SoD
-
 step << Alliance
     .train 429311,1
     #completewith Scroll of Spatial Mending
@@ -3052,15 +2924,12 @@ step
     .train 429311 >>|cRXP_WARN_Use the|r |T134939:0|t[|cRXP_FRIENDLY_Spell Notes: Balefire Bolt|r] |cRXP_WARN_to train|r |T135809:0|t[Balefire Bolt.]
     .use 223147
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Bracers(Balefire Bolt)
 #name Balefire Bolt - 35 (Blasted Lands)
-
 << Mage SoD
-
 step << Alliance
     .train 429311,1
     #completewith Scroll of Spatial Mending
@@ -3103,15 +2972,12 @@ step
     .train 429311 >>|cRXP_WARN_Use the|r |T134939:0|t[|cRXP_FRIENDLY_Spell Notes: Balefire Bolt|r] |cRXP_WARN_to train|r |T135809:0|t[Balefire Bolt.]
     .use 223147
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Bracers(Balefire Bolt)
 #name Balefire Bolt - 15 (Barrens)
-
 << Mage SoD
-
 step << Alliance
     .train 429311,1
     #completewith Scroll of Spatial Mending
@@ -3162,15 +3028,12 @@ step
     .train 429311 >>|cRXP_WARN_Use the|r |T134939:0|t[|cRXP_FRIENDLY_Spell Notes: Balefire Bolt|r] |cRXP_WARN_to train|r |T135809:0|t[Balefire Bolt.]
     .use 223147
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Bracers(Balefire Bolt)
 #name Balefire Bolt - 15 (Darkshore)
-
 << Mage SoD
-
 step << Alliance
     .train 429311,1
     #completewith Scroll of Spatial Mending
@@ -3213,15 +3076,12 @@ step
     .train 429311 >>|cRXP_WARN_Use the|r |T134939:0|t[|cRXP_FRIENDLY_Spell Notes: Balefire Bolt|r] |cRXP_WARN_to train|r |T135809:0|t[Balefire Bolt.]
     .use 223147
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Bracers(Balefire Bolt)
 #name Balefire Bolt - 15 (Silverpine Forest)
-
 << Mage SoD
-
 step << Alliance
     .train 429311,1
     #completewith Scroll of Spatial Mending
@@ -3264,15 +3124,12 @@ step
     .train 429311 >>|cRXP_WARN_Use the|r |T134939:0|t[|cRXP_FRIENDLY_Spell Notes: Balefire Bolt|r] |cRXP_WARN_to train|r |T135809:0|t[Balefire Bolt.]
     .use 223147
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Bracers(Balefire Bolt)
 #name Balefire Bolt - 35 (Swamp of Sorrows)
-
 << Mage SoD
-
 step << Alliance
     .train 429311,1
     #completewith Scroll of Spatial Mending
@@ -3328,15 +3185,12 @@ step
     .train 429311 >>|cRXP_WARN_Use the|r |T134939:0|t[|cRXP_FRIENDLY_Spell Notes: Balefire Bolt|r] |cRXP_WARN_to train|r |T135809:0|t[Balefire Bolt.]
     .use 223147
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Bracers(Balefire Bolt)
 #name Balefire Bolt - 28 (Redridge Mountains)
-
 << Mage SoD
-
 step << Alliance
     .train 429311,1
     #completewith Scroll of Spatial Mending
@@ -3378,7 +3232,6 @@ step
     .train 429311 >>|cRXP_WARN_Use the|r |T134939:0|t[|cRXP_FRIENDLY_Spell Notes: Balefire Bolt|r] |cRXP_WARN_to train|r |T135809:0|t[Balefire Bolt.]
     .use 223147
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Mage SoD
@@ -3386,7 +3239,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Cloak
 #name Overheat - 55 (Western Plaguelands)
 #title Overheat
-
 step
     .train 401764,1
     .zone Western Plaguelands >> Travel to Western Plaguelands
@@ -3417,7 +3269,6 @@ step
     .train 401764 >> |cRXP_WARN_Use the|r |T134939:0|t[|cRXP_LOOT_Spell Notes: Overheat|r] |cRXP_WARN_to train|r |T135813:0|t[Overheat]
     .use 225691
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 << Mage SoD
@@ -3425,7 +3276,6 @@ RXPGuides.RegisterGuide([[
 #subgroup Cloak
 #name Frozen Orb - 55 (Felwood/Winterspring)
 #title Frozen Orb
-
 step
     #completewith next
     .train 440858,1
@@ -3476,16 +3326,13 @@ step
     .train 440858 >> |cRXP_WARN_Use the|r |T134939:0|t[|cRXP_LOOT_Spell Notes: Frozen Orb|r] |cRXP_WARN_to train|r |T135851:0|t[Frozen Orb]
     .use 225690
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #group RestedXP Rune & Books Guide
 #subgroup Cloak
 #name Arcane Barrage - 60 (Azeroth)
 #title Arcane Barrage
-
 << Mage SoD
-
 step
     .train 401722,1
     #completewith Necromancy101

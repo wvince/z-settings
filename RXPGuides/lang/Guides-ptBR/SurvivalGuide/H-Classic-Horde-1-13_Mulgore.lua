@@ -205,7 +205,7 @@ step << Warrior
     .goto Mulgore,44.02,76.14
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Harutt|r
     .turnin 3091 >>Entregue Bilhete
-    .train 100 >>Treine |T132337:0|t[Carga]
+    .train 100 >>Aprenda |T132337:0|t[Investida]
     .train 772 >>Aprenda |T132155:0|t[Dilacerar]
     .target Harutt Thunderhorn
     .money <0.02
@@ -396,7 +396,7 @@ step << Hunter
 step << Druid
     .goto Mulgore,45.09,75.93
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Gart|r
-    .train 467 >>Treine |T136104:0|t[Espinhos]
+    .train 467 >>Aprenda |T136104:0|t[Espinhos]
     .train 5177 >>Aprenda |T136006:0|t[Ira]
     .target Gart Mistrunner
     .money <0.02
@@ -1357,7 +1357,7 @@ step << Hunter
 step << Hunter
     .goto Mulgore,47.81,55.69
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Yaw Crina Cortante|r
-    .turnin 6061 >>Entregue Adestramento da Fera - Missão
+    .turnin 6061 >>Entregue Domando a fera
     .accept 6087 >>Aceite Adestramento da Fera - Missão
     .target Yaw Sharpmane
 step << Hunter
@@ -1373,7 +1373,7 @@ step << Hunter
 step << Hunter
     .goto Mulgore,47.81,55.69
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Yaw Crina Cortante|r
-    .turnin 6087 >>Entregue Adestramento da Fera - Missão
+    .turnin 6087 >>Entregue Domando a fera
     .accept 6088 >>Aceite Adestramento da Fera - Missão
     .target Yaw Sharpmane
 step << Hunter
@@ -1389,7 +1389,7 @@ step << Hunter
 step << Hunter
     .goto Mulgore,47.81,55.69
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Yaw Crina Cortante|r
-    .turnin 6088 >>Entregue Adestramento da Fera - Missão
+    .turnin 6088 >>Entregue Domando a fera
     .accept 6089 >>Aceite Treinamento da Fera - Missão
     .target Yaw Sharpmane
 step
@@ -1524,7 +1524,7 @@ step
     .accept 870 >>Aceite Os Charcos Esquecidos
     .target +Tonga Runetotem
     .goto The Barrens,52.26,31.93
-    .accept 844 >>Aceite A Ameaça Pinote
+    .accept 844 >>Aceite A ameaça pinote
     .target +Sergra Darkthorn
     .goto The Barrens,52.24,31.00
     .accept 869 >>Aceite Raptores ladrões
@@ -1586,14 +1586,14 @@ step << Druid
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Turak Runa Totem|r
     .goto Thunder Bluff,76.7,27.3
     .turnin 5928 >>Entregue Heeding the Call - Missão
-    .accept 5922 >>Aceite Moonglade
+    .accept 5922 >>Aceite Clareira da Lua
     .target Arch Druid Hamuul Runetotem
     .target Turak Runetotem
     .isOnQuest 5928
 step << Druid
     .goto Thunder Bluff,76.7,27.3
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Turak Runa Totem|r
-    .accept 5922 >>Aceite Moonglade
+    .accept 5922 >>Aceite Clareira da Lua
     .target Arch Druid Hamuul Runetotem
     .target Turak Runetotem
 step << Druid
@@ -1843,14 +1843,14 @@ step
 step
     #label FurlScornbrow
     .goto Durotar,49.89,40.39
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tConversar com |cRXP_FRIENDLY_Furl|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Férrano Escarnecenho|r
     .accept 791 >>Aceite Carregar Seu Peso
     .target Furl Scornbrow
 step
     .goto Durotar,51.51,41.64
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Estalajadeiro Grosk|r
     .vendor >> Venda os itens de lixo
-    .home >> Defina sua Pedra de Retorno em Razor Hill
+    .home >> Defina sua Pedra de Regresso em Monte Navalha
     .bindlocation 362
     .isQuestAvailable 815
     .group
@@ -1966,7 +1966,7 @@ step
     .target Ukor
 step
     #label SenjinPickups
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Vel'rin|r, |cRXP_FRIENDLY_Vornal|r e |cRXP_FRIENDLY_Gadrin|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Vel'rin Presa|r, |cRXP_FRIENDLY_Mestre Vornal|r e |cRXP_FRIENDLY_Mestre Gadrin|r
     .accept 817 >>Aceite Presa prática
     .target +Vel'rin Fang
     .goto Durotar,55.95,73.93
@@ -1980,7 +1980,7 @@ step
     .goto Durotar,55.94,74.72
 step
     #completewith TaillasherEggs
-    >>Mate os |cRXP_ENEMY_Pygmy Surf Crawlers|r e os |cRXP_ENEMY_Surf Crawlers|r. Saqueie-os por seu |cRXP_LOOT_Mucus|r
+    >>Mate |cRXP_ENEMY_Surfatiscos Pigmeus|r e |cRXP_ENEMY_Surfatiscos|r. Saqueie-os para pegar |cRXP_LOOT_Muco|r
     >>Mate |cRXP_ENEMY_Conchacouros Makrura|r e |cRXP_ENEMY_Estaladores Makrura|r. Saqueie-os para pegar |cRXP_LOOT_Olhos|r
     .complete 818,2 --Crawler Mucus (8)
     .mob +Pygmy Surf Crawler
@@ -2017,7 +2017,7 @@ step
     .goto Durotar,67.06,87.21,120 >>Nade para a ilha principal
 step
     #completewith MinshinasSkull
-    >>Mate os |cRXP_ENEMY_Pygmy Surf Crawlers|r e os |cRXP_ENEMY_Surf Crawlers|r. Saqueie-os por seu |cRXP_LOOT_Mucus|r
+    >>Mate |cRXP_ENEMY_Surfatiscos Pigmeus|r e |cRXP_ENEMY_Surfatiscos|r. Saqueie-os para pegar |cRXP_LOOT_Muco|r
     >>Mate |cRXP_ENEMY_Conchacouros Makrura|r e |cRXP_ENEMY_Estaladores Makrura|r. Saqueie-os para pegar |cRXP_LOOT_Olhos|r
     .complete 818,2 --Crawler Mucus (8)
     .mob +Pygmy Surf Crawler
@@ -2080,7 +2080,7 @@ step
     .mob +Voodoo Troll
 step
     #completewith next
-    >>Mate os |cRXP_ENEMY_Pygmy Surf Crawlers|r e os |cRXP_ENEMY_Surf Crawlers|r. Saqueie-os por seu |cRXP_LOOT_Mucus|r
+    >>Mate |cRXP_ENEMY_Surfatiscos Pigmeus|r e |cRXP_ENEMY_Surfatiscos|r. Saqueie-os para pegar |cRXP_LOOT_Muco|r
     >>Mate |cRXP_ENEMY_Conchacouros Makrura|r e |cRXP_ENEMY_Estaladores Makrura|r. Saqueie-os para pegar |cRXP_LOOT_Olhos|r
     >>|cRXP_WARN_Vá para as ilhas do sul se você não estiver quase terminando esta missão neste ponto. Muitos|r |cRXP_ENEMY_Rastejadores|r |cRXP_WARN_e|r |cRXP_ENEMY_Makruras|r |cRXP_WARN_podem ser encontrados lá|r
     .complete 818,2 --Crawler Mucus (8)
@@ -2119,7 +2119,7 @@ step
     .goto Durotar,57.27,79.38,60,0
     .goto Durotar,55.66,80.47,60,0
     .goto Durotar,53.8,83.14,60,0
-    >>Mate os |cRXP_ENEMY_Pygmy Surf Crawlers|r e os |cRXP_ENEMY_Surf Crawlers|r. Saqueie-os por seu |cRXP_LOOT_Mucus|r
+    >>Mate |cRXP_ENEMY_Surfatiscos Pigmeus|r e |cRXP_ENEMY_Surfatiscos|r. Saqueie-os para pegar |cRXP_LOOT_Muco|r
     >>Mate |cRXP_ENEMY_Conchacouros Makrura|r e |cRXP_ENEMY_Estaladores Makrura|r. Saqueie-os para pegar |cRXP_LOOT_Olhos|r
     .complete 818,2 --Crawler Mucus (8)
     .mob +Pygmy Surf Crawler
@@ -2195,7 +2195,7 @@ step
     .target +Cook Torka
     .goto Durotar,51.12,42.46
     .turnin 823 >>Entregue Apresente-se a Orgnil
-    .accept 806 >>Aceite Tempestades Sombrias
+    .accept 806 >>Aceite Tempestades sombrias
     .target +Orgnil Soulscar
     .goto Durotar,52.25,43.18
     .turnin 784 >>Entregue Subjuguem os Traidores
@@ -2273,7 +2273,7 @@ step
     .goto Durotar,49.60,40.04,8 >>Viaje para cima da torre em direção a Férrano Escarnecenho
 step
     .goto Durotar,49.89,40.39
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tConversar com |cRXP_FRIENDLY_Furl|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Férrano Escarnecenho|r
     .turnin 791 >>Entregue Carregue suas tralhas
     .target Furl Scornbrow
 step
@@ -2590,7 +2590,7 @@ step
     .group
 step << Hunter
     #completewith HunterTraining
-    .goto Orgrimmar,68.02,38.69,30 >> Vá para o Vale de Honra
+    .goto Orgrimmar,68.02,38.69,30 >> Vá ao Vale da Honra
 step << Hunter
     .goto Orgrimmar,66.34,14.83
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Xao'tsu|r
@@ -2648,7 +2648,7 @@ step << Tauren Warrior
     .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<9.0
 step << Shaman/Druid
     .goto Orgrimmar,47.54,68.39
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|cRXP_BUY_Converse com|r Urtharo|cRXP_FRIENDLY_|r. Compre um|cRXP_BUY_ |T135154:0|t[Cajado de Combate]|r |cRXP_BUY_dele|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|cRXP_BUY_Fale com|r |cRXP_FRIENDLY_Urtharo|r|cRXP_BUY_. Compre um|r |T135154:0|t[Cajado de Combate] |cRXP_BUY_dele|r
     .collect 854,1,813,1 --Collect Quarter Staff (1)
     .money <0.3022
     .target Urtharo
@@ -3039,7 +3039,7 @@ step << Tauren Warrior
     .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<9.0
 step << Shaman/Druid
     .goto Orgrimmar,47.54,68.39
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|cRXP_BUY_Converse com|r Urtharo|cRXP_FRIENDLY_|r. Compre um|cRXP_BUY_ |T135154:0|t[Cajado de Combate]|r |cRXP_BUY_dele|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|cRXP_BUY_Fale com|r |cRXP_FRIENDLY_Urtharo|r|cRXP_BUY_. Compre um|r |T135154:0|t[Cajado de Combate] |cRXP_BUY_dele|r
     .collect 854,1,398,1 --Collect Quarter Staff (1)
     .money <0.3022
     .target Urtharo

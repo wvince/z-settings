@@ -24,7 +24,7 @@ step
     #completewith next
     .goto Tirisfal Glades,30.04,72.78,8,0
     .goto Tirisfal Glades,30.27,72.78,8,0
-    .goto Tirisfal Glades,30.22,71.65,10 >> Sortez de la crypte vers  |cRXP_FRIENDLY_Mordo|r
+    .goto Tirisfal Glades,30.22,71.65,10 >> Sortez de la crypte vers |cRXP_FRIENDLY_Mordo|r
 step
     .goto Tirisfal Glades,30.22,71.65
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Mordo|r
@@ -344,7 +344,7 @@ step << Priest
 step << Priest
     .goto Tirisfal Glades,31.11,66.02
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Duesten|r
-    .train 2052 >> Apprenez [Soins inférieurs Rank 2]
+    .train 2052 >> Apprenez [Soins inférieurs Rang 2]
     .train 589 >> Apprenez [Mot de l'ombre : Douleur]
     .target Dark Cleric Duesten
     .money <0.02
@@ -751,7 +751,7 @@ step << Priest
     .accept 5650 >> Acceptez la quête Vêtements des ténèbres
 	.train 591 >>Apprenez [Châtiment]
     .train 17 >>Apprenez [Mot de pouvoir : Bouclier]
-    .train 2052 >>Apprenez [Soins inférieurs Rank 2]
+    .train 2052 >>Apprenez [Soins inférieurs Rang 2]
     .target Dark Cleric Beryl
 step << Mage
     .goto Tirisfal Glades,61.97,52.47
@@ -1237,7 +1237,7 @@ step
 step
     #sticky
     #completewith Bonfire
-    +Faites attention si |cRXP_ENEMY_Kolkanis|r est présent, c'est un mob rare de niveau 9. Vous allez peut-être utiliser une [Potion de soins mineure] si vous en avez
+    +Faites attention si |cRXP_ENEMY_Kolkanis|r est présent, c'est un rare de niveau 9. Vous devrez peut-être utiliser une  [Potion de soins mineure] si vous en avez une
     .unitscan Warlord Kolkanis
 step
     >>Brûlez les |cRXP_PICK_Plans d'attaque|r au sol à l'intérieur de la tente
@@ -1793,7 +1793,7 @@ step
     #completewith next
     >>Tuez |cRXP_ENEMY_Zalazane|r. Dépouillez-le pour sa |cRXP_LOOT_Tête|r
     >>Gardez votre [Horion de terre] pour quand il lance [Vague de soins] << Shaman
-    >>Gardez votre [Suriner] pour lorsqu'il lance [Vague de soins] << Rogue
+    >>Gardez votre [Suriner] pour quand il lance [Vague de soins] << Rogue
     >>Faites attention. Il peut lancer [Vague de soins]. Utilisez votre [Potion] si nécessaire << !Shaman !Rogue
     .complete 826,3 --Zalazane's Head (1)
     .mob Zalazane
@@ -1807,7 +1807,7 @@ step
     .goto Durotar,67.4,87.8
     >>Tuez |cRXP_ENEMY_Zalazane|r. Dépouillez-le pour sa |cRXP_LOOT_Tête|r
     >>Gardez votre [Horion de terre] pour quand il lance [Vague de soins] << Shaman
-    >>Gardez votre [Suriner] pour lorsqu'il lance [Vague de soins] << Rogue
+    >>Gardez votre [Suriner] pour quand il lance [Vague de soins] << Rogue
     >>Faites attention. Il peut lancer [Vague de soins]. Utilisez votre [Potion] si nécessaire << !Shaman !Rogue
     .complete 826,3 --Zalazane's Head (1)
     .mob Zalazane
@@ -1913,7 +1913,7 @@ step
     .goto Durotar,55.95,73.93
 step
     #completewith Stolensupplies
-    +Mettez dans vos barres votre [Crâne au faible rougeoiement] et votre [Colle très collante]. Gardez-les pour des situations d'urgence
+    +|cRXP_WARN_Mettez dans vos barres votre|r |T133728:0|t[Crâne au faible rougeoiement] |cRXP_WARN_et la|r |T134712:0|t[Colle très collante]. |cRXP_WARN_Gardez-les pour les situations d'urgence|r
 step
     #loop
     .goto Durotar,49.22,48.96,0
@@ -2628,7 +2628,7 @@ step << Warlock/Mage/Rogue/Priest
     .goto Undercity,27.39,30.23,35,0
     .goto Undercity,21.89,43.35,35,0
     .goto Tirisfal Glades,51.10,71.53,50,0
-    .zone Tirisfal Glades >> Sortez de Fossoyeuse par les Égouts
+    .zone Tirisfal Glades >> Quittez Undercity par les Égouts
     .zoneskip Tirisfal Glades
 step << Warlock
     #completewith next
@@ -3762,7 +3762,7 @@ step
     .goto Undercity,34.80,33.19,15,0
     .goto Undercity,27.39,30.23,35,0
     .goto Undercity,21.89,43.35,35,0
-    .goto Tirisfal Glades,51.10,71.53,50 >> Sortez de Fossoyeuse par les Égouts
+    .goto Tirisfal Glades,51.10,71.53,50 >> Quittez Undercity par les Égouts
     .zoneskip Tirisfal Glades
     .zoneskip Tirisfal Glades
 step

@@ -4,11 +4,11 @@ RXPGuides.RegisterGuide([[
 #version 7
 #group RXP TBC 生存指南 (H)
 << Horde
-#name 1-6 杜隆塔尔
+#name 1-6级 杜隆塔尔
 #version 7
 #subgroup RXP TBC Survival Guide 1-30
 #defaultfor Orc/Troll
-#next 6-10 杜隆塔尔
+#next 6-10级 杜隆塔尔
 
 step << !Orc !Troll
     #completewith next
@@ -960,7 +960,7 @@ RXPGuides.RegisterGuide([[
 #version 7
 #group RXP TBC 生存指南 (H)
 << Horde
-#name 6-10 杜隆塔尔
+#name 6-10级 杜隆塔尔
 #version 7
 #subgroup RXP TBC Survival Guide 1-30
 #defaultfor Orc/Troll
@@ -2630,7 +2630,7 @@ step << Orc Warlock
 step << Orc Warlock
     #softcore
     .goto Durotar,47.05,17.58
-    .deathskip >> 死掉并在|cRXP_FRIENDLY_灵魂医者|r 处复生
+    .deathskip >> 死亡并在 |cRXP_FRIENDLY_灵魂医者|r 处重生
     .isQuestComplete 1501
 step << Orc Warlock
     .goto Orgrimmar,48.97,92.84,50,0
@@ -2789,7 +2789,7 @@ step
     .goto Undercity,45.32,78.32,10,0
     .goto Undercity,46.26,83.91,10,0
     .goto Undercity,49.03,87.92,10,0
-    .goto Undercity,52.94,89.60,10 >>进入皇家区
+    .goto Undercity,52.94,89.60,10 >>进入皇室区
     .dungeon RFC
 step
     #label RFCPowerPickup

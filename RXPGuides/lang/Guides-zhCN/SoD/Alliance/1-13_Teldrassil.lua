@@ -110,7 +110,7 @@ step << Warrior/Rogue
     #season 2
     .goto Teldrassil,59.306,41.091
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_奇娜|r 对话
-	.vendor >> 出售垃圾物品
+	.vendor >> |cRXP_WARN_出售垃圾物品|r
     .target 奇娜
 step << Rogue
     .goto Teldrassil,59.63,38.67
@@ -197,7 +197,7 @@ step << Hunter/Rogue/Priest
     .train 402862 >> 使用 |T136222:0|t[|cRXP_FRIENDLY_忧虑助祭的回忆|r] 来训练 |T237545:0|t[苦修] << Priest
     .train 402849 >> 使用 |T135975:0|t[|cRXP_FRIENDLY_帝王消陨的预言|r] 来训练 |T136149:0|t[暗言术：灭] << Priest
     .train 410121 >> 使用 |T134419:0|t[|cRXP_FRIENDLY_奇美拉符文|r] 来学习 |T236176:0|t[奇美拉射击] << Hunter
-    .train 415423 >> 使用 |T133739:0|t[论述：蝰蛇守护|cRXP_FRIENDLY_] 来学习 |T132160:0|t[蝰蛇守护]|r] << Hunter
+    .train 415423 >> Use the |T133739:0|t[|cRXP_FRIENDLY_Treatise on Aspect of the Viper|r] to train |T132160:0|t[Heart of the Viper] << Hunter
     .train 410122 >> 使用 |T134419:0|t[|cRXP_FRIENDLY_独来独往符文|r] 来学习 |T132266:0|t[独来独往] << Hunter
     .train 416086 >> 使用 |T134419:0|t[|cRXP_FRIENDLY_短兵相接符文|r] 来学习 |T132394:0|t[近战专家] << Hunter
     .train 440563 >> 使用 |T134419:0|t[|cRXP_FRIENDLY_游击符文|r] 来学习 |T132171:0|t[一击脱离] << Hunter
@@ -328,7 +328,7 @@ step << !Hunter !Druid !Priest
     #season 2
     .goto Teldrassil,59.306,41.091
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_奇娜|r 对话
-	.vendor >> 出售垃圾物品
+	.vendor >> |cRXP_WARN_出售垃圾物品|r
     .target 奇娜
  step << NightElf Warrior
     #season 2
@@ -343,7 +343,7 @@ step << Druid/Priest
     #label DTrain4
     .goto Teldrassil,59.602,40.696
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_德林拉尔|r 对话
-    .vendor >> 出售垃圾物品
+    .vendor >> |cRXP_WARN_出售垃圾物品|r
     >>|cRXP_BUY_购买10瓶|r |T132794:0|t[清凉的泉水]
     .collect 159,10 --Collect Refreshing Spring Water (x10)
     .target 德林拉尔
@@ -409,13 +409,13 @@ step
 step << !Hunter
     .goto Teldrassil,59.306,41.091
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_奇娜|r 对话
-	.vendor >> 出售垃圾物品 << !Hunter
+	.vendor >> |cRXP_WARN_出售垃圾物品|r << !Hunter
     .target 奇娜
 step << Hunter
     #season 2
     .goto Teldrassil,59.306,41.091
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_奇娜|r 对话
-	.vendor >> 出售垃圾物品 << !Hunter
+	.vendor >> |cRXP_WARN_出售垃圾物品|r << !Hunter
 	.vendor >> |cRXP_BUY_购买3或4组|r |T132382:0|t[劣质箭] << Hunter
     .vendor >> |cRXP_BUY_购买|r |T135499:0|t|T135499:0|t[角木弯弓] |cRXP_BUY_如果还没有的话就买下它|r << Hunter
     .target 奇娜
@@ -684,8 +684,8 @@ step
     .goto Teldrassil,55.619,59.788
     .target 旅店老板凯达米尔
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_旅店老板凯达米尔|r 对话
-    .turnin 2159,2 >> 交任务 多兰纳尔的货物 << Hunter
-    .turnin 2159 >> 交任务 多兰纳尔的货物 << !Hunter
+    .turnin 2159,2 >> 交任务  多兰纳尔的货物 << Hunter
+    .turnin 2159 >> 交任务  多兰纳尔的货物 << !Hunter
     .vendor >>|cRXP_BUY_购买10瓶|T132815:0|t|cRXP_LOOT_冰镇牛奶|r 或者能买多少买多少 << Priest
     .home >> 将你的炉石绑定在多兰纳尔
 step << Warrior
@@ -903,7 +903,7 @@ step
     .goto Teldrassil,55.954,57.272
     .target 阿斯瑞达斯·熊皮
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_阿斯瑞达斯·熊皮|r 对话
-    .turnin 476 >> 交任务 瘤背熊怪的堕落
+    .turnin 476 >> 交任务  瘤背熊怪的堕落
 step << Priest
     .goto Teldrassil,55.564,56.746
     .target 劳尔娜·晨光
@@ -2507,7 +2507,7 @@ step << Rogue
     .goto Darnassus,39.72,92.68,10,0
     .goto Darnassus,36.65,85.93
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_女祭司艾茉拉|r 对话
-    .turnin 2518 >> 交任务 月神的泪水
+    .turnin 2518 >> 交任务  月神的泪水
     .target 女祭司艾茉拉
     .accept 2520 >> 接受任务 萨丝拉的祭品
 step << Rogue
@@ -2565,7 +2565,7 @@ step << !sod/!Rogue
     .goto Darnassus,39.72,92.68,10,0
     .goto Darnassus,36.65,85.93
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_女祭司艾茉拉|r 对话
-    .turnin 2518 >> 交任务 月神的泪水
+    .turnin 2518 >> 交任务  月神的泪水
     .target 女祭司艾茉拉
     .accept 2520 >> 接受任务 萨丝拉的祭品
 step << !sod/!Rogue

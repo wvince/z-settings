@@ -176,6 +176,13 @@ local function Build()
         { "Open settings", "options", "Open this page without listing the commands." },
         { "List commands", "help", "List every command in chat." },
     }
+    -- 0.7.0: settings another addon named Forever GCD left in our save:
+    -- Put back or Forget, shown only while a copy is kept (SaveGuard.lua;
+    -- nothing without the file).
+    if ns.SaveGuard then
+        ns.SaveGuard.Heading(page, { kit = Kit, title = "Forever GCD", roots = {
+            { get = function() return ForeverGCDDB end, put = function(data) ForeverGCDDB = data end } } })
+    end
     page.Help(function() return #mouse .. " controls · " .. #commands .. " commands" end,
         "What the mouse does on the target bar, how to read a flash, and the chat shortcuts.")
     page.Topic("Mouse")

@@ -111,7 +111,7 @@ step << !Hunter
 step << Human Warrior/Paladin/Rogue
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprecht mit |cRXP_FRIENDLY_Dank Drizzlecut|r
     .goto Dun Morogh,69.3,55.5
-    .train 2581 >>Erlernen Bergbau, wirkt Mineraliensuche
+    .train 2581 >>Erlernt Bergbau, wirkt Mineraliensuche
     .target Dank Drizzlecut
     .skill mining,1
 step
@@ -541,7 +541,7 @@ step << Rogue !Human
     .goto 1455,59.236,14.974,30,0
     .goto 1455,52.941,12.466,12,0
     .goto 1455,51.919,14.468,12,0
-    .goto 1455,51.438,16.000,10 >>Reisen zu |cRXP_FRIENDLY_Hulfdan Blackbeard|r innerhalb unten
+    .goto 1455,51.438,16.000,10 >>Reist zu |cRXP_FRIENDLY_Hulfdan Blackbeard|r innerhalb unten
 step << Rogue !Human
     .goto Ironforge,51.958,14.838
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprecht mit |cRXP_FRIENDLY_Hulfdan Blackbeard|r unten

@@ -37,7 +37,7 @@ local function newChar(name, realm, account, known)
     cdm = name .. "-cdm",
     chat = { [1] = { "General", 14, 0, 0, 0, 0.4, true, true, nil, false, "TOPLEFT", 10, 10, 400, 200, { "SAY", "PARTY" }, { "General" } },
              [2] = { "Combat Log", 14, 0, 0, 0, 0.4, true, true, 1, false, nil, nil, nil, nil, nil, {}, {} } },
-    addons = { DBM = true, GTFO = false, Leatrix_Plus = true, WoWCompanion = true } }
+    addons = { DBM = true, GTFO = false, Leatrix_Plus = true, SpyGodMode = true } }
 end
 
 local function serialize(v)
@@ -328,17 +328,17 @@ me.clicks = { { type = 3, actionID = 1, button = "LeftButton", modifiers = 0 }, 
 me.cvars.nameplateShowEnemies = "0"; me.cvars.NamePlateHorizontalScale = "1.4"; me.cvars.nameplateMaxDistance = "60"; me.cvars.graphicsQuality = "3"; me.cvars.enableMultiActionBars = "31"
 accA.editmode.layouts.layouts[1].systems[1].x = 77
 me.chat[3] = { "Guild", 18, 0, 0, 0, 0.6, true, true, 3, false, nil, nil, nil, nil, nil, { "GUILD" }, {} }
-me.addons = { Leatrix_Plus = false, Attune = true, Guide = true, DBM = true, BetterBlizzFrames = true, BigData = true, Weird = true, WoWCompanion = true, ["Z-Settings"] = true }
+me.addons = { Leatrix_Plus = false, Attune = true, Guide = true, DBM = true, BetterBlizzFrames = true, BigData = true, Weird = true, SpyGodMode = true, ["Z-Settings"] = true }
 me.cdm = "my-warlock-cdm"
 SVS = { DBM = "DBM_AllSavedOptions", BetterBlizzFrames = "BetterBlizzFramesDB", BigData = "BigDataDB", Weird = "WeirdDB",
-        WoWCompanion = "WoWCompanionDB", ["Z-Settings"] = "ZSettingsDB", Attune = "Attune_DB", Guide = "GuideDB" }
+        SpyGodMode = "SpyGodModeDB", ["Z-Settings"] = "ZSettingsDB", Attune = "Attune_DB", Guide = "GuideDB" }
 
 -- the friend's own setup
 accB.general = { { "Buddy macro", 9, "/wave" } }
 accB.binds[1][2] = "W"
 friend.clicks = { { type = 3, actionID = 2, button = "LeftButton", modifiers = 0 }, { type = 1, actionID = 133, button = "RightButton", modifiers = 1 } }
 friend.cvars.nameplateShowEnemies = "1"
-friend.addons = { Attune = true, Guide = true, DBM = true, BetterBlizzFrames = nil, BigData = false, Weird = false, WoWCompanion = false, ["Z-Settings"] = true, Details = true }
+friend.addons = { Attune = true, Guide = true, DBM = true, BetterBlizzFrames = nil, BigData = false, Weird = false, SpyGodMode = false, ["Z-Settings"] = true, Details = true }
 friend.addons.BetterBlizzFrames = nil  -- not installed
 friend.cdm = "friend-mage-cdm"
 
@@ -372,7 +372,7 @@ local function fire(event)
 end
 useChar(me, { DBM_AllSavedOptions = { warnings = true, bars = { size = 2 } }, BetterBlizzFramesDB = { castbar = 1 },
   BigDataDB = { blob = string.rep("x", 400000) }, Attune_DB = { toons = { Zeroshin = 1 } },
-  GuideDB = { profileKeys = { ["Zeroshin - PvP"] = "Zeroshin - PvP" }, profiles = { ["Zeroshin - PvP"] = { size = 2 } } }, WeirdDB = { f = function() end }, WoWCompanionDB = { secret = 1 } })
+  GuideDB = { profileKeys = { ["Zeroshin - PvP"] = "Zeroshin - PvP" }, profiles = { ["Zeroshin - PvP"] = { size = 2 } } }, WeirdDB = { f = function() end }, SpyGodModeDB = { secret = 1 } })
 ZSettingsDB = nil
 printed, reloads = {}, 0
 SlashCmdList.ZSETTINGS("export")
@@ -398,7 +398,7 @@ check("1 only target/menu clicks shared", #data.clicks == 1 and data.clicks[1].t
 check("1 graphics not shared", data.cvars.graphicsQuality == nil)
 check("1 local nameplate settings shared", data.cvars.NamePlateHorizontalScale == "1.4" and data.cvars.nameplateMaxDistance == "60")
 check("1 DBM settings shared", data.settings.DBM_AllSavedOptions ~= nil)
-check("1 WoWCompanion never shared", data.settings.WoWCompanionDB == nil)
+check("1 SpyGodMode never shared", data.settings.SpyGodModeDB == nil)
 check("1 oversized table left out", data.settings.BigDataDB == nil)
 check("1 unshareable table left out", data.settings.WeirdDB == nil)
 check("1 character data left out", data.settings.Attune_DB == nil)
@@ -412,7 +412,7 @@ check("1 messages repeated after the reload", said("commit and push") and said("
 check("1 messages shown once", ZSettingsDB.notice == nil)
 
 -- 2. the friend pulls the repo and imports the setup that ships with the addon
-BetterBlizzFramesDB, BigDataDB, WeirdDB, WoWCompanionDB = nil, nil, nil, nil   -- the friend's PC has none of these
+BetterBlizzFramesDB, BigDataDB, WeirdDB, SpyGodModeDB = nil, nil, nil, nil   -- the friend's PC has none of these
 Z_BUNDLE = text
 useChar(friend, { DBM_AllSavedOptions = { warnings = false } })
 friend.ZSettingsDB = nil
@@ -460,7 +460,7 @@ check("2 addon friend lacks skipped", BetterBlizzFramesDB == nil)
 check("2 friend's Cooldown Manager untouched", friend.cdm == "friend-mage-cdm")
 check("2 friend's bars untouched", next(friend.bars) == nil)
 check("2 Z-Settings stays on", friend.addons["Z-Settings"] == true)
-check("2 WoWCompanion not switched on", friend.addons.WoWCompanion == false)
+check("2 SpyGodMode not switched on", friend.addons.SpyGodMode == false)
 check("2 undo step kept for this character", friend.ZSettingsDB and type(friend.ZSettingsDB.undo) == "table" and friend.ZSettingsDB.undo["Buddy-Classic Beta PvP"] ~= nil)
 check("2 missing addon reported", said("BetterBlizzFrames"))
 -- an addon that rewrites its table at logout doesn't undo the import
@@ -1073,7 +1073,7 @@ Z_BUNDLE = nil
 
 -- 9. copying one of my characters onto another, any class, on the same game account and across accounts
 do
-  SVS = { DBM = "DBM_AllSavedOptions", Guide = "GuideDB", WoWCompanion = "WoWCompanionDB", ["Z-Settings"] = "ZSettingsDB" }
+  SVS = { DBM = "DBM_AllSavedOptions", Guide = "GuideDB", SpyGodMode = "SpyGodModeDB", ["Z-Settings"] = "ZSettingsDB" }
   SVCS = { DBM = "DBM_Char", GTFO = "GTFOChar" }
   local cAcc = newAccount()
   cAcc.general = { { "Shared", 1, "/wave" } }
@@ -1093,8 +1093,8 @@ do
   cAcc.editmode.layouts.activeLayout = 4
   src.cdm, dst.cdm = "src-cdm", "dst-cdm"
   src.chat[3] = { "Trade", 12, 0, 0, 0, 0.5, true, true, 3, false, nil, nil, nil, nil, nil, { "CHANNEL" }, {} }
-  src.addons = { DBM = true, GTFO = true, Guide = true, ["Z-Settings"] = true, WoWCompanion = true }
-  dst.addons = { DBM = true, GTFO = false, Guide = true, ["Z-Settings"] = true, WoWCompanion = false }
+  src.addons = { DBM = true, GTFO = true, Guide = true, ["Z-Settings"] = true, SpyGodMode = true }
+  dst.addons = { DBM = true, GTFO = false, Guide = true, ["Z-Settings"] = true, SpyGodMode = false }
   local guide = { profileKeys = { ["Src - R"] = "Src - R", ["Other - R"] = "Default" },
     profiles = { ["Src - R"] = { size = 5 }, Default = { size = 1 } }, char = { ["Src - R"] = { seen = 1 } } }
 
@@ -1107,7 +1107,7 @@ do
   check("9 save says what it kept", said("saved Src%-R"))
   local saved = C_EncodingUtil.DeserializeCBOR(C_EncodingUtil.DecompressString(C_EncodingUtil.DecodeBase64(db.characters["Src-R"]:sub(5))))
   check("9 save holds per-character tables", saved.charTables.DBM_Char ~= nil and saved.charTables.GTFOChar ~= nil)
-  check("9 save leaves WoWCompanion and Z-Settings out", saved.accountTables.WoWCompanionDB == nil and saved.accountTables.ZSettingsDB == nil)
+  check("9 save leaves SpyGodMode and Z-Settings out", saved.accountTables.SpyGodModeDB == nil and saved.accountTables.ZSettingsDB == nil)
 
   -- the help lists every command
   printed = {}
@@ -1136,7 +1136,7 @@ do
   check("9 UI positions copied", cem.layouts[1].systems[1].x == 40)
   check("9 source's layout selected", cem.activeLayout == 4 and dst.activeLayout == 4 and cem.layouts[2].layoutName == "Src own")
   check("9 Cooldown Manager and chat copied", dst.cdm == "src-cdm" and dst.chat[3][1] == "Trade")
-  check("9 addons switched like the source", dst.addons.GTFO == true and dst.addons.WoWCompanion == false)
+  check("9 addons switched like the source", dst.addons.GTFO == true and dst.addons.SpyGodMode == false)
   check("9 per-character addon table copied", DBM_Char.src == 1 and DBM_Char.dst == nil)
   check("9 profile copied under this character's name", GuideDB.profileKeys["Dst - R"] == "Dst - R" and GuideDB.profiles["Dst - R"].size == 5)
   check("9 character data copied", GuideDB.char["Dst - R"] and GuideDB.char["Dst - R"].seen == 1)

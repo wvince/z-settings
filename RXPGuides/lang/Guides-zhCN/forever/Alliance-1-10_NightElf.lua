@@ -10,7 +10,7 @@ RXPGuides.RegisterGuide([[
 #name 1-6级 幽影谷
 #displayname 1-7级 幽影谷 << sod
 #version 1
-#group RestedXP 永久向导 A
+#group RestedXP无限服指南（联盟）
 #subgroup 速通指南 1-20级
 --#groupid RXP-SRGCE-A1
 #defaultfor NightElf
@@ -46,7 +46,7 @@ step << Druid
     .mob 草刺野猪幼崽
 step << Druid
     #completewith next
-    +|cRXP_WARN_确保你至少有96铜币价值的垃圾装备|r，你可以把你那把能卖9铜币的法杖也算在内
+    +|cRXP_WARN_确保你至少拥有价值1银币2铜币的供应商垃圾|r，你也可以算上你的staff（商人价9铜币）
 step << !sod/Warrior
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_迪兰妮亚·银辉|r 和 |cRXP_FRIENDLY_麦利萨尔·鹿盔|r 对话
     #label GoodProtector
@@ -59,7 +59,7 @@ step << !sod/Warrior
 step << Priest
     .goto 1438/1,779.8482,10450.1295
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_德林拉尔|r 对话
-    .vendor >> 出售垃圾物品
+    .vendor >> |cRXP_WARN_出售垃圾物品|r
     >>|cRXP_BUY_购买15瓶|r |T132794:0|t[清凉的泉水]
     .collect 159,15 --Collect Refreshing Spring Water (x15)
     .target 德林拉尔
@@ -73,7 +73,7 @@ step << !Druid
 step << Warrior
     .goto 1438/1,794.92,10436.72
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_奇娜|r 对话
-	.vendor >> 出售垃圾物品
+	.vendor >> |cRXP_WARN_出售垃圾物品|r
     .target 奇娜
 step << Warrior
 	.goto 1438/1,778.07,10526.62
@@ -121,7 +121,7 @@ step << !Priest !Rogue
 	.accept 3120 >> 接受任务 绿色符记 << Druid
 step << !Hunter !Druid !Warrior
     #completewith next
-    >>在去找埃沃隆的路上击杀 |cRXP_ENEMY_草刺野猪|r
+    >>在前往埃沃隆的路上击杀 |cRXP_ENEMY_草刺野猪|r。你不必现在完成此任务
     .complete 457,2 --Kill Thistle Boar (x7)
     .mob 草刺野猪
 step << !Hunter !Druid !Warrior
@@ -146,6 +146,7 @@ step << Priest/Rogue
 	.goto 1438/1,826.03,10328.97
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_管理员伊尔萨莱恩|r 对话
     .turnin 456 >> 交任务 自然的平衡
+    .accept 457 >> 接受任务 自然的平衡
     .target 管理员伊尔萨莱恩
 	.accept 3119 >> 接受任务 神圣符记 << Priest
 step << Druid
@@ -162,7 +163,7 @@ step << Druid
     .mob 劣魔
 step << Druid
     #completewith next
-    >>在去找埃沃隆的路上击杀 |cRXP_ENEMY_草刺野猪|r
+    >>在前往埃沃隆的路上击杀 |cRXP_ENEMY_草刺野猪|r。你不必现在完成此任务
     .complete 457,2 --Kill Thistle Boar (x7)
     .mob 草刺野猪
 step << Druid
@@ -206,7 +207,7 @@ step << Warrior
 step << Priest
     .goto 1438/1,779.8482,10450.1295
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_德林拉尔|r 对话
-    .vendor >> 出售垃圾物品
+    .vendor >> |cRXP_WARN_出售垃圾物品|r
     >>|cRXP_BUY_购买最多25个|r |T132794:0|t[清凉的泉水]
     .collect 159,25 --Collect Refreshing Spring Water (x25)
     .target 德林拉尔
@@ -257,7 +258,7 @@ step
     .mob 树林蜘蛛
 step
     #completewith next
-    >>在去找小劣魔的路上击杀 |cRXP_ENEMY_草刺野猪|r
+    >>在前往格瑞尔的路上击杀 |cRXP_ENEMY_草刺野猪|r。你不必现在完成此任务
     .complete 457,2 --Kill Thistle Boar (x7)
     .mob 草刺野猪
 step << !Druid
@@ -284,7 +285,7 @@ step
     .turnin 97977 >>交任务 自然的呼唤
 step
     #completewith next
-    >>在去找埃沃隆的路上击杀 |cRXP_ENEMY_草刺野猪|r
+    >>在前往埃沃隆的路上击杀 |cRXP_ENEMY_草刺野猪|r。你不必现在完成此任务
     .complete 457,2 --Kill Thistle Boar (x7)
     .mob 草刺野猪
 step
@@ -296,14 +297,14 @@ step
 step << Priest
     .goto 1438/1,779.8482,10450.1295
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_德林拉尔|r 对话
-    .vendor >> 出售垃圾物品
+    .vendor >> |cRXP_WARN_出售垃圾物品|r
     >>|cRXP_BUY_购买最多25个|r |T132794:0|t[清凉的泉水]
     .collect 159,25 --Collect Refreshing Spring Water (x25)
     .target 德林拉尔
 step << !Priest
     .goto 1438/1,794.92,10436.72
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_奇娜|r 对话
-	.vendor >> 出售垃圾物品 << !Hunter
+	.vendor >> |cRXP_WARN_出售垃圾物品|r << !Hunter
 	.vendor >> |cRXP_BUY_购买3或4组|r |T132382:0|t[劣质箭] << Hunter
     .target 奇娜
 step
@@ -320,7 +321,7 @@ step << Hunter/Rogue
     .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<2.05
 step
     #completewith next
-    >>在去找埃沃隆的路上击杀 |cRXP_ENEMY_草刺野猪|r
+    >>在前往埃沃隆的路上击杀 |cRXP_ENEMY_草刺野猪|r。你不必现在完成此任务
     .complete 457,2 --Kill Thistle Boar (x7)
     .mob 草刺野猪
 step
@@ -409,7 +410,7 @@ step << Priest
     #completewith next
     .goto 1438/1,787.28,10438.120
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与楼上的 |cRXP_FRIENDLY_简娜·明月|r 对话
-	.vendor >> 出售垃圾物品
+	.vendor >> |cRXP_WARN_出售垃圾物品|r
     .target Janna Brightmoon
 step << Priest
 	.goto 1438/1,801.64,10458.75
@@ -450,7 +451,7 @@ RXPGuides.RegisterGuide([[
 #name 6-11级 泰达希尔
 #displayname 7-13级 泰达希尔 << SoD
 #version 1
-#group RestedXP 永久向导 A
+#group RestedXP无限服指南（联盟）
 #subgroup 速通指南 1-20级
 --#groupid RXP-SRGCE-A1
 #defaultfor NightElf
@@ -491,6 +492,8 @@ step
 step
     .goto 1438/1,882.300,9909.101
     >>在营火旁输入 |cRXP_WARN_/sit|r 表情，|cRXP_WARN_原地坐下保持1分钟|r 来完成目标
+    >>|cRXP_WARN_如果你坐下后没有获得任务奖励，放弃任务再重新接一次！|r
+    .complete 96606,1 --Sit
     .complete 96606,2 --Gain the Boosted Rest buff
 step
     .goto 1438/1,879.700,9907.601
@@ -599,7 +602,7 @@ step << Rogue
 step << Druid
     .goto 1438/1,947.57,9812.38
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_沙洛蒙|r 对话
-    >>|cRXP_BUY_如果你能负担得起（4银79铜），就购买并装备一根|r |T135145:0|t[学徒短杖] |cRXP_BUY_，不能的话就跳过这一步|r
+    >>|cRXP_BUY_购买并装备1把|r |T135145:0|t[学徒短杖]|cRXP_BUY_如果钱够(5银 4铜),如果钱不够跳过此步|r
     .collect 2495,1 --Walking Stick (1)
     .target 沙洛蒙
     .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<4.20
@@ -613,8 +616,8 @@ step
     .goto 1438/1,982.65,9802.19
     .target 旅店老板凯达米尔
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_旅店老板凯达米尔|r 对话
-    .turnin 2159,2 >> 交任务 多兰纳尔的货物 << Hunter
-    .turnin 2159 >> 交任务 多兰纳尔的货物 << !Hunter
+    .turnin 2159,2 >> 交任务  多兰纳尔的货物 << Hunter
+    .turnin 2159 >> 交任务  多兰纳尔的货物 << !Hunter
     .vendor >>|cRXP_BUY_购买10瓶|T132815:0|t|cRXP_LOOT_冰镇牛奶|r 或者能买多少买多少 << Priest
     .home >> 将你的炉石绑定在多兰纳尔
 step << Hunter
@@ -829,7 +832,7 @@ step
     .goto 1438/1,965.59,9887.58
     .target 阿斯瑞达斯·熊皮
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_阿斯瑞达斯·熊皮|r 对话
-    .turnin 476 >> 交任务 瘤背熊怪的堕落
+    .turnin 476 >> 交任务  瘤背熊怪的堕落
 step << Priest
     .goto 1438/1,985.45,9905.43
     .target 劳尔娜·晨光
@@ -1406,7 +1409,7 @@ step << Druid/Priest
     .accept 940 >> 接受任务 泰达希尔
 step << Druid/Priest
     #label xp10
-    .xp 10-900 >> 打怪直到还差900点经验达到10级（5600/6500）
+    .xp 10-870 >> 刷怪至离升10级还差870经验（5630/6500）
 step << Hunter
     #completewith xp10
     #label mist1
@@ -1608,7 +1611,7 @@ step << !Rogue
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与楼上的 |cRXP_FRIENDLY_女祭司艾茉拉|r 对话
     .accept 2518 >> 接受任务 月神的泪水
 step << Priest
-    .goto Darnassus,40.0,80.0
+    .goto 1457/1,2515.0296,9673.7323
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与楼上的 |cRXP_FRIENDLY_女祭司阿兰希雅|r 对话
     .accept 5627 >>接受任务 艾露恩之星
     .turnin 5627 >>交任务 艾露恩之星
@@ -2040,9 +2043,6 @@ step
     #loop
     .goto 1438/1,1828.600,10964.800
     >>击杀 |cRXP_ENEMY_萨丝拉|r。拾取她的 |cRXP_LOOT_丝囊|r
-    >>|cRXP_ENEMY_萨丝拉|r |cRXP_WARN_可能在3个不同地点刷新，请查看地图以获取推荐路线|r
-    >>|cRXP_WARN_沿河向北前进，先检查最东边的刷新点。在途中完成 |r|T134339:0|t[肿瘤] |cRXP_WARN_任务|r
-    >>|cRXP_WARN_如果她不在河的东侧，则在前往西侧之前完成|r |T134339:0|t[肿瘤]|cRXP_WARN_ 任务|r
     .complete 2518,1 --Collect Silvery Spinnerets (x1)
     .mob 萨丝拉
 step
@@ -2126,22 +2126,20 @@ step
     >>前去找 |cRXP_FRIENDLY_神谕之树的树皮|r
     .turnin 98398 >> 交任务 神谕之树
     .accept 940 >> 接受任务 泰达希尔
-step
+step << !Warrior --remove warrior tag if they fix the ress sickness
     #softcore
 	#completewith darn << era
     #completewith darnSoD << sod
     .deathskip >>死亡并在达纳苏斯墓地复活
     >>|cRXP_WARN_确保你在河流的西侧，否则可能会走错方向|r << sod
     .target 灵魂医者
-step
-    #hardcore
+step << Warrior --remove warrior tag if they fix the ress sickness
     #completewith next
     .goto 1457/1,2070.42,9979.310
     .zone Darnassus >> 前往达纳苏斯
-step
+step << !Warrior --remove warrior tag if they fix the ress sickness 
     #hardcore
     #completewith next
-    #season 2
     .goto 1457/1,2070.42,9979.310
     .zone Darnassus >> 前往达纳苏斯
 step << !Warrior
@@ -2267,7 +2265,7 @@ step
     .goto 1457/1,2517.99,9584.25,10,0
     .goto 1457/1,2550.48,9631.88
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_女祭司艾茉拉|r 对话
-    .turnin 2518 >> 交任务 月神的泪水
+    .turnin 2518 >> 交任务  月神的泪水
     .target 女祭司艾茉拉
     .accept 2520 >> 接受任务 萨丝拉的祭品
 step
@@ -2318,14 +2316,12 @@ step << Hunter
     >>|cRXP_WARN_你需要用它来喂养你的猫头鹰，它们只吃肉类，而黑海岸没有出售肉类的商人|r
     .collect 117,15
     .target 加伊娜
-step << Hunter/Warrior/Priest/Sod Rogue
+step << Hunter/Warrior/Priest
     .goto 1457/1,2329.19,9908.53
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_伊琳尼雅·月火|r 对话
     .skipgossipid 96881
     .train 227 >>学习法杖 << Hunter/Warrior/Priest
-    .train 265 >>学习 弩 << Sod Rogue
     >>如果你的背包里有一个法杖，请装备它 << Hunter
-    >>如果你的背包里有一把弓，就装备它 << Rogue
     .target 伊琳尼雅·月火
 step << Hunter
     #optional

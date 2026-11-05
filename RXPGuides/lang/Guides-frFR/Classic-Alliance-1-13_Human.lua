@@ -174,7 +174,7 @@ step << Warrior
     .vendor >> Vendez tout ce dont nous n'avez pas besoin
     .target +Brother Danil
     .goto Elwynn Forest,47.486,41.566
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Llane Beshere|r en bas des escaliers à l'intérieur
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Llane Beshere|r en bas des escaliers
     .train 6673 >>Apprenez [Cri de guerre]
     .target +Llane Beshere
     .goto Elwynn Forest,50.242,42.287
@@ -413,7 +413,7 @@ step << Warrior
     #xprate >1.59
     #season 0,1
     .goto Elwynn Forest,50.242,42.287
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Llane Beshere|r en bas des escaliers à l'intérieur
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Llane Beshere|r en bas des escaliers
     .turnin 3100 >> Rendez la quête Lettre simple
     .trainer >> Apprenez vos sorts de classe
     .target Llane Beshere
@@ -421,7 +421,7 @@ step << Warrior
     #xprate >1.59
     #season 2
     .goto Elwynn Forest,50.242,42.287
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Llane Beshere|r en bas des escaliers à l'intérieur
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Llane Beshere|r en bas des escaliers
     .turnin 3100 >> Rendez la quête Lettre simple
     .accept 77616 >> Acceptez la quête La Rune perdue << Human
     .trainer >> Apprenez vos sorts de classe
@@ -574,7 +574,7 @@ step << Warrior
     #xprate <1.59
     #season 0,1
     .goto Elwynn Forest,50.242,42.287
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Llane Beshere|r en bas des escaliers à l'intérieur
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Llane Beshere|r en bas des escaliers
     .turnin 3100 >> Rendez la quête Lettre simple
     .trainer >> Apprenez vos sorts de classe
     .target Llane Beshere
@@ -1038,7 +1038,7 @@ step << Rogue
     .train 400094,1
 step
     .goto 1429,57.518,48.253
-    >>Tuez |cRXP_ENEMY_Garrick Padfoot|r. Dépouillez-le pour sa |cRXP_LOOT_Tête|r
+    >>Tuez |cRXP_ENEMY_Garrick Padfoot|r. Dépouillez-le jeu pour sa |cRXP_LOOT_Tête|r
     .complete 6,1 --Collect Garrick's Head (x1)
     .mob Garrick Padfoot
 step
@@ -1413,7 +1413,7 @@ step
     .goto Elwynn Forest,41.576,69.499,0
     >>Tuez les |cRXP_ENEMY_Stonetusk Boars|r. Dépouillez-les pour leur |cRXP_LOOT_[Chunks of Boar Meat]|r
     >>Ils seront utilisés pour monter votre niveau de [Cuisine] plus tard
-    >>Vous aurez besoin d'un niveau de 10 en [Cuisine] pour une quête à Auberdine plus tard
+    >>Vous aurez besoin d'un niveau de [Cuisine] de 10 pour une quête à Auberdine plus tard
     .collect 769,10,86,1,0x20,cooking --Chunk of Boar Meat (1-10)
     .mob Stonetusk Boar
     .skill cooking,10,1 --XX Shows if cooking skill is <10
@@ -1447,7 +1447,7 @@ step << Warrior/Paladin/Rogue
     #optional
     #label RoughStone1
     #completewith NecklaceStart
-    >>Tuez les |cRXP_ENEMY_Kobold Tunnelers|r et les |cRXP_ENEMY_Kobold Miners|r. Ouvrez les |cRXP_PICK_Battered Chests|r. Ramassez les |cRXP_LOOT_[Rough Stones]|r << Warrior/Rogue
+    >>Tuez les |cRXP_ENEMY_Kobold Tunnelers|r et les |cRXP_ENEMY_Kobold Miners|r. Ouvrez les |cRXP_PICK_Battered Chests|r. Dépouillez-les pour leur |cRXP_LOOT_[Rough Stones]|r << Warrior/Rogue
     >>Tuez les |cRXP_ENEMY_Kobold Tunnelers|r et les |cRXP_ENEMY_Kobold Miners|r. Ouvrez les |cRXP_PICK_Battered Chests|r. Dépouillez-les pour leur |cRXP_LOOT_[Rough Stones]|r et leur |cRXP_LOOT_[Linen Cloth]|r << Paladin
     .collect 2835,1 --Rough Stone (1+)
     .collect 2589,1 << Paladin --Linen Cloth (1+)
@@ -1520,7 +1520,7 @@ step << Warrior/Paladin/Rogue
     #optional
     #label RoughStone2
     #completewith Lovers
-    >>Tuez les |cRXP_ENEMY_Kobold Tunnelers|r et les |cRXP_ENEMY_Kobold Miners|r. Ouvrez les |cRXP_PICK_Battered Chests|r. Ramassez les |cRXP_LOOT_[Rough Stones]|r << Warrior/Rogue
+    >>Tuez les |cRXP_ENEMY_Kobold Tunnelers|r et les |cRXP_ENEMY_Kobold Miners|r. Ouvrez les |cRXP_PICK_Battered Chests|r. Dépouillez-les pour leur |cRXP_LOOT_[Rough Stones]|r << Warrior/Rogue
     >>Tuez les |cRXP_ENEMY_Kobold Tunnelers|r et les |cRXP_ENEMY_Kobold Miners|r. Ouvrez les |cRXP_PICK_Battered Chests|r. Dépouillez-les pour leur |cRXP_LOOT_[Rough Stones]|r et leur |cRXP_LOOT_[Linen Cloth]|r << Paladin
     .collect 2835,1 --Rough Stone (1+)
     .collect 2589,1 << Paladin --Linen Cloth (1+)
@@ -1593,7 +1593,7 @@ step << Warrior/Paladin/Rogue
     #optional
     #label RoughStone3
     #completewith Exchange
-    >>Tuez les |cRXP_ENEMY_Kobold Tunnelers|r et les |cRXP_ENEMY_Kobold Miners|r. Ouvrez les |cRXP_PICK_Battered Chests|r. Ramassez les |cRXP_LOOT_[Rough Stones]|r << Warrior/Rogue
+    >>Tuez les |cRXP_ENEMY_Kobold Tunnelers|r et les |cRXP_ENEMY_Kobold Miners|r. Ouvrez les |cRXP_PICK_Battered Chests|r. Dépouillez-les pour leur |cRXP_LOOT_[Rough Stones]|r << Warrior/Rogue
     >>Tuez les |cRXP_ENEMY_Kobold Tunnelers|r et les |cRXP_ENEMY_Kobold Miners|r. Ouvrez les |cRXP_PICK_Battered Chests|r. Dépouillez-les pour leur |cRXP_LOOT_[Rough Stones]|r et leur |cRXP_LOOT_[Linen Cloth]|r << Paladin
     .collect 2835,1 --Rough Stone (1+)
     .collect 2589,1 << Paladin --Linen Cloth (1+)
@@ -2490,7 +2490,7 @@ step << !Paladin
     >>Lancez [Rénovation] et [Mot de pouvoir : Bouclier] |cRXP_WARN_puis remontez votre barre de mana à fond. Engagez les 2 |cRXP_ENEMY_Murlocs|r devant les huttes, écartez-vous, tuez-en un rapidement. Enfuyez-vous après en avoir tué un, puis tuez l'autre|r << Priest
     >>Engagez les 2 |cRXP_ENEMY_Murlocs|r devant les huttes, sortez et lancez [Métamorphone] sur l'un des deux avant de tuer l'autre. Tuez celui qui est Métamorphosé ensuite << Mage
     >>Maintenez 100 points de Rage. Engagez les 2 |cRXP_ENEMY_Murlocs|r devant les huttes, sortez et maintenez [Brise-genou] sur l'un des deux en tuant l'autre. Utilisez le [Sac de billes] sur celui que vous tuez. Enfuyez-vous de celui que vous avez semé avec [Brise-genou] après avoir tué le premier << Warrior
-    >>Engagez les 2 |cRXP_ENEMY_Murlocs|r devant les huttes, sortez et concentrez-vous sur l'un d'entre eux. Utilisez [Évasion] une fois qu'ils vous attaquent tous les deux. Il s'agit d'une bonne opportunité pour utiliser le [Sac de billes]. Enfuyez-vous une fois que vous avez tué l'un des deux << Rogue
+    >>Engagez les 2 |cRXP_ENEMY_Murlocs|r devant les huttes, écartez-vous et concentrez-vous sur l'un des deux. Utilisez [Évasion] une fois qu'ils vous attaquent tous les deux. C'est une bonne opportunité pour utiliser votre [Sac de billes]. Enfuyez-vous après avoir tué le premier << Rogue
     >>Engagez les 2  |cRXP_ENEMY_Murlocs|r devant les huttes, sortez et maintenez [Peur] sur l'un d'entre eux en boucle, en essayant de maintenir vos DoTs sur les deux << Warlock
     .turnin 45 >> Rendez la quête La destinée de Rolf
     .accept 71 >> Acceptez la quête Faire son rapport au garde Thomas
@@ -3407,7 +3407,7 @@ step
     .isQuestAvailable 6181 << Human
 step
     .goto Westfall,52.86,53.71
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Aubergiste Heather|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Innkeeper Heather|r
     >>|cRXP_BUY_Achetez-lui jusqu'à 20|r |T133918:0|t[Lutjans à longue mâchoire] |cRXP_BUY_. Cette nourriture de niveau 5 est peu coûteuse|r
     .collect 4592,20,314,1 --Longjaw Mud Snapper (20)
 	.target Innkeeper Heather
@@ -4209,7 +4209,7 @@ step
     >>Montez vos [Premiers soins] en attendant le Tram pour Ironforge si nécessaire << Rogue/Warrior/Paladin
     >>Vous aurez besoin d'un niveau de compétence en [Premiers soins] de 80 pour une quête au niveau 24 << Rogue !Dwarf
     >>Lancez [Invocation : marcheur du vide] et [Création d'une pierre de soin] en attendant le Tram pour Ironforge si nécessaire << Warlock
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Monty|r sur la plateforme du milieu du côté Ironforge dans le Tram des Profondeurs
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Monty|r sur la plateforme du milieu du Tram des Profondeurs du côté d'Ironforge
     .accept 6661 >> Acceptez la quête Chasse au rat dans les profondeurs
     .target Monty
 step
@@ -4231,7 +4231,7 @@ step
     >>Montez vos [Premiers soins] en attendant le Tram pour Ironforge si nécessaire << Rogue/Warrior/Paladin
     >>Vous aurez besoin d'un niveau de compétence en [Premiers soins] de 80 pour une quête au niveau 24 << Rogue !Dwarf
     >>Lancez [Invocation : marcheur du vide] et [Création d'une pierre de soin] en attendant le Tram pour Ironforge si nécessaire << Warlock
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Monty|r sur la plateforme du milieu du côté Ironforge dans le Tram des Profondeurs
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Monty|r sur la plateforme du milieu du Tram des Profondeurs du côté d'Ironforge
     .accept 6661 >> Acceptez la quête Chasse au rat dans les profondeurs
     .target Monty
     .zoneskip Ironforge
@@ -4649,7 +4649,7 @@ step
     .goto 1426,57.936,50.787,0
     >>Tuez les |cRXP_ENEMY_Elder Crag Boars|r. Dépouillez-les pour leur|cRXP_LOOT_[Chunks of Boar Meat]|r
     >>Ils seront utilisés pour monter votre niveau de [Cuisine] plus tard
-    >>Vous aurez besoin d'un niveau de 10 en [Cuisine] pour une quête à Auberdine plus tard
+    >>Vous aurez besoin d'un niveau de [Cuisine] de 10 pour une quête à Auberdine plus tard
     .collect 769,10,2178,1,0x20,cooking --Chunk of Boar Meat (1-10)
     .mob Elder Crag Boar
     .skill cooking,10,1 --XX Shows if cooking skill is <10
@@ -4956,7 +4956,7 @@ step
     .target Gothor Brumn
 step
     .goto Loch Modan,24.764,18.397
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez au |cRXP_FRIENDLY_Mountaineer Stormpike|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Mountaineer Stormpike|r
     >>|cRXP_WARN_N'acceptez pas encore la quête La mission de Foudrepique|r
     .turnin 353 >> Rendez la quête Livraison pour Foudrepique
     .accept 307 >> Acceptez la quête Bas les pattes !
@@ -4973,7 +4973,7 @@ step
     .goto 1426,80.583,36.040,0
     >>Tuez  les|cRXP_ENEMY_Mountain Boars|r. Dépouillez-les pour leur|cRXP_LOOT_[Chunks of Boar Meat]|r
     >>Ils seront utilisés pour monter votre niveau de [Cuisine] plus tard
-    >>Vous aurez besoin d'un niveau de 10 en [Cuisine] pour une quête à Auberdine plus tard
+    >>Vous aurez besoin d'un niveau de [Cuisine] de 10 pour une quête à Auberdine plus tard
     .collect 769,10,2178,1,0x20,cooking --Chunk of Boar Meat (1-10)
     .mob Mountain Boar
     .skill cooking,10,1 --XX Shows if cooking skill is <10
@@ -5305,7 +5305,7 @@ step << Human
     #xprate <1.59
     #label StormpikeDelivery
     .goto Loch Modan,24.77,18.40
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez au |cRXP_FRIENDLY_Mountaineer Stormpike|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Mountaineer Stormpike|r
     .turnin 307 >> Rendez la quête Bas les pattes !
     .turnin 1339 >> Rendez la quête La mission du Montagnard Foudrepique
     .accept 1338 >> Acceptez la quête La mission de Foudrepique
@@ -5315,7 +5315,7 @@ step << Human
     #xprate >1.59
     #label StormpikeDelivery
     .goto Loch Modan,24.77,18.40
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez au |cRXP_FRIENDLY_Mountaineer Stormpike|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Mountaineer Stormpike|r
     .turnin 307 >> Rendez la quête Bas les pattes !
     .turnin 1339 >> Rendez la quête La mission du Montagnard Foudrepique
     .accept 1338 >> Acceptez la quête La mission de Foudrepique << Mage/Warlock/Rogue

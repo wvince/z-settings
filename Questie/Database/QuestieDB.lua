@@ -234,9 +234,24 @@ QuestieDB.itemObjectiveFirst = LibQuestieDB.ObjectiveFirst.itemObjectiveFirst
 QuestieDB.eventObjectiveFirst = LibQuestieDB.ObjectiveFirst.eventObjectiveFirst
 QuestieDB.spellObjectiveFirst = LibQuestieDB.ObjectiveFirst.spellObjectiveFirst
 
+---Gives each entity type's first load its own frame, ahead of anything in Login Initialization
+---that reads entity IDs. In Source mode that first read compiles and corrects a whole payload:
+---it cannot yield part-way and counts against the client's script time limit, so one resume must
+---only pay for one type. In Baked mode the reads are lookups and the yields cost a few frames.
+---
+---Npc goes first because Quest's requiredRaces pass reads it, which would otherwise load both
+---types in Quest's resume.
+---@async
+function QuestieDB.PreloadEntityData()
+    for _, entity in ipairs({LibQuestieDB.Npc, LibQuestieDB.Quest, LibQuestieDB.Item, LibQuestieDB.Object}) do
+        entity.GetAllIds()
+        coroutine.yield()
+    end
+end
+
 ---Rebinds the composed ID maps. QuestieDB replaces a shared read-only map when a Correction
 ---write touches its datatype, so a retained reference can hide an added entity or keep a
----withdrawn one.
+---withdrawn one. `PreloadEntityData` has already paid for the expensive first reads.
 ---@return nil
 local function _BindEntityIdMaps()
     QuestieDB.QuestPointers = LibQuestieDB.Quest.GetAllIds(true)
@@ -536,6 +551,35 @@ function QuestieDB:GetZoneOrSortForClass(class)
 end
 
 local questTagInfoCache = {}
+local questTagRetryQueue = {}
+local questTagRetryTimer = false
+
+local function ProcessQuestTagRetry()
+    questTagRetryTimer = false
+
+    local queue = questTagRetryQueue
+    questTagRetryQueue = {}
+
+    for questId in pairs(queue) do
+        local questTagId, questTagName = QuestieCompat.GetQuestTagInfo(questId)
+
+        questTagInfoCache[questId] = {
+            questTagId,
+            questTagName,
+        }
+    end
+end
+
+local function ScheduleQuestTagRetry(questId)
+    questTagRetryQueue[questId] = true
+
+    if questTagRetryTimer then
+        return
+    end
+
+    questTagRetryTimer = true
+    C_Timer.After(1, ProcessQuestTagRetry)
+end
 
 --- Wrapper function for the GetQuestTagInfo API to correct
 --- quests that are falsely marked by Blizzard and cache the results.
@@ -543,29 +587,29 @@ local questTagInfoCache = {}
 ---@return number|nil questTagId
 ---@return string|nil questTagName
 function QuestieDB.GetQuestTagInfo(questId)
-    if questTagInfoCache[questId] then
-        return questTagInfoCache[questId][1], questTagInfoCache[questId][2]
+    local cached = questTagInfoCache[questId]
+
+    if cached then
+        return cached[1], cached[2]
     end
 
-    local questTagCorrections = _QuestieDB.questTagCorrections
-    local questTagId, questTagName
-    if questTagCorrections[questId] then
-        questTagId, questTagName = questTagCorrections[questId][1], questTagCorrections[questId][2]
-    else
-        questTagId, questTagName = QuestieCompat.GetQuestTagInfo(questId)
+    local correction = _QuestieDB.questTagCorrections[questId]
 
-        if questTagId == nil and questTagName == nil then
-            -- Retry the API call after a short delay, as the API tends to incorrectly return nil on the first call.
-            -- Doing it here asserts, we only call the API twice per quest at most.
-            C_Timer.After(1, function()
-                local retryQuestTagId, retryQuestTagName = QuestieCompat.GetQuestTagInfo(questId)
-                questTagInfoCache[questId] = {retryQuestTagId, retryQuestTagName}
-            end)
-        end
+    if correction then
+        questTagInfoCache[questId] = correction
+        return correction[1], correction[2]
     end
 
-    -- cache the result to avoid hitting the API throttling limit
-    questTagInfoCache[questId] = {questTagId, questTagName}
+    local questTagId, questTagName = QuestieCompat.GetQuestTagInfo(questId)
+
+    questTagInfoCache[questId] = {
+        questTagId,
+        questTagName,
+    }
+
+    if questTagId == nil and questTagName == nil then
+        ScheduleQuestTagRetry(questId)
+    end
 
     return questTagId, questTagName
 end

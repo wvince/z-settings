@@ -1,6 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
@@ -13,7 +12,6 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-H1
 #defaultfor Troll/Orc
 #next 6-10 Durotar
-
 step << !Orc !Troll
     #completewith next
     +|cRXP_WARN_You have selected a guide meant for Orcs and Trolls. You should choose the same starter zone that you start in|r
@@ -1095,7 +1093,6 @@ step
     .goto 1411/1,-4600.96,-603.82,25 >>Exit the Valley of Trials
     .isOnQuest 805
 ]])
-
 RXPGuides.RegisterGuide([[
 #forever
 #disabledungeons
@@ -1107,7 +1104,6 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-H1
 #defaultfor Troll/Orc
 #next 10-12 Durotar
-
 step
     .goto 1411/1,-4715.17,-599.240
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ukor|r
@@ -1966,6 +1962,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to|r |cRXP_FRIENDLY_Gar'Thok|r
     .turnin 784 >>Turn in Vanquish the Betrayers
     .turnin 830 >>Turn in The Admiral's Orders
+    .turnin 96821 >>Turn in Legging It
     .accept 825 >>Accept From The Wreckage....
     .accept 831 >>Accept The Admiral's Orders
     .target +Gar'Thok
@@ -3179,7 +3176,6 @@ step << Rogue
     .train 674 >> Train your class spells
     .target Kaplak
 ]])
-
 RXPGuides.RegisterGuide([[
 #forever
 #disabledungeons
@@ -3192,8 +3188,6 @@ RXPGuides.RegisterGuide([[
 #defaultfor Troll/Orc
 #next 10-12 Tirisfal (Orc/Troll) << !Hunter !Shaman !Tauren !Skyborne
 #next 12-17 The Barrens << Orc Hunter/Troll Hunter/Orc Shaman/Troll Shaman
-
-
 step << Shaman/Hunter
     .goto 1411/1,-4648.55,271.43
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Takrin|r
@@ -3812,8 +3806,6 @@ step
     #optional
     .abandon 816 >>Abandon Lost But Not Forgotten
 ]])
-
-
 RXPGuides.RegisterGuide([[
 #forever
 #disabledungeons
@@ -3825,7 +3817,6 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-H1
 #defaultfor !Hunter !Shaman !Tauren !Skyborne !Undead
 #next 12-14 Silverpine Forest << !Hunter !Shaman !Tauren !Skyborne !Undead
-
 step
     #completewith DeliverytoSPF
     .goto 1420/0,253.4,2234.85,80 >> Travel to Brill

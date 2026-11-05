@@ -7,7 +7,7 @@ RXPGuides.RegisterGuide([[
 #mop
 << Horde
 #name 22-27级 灰谷
-#next 27-31 北荆棘谷
+#next 27-31级 北荆棘谷
 #version 1
 --#group RXP Cataclysm (H) << cata
 
@@ -841,7 +841,7 @@ step
     .goto 63,12.77,34.20
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_穆格拉什|r 对话
     >>|cRXP_WARN_这将开始一个护送任务。小心，任务难度较高|r
-    .accept 6641,1 >> 接受任务 鞭笞者沃尔沙
+    .accept 6641,1 >> 接受任务鞭笞者沃尔沙
     .target 穆格拉什
 step
     #completewith LitLightHouse
@@ -984,7 +984,7 @@ step
 step
     .goto 63,11.57,35.30
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_达格鲁·怒锤|r 对话
-    .turnin 26890 >>交任务  阿库麦尔的精华
+    .turnin 26890 >>交任务阿库麦尔的精华
     .target Dagrun Ragehammer
 step
     #completewith HellscreamsWatchPickups
@@ -1014,7 +1014,7 @@ step
 step
     .goto 63,37.77,43.50
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_卡拉恩·阿玛卡|r 对话
-    .accept 216 >>接受任务 蓟皮熊怪的麻烦
+    .accept 216 >>接受任务蓟皮熊怪的麻烦
     .target 卡拉恩·阿玛卡
 step
     .goto 63,37.98,43.87
@@ -1632,7 +1632,7 @@ step
     #questguide
     .goto 85,53.62,78.77
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_旅店老板格雷什卡|r 对话
-    .home >>将你的炉石设置到奥格瑞玛
+    .home >>将你的炉石绑在铁炉堡
     .target 旅店老板格雷什卡
     .isQuestTurnedIn 13841
 step

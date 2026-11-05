@@ -8,7 +8,7 @@ RXPGuides.RegisterGuide([[
 #cata
 #mop
 << Horde
-#name 1-6 逐日者岛
+#name 1-6级 逐日者岛
 #next 6-10 永歌森林
 #version 1
 --#group RXP Cataclysm (H) << cata
@@ -1236,7 +1236,7 @@ step
     #xprate <1.2
     .goto Eversong Woods,54.28,70.97
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_学徒米尔维达|r 对话
-    >>|cRXP_WARN_等待剧情演出完成|r
+    >>|cRXP_WARN_等剧情结束|r
     .turnin 8487 >>交任务 被腐蚀的土地
     .timer 9,被腐蚀的土地 剧情
     .accept 8488 >>接受任务 出人意料的结果

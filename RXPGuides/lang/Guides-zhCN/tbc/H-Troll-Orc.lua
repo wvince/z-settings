@@ -3731,7 +3731,7 @@ step << !Tauren
     #softcore
     #completewith Xroads1
     .goto The Barrens,50.72,32.61
-    .deathskip >> 死掉并在|cRXP_FRIENDLY_灵魂医者|r 处复生
+    .deathskip >> 死亡并在 |cRXP_FRIENDLY_灵魂医者|r 处重生
     .subzoneskip 380
 step << !Tauren
     #hardcore
@@ -3821,7 +3821,7 @@ step << !Tauren
     #xprate <1.5
     #softcore
     #completewith PoolsTurnin
-    .deathskip >> 死掉并在|cRXP_FRIENDLY_灵魂医者|r 处复生
+    .deathskip >> 死亡并在 |cRXP_FRIENDLY_灵魂医者|r 处重生
 step << !Tauren
     #xprate <1.5
     #label FungalSporesComplete
@@ -4187,7 +4187,7 @@ step
     #softcore
     #completewith FizzleKill
     .goto Durotar,47.05,17.58
-    .deathskip >> 死掉并在|cRXP_FRIENDLY_灵魂医者|r 处复生
+    .deathskip >> 死亡并在 |cRXP_FRIENDLY_灵魂医者|r 处重生
 step
     #hardcore
     #completewith FizzleKill
@@ -4348,7 +4348,7 @@ step
     >>击杀 |cRXP_ENEMY_加祖兹|r。拾取他的 |T134085:0|t[|cRXP_LOOT_燃影之眼|r]
     >>|cRXP_WARN_使用 |T134085:0|t[|cRXP_LOOT_燃影之眼|r] 以开启任务|r
     >>|cRXP_WARN_在击杀 |r加祖兹|cRXP_ENEMY_ 后，你可以跑到洞穴内的水体中以躲避 |r|cRXP_WARN_虚空行者|r|cRXP_ENEMY_|r
-    >>|cRXP_WARN_Be careful as he is difficult. You can skip this quest if you need|r (NOT TRANSLATED IN :zhCN YET)
+    >>|cRXP_WARN_注意他比较难对付，如有需要可以跳过这个任务|r
     .collect 4903,1,832,1 --Collect Eye of Burning Shadow
     .accept 832 >>接受任务 燃影之眼
     .use 4903
@@ -4437,7 +4437,7 @@ step
 step
     #softcore
     #completewith next
-    .deathskip >> 死掉并在|cRXP_FRIENDLY_灵魂医者|r 处复生
+    .deathskip >> 死亡并在 |cRXP_FRIENDLY_灵魂医者|r 处重生
     .isQuestComplete 813 --don't want ress sickness if more Scorpids need to get killed before entering ORG
 step
     #hardcore
@@ -4508,7 +4508,7 @@ step
     #softcore
     #completewith FoundtheCure
     .goto Durotar,47.05,17.58
-    .deathskip >> 死掉并在|cRXP_FRIENDLY_灵魂医者|r 处复生
+    .deathskip >> 死亡并在 |cRXP_FRIENDLY_灵魂医者|r 处重生
 step
     #label FoundtheCure
     .goto Durotar,41.54,18.59

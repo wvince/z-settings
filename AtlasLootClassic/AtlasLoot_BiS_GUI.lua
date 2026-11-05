@@ -1133,7 +1133,7 @@ local function CreatePSAFooter()
     text:SetJustifyH("LEFT")
     text:SetJustifyV("MIDDLE")
     text:SetWordWrap(true)
-    text:SetText("PSA: Dungeons, in wich new Forever related Items have been added are now marked with the '|TInterface\\AddOns\\AtlasLootClassic\\ltn4.tga:18:18:2:0|t' Icon. Updates will occur daily, to adress any reported bugs or missing items asap. Special thanks to sadpanda!")
+    text:SetText("PSA: Dungeons, in wich new Forever related Items have been added are now marked with the '|TInterface\\AddOns\\AtlasLootClassic\\ltn4.tga:18:18:2:0|t' Icon. Updates will occur daily, to adress any reported bugs or missing items asap. Forever is now live!")
 
     footer.text = text
 

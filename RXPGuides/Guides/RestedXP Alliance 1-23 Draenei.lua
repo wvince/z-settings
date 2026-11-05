@@ -1,6 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Horde" then return end
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #tbc
@@ -999,7 +998,6 @@ step
     .goto Bloodmyst Isle,63.5,88.8
 	.zone Bloodmyst Isle >> Travel to Bloodmyst Isle
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -2254,7 +2252,6 @@ step
     .zone Darkshore >>Get onto the boat when it comes and travel to Darkshore.
 	>> Level first aid or make sharpening stones while you wait. << Warrior/Paladin
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -2569,7 +2566,6 @@ step
     .complete 945,1 --Escort Therylune
     .isOnQuest 945
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
@@ -2946,4 +2942,3 @@ step << NightElf tbc/Draenei tbc
     .goto Ironforge,76.03,50.98,30,0
     .zone Stormwind City >> Take the tram to Stormwind
 ]])
-

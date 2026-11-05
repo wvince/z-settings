@@ -1059,7 +1059,7 @@ step << Dwarf Rogue
     #optional
     #sticky
     #label AntiVenomEnd2
-    .cast 20594 >>|cRXP_WARN_Wirkt|T136225:0|t[Steingestalt],um|T136230:0|t[Berührung von Zanzil] Debuff zu entfernen|r
+    .cast 20594 >>|cRXP_WARN_Wirkt |T136225:0|t[Steingestalt], um |T136230:0|t[Berührung von Zanzil]-Debuff zu entfernen|r
     .aura -9991
 step << Rogue
     #optional

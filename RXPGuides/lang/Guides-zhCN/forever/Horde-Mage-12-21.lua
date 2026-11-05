@@ -68,8 +68,8 @@ step
     .goto 1413/1,-2595.75,-421.13
 .target 药剂师赫布瑞姆
 >>与 |cRXP_FRIENDLY_药剂师赫布瑞姆|r 对话
-    .accept 848 >>接受任务菌类孢子
-    .accept 1492 >>接受任务码头管理员迪兹维格
+    .accept 848 >>接受任务 菌类孢子
+    .accept 1492 >>接受任务 码头主管迪兹维格
 step
     #sticky
     #completewith next
@@ -198,7 +198,7 @@ step
 step
     .goto 1413/1,-3690.15,-981.90
 >>与 |cRXP_FRIENDLY_酿酒师德罗恩|r 对话
-    .turnin 819 >>交任务 老陈的空酒桶
+    .turnin 819 >>交任务  老陈的空酒桶
 .target 酿酒师德罗恩
     .accept 821 >>接受任务 老陈的空酒桶
 step
@@ -511,11 +511,11 @@ step
 >>与 |cRXP_FRIENDLY_麦伯克·米希瑞克斯|r 对话
     .accept 1069 >> 接受任务深苔蜘蛛的卵
 step
-    >>拾取箱子中的物品
+    >>拾取箱子
     .goto 1413/1,-3821.88,-1711.58
     .complete 888,2 --Telescopic Lens (1)
 step
-    >>拾取箱子中的物品
+    >>拾取箱子
     .goto 1413/1,-3720.55,-1738.60
 step
     #sticky
@@ -610,7 +610,7 @@ step
 >>与 |cRXP_FRIENDLY_瑟格拉·黑棘|r 对话
     .turnin 905 >>交任务  在迅猛龙的巢穴里
 .target 瑟格拉·黑棘
-    .accept 3261 >>接受任务 乔恩·星眼
+    .accept 3261 >>接受任务 [DEPRECATED in 4.x] 乔恩·星眼
 step
     .goto 1413/1,-2666.68,-481.94--??
 >>与 |cRXP_FRIENDLY_图加·符文图腾|r 对话
@@ -698,9 +698,9 @@ step
 step
     .goto 1413/1,-954.15,-272.49
 >>与 |cRXP_FRIENDLY_希雷斯·碎石|r 对话
-    .turnin 1061 >> 交任务  石爪之灵
+    .turnin 1061 >> 交任务石爪之灵
 .target 希雷斯·碎石
-    .accept 1062 >> 接受任务地精侵略者
+    .accept 1062 >> 接受任务 地精侵略者
 .target 玛卡巴·扁蹄
 >>与 |cRXP_FRIENDLY_玛卡巴·扁蹄|r 对话
     .accept 6548 >> 接受任务 为我的村庄复仇
@@ -734,7 +734,7 @@ step
 >>与 |cRXP_FRIENDLY_玛卡巴·扁蹄|r 对话
     .turnin 6548 >> 交任务  为我的村庄复仇
 .target 玛卡巴·扁蹄
-    .accept 6629 >> 接受任务杀死格鲁迪格·黑云
+    .accept 6629 >> 接受任务 杀死格鲁迪格·黑云
 step
     >>从西侧的小路进入村庄。在开始里面的任务之前，确保先击杀全部6个蛮兵。击杀主帐篷前的格鲁迪格
     .goto 1442/1,-255.52,93.5,60,0
@@ -755,7 +755,7 @@ step
     .goto 1442/1,-240.87,-180.03
 .target 辛吉拉
 >>与 |cRXP_FRIENDLY_辛吉拉|r 对话
-    .accept 6461 >> 接受任务盗窃的蜘蛛
+    .accept 6461 >> 接受任务 盗窃的蜘蛛
 step
     #sticky
     #label deepmossegg
@@ -901,7 +901,7 @@ step
     .goto 1413/1,-3690.15,-981.90
 .target 酿酒师德罗恩
 >>与 |cRXP_FRIENDLY_酿酒师德罗恩|r 对话
-    .turnin 821 >>交任务 老陈的空酒桶
+    .turnin 821 >>交任务  老陈的空酒桶
 step
     .goto 1413/1,-3771.22,-894.07
     .fly Crossroads >>飞往十字路口
@@ -910,8 +910,8 @@ step
 >>与 |cRXP_FRIENDLY_图加·符文图腾|r 对话
     .turnin 880 >>交任务  变异的生物
 .target 图加·符文图腾
-    .accept 1489 >>接受任务哈缪尔·符文图腾
-    .accept 3301 >>接受任务茉拉·符文图腾
+    .accept 1489 >>接受任务 哈缪尔·符文图腾
+    .accept 3301 >>接受任务 茉拉·符文图腾
 step
     .goto 1413/1,-2646.42,-522.48
 .target 曼科里克
@@ -941,7 +941,7 @@ step
 step
     .goto 1413/1,-1896.55,-2387.20
 >>与 |cRXP_FRIENDLY_碎牙|r 对话
-    .turnin 878 >>交任务  野猪人的内战
+    .turnin 878 >>交任务野猪人的内战
 .target 碎牙
     .accept 5052 >>接受任务 阿迦玛甘的血岩碎片
     .turnin 5052 >>交任务  阿迦玛甘的血岩碎片
@@ -1032,14 +1032,14 @@ step
 >>与 |cRXP_FRIENDLY_梅洛·石蹄|r 对话
     .turnin 1130 >>交任务 梅洛的关注
 .target 梅洛·石蹄
-    .accept 1131 >>接受任务钢齿土狼
+    .accept 1131 >>接受任务 钢齿土狼
 step
  	>>进入幻象之池
 	.goto 1456/1,202.5,-1058.75,30,0
 	.goto 1456/1,276.6,-996.120
 .target 药剂师扎玛
 >>与 |cRXP_FRIENDLY_药剂师扎玛|r 对话
-    .turnin 853 >> 交任务药剂师扎玛
+    .turnin 853 >> 交任务  药剂师扎玛
 step
     .goto 1456/1,254.06,-995.78
     .trainer >> 训练你的职业技能
@@ -1062,18 +1062,18 @@ step
 >>与 |cRXP_FRIENDLY_希雷斯·碎石|r 对话
     .turnin 1062 >>交任务地精侵略者
 >>与 |cRXP_FRIENDLY_玛卡巴·扁蹄|r 对话
-    .turnin 6629 >>交任务  杀死格鲁迪格·黑云
+    .turnin 6629 >>交任务杀死格鲁迪格·黑云
     .turnin 6523 >>交任务保护卡雅
 .target 玛卡巴·扁蹄
     .accept 6401 >>接受任务卡雅还活着
 .target 希雷斯·碎石
-    .accept 1063 >>接受任务 巫婆长老
+    .accept 1063 >>接受任务巫婆长老
 --    .accept 1068 >> Accept Shredding Machines
 step
     .goto 1442/1,-235.98,-180.03
 .target 辛吉拉
 >>与 |cRXP_FRIENDLY_辛吉拉|r 对话
-    .turnin 6461 >>交任务盗窃的蜘蛛
+    .turnin 6461 >>交任务  盗窃的蜘蛛
 step
     .goto 1442/1,365.2,878.29
 .target 菲兹克斯
@@ -1093,7 +1093,7 @@ step
 step
     .goto 1456/1,-213.96,-1065.010
 >>与 |cRXP_FRIENDLY_玛加萨·恐怖图腾|r 对话
-    .turnin 1063 >> 交任务巫婆长老
+    .turnin 1063 >> 交任务  巫婆长老
 .target 玛加萨·恐怖图腾
     .accept 1064 >> 接受任务 被遗忘者的援助
 step

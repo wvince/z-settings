@@ -183,7 +183,7 @@ step
 	#completewith next
 	.goto Azuremyst Isle,79.987,47.117
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Aurok|r
-	.vendor >> Lixo Comerciante
+	.vendor >> Venda os lixos
     .target Aurok
 step << Mage
 	.goto Azuremyst Isle,79.582,48.762
@@ -277,7 +277,7 @@ step << Warrior
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Kore|r
     .accept 9289 >> Aceite Treinamento de Guerreiro
 	.turnin 9289 >> Entregue Treinamento de Guerreiro
-    .train 100 >> Aprenda |T132337:0|t[carga]
+    .train 100 >> Aprenda |T132337:0|t[Investida]
     .train 772 >> Aprenda |T132155:0|t[Dilacerar]
     .target Kore
 step << Hunter
@@ -306,7 +306,7 @@ step << Shaman/Hunter
 	#completewith next
 	.goto Azuremyst Isle,79.188,50.928
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Mura|r
-	.vendor >> Lixo Comerciante
+	.vendor >> Venda os lixos
     >>|cRXP_BUY_Compre 5 pacotes de|r |T132382:0|t[Rough Flechas] |cRXP_BUY_dela|r << Hunter
     .collect 2512,1000 << Hunter --Rough Arrow (1000)
     .target Mura
@@ -366,7 +366,7 @@ step
 	#completewith SpareParts
 	.goto Azuremyst Isle,79.987,47.117
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Aurok|r
-	.vendor >> Lixo Comerciante
+	.vendor >> Venda os lixos
     .target Aurok
 step
     .isQuestComplete 9283
@@ -1152,7 +1152,7 @@ step << Hunter
 step << Hunter
     .goto Azuremyst Isle,24.183,54.341
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Caçadora Kella Arconyx|r
-    .turnin 9591 >> Entregue Domar a Fera - Missão
+    .turnin 9591 >> Entregue Domando a fera
     .accept 9592 >> Aceite Domando a Fera
     .target Huntress Kella Nightbow
 step
@@ -1171,7 +1171,7 @@ step << Hunter
 step << Hunter
     .goto Azuremyst Isle,24.183,54.341
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Caçadora Kella Arconyx|r
-    .turnin 9592 >> Entregue Domar a Fera - Missão
+    .turnin 9592 >> Entregue Domando a fera
     .accept 9593 >> Aceite Domando a Fera
     .target Huntress Kella Nightbow
 step << Hunter
@@ -1183,7 +1183,7 @@ step << Hunter
 step << Hunter
     .goto Azuremyst Isle,24.183,54.341
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Caçadora Kella Arconyx|r
-    .turnin 9593 >> Entregue Domar a Fera - Missão
+    .turnin 9593 >> Entregue Domando a fera
     .accept 9675 >> Aceite Treinamento de Feras
     .target Huntress Kella Nightbow
 step << Hunter
@@ -1838,7 +1838,7 @@ step << Paladin
 	.trainer >> Treine suas magias de classe
 step
     .isOnQuest 9581,9663
-	.hs >> Use a Pedra de Regresso para O Entreposto Rubro
+	.hs >> Usar Pedra de Regresso para Vigília Rubra
     .cooldown item,6948,>2,1
 step
 	.isOnQuest 9581,9663
@@ -2046,7 +2046,7 @@ step
 step
     #optional
     .isOnQuest 9648,9594,9567,9629
-	.hs >> Use a Pedra de Regresso para O Entreposto Rubro
+	.hs >> Usar Pedra de Regresso para Vigília Rubra
     .cooldown item,6948,>2,1
 step
     #completewith next
@@ -2530,7 +2530,7 @@ step
     .accept 9606 >> Aceite Retornar para Topher Loaal
 step
     .isOnQuest 9606,9699
-	.hs >> Use a Pedra de Regresso para O Entreposto Rubro
+	.hs >> Usar Pedra de Regresso para Vigília Rubra
     >>|cRXP_BUY_Compre comida/água se necessário|r << !Warrior !Rogue
 	>>|cRXP_BUY_Compre comida se necessário|r << Warrior/Rogue
     .cooldown item,6948,>2,1
@@ -3173,7 +3173,7 @@ step
     .complete 9748,1 --Collect Bloodmyst Water Sample (x1)
 step
     .isOnQuest 9748,9669,9741,9711
-    .hs >> Use a Pedra de Regresso para O Entreposto Rubro
+    .hs >> Usar Pedra de Regresso para Vigília Rubra
     >>|cRXP_BUY_Compre comida/água se necessário|r << !Warrior !Rogue
 	>>|cRXP_BUY_Compre comida se necessário|r << Warrior/Rogue
     .cooldown item,6948,>2,1
@@ -3344,7 +3344,7 @@ step << Shaman/Hunter/Priest/Mage/Warrior
 step << Shaman
     .goto The Exodar,32.450,23.996
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Sulaa|r
-    .accept 9502 >> Aceite Chamado da Água
+    .accept 9502 >> Aceite Clamor da água
     .trainer >> Treine suas magias de classe
     .target Sulaa
 step << Shaman
@@ -3356,7 +3356,7 @@ step << Shaman
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Clarividente Nobambo|r
     >>|cRXP_FRIENDLY_Clarividente Nobambo|r |cRXP_WARN_patrulha levemente|r
     .turnin 9502 >> Entregue Clamor da água
-    .accept 9501 >> Aceite Chamado da Água
+    .accept 9501 >> Aceite Clamor da água
     .target Farseer Nobundo
 step << Shaman
     #completewith next
@@ -3376,7 +3376,7 @@ step << Shaman
     .goto Bloodmyst Isle,32.302,16.198
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tConverse com |cRXP_FRIENDLY_Aquos|r submerso
     .turnin 9501 >> Entregue Clamor da água
-    .accept 9503 >> Aceite Chamado da Água
+    .accept 9503 >> Aceite Clamor da água
     .target Aqueous
 step << Shaman
     #loop
@@ -3408,7 +3408,7 @@ step << Shaman
     .goto Bloodmyst Isle,32.302,16.198
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tConverse com |cRXP_FRIENDLY_Aquos|r submerso
     .turnin 9503 >> Entregue Clamor da água
-    .accept 9504 >> Aceite Chamado da Água
+    .accept 9504 >> Aceite Clamor da água
     .target Aqueous
 step << Shaman
 	#completewith ShamFlyExo
@@ -4543,7 +4543,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_a Raene Correlobos|r
     .turnin 10752 >> Entregue em Rumo a Vale Gris
     .accept 1054 >> Aceite Expurgo a Ameaça
-    .accept 991 >> Aceite A Purificação de Raene
+    .accept 991 >> Aceite a Purificação de Raene
     .target Raene Wolfrunner
 step
     .goto Ashenvale,36.99,49.22
@@ -4629,7 +4629,7 @@ step
 .dungeon WC
     #completewith EnterWC
     >>Mate todos os tipos de criaturas |cRXP_ENEMY_Desviantes|r. Saqueie-as para obter seus |cRXP_LOOT_Pelegos Anormal|r
-    >>Isso pode ser concluído DENTRO e FORA das Cavernas do Lamento
+    >>Isso pode ser concluído DENTRO e FORA da Caverna Ululante
     .complete 1486,1 -- Deviate Hide (20)
     .isOnQuest 1486
 step
@@ -4645,7 +4645,7 @@ step
     .goto 1414/1,-2003.0622,-656.5599
     >>Mate |cRXP_ENEMY_Maluc Insano|r. Saqueie-o para obter o |cRXP_LOOT_Xerez de 99 Anos|r
     >>|cRXP_ENEMY_Maluc Insano|r pode surgir em alguns locais
-    >>Esta missão é concluída FORA das Cavernas do Lamento
+    >>Esta missão é concluída FORA da Caverna Ululante
     .complete 959,1 -- 99-Year-Old Port (1)
     .isOnQuest 959
     .mob Mad Magglish
@@ -4653,7 +4653,7 @@ step
 .dungeon WC
     #label EnterWC
     .goto 1414/1,-2205.4612,-742.4261
-    +Entre na Caverna Ululante
+    +Entre nas Cavernas do Lamento
     .zoneskip 1414,1 -- similar to stockades, no subzone for WC
 step
 .dungeon WC
@@ -4695,7 +4695,7 @@ step
 step
 .dungeon WC
     >>Mate todos os tipos de criaturas |cRXP_ENEMY_Desviantes|r. Saqueie-as para obter seus |cRXP_LOOT_Pelegos Anormal|r
-    >>Isso pode ser concluído DENTRO e FORA das Cavernas do Lamento
+    >>Isso pode ser concluído DENTRO e FORA da Caverna Ululante
     .complete 1486,1 -- Deviate Hide (20)
     .isOnQuest 1486
 step
@@ -4853,7 +4853,7 @@ step
 	.target Teronis' Corpse
     .goto Ashenvale,20.31,42.33
     .turnin 991 >> Entregue Purificação de Raene
-    .accept 1023 >> Aceite A Purificação de Raene
+    .accept 1023 >> Aceite a Purificação de Raene
 step
     .goto Ashenvale,20.41,43.82,50,0
     .goto Ashenvale,19.43,42.09,50,0
@@ -5335,7 +5335,7 @@ step << skip --logout skip Draenei
 	>>Entre na caverna dos troggs no sudeste. Faça um skip de logout
     .goto Dun Morogh,70.63,56.70,60,0
     .goto Dun Morogh,70.60,54.86
-	.link https://www.youtube.com/watch?v=yQBW3KyguCM >> |cRXP_WARN_CLIQUE AQUI para referência|r
+	.link https://www.youtube.com/watch?v=yQBW3KyguCM >> CLIQUE AQUI para referência
 	.zone Ironforge >> Desconecte-se e pule esta etapa ou viaje para Altaforja
 step << Draenei
 #xprate >1.49

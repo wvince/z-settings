@@ -7,7 +7,7 @@ RXPGuides.RegisterGuide([[
 #group RXP MoP 1-80 (A) << mop
 #cata
 #mop
-#name 1-6 Shadowglen
+#name 1-6 Umbravale
 #next 6-10 Teldrassil
 #defaultfor NightElf
 <<Alliance
@@ -27,7 +27,7 @@ step
 step
     .goto 460,45.62,74.56
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Ilthalaine|r
-    .turnin 28713 >>Entregue O Equilíbrio da Natureza
+    .turnin 28713 >>Entregue O equilíbrio da natureza
     .accept 28714 >>Aceite A Corrupção do Limo Vil
 	.target Ilthalaine
 step
@@ -124,7 +124,7 @@ step << Mage
     .goto 1438/1,793.29999,10397.10059,-1
     .goto 1438/1,787.40002,10393.00000,-1
     .goto 1438/1,781.90002,10389.90039,-1
-    >>|cRXP_WARN_Use|r |T135812:0|t[Bola de Fogo] |cRXP_WARN_no |cRXP_ENEMY_Boneco de Treinamento|r até obter um|r |T135731:0|t[Mísseis Arcanos!] |cRXP_WARN_proc, depois lance|r |T136096:0|t[Mísseis Arcanos]|cRXP_WARN_. Repita isto duas vezes|r
+    >>|cRXP_WARN_Lance|r |T135812:0|t[Bola de Fogo] |cRXP_WARN_no |cRXP_ENEMY_Boneco de Treinamento|r até você obter um|r |T135731:0|t[Mísseis Arcanos!] |cRXP_WARN_proc, depois lance|r |T136096:0|t[Mísseis Arcanos]|cRXP_WARN_. Repita isto duas vezes|r
     .complete 26940,1 << cata -- Practice Arcane Missiles (1)
     .complete 26940,2 << !cata -- Practice Arcane Missiles (1)
     .mob Training Dummy
@@ -147,7 +147,7 @@ step << Warrior
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Alyissia|r
     .turnin 3116 >> Entregue O Selo Simples
     .accept 26945 >> Aceite O Aprendizado de Novas Técnicas
-	.train 100 >> Treine |T132337:0|t[Carga] << cata
+	.train 100 >> Aprenda |T132337:0|t[Investida] << cata
     .target Alyissia
 step << Warrior
     .goto 1438/1,808.79999,10460.79980
@@ -250,7 +250,7 @@ step
     .goto 460,42.49,50.47
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Dantaria Clarargêntea|r
     .turnin 28724 >>Entregue O Antídoto de Iverron
-    .accept 28725 >>Aceite A Protetora dos Bosques
+    .accept 28725 >>Aceite O Protetor da Floresta
 	.target Dentaria Silverglade
 step
 	#completewith next
@@ -1037,7 +1037,7 @@ step << Warrior
     .goto 89,56.327,52.547
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Ariyell Caelumbra|r
     >>|cRXP_BUY_Compre um|r |T135350:0|t[Espadão] |cRXP_BUY_dela|r
-    >>|cRXP_WARN_Alternatively, check the Auction House for something better or cheaper|r
+    >>|cRXP_WARN_Alternativamente, verifique a Casa de Leilões por algo melhor ou mais barato|r
     .collect 1198,1 -- Claymore (1)
     .money <0.2142
     .itemStat 16,QUALITY,<7
@@ -1047,7 +1047,7 @@ step << Rogue
     .goto 89,56.327,52.547
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Ariyell Caelumbra|r
     >>|cRXP_BUY_Compre um|r |T135346:0|t[Alfanje] |cRXP_BUY_dela|r
-    >>|cRXP_WARN_Alternatively, check the Auction House for something better or cheaper|r
+    >>|cRXP_WARN_Alternativamente, verifique a Casa de Leilões por algo melhor ou mais barato|r
     .collect 851,1 -- Cutlass (1)
     .money <0.1618
     .itemStat 16,QUALITY,<7
@@ -1059,7 +1059,7 @@ step << Rogue
     .goto 89,56.327,52.547
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Ariyell Caelumbra|r
     >>|cRXP_BUY_Compre um|r |T132402:0|t[Machadinha] |cRXP_BUY_dela|r
-    >>|cRXP_WARN_Alternatively, check the Auction House for something better or cheaper|r
+    >>|cRXP_WARN_Alternativamente, verifique a Casa de Leilões por algo melhor ou mais barato|r
     .collect 853,1 -- Hatchet (1)
     .money <0.1927
     .itemStat 16,QUALITY,<7
@@ -1071,7 +1071,7 @@ step << Hunter
     .goto 89,56.327,52.547
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Ariyell Caelumbra|r
     >>|cRXP_BUY_Compre um|r |T135499:0|t[Arco Recurvo Laminado] |cRXP_BUY_dela|r
-    >>|cRXP_WARN_Alternatively, check the Auction House for something better or cheaper|r
+    >>|cRXP_WARN_Alternativamente, verifique a Casa de Leilões por algo melhor ou mais barato|r
     .collect 2507,1 --Collect Laminated Recurve Bow (1)
     .money <0.1402
     .itemStat 18,QUALITY,<7

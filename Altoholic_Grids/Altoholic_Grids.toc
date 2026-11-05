@@ -1,0 +1,20 @@
+## Interface: 16001
+## Title: Altoholic_Grids
+## IconTexture: Interface\Icons\inv_drink_13
+
+## Notes: Altoholic's Grids Tab
+## Author: Thaoky (EU-Marécages de Zangar)
+## Version: 1.60.005
+## Dependencies: Altoholic, DataStore, DataStore_Characters
+## SavedVariables: Altoholic_GridsTab_Options, Altoholic_GridsTab_Columns
+## LoadOnDemand: 1
+## X-Category: Interface Enhancements
+
+Locale.xml
+
+Templates\UITemplates.xml
+TabGrids.xml
+Frames\Grids.xml
+
+Grid_Equipment.lua
+Grid_Reputations.lua

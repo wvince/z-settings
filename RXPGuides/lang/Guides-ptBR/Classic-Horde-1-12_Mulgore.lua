@@ -231,7 +231,7 @@ step << Warrior
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Harutt|r
     .turnin 3091 >>Entregue Bilhete
     .accept 77651 >>Aceite Entre as Espinheiras
-    .train 100 >> Treine |T132337:0|t[Carga]
+    .train 100 >> Aprenda |T132337:0|t[Investida]
     .train 772 >> Aprenda |T132155:0|t[Dilacerar]
     .target Harutt Thunderhorn
     .money <0.02
@@ -248,7 +248,7 @@ step << Warrior
     .goto Mulgore,44.02,76.14
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Harutt|r
     .turnin 3091 >>Entregue Bilhete
-    .train 100 >> Treine |T132337:0|t[Carga]
+    .train 100 >> Aprenda |T132337:0|t[Investida]
     .train 772 >> Aprenda |T132155:0|t[Dilacerar]
     .target Harutt Thunderhorn
     .money <0.02
@@ -514,7 +514,7 @@ step << Druid
     #season 2
     .goto Mulgore,45.09,75.93
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Gart|r
-    .train 467 >>Treine |T136104:0|t[Espinhos]
+    .train 467 >>Aprenda |T136104:0|t[Espinhos]
     .train 5177 >>Aprenda |T136006:0|t[Ira]
     .turnin 77648 >>Entregue Relíquias dos Taurens
     .target Gart Mistrunner
@@ -530,7 +530,7 @@ step << Druid
     #season 0
     .goto Mulgore,45.09,75.93
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Gart|r
-    .train 467 >>Treine |T136104:0|t[Espinhos]
+    .train 467 >>Aprenda |T136104:0|t[Espinhos]
     .train 5177 >>Aprenda |T136006:0|t[Ira]
     .target Gart Mistrunner
     .money <0.02
@@ -1830,7 +1830,7 @@ step << Hunter
 step << Hunter
     .goto Mulgore,47.81,55.69
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Yaw Crina Cortante|r
-    .turnin 6061 >>Entregue Adestramento da Fera - Missão
+    .turnin 6061 >>Entregue Domando a fera
     .accept 6087 >>Aceite Adestramento da Fera - Missão
     .target Yaw Sharpmane
 step << Hunter
@@ -1846,7 +1846,7 @@ step << Hunter
 step << Hunter
     .goto Mulgore,47.81,55.69
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Yaw Crina Cortante|r
-    .turnin 6087 >>Entregue Adestramento da Fera - Missão
+    .turnin 6087 >>Entregue Domando a fera
     .accept 6088 >>Aceite Adestramento da Fera - Missão
     .target Yaw Sharpmane
 step << Hunter
@@ -1862,7 +1862,7 @@ step << Hunter
 step << Hunter
     .goto Mulgore,47.81,55.69
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Yaw Crina Cortante|r
-    .turnin 6088 >>Entregue Adestramento da Fera - Missão
+    .turnin 6088 >>Entregue Domando a fera
     .accept 6089 >>Aceite Treinamento da Fera - Missão
     .target Yaw Sharpmane
 step
@@ -1976,14 +1976,14 @@ step << Druid
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Turak Runa Totem|r
     .goto Thunder Bluff,76.7,27.3
     .turnin 5928 >>Entregue Heeding the Call - Missão
-    .accept 5922 >>Aceite Moonglade
+    .accept 5922 >>Aceite Clareira da Lua
     .target Arch Druid Hamuul Runetotem
     .target Turak Runetotem
     .isOnQuest 5928
 step << Druid
     .goto Thunder Bluff,76.7,27.3
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Turak Runa Totem|r
-    .accept 5922 >>Aceite Moonglade
+    .accept 5922 >>Aceite Clareira da Lua
     .target Arch Druid Hamuul Runetotem
     .target Turak Runetotem
 step << Druid
@@ -2868,7 +2868,7 @@ step
     .goto The Barrens,52.23,31.00
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Sergra Espinhonegro|r
     .turnin 860 >>Entregue Sergra Espinhonegro
-    .accept 844 >>Aceite A Ameaça Pinote
+    .accept 844 >>Aceite A ameaça pinote
     .target Sergra Darkthorn
 step
     .goto The Barrens,51.93,30.32
@@ -3339,7 +3339,7 @@ step << Warrior
     .goto Mulgore,44.02,76.14
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Harutt|r
     .turnin 3091 >>Entregue Bilhete
-    .train 100 >> Treine |T132337:0|t[Carga]
+    .train 100 >> Aprenda |T132337:0|t[Investida]
     .train 772 >> Aprenda |T132155:0|t[Dilacerar]
     .target Harutt Thunderhorn
     .money <0.02
@@ -3355,7 +3355,7 @@ step << Warrior
     .goto Mulgore,44.02,76.14
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Harutt|r
     .turnin 3091 >>Entregue Bilhete
-    .train 100 >> Treine |T132337:0|t[Carga]
+    .train 100 >> Aprenda |T132337:0|t[Investida]
     .train 772 >> Aprenda |T132155:0|t[Dilacerar]
     .target Harutt Thunderhorn
     .money <0.02
@@ -3578,7 +3578,7 @@ step << Druid
     #season 2
     .goto Mulgore,45.09,75.93
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Gart|r
-    .train 467 >>Treine |T136104:0|t[Espinhos]
+    .train 467 >>Aprenda |T136104:0|t[Espinhos]
     .train 5177 >>Aprenda |T136006:0|t[Ira]
     .target Gart Mistrunner
     .money <0.02
@@ -3586,7 +3586,7 @@ step << Druid
     #season 0
     .goto Mulgore,45.09,75.93
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Gart|r
-    .train 467 >>Treine |T136104:0|t[Espinhos]
+    .train 467 >>Aprenda |T136104:0|t[Espinhos]
     .train 5177 >>Aprenda |T136006:0|t[Ira]
     .target Gart Mistrunner
     .money <0.02
@@ -4355,7 +4355,7 @@ step << Hunter
     #optional
     .goto Mulgore,47.81,55.69
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Yaw Crina Cortante|r
-    .turnin 6061 >>Entregue Adestramento da Fera - Missão
+    .turnin 6061 >>Entregue Domando a fera
     .accept 6087 >>Aceite Adestramento da Fera - Missão
     .target Yaw Sharpmane
     .isQuestComplete 6061
@@ -4382,7 +4382,7 @@ step << Hunter
     #optional
     .goto Mulgore,47.81,55.69
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Yaw Crina Cortante|r
-    .turnin 6087 >>Entregue Adestramento da Fera - Missão
+    .turnin 6087 >>Entregue Domando a fera
     .accept 6088 >>Aceite Adestramento da Fera - Missão
     .target Yaw Sharpmane
     .isQuestTurnedIn 6061
@@ -4402,7 +4402,7 @@ step << Hunter
     #optional
     .goto Mulgore,47.81,55.69
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Yaw Crina Cortante|r
-    .turnin 6088 >>Entregue Adestramento da Fera - Missão
+    .turnin 6088 >>Entregue Domando a fera
     .accept 6089 >>Aceite Treinamento da Fera - Missão
     .target Yaw Sharpmane
     .isQuestTurnedIn 6061
@@ -4592,13 +4592,13 @@ step << Druid
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Turak Runa Totem|r
     .goto Thunder Bluff,76.7,27.3
     .turnin 5928 >>Entregue Heeding the Call - Missão
-    .accept 5922 >>Aceite Moonglade
+    .accept 5922 >>Aceite Clareira da Lua
     .target Turak Runetotem
     .isOnQuest 5928
 step << Druid
     .goto Thunder Bluff,76.7,27.3
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Turak Runa Totem|r
-    .accept 5922 >>Aceite Moonglade
+    .accept 5922 >>Aceite Clareira da Lua
     .target Turak Runetotem
     .xp <10,1
 step << Druid
@@ -5059,7 +5059,7 @@ step << Hunter
 step << Hunter
     .goto Mulgore,47.81,55.69
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Yaw Crina Cortante|r
-    .turnin 6061 >>Entregue Adestramento da Fera - Missão
+    .turnin 6061 >>Entregue Domando a fera
     .accept 6087 >>Aceite Adestramento da Fera - Missão
     .target Yaw Sharpmane
 step << Hunter
@@ -5075,7 +5075,7 @@ step << Hunter
 step << Hunter
     .goto Mulgore,47.81,55.69
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Yaw Crina Cortante|r
-    .turnin 6087 >>Entregue Adestramento da Fera - Missão
+    .turnin 6087 >>Entregue Domando a fera
     .accept 6088 >>Aceite Adestramento da Fera - Missão
     .target Yaw Sharpmane
 step << Hunter
@@ -5091,7 +5091,7 @@ step << Hunter
 step << Hunter
     .goto Mulgore,47.81,55.69
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Yaw Crina Cortante|r
-    .turnin 6088 >>Entregue Adestramento da Fera - Missão
+    .turnin 6088 >>Entregue Domando a fera
     .accept 6089 >>Aceite Treinamento da Fera - Missão
     .target Yaw Sharpmane
 step
@@ -5324,14 +5324,14 @@ step << Druid
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Turak Runa Totem|r
     .goto Thunder Bluff,76.7,27.3
     .turnin 5928 >>Entregue Heeding the Call - Missão
-    .accept 5922 >>Aceite Moonglade
+    .accept 5922 >>Aceite Clareira da Lua
     .target Arch Druid Hamuul Runetotem
     .target Turak Runetotem
     .isOnQuest 5928
 step << Druid
     .goto Thunder Bluff,76.7,27.3
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Turak Runa Totem|r
-    .accept 5922 >>Aceite Moonglade
+    .accept 5922 >>Aceite Clareira da Lua
     .target Arch Druid Hamuul Runetotem
     .target Turak Runetotem
 step << Druid
@@ -5913,13 +5913,13 @@ step
     .goto The Barrens,52.23,31.00
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Sergra Espinhonegro|r
     .turnin 860 >>Entregue Sergra Espinhonegro
-    .accept 844 >>Aceite A Ameaça Pinote
+    .accept 844 >>Aceite A ameaça pinote
     .target Sergra Darkthorn
     .isOnQuest 860
 step
     .goto The Barrens,52.23,31.00
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Sergra Espinhonegro|r
-    .accept 844 >>Aceite A Ameaça Pinote
+    .accept 844 >>Aceite A ameaça pinote
     .target Sergra Darkthorn
 step
     .goto The Barrens,51.93,30.32

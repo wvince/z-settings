@@ -1,0 +1,10 @@
+## Interface: 16001
+## Title: RangeColor
+## Notes: Tints action bar icons red when out of range, instead of only showing the small range dot.
+## Author: Neshanesh
+## Version: 1.0
+## IconTexture: Interface\AddOns\RangeColor\icon.png
+## SavedVariables: RangeColorDB
+## OptionalDeps: Dominos
+
+RangeColor.lua

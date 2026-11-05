@@ -1,0 +1,81 @@
+DataStore Changelog (dates in dd/mm/yyyy)
+===================
+
+
+Version 2026.10.14 (14/10/2026)
+
+- Updated ToC for 12.1.5.
+
+Version 2026.10.02 (02/10/2026)
+
+- Moved build information to AddonFactory to centralize version detection.
+- Updated UI version detection to support WoW Forever.
+- Updated for Altoholic Forever v1.60.002.
+
+Version 2026.09.30 (30/09/2026)
+
+- Replaced all calls to UnitName("player") by AddonFactory:GetPlayerName() for WoW Forever.
+- Updated for Altoholic Forever v1.60.001
+
+Version 2026.08.16 (16/08/2026)
+
+- Updated ToC for 12.1.
+
+Version 2026.07.10 (10/07/2026)
+
+- GitHub workflow version update.
+
+Version 2026.07.06 (06/07/2026)
+
+- Updated ToC for 12.0.7.
+- Fixed lua error during scanning (Thanks GovtGeek!)
+
+Version 2026.01.21 (21/01/2026)
+
+- Updated ToC for 12.0.
+
+Version 2025.10.19 (19/10/2025)
+
+- Updated ToC for 11.2.5.
+
+Version 2025.08.21 (21/08/2025)
+
+- ToC Update.
+
+Version 2025.02.28 (28/02/2025)
+
+- ToC Update.
+
+Version 2024.11.11 (11/11/2024)
+
+- Fixed multiple issues related to the scanning of Mythic+ data.
+- ToC Update.
+
+Version 2024.09.15 (15/09/2024)
+
+- ToC Update.
+- Fixed a lua error when doing a /reload or visiting the Great Vault (Thanks GovtGeek !).
+
+Version 2024.08.14 (14/08/2024)
+
+- ToC Update.
+
+Version 2024.07.28 (28/07/2024)
+
+- ToC Update.
+
+Version 2024.05.20 (05/20/2024)
+
+- Stopped using Ace libraries
+- Using locals for all global functions
+- Using new tables in the SV file. 
+
+Version 2023.11.06 (06/11/2023)
+
+- ToC Update for 10.2
+
+Version 2023.05.28 (28/05/2023)
+
+- As of this version, this DataStore module will be released in a single package compatible with all versions of the game.
+- As of this version, the version number will no longer be 1.x or 9.x, but rather a date that clearly identifies when the release took place.
+

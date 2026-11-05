@@ -98,12 +98,11 @@ end
 -- Auxiliar tooltips functions
 --=====================================================
 
-local ItemToolTip = CreateFrame("GameTooltip", "RSMapItemToolTip", nil, "ShoppingTooltipTemplate")
+local ItemToolTip = CreateFrame("GameTooltip", "RSMapItemToolTip", nil, "GameTooltipTemplate")
 local ItemToolTipComp1 = CreateFrame("GameTooltip", "RSMapItemToolTipComp1", nil, "ShoppingTooltipTemplate")
 local ItemToolTipComp2 = CreateFrame("GameTooltip", "RSMapItemToolTipComp2", nil, "ShoppingTooltipTemplate")
 local InfoToolTip = CreateFrame("GameTooltip", "RSMapInfoToolTip", nil, "GameTooltipTemplate")
 ItemToolTip.shoppingTooltips = { ItemToolTipComp1, ItemToolTipComp2 }
-
 local function showItemToolTip(cell, args)
 	local itemID, itemLink, itemClassID, itemSubClassID, isLink, dropChance = unpack(args)
 	if (isLink) then

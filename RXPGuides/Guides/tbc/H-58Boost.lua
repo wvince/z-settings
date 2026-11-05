@@ -10,7 +10,6 @@ RXPGuides.RegisterGuide([[
 #subweight -1
 #title Boosted Character 58-60
 #next 60-61 Hellfire Peninsula
-
 step
 +As soon as you log in for the first time, finish the little tutorial section in front of your class trainer to get access to all of the boosted gear
 .use 185964
@@ -857,7 +856,6 @@ step << skip
 	.goto Swamp of Sorrows,33.4,71.9,60,0
 	.goto Swamp of Sorrows,33.2,68.4,60,0
 	.zone Blasted Lands >> Travel to Blasted Lands
-
 step << skip
     .goto Blasted Lands,58.1,56.1
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Warlord Dar'toon|r
@@ -865,5 +863,4 @@ step << skip
     --.turnin 64217 >>Turn in The Dark Portal << Druid
     --.accept 9407 >>Accept Through the Dark Portal
     .target Warlord Dar'toon
-
 ]])

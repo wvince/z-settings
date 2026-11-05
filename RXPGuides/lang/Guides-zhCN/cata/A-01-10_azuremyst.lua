@@ -202,7 +202,7 @@ step
     .target 植物学家塔蕾克丝
 step << Mage
     .goto Azuremyst Isle,79.662,46.427
-    >>|cRXP_WARN_施放|r |T135812:0|t[火球术] |cRXP_WARN_在|cRXP_ENEMY_训练假人|r上，直到触发|r |T135731:0|t[奥术飞弹！] |cRXP_WARN_效果，然后施放|r |T136096:0|t[奥术飞弹]|cRXP_WARN_。重复两次|r
+    >>|cRXP_WARN_施放|r |T135812:0|t[火球术] |cRXP_WARN_对着 |cRXP_ENEMY_训练假人|r 直到你获得|r |T135731:0|t[雷霆蜥蜴的血液!] |cRXP_WARN_触发，然后施放|r |T136096:0|t[雷霆蜥蜴的血液]|cRXP_WARN_。重复两次|r
     >>|cRXP_WARN_对|r |T135848:0|t[训练假人] |cRXP_WARN_使用|cRXP_ENEMY_冰霜新星|r。重复两次|r
     .complete 26968,1 << cata -- Practice Arcane Missiles (1)
     .complete 26968,2 << !cata -- Practice Frost Nova (1)
@@ -849,7 +849,7 @@ step
     .timer 73,间谍之树剧情表演
     .use 23792
 step
-    >>|cRXP_WARN_等待剧情演出完成|r
+    >>|cRXP_WARN_等剧情结束|r
     .complete 9531,1 -- The Traitor Uncovered
 step
     +|cRXP_WARN_点掉|r |T132288:0|t[大树伪装] |cRXP_WARN_buff|r

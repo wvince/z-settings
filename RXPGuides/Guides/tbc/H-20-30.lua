@@ -8,7 +8,6 @@ RXPGuides.RegisterGuide([[
 #version 7
 #subgroup RestedXP Horde 1-30
 #next 23-25 Hillsbrad Foothills
-
 step
     #completewith MeetingTW
     .goto Orgrimmar,48.97,92.84,50,0
@@ -3268,7 +3267,6 @@ step
     #optional
     .abandon 1491 >>Abandon Smart Drinks
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -3278,7 +3276,6 @@ RXPGuides.RegisterGuide([[
 #version 7
 #subgroup RestedXP Horde 1-30
 #next 25-27 Ashenvale
-
 step
     #sticky
     #completewith EnterSFK
@@ -4705,9 +4702,7 @@ step
     #optional
     .abandon 1098 >>Abandon Deathstalkers in Shadowfang
     .dungeon SFK
-
     ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -4717,7 +4712,6 @@ RXPGuides.RegisterGuide([[
 #version 7
 #subgroup RestedXP Horde 1-30
 #next 27-30 South Barrens/Thousand Needles
-
 step << Rogue
     #optional
     #completewith Splintertree1
@@ -5496,7 +5490,6 @@ step
     .target Vhulgra
     .zoneskip Ashenvale,1
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -5506,7 +5499,6 @@ RXPGuides.RegisterGuide([[
 #version 7
 #subgroup RestedXP Horde 1-30
 #next 30-33 Hillsbrad/Arathi part 1
-
 step << Shaman/Warrior
     #ah
     .goto Thunder Bluff,54.06,57.25
@@ -8246,5 +8238,4 @@ step << Troll
     .skill riding,75,1
     .target Xar'Ti
     .target Zjolnir
-
 ]])

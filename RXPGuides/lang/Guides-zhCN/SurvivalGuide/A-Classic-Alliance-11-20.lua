@@ -37,7 +37,7 @@ step
 step
     .goto Westfall,56.04,31.23
     .target Farmer Saldean
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t 与 |cRXP_FRIENDLY_农夫萨丁|r 对话
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_农夫萨丁|r 对话
     .accept 9 >> 接受任务 清理荒野
 step
     #label SalmaS
@@ -68,7 +68,7 @@ step
     #era
     .goto Westfall,56.42,47.62
     .target Captain Danuvin
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t 与 |cRXP_FRIENDLY_丹努文队长|r 对话
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_丹努文队长|r 对话
     .accept 102 >> 接受任务 西部荒野的豺狼人
 step << Human
     #requires Lewis
@@ -195,7 +195,7 @@ step
 step
     #completewith next
 	.goto Westfall,56.04,31.23
-	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|t 与 |cRXP_FRIENDLY_农夫萨丁|r 对话
+	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_农夫萨丁|r 对话
     .vendor
     >>|cRXP_WARN_不要出售|T133884:0|t|T135997:0|t[鱼人的眼球]、|T134341:0|t|T133972:0|t[血牙野猪的头]、|T134341:0|t|T134341:0|t[血牙野猪的肝]或|T133972:0|t|T133972:0|t[秃鹫肉条]|r
 	.target Farmer Saldean
@@ -235,7 +235,7 @@ step
     .mob +Young Goretusk
     .mob +Goretusk
 step
-	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|t 与 |cRXP_FRIENDLY_农夫萨丁|r 对话
+	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_农夫萨丁|r 对话
 	.target Farmer Saldean
     .goto Westfall,56.04,31.23
     .turnin 9 >> 交任务 清理荒野
@@ -395,12 +395,12 @@ step << !NightElf
     .goto Wetlands,10.43,61.01,10,0
     .goto Wetlands,10.496,60.201
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与楼上的 |cRXP_FRIENDLY_萨莫尔·菲斯蒂沃斯|r 对话
-    .vendor >> |cRXP_BUY_尽可能多地购买|r |T134831:0|t[治疗药水] |cRXP_BUY_（如果有售）|r
+    .vendor >> |cRXP_BUY_尽可能多购买|r |T134831:0|t[治疗药水] |cRXP_BUY_有库存的话|r
     >>|cRXP_WARN_这是限量供应物品，如果 |cRXP_FRIENDLY_萨莫尔·菲斯蒂沃斯|r 没有库存，请跳过此步骤|r
     .target 萨莫尔·菲斯蒂沃斯
 step << !NightElf
     .goto Wetlands,9.49,59.69
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_谢尔雷|r 对话
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_谢尔雷|r 交谈
     .fp Wetlands>> 获取湿地的飞行路径
     .target 谢尔雷·布隆迪尔
 step << Hunter !NightElf
@@ -413,7 +413,7 @@ step << Hunter !NightElf
 step << !NightElf
     .goto Wetlands,7.95,56.38
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|t 与 |cRXP_FRIENDLY_德温·晨光|r对话
-    .vendor >> |cRXP_BUY_尽可能多地购买|r |T134831:0|t[治疗药水] |cRXP_BUY_（如果有售）|r
+    .vendor >> |cRXP_BUY_尽可能多购买|r |T134831:0|t[治疗药水] |cRXP_BUY_有库存的话|r
     >>|cRXP_WARN_这是限量供应物品。如果 |cRXP_FRIENDLY_德温·晨光|r 没有库存，请跳过此步骤|r
     .target 德温·晨光
 step << !NightElf
@@ -790,7 +790,7 @@ step
 step
 #map Darkshore
     .goto Felwood,25.15,4.61
-    >>点击地上的 |cRXP_PICK_搁浅的海洋生物|r
+    >>点击 |cRXP_PICK_搁浅的海洋生物|r
     .accept 4723 >> 接受任务 搁浅的海洋生物
 step << Druid
     #completewith cure1
@@ -1014,7 +1014,7 @@ step
 #map Darkshore
     #label Beached4728
     .goto Felwood,18.41,49.43
-    >>点击地上的 |cRXP_PICK_搁浅的海洋生物|r
+    >>点击 |cRXP_PICK_搁浅的海洋生物|r
     .accept 4728 >> 接受任务 搁浅的海洋生物
 step
     #label BearComplete
@@ -1894,7 +1894,7 @@ step
     .isOnQuest 731
 step
     .goto Ashenvale,13.97,4.10
-    >>点击地上的 |cRXP_PICK_搁浅的海洋生物|r
+    >>点击 |cRXP_PICK_搁浅的海洋生物|r
     .accept 4733 >> 接受任务 搁浅的海洋生物
     >>|cRXP_WARN_这个任务可能会非常困难。请与 |cRXP_ENEMY_鱼人|r 逐个交战，否则你可能会同时引到多个|r
     .link https://youtu.be/lfQM3Q-Ag5A >> |cRXP_WARN_点击此处查看视频指南|r
@@ -1910,7 +1910,7 @@ step
 step
 #map Darkshore
     .goto Felwood,14.62,60.72
-    >>点击地上的 |cRXP_PICK_搁浅的海洋生物|r
+    >>点击 |cRXP_PICK_搁浅的海洋生物|r
     .accept 4730 >> 接受任务 搁浅的海洋生物
 step
     #label Murkdeep
@@ -1959,7 +1959,7 @@ step
 step
 .group
     .goto Darkshore,44.44,84.69
-    >>|cRXP_WARN_等剧情结束|r
+    >>|cRXP_WARN_等待剧情演出完成|r
     .complete 995,1
     .isQuestTurnedIn 986
 step
@@ -2141,7 +2141,7 @@ step
 .dungeon WC
     .goto The Barrens,63.084,37.163
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_布拉高克|r 对话
-    .fp Ratchet >> 开启棘齿城飞行点
+    .fp Ratchet >> 获取棘齿城飞行路径
     .target 布拉高克
 step
 .dungeon WC
@@ -2272,7 +2272,7 @@ step
 .dungeon WC
     .goto The Barrens,48.184,32.781
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_菲拉·古风|r 对话
-    .turnin 6981 >> 交任务 发光的碎片
+    .turnin 6981 >> 交任务发光的碎片
     .target 菲拉·古风
     .isQuestComplete 6981
 step

@@ -1,6 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #classic
@@ -11,7 +10,6 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Horde Mage AoE
 #defaultfor Horde Mage
 #next 17-21 Stonetalon/Barrens AoE
-
 step << Mage
 	#era/som
     #completewith next
@@ -704,7 +702,6 @@ step
 >>Talk to |cRXP_FRIENDLY_Makaba Flathoof|r
     .accept 6548 >> Accept Avenge My Village
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
@@ -714,7 +711,6 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Horde Mage AoE
 #defaultfor Horde Mage
 #next 21-30 Silverpine/Hillsbrad AoE
-
 step
     .goto Stonetalon Mountains,80.7,89.2,50,0
     .goto Stonetalon Mountains,82.0,86.0,50,0

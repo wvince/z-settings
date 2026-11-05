@@ -416,14 +416,14 @@ step << Human
     #season 2
     #optional
     #completewith next
-    .goto 1429,48.79,41.58,12,0
-    .goto 1429,48.975,41.146,12,0
-    .goto 1429,49.262,40.633,12,0
-    .goto 1429,49.510,40.095,6,0
-    .goto 1429,49.691,40.230,6,0
-    .goto 1429,49.595,40.673,6,0
-    .goto 1429,49.324,40.492,6,0
-    .goto 1429,49.436,39.881,10,0
+    .goto 1429/0,-158.00,-8901.99,12,0--c:1429,48.79,41.58
+    .goto 1429/0,-164.42,-8891.94,12,0--c:1429,48.975,41.146
+    .goto 1429/0,-174.39,-8880.07,12,0--c:1429,49.262,40.633
+    .goto 1429/0,-182.99,-8867.62,6,0--c:1429,49.510,40.095
+    .goto 1429/0,-189.28,-8870.74,6,0--c:1429,49.691,40.230
+    .goto 1429/0,-185.94,-8880.99,6,0--c:1429,49.595,40.673
+    .goto 1429/0,-176.54,-8876.80,6,0--c:1429,49.324,40.492
+    .goto 1429/0,-180.42,-8862.66,10,0--c:1429,49.436,39.881
     .goto 1429/0,-188.23,-8851.58,12 >>Descendez les escaliers, puis allez vers |cRXP_FRIENDLY_Khelden Bremen|r
     .isQuestComplete 77620
 step << Human
@@ -1462,16 +1462,16 @@ step
     .accept 179 >> Acceptez la quête Tailleur chez les nains
     .target Sten Stoutarm
 step
-    .goto 1426,29.529,73.286,0
-    .goto 1426,28.117,75.088,0
-    .goto 1426,28.557,72.487,0
-    .goto 1426,29.529,73.286,60,0
-    .goto 1426,29.054,74.608,60,0
-    .goto 1426,28.558,75.781,60,0
-    .goto 1426,28.117,75.088,60,0
-    .goto 1426,27.562,74.331,60,0
-    .goto 1426,27.793,73.123,60,0
-    .goto 1426,28.557,72.487,60,0
+    .goto 1426/0,347.78,-6283.31,0--c:1426,29.529,73.286
+    .goto 1426/0,417.32,-6342.47,0--c:1426,28.117,75.088
+    .goto 1426/0,395.65,-6257.07,0--c:1426,28.557,72.487
+    .goto 1426/0,347.78,-6283.31,60,0--c:1426,29.529,73.286
+    .goto 1426/0,371.17,-6326.71,60,0--c:1426,29.054,74.608
+    .goto 1426/0,395.60,-6365.23,60,0--c:1426,28.558,75.781
+    .goto 1426/0,417.32,-6342.47,60,0--c:1426,28.117,75.088
+    .goto 1426/0,444.65,-6317.62,60,0--c:1426,27.562,74.331
+    .goto 1426/0,433.28,-6277.96,60,0--c:1426,27.793,73.123
+    .goto 1426/0,395.65,-6257.07,60,0--c:1426,28.557,72.487
     >>Tuez les |cRXP_ENEMY_Jeunes loups décharnés|r. Dépouillez-les pour leur |cRXP_LOOT_Viande de loup coriace|r
     .complete 179,1 --Collect Tough Wolf Meat (x8)
     .mob Ragged Young Wolf
@@ -1521,15 +1521,15 @@ step
     #season 2
     #xprate <1.1
     #completewith EnterAnvilmar
-    .goto 1426,27.096,72.545,0
-    .goto 1426,26.620,73.548,0
-    .goto 1426,25.722,72.261,0
-    .goto 1426,24.878,72.329,0
-    .goto 1426,24.100,73.749,0
-    .goto 1426,24.920,74.697,0
-    .goto 1426,21.813,72.584,0
-    .goto 1426,19.578,72.086,0
-    .goto 1426,20.627,70.415,0
+    .goto 1426/0,467.61,-6258.98,0--c:1426,27.096,72.545
+    .goto 1426/0,491.05,-6291.91,0--c:1426,26.620,73.548
+    .goto 1426/0,535.27,-6249.65,0--c:1426,25.722,72.261
+    .goto 1426/0,576.84,-6251.89,0--c:1426,24.878,72.329
+    .goto 1426/0,615.16,-6298.51,0--c:1426,24.100,73.749
+    .goto 1426/0,574.77,-6329.63,0--c:1426,24.920,74.697
+    .goto 1426/0,727.79,-6260.26,0--c:1426,21.813,72.584
+    .goto 1426/0,837.87,-6243.91,0--c:1426,19.578,72.086
+    .goto 1426/0,786.20,-6189.04,0--c:1426,20.627,70.415
     >>Tuez les |cRXP_ENEMY_Rockjaw Troggs|r et les |cRXP_ENEMY_Burly Rockjaw Troggs|r
     .complete 170,1 --Kill Rockjaw Trogg (x6)
     .mob +Rockjaw Trogg
@@ -1553,8 +1553,8 @@ step
     #label EnterAnvilmar
     #optional
     #completewith next
-    .goto 1426,28.792,68.804,12,0
-    .goto 1426,28.642,68.375,12 >> Entrez dans Anvilmar
+    .goto 1426/0,384.08,-6136.15,12,0--c:1426,28.792,68.804
+    .goto 1426/0,391.46,-6122.06,12 >> Entrez dans Anvilmar--c:1426,28.642,68.375
 step
     #season 2
     .goto 1426/0,388.17,-6056.10
@@ -1581,20 +1581,20 @@ step
     #season 2
     #optional
     #completewith Talin
-    .goto 1426,28.792,68.804,12 >> Quittez Anvilmar
+    .goto 1426/0,384.08,-6136.15,12 >> Quittez Anvilmar--c:1426,28.792,68.804
     .subzoneskip 77,1
 step
     #xprate <1.1
     #completewith Rockjaw
-    .goto 1426,27.096,72.545,0
-    .goto 1426,26.620,73.548,0
-    .goto 1426,25.722,72.261,0
-    .goto 1426,24.878,72.329,0
-    .goto 1426,24.100,73.749,0
-    .goto 1426,24.920,74.697,0
-    .goto 1426,21.813,72.584,0
-    .goto 1426,19.578,72.086,0
-    .goto 1426,20.627,70.415,0
+    .goto 1426/0,467.61,-6258.98,0--c:1426,27.096,72.545
+    .goto 1426/0,491.05,-6291.91,0--c:1426,26.620,73.548
+    .goto 1426/0,535.27,-6249.65,0--c:1426,25.722,72.261
+    .goto 1426/0,576.84,-6251.89,0--c:1426,24.878,72.329
+    .goto 1426/0,615.16,-6298.51,0--c:1426,24.100,73.749
+    .goto 1426/0,574.77,-6329.63,0--c:1426,24.920,74.697
+    .goto 1426/0,727.79,-6260.26,0--c:1426,21.813,72.584
+    .goto 1426/0,837.87,-6243.91,0--c:1426,19.578,72.086
+    .goto 1426/0,786.20,-6189.04,0--c:1426,20.627,70.415
     >>Tuez les |cRXP_ENEMY_Rockjaw Troggs|r et les |cRXP_ENEMY_Burly Rockjaw Troggs|r
     .complete 170,1 --Kill Rockjaw Trogg (x6)
     .mob +Rockjaw Trogg
@@ -1611,21 +1611,21 @@ step
     .target Talin Keeneye
 step
     #loop
-    .goto 1426,22.276,72.549,0
-    .goto 1426,20.924,70.393,0
-    .goto 1426,22.662,69.331,0
-    .goto 1426,24.358,72.591,0
-    .goto 1426,22.276,72.549,45,0
-    .goto 1426,21.209,72.266,45,0
-    .goto 1426,20.880,71.470,45,0
-    .goto 1426,20.924,70.393,45,0
-    .goto 1426,21.330,69.261,45,0
-    .goto 1426,22.035,69.231,45,0
-    .goto 1426,22.662,69.331,45,0
-    .goto 1426,24.317,68.026,45,0
-    .goto 1426,24.754,69.257,45,0
-    .goto 1426,24.878,71.191,45,0
-    .goto 1426,24.358,72.591,45,0
+    .goto 1426/0,704.99,-6259.11,0--c:1426,22.276,72.549
+    .goto 1426/0,771.58,-6188.32,0--c:1426,20.924,70.393
+    .goto 1426/0,685.98,-6153.45,0--c:1426,22.662,69.331
+    .goto 1426/0,602.45,-6260.49,0--c:1426,24.358,72.591
+    .goto 1426/0,704.99,-6259.11,45,0--c:1426,22.276,72.549
+    .goto 1426/0,757.54,-6249.82,45,0--c:1426,21.209,72.266
+    .goto 1426/0,773.74,-6223.68,45,0--c:1426,20.880,71.470
+    .goto 1426/0,771.58,-6188.32,45,0--c:1426,20.924,70.393
+    .goto 1426/0,751.58,-6151.15,45,0--c:1426,21.330,69.261
+    .goto 1426/0,716.86,-6150.17,45,0--c:1426,22.035,69.231
+    .goto 1426/0,685.98,-6153.45,45,0--c:1426,22.662,69.331
+    .goto 1426/0,604.47,-6110.60,45,0--c:1426,24.317,68.026
+    .goto 1426/0,582.95,-6151.02,45,0--c:1426,24.754,69.257
+    .goto 1426/0,576.84,-6214.52,45,0--c:1426,24.878,71.191
+    .goto 1426/0,602.45,-6260.49,45,0--c:1426,24.358,72.591
     >>Tuez les |cRXP_ENEMY_Small Crag Boars|r
     .complete 183,1 --Kill Small Crag Boar (x12)
     .mob Small Crag Boar
@@ -1636,7 +1636,7 @@ step
     .target Talin Keeneye
 step
     #label Rockjaw
-    .goto 1426,25.077,75.711
+    .goto 1426/0,567.04,-6362.93--c:1426,25.077,75.711
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Grelin Whitebeard|r
     .turnin 234 >> Rendez la quête La distribution du courrier de la Vallée des Frigères
     .accept 182 >> Acceptez la quête La caverne des trolls
@@ -1762,17 +1762,17 @@ step
     #xprate <1.1
     #sticky
     #label TroggEnd
-    .goto 1426,27.858,76.482,0
-    .goto 1426,30.727,76.831,0
-    .goto 1426,29.280,75.500,0
-    .waypoint 1426,27.858,76.482,50,0
-    .waypoint 1426,28.946,77.153,50,0
-    .waypoint 1426,29.716,77.605,50,0
-    .waypoint 1426,30.727,76.831,50,0
-    .waypoint 1426,32.814,75.221,50,0
-    .waypoint 1426,31.138,74.048,50,0
-    .waypoint 1426,30.077,74.479,50,0
-    .waypoint 1426,29.280,75.500,50,0
+    .goto 1426/0,430.08,-6388.24,0--c:1426,27.858,76.482
+    .goto 1426/0,288.78,-6399.70,0--c:1426,30.727,76.831
+    .goto 1426/0,360.04,-6356.00,0--c:1426,29.280,75.500
+    .waypoint 1426/0,430.08,-6388.24,50,0--c:1426,27.858,76.482
+    .waypoint 1426/0,376.49,-6410.27,50,0--c:1426,28.946,77.153
+    .waypoint 1426/0,338.57,-6425.11,50,0--c:1426,29.716,77.605
+    .waypoint 1426/0,288.78,-6399.70,50,0--c:1426,30.727,76.831
+    .waypoint 1426/0,185.99,-6346.84,50,0--c:1426,32.814,75.221
+    .waypoint 1426/0,268.54,-6308.33,50,0--c:1426,31.138,74.048
+    .waypoint 1426/0,320.79,-6322.48,50,0--c:1426,30.077,74.479
+    .waypoint 1426/0,360.04,-6356.00,50,0--c:1426,29.280,75.500
     >>|cRXP_WARN_Tuez TOUS les |cRXP_ENEMY_Troggs Mâcheroc|r que vous croisez et les |r |cRXP_ENEMY_Troggs Mâcheroc mastocs|r
     .complete 170,1 --Kill Rockjaw Trogg (x6)
     .mob +Rockjaw Trogg
@@ -2304,7 +2304,7 @@ step
 step
     .goto 1426/0,-531.38,-5601.49
     >>Parlez à |cRXP_FRIENDLY_Belm l'aubergiste|r
-    >>|cRXP_BUY_Achetez une |r|T132800:0|t[Bière au malt Rhapsody] |cRXP_BUY_et une|r |T132800:0|t[Thunder Ale] |cRXP_BUY_à Belm|r
+    >>|cRXP_BUY_Buy|r |T132800:0|t[Rhapsody Malt] |cRXP_BUY_and|r |T132800:0|t[Thunder Ale] |cRXP_BUY_from him|r
     .complete 384,2 --Collect Rhapsody Malt (x1)
     .collect 2686,1,311,1 --Collect Thunder Ale (x1)
     .target Innkeeper Belm
@@ -3067,7 +3067,7 @@ step
 step
     #completewith next
     .goto 1437/0,-836.21,-3796.15,10,0
-    .goto 1437/0,-829.18,-3804.420,10 >>Entrez dans l'auberge
+    .goto 1437/0,-829.18,-3804.420,10 >>Entrez à l'intérieur de l'auberge
 step
     .goto 1437/0,-823.8,-3807.180
     >>Sautez sur le lustre en bas des escaliers
@@ -3623,7 +3623,7 @@ step
 step
     #completewith next
     .goto 1437/0,-836.21,-3796.15,10,0
-    .goto 1437/0,-829.18,-3804.420,10 >>Entrez dans l'auberge
+    .goto 1437/0,-829.18,-3804.420,10 >>Entrez à l'intérieur de l'auberge
 step
     .goto 1437/0,-823.8,-3807.180
     >>Sautez sur le lustre en bas des escaliers
@@ -4610,7 +4610,7 @@ step
     #completewith next
     .goto 1432/0,-2966.06,-5365.72,12,0
     .goto 1432/0,-2969.92,-5377.12,12,0
-    >>Entrez dans l'auberge
+    >>Entrez à l'intérieur de l'auberge
     .goto 1432/0,-2954.42,-5394.10,10 >>Voyagez vers |cRXP_FRIENDLY_Vidra Poêlâtre|r
 step
     .goto 1432/0,-2954.42,-5394.10
@@ -5562,7 +5562,7 @@ RXPGuides.RegisterGuide([[
 
 step
     #completewith JenneaT
-    +|cRXP_WARN_NOTE: Vous avez besoin de 12 stacks de chaque tissu (|r|T132911:0|t[Étoffe de laine]|cRXP_WARN_,|r |T132905:0|t[Étoffe de soie]|cRXP_WARN_,|r |T132892:0|t[Étoffe de tisse-mage]|cRXP_WARN_,|r et |T132903:0|t[Étoffe runique]|cRXP_WARN_) pour rendre les tissus plus tard. Vous les obtiendrez naturellement en montant de niveau|r
+    +|cRXP_WARN_NOTE: You need 12 stacks of each cloth (|r|T132911:0|t[Wool Cloth]|cRXP_WARN_,|r |T132905:0|t[Silk Cloth]|cRXP_WARN_,|r |T132892:0|t[Mageweave Cloth]|cRXP_WARN_,|r and |T132903:0|t[Runecloth]|cRXP_WARN_) to do the cloth turnins later. You'll get these naturally as you level|r
 step << skip
     #completewith next
     .goto 1453/0,661.38,-8858.16,12,0
@@ -6250,7 +6250,7 @@ step
     #label Bank3
     .goto 1453/0,614.33,-8932.92
     >>Parlez à |cRXP_FRIENDLY_Newton Burnside|r
-    >>|cRXP_WARN_NOTE: Vous avez besoin de 12 stacks de chaque tissu (|r|T132911:0|t[Étoffe de laine]|cRXP_WARN_,|r |T132905:0|t[Étoffe de soie]|cRXP_WARN_,|r |T132892:0|t[Étoffe de tisse-mage]|cRXP_WARN_,|r et |T132903:0|t[Étoffe runique]|cRXP_WARN_) pour rendre les tissus plus tard. Vous les obtiendrez naturellement en montant de niveau|r
+    >>|cRXP_WARN_NOTE: You need 12 stacks of each cloth (|r|T132911:0|t[Wool Cloth]|cRXP_WARN_,|r |T132905:0|t[Silk Cloth]|cRXP_WARN_,|r |T132892:0|t[Mageweave Cloth]|cRXP_WARN_,|r and |T132903:0|t[Runecloth]|cRXP_WARN_) to do the cloth turnins later. You'll get these naturally as you level|r
     .bankdeposit 2998,4371,1711,1478,1712,3012,1180,1181,3013,17056,2592,2998,1941 >> Déposez les objets suivants dans votre banque:
     >>|T133024:0|t[Tube en bronze]
     >>|T134943:0|t[Parchemins]
@@ -7043,7 +7043,7 @@ step
     .target Vesprystus
 step
     #completewith next
-    .goto 1438,55.885,89.350
+    .goto 1438/1,969.11,8798.93--c:1438,55.885,89.350
     .zone Darnassus >> Prenez le portail violet pour Darnassus
 step
     #completewith next
@@ -7097,7 +7097,7 @@ step
     #label Bank
     .goto 1453/0,614.33,-8932.92
     >>Parlez à |cRXP_FRIENDLY_Newton Burnside|r
-    >>|cRXP_WARN_NOTE: Vous avez besoin de 12 stacks de chaque tissu (|r|T132911:0|t[Étoffe de laine]|cRXP_WARN_,|r |T132905:0|t[Étoffe de soie]|cRXP_WARN_,|r |T132892:0|t[Étoffe de tisse-mage]|cRXP_WARN_,|r et |T132903:0|t[Étoffe runique]|cRXP_WARN_) pour rendre les tissus plus tard. Vous les obtiendrez naturellement en montant de niveau|r
+    >>|cRXP_WARN_NOTE: You need 12 stacks of each cloth (|r|T132911:0|t[Wool Cloth]|cRXP_WARN_,|r |T132905:0|t[Silk Cloth]|cRXP_WARN_,|r |T132892:0|t[Mageweave Cloth]|cRXP_WARN_,|r and |T132903:0|t[Runecloth]|cRXP_WARN_) to do the cloth turnins later. You'll get these naturally as you level|r
     .bankdeposit 17056,2592,1015,4654 >> Déposez les objets suivants dans votre banque:
     >>|T132917:0|t[Plume légère]
     >>|T132911:0|t[Étoffe de laine]
@@ -8057,7 +8057,7 @@ step
 step
     .goto 1455/0,-997.66,-4886.49
     >>Parlez à |cRXP_FRIENDLY_Bailey Mantepierre|r
-    >>|cRXP_WARN_NOTE: Vous avez besoin de 12 stacks de chaque tissu (|r|T132911:0|t[Étoffe de laine]|cRXP_WARN_,|r |T132905:0|t[Étoffe de soie]|cRXP_WARN_,|r |T132892:0|t[Étoffe de tisse-mage]|cRXP_WARN_,|r et |T132903:0|t[Étoffe runique]|cRXP_WARN_) pour rendre les tissus plus tard. Vous les obtiendrez naturellement en montant de niveau|r
+    >>|cRXP_WARN_NOTE: You need 12 stacks of each cloth (|r|T132911:0|t[Wool Cloth]|cRXP_WARN_,|r |T132905:0|t[Silk Cloth]|cRXP_WARN_,|r |T132892:0|t[Mageweave Cloth]|cRXP_WARN_,|r and |T132903:0|t[Runecloth]|cRXP_WARN_) to do the cloth turnins later. You'll get these naturally as you level|r
     .bankdeposit 17056,2592,1015,1083,2665,1922,1284 >> Déposez les objets suivants dans votre banque:
     >>|T132917:0|t[Plume légère]
     >>|T132911:0|t[Étoffe de laine]

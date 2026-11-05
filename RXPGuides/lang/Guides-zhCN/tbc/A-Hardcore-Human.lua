@@ -1468,7 +1468,7 @@ step << Warlock
     .turnin 1689 >> 交任务誓缚
 step << Human
     .goto StormwindClassic,74.312,47.240
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t 与 |cRXP_FRIENDLY_奥斯瑞克·斯图恩|r 对话
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与|cRXP_FRIENDLY_奥斯瑞克·斯图恩|r 对话
     >>|cRXP_WARN_先不要接取后续任务|r
     .turnin 6281 >> 交任务 前往暴风城
     .target 奥斯瑞克·斯图恩
@@ -1565,7 +1565,7 @@ step
     .zone Ironforge >>进入铁炉堡
 step
     .goto Ironforge,55.501,47.742
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t 与 |cRXP_FRIENDLY_格莱斯·瑟登|r 对话
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_格莱斯·瑟登|r 对话
     .fp Ironforge >> 获取铁炉堡的飞行路径
     .target 格莱斯·瑟登
 step << Warrior
@@ -1736,7 +1736,7 @@ step
     .goto Dun Morogh,68.614,54.643
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_卡杉·莫格什|r 对话
     .vendor >> |cRXP_BUY_购买|r |T133968:0|t[刚出炉的面包]|cRXP_BUY_如果需要的话|r << Warrior/Rogue
-    .vendor >> |cRXP_BUY_购买|r |T133968:0|t[刚出炉的面包]|cRXP_BUY_和|r |T132815:0|t[冰镇牛奶]|cRXP_BUY_如果需要的话|r << !Warrior !Rogue
+    .vendor >> |cRXP_BUY_购买|r |T133968:0|t [刚出炉的面包]|cRXP_BUY_和|r |T132815:0|t[冰镇牛奶]|cRXP_BUY_如果需要的话|r << !Warrior !Rogue
     .target 卡杉·莫格什
 step
     #label troggs

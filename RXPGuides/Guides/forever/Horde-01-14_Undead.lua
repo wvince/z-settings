@@ -1,6 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
@@ -13,7 +12,6 @@ RXPGuides.RegisterGuide([[
 #defaultfor Undead
 #name 1-6 Tirisfal Glades
 #next 6-12 Tirisfal Glades
-
 step << !Undead
     #completewith next
     +|cRXP_WARN_You have selected a guide meant for Undead. It is recommended you choose the same starter zone that you start in|r
@@ -549,9 +547,9 @@ step << Warlock
 step << skip
     #hardcore
     #completewith next
-    .goto 1420,26.027,60.607,-1
-    .goto 1420,24.508,59.360,-1
-    .goto 1420,23.572,59.239,-1
+    .goto 1420/0,1857.24,2011.71,-1--c:1420,26.027,60.607
+    .goto 1420/0,1925.88,2049.28,-1--c:1420,24.508,59.360
+    .goto 1420/0,1968.17,2052.92,-1--c:1420,23.572,59.239
     .goto 1420/0,1628.91,1882.99,30 >>|cRXP_WARN_Perform a Logout Skip inside the cave by jumping on top of a shredder, well, or the wooden plank stuck in the wall, then log out and back in|r
     >>|cRXP_WARN_Alternatively, run back to Deathknell|r
 step
@@ -701,9 +699,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Calvin|r
     .accept 8 >> Accept A Rogue's Deal
     .target Calvin Montague
-
 ]])
-
 RXPGuides.RegisterGuide([[
 #forever
 #disabledungeons
@@ -716,7 +712,6 @@ RXPGuides.RegisterGuide([[
 --#groupid RXP-SRGCE-H1
 #defaultfor Undead
 #next 12-14 Silverpine Forest; 12-17 The Barrens
-
 step
     .goto 1420/0,1184.71,2205.63
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Simmer|r
@@ -2599,9 +2594,7 @@ step
     >>|cRXP_WARN_He patrols around the graveyard|r
     .turnin 99142 >>Turn in Tomb Weed
     .target Junior Apothecary Holland
-
     --Bandarion Keep section
-
 step << !Paladin
     #optional
     .maxlevel 11,BandarionKeepSkip
@@ -3147,9 +3140,7 @@ step << Paladin
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lady Sylvanas Windrunner|r
     .turnin 95803 >>Turn in A Token of Good Faith
     .target Lady Sylvanas Windrunner
-
     --Paladin Ressurrect chain route
-
 step << Paladin
     #completewith
     .goto 1420/0,235.32,1883.89
@@ -3202,9 +3193,7 @@ step << Paladin
     .accept 94438 >>Accept A Lesson in Divinity
     .target Deathguard Billmuth
     .isQuestTurnedIn 94436
-
     --East Tirisfal south of SM
-
 step << Paladin
     #completewith next
     .goto 1420/0,-885.200,2399.800,50 >>Travel to Eastern Tirisfal
@@ -3227,9 +3216,7 @@ step << Paladin
     .mob Scarlet Friar
     .mob Scarlet Zealot
     .isQuestTurnedIn 94436
-
     --Back to Bandarion Keep
-
 step << Paladin
     #completewith next
     .goto 1420/0,1732.500,2437.900,50,0
@@ -3276,8 +3263,6 @@ step
     .goto 1420/0,629.36,1553.42
     .zone Silverpine Forest >> Travel to Silverpine Forest
 ]])
-
-
 RXPGuides.RegisterGuide([[
 #group RestedXP Forever Guide (H)
 #subgroup Speedrun Guide 1-22
@@ -3290,7 +3275,6 @@ RXPGuides.RegisterGuide([[
 #name 12-14 Silverpine Forest
 #displayname 13-15 Silverpine Forest << Paladin
 #next 12-17 The Barrens
-
 step << Undead Rogue
     #sticky
     #completewith RotHideCluesTurnIn
@@ -3988,12 +3972,12 @@ step
 step
     #completewith next
     #optional
-    .goto 1458,54.383,73.014,50,0 << !Undead/!Rogue
-    .goto 1458,52.837,77.725,20,0
-    .goto 1458,52.275,79.254,15,0
-    .goto 1458,51.279,79.923,15,0
-    .goto 1458,49.693,78.903,15,0
-    .goto 1458,47.951,76.171,15 >>Travel to the The Apothecarium
+    .goto 1458/0,351.46,1410.58,50,0 << !Undead/!Rogue--c:1458,54.383,73.014
+    .goto 1458/0,366.29,1380.42,20,0--c:1458,52.837,77.725
+    .goto 1458/0,371.68,1370.64,15,0--c:1458,52.275,79.254
+    .goto 1458/0,381.23,1366.35,15,0--c:1458,51.279,79.923
+    .goto 1458/0,396.45,1372.88,15,0--c:1458,49.693,78.903
+    .goto 1458/0,413.16,1390.37,15 >>Travel to the The Apothecarium--c:1458,47.951,76.171
 step
     .goto 1458/0,426.100,1403.600
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Doctor Martin Felben|r
@@ -4010,7 +3994,7 @@ step
     .target +Apothecary Zinge
     .goto 1458/0,391.97,1442.87
 step
-    .goto Undercity,56.2,96.2
+    .goto 1458/0,334.02,1262.17--c:Undercity,56.2,96.2
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Varimathras|r
     .accept 5725 >>Accept The Power to Destroy...
     .target Varimathras
@@ -4344,5 +4328,4 @@ step << !Undead !Skyborne
     >>|cRXP_WARN_Loot the|r |T134095:0|t[Flawed Power Stone] |cRXP_WARN_next to|r |cRXP_FRIENDLY_Ak'Zeloth|r|cRXP_WARN_. This item has a 30 minute timer, so be sure to be quick|r
     .turnin 926 >>Turn in Flawed Power Stone
     .isOnQuest 924
-
 ]])

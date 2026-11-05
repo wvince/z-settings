@@ -1,7 +1,6 @@
 -- ================================================================
 -- ================    ALLIED RACE UNLOCK   =======================
 -- ================================================================
-
 --Nesting
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
@@ -14,7 +13,6 @@ RXPGuides.RegisterGuide([[
 #chapters a) Void Elf Unlock 1;a) Lightforged Draenei Unlock 1;a) DarkIronDwarf Unlock 1;a) KulTiran Unlock 1;a) Mechagnome Unlock 1;a) Void Elf DH;a) Earthen Unlock 1 << Alliance
 #chapters a) Nightborne Unlock 1;a) Highmountain Tauren Unlock 1;a) Maghar Orc Unlock 1;a) Zandalari Troll Unlock 1;a) Vulpera Unlock 1 << Horde
 ]])
-
 ---Allied Choice
 RXPGuides.RegisterGuide([[
 #retail
@@ -24,10 +22,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF1|r - Void Elf
 #next a) Allied Choice
 #internal
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Aysa Cloudsinger|r
-    .isQuestAvailable 49929
+    .isQuestAvailable 49929 --The Call for Allies
     .goto 84,52.05,13.39
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Aysa Cloudsinger|r |cRXP_WARN_inside the Stormwind Embassy|r.
     .accept 49929 >>Accept The Call for Allies
@@ -35,7 +32,7 @@ step
     .target Aysa Cloudsinger
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Aysa Cloudsinger|r
-    .isQuestAvailable 49929
+    .isQuestAvailable 49929 --The Call for Allies
     .goto 84,52.05,13.39
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Aysa Cloudsinger|r |cRXP_WARN_inside the Stormwind Embassy|r.
     .accept 50239 >>Accept A Choice of Allies
@@ -80,10 +77,8 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF1|r - Void Elf
 #next a) Lightforged Draenei Unlock 1
 #chapter
-
 step
     #include ad) The Elves of Quel'Thalas
-
 ]])
 --LightforgedDraenei
 RXPGuides.RegisterGuide([[
@@ -94,9 +89,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF2|r - Lightforged Draenei
 #next a) DarkIronDwarf Unlock 1
 #chapter
-
 << Alliance !LightforgedDraenei
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Aysa Cloudsinger|r
     .goto 84,52.06,13.38
@@ -345,9 +338,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF3|r - Dark Iron Dwarf
 #next a) KulTiran Unlock 1
 #chapter
-
 << Alliance !DarkIronDwarf
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Aysa Cloudsinger|r
     .goto 84,52.06,13.38
@@ -360,7 +351,7 @@ step
     .enterScenario 1571 >>Talk to |cRXP_FRIENDLY_Moira Thaurissan|r.
     .skipgossipid 48178
     .target Moira Thaurissan
-    .isOnQuest 51813
+    .isOnQuest 51813 --Blackrock Depths
 step
     #arrowtext |cFFFCDC00Follow the arrow|r
     .goto 1159,55.84,31.94
@@ -507,19 +498,19 @@ step
     .goto 1160,29.17,26.27
     .vehicle >>|TInterface/cursor/crosshair/interact.blp:20|tClick on the |cRXP_PICK_Tank|r.
     .target The Tank
-    .isOnQuest 53342
+    .isOnQuest 53342 --Molten Core
 step
     #arrowtext Use [Afterburn]
     .goto 1160,33.04,21.38,5 >>Use |T1032476:0|t[Afterburn](2) to sprint |cRXP_WARN_of the edge|r.
     *|cRXP_WARN_Aim to land on the mountain cliff|r.
-    .isOnQuest 53342
+    .isOnQuest 53342 --Molten Core
 step
     #arrowtext Use [Afterburn]\non |cRXP_ENEMY_enemies|r
     .goto 1160,40.84,27.61,20,0
     .goto 1160,38.88,46.96,30,0
     .goto 1160,44.83,64.11,15 >>Use |T1032476:0|t[Afterburn](2) to sprint and |T135781:0|t[Frozen Keekers](1) to kill |cRXP_ENEMY_enemies|r |cRXP_WARN_in front of you|r.
     .timer 7, Duration until continuation.
-    .isOnQuest 53342
+    .isOnQuest 53342 --Molten Core
 step
     #arrowtext Kill\n|cRXP_ENEMY_Gezzrok the Keeper|r
     .goto 1160,56.48,54.86
@@ -671,9 +662,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF4|r - Kul Tiran
 #next a) Mechagnome Unlock 1
 #chapter
-
 << Alliance !KulTiran
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Aysa Cloudsinger|r
     .goto 84,52.06,13.38
@@ -1154,9 +1143,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF5|r - Mechagnome
 #next a) Void Elf DH
 #chapter
-
 << Alliance !Mechagnome
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Aysa Cloudsinger|r
     .goto 84,52.06,13.38
@@ -1571,7 +1558,6 @@ RXPGuides.RegisterGuide([[
 #name a) Void Elf DH
 #displayname |cFF00CCFF6|r - Void Elf Demon Hunter
 #chapter
-
 step
     #completewith next
     #label Shadowy Invitation
@@ -1605,8 +1591,8 @@ step
     .complete 84957,2 --1/1 Take the Spatial Rift to Tazavesh
 step
     #arrowtext Click\n|cRXP_PICK_Phase Conduit|r
-    .isQuestAvailable 90972
-    .isQuestTurnedIn account,84959
+    .isQuestAvailable 90972 --A Common Cause
+    .isQuestTurnedIn account,84959 --Lost Lines of Defense
     .goto 2371,75.87,33.11,-1 -- The Oasis
     .goto 2371,77.17,48.93,-1 -- North Sufaad
     .goto 2472,46.79,56.86,-1 -- Tazavesh, the Veiled Market
@@ -1679,24 +1665,24 @@ step
     .mob Ramon'ta the Insatiable
 step
     #arrowtext Click\n|cRXP_PICK_Phase Conduit|r
-    .isQuestAvailable 90972
-    .isQuestTurnedIn account,84959
-    .isOnQuest 86786
+    .isQuestAvailable 90972 --A Common Cause
+    .isQuestTurnedIn account,84959 --Lost Lines of Defense
+    .isOnQuest 86786 --The Void Hunter
     .goto 2371,56.21,21.51
     .cast 1239390 >>|TInterface/cursor/crosshair/interact.blp:20|tClick on the |cRXP_PICK_Phase Conduit|r.
 step
     #arrowtext Click\n|cRXP_PICK_Phase Conduit|r
-    .isQuestAvailable 90972
-    .isQuestTurnedIn account,84959
-    .isOnQuest 86786
+    .isQuestAvailable 90972 --A Common Cause
+    .isQuestTurnedIn account,84959 --Lost Lines of Defense
+    .isOnQuest 86786 --The Void Hunter
     .goto 2371,56.21,21.51
     >>|TInterface/cursor/crosshair/interact.blp:20|tClick on the |cRXP_PICK_Phase Conduit|r.
     .fly Shan'dorah >>Fly to Shan'dorah
     .target Phase Conduit
 step
-    .isQuestAvailable 90972
-    .isQuestTurnedIn account,84959
-    .isOnQuest 86786
+    .isQuestAvailable 90972 --A Common Cause
+    .isQuestTurnedIn account,84959 --Lost Lines of Defense
+    .isOnQuest 86786 --The Void Hunter
     .goto 2371,60.11,29.67
     .aura -1214374 >>Remove the |T135752:0|t[Phase Diving] buff (with Right-Click)
     .macro Remove Aura,135752 >>/cancelaura Phase Diving
@@ -2016,7 +2002,6 @@ step
     .turnin 92632 >>Turn in Trial of Wrath
     .target Allari the Souleater
 ]])
-
 ---Allied Choice
 RXPGuides.RegisterGuide([[
 #retail
@@ -2026,7 +2011,6 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF1|r - Void Elf
 #next a) Allied Choice
 #internal
-
 -- step
 --     #completewith HighmountainStartQuestline
 --     .zone 85 >>Get to Orgrimmar
@@ -2069,7 +2053,6 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF1|r - Nightborne
 #next a) Highmountain Tauren Unlock 1
 #chapter
-
 step
     #include ad) The Elves of Quel'Thalas
 ]])
@@ -2082,9 +2065,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF2|r - Highmountain Tauren
 #next a) Maghar Orc Unlock 1
 #chapter
-
 << Horde !HighmountainTauren
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Ji Firepaw|r
     .goto 85,37.78,81.16
@@ -2494,9 +2475,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF3|r - Maghar Orc
 #next a) Zandalari Troll Unlock 1
 #chapter
-
 << Horde !MagharOrc
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Ji Firepaw|r
     .goto 85,37.78,81.16
@@ -2845,9 +2824,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF4|r - Zandalari Troll
 #next a) Vulpera Unlock 1
 #chapter
-
 << Horde !ZandalariTroll
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Ji Firepaw|r
     .goto 85,37.75,81.18
@@ -2855,7 +2832,7 @@ step
     .accept 53831 >>Accept A Royal Occasion
     .target Ji Firepaw
 step
-    .isOnQuest 53831
+    .isOnQuest 53831 --A Royal Occasion
     #completewith next
     .goto 85,53.40,90.43,10,0
     .goto 85,58.48,91.26
@@ -2875,7 +2852,6 @@ step
 step << !DemonHunter !Dracthyr
     #arrowtext Jump down the pyramid carefully
     #completewith next
-
     .goto 1165,48.51,38.00,15,0
     .goto 1165,45.15,47.02,20,0
     .goto 1165,42.06,26.50,20 >>Jump down the pyramid carefully
@@ -2944,7 +2920,6 @@ step
 step
     #arrowtext Go back up
     #completewith next
-
     .goto 1165,42.61,22.91,12,0
     .goto 1165,41.41,18.05,12 >>Go back up
 step
@@ -3204,7 +3179,6 @@ step
 step
     #arrowtext Jump down carefully
     #completewith next
-
     >>Jump down carefully
     .goto 1165,46.06,16.57,15,0
     .goto 1165,47.06,19.23,15,0
@@ -3214,17 +3188,15 @@ step
 step
     #arrowtext Click the Totem of Pa'ku
     #completewith ZandalariTrollAllegianceoftheZandalari
-
     .isQuestTurnedIn 47436
-    .isOnQuest 53719
+    .isOnQuest 53719 --Allegiance of the Zandalari
     .vehicle 131154 >>|TInterface/cursor/crosshair/interact.blp:20|tClick on the Totem of Pa'ku
     .goto 1165,51.37,40.95
 step
     #arrowtext Take the elevator to |cRXP_FRIENDLY_Queen Talanji|r
     #completewith ZandalariTrollAllegianceoftheZandalari
-
     .isQuestTurnedIn 47443
-    .isOnQuest 53719
+    .isOnQuest 53719 --Allegiance of the Zandalari
     .goto 1165,49.93,42.24,10,0
     .goto 1164,37.75,71.70,10,0
     .goto 1164,20.56,72.09,5 >>Take the elevator to |cRXP_FRIENDLY_Queen Talanji|r.
@@ -3244,9 +3216,7 @@ RXPGuides.RegisterGuide([[
 #name a) Vulpera Unlock 1
 #displayname |cFF00CCFF5|r - Vulpera
 #chapter
-
 << Horde !Vulpera
-
 step
     #arrowtext Talk to Ji Firepaw
     .goto 85,37.78,81.16
@@ -3296,7 +3266,7 @@ step
     .goto 85,49.88,75.57,10 >>Leave Grommash Hold
 step
     #arrowtext Take the Portal to Twilight Highlands
-    .isOnQuest 53891
+    .isOnQuest 53891 --No Problem Too Small
     .goto 85,50.22,39.46
     .zone 241 >>Take the Portal to Twilight Highlands
 step
@@ -3376,7 +3346,6 @@ step
 step
     #loop
     >>Pick up |cRXP_PICK_Twilight Ore|r from the veins.
-
     .goto 241,51.13,68.58,30,0
     .goto 241,48.60,70.24,30,0
     .goto 241,46.42,72.89,30,0
@@ -3447,7 +3416,7 @@ step
     .goto 85,49.88,75.57,10 >>Leave Grommash Hold
 step
     #arrowtext Take the Portal to Zuldazar
-    .isOnQuest 53899
+    .isOnQuest 53899 --On the Outskirts
     .goto 85,53.42,90.44,10,0
     .goto 85,58.55,91.31
     .zone 1163 >>Take the Portal to Zuldazar
@@ -3548,12 +3517,12 @@ step
 step
     #arrowtext Enter The Great Seal
     .zoneskip 85
-    .isOnQuest 54027
+    .isOnQuest 54027 --Threat Contained
     #completewith VulperaOntheOutskirts
     .goto 1165,49.94,42.02,10 >>Enter The Great Seal
 step
     #arrowtext Take the portal to Orgrimmar
-    .isOnQuest 54027
+    .isOnQuest 54027 --Threat Contained
     .zoneskip 85
     .goto 1163,73.72,70.00
     .zone 85 >> Take the portal to Orgrimmar
@@ -3579,7 +3548,7 @@ step
     .goto 85,49.88,75.57,10 >>Leave Grommash Hold
 step
     #arrowtext Take the Portal to Azsuna
-    .isOnQuest 53899
+    .isOnQuest 53899 --On the Outskirts
     .goto 85,53.42,90.44,10,0
     .goto 85,58.86,89.52
     .zone 630 >>Take the Portal to Azsuna
@@ -3719,13 +3688,9 @@ RXPGuides.RegisterGuide([[
 #name a) Earthen Unlock 1
 #displayname |cFF00CCFF6|r - Earthen Dwarf
 #chapter
-
 step
     #include RestedXP Speed Leveling\a) The War Within Recap
-
 -- Tools
-
-
 step
     #arrowtext Enter the House
     #completewith next
@@ -3809,11 +3774,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Machinist Kittrin|r.
     .turnin 78564 >>Turn in Reforged Purpose
     .target Machinist Kittrin
-
-
-
 -- Merrix
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Aldra|r
     #label BehindClosedDoorsA
@@ -3928,20 +3889,20 @@ step
     .turnin 79354 >>Turn in The Machine Speakers
 step
     -- .isQuestComplete 79354 previous requisite
-    .isQuestComplete 78837
+    .isQuestComplete 78837 --Pomp and Dire Circumstance
     #completewith next
     .zone 2214 >> Go to Ringing Deeps
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Saradi|r
     -- .isQuestComplete 79354 previous requisite
-    .isQuestComplete 78837
+    .isQuestComplete 78837 --Pomp and Dire Circumstance
     .goto 2214,43.34,32.67
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Saradi|r.
     .accept 79542 >>Accept The Councilward's Summons
     .target Saradi
 step
     -- .isQuestComplete 79354 previous requisite
-    .isQuestComplete 78837
+    .isQuestComplete 78837 --Pomp and Dire Circumstance
     #completewith next
     .zone 2339 >> Go to Dornogal
 step
@@ -4334,7 +4295,7 @@ step
     .complete 79530,1 --1/1 Regroup with Steelvein in the Ringing Deeps
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Overseer Ardgrin|r
-    .isOnQuest 79530
+    .isOnQuest 79530 --Bad Business
     .goto 2214,38.06,24.12
     .gossipoption 121524 >>Talk to |cRXP_FRIENDLY_Overseer Ardgrin|r.
     .timer 12,RP
@@ -4352,9 +4313,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Steelvein|r.
     .turnin 79530 >>Turn in Bad Business
     .target Steelvein
-
 -- Rise
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Urtago|r
     .goto 2248,55.75,56.05
@@ -4534,7 +4493,7 @@ step
 step
     #arrowtext Enter the cave
     #completewith GrandHeisterBokkSlain
-    .isOnQuest 78749
+    .isOnQuest 78749 --Who Runs this Fine Establishment?
     .goto 2248,62.48,39.18,10 >>Enter the cave
 step
     #arrowtext Kill\n|cRXP_ENEMY_Grand-Heister Bokk|r
@@ -4877,11 +4836,9 @@ step
     .turnin 82895 >>Turn in The Weight of Duty
     .target Urtago
 ]])
-
 -- ============================================================
 -- ================    HERITAGE ARMOR   =======================
 -- ============================================================
-
 --Nesting
 RXPGuides.RegisterGuide([[
 #retail
@@ -4893,7 +4850,6 @@ RXPGuides.RegisterGuide([[
 #chapters a) Human Heritage Armor;a) Dwarf Heritage Armor;a) Nightelf Heritage Armor;a) Gnome Heritage Armor;a) Draenei Heritage Armor;a) Worgen Heritage Armor;a) EarthenDwarf Heritage Armor;a) Void Elf Heritage Armor;a) Lightforged Draenei Heritage Armor;a) Dark Iron Dwarf Heritage Armor;a) Kul Tiran Heritage Armor;a) Heritage Pandaren;a) Haranir Heritage Armor << Alliance
 #chapters a) Orc Heritage Armor;a) Undead Heritage Armor;a) Tauren Heritage Armor;a) Troll Heritage Armor;a) Blood Elf Heritage Armor;a) Goblin Heritage Armor;a) Nightborne Heritage Armor;a) Highmountain Heritage Armor;a) Mag'har Orc Heritage Armor;a) Zandalari Troll Heritage Armor;a) Vulpera Heritage Armor;a) Heritage Pandaren;a) Haranir Heritage Armor << Horde
 ]])
-
 --Human
 RXPGuides.RegisterGuide([[
 #retail
@@ -4903,9 +4859,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - Human
 #next a) Dwarf Heritage Armor
 #chapter
-
 << Alliance
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Aysa Cloudsinger|r
     #label StartIncludePrepGuide
@@ -5468,9 +5422,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Dwarf
 #next a) Nightelf Heritage Armor
 #chapter
-
 << Alliance
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Aysa Cloudsinger|r
     #label StartIncludePrepGuide
@@ -5915,9 +5867,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF003|r - Nightelf
 #next a) Gnome Heritage Armor
 #chapter
-
 << Alliance
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Aysa Cloudsinger|r
     #label StartIncludePrepGuide
@@ -6281,9 +6231,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF004|r - Gnome
 #next a) Draenei Heritage Armor
 #chapter
-
 << Alliance
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Aysa Cloudsinger|r
     #label StartIncludePrepGuide
@@ -6543,9 +6491,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF005|r - Draenei
 #next a) Worgen Heritage Armor
 #chapter
-
 << Alliance
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Aysa Cloudsinger|r
     #label StartIncludePrepGuide
@@ -6587,25 +6533,25 @@ step
     .target Grand Artificer Romuul
 step
     #arrowtext Click\n|cRXP_PICK_Arkonite Pillar|r
-    .isOnQuest 78069
+    .isOnQuest 78069 --Reviving Tradition
     .goto 103,55.55,78.78
     .cast 3365 >>Click on the |cRXP_PICK_Arkonite Pillar|r
     .target Arkonite Generator
 step
     #arrowtext Click\n|cRXP_PICK_Arkonite Pillar|r
-    .isOnQuest 78069
+    .isOnQuest 78069 --Reviving Tradition
     .goto 103,54.72,78.81
     .cast 3365 >>Click on the |cRXP_PICK_Arkonite Pillar|r
     .target Arkonite Generator
 step
     #arrowtext Click\n|cRXP_PICK_Arkonite Pillar|r
-    .isOnQuest 78069
+    .isOnQuest 78069 --Reviving Tradition
     .goto 103,54.32,81.45
     .cast 3365 >>Click on the |cRXP_PICK_Arkonite Pillar|r
     .target Arkonite Generator
 step
     #arrowtext Click\n|cRXP_PICK_Arkonite Pillar|r
-    .isOnQuest 78069
+    .isOnQuest 78069 --Reviving Tradition
     .goto 103,53.97,80.18
     .cast 3365 >>Click on the |cRXP_PICK_Arkonite Pillar|r
     .target Arkonite Generator
@@ -7111,9 +7057,7 @@ RXPGuides.RegisterGuide([[
 #displayname  |cFF1EFF006|r - Worgen
 #next a) Void Elf Heritage Armor
 #chapter
-
 << Alliance
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Aysa Cloudsinger|r
     #label StartIncludePrepGuide
@@ -7216,7 +7160,7 @@ step
     .accept 54984 >>Accept Let Sleeping Wolves Lie
 step
     #arrowtext Go through the Portal
-    .isOnQuest 54984
+    .isOnQuest 54984 --Let Sleeping Wolves Lie
     .goto 47,46.57,35.31
     .enterScenario 1732 >>Go through the Portal
 step
@@ -7341,9 +7285,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF007|r - Void Elf
 #next a) Lightforged Draenei Heritage Armor
 #chapter
-
 << Allianc
-
 step
     #label StartIncludePrepGuide
     #completewith next
@@ -7368,9 +7310,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF008|r - Lightforged Draeanei
 #next a) Dark Iron Dwarf Heritage Armor
 #chapter
-
 << Alliance
-
 step
     #label StartIncludePrepGuide
     #completewith next
@@ -7395,9 +7335,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF009|r - Dark Iron Dwarf
 #next a) Kul Tiran Heritage Armor
 #chapter
-
 << Alliance
-
 step
     #arrowtext Click\n|cRXP_PICK_Mole Machine to Shadowforge City.|r
     #label StartIncludePrepGuide
@@ -7426,9 +7364,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF0010|r - Kul Tiran
 #next a) Mechagnome Heritage Armor
 #chapter
-
 << Alliance
-
 step
     #label StartIncludePrepGuide
     #completewith next
@@ -7449,9 +7385,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF0011|r - Mechagnome
 #next a) EarthenDwarf Heritage Armor
 #chapter
-
 << Alliance
-
 step
     #label StartIncludePrepGuide
     #completewith Heritage of the Mechagnome
@@ -7477,9 +7411,7 @@ RXPGuides.RegisterGuide([[
 #name a) EarthenDwarf Heritage Armor
 #displayname |cFF1EFF007|r - Earthen Dwarf
 #chapter
-
 << Alliance
-
 step
     >>Log into a level 50+ Earthen character to get this quest when you enter Dornogal.
     .accept 82771 >>Accept Heritage of the Earthen
@@ -7515,9 +7447,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - Orc
 #next a) Undead Heritage Armor
 #chapter
-
 << Horde
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Ji Firepaw|r
     #label StartIncludePrepGuide
@@ -7558,7 +7488,7 @@ step
     .complete 72462,1 --1/1 Portal to Alterac Valley taken
     .timer 107,RP
 step
-    .isOnQuest 72462
+    .isOnQuest 72462 --A People in Need of Healing
     .enterScenario 2137 >>Enter the scenario
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Farseer Drek'Thar|r
@@ -8040,9 +7970,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Undead
 #next a) Tauren Heritage Armor
 #chapter
-
 << Horde
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Calia Menethil|r
     #label StartIncludePrepGuide
@@ -8793,9 +8721,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF003|r - Tauren
 #next a) Troll Heritage Armor
 #chapter
-
 << Horde
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Spiritwalker Ussoh|r
     #label StartIncludePrepGuide
@@ -8818,7 +8744,7 @@ step
     .cast 6478,1 >>Click on the |cRXP_PICK_Spiritwalker's Incense|r
     .timer 23,RP
 step
-    .isOnQuest 54761
+    .isOnQuest 54761 --Spirit Guide
     >>|cRXP_WARN_Wait for the Roleplay|r.
     .complete 54761,1 --1/1 Light Spiritwalker's Incense
 step
@@ -8946,9 +8872,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF004|r - Troll
 #next a) Blood Elf Heritage Armor
 #chapter
-
 << Horde
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Zi'guma|r
     #label StartIncludePrepGuide
@@ -9298,11 +9222,27 @@ step
     .turnin 77899 >>Turn in The Rush'kah
     .target Rokhan
 step
+    #include RestedXP Miscellaneous\a) Loa Trials@LorewalkingLoaStart-LorewalkingLoaEnd
+]])
+--Shared Loa trials for Lorewalking
+RXPGuides.RegisterGuide([[
+#retail
+#version 1
+#group RestedXP Miscellaneous
+#name a) Loa Trials
+#internal
+step
+    #label LorewalkingLoaStart
     #arrowtext Talk to\n|cRXP_FRIENDLY_Rokhan|r
     .goto 463,60.09,62.39
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Rokhan|r
     .target Rokhan
     .accept 77900 >>Accept The Loa Trials
+step
+    #completewith next
+    #label Loa Trial Ritual
+    >>|cRXP_WARN_Wait for the Roleplay|r.
+    .complete 77900,1 --1/1 Participate in trial ritual
 step
     #arrowtext Use [Loa Trial Ritual]
     #completewith next
@@ -9311,8 +9251,9 @@ step
     .use 427573
     .timer 46,RP
 step
-    .goto 463,58.5,65.57
-    >>Wait until the objective completes
+    #requires Loa Trial Ritual
+    .goto 463,58.52,65.53
+    >>|cRXP_WARN_Wait for the Roleplay|r.
     .complete 77900,1 --1/1 Participate in trial ritual
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Rokhan|r
@@ -9340,7 +9281,7 @@ step
     .mob Unfinished Rush'kah
 step
     #completewith Ritual Circle
-    >>When the |cRXP_ENEMY_Lost Trainee's|r health drops to 50%, click on them for credit.
+    >>Reduce a |cRXP_ENEMY_Lost Trainee|r to 50% health, then click on them for credit.
     .complete 77901,1 --8/8 Lost Trainee darkness removed
     .use 211000
     .mob Lost Trainee Warrior
@@ -9385,7 +9326,7 @@ step
     .mob Empowered Boneguard
     .mob Unfinished Rush'kah
 step
-    >>When the |cRXP_ENEMY_Lost Trainee's|r health drops to 50%, click on them for credit.
+    >>Reduce a |cRXP_ENEMY_Lost Trainee|r to 50% health, then click on them for credit.
     .complete 77901,1 --8/8 Lost Trainee darkness removed
     .use 211000
     .mob Lost Trainee Warrior
@@ -9418,34 +9359,43 @@ step
     >>|TInterface/cursor/crosshair/interact.blp:20|tClick on the |cRXP_PICK_Feather|r
     .complete 77905,1 --1/1 Jani's Blessing
 step
-    #arrowtext Kill\n|cRXP_ENEMY_Summoned Visage|r
+    #arrowtext Kill |cRXP_ENEMY_Summoned Visage|r\nClick |cRXP_PICK_Totems|r
     .goto 463,58.55,56.29
-    >>Kill |cRXP_ENEMY_Summoned Visage|r on the pillar and Click on the |cRXP_PICK_Totems|r.
+    >>Kill the |cRXP_ENEMY_Summoned Visage|r on the pillar, then click on the |cRXP_PICK_Totems|r.
+    *|cRXP_WARN_After finishing at each pillar, stand inside the green circle and use the Extra Action Button to travel to the next pillar|r.
     .complete 77905,3,1 --4/4 Tzadah's Empowerment destroyed
     .mob Summoned Visage
 step
-    #arrowtext Kill\n|cRXP_ENEMY_Summoned Visage|r
+    #arrowtext Kill |cRXP_ENEMY_Summoned Visage|r\nClick |cRXP_PICK_Totems|r
     .goto 463,54.39,56.53
-    >>Kill |cRXP_ENEMY_Summoned Visage|r on the pillar and Click on the |cRXP_PICK_Totems|r.
+    >>Kill the |cRXP_ENEMY_Summoned Visage|r on the pillar, then click on the |cRXP_PICK_Totems|r.
+    *|cRXP_WARN_After finishing at each pillar, stand inside the green circle and use the Extra Action Button to travel to the next pillar|r.
     .complete 77905,3,2 --4/4 Tzadah's Empowerment destroyed
     .mob Summoned Visage
 step
-    #arrowtext Kill\n|cRXP_ENEMY_Summoned Visage|r
+    #arrowtext Kill |cRXP_ENEMY_Summoned Visage|r\nClick |cRXP_PICK_Totems|r
     .goto 463,54.49,47.04
-    >>Kill |cRXP_ENEMY_Summoned Visage|r on the pillar and Click on the |cRXP_PICK_Totems|r.
+    >>Kill the |cRXP_ENEMY_Summoned Visage|r on the pillar, then click on the |cRXP_PICK_Totems|r.
+    *|cRXP_WARN_After finishing at each pillar, stand inside the green circle and use the Extra Action Button to travel to the next pillar|r.
     .complete 77905,3,3 --4/4 Tzadah's Empowerment destroyed
     .mob Summoned Visage
 step
-    #arrowtext Kill\n|cRXP_ENEMY_Summoned Visage|r
+    #arrowtext Kill |cRXP_ENEMY_Summoned Visage|r\nClick |cRXP_PICK_Totems|r
     .goto 463,58.48,46.89
-    >>Kill |cRXP_ENEMY_Summoned Visage|r on the pillar and Click on the |cRXP_PICK_Totems|r.
+    >>Kill the |cRXP_ENEMY_Summoned Visage|r on the pillar, then click on the |cRXP_PICK_Totems|r.
     .complete 77905,3,4 --4/4 Tzadah's Empowerment destroyed
     .mob Summoned Visage
 step
+    #label LorewalkingLoaEnd
     #arrowtext Talk to\n|cRXP_FRIENDLY_Rokhan|r
     .goto 463,58.50,65.55
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Rokhan|r
     .turnin 77905 >>Turn in Avatar of Mueh'zala
+    .target Rokhan
+step
+    #arrowtext Talk to\n|cRXP_FRIENDLY_Rokhan|r
+    .goto 463,58.50,65.55
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Rokhan|r
     .target Rokhan
     .accept 77906 >>Accept De Darkspear Loa
 step
@@ -9474,7 +9424,6 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF005|r - Blood Elf
 #next a) Goblin Heritage Armor
 #chapter
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Ambassador Dawnsworn|r
     #label StartIncludePrepGuide
@@ -9528,7 +9477,7 @@ step
 step
     #arrowtext Follow the arrow
     #label Writing on the Wall
-    .isOnQuest 53882
+    .isOnQuest 53882 --Writing on the Wall
     .goto 95,45.47,75.66,15 >>Follow the Arrow
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Lor'themar Theron|r
@@ -9680,7 +9629,7 @@ step
 step
     #arrowtext Enter the Sunwell
     #label SunwellStart1
-    .isOnQuest 54096
+    .isOnQuest 54096 --The Fall of the Sunwell
     .goto 122,44.28,45.68
     .zone 973 >>Enter the Sunwell
 step
@@ -9787,9 +9736,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF006|r - Goblin
 #next a) Nightborne Heritage Armor
 #chapter
-
 << Horde
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Izzy|r
     #label StartIncludePrepGuide
@@ -9848,7 +9795,7 @@ step
     .complete 57047,3 --1/1 Freezing Console activated
 step
     #arrowtext Click\n|cRXP_PICK_Flame Console|r
-    .isOnQuest 57047
+    .isOnQuest 57047 --A Simple Experiment
     .goto 1532,53.21,60.08
     .cast 305733 >>Click on |cRXP_PICK_Flame Console|r
     .timer 22,RP
@@ -10018,7 +9965,7 @@ step
     .accept 57079 >>Accept Beat The Crapopolis Outta Him!
 step
     #arrowtext Click\n|cRXP_PICK_Goblin Flying Machine|r
-    .isOnQuest 57079
+    .isOnQuest 57079 --Beat The Crapopolis Outta Him!
     .goto 210,32.86,26.18
     .cast 306977 >>Click on the |cRXP_PICK_Goblin Flying Machine|r
     .target Goblin Flying Machine
@@ -10039,7 +9986,7 @@ step
     .target Hobart Grapplehammer
 step
     #arrowtext Click\n|cRXP_PICK_Chest|r
-    .isOnQuest 57079
+    .isOnQuest 57079 --Beat The Crapopolis Outta Him!
     .goto 1531,52.58,58.9
     >>|TInterface/cursor/crosshair/interact.blp:20|tClick on the |cRXP_PICK_Chest|r
     .scenario 4369,1
@@ -10070,9 +10017,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF007|r - Nightborne
 #next a) Highmountain Heritage Armor
 #chapter
-
 << Horde
-
 step
     #arrowtext Click\n|cRXP_PICK_Portal|r
     #label StartIncludePrepGuide
@@ -10095,9 +10040,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF008|r - Highmountain
 #next a) Mag'har Orc Heritage Armor
 #chapter
-
 << Horde
-
 step
     #label StartIncludePrepGuide
     #completewith Heritage of Highmountain
@@ -10125,7 +10068,6 @@ RXPGuides.RegisterGuide([[
 #next a) Zandalari Troll Heritage Armor
 #chapter
 << Horde
-
 step
     #label StartIncludePrepGuide
     #completewith next
@@ -10147,7 +10089,6 @@ RXPGuides.RegisterGuide([[
 #next a) Vulpera Heritage Armor
 #chapter
 << Horde
-
 step
     #label StartIncludePrepGuide
     #completewith Heritage of Highmountain
@@ -10174,9 +10115,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF0011|r - Vulpera
 #next a) Heritage Pandaren
 #chapter
-
 << Horde
-
 step
     #label StartIncludePrepGuide
     #completewith next
@@ -10197,10 +10136,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF0012|r - Pandaren
 #next a) Haranir Heritage Armor
 #chapter
-
 step << Horde
     #arrowtext Talk to\n|cRXP_FRIENDLY_Ji Firepaw|r
-    .isOnQuest 84444
+    .isOnQuest 84444 --Invitation to the Spirit Festival
     .goto 85,70.32,38.96
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ji Firepaw|r
     .turnin 84444 >>Turn in Invitation to the Spirit Festival
@@ -10236,7 +10174,7 @@ step << Horde
     .target Li Li Stormstout
 step << Alliance
     #arrowtext Talk to\n|cRXP_FRIENDLY_Aysa Cloudsinger|r
-    .isOnQuest 84442
+    .isOnQuest 84442 --Invitation to the Spirit Festival
     .goto 84,68.39,16.45
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Aysa Cloudsinger|r
     .turnin 84442 >>Turn in Invitation to the Spirit Festival
@@ -10718,7 +10656,6 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF0013|r - Haranir
 #internal
 #chapter
-
 step
     >>zone 2413 >>Enter Harandar
     *|cRXP_WARN_Use|r |T5927658:0|t[Rootwalking]
@@ -10730,9 +10667,6 @@ step
     .turnin 82771 >>Turn in Heritage of the Haranir
     .target Orweyna
 ]])
-
-
-
 --Nightborne
 RXPGuides.RegisterGuide([[
 #retail
@@ -10742,7 +10676,6 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF1|r - Nightborne
 #next a) Highmountain Tauren Unlock 12123123
 #internal
-
 -- step
 --     #completewith NightborneStartQuestline
 --     .zone 85 >>Get to Orgrimmar
@@ -10802,25 +10735,25 @@ step
     .accept 49613 >>Accept Silvermoon City
     .target Lady Liadrin
 step << Mage
-    .isOnQuest 49613
+    .isOnQuest 49613 --Silvermoon City
     #completewith NightborneThalyssraEstate
     .train 32272,3
     .cast 32272 >>Use Teleport: Silvermoon
 step
-    .isOnQuest 49613
+    .isOnQuest 49613 --Silvermoon City
     .zoneskip 110
-    .itemcount 65274,1
+    .itemcount 65274,1 --Cloak of Coordination
     .cooldown item,65274,>0,1
     .goto 680,65.88,63.71
     .zone 85 >>Use the Cloak of Coordination
 step
-    .isOnQuest 49613
+    .isOnQuest 49613 --Silvermoon City
     #completewith next
     .zoneskip 110
     .zone 627 >>Use the Dalaran Hearthstone if you have one (in your toy box)
 step
     #arrowtext Take the Portal to Orgrimmar
-    .isOnQuest 49613
+    .isOnQuest 49613 --Silvermoon City
     .zoneskip 110
     .goto 627,55.27,23.93
     .zone 85 >>Take the Portal to Orgrimmar
@@ -10839,7 +10772,7 @@ step
 step
     #arrowtext Click\n|cRXP_PICK_Portal|r
     #label RemembertheSunwellStart
-    .isOnQuest 49354
+    .isOnQuest 49354 --Remember the Sunwell
     .goto 110,53.95,19.49
     .zone 973 >>Click on the |cRXP_PICK_Portal|r
 step
@@ -10892,7 +10825,7 @@ step
 step
     #arrowtext Click\n|cRXP_PICK_Silvermoon Translocator|r
     #label RemembertheSunwellEnd
-    .isOnQuest 49354
+    .isOnQuest 49354 --Remember the Sunwell
     .goto 973,62.03,67.6
     .zone 110 >>|TInterface/cursor/crosshair/interact.blp:20|tClick on the |cRXP_PICK_Silvermoon Translocator|r
 step
@@ -10903,22 +10836,22 @@ step
     .accept 49614 >>Accept The Nightborne
     .target Lady Liadrin
 step << Mage
-    .isOnQuest 49614
+    .isOnQuest 49614 --The Nightborne
     #completewith NightborneTheNightborne
     .zoneskip 85
     .goto 110,58.44,19.13
     .cast 3567>>Use Teleport: Orgrimmar
 step
-    .isOnQuest 49614
+    .isOnQuest 49614 --The Nightborne
     #completewith next
     .zoneskip 85
-    .itemcount 140192,1
+    .itemcount 140192,1 --Legion Dalaran Hearthstone
     .cooldown item,140192,>0,1
     .goto 680,65.88,63.71
     .zone 627 >>Use the Dalaran Hearthstone if you have one (in your toy box)
 step
     #arrowtext Take the Portal to Orgrimmar
-    .isOnQuest 49614
+    .isOnQuest 49614 --The Nightborne
     .zoneskip 627,1
     .goto 627,55.27,23.93
     .zone 85 >>Take the Portal to Orgrimmar
@@ -10952,8 +10885,6 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF1|r - Void Elf
 #next a) Lightforged Draenei Unlock 1hgjjg
 #internal
-
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Aysa Cloudsinger|r
     .goto 84,52.06,13.38
@@ -11014,12 +10945,12 @@ step
     .target Alleria Windrunner
 step
     #arrowtext Click\n|cRXP_PICK_Void Portal|r
-    .isOnQuest 48962
+    .isOnQuest 48962 --Telogrus Rift
     .goto 95,79.64,19.8
     .zone 972 >>Click on the |cRXP_PICK_Void Portal|r.
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Magister Umbric|r
-    .isOnQuest 48962
+    .isOnQuest 48962 --Telogrus Rift
     .goto 972,47.84,73.88
     .gossipoption 47941 >>Talk to |cRXP_FRIENDLY_Magister Umbric|r.
     .timer 66,Duration until continuation.
@@ -11112,7 +11043,7 @@ step
     #completewith Telogrus Rift
     .goto 972,27.98,24.48
     .cast 253691 >>Click on the |cRXP_PICK_Void Portal|r to teleport to |cRXP_WARN_Stormwind|r.
-    .isOnQuest 48962
+    .isOnQuest 48962 --Telogrus Rift
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Aysa Cloudsinger|r
     #requires Telogrus Rift
@@ -11120,5 +11051,4 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Aysa Cloudsinger|r.
     .turnin 48962 >>Turn in Telogrus Rift
     .target Aysa Cloudsinger
-
 ]])

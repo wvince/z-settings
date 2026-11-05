@@ -161,7 +161,7 @@ step << Warlock
     .goto Durotar,44.58,56.10,40,0
     .goto Durotar,44.27,56.59,40,0
     .goto Durotar,43.85,55.52,40,0
-    >>Mate os |cRXP_ENEMY_Familiares Torpes|r. Saqueie-os para |cRXP_LOOT_Vile Familiar Cabeças|r
+    >>Mate |cRXP_ENEMY_Familiares Torpes|r. Saqueie-os para pegar |cRXP_LOOT_Cabeças de Demônio Familiar Vil|r
     .complete 1485,1 --Vile Familiar Head (6)
     .mob Vile Familiar
 step
@@ -331,11 +331,11 @@ step
     .turnin 788 >>Entregue Dentes cortantes << !Shaman
     .accept 789 >>Aceite A ferroada do escorpídeo
     .accept 2383 >>Aceite Pergaminho simples << Orc Warrior
-    .accept 3065 >>Aceite Tabuleta Simples - Missão << Troll Warrior
+    .accept 3065 >>Aceite Tabuleta Simples << Troll Warrior
     .accept 3082 >>Aceite Tabuleta cinzelada << Troll Hunter
     .accept 3083 >>Aceite Tabuleta cifrada << Troll Rogue
     .accept 3084 >>Aceite Tabuleta Inscrita em Runas - Missão << Troll Shaman
-    .accept 3085 >>Aceite Tabuleta Sagrada << Troll Priest
+    .accept 3085 >>Aceite Tabuleta consagrada << Troll Priest
     .accept 3086 >>Aceite Tabuleta glífica << Troll Mage
     .accept 3087 >>Aceite Pergaminho Cinzelado << Orc Hunter
     .accept 3088 >>Aceite Pergaminho cifrado << Orc Rogue
@@ -354,7 +354,7 @@ step << Rogue
     .goto Durotar,41.27,68.00
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Rwag|r
     .turnin 3083 >>Entregue Tabuleta cifrada << Troll Rogue
-    .turnin 3088 >>Entregue Pergaminho Cifrado << Orc Rogue
+    .turnin 3088 >>Entregue Pergaminho cifrado << Orc Rogue
     .train 53 >> Aprenda |T132090:0|t[Punhalada pelas Costas]
     .target Rwag
     .money <0.04
@@ -365,7 +365,7 @@ step << Rogue
     .goto Durotar,41.27,68.00
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Rwag|r
     .turnin 3083 >>Entregue Tabuleta cifrada << Troll Rogue
-    .turnin 3088 >>Entregue Pergaminho Cifrado << Orc Rogue
+    .turnin 3088 >>Entregue Pergaminho cifrado << Orc Rogue
     .target Rwag
 step << Warlock
     #completewith Nartok2
@@ -1064,7 +1064,7 @@ step << Warrior
     #xprate <1.5
     .goto Durotar,42.89,69.44
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Frang|r
-    .train 100 >> Treine |T132337:0|t[Carga]
+    .train 100 >> Aprenda |T132337:0|t[Investida]
     .train 772 >> Aprenda |T132155:0|t[Dilacerar]
     .target Frang
     .money <0.02
@@ -1078,7 +1078,7 @@ step << Warrior
 step << Warrior
     .goto Durotar,42.89,69.44
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Frang|r
-    .train 100 >> Treine |T132337:0|t[Carga]
+    .train 100 >> Aprenda |T132337:0|t[Investida]
     .target Frang
     .money <0.01
 step
@@ -1305,7 +1305,7 @@ step
 step
     #softcore
     .goto Durotar,49.89,40.39
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tConversar com |cRXP_FRIENDLY_Furl|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Férrano Escarnecenho|r
     .accept 791 >>Aceite Carregar Seu Peso
     .target Furl Scornbrow
 step << Warrior/Rogue
@@ -1565,7 +1565,7 @@ step
     .target Lar Prowltusk
 step
     #label SenjinPickups
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Vel'rin|r, |cRXP_FRIENDLY_Vornal|r e |cRXP_FRIENDLY_Gadrin|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Vel'rin Presa|r, |cRXP_FRIENDLY_Mestre Vornal|r e |cRXP_FRIENDLY_Mestre Gadrin|r
     .accept 817 >>Aceite Presa prática
     .target +Vel'rin Fang
     .goto Durotar,55.95,73.93
@@ -2071,7 +2071,7 @@ step
     #label Betrayers
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com|r |cRXP_FRIENDLY_Orgnil|r, |cRXP_FRIENDLY_Gar'Thok|r e |cRXP_FRIENDLY_Torka|r
     .turnin 823 >>Entregue Apresente-se a Orgnil
-    .accept 806 >>Aceite Tempestades Sombrias
+    .accept 806 >>Aceite Tempestades sombrias
     .target +Orgnil Soulscar
     .goto Durotar,52.24,43.15
     .accept 784 >>Aceite Aniquile os invasores
@@ -2102,7 +2102,7 @@ step
 step
     #hardcore
     .goto Durotar,49.89,40.39
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tConversar com |cRXP_FRIENDLY_Furl|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Férrano Escarnecenho|r
     .accept 791 >>Aceite Carregar Seu Peso
     .target Furl Scornbrow
 step << Warrior/Rogue
@@ -2287,7 +2287,7 @@ step << !Priest !Mage
     .goto Durotar,57.96,42.46,50,0
     .goto Durotar,56.47,43.45,50,0
     .goto Durotar,55.50,48.97,50,0
-    .xp 7+2520 >> Farme até 2520+/4500 XP
+    .xp 7+2520 >> Mate inimigos até atingir 2520+/4500 de xp
     .isNotOnQuest 823
 step << !Priest !Mage
     #xprate <1.5
@@ -2387,7 +2387,7 @@ step
     #label RazorTurnins1
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com|r |cRXP_FRIENDLY_Orgnil|r, |cRXP_FRIENDLY_Gar'Thok|r e |cRXP_FRIENDLY_Torka|r
     .turnin 823 >>Entregue Apresente-se a Orgnil
-    .accept 806 >>Aceite Tempestades Sombrias
+    .accept 806 >>Aceite Tempestades sombrias
     .target +Orgnil Soulscar
     .goto Durotar,52.24,43.15
     .turnin 784 >>Entregue Subjuguem os Traidores
@@ -2428,7 +2428,7 @@ step
     .goto Durotar,49.60,40.04,8 >>Viaje para cima da torre em direção a Férrano Escarnecenho
 step
     .goto Durotar,49.89,40.39
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tConversar com |cRXP_FRIENDLY_Furl|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Férrano Escarnecenho|r
     .turnin 791 >>Entregue Carregue suas tralhas
     .target Furl Scornbrow
 step << Warrior/Rogue
@@ -2440,7 +2440,7 @@ step << Warrior/Rogue
 step << Warrior/Rogue
     .goto Durotar,51.90,41.14
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Wuark|r
-    >>|cRXP_BUY_Compre|r |T134708:0|t[Picareta de Mineração] |cRXP_BUY_de|r |cRXP_FRIENDLY_Wuark|r
+    >>|cRXP_BUY_Compre uma|r |T134708:0|t[Picareta de Mineração] |cRXP_BUY_de|r |cRXP_FRIENDLY_Wuark|r
     .collect 2901,1,825,1 --Mining Pick (1)
     .target Wuark
 step << Warrior/Rogue
@@ -2581,7 +2581,7 @@ step
     >>|cRXP_WARN_Guarde 4 de prata para seus feitiços de classe!|r << Rogue/Warrior/Shaman/Warlock
     >>|cRXP_WARN_Guarde 2 de prata para os feitiços da sua classe!|r << Priest
     .vendor >> Venda os itens de lixo
-    .home >> Defina sua Pedra de Retorno em Razor Hill
+    .home >> Defina sua Pedra de Regresso em Monte Navalha
     .turnin 2161 >>Entregue O Fardo do Peão
     .target Innkeeper Grosk
     .train 6760,1 << Rogue
@@ -2597,7 +2597,7 @@ step << !Mage !Hunter !Druid
     >>|cRXP_BUY_Compre|r |T132815:0|t[Leite Gelado] |cRXP_BUY_dele|r << Mage/Warlock/Priest/Shaman/Druid
     >>|cRXP_BUY_Compre|r |T133974:0|t[Pernil de Carne] |cRXP_BUY_dele|r << Rogue/Warrior
     .vendor >> Venda os itens de lixo
-    .home >> Defina sua Pedra de Retorno em Razor Hill
+    .home >> Defina sua Pedra de Regresso em Monte Navalha
     .turnin 2161 >>Entregue O Fardo do Peão
     .target Innkeeper Grosk
     .train 6760,3 << Rogue
@@ -2643,7 +2643,7 @@ step << Priest
     .goto Durotar,54.26,42.93
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Tai'jin|r
     .turnin 5649 >> Entregue Em Simpatia da Espiritualidade
-    .accept 5648 >> Aceite Garments of Spirituality
+    .accept 5648 >> Aceite Vestes da espiritualidade
     .train 2052 >> Aprenda |T135929:0|t[Cura Inferior Grau 2]
     .target Tai'jin
 step << Priest
@@ -2672,7 +2672,7 @@ step
     .money <0.05
 step
     #completewith next
-    >>Mate os |cRXP_ENEMY_Pygmy Surf Crawlers|r e os |cRXP_ENEMY_Surf Crawlers|r. Saqueie-os por seu |cRXP_LOOT_Mucus|r
+    >>Mate |cRXP_ENEMY_Surfatiscos Pigmeus|r e |cRXP_ENEMY_Surfatiscos|r. Saqueie-os para pegar |cRXP_LOOT_Muco|r
     >>Mate |cRXP_ENEMY_Conchacouros Makrura|r e |cRXP_ENEMY_Estaladores Makrura|r. Saqueie-os para pegar |cRXP_LOOT_Olhos|r
     -->>This does not need to be finished now
     .complete 818,2 --Crawler Mucus (8)
@@ -2705,7 +2705,7 @@ step
     .mob Durotar Tiger
 step
     #completewith next
-    >>Mate os |cRXP_ENEMY_Pygmy Surf Crawlers|r e os |cRXP_ENEMY_Surf Crawlers|r. Saqueie-os por seu |cRXP_LOOT_Mucus|r
+    >>Mate |cRXP_ENEMY_Surfatiscos Pigmeus|r e |cRXP_ENEMY_Surfatiscos|r. Saqueie-os para pegar |cRXP_LOOT_Muco|r
     >>Mate |cRXP_ENEMY_Conchacouros Makrura|r e |cRXP_ENEMY_Estaladores Makrura|r. Saqueie-os para pegar |cRXP_LOOT_Olhos|r
     -->>This does not need to be finished now
     .complete 818,2 --Crawler Mucus (8)
@@ -2734,7 +2734,7 @@ step
     .mob Bloodtalon Taillasher
 step
     #completewith next
-    >>Mate os |cRXP_ENEMY_Pygmy Surf Crawlers|r e os |cRXP_ENEMY_Surf Crawlers|r. Saqueie-os por seu |cRXP_LOOT_Mucus|r
+    >>Mate |cRXP_ENEMY_Surfatiscos Pigmeus|r e |cRXP_ENEMY_Surfatiscos|r. Saqueie-os para pegar |cRXP_LOOT_Muco|r
     >>Mate |cRXP_ENEMY_Conchacouros Makrura|r e |cRXP_ENEMY_Estaladores Makrura|r. Saqueie-os para pegar |cRXP_LOOT_Olhos|r
     .complete 818,2 --Crawler Mucus (8)
     .mob +Pygmy Surf Crawler
@@ -2842,7 +2842,7 @@ step << Priest
     .train 402852,1
 step
     #completewith next
-    >>Mate os |cRXP_ENEMY_Pygmy Surf Crawlers|r e os |cRXP_ENEMY_Surf Crawlers|r. Saqueie-os por seu |cRXP_LOOT_Mucus|r
+    >>Mate |cRXP_ENEMY_Surfatiscos Pigmeus|r e |cRXP_ENEMY_Surfatiscos|r. Saqueie-os para pegar |cRXP_LOOT_Muco|r
     >>Mate |cRXP_ENEMY_Conchacouros Makrura|r e |cRXP_ENEMY_Estaladores Makrura|r. Saqueie-os para pegar |cRXP_LOOT_Olhos|r
     -->>This does not need to be finished now
     .complete 818,2 --Crawler Mucus (8)
@@ -2881,7 +2881,7 @@ step
     .goto Durotar,57.27,79.38,60,0
     .goto Durotar,55.66,80.47,60,0
     .goto Durotar,53.8,83.14,60,0
-    >>Mate os |cRXP_ENEMY_Pygmy Surf Crawlers|r e os |cRXP_ENEMY_Surf Crawlers|r. Saqueie-os por seu |cRXP_LOOT_Mucus|r
+    >>Mate |cRXP_ENEMY_Surfatiscos Pigmeus|r e |cRXP_ENEMY_Surfatiscos|r. Saqueie-os para pegar |cRXP_LOOT_Muco|r
     >>Mate |cRXP_ENEMY_Conchacouros Makrura|r e |cRXP_ENEMY_Estaladores Makrura|r. Saqueie-os para pegar |cRXP_LOOT_Olhos|r
     -->>This does not need to be finished now
     .complete 818,2 --Crawler Mucus (8)
@@ -3138,7 +3138,7 @@ step << Hunter
     .goto Durotar,51.85,43.49
     >>Entre no bunker
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Thotar|r dentro
-    .turnin 6062 >>Entregue Adestramento da Fera - Missão
+    .turnin 6062 >>Entregue Domando a fera
     .accept 6083 >>Aceite Adestramento da Fera - Missão
     .target Thotar
     .isQuestComplete 6062
@@ -3167,7 +3167,7 @@ step << Hunter
     .goto Durotar,51.85,43.49
     >>Entre no bunker
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Thotar|r dentro
-    .turnin 6083 >>Entregue Adestramento da Fera - Missão
+    .turnin 6083 >>Entregue Domando a fera
     .accept 6082 >>Aceite Adestramento da Fera - Missão
     .target Thotar
     .isQuestTurnedIn 6062
@@ -3192,7 +3192,7 @@ step << Hunter
     .goto Durotar,51.85,43.49
     >>Entre no bunker
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Thotar|r dentro
-    .turnin 6082 >>Entregue Adestramento da Fera - Missão
+    .turnin 6082 >>Entregue Domando a fera
     .accept 6081 >>Aceite Treinamento da Fera - Missão
     .target Thotar
     .isQuestTurnedIn 6062
@@ -3551,7 +3551,7 @@ step << Warrior/Shaman/Hunter
     .target Thrall
 step << Hunter
     #completewith next
-    .goto Orgrimmar,68.02,38.69,30 >> Vá para o Vale de Honra
+    .goto Orgrimmar,68.02,38.69,30 >> Vá ao Vale da Honra
 step << Hunter
     .goto Orgrimmar,66.05,18.52
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Ormak|r
@@ -3829,7 +3829,7 @@ step << Warrior/Shaman
     .goto The Barrens,52.23,31.00
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Sergra Espinhonegro|r
     .turnin 842 >>Entregue Recrutamento na Encruzilhada
-    .accept 844 >>Aceite A Ameaça Pinote
+    .accept 844 >>Aceite A ameaça pinote
     .target Sergra Darkthorn
 step << Warrior/Shaman
     .goto The Barrens,52.62,29.84
@@ -4925,7 +4925,7 @@ step << Shaman
     .target Kardris Dreamseeker
 step << Rogue
     .goto Orgrimmar,48.12,80.52
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|cRXP_BUY_Converse com|r Trak'gen|cRXP_FRIENDLY_|r. Compre|cRXP_BUY_ |T135419:0|t[Machado de Arremesso Afiado]|r |cRXP_BUY_dele|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|cRXP_BUY_Fale com|r |cRXP_FRIENDLY_Trak'gen|r|cRXP_BUY_. Compre |r |T135419:0|t[Machado de Arremesso Afiado] |cRXP_BUY_dele|r
     .collect 3135,200,354,1 --Sharp Throwing Axe (200)
     .vendor >> Venda os lixos
     .target Trak'gen
@@ -4960,7 +4960,7 @@ step << Mage
 step << Warrior
     #xprate <1.5
     #completewith next
-    .goto Orgrimmar,68.02,38.69,30 >> Vá para o Vale de Honra
+    .goto Orgrimmar,68.02,38.69,30 >> Vá ao Vale da Honra
 step << Warrior
     #xprate <1.5
     .goto Orgrimmar,79.93,31.26
@@ -4977,7 +4977,7 @@ step << Warrior/Shaman/Hunter
     #xprate <1.5 << !Hunter
     .goto Orgrimmar,31.74,37.82
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Thrall|r
-    .turnin 5726 >>Entregue Escondido Enemies
+    .turnin 5726 >>Entregue Inimigos ocultos
     .accept 5727 >>Aceite Inimigos Escondidos
     .target Thrall
     .isQuestComplete 5726
@@ -4986,7 +4986,7 @@ step << Warrior/Shaman/Hunter
     #xprate <1.5 << !Hunter
     .goto Orgrimmar,31.74,37.82
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Thrall|r
-    .turnin 5726 >>Entregue Escondido Enemies
+    .turnin 5726 >>Entregue Inimigos ocultos
     .target Thrall
     .isQuestComplete 5726
     .dungeon !RFC
@@ -5042,12 +5042,12 @@ step << !Warrior !Shaman !Hunter
     #softcore
     #completewith ZeptoUC1
     .goto Orgrimmar,53.03,48.78
-    .subzone 2437 >> Entre em Cavernas Ígneas
+    .subzone 2437 >> Entre nas Cavernas Ígneas
 step << !Warrior !Shaman !Hunter
     #softcore
     #completewith ZeptoUC1
     .goto Durotar,47.05,17.58
-    .deathskip >> Morra e renasça no |cRXP_FRIENDLY_Anjo da Cura|r
+    .deathskip >> Morra e ressuscite no |cRXP_FRIENDLY_Anjo da Cura|r
 step << !Warrior !Shaman !Hunter
     #hardcore
     #completewith ZeptoUC1
@@ -5058,13 +5058,13 @@ step << Warrior/Shaman/Hunter
     #softcore
     #completewith FoundtheCure
     .goto Orgrimmar,53.03,48.78
-    .subzone 2437 >> Entre em Cavernas Ígneas
+    .subzone 2437 >> Entre nas Cavernas Ígneas
 step << Warrior/Shaman/Hunter
     #xprate <1.5 << !Hunter
     #softcore
     #completewith FoundtheCure
     .goto Durotar,47.05,17.58
-    .deathskip >> Morra e renasça no |cRXP_FRIENDLY_Anjo da Cura|r
+    .deathskip >> Morra e ressuscite no |cRXP_FRIENDLY_Anjo da Cura|r
 step << Warrior/Shaman/Hunter
     #xprate <1.5 << !Hunter
     #hardcore
@@ -5313,7 +5313,7 @@ step << Mage
     .target Cain Firesong
 step << !Mage
     .goto Tirisfal Glades,61.71,52.06
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com a |cRXP_FRIENDLY_Estalajadeira Geni|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Estalajadeira Geni|r
     >>|cRXP_BUY_Compre|r |T132815:0|t[Leite Gelado] |cRXP_BUY_dela|r << Mage/Priest/Shaman
     >>|cRXP_BUY_Compre|r |T134532:0|t[Cogumelo de Bolinhas Vermelhas] |cRXP_BUY_dela|r <<Warrior/Rogue
     >>|cRXP_BUY_Compre|r |T132815:0|t[Leite Gelado] |cRXP_BUY_e|r |T134532:0|t[Cogumelo de Bolinhas Vermelhas] |cRXP_BUY_dela|r << Warlock
@@ -5557,14 +5557,14 @@ step
     .goto Tirisfal Glades,58.20,51.43
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Necroguarda Dinis|r
     .turnin 404 >>Entregue Uma tarefa podre
-    .accept 426 >>Aceite Os Moinhos Invadidos
+    .accept 426 >>Aceite Os moinhos invadidos
     .isQuestComplete 404
     .target Deathguard Dillinger
 step
     #optional
     .goto Tirisfal Glades,58.20,51.43
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Necroguarda Dinis|r
-    .accept 426 >>Aceite Os Moinhos Invadidos
+    .accept 426 >>Aceite Os moinhos invadidos
     .isQuestTurnedIn 404
     .target Deathguard Dillinger
 step
@@ -6247,7 +6247,7 @@ step << Warlock
     .xp <12,1
 step << !Mage
     .goto Tirisfal Glades,61.71,52.06
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com a |cRXP_FRIENDLY_Estalajadeira Geni|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Estalajadeira Geni|r
     >>|cRXP_BUY_Compre|r |T132815:0|t[Leite Gelado] |cRXP_BUY_dela|r << Mage/Priest/Shaman
     >>|cRXP_BUY_Compre|r |T134532:0|t[Cogumelo de Bolinhas Vermelhas] |cRXP_BUY_dela|r <<Warrior/Rogue
     >>|cRXP_BUY_Compre|r |T132815:0|t[Leite Gelado] |cRXP_BUY_e|r |T134532:0|t[Cogumelo de Bolinhas Vermelhas] |cRXP_BUY_dela|r << Warlock/Hunter
@@ -6834,7 +6834,7 @@ step << Undead Rogue
 step << Rogue
     #label Swordtraining3
     .goto Undercity,57.29,32.72
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|cRXP_BUY_Fale com|r |cRXP_FRIENDLY_Arquibaldo|r no Bairro da Guerra
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|cRXP_BUY_Fale com|r |cRXP_FRIENDLY_Arquibaldo|r no Distrito Bélico
     .train 201 >>Treine Espadas de Uma Mão
     .target Archibald
     .money <0.1
@@ -7390,7 +7390,7 @@ step << Warlock
     .goto Durotar,44.58,56.10,40,0
     .goto Durotar,44.27,56.59,40,0
     .goto Durotar,43.85,55.52,40,0
-    >>Mate os |cRXP_ENEMY_Familiares Torpes|r. Saqueie-os para |cRXP_LOOT_Vile Familiar Cabeças|r
+    >>Mate |cRXP_ENEMY_Familiares Torpes|r. Saqueie-os para pegar |cRXP_LOOT_Cabeças de Demônio Familiar Vil|r
     .complete 1485,1 --Vile Familiar Head (6)
     .mob Vile Familiar
 step << Hunter
@@ -7520,11 +7520,11 @@ step
     .turnin 788 >>Entregue Dentes cortantes << !Shaman
     .accept 789 >>Aceite A ferroada do escorpídeo
     .accept 2383 >>Aceite Pergaminho simples << Orc Warrior
-    .accept 3065 >>Aceite Tabuleta Simples - Missão << Troll Warrior
+    .accept 3065 >>Aceite Tabuleta Simples << Troll Warrior
     .accept 3082 >>Aceite Tabuleta cinzelada << Troll Hunter
     .accept 3083 >>Aceite Tabuleta cifrada << Troll Rogue
     .accept 3084 >>Aceite Tabuleta Inscrita em Runas - Missão << Troll Shaman
-    .accept 3085 >>Aceite Tabuleta Sagrada << Troll Priest
+    .accept 3085 >>Aceite Tabuleta consagrada << Troll Priest
     .accept 3086 >>Aceite Tabuleta glífica << Troll Mage
     .accept 3087 >>Aceite Pergaminho Cinzelado << Orc Hunter
     .accept 3088 >>Aceite Pergaminho cifrado << Orc Rogue
@@ -7543,7 +7543,7 @@ step << Rogue
     .goto Durotar,41.27,68.00
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Rwag|r
     .turnin 3083 >>Entregue Tabuleta cifrada << Troll Rogue
-    .turnin 3088 >>Entregue Pergaminho Cifrado << Orc Rogue
+    .turnin 3088 >>Entregue Pergaminho cifrado << Orc Rogue
     .train 53 >> Aprenda |T132090:0|t[Punhalada pelas Costas]
     .target Rwag
     .money <0.04
@@ -7554,7 +7554,7 @@ step << Rogue
     .goto Durotar,41.27,68.00
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Rwag|r
     .turnin 3083 >>Entregue Tabuleta cifrada << Troll Rogue
-    .turnin 3088 >>Entregue Pergaminho Cifrado << Orc Rogue
+    .turnin 3088 >>Entregue Pergaminho cifrado << Orc Rogue
     .target Rwag
 step << Warlock
     #completewith Nartok2
@@ -7762,7 +7762,7 @@ step << Warrior
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Frang|r
     .turnin 2383 >>Entregue Pergaminho simples << Orc
     .turnin 3065 >>Entregue Tabuleta Simples << Troll
-    .train 100 >> Treine |T132337:0|t[Carga]
+    .train 100 >> Aprenda |T132337:0|t[Investida]
     .train 772 >> Aprenda |T132155:0|t[Dilacerar]
     .target Frang
     .money <0.02
@@ -8097,7 +8097,7 @@ step << Warrior
     #xprate <1.5
     .goto Durotar,42.89,69.44
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Frang|r
-    .train 100 >> Treine |T132337:0|t[Carga]
+    .train 100 >> Aprenda |T132337:0|t[Investida]
     .train 772 >> Aprenda |T132155:0|t[Dilacerar]
     .target Frang
     .money <0.02
@@ -8111,7 +8111,7 @@ step << Warrior
 step << Warrior
     .goto Durotar,42.89,69.44
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Frang|r
-    .train 100 >> Treine |T132337:0|t[Carga]
+    .train 100 >> Aprenda |T132337:0|t[Investida]
     .target Frang
     .money <0.01
 step
@@ -8238,7 +8238,7 @@ step
 step
     #softcore
     .goto Durotar,49.89,40.39
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tConversar com |cRXP_FRIENDLY_Furl|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Férrano Escarnecenho|r
     .accept 791 >>Aceite Carregar Seu Peso
     .target Furl Scornbrow
 step << Warrior/Rogue
@@ -8503,7 +8503,7 @@ step
     .target Lar Prowltusk
 step
     #label SenjinPickups
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Vel'rin|r, |cRXP_FRIENDLY_Vornal|r e |cRXP_FRIENDLY_Gadrin|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Vel'rin Presa|r, |cRXP_FRIENDLY_Mestre Vornal|r e |cRXP_FRIENDLY_Mestre Gadrin|r
     .accept 817 >>Aceite Presa prática
     .target +Vel'rin Fang
     .goto Durotar,55.95,73.93
@@ -8756,7 +8756,7 @@ step
     .mob Durotar Tiger
 step
     #completewith TigerFur
-    >>Mate os |cRXP_ENEMY_Pygmy Surf Crawlers|r e os |cRXP_ENEMY_Surf Crawlers|r. Saqueie-os por seu |cRXP_LOOT_Mucus|r
+    >>Mate |cRXP_ENEMY_Surfatiscos Pigmeus|r e |cRXP_ENEMY_Surfatiscos|r. Saqueie-os para pegar |cRXP_LOOT_Muco|r
     >>Mate |cRXP_ENEMY_Conchacouros Makrura|r e |cRXP_ENEMY_Estaladores Makrura|r. Saqueie-os para pegar |cRXP_LOOT_Olhos|r
     .complete 818,2 --Crawler Mucus (8)
     .mob +Pygmy Surf Crawler
@@ -8844,7 +8844,7 @@ step
     .goto Durotar,59.92,80.80,50,0
     .goto Durotar,57.90,78.13,50,0
     .goto Durotar,53.27,83.05,50,0
-    >>Mate os |cRXP_ENEMY_Pygmy Surf Crawlers|r e os |cRXP_ENEMY_Surf Crawlers|r. Saqueie-os por seu |cRXP_LOOT_Mucus|r
+    >>Mate |cRXP_ENEMY_Surfatiscos Pigmeus|r e |cRXP_ENEMY_Surfatiscos|r. Saqueie-os para pegar |cRXP_LOOT_Muco|r
     >>Mate |cRXP_ENEMY_Conchacouros Makrura|r e |cRXP_ENEMY_Estaladores Makrura|r. Saqueie-os para pegar |cRXP_LOOT_Olhos|r
     .complete 818,2 --Crawler Mucus (8)
     .mob +Pygmy Surf Crawler
@@ -8976,7 +8976,7 @@ step
 step
     #hardcore
     .goto Durotar,49.89,40.39
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tConversar com |cRXP_FRIENDLY_Furl|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Férrano Escarnecenho|r
     .accept 791 >>Aceite Carregar Seu Peso
     .target Furl Scornbrow
 step << Warrior/Rogue
@@ -9163,7 +9163,7 @@ step
     .goto Durotar,52.24,43.15
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com|r |cRXP_FRIENDLY_Orgnil Chaganalma|r
     .turnin 823 >>Entregue Apresente-se a Orgnil
-    .accept 806 >>Aceite Tempestades Sombrias
+    .accept 806 >>Aceite Tempestades sombrias
     .target Orgnil Soulscar
 step
     #xprate >2.09
@@ -9231,7 +9231,7 @@ step
     .goto Durotar,49.60,40.04,8 >>Viaje para cima da torre em direção a Férrano Escarnecenho
 step
     .goto Durotar,49.89,40.39
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tConversar com |cRXP_FRIENDLY_Furl|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Férrano Escarnecenho|r
     .turnin 791 >>Entregue Carregue suas tralhas
     .target Furl Scornbrow
 step << Warrior/Rogue
@@ -9243,7 +9243,7 @@ step << Warrior/Rogue
 step << Warrior/Rogue
     .goto Durotar,51.90,41.14
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Wuark|r
-    >>|cRXP_BUY_Compre|r |T134708:0|t[Picareta de Mineração] |cRXP_BUY_de|r |cRXP_FRIENDLY_Wuark|r
+    >>|cRXP_BUY_Compre uma|r |T134708:0|t[Picareta de Mineração] |cRXP_BUY_de|r |cRXP_FRIENDLY_Wuark|r
     .collect 2901,1,825,1 --Mining Pick (1)
     .target Wuark
 step << Warrior/Rogue
@@ -9389,7 +9389,7 @@ step
     >>|cRXP_BUY_Compre|r |T132815:0|t[Leite Gelado] |cRXP_BUY_dele|r << Mage/Warlock/Priest/Shaman
     >>|cRXP_BUY_Compre|r |T133974:0|t[Pernil de Carne] |cRXP_BUY_dele|r << Rogue/Warrior
     .vendor >> Venda os itens de lixo
-    .home >> Defina sua Pedra de Retorno em Razor Hill
+    .home >> Defina sua Pedra de Regresso em Monte Navalha
     .turnin 2161 >>Entregue O Fardo do Peão
     .target Innkeeper Grosk
     .bindlocation 362
@@ -9397,7 +9397,7 @@ step << Priest
     .goto Durotar,54.26,42.93
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Tai'jin|r
     .turnin 5649 >> Entregue Em Simpatia da Espiritualidade
-    .accept 5648 >> Aceite Garments of Spirituality
+    .accept 5648 >> Aceite Vestes da espiritualidade
     .train 2052 >> Aprenda |T135929:0|t[Cura Inferior Grau 2]
     .target Tai'jin
 step << Priest
@@ -9490,7 +9490,7 @@ step << Hunter
     .goto Durotar,51.85,43.49
     >>Entre no bunker
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Thotar|r dentro
-    .turnin 6062 >>Entregue Adestramento da Fera - Missão
+    .turnin 6062 >>Entregue Domando a fera
     .accept 6083 >>Aceite Adestramento da Fera - Missão
     .target Thotar
 step << Hunter
@@ -9516,7 +9516,7 @@ step << Hunter
     .goto Durotar,51.85,43.49
     >>Entre no bunker
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Thotar|r dentro
-    .turnin 6083 >>Entregue Adestramento da Fera - Missão
+    .turnin 6083 >>Entregue Domando a fera
     .accept 6082 >>Aceite Adestramento da Fera - Missão
     .target Thotar
 step << Hunter
@@ -9539,7 +9539,7 @@ step << Hunter
     .goto Durotar,51.85,43.49
     >>Entre no bunker
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Thotar|r dentro
-    .turnin 6082 >>Entregue Adestramento da Fera - Missão
+    .turnin 6082 >>Entregue Domando a fera
     .accept 6081 >>Aceite Treinamento da Fera - Missão
     .target Thotar
 step << Hunter
@@ -9868,7 +9868,7 @@ step
     .goto The Barrens,52.24,31.01
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Sergra Espinhonegro|r
     .turnin 842 >>Entregue Recrutamento na Encruzilhada
-    .accept 844 >>Aceite A Ameaça Pinote
+    .accept 844 >>Aceite A ameaça pinote
     .target Sergra Darkthorn
 step
     #xprate >2.09
@@ -9910,7 +9910,7 @@ step
     .target Innkeeper Gryshka
 step << Rogue
     .goto Orgrimmar,48.12,80.52
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|cRXP_BUY_Converse com|r Trak'gen|cRXP_FRIENDLY_|r. Compre|cRXP_BUY_ |T135419:0|t[Machado de Arremesso Afiado]|r |cRXP_BUY_dele|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|cRXP_BUY_Fale com|r |cRXP_FRIENDLY_Trak'gen|r|cRXP_BUY_. Compre |r |T135419:0|t[Machado de Arremesso Afiado] |cRXP_BUY_dele|r
     .collect 3135,200 --Sharp Throwing Axe (200)
     .vendor >> Venda os lixos
     .target Trak'gen
@@ -10066,7 +10066,7 @@ step << Troll Warrior
     .train 227,3
 step << Hunter
     #completewith next
-    .goto Orgrimmar,68.02,38.69,30 >> Vá para o Vale de Honra
+    .goto Orgrimmar,68.02,38.69,30 >> Vá ao Vale da Honra
 step << Hunter
     .goto Orgrimmar,66.05,18.52
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Ormak|r
@@ -10123,11 +10123,11 @@ step << Warlock
     #softcore
     #completewith next
     .goto Orgrimmar,53.03,48.78
-    .subzone 2437 >> Entre em Cavernas Ígneas
+    .subzone 2437 >> Entre nas Cavernas Ígneas
 step << Warlock
     #softcore
     .goto Durotar,47.05,17.58
-    .deathskip >> Morra e renasça no |cRXP_FRIENDLY_Anjo da Cura|r
+    .deathskip >> Morra e ressuscite no |cRXP_FRIENDLY_Anjo da Cura|r
     .isOnQuest 1501
 step << Warlock
     #hardcore
@@ -10147,7 +10147,7 @@ step << Warlock
     .unitscan Gazz'uz
 step << Warlock
     #completewith next
-    >>Mate os |cRXP_ENEMY_Burning Blade Orcs|r. Saqueie-os para obter uma |cRXP_LOOT_Lieutenant's Insignia|r
+    >>Mate os |cRXP_ENEMY_Burning Blade Orcs|r. Saqueie-os para obter a |cRXP_LOOT_Lieutenant's Insignia|r
     >>|cRXP_WARN_Pular isto se você tiver azar com o drop|r
     .complete 5726,1 --Lieutenant's Insignia (1)
     .mob Burning Blade Fanatic
@@ -10161,7 +10161,7 @@ step << Warlock
 step << Warlock
     #softcore
     .goto Durotar,47.05,17.58
-    .deathskip >> Morra e renasça no |cRXP_FRIENDLY_Anjo da Cura|r
+    .deathskip >> Morra e ressuscite no |cRXP_FRIENDLY_Anjo da Cura|r
     .isQuestComplete 1501
 step << Warlock
     .goto Orgrimmar,48.97,92.84,50,0
@@ -10171,7 +10171,7 @@ step << Warlock
 step << Warlock
     .goto Orgrimmar,31.74,37.82
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Thrall|r
-    .turnin 5726 >>Entregue Escondido Enemies
+    .turnin 5726 >>Entregue Inimigos ocultos
     .accept 5727 >>Aceite Inimigos Escondidos
     .target Thrall
     .isQuestComplete 5726
@@ -10221,7 +10221,7 @@ step << Warlock
 step << Warlock
     .goto Orgrimmar,31.74,37.82
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Thrall|r
-    .turnin 5727 >>Entregue Escondido Enemies
+    .turnin 5727 >>Entregue Inimigos ocultos
     .target Thrall
     .isQuestTurnedIn 5726
 step << Warlock

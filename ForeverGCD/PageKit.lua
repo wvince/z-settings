@@ -331,6 +331,10 @@ local _, ns = ...
 --   Every page: a More line counts, names and folds only the rows it will
 --     show: a row hidden by its When (row:When, block.when), or in an empty
 --     or filtered block, is left out ("+ 3 more" while one of four hides)
+-- Kit 20 (Forever Skin 0.54.0, every page):
+--   A search reads a heading's tag (page.BlizzardHeading) with its title, as
+--     it is drawn after it: "blizzard" finds the rows under a Blizzard
+--     heading, whose rows carry no tag of their own
 -- Kit 18's history: what Forever Skin needs to join without losing anything
 -- (its sub-headings, titled ticks, locked CVars and per-control state lines,
 -- its fixed title strip), and the user's two answers for every page
@@ -347,6 +351,11 @@ local _, ns = ...
 -- Until kit 18 a More line counted a row its When hid (Combat Text's
 -- Colours, for Your hits only, made the Lanes line read "4 more" and open
 -- three), in Combat Text's toolkit and the kit alike.
+-- Kit 20's history: Forever Skin's Nameplates page held Blizzard's options
+-- under one heading titled Blizzard's nameplate options, so a search for
+-- blizzard found every one of them by that title; from Skin 0.54.0 they
+-- sit under their topics, three headings of Blizzard's alone carrying the
+-- tag instead of a title that says it.
 -- Helpers, on ns.PageKit and every kit: Text, PlaceTooltip, ShowTip,
 -- Tooltip, Skin, Hover, Strip, ButtonWidget, Tick, StepArrow, Tag,
 -- BlizzardLines, TipFrame, HideTip, OwnPoint, ResetArt, Px, Edge, RefreshEdges, Usable,
@@ -357,7 +366,7 @@ local _, ns = ...
 
 local Kit = {}
 ns.PageKit = Kit
-Kit.VERSION = 19
+Kit.VERSION = 20
 
 local WHITE = "Interface\\Buttons\\WHITE8X8"
 local BACKDROP = {
@@ -3470,6 +3479,8 @@ function Kit.New(options)
                 local this = block.group
                 while this do
                     titles[#titles + 1] = this.title or ""
+                    -- Kit 20: and its tag, drawn after the title.
+                    if this.blizzard then titles[#titles + 1] = this.blizzard end
                     this = this.parent
                 end
                 local heading = table.concat(titles, "\n")
@@ -3477,7 +3488,8 @@ function Kit.New(options)
                 if block.group ~= nil then whole = wholeOf[block.group] == true end
                 if block.heading then
                     local own = block.heading
-                    wholeOf[own] = (own.parent ~= nil and wholeOf[own.parent] == true) or Holds(own.title, words)
+                    wholeOf[own] = (own.parent ~= nil and wholeOf[own.parent] == true)
+                        or Holds((own.title or "") .. (own.blizzard and ("\n" .. own.blizzard) or ""), words)
                     running = wholeOf[own]
                     last = running
                 elseif block.topic then

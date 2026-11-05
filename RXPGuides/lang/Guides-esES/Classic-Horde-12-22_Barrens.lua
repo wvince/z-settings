@@ -77,7 +77,7 @@ step << !Shaman !Warrior/Undead
     #softcore
     #completewith ThievesPickup
     .goto The Barrens,50.72,32.61
-    .deathskip >> Muere y resucita en el |cRXP_FRIENDLY_Ángel de la Resurrección|r
+    .deathskip >> Muere y reaparece en el |cRXP_FRIENDLY_Ángel de la Resurrección|r
 step << !Shaman !Warrior/Undead
     #hardcore
     #completewith ThievesPickup
@@ -529,7 +529,7 @@ step << Tauren Shaman
     .dungeon RFC
 step << Tauren Shaman
     .goto Durotar,38.96,58.22
-    >>Haz clic en el |cRXP_PICK_Blandón|r en el suelo
+    >>Haz clic en el |cRXP_PICK_Blandón|r del suelo
     .turnin 1526 >>Entrega la misión La llamada del fuego
     .accept 1527 >>Acepta la misión La llamada del fuego
     .dungeon RFC
@@ -970,7 +970,7 @@ step << Shaman
     .mob Minor Manifestation of Fire
 step << Shaman
     .goto Durotar,38.96,58.22
-    >>Haz clic en el |cRXP_PICK_Blandón|r en el suelo
+    >>Haz clic en el |cRXP_PICK_Blandón|r del suelo
     .turnin 1526 >>Entrega la misión La llamada del fuego
     .accept 1527 >>Acepta la misión La llamada del fuego
 step << Shaman
@@ -2015,7 +2015,7 @@ step
 step << Priest
     #optional
     .goto Orgrimmar,35.59,87.80
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con |cRXP_FRIENDLY_Ur'kyo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con|r |cRXP_FRIENDLY_Ur'kyo|r
     .train 8102 >> Aprende tus hechizos de clase
     .target Ur'kyo
     .xp <16,1
@@ -2024,7 +2024,7 @@ step << Priest
     #optional
     #season 2
     .goto Orgrimmar,35.59,87.80
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con |cRXP_FRIENDLY_Ur'kyo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con|r |cRXP_FRIENDLY_Ur'kyo|r
     .train 527 >> Aprende |T135894:0|t[Disipar magia]
     >>|cRXP_WARN_Necesitarás|r |T135894:0|t[Disipar magia] |cRXP_WARN_para obtener una runa más tarde|r
     .target Ur'kyo
@@ -2033,7 +2033,7 @@ step << Priest
     #optional
     #season 0
     .goto Orgrimmar,35.59,87.80
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con |cRXP_FRIENDLY_Ur'kyo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con|r |cRXP_FRIENDLY_Ur'kyo|r
     .train 970 >> Aprende tus hechizos de clase
     .target Ur'kyo
     .xp <18,1
@@ -3112,6 +3112,7 @@ step
     >>Mata al |cRXP_ENEMY_Señor de la guerra Krom'zar|r una vez que aparece. Despoja el |cRXP_PICK_Estandarte|r que deja en el suelo
     >>|cRXP_WARN_¡Ten cuidado! Es un élite fuerte y está custodiado por al menos dos|r |cRXP_ENEMY_Kolkar|r |cRXP_WARN_enemigos|r
     >>|cRXP_WARN_Puede tardar hasta 3 minutos en reaparecer|r
+    .link https://www.youtube.com/watch?v=xrm0PWe5wf4 >>|cRXP_WARN_Haz clic aquí para una guía en video sobre cómo hacer kiting|r |cRXP_ENEMY_Señor de la guerra Krom'zar|r
     .complete 4021,1 --Piece of Krom'zar's Banner (1)
     .unitscan Warlord Krom'zar
     .isOnQuest 4021
@@ -4228,7 +4229,7 @@ step << Mage
     .dungeon DM
 step << Priest
     .goto Orgrimmar,35.59,87.80
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con |cRXP_FRIENDLY_Ur'kyo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con|r |cRXP_FRIENDLY_Ur'kyo|r
     .train 970 >> Aprende tus hechizos de clase
     .target Ur'kyo
     .xp <18,1
@@ -4237,7 +4238,7 @@ step << Priest
 step << Priest
     #optional
     .goto Orgrimmar,35.59,87.80
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con |cRXP_FRIENDLY_Ur'kyo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con|r |cRXP_FRIENDLY_Ur'kyo|r
     .train 14914 >> Aprende tus hechizos de clase
     .target Ur'kyo
     .xp <20,1
@@ -4625,7 +4626,7 @@ step
 step << !Tauren !Shaman !Warrior/Undead
     .goto The Barrens,44.55,59.27
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con |cRXP_FRIENDLY_Quebrantadientes|r
-    .aura 16618 >>|cRXP_WARN_Si te quedan 10|r |T134128:0|t[|cRXP_LOOT_Esquirlas de sangre|r |cRXP_WARN_, úsalas para obtener|r |T136022:0|t[Espíritu del viento] |cRXP_WARN_de|r |cRXP_FRIENDLY_Quebrantadientes|r
+    .aura 16618 >>|cRXP_WARN_Si te quedan 10|r |T134128:0|t[|cRXP_LOOT_Esquirlas de sangre|r] |cRXP_WARN_, úsalas para obtener|r |T136022:0|t[Espíritu del viento] |cRXP_WARN_de|r |cRXP_FRIENDLY_Quebrantadientes|r
     >>|cRXP_WARN_Omite este paso si tienes la ruta de vuelo de Cima del Trueno|r
     .itemcount 5075,10
     .target Mangletooth
@@ -5299,7 +5300,7 @@ step
     .dungeon WC
 step
     #label Ectoplasms
-    >>Mata |cRXP_ENEMY_Ectoplasmas|r. Despójalos para obtener su |cRXP_LOOT_Esencia|r
+    >>Mata a los |cRXP_ENEMY_Ectoplasmas|r. Despójalos para obtener su |cRXP_LOOT_Esencia|r
     .complete 1491,1 --Wailing Essence (6)
     .mob Devouring Ectoplasm
     .mob Evolving Ectoplasm
@@ -5551,6 +5552,7 @@ step
     >>Mata al |cRXP_ENEMY_Señor de la guerra Krom'zar|r una vez que aparece. Despoja el |cRXP_PICK_Estandarte|r que deja en el suelo
     >>|cRXP_WARN_¡Ten cuidado! Es un élite fuerte y está custodiado por al menos dos|r |cRXP_ENEMY_Kolkar|r |cRXP_WARN_enemigos|r
     >>|cRXP_WARN_Puede tardar hasta 3 minutos en reaparecer|r
+    .link https://www.youtube.com/watch?v=xrm0PWe5wf4 >>|cRXP_WARN_Haz clic aquí para una guía en video sobre cómo hacer kiting|r |cRXP_ENEMY_Señor de la guerra Krom'zar|r
     .complete 4021,1 --Piece of Krom'zar's Banner (1)
     .unitscan Warlord Krom'zar
     .isQuestTurnedIn 852
@@ -5633,7 +5635,7 @@ step << !Hunter
     #xprate <1.5
     #softcore
     #completewith next
-    .deathskip >> Muere y resucita en el |cRXP_FRIENDLY_Ángel de la Resurrección|r
+    .deathskip >> Muere y reaparece en el |cRXP_FRIENDLY_Ángel de la Resurrección|r
 step << !Hunter
     #xprate <1.5
     #hardcore
@@ -6566,13 +6568,13 @@ step << Mage
     .target Thuul
 step << Troll Priest
     .goto Orgrimmar,35.59,87.80
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con |cRXP_FRIENDLY_Ur'kyo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con|r |cRXP_FRIENDLY_Ur'kyo|r
     .turnin 5642 >> Entrega la misión Guardia de las Sombras
     .trainer >> Aprende tus hechizos de clase
     .target Ur'kyo
 step << Undead Priest
     .goto Orgrimmar,35.59,87.80
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con |cRXP_FRIENDLY_Ur'kyo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con|r |cRXP_FRIENDLY_Ur'kyo|r
     .train 8103 >> Aprende tus hechizos de clase
     .target Ur'kyo
     .xp <22,1
@@ -6580,7 +6582,7 @@ step << Undead Priest
 step << Undead Priest
     #optional
     .goto Orgrimmar,35.59,87.80
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con |cRXP_FRIENDLY_Ur'kyo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con|r |cRXP_FRIENDLY_Ur'kyo|r
     .train 3747 >> Aprende tus hechizos de clase
     .target Ur'kyo
     .xp <24,1
@@ -6659,7 +6661,7 @@ step << skip --Rogue/Druid
 step << Rogue/Druid
     #softcore
     #completewith next
-    .deathskip >> Muere y resucita en el |cRXP_FRIENDLY_Ángel de la Resurrección|r
+    .deathskip >> Muere y reaparece en el |cRXP_FRIENDLY_Ángel de la Resurrección|r
 step << Rogue/Druid
     #softcore
     .goto The Barrens,51.50,30.34
@@ -6791,7 +6793,7 @@ step << !Tauren
     #softcore
     #completewith ThievesPickup
     .goto The Barrens,50.72,32.61
-    .deathskip >> Muere y resucita en el |cRXP_FRIENDLY_Ángel de la Resurrección|r
+    .deathskip >> Muere y reaparece en el |cRXP_FRIENDLY_Ángel de la Resurrección|r
     .subzoneskip 380
 step << !Tauren
     #xprate <2.1 << !Undead
@@ -7036,7 +7038,7 @@ step << Warlock/Mage
     .itemcount 221499,1 << Warlock --Rune of the Felguard
     .itemcount 223147,1 << Mage --Spell Notes: Balefire Bolt
     .train 431756 >>|cRXP_WARN_Usa la|r |T134419:0|t[|cRXP_FRIENDLY_Runa del Guardia vil|r] |cRXP_WARN_para aprender|r |T136216:0|t[Invocar guardia vil] << Warlock
-    .train 429311 >>|cRXP_WARN_Usa las|r |T134939:0|t[|cRXP_FRIENDLY_Notas de hechizo: Descarga de fuego fardo|r |cRXP_WARN_para aprender|r |T135809:0|t[Descarga de fuego fardo] << Mage
+    .train 429311 >>|cRXP_WARN_Usa las|r |T134939:0|t[|cRXP_FRIENDLY_Notas de hechizo: Descarga de fuego fardo|r] |cRXP_WARN_para aprender|r |T135809:0|t[Descarga de fuego fardo] << Mage
     .use 221499 << Warlock
     .use 223147 << Mage
 step
@@ -9166,7 +9168,7 @@ step
 step << Priest
     #optional
     .goto Orgrimmar,35.59,87.80
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con |cRXP_FRIENDLY_Ur'kyo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con|r |cRXP_FRIENDLY_Ur'kyo|r
     .train 8102 >> Aprende tus hechizos de clase
     .target Ur'kyo
     .xp <16,1
@@ -9175,7 +9177,7 @@ step << Priest
     #optional
     #season 2
     .goto Orgrimmar,35.59,87.80
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con |cRXP_FRIENDLY_Ur'kyo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con|r |cRXP_FRIENDLY_Ur'kyo|r
     .train 527 >> Aprende |T135894:0|t[Disipar magia]
     >>|cRXP_WARN_Necesitarás|r |T135894:0|t[Disipar magia] |cRXP_WARN_para obtener una runa más tarde|r
     .target Ur'kyo
@@ -9184,7 +9186,7 @@ step << Priest
     #optional
     #season 0
     .goto Orgrimmar,35.59,87.80
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con |cRXP_FRIENDLY_Ur'kyo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con|r |cRXP_FRIENDLY_Ur'kyo|r
     .train 970 >> Aprende tus hechizos de clase
     .target Ur'kyo
     .xp <18,1
@@ -10288,6 +10290,7 @@ step
     >>Mata al |cRXP_ENEMY_Señor de la guerra Krom'zar|r una vez que aparece. Despoja el |cRXP_PICK_Estandarte|r que deja en el suelo
     >>|cRXP_WARN_¡Ten cuidado! Es un élite fuerte y está custodiado por al menos dos|r |cRXP_ENEMY_Kolkar|r |cRXP_WARN_enemigos|r
     >>|cRXP_WARN_Puede tardar hasta 3 minutos en reaparecer|r
+    .link https://www.youtube.com/watch?v=xrm0PWe5wf4 >>|cRXP_WARN_Haz clic aquí para una guía en video sobre cómo hacer kiting|r |cRXP_ENEMY_Señor de la guerra Krom'zar|r
     .complete 4021,1 --Piece of Krom'zar's Banner (1)
     .unitscan Warlord Krom'zar
     .isOnQuest 4021
@@ -11032,7 +11035,7 @@ step << Warlock/Mage
     .itemcount 221499,1 << Warlock --Rune of the Felguard
     .itemcount 223147,1 << Mage --Spell Notes: Balefire Bolt
     .train 431756 >>|cRXP_WARN_Usa la|r |T134419:0|t[|cRXP_FRIENDLY_Runa del Guardia vil|r] |cRXP_WARN_para aprender|r |T136216:0|t[Invocar guardia vil] << Warlock
-    .train 429311 >>|cRXP_WARN_Usa las|r |T134939:0|t[|cRXP_FRIENDLY_Notas de hechizo: Descarga de fuego fardo|r |cRXP_WARN_para aprender|r |T135809:0|t[Descarga de fuego fardo] << Mage
+    .train 429311 >>|cRXP_WARN_Usa las|r |T134939:0|t[|cRXP_FRIENDLY_Notas de hechizo: Descarga de fuego fardo|r] |cRXP_WARN_para aprender|r |T135809:0|t[Descarga de fuego fardo] << Mage
     .use 221499 << Warlock
     .use 223147 << Mage
 step
@@ -11587,7 +11590,7 @@ step << Mage
     .dungeon DM
 step << Priest
     .goto Orgrimmar,35.59,87.80
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con |cRXP_FRIENDLY_Ur'kyo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con|r |cRXP_FRIENDLY_Ur'kyo|r
     .train 970 >> Aprende tus hechizos de clase
     .target Ur'kyo
     .xp <18,1
@@ -11596,7 +11599,7 @@ step << Priest
 step << Priest
     #optional
     .goto Orgrimmar,35.59,87.80
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con |cRXP_FRIENDLY_Ur'kyo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con|r |cRXP_FRIENDLY_Ur'kyo|r
     .train 14914 >> Aprende tus hechizos de clase
     .target Ur'kyo
     .xp <20,1
@@ -12041,7 +12044,7 @@ step
 step << !Tauren
     .goto The Barrens,44.55,59.27
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con |cRXP_FRIENDLY_Quebrantadientes|r
-    .aura 16618 >>|cRXP_WARN_Si te quedan 10|r |T134128:0|t[|cRXP_LOOT_Esquirlas de sangre|r |cRXP_WARN_, úsalas para obtener|r |T136022:0|t[Espíritu del viento] |cRXP_WARN_de|r |cRXP_FRIENDLY_Quebrantadientes|r
+    .aura 16618 >>|cRXP_WARN_Si te quedan 10|r |T134128:0|t[|cRXP_LOOT_Esquirlas de sangre|r] |cRXP_WARN_, úsalas para obtener|r |T136022:0|t[Espíritu del viento] |cRXP_WARN_de|r |cRXP_FRIENDLY_Quebrantadientes|r
     >>|cRXP_WARN_Omite este paso si tienes la ruta de vuelo de Cima del Trueno|r
     .itemcount 5075,10
     .target Mangletooth
@@ -12926,6 +12929,7 @@ step
     >>Mata al |cRXP_ENEMY_Señor de la guerra Krom'zar|r una vez que aparece. Despoja el |cRXP_PICK_Estandarte|r que deja en el suelo
     >>|cRXP_WARN_¡Ten cuidado! Es un élite fuerte y está custodiado por al menos dos|r |cRXP_ENEMY_Kolkar|r |cRXP_WARN_enemigos|r
     >>|cRXP_WARN_Puede tardar hasta 3 minutos en reaparecer|r
+    .link https://www.youtube.com/watch?v=xrm0PWe5wf4 >>|cRXP_WARN_Haz clic aquí para una guía en video sobre cómo hacer kiting|r |cRXP_ENEMY_Señor de la guerra Krom'zar|r
     .complete 4021,1 --Piece of Krom'zar's Banner (1)
     .unitscan Warlord Krom'zar
     .isQuestTurnedIn 852
@@ -13022,7 +13026,7 @@ step << !Hunter
     #xprate <2.1
     #softcore
     #completewith next
-    .deathskip >> Muere y resucita en el |cRXP_FRIENDLY_Ángel de la Resurrección|r
+    .deathskip >> Muere y reaparece en el |cRXP_FRIENDLY_Ángel de la Resurrección|r
 step << !Hunter
     #xprate <2.1
     #hardcore
@@ -13068,6 +13072,7 @@ step
     >>Mata al |cRXP_ENEMY_Señor de la guerra Krom'zar|r una vez que aparece. Despoja el |cRXP_PICK_Estandarte|r que deja en el suelo
     >>|cRXP_WARN_¡Ten cuidado! Es un élite fuerte y está custodiado por al menos dos|r |cRXP_ENEMY_Kolkar|r |cRXP_WARN_enemigos|r
     >>|cRXP_WARN_Puede tardar hasta 3 minutos en reaparecer|r
+    .link https://www.youtube.com/watch?v=xrm0PWe5wf4 >>|cRXP_WARN_Haz clic aquí para una guía en video sobre cómo hacer kiting|r |cRXP_ENEMY_Señor de la guerra Krom'zar|r
     .complete 4021,1 --Piece of Krom'zar's Banner (1)
     .unitscan Warlord Krom'zar
     .isQuestTurnedIn 852
@@ -13311,7 +13316,7 @@ step << skip --Rogue
 step << Rogue
     #softcore
     #completewith next
-    .deathskip >> Muere y resucita en el |cRXP_FRIENDLY_Ángel de la Resurrección|r
+    .deathskip >> Muere y reaparece en el |cRXP_FRIENDLY_Ángel de la Resurrección|r
 step << Rogue
     #softcore
     .goto The Barrens,51.50,30.34

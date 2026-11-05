@@ -25,7 +25,7 @@
 ## Notes-zhTW: 顯示首領與小怪可能掉落的物品，並可查詢各陣營與戰場的獎勵物品、套裝物品等資訊。
 
 ## Author: sliccer
-## Version: Forever 1.60.1
+## Version: v1.2.9
 ## SavedVariables: AtlasLootClassicDB
 ## OptionalDeps: Ace3, LibSharedMedia-3.0, AceGUI-3.0-SharedMediaWidgets, LibDBIcon-1.0, LibDataBroker-1.1, Atlas, DevTool
 ## X-Curse-Project-ID: 1422985

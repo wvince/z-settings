@@ -4168,7 +4168,7 @@ step
     .goto Ashenvale,36.61,49.58
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_a Raene Correlobos|r
     .turnin -10752 >> Entregue em Rumo a Vale Gris
-    .accept 991 >> Aceite A Purificação de Raene
+    .accept 991 >> Aceite a Purificação de Raene
     .accept 1054 >> Aceite Expurgo a Ameaça
     .target Raene Wolfrunner
 step
@@ -4474,7 +4474,7 @@ step
     .goto Ashenvale,20.31,42.33
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Cadáver de Teronis|r
 	.turnin 991 >> Entregue Purificação de Raene
-    .accept 1023 >> Aceite A Purificação de Raene
+    .accept 1023 >> Aceite a Purificação de Raene
     .target Teronis' Corpse
 step
     #loop
@@ -4968,7 +4968,7 @@ step << skip --logout skip NightElf/Draenei
 	>>Entre na caverna dos troggs no sudeste. Faça um skip de logout
     .goto Dun Morogh,70.63,56.70,60,0
     .goto Dun Morogh,70.60,54.86
-	.link https://www.youtube.com/watch?v=yQBW3KyguCM >> |cRXP_WARN_CLIQUE AQUI para referência|r
+	.link https://www.youtube.com/watch?v=yQBW3KyguCM >> CLIQUE AQUI para referência
 	.zone Ironforge >> Desconecte-se e pule esta etapa ou viaje para Altaforja
 step << NightElf/Draenei
 #xprate >1.49
@@ -5198,7 +5198,7 @@ step
     .goto Ashenvale,36.61,49.58
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_a Raene Correlobos|r
     .turnin -10752 >> Entregue em Rumo a Vale Gris
-    .accept 991 >> Aceite A Purificação de Raene
+    .accept 991 >> Aceite a Purificação de Raene
     .accept 1054 >> Aceite Expurgo a Ameaça
     .target Raene Wolfrunner
 step
@@ -5247,7 +5247,7 @@ step
     .goto Ashenvale,20.31,42.33
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Cadáver de Teronis|r
 	.turnin 991 >> Entregue Purificação de Raene
-    .accept 1023 >> Aceite A Purificação de Raene
+    .accept 1023 >> Aceite a Purificação de Raene
     .target Teronis' Corpse
 step
     #loop

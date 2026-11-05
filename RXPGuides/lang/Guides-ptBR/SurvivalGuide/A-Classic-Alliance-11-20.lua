@@ -438,7 +438,7 @@ step << Druid
     .goto Moonglade,44.1444,45.227
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Silva Fil'naveth|r
     .skipgossip 1
-    .fly Teldrassil >> Voe para Vila de Rut’theran
+    .fly Teldrassil >> Voe para a Vila de Rut'theran
     .target Silva Fil'naveth
 step << Druid
     #completewith next
@@ -819,7 +819,7 @@ step
     .accept 4725 >> Aceite Tartaruga Marinha Encalhada
 step
     .goto Darkshore,50.81,25.50
-    .use 12350 >>Use o [Tubo de Amostragem Vazio] na base do Rio Fontescarpa
+    .use 12350 >>Use o [Tubo de Amostragem Vazio] na base do **Rio Fontescarpa**
     .complete 4762,1
 step
 #map Darkshore
@@ -1612,7 +1612,7 @@ step << Druid
     .goto Moonglade,44.1444,45.227
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Silva Fil'naveth|r
     .skipgossip 1
-    .fly Teldrassil >> Voe para Vila de Rut’theran
+    .fly Teldrassil >> Voe para a Vila de Rut'theran
     .target Silva Fil'naveth
     .zoneskip Teldrassil
     .zoneskip Darnassus
@@ -1675,7 +1675,7 @@ step
     .zoneskip Ashenvale
 step
     .goto Darkshore,37.21,44.22
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tClique em |cRXP_FRIENDLY_O Cartaz Procurado|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tClique em |cRXP_FRIENDLY_O Cartaz de Procurado|r
     .accept 4740 >> Aceite PROCURADO: Lodofundo!
 step
 #map Darkshore
@@ -2107,7 +2107,7 @@ step
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_a Raene Correlobos|r
 	.target Raene Wolfrunner
     .goto Ashenvale,36.61,49.58
-    .accept 991 >> Aceite A Purificação de Raene
+    .accept 991 >> Aceite a Purificação de Raene
 step
     .goto Ashenvale,36.99,49.22
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com a |cRXP_FRIENDLY_Estalajadeira Kimlya|r
@@ -2186,7 +2186,7 @@ step
     .goto 1414,51.82,54.85
     >>Mate |cRXP_ENEMY_Maluc Insano|r. Saqueie-o para obter o |cRXP_LOOT_Xerez de 99 Anos|r
     >>|cRXP_ENEMY_Maluc Insano|r pode surgir em alguns locais
-    >>Esta missão é concluída FORA das Cavernas do Lamento
+    >>Esta missão é concluída FORA da Caverna Ululante
     .complete 959,1 -- 99-Year-Old Port (1)
     .isOnQuest 959
     .mob Mad Magglish
@@ -2194,7 +2194,7 @@ step
 .dungeon WC
     #label EnterWC
     .goto 1414,52.37,55.20
-    +Entre na Caverna Ululante
+    +Entre nas Cavernas do Lamento
     .zoneskip 1414,1 -- similar to stockades, no subzone for WC
 step
 .dungeon WC

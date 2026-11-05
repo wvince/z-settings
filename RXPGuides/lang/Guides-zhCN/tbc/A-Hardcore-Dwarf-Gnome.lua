@@ -928,7 +928,7 @@ step
     #completewith next
     .goto Dun Morogh,47.779,52.426,6,0
     .goto Dun Morogh,47.644,52.655,3,0
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_加文·雷酒|r 对话
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t在楼下与 |cRXP_FRIENDLY_加文·雷酒|r 对话
     .turnin 308 >> 交任务 加文的爱好
     .target 加文·雷酒
 step
@@ -1425,7 +1425,7 @@ step << Rogue
     .turnin -2218 >> 交任务 救赎之路
     .target 霍夫丹·黑须
 step
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t 与 |cRXP_FRIENDLY_格莱斯·瑟登|r 对话
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_格莱斯·瑟登|r 对话
     .target 格莱斯·瑟登
     .goto Ironforge,55.501,47.742
     .turnin 6388 >> 交任务 格莱斯·瑟登
@@ -1607,7 +1607,7 @@ step << Rogue
     .itemcount 851,1
 step
     .goto StormwindClassic,66.277,62.137
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_杜加尔·朗德瑞克|r 对话
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t 与 |cRXP_FRIENDLY_杜加尔·朗德瑞克|r 对话
     .fp Stormwind >> 获取暴风城的飞行路径
     .target 杜加尔·朗德瑞克
 step

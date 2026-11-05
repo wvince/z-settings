@@ -13,6 +13,8 @@ RXPGuides.RegisterGuide([[
 #subgroup Guide du Set Tenue de combat d'héroïsme << Warrior
 #subgroup Guide du Set Habits du Vertueux << Priest
 #name Partie 1 : Brassards
+#guideKind gearset
+#guideIcon rxp-icon-quest
 #next Partie 2 : Ceinture et Gants
 
 
@@ -229,6 +231,8 @@ RXPGuides.RegisterGuide([[
 #subgroup Guide du Set Tenue de combat d'héroïsme << Warrior
 #subgroup Guide du Set Habits du Vertueux << Priest
 #name Partie 2 : Ceinture et Gants
+#guideKind gearset
+#guideIcon rxp-icon-quest
 #next Partie 3 : Pantalon, Épaulières et Bottes
 
 
@@ -673,6 +677,8 @@ RXPGuides.RegisterGuide([[
 #subgroup Guide du Set Tenue de combat d'héroïsme << Warrior
 #subgroup Guide du Set Habits du Vertueux << Priest
 #name Partie 3 : Pantalon, Épaulières et Bottes
+#guideKind gearset
+#guideIcon rxp-icon-quest
 #next Partie 4: Casque et Plastron
 
 step
@@ -905,7 +911,7 @@ step
     .subzoneskip 2557
 step
     #completewith AnthionsFriend
-    .goto Kalimdor,43.39,66.52,20 >>Entrez dans Hache-Tripes par l'entrée nord
+    .goto Kalimdor,43.39,66.52,20 >>Entrez à Hache-Tripes par l'entrée nord
     >>|cRXP_WARN_Vous devez avoir la|r |T134244:0|t[Clé en croissant] |cRXP_WARN_pour pouvoir ouvrir la porte vers Hache-Tripes Nord et vers la bibliothèque|r << !Rogue
     >>|cRXP_WARN_Vous devez avoir la|r |T134244:0|t[Clé en croissant]|cRXP_WARN_ ou avoir une compétence de 300 en crochetage pour pouvoir ouvrir la porte pour accéder à Hache-Tripes Nord et à la bibliothèque|r << Rogue
     >>|cRXP_WARN_Sinon, vous pouvez demander à un autre joueur d'ouvrir les portes pour vous|r
@@ -1155,6 +1161,8 @@ RXPGuides.RegisterGuide([[
 #subgroup Guide du Set Tenue de combat d'héroïsme << Warrior
 #subgroup Guide du Set Habits du Vertueux << Priest
 #name Partie 4: Casque et Plastron
+#guideKind gearset
+#guideIcon rxp-icon-quest
 
 
 step

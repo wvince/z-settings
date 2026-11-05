@@ -6,7 +6,6 @@ RXPGuides.RegisterGuide([[
 #name A_1_TMF_Start
 #next B_1_TSOM_Start
 #displayname |cRXP_LOOT_1.0|r - The Invasion
-
 step
     #completewith OpeningtheDoor
 	.zone 85 >> Travel to Orgrimmar << Horde
@@ -529,8 +528,6 @@ step
     .target Malfurion Stormrage
     .turnin 29201 >>Turn in Through the Gates of Hell
 ]])
-
-
 RXPGuides.RegisterGuide([[
 #cata
 #version 1
@@ -538,9 +535,7 @@ RXPGuides.RegisterGuide([[
 #name B_1_TSOM_Start
 #next C_1_TSOM_Druids
 #displayname |cRXP_FRIENDLY_2.0|r - The Molten Front
-
 --Molten Front quests
-
 step
     #completewith WispAway
     .goto 198,27.484,56.394
@@ -588,8 +583,6 @@ step -- 29179 Hostile Elements
     .complete 29179,1 -- Charred Combatant slain (8)
     .mob Charred Vanquisher
     .mob Charred Soldier
-
-
 step -- 29304 The Dogs of War
     .isOnQuest 29304
     #sticky
@@ -746,12 +739,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Rayne Feathersong|r
     .dailyturnin 29143 >>Turn in Wisp Away
     .target Rayne Feathersong
-
-
-
-
 --Hyjal quests
-
 step
     #completewith HyjalQuests
     .goto 338,53.026,83.693
@@ -1280,7 +1268,6 @@ step
     #label FinishDruids
     .isQuestAvailable 29181
     +|cRXP_WARN_You have completed all the available daily quests for today. Reload this same guide tomorrow (|r|cRXP_FRIENDLY_2.0|r - The Molten Front|cRXP_WARN_) to continue completing the daily quests until you have acquired enough|r |T513195:0|t[Marks of the World Tree]
-
 -- Beginning of Druids questline if turned in
 step
     .isQuestTurnedIn 29181
@@ -1593,7 +1580,6 @@ step
     .isQuestTurnedIn 29181
     +|cRXP_WARN_You have completed all the available daily quests for today. Reload the (|r|cRXP_ENEMY_2.5|r - The Molten Front + Druids|cRXP_WARN_) guide tomorrow to continue completing the daily quests until you have acquired enough|r |T513195:0|t[Marks of the World Tree]
 ]])
-
 RXPGuides.RegisterGuide([[
 #cata
 #version 1
@@ -1602,7 +1588,6 @@ RXPGuides.RegisterGuide([[
 --#next D_1_TSOM_Wardens
 --Making guide not auto change so user has choice of which daily quests they want to do out of Druids/Wardens
 #displayname |cRXP_ENEMY_2.5|r - The Molten Front + Druids
-
 step
     #optional
     .isQuestAvailable 29181
@@ -2470,7 +2455,6 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Captain Irontree|r
     .dailyturnin 29138 >>Turn in Burn Victims
     .target Captain Irontree
-
 -- Checking if can turn in The Shadow Wardens before starting Druids quests for the day
 step
     .goto 338,47.017,91.361
@@ -2487,7 +2471,6 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Captain Saynna Stormrunner|r
     .turnin 29214 >>Turn in The Shadow Wardens
     .target Captain Saynna Stormrunner
-
 -- Beginning of Wardens questline if turned in
 step
     #label THB
@@ -2934,7 +2917,6 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tholo Whitehoof|r
     .dailyturnin 29274 >> Turn in Hounds of Shannox
     .target Tholo Whitehoof
-
 --Calling the Ancients unlock
 step
     .isQuestTurnedIn 29182 -- Druids prereq
@@ -2996,7 +2978,6 @@ step
     .dailyturnin 29305 >>Turn in Strike at the Heart
     .target Skylord Omnuron
 --Complete Calling the Ancients unlock
-
 --Additional Armaments unlock
 step
     .isQuestTurnedIn 29182 -- Druids prereq
@@ -3107,7 +3088,6 @@ step
     .dailyturnin 29297 >> Turn in Bye Bye Burdy
     .target Damek Bloombeard
 --Complete Additional Armaments unlock
-
 --Filling the Moonwell unlock
 step
     .goto 338,44.087,86.321
@@ -3263,7 +3243,6 @@ step
     .turnin 29311 >> Turn in The Rest is History
     .target Malfurion Stormrage
 --Complete Filling the Moonwell
-
 step
     #optional
     .isQuestTurnedIn 29284
@@ -3281,14 +3260,12 @@ step
     .isQuestTurnedIn 29214
     +|cRXP_WARN_You have unlocked [The Shadow Wardens] daily quests. You have the choice of either completing quests for Druids of the Talon or The Shadow Wardens. If you wish to complete quests for Druids of the Talon, reload this same guide tomorrow (|r|cRXP_ENEMY_2.5|r - The Molten Front + Druids|cRXP_WARN_) or (|r|cRXP_PICK_2.5|r - The Molten Front + Wardens|cRXP_WARN_) tomorrow if you wish to complete The Shadow Wardens quests. Both yield the same amount of|r |T513195:0|t[Marks of the World Tree]
 ]])
-
 RXPGuides.RegisterGuide([[
 #cata
 #version 1
 #group +The Molten Front
 #name D_1_TSOM_Wardens
 #displayname |cRXP_PICK_2.5|r - The Molten Front + Wardens
-
 step
     #optional
     .isQuestAvailable 29214
@@ -4433,7 +4410,6 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Captain Saynna Stormrunner|r
     .dailyturnin 29243 >>Turn in Strike at the Heart
     .target Captain Saynna Stormrunner
-
 --Calling the Ancients unlock
 step
     .isQuestTurnedIn 29182 -- Druids prereq
@@ -4495,7 +4471,6 @@ step
     .dailyturnin 29243 >>Turn in Strike at the Heart
     .target Captain Saynna Stormrunner
 --Complete Calling the Ancients unlock
-
 --Additional Armaments unlock
 step
     .isQuestTurnedIn 29182 -- Druids prereq
@@ -4606,7 +4581,6 @@ step
     .dailyturnin 29297 >> Turn in Bye Bye Burdy
     .target Damek Bloombeard
 --Complete Additional Armaments unlock
-
 --Filling the Moonwell unlock
 step
     .goto 338,44.087,86.321
@@ -4762,7 +4736,6 @@ step
     .turnin 29311 >> Turn in The Rest is History
     .target Malfurion Stormrage
 --Complete Filling the Moonwell
-
 step
     #optional
     .isQuestTurnedIn 29284
@@ -4772,7 +4745,6 @@ step
     +Congratulations on unlocking all of the Molten Front! Continue to complete either (|cRXP_ENEMY_2.5|r - The Molten Front + Druids) or (|cRXP_PICK_2.5|r - The Molten Front + Wardens) to earn more |T513195:0|t[Marks of the World Tree]
     >>|cRXP_FRIENDLY_Zen'Vorka|r sells |T133654:0|t[|cRXP_FRIENDLY_Zen'Vorka's Cache|r] for 30 |T513195:0|t[Marks of the World Tree] which can contain a random green quality item or the rare companion |T294481:0|t[|cFF0070FFScorched Stone|r]
     .target Zen'Vorka
-
 step
     #label WardenEnd
     +|cRXP_WARN_You have completed all the available daily quests for today. Reload this same guide tomorrow (|r|cRXP_PICK_2.5|r - The Molten Front + Wardens|cRXP_WARN_) to continue completing the daily quests until you have acquired enough|r |T513195:0|t[Marks of the World Tree]

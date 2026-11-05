@@ -1,0 +1,28 @@
+## Interface: 50504
+## Title: DataStore_Talents
+## IconTexture: Interface\Icons\garrison_building_storehouse
+
+## Notes: Stores information about character talents
+## Author: Thaoky (EU-Marécages de Zangar)
+## Version: 2026.10.14
+## Dependencies: AddonFactory, DataStore
+## SavedVariables: DataStore_Talents_Characters, DataStore_TalentsRefDB, DataStore_Talents_Glyphs
+## X-Category: Interface Enhancements
+
+## Category: Libraries
+## Category-deDE: Bibliotheken
+## Category-esES: Bibliotecas
+## Category-esMX: Bibliotecas
+## Category-frFR: Bibliothèques
+## Category-itIT: Librerie
+## Category-koKR: 라이브러리
+## Category-ptBR: Bibliotecas
+## Category-ruRU: Библиотеки
+## Category-zhCN: 函数库
+## Category-zhTW: 函式庫
+
+Enum.lua
+DataStore_Talents.lua
+API\Specialization.lua
+API\Glyphs.lua
+API\TalentRows.lua

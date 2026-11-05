@@ -1,6 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Horde" then return end
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #tbc
@@ -99,7 +98,6 @@ step << Priest
     .goto StormwindClassic,38.8,26.4
     .turnin 64035 >>Turn in Talented
     .accept 64038 >>Accept The Dark Portal
-
 --
 step << Mage
     .goto StormwindClassic,38.7,79.3
@@ -122,7 +120,6 @@ step << Mage
     .goto StormwindClassic,38.7,79.3
     .turnin 64035 >>Turn in Talented
     .accept 64038 >>Accept The Dark Portal
-
 --
 step << Warlock
     .goto StormwindClassic,26.0,77.4
@@ -145,7 +142,6 @@ step << Warlock
     .goto StormwindClassic,26.1,77.4
     .turnin 64035 >>Turn in Talented
     .accept 64038 >>Accept The Dark Portal
-
 --
 step << Hunter
     .goto StormwindClassic,61.7,15.2
@@ -168,7 +164,6 @@ step << Hunter
     .goto StormwindClassic,61.7,15.2
     .turnin 64035 >>Turn in Talented
     .accept 64038 >>Accept The Dark Portal
-
 step << Druid
     .goto StormwindClassic,21.4,51.4
     .turnin 64028 >>Turn in A New Beginning

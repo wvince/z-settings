@@ -1,6 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #hardcore
@@ -12,8 +11,6 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Survival Guide (H)
 #subgroup RXP Survival Guide 1-20
 #next 19-23 Stonetalon/Barrens/Ashenvale
-
-
 step << !Tauren !Hunter !Shaman
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gar'Thok|r
     .turnin 837 >>Turn in Encroachment
@@ -2106,9 +2103,7 @@ step
     .accept 6548 >> Accept Avenge My Village
     .target +Makaba Flathoof
     .goto The Barrens,35.19,27.79
-
 ]])
-
 RXPGuides.RegisterGuide([[
 #hardcore
 #classic
@@ -2119,7 +2114,6 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Survival Guide (H)
 #subgroup RXP Survival Guide 1-20
 #next 23-25 Hillsbrad
-
 step
     #optional
     #completewith next
@@ -3811,7 +3805,7 @@ step
     .dungeon WC
 step
     #optional
-    >>Kill |cRXP_ENEMY_Deviate Ravagers|r, |cRXP_ENEMY_Vipers|r, |cRXP_ENEMY_Shamblers|r and |cRXP_ENEMY_Dreadfangs|r. Loot them for their |cRXP_ENEMY_Hides|r . Loot them for their |cRXP_ENEMY_Hides|r
+    >>Kill |cRXP_ENEMY_Deviate Ravagers|r, |cRXP_ENEMY_Vipers|r, |cRXP_ENEMY_Shamblers|r and |cRXP_ENEMY_Dreadfangs|r. Loot them for their |cRXP_ENEMY_Hides|r
     .complete 1487,1 --Deviate Ravager (7)
     .mob +Deviate Ravager
     .complete 1487,2 --Deviate Viper (7)
@@ -5081,6 +5075,4 @@ step
     .zone Tirisfal Glades >>Take the Zeppelin to Tirisfal Glades
     .zoneskip Tirisfal Glades
     .zoneskip Undercity
-
 ]])
-

@@ -3,7 +3,7 @@
 ## Title-zhCN: RestedXP 指南
 ## Notes: In-game leveling guides
 ## Author: RestedXP
-## Version: v4.11.27-44-ge509294
+## Version: v4.11.32
 ## Category: Quests
 ## Category-deDE: Quests
 ## Category-esES: Misiones
@@ -21,8 +21,8 @@
 ## X-Curse-Project-ID: 486246
 ## X-Wago-ID: ZKbebq61
 
-libs\embeds_Mainline.xml [AllowLoadGameType standard,camelot]
-libs\embeds.xml [AllowLoadGameType vanilla,tbc,wrath,cata,mists]
+
+libs\embeds.xml
 locale\locales.xml
 UI\includes.xml
 
@@ -34,13 +34,7 @@ GuideWindow.lua
 Help.lua
 SettingsPanel.lua
 
-DB/mainline.xml [AllowLoadGameType standard]
-DB/mop.xml [AllowLoadGameType mists]
-DB/cata.xml [AllowLoadGameType cata]
-DB/wotlk.xml [AllowLoadGameType wrath]
-DB/tbc.xml [AllowLoadGameType tbc]
-DB/classic.xml [AllowLoadGameType vanilla]
-DB/forever.xml [AllowLoadGameType camelot]
+DB/classic.xml
 
 HSBatching.lua
 QuestLog.lua
@@ -56,61 +50,28 @@ map.lua
 functions.lua
 GuideLoader.lua
 
-Guides/GuideList-Mainline.xml [AllowLoadGameType standard]
-Guides/GuideList-cata.xml [AllowLoadGameType cata]
-Guides/GuideList-mop.xml [AllowLoadGameType mists]
-Guides/GuideList-classic.xml [AllowLoadGameType vanilla]
-Guides/GuideList-forever.xml [AllowLoadGameType camelot]
+Guides/GuideList-classic.xml
 
-Guides/GuideList-tbc.xml [AllowLoadGameType tbc]
-
-lang/Guides-zhCN/GuideList-tbc.xml [AllowLoadGameType tbc]
-lang/Guides-zhCN/GuideList-classic.xml [AllowLoadGameType vanilla]
-lang/Guides-zhCN/GuideList-Mainline.xml [AllowLoadGameType standard]
-#lang/Guides-zhCN/GuideList-cata.xml [AllowLoadGameType cata]
-lang/Guides-zhCN/GuideList-mop.xml [AllowLoadGameType mists]
-lang/Guides-zhCN/GuideList-forever.xml [AllowLoadGameType camelot]
-lang/Guides-zhCN/GuideList.xml [AllowLoadGameType wrath]
-
-#lang/Guides-deDE/GuideList-tbc.xml [AllowLoadGameType tbc]
-lang/Guides-deDE/GuideList-classic.xml [AllowLoadGameType vanilla]
-lang/Guides-deDE/GuideList-Mainline.xml [AllowLoadGameType standard]
-#lang/Guides-deDE/GuideList-cata.xml [AllowLoadGameType cata]
-#lang/Guides-deDE/GuideList-mop.xml [AllowLoadGameType mists]
-lang/Guides-deDE/GuideList-forever.xml [AllowLoadGameType camelot]
-#lang/Guides-deDE/GuideList.xml [AllowLoadGameType wrath]
-
-#lang/Guides-esES/GuideList-tbc.xml [AllowLoadGameType tbc]
-lang/Guides-esES/GuideList-classic.xml [AllowLoadGameType vanilla]
-lang/Guides-esES/GuideList-Mainline.xml [AllowLoadGameType standard]
-#lang/Guides-esES/GuideList-cata.xml [AllowLoadGameType cata]
-#lang/Guides-esES/GuideList-mop.xml [AllowLoadGameType mists]
-lang/Guides-esES/GuideList-forever.xml [AllowLoadGameType camelot]
-#lang/Guides-esES/GuideList.xml [AllowLoadGameType wrath]
-
-#lang/Guides-frFR/GuideList-tbc.xml [AllowLoadGameType tbc]
-lang/Guides-frFR/GuideList-classic.xml [AllowLoadGameType vanilla]
-lang/Guides-frFR/GuideList-Mainline.xml [AllowLoadGameType standard]
-#lang/Guides-frFR/GuideList-cata.xml [AllowLoadGameType cata]
-#lang/Guides-frFR/GuideList-mop.xml [AllowLoadGameType mists]
-lang/Guides-frFR/GuideList-forever.xml [AllowLoadGameType camelot]
-#lang/Guides-frFR/GuideList.xml [AllowLoadGameType wrath]
-
-lang/Guides-ptBR/GuideList-tbc.xml [AllowLoadGameType tbc]
-lang/Guides-ptBR/GuideList-classic.xml [AllowLoadGameType vanilla]
-lang/Guides-ptBR/GuideList-Mainline.xml [AllowLoadGameType standard]
-#lang/Guides-ptBR/GuideList-cata.xml [AllowLoadGameType cata]
-lang/Guides-ptBR/GuideList-mop.xml [AllowLoadGameType mists]
-lang/Guides-ptBR/GuideList-forever.xml [AllowLoadGameType camelot]
-#lang/Guides-ptBR/GuideList.xml [AllowLoadGameType wrath]
+lang/Guides-zhCN/GuideList-classic.xml
 
 
 
-Talents.lua [AllowLoadGameType cata,vanilla,camelot,tbc]
-Guides/Talents/cata.xml [AllowLoadGameType cata]
-Guides/Talents/tbc.xml [AllowLoadGameType tbc]
-Guides/Talents/classic.xml [AllowLoadGameType vanilla,camelot]
+lang/Guides-deDE/GuideList-classic.xml
 
-ItemUpgrades.lua [AllowLoadGameType tbc,vanilla,camelot,cata]
 
-CptStadicsVendorTreasures.lua [AllowLoadGameType vanilla,camelot,tbc,wrath]
+lang/Guides-esES/GuideList-classic.xml
+
+
+lang/Guides-frFR/GuideList-classic.xml
+
+
+lang/Guides-ptBR/GuideList-classic.xml
+
+
+
+Talents.lua
+Guides/Talents/classic.xml
+
+ItemUpgrades.lua
+
+CptStadicsVendorTreasures.lua

@@ -480,7 +480,7 @@ step
 -- 3 Quests from The Shadow Vault
 step
 	>>Desde La Cámara de las Sombras, acepta las 3 misiones diarias.
-    >>Habla con Plateado.
+    >>Talk to Sliver
 	.daily 12995 >>Acepta la misión Dejar nuestra huella
 	.goto Icecrown,42.84,24.92
 	>>Habla con El Saltador. Camina alrededor de la tienda.
@@ -527,7 +527,7 @@ step
     .complete 13071,1 --Vrykul buildings set ablaze (8)
 	.isOnQuest 13071
 step
-    >>Regresa a La Cámara de las Sombras. Habla con Plateado, El Saltador y Vil.
+    >>Return to The Shadow Vault. Talk to Sliver, The Leaper and Vile
 	.turnin 12995 >>Entrega la misión Dejar nuestra huella
 	.goto Icecrown,42.84,24.92
     .turnin 13069 >>Entrega la misión Disparar'Em Up.
@@ -604,7 +604,7 @@ step
 step
 	#requires Gryphon
 	>>Regresa a Death's Levantar. Habla con Uzo, Setaal y Aurochs.
-    .turnin 12815 >>Entrega la misión Espacio aéreo protegido.
+    .turnin 12815 >>Entrega la misión Espacio aéreo protegido
     .goto Icecrown,19.64,47.80
     .turnin 12813 >>Entrega la misión ¡De sus cadáveres se alzan!.
     .goto Icecrown,19.67,48.39

@@ -1832,9 +1832,9 @@ step << Paladin
     .goto The Exodar,38.367,82.564
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Priestess Kyleen Il'dinare|r
     .target Jol
-    .accept 9598 >>Erlösung annehmen
+    .accept 9598 >>Akzeptiert die Quest Erlösung
     .turnin 9598 >>Gebt die Quest Erlösung ab
-    .accept 9600 >>Accept Redemption (NOT TRANSLATED IN :deDE YET)
+    .accept 9600 >>Akzeptiert die Quest Erlösung
 	.trainer >> Trainiere deine Klassenfähigkeiten
 step
     .isOnQuest 9581,9663
@@ -4135,7 +4135,7 @@ step
 step
     .goto Darkshore,55.803,18.291,10,0
     .goto Darkshore,56.655,13.485
-    >>Sprecht mit |cRXP_FRIENDLY_Der Dreschonator 4100|r, um die Eskorte zu starten
+    >>Sprecht mit |cRXP_FRIENDLY_Der Dreschonator 4100|r um die Eskorte zu beginnen
     >>Escortier |cRXP_FRIENDLY_Der Dreschonator 4100|r bis zu |cRXP_FRIENDLY_Gelkak Gyromast|r
     >>Tötet |cRXP_ENEMY_The Threshwackonator 4100|r sobald er feindselig ist
     .skipgossip

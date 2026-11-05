@@ -1,7 +1,6 @@
 -- ================================================ -
 -- ==============  GROUP: LEGION REMIX  =========== -
 -- ================================================ -
-
 ---Tips & Tricks
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
@@ -12,7 +11,6 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF8888880|r - Tips & Tricks|r
 #subgroup |cFFFCDC00(10-80)|r Speedrun Route
 #next a) Intro
-
 step
     +|cRXP_WARN_|cRXP_WARN_|T1411837:0|t[Infinite Power]|r|r is the Artifact Power of Legion Remix. It fuels your Artifact Weapon, allowing you to unlock upgrades and grow stronger as you play.
 step
@@ -98,7 +96,6 @@ step
     .macro Temporal Retreat,4571434 >>Follow the Arrow
     .macro Unraveling Sands,4643984 >>Follow the Arrow
 ]])
-
 ---Intro
 RXPGuides.RegisterGuide([[
 #retail
@@ -108,7 +105,6 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF001|r - Intro|r
 #subgroup |cFFFCDC00(10-80)|r Speedrun Route
 #next aa) Skyriding
-
 step
     #completewith Fixed Point in Time
     #hidewindow
@@ -167,7 +163,7 @@ step
     .clicknext RestedXP Legion Remix\a) Intro Skip >>CLICK HERE FOR GUIDE
 step << Alliance
     #arrowtext |cFFFCDC00Check Note|r
-    .isOnQuest 89405
+    .isOnQuest 89405 --Mean Streets of Dalaran
     .goto 627,67.24,39.87,5,0
     .goto 627,67.59,39.09,5,0
     .goto 627,65.54,39.69,5,0
@@ -512,7 +508,7 @@ step
     .target +Momentus
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Momentus|r
-    .isQuestComplete 90901
+    .isQuestComplete 90901 --As A Matter of Artifact
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Momentus|r
     .turnin 90901 >>Turn in As A Matter of Artifact
     .goto 627,42.46,28.05
@@ -837,7 +833,7 @@ step
 step
     #arrowtext |cFFFCDC00Repeat the macro|r
     #requires Krasus' Landing
-    .isOnQuest 89418
+    .isOnQuest 89418 --A Fixed Point in Time
     .goto 619,45.96,67.89
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Nostwin|r
     .home >>Set your Hearthstone to Dalaran
@@ -860,7 +856,7 @@ step
     .target Momentus
 step
     #arrowtext Click\n|cRXP_PICK_Portal|r
-    .isOnQuest 89418
+    .isOnQuest 89418 --A Fixed Point in Time
     .goto 619,45.71,67.46
     .zone 627 >>Click on the |cRXP_PICK_Portal|r
 step <<!DemonHunter
@@ -931,16 +927,13 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF001|r - Intro Skip|r
 #subgroup |cFFFCDC00(10-80)|r Speedrun Route
 #next aa) Skyriding
-
 step
     .goto 627,72.46,45.90
     .achievementComplete 42313,1
     .gossipoption 134056 >>Before talking to |cRXP_FRIENDLY_Moratari|r, make sure you have your desired specialization selected.
     *|cRXP_WARN_This will grant you the Artifact Weapon for your chosen spec; you can obtain others later, but there’s no immediate access|r.
     .target Moratari
-
 ]])
-
 ---Skyriding
 RXPGuides.RegisterGuide([[
 #retail
@@ -961,18 +954,15 @@ RXPGuides.RegisterGuide([[
 #next ab) Order Hall Shaman Part 1 << Shaman
 #next ab) Order Hall Warlock Part 1 << Warlock
 #next ab) Order Hall Warrior Part 1 << Warrior
-
 step
     #arrowtext Click HERE FOR GUIDE
     .goto 627,72.06,41.69
-    .isQuestTurnedIn account,80018
+    .isQuestTurnedIn account,80018 --Fashionable Flying
     +|cRXP_WARN_You’ve already completed the Skyriding intro before. By clicking the text below, you’ll skip the Skyriding intro for faster leveling|r.
     *Manually skip this step if you prefer to play through that content.
     .clicknext RestedXP Legion Remix\aa) Skyriding Skip >>CLICK HERE FOR GUIDE
 step
     #include RestedXP Legion Remix\a) Skyriding Panda
-
-
 ]])
 ---Skyriding Skip
 RXPGuides.RegisterGuide([[
@@ -995,17 +985,12 @@ RXPGuides.RegisterGuide([[
 #next ab) Order Hall Shaman Part 1 << Shaman
 #next ab) Order Hall Warlock Part 1 << Warlock
 #next ab) Order Hall Warrior Part 1 << Warrior
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Moratari|r
     .goto 627,72.05,41.65
     .gossipoption 133762 >>Talk to |cRXP_FRIENDLY_Moratari|r
     .target Moratari
-
-
-
 ]])
-
 ---Monk Order Hall Intro 1
 RXPGuides.RegisterGuide([[
 #retail
@@ -1014,11 +999,9 @@ RXPGuides.RegisterGuide([[
 #subgroup |cFFFCDC00(10-80)|r Speedrun Route
 #name ab) Order Hall Monk Part 1
 #displayname |cFF00FF003|r - Order Hall Intro 1|r
-
 << Monk
-
 step
-    .isQuestTurnedIn account,91955
+    .isQuestTurnedIn account,91955 --Just Between Us
     .achievementComplete 61108,1
     +|cRXP_WARN_You’ve already got the 10% XP bonus from the artifact questline. By clicking the text below, you’ll skip the Order Hall intro and parts of Azsuna for faster leveling|r.
     *Manually skip this step if you prefer to play through that content.
@@ -1072,11 +1055,11 @@ step
 step
     #arrowtext Wait at Door
     .goto 424,45,27.6
-    .isOnQuest 12103
+    .isOnQuest 12103 --Before the Storm
     .countdown 32 >>|cRXP_WARN_Wait for the Roleplay|r.
 step
     #arrowtext Wait at Door
-    .isOnQuest 12103
+    .isOnQuest 12103 --Before the Storm
     .goto 424,45,27.6
     >>Kill |cRXP_ENEMY_Infernal Destroyer|r |cRXP_WARN_after the roleplay|r.
     .scenario 1887,1
@@ -1248,14 +1231,14 @@ step
     .target Iron-Body Ponshu
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Iron-Body Ponshu|r
-    .isQuestAvailable 40636
+    .isQuestAvailable 40636 --Prepare To Strike
     .goto 709,51.41,48.38
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Iron-Body Ponshu|r
     .accept 40636 >>Accept Prepare To Strike
     .target Iron-Body Ponshu
 step
-    .isQuestAvailable 40636
-    .isQuestAvailable account,91955
+    .isQuestAvailable 40636 --Prepare To Strike
+    .isQuestAvailable account,91955 --Just Between Us
     +Select one of the following guides for now:
     *|cRXP_WARN_IMPORTANT: Select the one you already have in order to gain an additional 10% xp (one time only)|r
     *|cRXP_WARN_You’ll be able to do the other questlines later|r
@@ -1263,7 +1246,6 @@ step
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Windwalker >>Windwalker(DPS) Questline
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Brewmaster >>Brewmaster(Tank) Questline
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Mistweaver >>Mistweaver(Healer) Questline
-
 ]])
 ---Monk Order Hall Intro 2
 RXPGuides.RegisterGuide([[
@@ -1274,9 +1256,7 @@ RXPGuides.RegisterGuide([[
 #name ac) Order Hall Monk Part 2
 #displayname |cFF00FF004|r - Order Hall Intro 2|r
 #next ad) Infinite Bazaar
-
 << Monk
-
 step
     #completewith Dalaran
     #hidewindow
@@ -1307,7 +1287,7 @@ step
     .usespell 1241425 -- Temporal Retreat
 step
     #optional
-    .isQuestAvailable 40636
+    .isQuestAvailable 40636 --Prepare To Strike
     +|cRXP_WARN_You have to do the previous chapter first|r
     .clicknext RestedXP Legion Remix\ab) Order Hall Monk Part 1 >>CLICK HERE FOR GUIDE
 step
@@ -1393,11 +1373,9 @@ RXPGuides.RegisterGuide([[
 #name ab) Order Hall Death Knight Part 1
 #displayname |cFF00FF004|r - Order Hall Intro 1|r
 #subgroup |cFFFCDC00(10-80)|r Speedrun Route
-
 << DeathKnight
-
 step
-    .isQuestTurnedIn account,91955
+    .isQuestTurnedIn account,91955 --Just Between Us
     .achievementComplete 61108,1
     +|cRXP_WARN_You’ve already got the 10% XP bonus from the artifact questline. By clicking the text below, you’ll skip the Order Hall intro and parts of Azsuna for faster leveling|r.
     *Manually skip this step if you prefer to play through that content.
@@ -1415,7 +1393,7 @@ step
     .accept 40715 >>Accept A Pact of Necessity
     .target Duke Lankral
 step
-    .isQuestAvailable account,91955
+    .isQuestAvailable account,91955 --Just Between Us
     +Select one of the following guides for now:
     *|cRXP_WARN_IMPORTANT: Select the one you already have in order to gain an additional 10% xp (one time only)|r
     *|cRXP_WARN_You’ll be able to do the other questlines later|r
@@ -1423,7 +1401,6 @@ step
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Frost DK >> Frost(DPS) Questline
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Unholy >> Unholy(DPS) Questline
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Blood >> Blood(Tank) Questline
-
 ]])
 ---Death Knight Order Hall Intro 2
 RXPGuides.RegisterGuide([[
@@ -1434,12 +1411,10 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF3|r - Order Hall Intro 2|r
 #subgroup |cFFFCDC00(10-80)|r Speedrun Route
 #next ad) Infinite Bazaar
-
 << DeathKnight
-
 step
     #optional
-    .isQuestAvailable 40715
+    .isQuestAvailable 40715 --A Pact of Necessity
     +|cRXP_WARN_You have to do the previous chapter first|r
     .clicknext RestedXP Legion Remix\ab) Order Hall Death Knight Part 1 >>CLICK HERE FOR GUIDE
 step
@@ -1594,11 +1569,9 @@ RXPGuides.RegisterGuide([[
 #name ab) Order Hall Demon Hunter Part 1
 #displayname |cFF00FF003|r - Order Hall Intro 1|r
 #subgroup |cFFFCDC00(10-80)|r Speedrun Route
-
 << DemonHunter
-
 step
-    .isQuestTurnedIn account,91955
+    .isQuestTurnedIn account,91955 --Just Between Us
     .achievementComplete 61108,1
     +|cRXP_WARN_You’ve already got the 10% XP bonus from the artifact questline. By clicking the text below, you’ll skip the Order Hall intro and parts of Azsuna for faster leveling|r.
     *Manually skip this step if you prefer to play through that content.
@@ -1668,22 +1641,21 @@ step
     .target Altruis the Sufferer
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Follower|r
-    .isQuestAvailable 40814
+    .isQuestAvailable 40814 --The Power to Survive
     .goto 627,74.97,48.97
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Follower|r
     .target Kayn Sunfury
     .target Altruis the Sufferer
     .accept 40814 >>Accept The Power to Survive
 step
-    .isQuestAvailable 40814
-    .isQuestAvailable account,91955
+    .isQuestAvailable 40814 --The Power to Survive
+    .isQuestAvailable account,91955 --Just Between Us
     +Select one of the following guides for now:
     *|cRXP_WARN_IMPORTANT: Select the one you already have in order to gain an additional 10% xp (one time only)|r
     *|cRXP_WARN_You’ll be able to do the other questlines later|r
     *|cFFFF0000You can't progress if you don't select one|r.
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Havoc >> Havoc(DPS) Questline
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Vengeance >> Vengeance(DPS) Questline
-
 ]])
 ---Demon Hunter Order Hall Intro 2
 RXPGuides.RegisterGuide([[
@@ -1694,9 +1666,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF004|r - Order Hall Intro 2|r
 #subgroup |cFFFCDC00(10-80)|r Speedrun Route
 #next ae) First Zone
-
 << DemonHunter
-
 step
     #optional
     .convertquest 39261,39047
@@ -1739,7 +1709,7 @@ step
     .usespell 1241425 -- Temporal Retreat
 step
     #optional
-    .isQuestAvailable 40814
+    .isQuestAvailable 40814 --The Power to Survive
     +|cRXP_WARN_You have to do the previous chapter first|r
     .clicknext RestedXP Legion Remix\ab) Order Hall Demon Hunter Part 1 >>CLICK HERE FOR GUIDE
 step
@@ -1915,7 +1885,7 @@ step
     .target Battlelord Gaardoun
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Kayn Sunfury|r
-    .isOnQuest 42671
+    .isOnQuest 42671 --Rise, Champions
     .goto 720,58.62,57.92
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kayn Sunfury|r.
     .accept 42695 >>Accept Champion: Kayn Sunfury
@@ -1924,7 +1894,7 @@ step
     .target Kayn Sunfury
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Altruis the Sufferer|r
-    .isOnQuest 42670
+    .isOnQuest 42670 --Rise, Champions
     .goto 720,58.62,57.92
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Altruis the Sufferer|r.
     .accept 42695 >>Accept Champion: Kayn Sunfury
@@ -1971,8 +1941,8 @@ step
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Loramus Thalipedes|r
     #label Asha Ravensong
-    .isQuestAvailable 44383
-    .isQuestNotComplete 42681
+    .isQuestAvailable 44383 --Pursuit of Power
+    .isQuestNotComplete 42681 --Loramus, Is That You?
     .goto 720,50.59,66.28,10,0
     .goto 720,46.79,55.5,10,0
     .goto 721,51.86,55.1,5,0
@@ -1983,9 +1953,9 @@ step
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Follower|r
     .zoneskip 720,1
-    .isQuestTurnedIn 40814
-    .isQuestAvailable 44383
-    .isQuestAvailable 40247
+    .isQuestTurnedIn 40814 --The Power to Survive
+    .isQuestAvailable 44383 --Pursuit of Power
+    .isQuestAvailable 40247 --Asking a Favor
     .goto 721,51.78,55.46,10,0
     .goto 720,46.98,56.68,10,0
     .goto 720,50.57,66.1,10,0
@@ -1997,9 +1967,9 @@ step
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Follower|r
     .zoneskip 720,1
-    .isQuestTurnedIn 40814
-    .isQuestAvailable 44383
-    .isOnQuest 44383,
+    .isQuestTurnedIn 40814 --The Power to Survive
+    .isQuestAvailable 44383 --Pursuit of Power
+    .isOnQuest 44383, --Pursuit of Power
     .goto 720,58.62,57.88
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Follower|r.
     .complete 44383,1 --1/1 Choose a second artifact to pursue
@@ -2008,9 +1978,9 @@ step
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Follower|r
     .zoneskip 720,1
-    .isQuestTurnedIn 40814
-    .isQuestAvailable 44383
-    .isQuestComplete 44383
+    .isQuestTurnedIn 40814 --The Power to Survive
+    .isQuestAvailable 44383 --Pursuit of Power
+    .isQuestComplete 44383 --Pursuit of Power
     .goto 720,58.62,57.88
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Follower|r.
     .turnin 44383 >>Turn in Pursuit of Power
@@ -2019,9 +1989,9 @@ step
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Follower|r
     .zoneskip 720,1
-    .isQuestTurnedIn 40814
-    .isQuestAvailable 44383
-    .isQuestAvailable 40819
+    .isQuestTurnedIn 40814 --The Power to Survive
+    .isQuestAvailable 44383 --Pursuit of Power
+    .isQuestAvailable 40819 --Making Arrangements
     .goto 721,51.78,55.46,10,0
     .goto 720,46.98,56.68,10,0
     .goto 720,50.57,66.1,10,0
@@ -2033,9 +2003,9 @@ step
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Follower|r
     .zoneskip 720,1
-    .isQuestTurnedIn 40814
-    .isQuestAvailable 44383
-    .isOnQuest 44383
+    .isQuestTurnedIn 40814 --The Power to Survive
+    .isQuestAvailable 44383 --Pursuit of Power
+    .isOnQuest 44383 --Pursuit of Power
     .goto 720,58.62,57.88
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Follower|r.
     .complete 44383,1 --1/1 Choose a second artifact to pursue
@@ -2044,9 +2014,9 @@ step
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Follower|r
     .zoneskip 720,1
-    .isQuestTurnedIn 40814
-    .isQuestAvailable 44383
-    .isQuestComplete 44383
+    .isQuestTurnedIn 40814 --The Power to Survive
+    .isQuestAvailable 44383 --Pursuit of Power
+    .isQuestComplete 44383 --Pursuit of Power
     .goto 720,58.62,57.88
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Follower|r.
     .turnin 44383 >>Turn in Pursuit of Power
@@ -2054,7 +2024,7 @@ step
     .target Altruis the Sufferer
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Follower|r
-    .isQuestAvailable 40819
+    .isQuestAvailable 40819 --Making Arrangements
     .goto 720,58.6,57.83
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Follower|r.
     .target Kayn Sunfury
@@ -2062,7 +2032,7 @@ step
     .accept 40819 >>Accept Making Arrangements
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Follower|r
-    .isQuestAvailable 40247
+    .isQuestAvailable 40247 --Asking a Favor
     .goto 720,58.6,57.83
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Follower|r.
     .accept 40247 >>Accept Asking a Favor
@@ -2076,12 +2046,12 @@ step
     .zone 627 >>|TInterface/cursor/crosshair/interact.blp:20|tClick on the |cRXP_PICK_Portal|r
 step
     #arrowtext Move to the Portal
-    .isOnQuest 39718
+    .isOnQuest 39718 --Paradise Lost
     .goto 627,72.09,40.72
     .countdown 2 >>Move to the Portal
 step
     #arrowtext Click\n|cRXP_PICK_Portal|r
-    .isOnQuest 39718
+    .isOnQuest 39718 --Paradise Lost
     .goto 627,72.09,40.72
     .zone 619 >>|TInterface/cursor/crosshair/interact.blp:20|tClick on the |cRXP_PICK_Portal|r
 step
@@ -2095,11 +2065,9 @@ RXPGuides.RegisterGuide([[
 #name ab) Order Hall Druid Part 1
 #displayname |cFF00FF003|r - Order Hall Intro 1|r
 #subgroup |cFFFCDC00(10-80)|r Speedrun Route
-
 << Druid
-
 step
-    .isQuestTurnedIn account,91955
+    .isQuestTurnedIn account,91955 --Just Between Us
     .achievementComplete 61108,1
     +|cRXP_WARN_You’ve already got the 10% XP bonus from the artifact questline. By clicking the text below, you’ll skip the Order Hall intro and parts of Azsuna for faster leveling|r.
     *Manually skip this step if you prefer to play through that content.
@@ -2220,8 +2188,8 @@ step
     .accept 40646 >>Accept Weapons of Legend
     .target Rensar Greathoof
 step
-    .isQuestAvailable 40646
-    .isQuestAvailable account,91955
+    .isQuestAvailable 40646 --Weapons of Legend
+    .isQuestAvailable account,91955 --Just Between Us
     +Select one of the following guides for now:
     *|cRXP_WARN_IMPORTANT: Select the one you already have in order to gain an additional 10% xp (one time only)|r
     *|cRXP_WARN_You’ll be able to do the other questlines later|r
@@ -2230,7 +2198,6 @@ step
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Feral Druid >> Feral(DPS) Questline
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Guardian Druid >> Guardian(Tank) Questline
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Restoration Druid >> Restoration(Healer) Questline
-
 ]])
 ---Druid Order Hall Intro 2
 RXPGuides.RegisterGuide([[
@@ -2241,12 +2208,10 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF004|r - Order Hall Intro 2|r
 #subgroup |cFFFCDC00(10-80)|r Speedrun Route
 #next ad) Infinite Bazaar
-
 << Druid
-
 step
     #optional
-    .isQuestAvailable 40646
+    .isQuestAvailable 40646 --Weapons of Legend
     +|cRXP_WARN_You have to do the previous chapter first|r
     .clicknext RestedXP Legion Remix\ab) Order Hall Druid Part 1 >>CLICK HERE FOR GUIDE
 step
@@ -2324,11 +2289,9 @@ RXPGuides.RegisterGuide([[
 #name ab) Order Hall Hunter Part 1
 #displayname |cFF00FF003|r - Order Hall Intro 1|r
 #subgroup |cFFFCDC00(10-80)|r Speedrun Route
-
 << Hunter
-
 step
-    .isQuestTurnedIn account,91955
+    .isQuestTurnedIn account,91955 --Just Between Us
     .achievementComplete 61108,1
     +|cRXP_WARN_You’ve already got the 10% XP bonus from the artifact questline. By clicking the text below, you’ll skip the Order Hall intro and parts of Azsuna for faster leveling|r.
     *Manually skip this step if you prefer to play through that content.
@@ -2433,8 +2396,8 @@ step
     .accept 40618 >>Accept Weapons of Legend
     .target Emmarel Shadewarden
 step
-    .isQuestAvailable 40618
-    .isQuestAvailable account,91955
+    .isQuestAvailable 40618 --Weapons of Legend
+    .isQuestAvailable account,91955 --Just Between Us
     .goto 627,60.03,53.41
     +Select one of the following guides for now:
     *|cRXP_WARN_IMPORTANT: Select the one you already have in order to gain an additional 10% xp (one time only)|r
@@ -2443,7 +2406,6 @@ step
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Beast Mastery >> Beast Mastery(DPS) Questline
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Marksmanship >> Marksmanship(DPS) Questline
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Survival >> Survival(DPS) Questline
-
 ]])
 ---Hunter Order Hall Intro 2
 RXPGuides.RegisterGuide([[
@@ -2454,12 +2416,10 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF004|r - Order Hall Intro 2|r
 #subgroup |cFFFCDC00(10-80)|r Speedrun Route
 #next ad) Infinite Bazaar
-
 << Hunter
-
 step
     #optional
-    .isQuestAvailable 40618
+    .isQuestAvailable 40618 --Weapons of Legend
     +|cRXP_WARN_You have to do the previous chapter first|r
     .clicknext RestedXP Legion Remix\ab) Order Hall Hunter Part 1 >>CLICK HERE FOR GUIDE
 step
@@ -2566,11 +2526,9 @@ RXPGuides.RegisterGuide([[
 #name ab) Order Hall Mage Part 1
 #displayname |cFF00FF003|r - Order Hall Intro 1|r
 #subgroup |cFFFCDC00(10-80)|r Speedrun Route
-
 << Mage
-
 step
-    .isQuestTurnedIn account,91955
+    .isQuestTurnedIn account,91955 --Just Between Us
     .achievementComplete 61108,1
     +|cRXP_WARN_You’ve already got the 10% XP bonus from the artifact questline. By clicking the text below, you’ll skip the Order Hall intro and parts of Azsuna for faster leveling|r.
     *Manually skip this step if you prefer to play through that content.
@@ -2638,7 +2596,7 @@ step
     .accept 41036 >>Accept The Dreadlord's Prize
 step
     #arrowtext Enter the Violet Hold
-    .isOnQuest 41036
+    .isOnQuest 41036 --The Dreadlord's Prize
     .goto 627,57.2,47,10,0
     .goto 627,67.31,69.6
     .zone 723 >>Enter the Violet Hold
@@ -2714,13 +2672,13 @@ step
     .target Meryl Felstorm
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Meryl Felstorm|r
-    .isQuestAvailable 41085
+    .isQuestAvailable 41085 --A Mage's Weapon
     .goto 735,59.15,43.01
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Meryl Felstorm|r
     .target Meryl Felstorm
     .accept 41085 >>Accept A Mage's Weapon
 step
-    .isQuestAvailable 41085
+    .isQuestAvailable 41085 --A Mage's Weapon
     +Select one of the following guides for now:
     *|cRXP_WARN_IMPORTANT: Select the one you already have in order to gain an additional 10% xp (one time only)|r
     *|cRXP_WARN_You’ll be able to do the other questlines later|r
@@ -2738,9 +2696,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF004|r - Order Hall Intro 2|r
 #subgroup |cFFFCDC00(10-80)|r Speedrun Route
 #next ad) Infinite Bazaar
-
 << Mage
-
 step
     #completewith Champion: Archmage Modera
     #hidewindow
@@ -2771,7 +2727,7 @@ step
     .usespell 1241425 -- Temporal Retreat
 step
     #optional
-    .isQuestAvailable 41085
+    .isQuestAvailable 41085 --A Mage's Weapon
     +|cRXP_WARN_You have to do the previous chapter first|r
     .clicknext RestedXP Legion Remix\ab) Order Hall Mage Part 1 >>CLICK HERE FOR GUIDE
 step
@@ -2964,11 +2920,9 @@ RXPGuides.RegisterGuide([[
 #name ab) Order Hall Paladin Part 1
 #displayname |cFF00FF003|r - Order Hall Intro 1|r
 #subgroup |cFFFCDC00(10-80)|r Speedrun Route
-
 << Paladin
-
 step
-    .isQuestTurnedIn account,91955
+    .isQuestTurnedIn account,91955 --Just Between Us
     .achievementComplete 61108,1
     +|cRXP_WARN_You’ve already got the 10% XP bonus from the artifact questline. By clicking the text below, you’ll skip the Order Hall intro and parts of Azsuna for faster leveling|r.
     *Manually skip this step if you prefer to play through that content.
@@ -3030,13 +2984,13 @@ step
     .accept 40408 >>Accept Weapons of Legend
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Lord Maxwell Tyrosus|r
-    .isQuestAvailable 40408
+    .isQuestAvailable 40408 --Weapons of Legend
     .goto 627,74.92,48.21
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lord Maxwell Tyrosus|r
     .target Lord Maxwell Tyrosus
     .accept 40408 >>Accept Weapons of Legend
 step
-    .isQuestAvailable 40408
+    .isQuestAvailable 40408 --Weapons of Legend
     +Select one of the following guides for now:
     *|cRXP_WARN_IMPORTANT: Select the one you already have in order to gain an additional 10% xp (one time only)|r
     *|cRXP_WARN_You’ll be able to do the other questlines later|r
@@ -3044,7 +2998,6 @@ step
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Retribution >> Retribution(DPS) Questline
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Paladin Protection >> Protection(Tank) Questline
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Holy Paladin >> Holy(Healer) Questline
-
 ]])
 ---Paladin Order Hall Intro 2
 RXPGuides.RegisterGuide([[
@@ -3055,9 +3008,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF004|r - Order Hall Intro 2|r
 #subgroup |cFFFCDC00(10-80)|r Speedrun Route
 #next ad) Infinite Bazaar
-
 << Paladin
-
 step
     #completewith Order Hall Paladin Part 2
     #hidewindow
@@ -3093,7 +3044,7 @@ step
 --     .target Eadric the Pure
 step
     #optional
-    .isQuestAvailable 40408
+    .isQuestAvailable 40408 --Weapons of Legend
     +|cRXP_WARN_You have to do the previous chapter first|r
     .clicknext RestedXP Legion Remix\ab) Order Hall Paladin Part 1 >>CLICK HERE FOR GUIDE
 step
@@ -3185,7 +3136,7 @@ step
     .complete 42846,1 --1/1 Enlist Lady Liadrin
 step
     #arrowtext Click\n|cRXP_PICK_Portal|r
-    .isOnQuest 42846
+    .isOnQuest 42846 --The Blood Matriarch
     .goto 24,37.79,63.92
     .zone 627 >>|TInterface/cursor/crosshair/interact.blp:20|tClick on the |cRXP_PICK_Portal|r
 ]])
@@ -3197,11 +3148,9 @@ RXPGuides.RegisterGuide([[
 #name ab) Order Hall Priest Part 1
 #displayname |cFF00FF004|r - Order Hall Intro 1|r
 #subgroup |cFFFCDC00(10-80)|r Speedrun Route
-
 << Priest
-
 step
-    .isQuestTurnedIn account,91955
+    .isQuestTurnedIn account,91955 --Just Between Us
     .achievementComplete 61108,1
     +|cRXP_WARN_You’ve already got the 10% XP bonus from the artifact questline. By clicking the text below, you’ll skip the Order Hall intro and parts of Azsuna for faster leveling|r.
     *Manually skip this step if you prefer to play through that content.
@@ -3247,8 +3196,8 @@ step
     .accept 40706 >>Accept A Legend You Can Hold
     .target Alonsus Faol
 step
-    .isQuestAvailable 40706
-    .isQuestAvailable account,91955
+    .isQuestAvailable 40706 --A Legend You Can Hold
+    .isQuestAvailable account,91955 --Just Between Us
     .goto 18,78.96,40.99
     +Select one of the following guides for now:
     *|cRXP_WARN_IMPORTANT: Select the one you already have in order to gain an additional 10% xp (one time only)|r
@@ -3267,12 +3216,10 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF4|r - Order Hall Intro 2|r
 #subgroup |cFFFCDC00(10-80)|r Speedrun Route
 #next ad) Infinite Bazaar
-
 << Priest
-
 step
     #optional
-    .isQuestAvailable 40706
+    .isQuestAvailable 40706 --A Legend You Can Hold
     +|cRXP_WARN_You have to do the previous chapter first|r
     .clicknext RestedXP Legion Remix\ab) Order Hall Priest Part 1>>CLICK HERE FOR GUIDE
 step
@@ -3284,7 +3231,7 @@ step
     .target Prophet Velen
 step
     .zoneskip 629
-    .isOnQuest 40938
+    .isOnQuest 40938 --The Light and the Void
     .goto 627,51.83,42.85,10,0
     .goto 627,49.25,47.64
     .zone 629 >>Use the teleporter in the center of Dalaran
@@ -3359,8 +3306,8 @@ step
     .target High Priestess Ishanah
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Alonsus Faol|r
-    .isNotOnQuest 43372
-    .isQuestAvailable 43372
+    .isNotOnQuest 43372 --Whispers in the Void
+    .isQuestAvailable 43372 --Whispers in the Void
     .goto 702,51.55,47.76
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Alonsus Faol|r
     .turnin 43270 >>Turn in Rise, Champions
@@ -3379,11 +3326,9 @@ RXPGuides.RegisterGuide([[
 #name ab) Order Hall Rogue Part 1
 #displayname |cFF00FF003|r - Order Hall Intro 1|r
 #subgroup |cFFFCDC00(10-80)|r Speedrun Route
-
 << Rogue
-
 step
-    .isQuestTurnedIn account,91955
+    .isQuestTurnedIn account,91955 --Just Between Us
     .achievementComplete 61108,1
     +|cRXP_WARN_You’ve already got the 10% XP bonus from the artifact questline. By clicking the text below, you’ll skip the Order Hall intro and parts of Azsuna for faster leveling|r.
     *Manually skip this step if you prefer to play through that content.
@@ -3429,7 +3374,7 @@ step
     .target "Red" Jack Findle
 step
     #completewith whispered2
-    .isOnQuest 40832
+    .isOnQuest 40832 --Call of The Uncrowned
     .cast 201253 >>Use |T134940:0|t[Sealed Letter]
     .timer 24,RP
     .use 133558
@@ -3523,14 +3468,14 @@ step
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Lord Jorach Ravenholdt|r
     #label Order Hall Rogue Part 1
-    .isQuestAvailable 40840
+    .isQuestAvailable 40840 --A Worthy Blade
     .goto 626,41.37,77.95
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lord Jorach Ravenholdt|r
     .target Lord Jorach Ravenholdt
     .accept 40840 >>Accept A Worthy Blade
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Fleet Admiral Tethys|r and |cRXP_FRIENDLY_Valeera Sanguinar|r and |cRXP_FRIENDLY_Princess Tess Greymane|r
-    .isOnQuest 40840
+    .isOnQuest 40840 --A Worthy Blade
     .goto 626,41.7,75.76
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Fleet Admiral Tethys|r, |cRXP_FRIENDLY_Valeera Sanguinar|r,  and  |cRXP_FRIENDLY_Princess Tess Greymane|r.
     .complete 40840,2 --1/1 Valeera's plan considered
@@ -3543,7 +3488,7 @@ step
     .target Valeera Sanguinar
     .target Princess Tess Greymane
 step
-    .isQuestAvailable 40840
+    .isQuestAvailable 40840 --A Worthy Blade
     +Select one of the following guides for now:
     *|cRXP_WARN_IMPORTANT: Select the one you already have in order to gain an additional 10% xp (one time only)|r
     *|cRXP_WARN_You’ll be able to do the other questlines later|r
@@ -3551,7 +3496,6 @@ step
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Assassination >> Assassination(DPS) Questline
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Outlaw >> Outlaw(DPS) Questline
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Subtlety >> Subtlety(DPS) Questline
-
 ]])
 ---Rogue Order Hall Intro 2
 RXPGuides.RegisterGuide([[
@@ -3562,9 +3506,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF004|r - Order Hall Intro 2|r
 #subgroup |cFFFCDC00(10-80)|r Speedrun Route
 #next ad) Infinite Bazaar
-
 << Rogue
-
 step
     #completewith Order Hall Rogue Part 2
     #hidewindow
@@ -3595,7 +3537,7 @@ step
     .usespell 1241425 -- Temporal Retreat
 step
     #optional
-    .isQuestAvailable 40840
+    .isQuestAvailable 40840 --A Worthy Blade
     +|cRXP_WARN_You have to do the previous chapter first|r
     .clicknext RestedXP Legion Remix\ab) Order Hall Rogue Part 1 >>CLICK HERE FOR GUIDE
 step
@@ -3686,11 +3628,9 @@ RXPGuides.RegisterGuide([[
 #name ab) Order Hall Shaman Part 1
 #displayname |cFF00FF004|r - Order Hall Intro 1|r
 #subgroup |cFFFCDC00(10-80)|r Speedrun Route
-
 << Shaman
-
 step
-    .isQuestTurnedIn account,91955
+    .isQuestTurnedIn account,91955 --Just Between Us
     .achievementComplete 61108,1
     +|cRXP_WARN_You’ve already got the 10% XP bonus from the artifact questline. By clicking the text below, you’ll skip the Order Hall intro and parts of Azsuna for faster leveling|r.
     *Manually skip this step if you prefer to play through that content.
@@ -3710,7 +3650,7 @@ step
     .target Stormbeak
 step
     #arrowtext Enter the |cRXP_PICK_Melee at the Maelstrom|r scenario
-    .isOnQuest 39746
+    .isOnQuest 39746 --A Ring Unbroken
     .goto 627,73.85,43.56
     .enterScenario 1038 >>Enter the |cRXP_PICK_Melee at the Maelstrom|r scenario.
 step
@@ -3781,8 +3721,8 @@ step
     .accept 41335 >>Accept The Elements Call...
     .target Thrall
 step
-    .isQuestAvailable 41335
-    .isQuestAvailable account,91955
+    .isQuestAvailable 41335 --The Elements Call
+    .isQuestAvailable account,91955 --Just Between Us
     +Select one of the following guides for now:
     *|cRXP_WARN_IMPORTANT: Select the one you already have in order to gain an additional 10% xp (one time only)|r
     *|cRXP_WARN_You’ll be able to do the other questlines later|r
@@ -3790,7 +3730,6 @@ step
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Elemental >> Elemental(DPS) Questline
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Enhancement >> Enhancement(DPS) Questline
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Restoration Shaman >> Restoration(Healer) Questline
-
 ]])
 ---Shaman Order Hall Intro 2
 RXPGuides.RegisterGuide([[
@@ -3801,12 +3740,10 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF003|r - Order Hall Intro 2|r
 #subgroup |cFFFCDC00(10-80)|r Speedrun Route
 #next ad) Infinite Bazaar
-
 << Shaman
-
 step
     #optional
-    .isQuestAvailable 41335
+    .isQuestAvailable 41335 --The Elements Call
     +|cRXP_WARN_You have to do the previous chapter first|r
     .clicknext RestedXP Legion Remix\ab) Order Hall Shaman Part 1 >>CLICK HERE FOR GUIDE
 step
@@ -3864,11 +3801,9 @@ RXPGuides.RegisterGuide([[
 #name ab) Order Hall Warlock Part 1
 #displayname |cFF00FF004|r - Order Hall Intro 1|r
 #subgroup |cFFFCDC00(10-80)|r Speedrun Route
-
 << Warlock
-
 step
-    .isQuestTurnedIn account,91955
+    .isQuestTurnedIn account,91955 --Just Between Us
     .achievementComplete 61108,1
     +|cRXP_WARN_You’ve already got the 10% XP bonus from the artifact questline. By clicking the text below, you’ll skip the Order Hall intro and parts of Azsuna for faster leveling|r.
     *Manually skip this step if you prefer to play through that content.
@@ -3901,7 +3836,7 @@ step
     .complete 40729,1 --1/1 Ritual Perfomed
 step
     #arrowtext Enter the |cRXP_PICK_Into the Mouth of the Nether|r scenario
-    .isOnQuest 40729
+    .isOnQuest 40729 --The New Blood
     .goto 628,57.87,60.00
     .enterScenario 962 >>Enter the |cRXP_PICK_Into the Mouth of the Nether|r scenario.
 step
@@ -4008,8 +3943,8 @@ step
     .accept 40684 >>Accept The Tome of Blighted Implements
     .target Calydus
 step
-    .isQuestAvailable 40684
-    .isQuestAvailable account,91955
+    .isQuestAvailable 40684 --The Tome of Blighted Implements
+    .isQuestAvailable account,91955 --Just Between Us
     +Select one of the following guides for now:
     *|cRXP_WARN_IMPORTANT: Select the one you already have in order to gain an additional 10% xp (one time only)|r
     *|cRXP_WARN_You’ll be able to do the other questlines later|r
@@ -4017,7 +3952,6 @@ step
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Affliction >> Affliction(DPS) Questline
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Demonology >> Demonology(DPS) Questline
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Destruction >> Destruction(DPS) Questline
-
 ]])
 ---Warlock Order Hall Intro 2
 RXPGuides.RegisterGuide([[
@@ -4028,12 +3962,10 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00CCFF3|r - Order Hall Intro 2|r
 #subgroup |cFFFCDC00(10-80)|r Speedrun Route
 #next ad) Infinite Bazaar
-
 << Warlock
-
 step
     #optional
-    .isQuestAvailable 40684
+    .isQuestAvailable 40684 --The Tome of Blighted Implements
     +|cRXP_WARN_You have to do the previous chapter first|r
     .clicknext RestedXP Legion Remix\ab) Order Hall Warlock Part 1 >>CLICK HERE FOR GUIDE
 step
@@ -4168,11 +4100,9 @@ RXPGuides.RegisterGuide([[
 #name ab) Order Hall Warrior Part 1
 #displayname |cFF00FF003|r - Order Hall Intro 1|r
 #subgroup |cFFFCDC00(10-80)|r Speedrun Route
-
 << Warrior
-
 step
-    .isQuestTurnedIn account,91955
+    .isQuestTurnedIn account,91955 --Just Between Us
     .achievementComplete 61108,1
     +|cRXP_WARN_You’ve already got the 10% XP bonus from the artifact questline. By clicking the text below, you’ll skip the Order Hall intro and parts of Azsuna for faster leveling|r.
     *Manually skip this step if you prefer to play through that content.
@@ -4276,12 +4206,12 @@ step << Horde
     .complete 42815,1,1 --1/1 Take the flight to the Broken Shore
 step
     #label OrderHallWarrior1
-    .isOnQuest 42815
+    .isOnQuest 42815 --Return to the Broken Shore
     #title |cFFFCDC00Follow the Arrow|r
     .goto 676,50.86,28.18,15 >>|cRXP_WARN_Wait for the arrival at the shore|r.
 step
     .goto 676,50.86,28.18
-    .isOnQuest 42815
+    .isOnQuest 42815 --Return to the Broken Shore
     #title |cFFFCDC00Follow the Arrow|r
     .scenario 1870,1 --Meet up with the vrykul.
 step
@@ -4355,13 +4285,13 @@ step
     .target Odyn
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Odyn|r
-    .isQuestAvailable 40579
+    .isQuestAvailable 40579 --Weapons of Legend
     .goto 695,58.33,84.38
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Odyn|r
     .accept 40579 >>Accept Weapons of Legend
     .target Odyn
 step
-    .isQuestAvailable 40579
+    .isQuestAvailable 40579 --Weapons of Legend
     -- .isQuestAvailable account,91955
     +Select one of the following guides for now:
     *|cRXP_WARN_IMPORTANT: Select the one you already have in order to gain an additional 10% xp (one time only)|r
@@ -4370,7 +4300,6 @@ step
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Arms >> Arms(DPS) Questline
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Fury >> Fury(DPS) Questline
     .clicknext RestedXP Legion Remix\z) Artifact Weapon: Warrior Protection >> Protection(Tank) Questline
-
 ]])
 ---Warrior Order Hall Intro 2
 RXPGuides.RegisterGuide([[
@@ -4381,9 +4310,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF004|r - Order Hall Intro 2|r
 #subgroup |cFFFCDC00(10-80)|r Speedrun Route
 #next ad) Infinite Bazaar
-
 << Warrior
-
 step
     #completewith Accept The Eye of Odyn
     #hidewindow
@@ -4414,7 +4341,7 @@ step
     .usespell 1241425 -- Temporal Retreat
 step
     #optional
-    .isQuestAvailable 40579
+    .isQuestAvailable 40579 --Weapons of Legend
     +|cRXP_WARN_You have to do the previous chapter first|r
     .clicknext RestedXP Legion Remix\ab) Order Hall Warrior Part 1 >>CLICK HERE FOR GUIDE
 step
@@ -4503,7 +4430,6 @@ step
     .gossipoption 44733 >>Talk to |cRXP_FRIENDLY_Aerylia|r
     .target Aerylia
 ]])
-
 ---Infinite Bazaar
 RXPGuides.RegisterGuide([[
 #retail
@@ -4513,9 +4439,6 @@ RXPGuides.RegisterGuide([[
 #name ad) Infinite Bazaar
 #displayname |cFF00FF005|r - Infinite Bazaar|r
 #next ae) First Zone
-
-
-
 step
     #completewith Heroic World Tier
     #hidewindow
@@ -4555,7 +4478,7 @@ step
     .target Muninn
 step
     #arrowtext Click\n|cRXP_PICK_Portal|r
-    .isQuestAvailable 91639
+    .isQuestAvailable 91639 --Embrace Your Own Legend
     .zoneskip 627,1
     .goto 627,72.07,40.6
     .cast 1233963 >>Click on the |cRXP_PICK_Portal|r.
@@ -4583,7 +4506,7 @@ step
     .target Momentus
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Momentus|r and |cRXP_FRIENDLY_Erus|r
-    .isQuestComplete 91955
+    .isQuestComplete 91955 --Just Between Us
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Momentus|r and |cRXP_FRIENDLY_Erus|r
     .turnin 91955 >>Turn in Just Between Us
     .goto 619,45.83,67.98
@@ -4619,7 +4542,7 @@ step
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Eternus|r
     #requires InfiniteChaosA
-    .isOnQuest 91437
+    .isOnQuest 91437 --Call for Participants
     .goto 619,45.61,68.46,25,0
     .goto 619,45.68,68.50
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Eternus|r
@@ -4645,13 +4568,13 @@ step <<!DemonHunter
     .skipgossipid 134865
 step
     .goto 619,45.68,68.49
-    .isQuestTurnedIn account,91721
-    .isQuestAvailable account,91722
+    .isQuestTurnedIn account,91721 --Surpass Your Own Legend
+    .isQuestAvailable account,91722 --Shape a New Legend
     +|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Eternus|r and select a quest based on your preference.
     .questcount <3,89540,91613,90100,90112,90113,89600,89679,90102,90103,89524,89590,89678,89541,89607,90114,89521,89539,89683,90109,89528,89543,89544,89545,89550,89553,89554,89556,89558,89597,92439,89465,89469,89476,89523,89527,89533,89538,89549,89552,89592,89594,89599,89601,89605,89680,90101,90108,90110,90111,89464,89466,89516,89518,89519,89522,89525,89526,89529,89530,89531,89532,89534,89535,89542,89546,89547,89548,89551,89555,89557,89591,89593,89595,89598,89602,89604,89606,89665,89676,89677,89682,90096,90098,90099,90115,91439,91441,91449,89517,89520,89536,89537,89644,89681,90097,91438,91443,91446,91612,91848,91849,89596,89603,89622,91440,91444,91445,91447,91448,92441,91847,92440,92442,89467,89468 >>Accept 1 of the 100 Quests.
     .target Eternus
 step
-    .isQuestTurnedIn account,91722
+    .isQuestTurnedIn account,91722 --Shape a New Legend
     .goto 619,45.68,68.49
     +|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Eternus|r and select a quest based on your preference.
     .questcount <4,89540,91613,90100,90112,90113,89600,89679,90102,90103,89524,89590,89678,89541,89607,90114,89521,89539,89683,90109,89528,89543,89544,89545,89550,89553,89554,89556,89558,89597,92439,89465,89469,89476,89523,89527,89533,89538,89549,89552,89592,89594,89599,89601,89605,89680,90101,90108,90110,90111,89464,89466,89516,89518,89519,89522,89525,89526,89529,89530,89531,89532,89534,89535,89542,89546,89547,89548,89551,89555,89557,89591,89593,89595,89598,89602,89604,89606,89665,89676,89677,89682,90096,90098,90099,90115,91439,91441,91449,89517,89520,89536,89537,89644,89681,90097,91438,91443,91446,91612,91848,91849,89596,89603,89622,91440,91444,91445,91447,91448,92441,91847,92440,92442,89467,89468 >>Accept 3 of the 100 Quests.
@@ -4687,7 +4610,6 @@ step
     .use 254320
     .aura 1257698
 ]])
-
 ---Azsuna 1
 RXPGuides.RegisterGuide([[
 #retail
@@ -4697,7 +4619,6 @@ RXPGuides.RegisterGuide([[
 #name ae) First Zone
 #displayname |cFF00FF006|r - Azsuna|r
 #next cb) Val'sharah Speedrun 2
-
 step
     #completewith AzsunaSpeedrunY
     #hidewindow
@@ -4760,7 +4681,7 @@ step
     #include RestedXP Legion Remix\b) Behind Legion Lines@BehindLegionLinesA-BehindLegionLinesB
 step
     #arrowtext Click\n|cRXP_PICK_Treasure Chest|r
-    .isQuestAvailable account,38316
+    .isQuestAvailable account,38316 --Azsuna - Treasure 014 - Fel Collector
     .goto 630,40.56,57.69
     .turnin 38316 >>Click on the |cRXP_PICK_Treasure Chest|r.
 step
@@ -4788,22 +4709,22 @@ step
     .target Archmage Khadgar
 step
     #arrowtext Click\n|cRXP_PICK_Treasure Chest|r
-    .isOnQuest 38443
-    .isQuestAvailable account,37713
+    .isOnQuest 38443 --Journey to the Repose
+    .isQuestAvailable account,37713 --Azsuna - Treasure 002 - El'dranil Tablet
     .goto 630,44.47,39.47
     .turnin 37713 >>Click on the |cRXP_PICK_Treasure Chest|r.
 step
     #arrowtext Click\n|cRXP_PICK_Small Treasure Chest|r
-    .isOnQuest 38443
-    .isQuestAvailable account,37831
+    .isOnQuest 38443 --Journey to the Repose
+    .isQuestAvailable account,37831 --Azsuna - Treasure 008 - Soggy Bundle
     .goto 630,49.65,34.47
     .turnin 37831 >>Click on the |cRXP_PICK_Small Treasure Chest|r.
 step
     #include RestedXP Legion Remix\b) Defending Azurewing Repose@DefendingAzurewingReposeAA-DefendingAzurewingReposeAB
 step
     #arrowtext Click\n|cRXP_PICK_Treasure Chest|r
-    .isOnQuest 37853
-    .isQuestAvailable account,42289
+    .isOnQuest 37853 --The Death of the Eldest
+    .isQuestAvailable account,42289 --Azsuna - Treasure 032 - Leyhollow
     .goto 630,51.52,24.33
     .turnin 42289 >>Click on the |cRXP_PICK_Treasure Chest|r.
 step
@@ -4812,22 +4733,22 @@ step
     #include RestedXP Legion Remix\b) Defending Azurewing Repose@DefendingAzurewingReposeC-DefendingAzurewingReposeD
 step
     #arrowtext |cFFFCDC00In the Cave|r
-    .isOnQuest 37959
-    .isQuestAvailable account,44104
+    .isOnQuest 37959 --The Hunger Returns
+    .isQuestAvailable account,44104 --Azsuna - Treasure 045 - Ley Ruins 02
     .goto 630,53.61,18.14
     .turnin 44104 >>Click on the |cRXP_PICK_Treasure Chest|r.
 step
     #arrowtext |cFFFCDC00Top of the Tower|r
-    .isOnQuest 37959
-    .isQuestAvailable account,40711
+    .isOnQuest 37959 --The Hunger Returns
+    .isQuestAvailable account,40711 --Azsuna - Treasure 019 - [Ley Line Tower]
     .goto 630,55.63,18.51
     .turnin 40711 >>Click on the |cRXP_PICK_Treasure Chest|r.
 step
     #include RestedXP Legion Remix\b) Defending Azurewing Repose@DefendingAzurewingReposeE-DefendingAzurewingReposeF
 step
     #arrowtext |cFFFCDC00Top of the Tower|r
-    .isOnQuest 37862
-    .isQuestAvailable account,37980
+    .isOnQuest 37862 --Still Alive
+    .isQuestAvailable account,37980 --Azsuna - Treasure 012 - Book Treasure
     .goto 630,58.38,12.27
     .turnin 37980 >>Click on the |cRXP_PICK_Treasure Chest|r.
 step
@@ -4871,14 +4792,14 @@ step
     .target Elder Aldryth
 step
     #arrowtext Click\n|cRXP_PICK_Small Treasure Chest|r
-    .isOnQuest 37492
-    .isQuestAvailable account,42287
+    .isOnQuest 37492 --A Rather Long Walk
+    .isQuestAvailable account,42287 --Azsuna - Treasure 030 - El'Dranil Shallows 02 - Small
     .goto 630,54.40,36.35
     .turnin 42287 >>Click on the |cRXP_PICK_Small Treasure Chest|r.
 step
     #arrowtext Click\n|cRXP_PICK_Small Treasure Chest|r
-    .isOnQuest 37492
-    .isQuestAvailable account,37596
+    .isOnQuest 37492 --A Rather Long Walk
+    .isQuestAvailable account,37596 --Azsuna - Treasure 001 - Ancient Necklace
     .goto 630,53.03,37.27
     .turnin 37596 >>Click on the |cRXP_PICK_Small Treasure Chest|r.
 step
@@ -4910,8 +4831,8 @@ step
     .target +Olothil Starlance
 step
     #arrowtext Click\n|cRXP_PICK_Treasure Chest|r
-    .isOnQuest 37496
-    .isQuestAvailable account,37828
+    .isOnQuest 37496 --Infiltrating Shipwreck Arena
+    .isQuestAvailable account,37828 --Azsuna - Treasure 004 - Pet Journal
     .goto 630,49.38,45.34
     .turnin 37828 >>Click on the |cRXP_PICK_Treasure Chest|r.
 step
@@ -4925,22 +4846,22 @@ step
     .use 118330
 step
     #arrowtext Click\n|cRXP_PICK_Glimmering Treasure Chest|r
-    .isOnQuest 37565
-    .isQuestAvailable account,37649
+    .isOnQuest 37565 --The Right Weapon for the Job
+    .isQuestAvailable account,37649 --Treasure: Offerings for the Giants
     .goto 632,69.54,48.02
     .turnin 37649 >>Click on the |cRXP_PICK_Glimmering Treasure Chest|r.
 step
     #arrowtext Click\n|cRXP_PICK_Small Treasure Chest|r
     #label OceanusCaveTreasureChestsA
-    .isOnQuest 37565
-    .isQuestAvailable account,42291
+    .isOnQuest 37565 --The Right Weapon for the Job
+    .isQuestAvailable account,42291 --Azsuna - Treasure 033 - Oceanus Cove 02 - Small
     .goto 632,45.35,66.85
     .turnin 42291 >>Click on the |cRXP_PICK_Small Treasure Chest|r.
 step
     #include RestedXP Legion Remix\b) Against Giants@AgainstGiantsC-AgainstGiantsD
 step
     #arrowtext Click\n|cRXP_PICK_Small Treasure Chest|r
-    .isQuestAvailable account,37829
+    .isQuestAvailable account,37829 --Azsuna - Treasure 006 - A Giant Diary
     .goto 630,53.16,64.44
     .turnin 37829 >>Click on the |cRXP_PICK_Small Treasure Chest|r.
 step
@@ -4951,7 +4872,7 @@ step
     .target Okuna Longtusk
 step
     #arrowtext Don't complete it |cFFFCDC00(See Note)|r
-    .isQuestTurnedIn 37538
+    .isQuestTurnedIn 37538 --Round 1, Fight!
     --BONUS OBJECTIVE
     .xp >80,1
     #loop
@@ -4984,17 +4905,17 @@ step
     .accept 42220 >>Accept Shipwrecked Sailors << Alliance
 step
     #arrowtext Click\n|cRXP_PICK_Disputed Chest|r
-    .isQuestAvailable account,38365
+    .isQuestAvailable account,38365 --Azsuna - Treasure 015 - Giblin Treasure
     .goto 630,55.87,56.85
     .turnin 38365 >>Click on the |cRXP_PICK_Disputed Chest|r.
 step
     #arrowtext Click\n|cRXP_PICK_Small Treasure Chest|r
-    .isQuestAvailable account,42272
+    .isQuestAvailable account,42272 --Azsuna - Treasure 022 - Mak'rana - Small
     .goto 630,59.88,63.19
     .turnin 42272 >>Click on the |cRXP_PICK_Small Treasure Chest|r.
 step
     #arrowtext Click\n|cRXP_PICK_Small Treasure Chest|r
-    .isQuestAvailable account,42273
+    .isQuestAvailable account,42273 --Azsuna - Treasure 023 - Mak'rana 02 - Small
     .goto 630,62.37,58.41
     .turnin 42273 >>Click on the |cRXP_PICK_Small Treasure Chest|r.
 step
@@ -5062,14 +4983,14 @@ step
     .mob Naga Brute
 step
     #arrowtext Click\n|cRXP_PICK_Small Treasure Chest|r
-    .isOnQuest 42693
-    .isQuestAvailable account,42282
+    .isOnQuest 42693 --You Never Know Until You Scry
+    .isQuestAvailable account,42282 --Azsuna - Treasure 026 - Nar'thalas 02 - Small
     .goto 630,53.62,44.15
     .turnin 42282 >>Click on the |cRXP_PICK_Small Treasure Chest|r.
 step
     #arrowtext Click\n|cRXP_PICK_Small Treasure Chest|r
-    .isOnQuest 42693
-    .isQuestAvailable account,42283
+    .isOnQuest 42693 --You Never Know Until You Scry
+    .isQuestAvailable account,42283 --Azsuna - Treasure 027 - Nar'thalas 03 - Small
     .goto 630,53.49,45.46
     .turnin 42283 >>Click on the |cRXP_PICK_Small Treasure Chest|r.
 step
@@ -5102,39 +5023,39 @@ step
     #include RestedXP Legion Remix\b) Azsuna versus Azshara@AzsunaVersusAzsharaF-AzsunaVersusAzsharaG
 step
     #arrowtext Click\n|cRXP_PICK_Small Treasure Chest|r
-    .isOnQuest 37678
-    .isQuestAvailable account,42284
+    .isOnQuest 37678 --Hit the Books
+    .isQuestAvailable account,42284 --Azsuna - Treasure 028 - Nar'thalas 04 - Small
     .goto 631,62.02,83.86
     .turnin 42284 >>Click on the |cRXP_PICK_Small Treasure Chest|r.
 step
     #include RestedXP Legion Remix\b) Azsuna versus Azshara@AzsunaVersusAzsharaH-AzsunaVersusAzsharaI
 step
     #arrowtext Click\n|cRXP_PICK_Small Treasure Chest|r
-    .isOnQuest 37469
-    .isQuestAvailable account,42285
+    .isOnQuest 37469 --The Tidestone: Shattered
+    .isQuestAvailable account,42285 --Azsuna - Treasure 029 - Nar'thalas 05 - Small
     .goto 631,71.68,21.74
     .turnin 42285 >>Click on the |cRXP_PICK_Small Treasure Chest|r.
 step
     #include RestedXP Legion Remix\b) Azsuna versus Azshara@AzsunaVersusAzsharaJ-AzsunaVersusAzsharaZ
 step
     #arrowtext Click\n|cRXP_PICK_Glimmering Treasure Chest|r
-    .isQuestAvailable account,37830
+    .isQuestAvailable account,37830 --Azsuna - Treasure 007 - Nar'thalisian Artifact
     .goto 630,58.36,43.78
     .turnin 37830 >>Click on the |cRXP_PICK_Glimmering Treasure Chest|r.
 step
     #arrowtext Click\n|cRXP_PICK_Small Treasure Chest|r
-    .isQuestAvailable account,42294
+    .isQuestAvailable account,42294 --Azsuna - Treasure 037 - Hatecoil Warcamp 02 - Small
     .goto 630,62.80,44.79
     .turnin 42294 >>Click on the |cRXP_PICK_Small Treasure Chest|r.
 step
     #arrowtext Click\n|cRXP_PICK_Small Treasure Chest|r
-    .isQuestAvailable account,40751
+    .isQuestAvailable account,40751 --Azsuna - Treasure 020 - Olivian Rise
     .goto 630,66.06,43.45
     .turnin 40751 >>Click on the |cRXP_PICK_Small Treasure Chest|r.
 step
     #arrowtext Click\n|cRXP_PICK_Small Treasure Chest|r
     #label AzsunaSpeedrunY
-    .isQuestAvailable account,42293
+    .isQuestAvailable account,42293 --Azsuna - Treasure 036 - Hatecoil Warcamp 01 - Small
     .goto 630,63.65,39.17
     .turnin 42293 >>Click on the |cRXP_PICK_Small Treasure Chest|r.
 step
@@ -5165,7 +5086,6 @@ RXPGuides.RegisterGuide([[
 #name ae) First Zone 2
 #displayname |cFF00FF006|r - Azsuna|r
 #next cb) Val'sharah Speedrun 2
-
 step
     #completewith Let's Make A DealZ
     #hidewindow
@@ -5258,7 +5178,7 @@ step
     .target Lady Irisse
 step
     #completewith Making the World Safe for ProfitZZ
-    .isQuestTurnedIn 37538
+    .isQuestTurnedIn 37538 --Round 1, Fight!
     --BONUS OBJECTIVE
     #title Don't complete it |cFFFCDC00(See Note)|r
     .xp >80,1
@@ -5309,7 +5229,7 @@ step
     .complete 38857,3 --1/1 Grace the Green rescued
 step
     #completewith next
-    .isQuestTurnedIn 37538
+    .isQuestTurnedIn 37538 --Round 1, Fight!
     --BONUS OBJECTIVE
     #title Don't complete it |cFFFCDC00(See Note)|r
     .xp >80,1
@@ -5352,7 +5272,7 @@ step
     .turnin 37566 >>Turn in The Prince is Going Down
     .target Okuna Longtusk
  step
-    .isQuestTurnedIn 37538
+    .isQuestTurnedIn 37538 --Round 1, Fight!
     --BONUS OBJECTIVE
     .zoneskip 630,1
     .xp >80,1
@@ -5411,11 +5331,9 @@ step
     .accept 38232 >>Accept Minion! Kill Them!
     .target Daglop
 ]])
-
 -- ======================================
 -- ==============  AZSUNA  ==============
 -- ======================================
-
 --Behind Legion Lines
 RXPGuides.RegisterGuide([[
 #retail
@@ -5424,7 +5342,6 @@ RXPGuides.RegisterGuide([[
 #name b) Behind Legion Lines
 #displayname |cFF00CCFF1|r - Behind Legion Lines
 #internal
-
 step
     #completewith BehindLegionLinesZ
     #hidewindow
@@ -5472,7 +5389,7 @@ step
     .skipgossipid 42698
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Archmage Khadgar|r
-    .isOnQuest 41220
+    .isOnQuest 41220 --Down to Azsuna
     #optional
     .goto 630,45.10,42.91
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Archmage Khadgar|r.
@@ -5704,7 +5621,6 @@ RXPGuides.RegisterGuide([[
 #name b) Defending Azurewing Repose
 #displayname |cFF00CCFF2|r - Defending Azurewing Repose
 #internal
-
 step
     #completewith DefendingAzurewingReposeZ
     #hidewindow
@@ -6077,32 +5993,32 @@ step
     #arrowtext Use [Radiant Ley Crystal]\non |cRXP_FRIENDLY_Berazus|r
     #requires OnTheBrinkB
     .goto 630,49.73,24.98
-    >>Use the |T133255:0|t[Radiant Ley Crystal] on |cRXP_FRIENDLY_Berazus|r.
+    >>Click on the |cRXP_PICK_Radiant Ley Crystal|r macro in the "Active Items Frame" to use it on |cRXP_FRIENDLY_Berazus|r.
     .complete 38015,4 --1/1 Heal Berazus
     .target Berazus
-    .use 138146
+    .macro Radiant Ley Crystal,133255 >>/targetexact Berazus\n/use item:138146
 step
     #arrowtext Use [Radiant Ley Crystal]\non |cRXP_FRIENDLY_Cedonu|r
     .goto 630,48.67,27.90
-    >>Use the |T133255:0|t[Radiant Ley Crystal] on |cRXP_FRIENDLY_Cedonu|r.
+    >>Click on the |cRXP_PICK_Radiant Ley Crystal|r macro in the "Active Items Frame" to use it on |cRXP_FRIENDLY_Cedonu|r.
     .complete 38015,1 --1/1 Heal Cedonu
     .target Cedonu
-    .use 138146
+    .macro Radiant Ley Crystal,133255 >>/targetexact Cedonu\n/use item:138146
 step
     #arrowtext Use [Radiant Ley Crystal]\non |cRXP_FRIENDLY_Emmigosa|r
     .goto 630,47.98,27.13
-    >>Use the |T133255:0|t[Radiant Ley Crystal] on |cRXP_FRIENDLY_Emmigosa|r.
+    >>Click on the |cRXP_PICK_Radiant Ley Crystal|r macro in the "Active Items Frame" to use it on |cRXP_FRIENDLY_Emmigosa|r.
     .complete 38015,3 --1/1 Heal Emmigosa
     .target Emmigosa
-    .use 138146
+    .macro Radiant Ley Crystal,133255 >>/targetexact Emmigosa\n/use item:138146
 step
     #arrowtext Use [Radiant Ley Crystal]\non |cRXP_FRIENDLY_Kharmeera|r
     #label OnTheBrinkA
     .goto 630,47.26,26.33
-    >>Use the |T133255:0|t[Radiant Ley Crystal] on |cRXP_FRIENDLY_Kharmeera|r.
+    >>Click on the |cRXP_PICK_Radiant Ley Crystal|r macro in the "Active Items Frame" to use it on |cRXP_FRIENDLY_Kharmeera|r.
     .complete 38015,2 --1/1 Heal Kharmeera
     .target Kharmeera
-    .use 138146
+    .macro Radiant Ley Crystal,133255 >>/targetexact Kharmeera\n/use item:138146
 step
     #arrowtext Kill\n|cRXP_ENEMY_Withered forces|r
     #loop
@@ -6169,7 +6085,6 @@ RXPGuides.RegisterGuide([[
 #name b) Azsuna versus Azshara
 #displayname |cFF00CCFF3|r - Azsuna versus Azshara
 #internal
-
 step
     #completewith AzsunaVersusAzsharaZ
     #hidewindow
@@ -6678,7 +6593,6 @@ RXPGuides.RegisterGuide([[
 #name b) Against Giants
 #displayname |cFF00CCFF4|r - Against Giants
 #internal
-
 step
     #completewith AgainstGiantsZ
     #hidewindow
@@ -6896,7 +6810,6 @@ RXPGuides.RegisterGuide([[
 #name b) Mak'rana and the Fate of the Queen's Reprisal
 #displayname |cFF00CCFF5|r - Mak'rana and the Fate of the Queen's Reprisal
 #internal
-
 step
     #completewith MakranaFateQueenReprisalZ
     #hidewindow
@@ -7076,11 +6989,9 @@ step << Alliance
     .turnin 40794 >>Turn in Fate of the Queen's Reprisal
     .target Lieutenant Surtees
 ]])
-
 -- ======================================
 -- ======= SOJOURNER: AZSUNA ============
 -- ======================================
-
 --Challiane Vineyards
 RXPGuides.RegisterGuide([[
 #retail
@@ -7090,7 +7001,6 @@ RXPGuides.RegisterGuide([[
 #subgroup |cFFFCDC00(10-80+)|r Sojourner
 #displayname |cFF00CCFF1|r - Challiane Vineyards
 #internal
-
 step
     #completewith ChallianeVineyardsZ
     #hidewindow
@@ -7163,7 +7073,6 @@ RXPGuides.RegisterGuide([[
 #subgroup |cFFFCDC00(10-80+)|r Sojourner
 #displayname |cFF00CCFF1|r - Kirin Tor Reconnaissance
 #internal
-
 step
     #completewith KirinTorReconnaissanceZ
     #hidewindow
@@ -7302,10 +7211,8 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Legion Remix
 #name b) A Rather Long Walk
 #subgroup |cFFFCDC00(10-80+)|r Sojourner
-
 #displayname |cFF00CCFF1|r - A Rather Long Walk
 #internal
-
 step
     #completewith A Rather Long Walk
     #hidewindow
@@ -7363,7 +7270,6 @@ RXPGuides.RegisterGuide([[
 #subgroup |cFFFCDC00(10-80+)|r Sojourner
 #displayname |cFF00CCFF1|r - Crumbled Palace Cocktails
 #internal
-
 step
     #completewith Crumbled Palace Cocktails
     #hidewindow
@@ -7437,7 +7343,6 @@ RXPGuides.RegisterGuide([[
 #subgroup |cFFFCDC00(10-80+)|r Sojourner
 #displayname |cFF00CCFF6|r - Felblaze Ingress
 #internal
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Tehd Shoemaker|r
     #label FelblazeIngressA
@@ -7447,7 +7352,7 @@ step
     .target Tehd Shoemaker
 step
     #arrowtext Click\n|cRXP_PICK_Eye of Kilrogg|r
-    .isOnQuest 42375
+    .isOnQuest 42375 --Eye See You
     .goto 630,63.85,28.99
     .aura 212754,1 >>|TInterface/cursor/crosshair/interact.blp:20|tClick on the |cRXP_PICK_Eye of Kilrogg|r
     .target Eye of Kilrogg
@@ -7475,7 +7380,7 @@ step
     .target Tehd Shoemaker
 step
     #completewith EyeSeeYouA
-    .isOnQuest 42375
+    .isOnQuest 42375 --Eye See You
     .aura -212754 >>Cancel the buff
     .macro Cancel Bull,136155 >>/cancelaura 212754
 step
@@ -7539,11 +7444,9 @@ step
     .goto 630,63.85,28.94
     .target +Tehd Shoemaker
 ]])
-
 -- ================================================= -
 -- ==============  GROUP: SPEED LEVELING: ========== -
 -- ================================================= -
-
 ---Tips & Tricks
 RXPGuides.RegisterGuide([[
 #retail
@@ -7553,12 +7456,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF8888880|r - Tips & Tricks|r
 #subgroup |cFFFCDC00(10-80)|r Legion Remix
 #next b) Intro
-
 step
     #include RestedXP Legion Remix\1a) Tips & Tricks
-
 ]])
-
 ---Intro
 RXPGuides.RegisterGuide([[
 #retail
@@ -7568,11 +7468,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF001|r - Intro|r
 #subgroup |cFFFCDC00(10-80)|r Legion Remix
 #next ba) Skyriding
-
 step
     #include RestedXP Legion Remix\a) Intro
 ]])
-
 ---Skyriding
 RXPGuides.RegisterGuide([[
 #retail
@@ -7593,11 +7491,9 @@ RXPGuides.RegisterGuide([[
 #next bb) Order Hall Shaman Part 1<< Shaman
 #next bb) Order Hall Warlock Part 1 << Warlock
 #next bb) Order Hall Warrior Part 1 << Warrior
-
 step
     #include RestedXP Legion Remix\aa) Skyriding
 ]])
-
 ---Monk Part 1
 RXPGuides.RegisterGuide([[
 #retail
@@ -7607,9 +7503,7 @@ RXPGuides.RegisterGuide([[
 #name bb) Order Hall Monk Part 1
 #displayname |cFF00FF003|r - Order Hall Intro 1|r
 #next bc) Order Hall Monk Part 2
-
 << Monk
-
 step
     #include RestedXP Legion Remix\ab) Order Hall Monk Part 1
 ]])
@@ -7622,9 +7516,7 @@ RXPGuides.RegisterGuide([[
 #name bc) Order Hall Monk Part 2
 #displayname |cFF00FF004|r - Order Hall Intro 2|r
 #next bd) Infinite Bazaar
-
 << Monk
-
 step
     #include RestedXP Legion Remix\ac) Order Hall Monk Part 2
 ]])
@@ -7637,12 +7529,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF003|r - Order Hall Intro 1|r
 #subgroup |cFFFCDC00(10-80)|r Legion Remix
 #next bc) Order Hall Death Knight Part 2
-
 << DeathKnight
-
 step
     #include ab) Order Hall Death Knight Part 1
-
 ]])
 ---Death Knight 2
 RXPGuides.RegisterGuide([[
@@ -7653,12 +7542,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF004|r - Order Hall Intro 2|r
 #subgroup |cFFFCDC00(10-80)|r Legion Remix
 #next bd) Infinite Bazaar
-
 << DeathKnight
-
 step
     #include ac) Order Hall Death Knight Part 2
-
 ]])
 ---Demon Hunter 1
 RXPGuides.RegisterGuide([[
@@ -7669,13 +7555,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF003|r - Order Hall Intro 1|r
 #subgroup |cFFFCDC00(10-80)|r Legion Remix
 #next bc) Order Hall Demon Hunter Part 2
-
 << DemonHunter
-
 step
     #include RestedXP Legion Remix\ab) Order Hall Demon Hunter Part 1
-
-
 ]])
 ---Demon Hunter 2
 RXPGuides.RegisterGuide([[
@@ -7686,13 +7568,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF004|r - Order Hall Intro 2|r
 #subgroup |cFFFCDC00(10-80)|r Legion Remix
 #next bd) Infinite Bazaar
-
 << DemonHunter
-
 step
     #include RestedXP Legion Remix\ac) Order Hall Demon Hunter Part 2
-
-
 ]])
 ---Druid 1
 RXPGuides.RegisterGuide([[
@@ -7703,9 +7581,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF003|r - Order Hall Intro 1|r
 #subgroup |cFFFCDC00(10-80)|r Legion Remix
 #next bc) Order Hall Druid Part 2
-
 << Druid
-
 step
     #include RestedXP Legion Remix\ab) Order Hall Druid Part 1
 ]])
@@ -7718,9 +7594,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF004|r - Order Hall Intro 2|r
 #subgroup |cFFFCDC00(10-80)|r Legion Remix
 #next bd) Infinite Bazaar
-
 << Druid
-
 step
     #include RestedXP Legion Remix\ac) Order Hall Druid Part 2
 ]])
@@ -7733,9 +7607,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF003|r - Order Hall Intro 1|r
 #subgroup |cFFFCDC00(10-80)|r Legion Remix
 #next bc) Order Hall Druid Part 2
-
 << Hunter
-
 step
     #include RestedXP Legion Remix\ab) Order Hall Hunter Part 1
 ]])
@@ -7748,9 +7620,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF004|r - Order Hall Intro 2|r
 #subgroup |cFFFCDC00(10-80)|r Legion Remix
 #next bd) Infinite Bazaar
-
 << Hunter
-
 step
     #include RestedXP Legion Remix\ac) Order Hall Hunter Part 2
 ]])
@@ -7763,9 +7633,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF003|r - Order Hall Intro 1|r
 #subgroup |cFFFCDC00(10-80)|r Legion Remix
 #next bc) Order Hall Mage Part 2
-
 << Mage
-
 step
     #include RestedXP Legion Remix\ab) Order Hall Mage Part 1
 ]])
@@ -7778,9 +7646,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF004|r - Order Hall Intro 2|r
 #subgroup |cFFFCDC00(10-80)|r Legion Remix
 #next bd) Infinite Bazaar
-
 << Mage
-
 step
     #include RestedXP Legion Remix\ac) Order Hall Mage Part 2
 ]])
@@ -7793,9 +7659,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF003|r - Order Hall Intro 1|r
 #subgroup |cFFFCDC00(10-80)|r Legion Remix
 #next bc) Order Hall Paladin Part 2
-
 << Paladin
-
 step
     #include RestedXP Legion Remix\ab) Order Hall Paladin Part 1
 ]])
@@ -7808,9 +7672,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF004|r - Order Hall Intro 2|r
 #subgroup |cFFFCDC00(10-80)|r Legion Remix
 #next bd) Infinite Bazaar
-
 << Paladin
-
 step
     #include RestedXP Legion Remix\ac) Order Hall Paladin Part 2
 ]])
@@ -7823,9 +7685,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF003|r - Order Hall Intro 1|r
 #subgroup |cFFFCDC00(10-80)|r Legion Remix
 #next bc) Order Hall Priest Part 2
-
 << Priest
-
 step
     #include RestedXP Legion Remix\ab) Order Hall Priest Part 1
 ]])
@@ -7838,9 +7698,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF004|r - Order Hall Intro 2|r
 #subgroup |cFFFCDC00(10-80)|r Legion Remix
 #next bd) Infinite Bazaar
-
 << Priest
-
 step
     #include RestedXP Legion Remix\ac) Order Hall Priest Part 2
 ]])
@@ -7853,13 +7711,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF003|r - Order Hall Intro 1|r
 #subgroup |cFFFCDC00(10-80)|r Legion Remix
 #next bc) Order Hall Rogue Part 2
-
 << Rogue
-
 step
     #include RestedXP Legion Remix\ab) Order Hall Rogue Part 1
-
-
 ]])
 ---Rogue 2
 RXPGuides.RegisterGuide([[
@@ -7870,13 +7724,9 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF004|r - Order Hall Intro 2|r
 #subgroup |cFFFCDC00(10-80)|r Legion Remix
 #next bd) Infinite Bazaar
-
 << Rogue
-
 step
     #include RestedXP Legion Remix\ac) Order Hall Rogue Part 2
-
-
 ]])
 ---Shaman 1
 RXPGuides.RegisterGuide([[
@@ -7887,9 +7737,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF003|r - Order Hall Intro 1|r
 #subgroup |cFFFCDC00(10-80)|r Legion Remix
 #next bc) Order Hall Shaman Part 2
-
 <<Shaman
-
 step
     #include RestedXP Legion Remix\ab) Order Hall Shaman Part 1
 ]])
@@ -7902,9 +7750,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF004|r - Order Hall Intro 2|r
 #subgroup |cFFFCDC00(10-80)|r Legion Remix
 #next bd) Infinite Bazaar
-
 <<Shaman
-
 step
     #include RestedXP Legion Remix\ac) Order Hall Shaman Part 2
 ]])
@@ -7917,9 +7763,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF003|r - Order Hall Intro 1|r
 #subgroup |cFFFCDC00(10-80)|r Legion Remix
 #next bc) Order Hall Warlock Part 2
-
 << Warlock
-
 step
     #include RestedXP Legion Remix\ab) Order Hall Warlock Part 1
 ]])
@@ -7932,9 +7776,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF004|r - Order Hall Intro 2|r
 #subgroup |cFFFCDC00(10-80)|r Legion Remix
 #next bd) Infinite Bazaar
-
 << Warlock
-
 step
     #include RestedXP Legion Remix\ac) Order Hall Warlock Part 2
 ]])
@@ -7947,9 +7789,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF003|r - Order Hall Intro 1|r
 #subgroup |cFFFCDC00(10-80)|r Legion Remix
 #next bc) Order Hall Warrior Part 2
-
 << Warrior
-
 step
     #include RestedXP Legion Remix\ab) Order Hall Warrior Part 1
 ]])
@@ -7962,13 +7802,10 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF00FF004|r - Order Hall Intro 2|r
 #subgroup |cFFFCDC00(10-80)|r Legion Remix
 #next bd) Infinite Bazaar
-
 << Warrior
-
 step
     #include RestedXP Legion Remix\ac) Order Hall Warrior Part 2
 ]])
-
 ---Infinite Bazaar
 RXPGuides.RegisterGuide([[
 #retail
@@ -7978,11 +7815,9 @@ RXPGuides.RegisterGuide([[
 #name bd) Infinite Bazaar
 #displayname |cFF00FF005|r - Infinite Bazaar|r
 #next be) First Zone
-
 step
     #include RestedXP Legion Remix\ad) Infinite Bazaar
 ]])
-
 ---Azsuna
 RXPGuides.RegisterGuide([[
 #retail
@@ -7992,7 +7827,6 @@ RXPGuides.RegisterGuide([[
 #name be) First Zone
 #displayname |cFF00FF006|r - Azsuna|r
 #next cb) Val'sharah Speedrun
-
 step
     #include RestedXP Legion Remix\ae) First Zone
 ]])

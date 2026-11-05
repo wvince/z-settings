@@ -1205,7 +1205,7 @@ step << Warrior/Paladin/Hunter/Rogue/Shaman
     .train 199 >> Erlernen 2h Streitkolben << Paladin/Warrior/Shaman
     .train 198 >> Erlernen 1h Maces << Rogue
     .train 201 >> Erlernt 1h Schwerter << Rogue
-    .train 5011 >> Erlernen Armbrüste << Hunter
+    .train 5011 >> Erlernt Armbrüste << Hunter
     .target Handiir
 step << Hunter
 	.goto The Exodar,47.573,88.340
@@ -4002,7 +4002,7 @@ step << Dwarf Rogue
     #optional
     #sticky
     #label AntiVenomEnd2
-    .cast 20594 >>|cRXP_WARN_Wirkt|T136225:0|t[Steingestalt],um|T136230:0|t[Berührung von Zanzil] Debuff zu entfernen|r
+    .cast 20594 >>|cRXP_WARN_Wirkt |T136225:0|t[Steingestalt], um |T136230:0|t[Berührung von Zanzil]-Debuff zu entfernen|r
     .aura -9991
 step << Rogue
 .dungeon DM
@@ -4398,7 +4398,7 @@ step
     .goto Darkshore,61.40,9.40,0
     .goto Darkshore,62.42,7.67,0
     >>Tötet |cRXP_ENEMY_Mondpirscherpatriarch|r und |cRXP_ENEMY_Mondpirschermatriarchin|r. Plündert sie für ihre |cRXP_LOOT_Pelze|r
-    >>|cRXP_WARN_Passt auf |cRXP_ENEMY_Mondpirscher Matriarchs|r auf. Sie greifen immer mit einem |cRXP_ENEMY_Mondpirscher Mondpirscherwicht|r an ihrer Seite an|r
+    >>|cRXP_WARN_Seid vorsichtig vor den |cRXP_ENEMY_Mondpirschermatriarchin|r. Sie greifen immer mit einem |cRXP_ENEMY_Mondpirscherwicht|r an ihrer Seite an|r
     .complete 986,1 -- Fine Moonstalker Pelt (5)
     .mob Moonstalker Sire
     .mob Moonstalker Matriarch
@@ -4414,7 +4414,7 @@ step
     .isOnQuest 2078
     #completewith next
     .goto 1439,55.802,18.290
-    .gossip 6669,0 >> Sprecht mit |cRXP_FRIENDLY_Der Dreschonator 4100|r, um die Eskorte zu starten
+    .gossip 6669,0 >> Sprecht mit |cRXP_FRIENDLY_Der Dreschonator 4100|r um die Eskorte zu beginnen
     .skipgossip
     .target The Threshwackonator 4100
 step
@@ -4433,7 +4433,7 @@ step
 step
     #optional
     #sticky
-    .destroy 7442 >> Entfernt Gyromast's Schlüssel aus dem Inventar von Euch
+    .destroy 7442 >> Zerstört Gyromast's Schlüssel aus eurem Inventar
 step
     .goto 1439,54.973,24.885
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tSprich mit |cRXP_FRIENDLY_Balthule Schattenhieb|r
@@ -5945,7 +5945,7 @@ step
 #optional
     .goto Darkshore,32.44,43.71
     .zone Wetlands >> Nimm das Boot zum Hafen von Menethil
-    >>|cRXP_WARN_Level your|r |T135966:0|t[First Aid]|cRXP_WARN_while waiting for the Menethil Harbor boat|r
+    >>|cRXP_WARN_Level eure|r |T135966:0|t[Erste Hilfe]|cRXP_WARN_während ihr auf das Boot nach Menethil wartet|r
     .skill firstaid,<1,1
 step
     #label MeneBoat

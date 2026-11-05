@@ -2354,7 +2354,7 @@ step << Shaman
     .target Kranal Fiss
 step << Shaman
     #completewith CallofFire2
-    .zone Durotar >> Viaja de regreso a Durotar
+    .zone Durotar >> Regresa a Durotar
     .zoneskip Durotar
 step << Shaman
     #completewith next
@@ -2389,7 +2389,7 @@ step << Shaman
     >>|cRXP_WARN_Ten cuidado de no caer de la montaña, el camino es muy estrecho. Podrías morir si caes|r
 step << Shaman
     #completewith next
-    .zone The Barrens >> Viaja de regreso a Los Baldíos
+    .zone The Barrens >> Regresa a Los Baldíos
     .zoneskip The Barrens
 step << Shaman
     #loop
@@ -3001,7 +3001,7 @@ step << Shaman
     .isOnQuest 6385
 step << Troll Priest
     .goto Orgrimmar,35.59,87.80
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con |cRXP_FRIENDLY_Ur'kyo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con|r |cRXP_FRIENDLY_Ur'kyo|r
     .turnin 5654 >> Entrega la misión Maleficio de Debilidad
     .trainer >> Aprende tus hechizos de clase
     .target Ur'kyo
@@ -3009,7 +3009,7 @@ step << Troll Priest
 step << Troll Priest
     #optional
     .goto Orgrimmar,35.59,87.80
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con |cRXP_FRIENDLY_Ur'kyo|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tHabla con|r |cRXP_FRIENDLY_Ur'kyo|r
     .turnin 5652 >> Entrega la misión Maleficio de Debilidad
     .trainer >> Aprende tus hechizos de clase
     .target Ur'kyo

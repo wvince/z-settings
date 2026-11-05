@@ -11,18 +11,13 @@ RXPGuides.RegisterGuide([[
 #name 1a
 #displayname |cFFFCDC00LEVEL 1-10|r
 #disabled
-
 << !Harronir !Nightborne !HighmountainTauren !MagharOrc !EarthenDwarf !ZandalariTroll !Vulpera !Dracthyr !VoidElf !KulTiran !LightforgedDraenei !Mechagnome !Pandaren DK
-
 step
 +1
-
 ]])
-
 -- =================================
 -- =======   NEUTRAL ZONES   =======
 -- =================================
-
 --Exile's Reach Main Guide
 RXPGuides.RegisterGuide([[
 #retail
@@ -31,9 +26,7 @@ RXPGuides.RegisterGuide([[
 #subgroup |cFFFCDC00(1-90)|r Default
 #name a) Exile's Reach
 #internal
-
 << !Dracthyr !DemonHunter !DK !KulTiran !EarthenDwarf !DarkIronDwarf !LightforgedDraenei !Mechagnome !VoidElf !NightBorne !HighmountainTauren !Vulpera !MagharOrc !ZandalariTroll
-
 step
     #completewith ExilesEnd
     #hidewindow
@@ -147,7 +140,7 @@ step
     .countdown 2 >>1
 step
     .zoneskip 1409,1
-    .isQuestAvailable 55122
+    .isQuestAvailable 55122 --Murloc Mania
     +Immediately reach Level 10 and skip Exile's Reach by selecting |cRXP_WARN_the guide below|r
     *|cRXP_WARN_Don't if you want to continue Exile's Reach|r.
     .clicknext RestedXP Speed Leveling\a) No House Skip >>CLICK HERE FOR GUIDE
@@ -285,26 +278,18 @@ step << Priest/Warrior/Druid/Mage/Shaman/Paladin/Rogue/Warlock/Monk
     #label ClassQuests
     >>Follow |cRXP_FRIENDLY_Warlord Breka Grimaxe|r and wait for her to become hostile. << Horde
     >>Follow |cRXP_FRIENDLY_Captain Garrick|r and wait for her to become hostile. << Alliance
-
     *Cast |T136207:0|t[Shadow Word: Pain] on her and refresh it when it's about to expire |cRXP_WARN_<3seconds|r. << Priest
     *|cRXP_WARN_She’ll also notify you in chat when it’s about to expire|r. << Priest
-
     *Cast |T136118:0|t[Corruption] on her and refresh it when it's about to expire |cRXP_WARN_<3seconds|r. << Warlock
     *|cRXP_WARN_She’ll also notify you in chat when it’s about to expire|r. << Warlock
-
     *Cast |T136096:0|t[Moonfire] on her and refresh it when it's about to expire |cRXP_WARN_<5seconds|r. << Druid
     *|cRXP_WARN_She’ll also notify you in chat when it’s about to expire|r. << Druid
-
     *|cRXP_WARN_Keep your distance so you can|r |T132337:0|t[Charge] |cRXP_WARN_her immediately|r. << Warrior
     *Use |T132316:0|t[Hamstring] to slow her, making it easier to create distance before your next |T132337:0|t[Charge] is ready. << Warrior
-
     *Repeat this sequence: cast |T135846:0|t[Frostbolt] on |cRXP_ENEMY_Captain Garrick|r, then move directly in front of her and use |T135807:0|t[Fire Blast]. << Mage
     *|cRXP_WARN_You must be directly in front of her when using|r |T135807:0|t[Fire Blast]. << Mage
-
     *Repeat this sequence: cast |T136048:0|t[Lightning Bolt] on |cRXP_ENEMY_Captain Garrick|r, then use |T460956:0|t[Primal Strike] on her 4 times. << Shaman
-
     *Use |T136189:0|t[Sinister Strike] |cRXP_WARN_(your builder)|r on her to generate Combo Points, then spend 3, 4, and finally 5 Combo Points on |T132292:0|t[Eviscerate]|cRXP_WARN_(your spender)|r. << Rogue
-
     *Open with |cRXP_WARN_2|r |T606551:0|t[Tiger Palms] and |cRXP_WARN_1|r |T574575:0|t[Blackout Kick] against her. << Monk
     *Continue to alternate between the two << Monk
     *Build 3 Holy Power with |T135891:0|t[Crusader Strike] on her, then use |T236265:0|t[Shield of the Righteous]. << Paladin
@@ -1979,7 +1964,6 @@ RXPGuides.RegisterGuide([[
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A) << Alliance
 #next RestedXP Speed Leveling\b1) BfA Intro << Horde
 #chapter
-
 step
     .zoneskip 1409,1
     .zone 2352 >>Enter Neighbourhood
@@ -1996,9 +1980,9 @@ step
 step
     #arrowtext Click\n|cRXP_PICK_Portal|r
     .goto 2352,57.44,26.64
-    -- .zoneskip 2352,1
+    .zoneskip 2352,1
     .zone 84 >>Click on the |cRXP_PICK_Portal|r
-    -- .zoneskip 85
+    .zoneskip 85
 step
     #arrowtext Click\n|cRXP_PICK_Portal|r
     .goto 2351,53.93,49.4
@@ -2016,10 +2000,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - Plaguelands
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A) << Alliance
 #next b1) BfA Intro << Horde
-
-
 << DK !Pandaren !KulTiran !DarkIronDwarf !LightforgedDraenei !Mechagnome !VoidElf !HighmountainTauren !ZandalariTroll !Nightborne !Vulpera !MagharOrc
-
 step
     #hidewindow
     #completewith Cry For Vengeance!
@@ -2392,7 +2373,7 @@ step
 step
     #arrowtext |cFFFCDC00Use the macro|r
     #requires Dark Rider of Acherus
-    .isOnQuest 12687
+    .isOnQuest 12687 --Into the Realm of Shadows
     .goto 124,51.28,42.46,60,0
     .goto 124,51.44,39.07,30,0
     .goto 124,52.94,37.23
@@ -2553,11 +2534,11 @@ step
 step
     #arrowtext Step on the Teleporter
     #requires Victory At Death's Breach!
-    .isOnQuest 12701
+    .isOnQuest 12701 --Massacre At Light's Point
     .goto 124,50.53,33.42,5 >>Step on the Teleporter
 step
     #arrowtext Click\n|cRXP_PICK_Gryphon|r
-    .isOnQuest 12701
+    .isOnQuest 12701 --Massacre At Light's Point
     .goto 124,52.08,35.04,-1
     .goto 124,50.97,36.17,-1
     .cast 54567 >>Click on the |cRXP_PICK_Gryphon|r
@@ -3900,9 +3881,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - The Frozen Throne
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A) << Alliance
 #next b1) BfA Intro << Horde
-
 << DK Pandaren/DarkIronDwarf DK/KulTiran DK/LightforgedDraenei DK/Mechagnome DK/VoidElf DK/HighmountainTauren DK/Nightborne DK/ZandalariTroll DK/MagharOrc DK/Vulpera DK
-
 step
     .convertquest 58902,58903 << Horde
 step
@@ -4006,9 +3985,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - Mardum
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A) << Alliance
 #next b1) BfA Intro << Horde
-
 << DemonHunter !VoidElf
-
 step
     #hidewindow
     #completewith A New Direction
@@ -4629,7 +4606,7 @@ step
     .target Kayn Sunfury
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_NPCs|r
-    .isOnQuest 39516
+    .isOnQuest 39516 --Cry Havoc and Let Slip the Illidari!
     .goto 672,60.52,44.76
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to the |cRXP_FRIENDLY_NPCs|r.
     .complete 39516,4 --1/1 Kor'vas Bloodthorn taught
@@ -4646,7 +4623,7 @@ step
     .target Cyana Nightglaive
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Mannethrel Darkstar|r
-    .isOnQuest 39516
+    .isOnQuest 39516 --Cry Havoc and Let Slip the Illidari!
     .goto 672,60.25,44.59
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mannethrel Darkstar|r.
     .complete 39516,5 --1/1 Mannethrel taught
@@ -4654,7 +4631,7 @@ step
     .target Mannethrel Darkstar
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_NPCs|r
-    .isOnQuest 39515
+    .isOnQuest 39515 --Vengeance Will Be Mine!
     .goto 672,60.52,44.76
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to the |cRXP_FRIENDLY_NPCs|r.
     .complete 39515,4 --1/1 Kor'vas Bloodthorn taught
@@ -4671,7 +4648,7 @@ step
     .target Cyana Nightglaive
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Mannethrel Darkstar|r
-    .isOnQuest 39515
+    .isOnQuest 39515 --Vengeance Will Be Mine!
     .goto 672,60.25,44.59
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mannethrel Darkstar|r.
     .complete 39515,5 --1/1 Mannethrel taught
@@ -4924,7 +4901,7 @@ step
     .target Maiev Shadowsong
 step
     #arrowtext |cFFFCDC00Use the macro|r
-    .isOnQuest 38723
+    .isOnQuest 38723 --Stop Gul'dan!
     .goto 677,49.92,76.65
     >>Kill |cRXP_ENEMY_Crusher & Sledge|r
     *|cRXP_WARN_They have shared HP|r.
@@ -4935,7 +4912,7 @@ step
     .mob Sledge
 step
     #arrowtext |cFFFCDC00Use the macro|r
-    .isOnQuest 40253
+    .isOnQuest 40253 --Stop Gul'dan!
     .goto 677,49.92,76.65
     >>Kill |cRXP_ENEMY_Crusher & Sledge|r
     *|cRXP_WARN_They have shared HP|r.
@@ -4946,14 +4923,14 @@ step
     .mob Sledge
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Kayn Sunfury|r
-    .isQuestComplete 38723
+    .isQuestComplete 38723 --Stop Gul'dan!
     .goto 677,50.75,72.87
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kayn Sunfury|r.
     .turnin 38723 >>Turn in Stop Gul'dan!
     .target Kayn Sunfury
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Kayn Sunfury|r
-    .isQuestComplete 40253
+    .isQuestComplete 40253 --Stop Gul'dan!
     .goto 677,50.75,72.87
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kayn Sunfury|r.
     .turnin 40253 >>Turn in Stop Gul'dan!
@@ -4973,7 +4950,7 @@ step
     .mob Kethrazor
 step
     #arrowtext Follow the arrow
-    .isOnQuest 39742
+    .isOnQuest 39742 --Vault of the Wardens
     .goto 677,49.76,37.36,20,0
     .goto 677,43.61,29.01,15,0
     .goto 677,54.39,28.65,15,0
@@ -5027,7 +5004,7 @@ step
     #arrowtext |cFFFCDC00Use the macro|r
     #completewith next
     #label Immolanth1
-    .isOnQuest 39683
+    .isOnQuest 39683 --Forged in Fire
     .goto 678,46.75,36.35,25,0
     >>Kill |cRXP_ENEMY_Immolanth|r.
     *|cRXP_WARN_Use the Macro in the "Active Items Frame" immediately after his death|r.
@@ -5037,12 +5014,12 @@ step
 step
     #arrowtext Follow the arrow
     #completewith Immolanth1
-    .isOnQuest 39683
+    .isOnQuest 39683 --Forged in Fire
     .goto 678,46.7,17.8,130 >>Follow the Arrow
 step
     #arrowtext |cFFFCDC00Use the macro|r
     #requires Immolanth
-    .isOnQuest 39683
+    .isOnQuest 39683 --Forged in Fire
     .goto 678,46.7,17.8
     >>Kill |cRXP_ENEMY_Immolanth|r.
     *|cRXP_WARN_Use the Macro in the "Active Items Frame" immediately after his death|r.
@@ -5053,7 +5030,7 @@ step
     #completewith next
     #label Immolanth2
     #title |cFFFCDC00Use Macro|r
-    .isOnQuest 40254
+    .isOnQuest 40254 --Forged in Fire
     .goto 678,46.75,36.35,25,0
     >>Kill |cRXP_ENEMY_Immolanth|r.
     *|cRXP_WARN_Use the Macro in the "Active Items Frame" immediately after his death|r.
@@ -5063,12 +5040,12 @@ step
 step
     #arrowtext Follow the arrow
     #completewith Immolanth2
-    .isOnQuest 40254
+    .isOnQuest 40254 --Forged in Fire
     .goto 678,46.7,17.8,130 >>Follow the Arrow
 step
     #arrowtext |cFFFCDC00Use the macro|r
     #requires Immolanth2
-    .isOnQuest 40254
+    .isOnQuest 40254 --Forged in Fire
     .goto 678,46.7,17.8
     >>Kill |cRXP_ENEMY_Immolanth|r.
     *|cRXP_WARN_Use the Macro in the "Active Items Frame" immediately after his death|r.
@@ -5127,7 +5104,7 @@ step
 step
     #completewith next
     #label Forged in Fire1
-    .isQuestComplete 39683
+    .isQuestComplete 39683 --Forged in Fire
     .goto 678,46.24,71.18,15,0
     .goto 678,44.29,69.46,15,0
     .goto 678,46.75,66.79,15,0
@@ -5141,13 +5118,13 @@ step
     .target Allari the Souleater
 step
     #arrowtext Follow the arrow
-    .isQuestComplete 39683
+    .isQuestComplete 39683 --Forged in Fire
     #completewith Forged in Fire1
     .goto 678,41.1,47.2,85 >>Follow the Arrow
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Allari the Souleater|r
     #requires Forged in Fire1
-    .isQuestComplete 39683
+    .isQuestComplete 39683 --Forged in Fire
     .goto 678,41.1,47.2
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Allari the Souleater|r.
     .turnin 39685 >>Turn in Frozen in Time
@@ -5158,7 +5135,7 @@ step
 step
     #completewith next
     #label Forged in Fire2
-    .isQuestComplete 40254
+    .isQuestComplete 40254 --Forged in Fire
     .goto 678,46.24,71.18,15,0
     .goto 678,44.29,69.46,15,0
     .goto 678,46.75,66.79,15,0
@@ -5172,13 +5149,13 @@ step
     .target Allari the Souleater
 step
     #arrowtext Follow the arrow
-    .isQuestComplete 40254
+    .isQuestComplete 40254 --Forged in Fire
     #completewith Forged in Fire2
     .goto 678,41.1,47.2,85 >>Follow the Arrow
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Allari the Souleater|r
     #requires Forged in Fire2
-    .isQuestComplete 40254
+    .isQuestComplete 40254 --Forged in Fire
     .goto 678,41.1,47.2
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Allari the Souleater|r.
     .turnin 39685 >>Turn in Frozen in Time
@@ -5240,7 +5217,7 @@ step << Horde
     .acceptmultiple 39694,40256 >>Accept Between Us and Freedom
     .turnin 40373 >>Turn in A New Direction
 step << Horde
-    .isOnQuest 40256
+    .isOnQuest 40256 --Between Us and Freedom
     #title |cFFFCDC00Use Macro|r
     #completewith next
     #label Bastillax1
@@ -5255,13 +5232,13 @@ step << Horde
     .mob Bastillax
 step << Horde
     #arrowtext Follow the arrow
-    .isOnQuest 40256
+    .isOnQuest 40256 --Between Us and Freedom
     #completewith Bastillax1
     .goto 679,50.34,77.76,35 >>Follow the Arrow
 step << Horde
     #arrowtext |cFFFCDC00Use the macro|r
     #requires Bastillax1
-    .isOnQuest 40256
+    .isOnQuest 40256 --Between Us and Freedom
     .goto 679,50.34,77.76
     >>Kill |cRXP_ENEMY_Bastillax|r.
     *|cRXP_WARN_Use the Macro in the "Active Items Frame" immediately after his death|r.
@@ -5273,7 +5250,7 @@ step << Horde
     #completewith next
     #label Bastillax2
     #title |cFFFCDC00Use Macro|r
-    .isOnQuest 39694
+    .isOnQuest 39694 --Between Us and Freedom
     .goto 679,26.05,76.91,15,0
     .goto 679,33.56,76.33,15,0
     .goto 679,39.53,74.62,15,0
@@ -5285,13 +5262,13 @@ step << Horde
     .mob Bastillax
 step << Horde
     #arrowtext Follow the arrow
-    .isOnQuest 39694
+    .isOnQuest 39694 --Between Us and Freedom
     #completewith Bastillax2
     .goto 679,50.34,77.76,35 >>Follow the Arrow
 step << Horde
     #arrowtext |cFFFCDC00Use the macro|r
     #requires Bastillax2
-    .isOnQuest 39694
+    .isOnQuest 39694 --Between Us and Freedom
     .goto 679,50.34,77.76
     >>Kill |cRXP_ENEMY_Bastillax|r.
     *|cRXP_WARN_Use the Macro in the "Active Items Frame" immediately after his death|r.
@@ -5301,7 +5278,7 @@ step << Horde
 step << Alliance
     #completewith next
     #label Bastillax3
-    .isOnQuest 40255
+    .isOnQuest 40255 --Between Us and Freedom
     .goto 679,26.05,76.91,15,0
     .goto 679,33.56,76.33,15,0
     .goto 679,39.53,74.62,15,0
@@ -5319,7 +5296,7 @@ step << Alliance
 step << Alliance
     #arrowtext |cFFFCDC00Use the macro|r
     #requires Bastillax3
-    .isOnQuest 40255
+    .isOnQuest 40255 --Between Us and Freedom
     .goto 679,50.34,77.76
     >>Kill |cRXP_ENEMY_Bastillax|r.
     *|cRXP_WARN_Use the Macro in the "Active Items Frame" immediately after his death|r.
@@ -5331,7 +5308,7 @@ step << Alliance
     #completewith next
     #label Bastillax4
     #title |cFFFCDC00Use Macro|r
-    .isOnQuest 39688
+    .isOnQuest 39688 --Between Us and Freedom
     .goto 679,26.05,76.91,15,0
     .goto 679,33.56,76.33,15,0
     .goto 679,39.53,74.62,15,0
@@ -5348,7 +5325,7 @@ step << Alliance
 step << Alliance
     #arrowtext |cFFFCDC00Use the macro|r
     #requires Bastillax4
-    .isOnQuest 39688
+    .isOnQuest 39688 --Between Us and Freedom
     .goto 679,50.34,77.76
     >>Kill |cRXP_ENEMY_Bastillax|r.
     *|cRXP_WARN_Use the Macro in the "Active Items Frame" immediately after his death|r.
@@ -5581,9 +5558,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - The Forbidden Reach
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A) << Alliance
 #next b1) BfA Intro << Horde
-
 << Dracthyr
-
 step << !Evoker
     #arrowtext Talk to\n|cRXP_FRIENDLY_Scalecommander Emberthal|r
     .goto 2373,42.99,89.36
@@ -6872,9 +6847,7 @@ RXPGuides.RegisterGuide([[
 #displayname The Wandering Isle |cRXP_ENEMY_(Alternative)|r
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A) << Alliance
 #next b1) BfA Intro << Horde
-
 << Pandaren !DK
-
 step
     #hidewindow
     #completewith Accept A New Fate
@@ -8480,7 +8453,7 @@ step
 	.target Jojo Ironbrow
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Ji Firepaw|r
-    .isOnQuest 29779,29780,29781
+    .isOnQuest 29779,29780,29781 --The Direct Solution; Do No Evil; Monkey Advisory Warning
     .goto 378,30.97,36.74
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ji Firepaw|r.
     .turnin 29779 >>Turn in The Direct Solution
@@ -8697,7 +8670,7 @@ step
     .goto 378,17.28,50.76
 	.cast 108034 >>Eat |T571818:0|t[Small Sugarcane Stalk] (10s buff)
     .timer 10,Food Buff
-	.itemcount 77272,1
+	.itemcount 77272,1 --Small Sugarcane Stalk
     .use 77272
 step
     #arrowtext Wait at arrow's location
@@ -9288,9 +9261,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - Harandar
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A) << Alliance
 #next b1) BfA Intro << Horde
-
 << Harronir
-
 step
     #completewith Invasive Drifter
     .collecttoy 253629,3
@@ -9559,11 +9530,8 @@ RXPGuides.RegisterGuide([[
 #next ba) DF Alliance Intro Midnight (A) << Alliance
 #next b1) BfA Intro << Horde
 #chapter
-
 << Harronir
-
 --Arcantina Route
-
 step
     #arrowtext Use [Personal Key to Arcantina]
     .goto 2541,50.67,90.10,0
@@ -9585,9 +9553,7 @@ step << Horde
     .goto 2393,52.18,65.21
     .collecttoy 253629,3
     .zone 85 >>|TInterface/cursor/crosshair/interact.blp:20|tClick on the |cRXP_PICK_Portal to Orgrimmar|r
-
 --Rootwalking Route
-
 step
     .subzone 364 >>Use |T7491037:0|t[Rootwalking]
     .usespell 1238686
@@ -9628,9 +9594,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - Hall of Awakening
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A) << Alliance
 #next b1) BfA Intro << Horde
-
 << EarthenDwarf
-
 step
     #completewith Invasive Drifter
     .collecttoy 253629,3
@@ -9875,7 +9839,7 @@ step << Alliance
     .target Ambassador Moorgard
     .accept 81887 >>Accept Stranger in a Strange Land
 step << Alliance
-    #include RestedXP Speed Leveling\a) GC Chromie Time Normal@ChromieTime-ChromieTime
+    #include RestedXP Speed Leveling\a) GC Chromie Time Normal@ChromieTime1-ChromieTime2
 -- step << Alliance
 --     .goto 84,56.257,17.311
 --     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Chromie|r |cRXP_WARN_[2]|r.
@@ -9926,9 +9890,7 @@ RXPGuides.RegisterGuide([[
 #next ba) DF Alliance Intro Midnight (A) << Alliance
 #next b1) BfA Intro << Horde
 #chapter
-
 << EarthenDwarf
-
 step
     #arrowtext Use [Personal Key to Arcantina]
     .goto 2541,50.67,90.10
@@ -9952,7 +9914,6 @@ step << Horde
     .collecttoy 253629,3
 step << Alliance
     #include RestedXP Speed Leveling\a) GC Chromie Time Tower
-
 ]])
 --Arathi Highlands Returning Player
 RXPGuides.RegisterGuide([[
@@ -9964,7 +9925,6 @@ RXPGuides.RegisterGuide([[
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A) << Alliance
 #next b1) BfA Intro << Horde
 #internal
-
 step
     #completewith next
     #label Gnoll Way
@@ -10258,11 +10218,9 @@ step
     >>Choose your next Adventure
     .complete 90911,1
 ]])
-
 -- =================================
 -- ======   ALLIANCE ZONES   =======
 -- =================================
-
 --Exile's Reach
 RXPGuides.RegisterGuide([[
 #retail
@@ -10272,13 +10230,10 @@ RXPGuides.RegisterGuide([[
 #name a) Exile's Reach Alliance
 #displayname |cFF1EFF001|r - Exile's Reach
 #next ba) DF Alliance Intro Midnight (A)
-
 << Alliance !Harronir !Dracthyr !DemonHunter !DK !KulTiran !EarthenDwarf !DarkIronDwarf !LightforgedDraenei !Mechagnome !VoidElf !NightBorne !HighmountainTauren !Vulpera !MagharOrc !ZandalariTroll
-
 step
     #include RestedXP Speed Leveling\a) Exile's Reach
 ]])
-
 --Draenei: Ammen Vale
 RXPGuides.RegisterGuide([[
 #retail
@@ -10289,9 +10244,7 @@ RXPGuides.RegisterGuide([[
 #displayname Ammen Vale |cRXP_ENEMY_(Alternative)|r
 #defaultfor Draenei !DK
 #next ac) Draenei Azuremyst Isle
-
 << Alliance
-
 step
     #completewith Blood Elf Plans
     #hidewindow
@@ -10967,10 +10920,7 @@ RXPGuides.RegisterGuide([[
 #next b1) BfA Intro << Horde
 #chapter
 #internal
-
 << Alliance
-
-
 ]])
 --Draenei: Azuremyst Isle
 RXPGuides.RegisterGuide([[
@@ -10982,9 +10932,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Azuremyst Isle
 #defaultfor Draenei !DK
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A)
-
 << Alliance
-
 step
     #hidewindow
     #completewith HousingDraenei
@@ -11100,13 +11048,13 @@ step
     .target Anchorite Fateema
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Technician Dyvuun|r
-    .isQuestComplete 9603
+    .isQuestComplete 9603 --Beds, Bandages, and Beyond
     .goto 97,48.72,50.27
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Technician Dyvuun|r.
     .turnin 9313 >>Turn in Travel to Azure Watch
     .target Technician Dyvuun
 step
-    .isQuestComplete 9603
+    .isQuestComplete 9603 --Beds, Bandages, and Beyond
     #completewith next
     #hidewindow
     #label Word from Azure Watch2
@@ -11118,11 +11066,11 @@ step
     .target Caregiver Chellan
 step
     #arrowtext Enter the House
-    .isQuestComplete 9603
+    .isQuestComplete 9603 --Beds, Bandages, and Beyond
     #completewith Word from Azure Watch2
     .goto 97,48.65,49.69,5 >>Enter the House
 step
-    .isQuestComplete 9603
+    .isQuestComplete 9603 --Beds, Bandages, and Beyond
     #requires Word from Azure Watch2
     #completewith next
     #label Beds, Bandages, and Beyond
@@ -11133,7 +11081,7 @@ step
     .target Caregiver Chellan
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Caregiver Chellan|r
-    .isQuestComplete 9603
+    .isQuestComplete 9603 --Beds, Bandages, and Beyond
     #requires Word from Azure Watch2
     #completewith Beds, Bandages, and Beyond
     .goto 97,48.42,49.27
@@ -11143,7 +11091,7 @@ step
     .target Caregiver Chellan
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Caregiver Chellan|r
-    .isQuestComplete 9603
+    .isQuestComplete 9603 --Beds, Bandages, and Beyond
     #requires Beds, Bandages, and Beyond
     .goto 97,48.42,49.27
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Caregiver Chellan|r.
@@ -11151,7 +11099,7 @@ step
     .accept 9603 >>Accept Beds, Bandages, and Beyond
     .target Caregiver Chellan
 step
-    .isQuestComplete 9603
+    .isQuestComplete 9603 --Beds, Bandages, and Beyond
     #completewith next
     #label Wings of a Hippogryph
     .goto 97,48.83,50,5,0
@@ -11162,13 +11110,13 @@ step
     .target Zaldaan
 step
     #arrowtext Leave the House
-    .isQuestComplete 9603
+    .isQuestComplete 9603 --Beds, Bandages, and Beyond
     #completewith Wings of a Hippogryph
     .goto 97,49.62,49.03,35 >>Leave the House
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Zaldaan|r
     #requires Wings of a Hippogryph
-    .isQuestComplete 9603
+    .isQuestComplete 9603 --Beds, Bandages, and Beyond
     .goto 97,49.62,49.03
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Zaldaan|r.
     .turnin 9603 >>Turn in Beds, Bandages, and Beyond
@@ -11210,14 +11158,10 @@ step
     .accept 9455 >>Accept Strange Findings
     .mob Infected Nightstalker Runt
     .use 23678
-
-
 -- ******************** ROUTES DIVERGE HERE ********************--
-
 -- =========================================================
 -- ===               XPRATE: ABOVE 1.10                  ===
 -- =========================================================
-
 step
     .xp >10,1
     #xprate >1.10
@@ -11266,11 +11210,9 @@ step
     *Loot them for |T134196:0|t[|cRXP_LOOT_Root Trapper Vine|r].
     .complete 9463,1 --8/8 Root Trapper Vine
     .mob Root Trapper
-
 -- ==============================================
 -- ===        XPRATE: BETWEEN 1 - 1.10       ====
 -- ==============================================
-
 step
     #xprate 1-1.10
     .xp >10,1
@@ -11324,7 +11266,7 @@ step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Diktynna|r
     .goto 97,61.11,54.07
     #xprate 1-1.10
-    .isQuestComplete 9452
+    .isQuestComplete 9452 --Red Snapper - Very Tasty!
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Diktynna|r
     .turnin 9452 >>Turn in Red Snapper - Very Tasty!
     .target Diktynna
@@ -11355,7 +11297,7 @@ step
     .mob Moongraze Buck
 step
     #arrowtext |cFFFCDC00[RARE MONSTER]|r
-    .isOnQuest 9454
+    .isOnQuest 9454 --The Great Moongraze Hunt
     #xprate 1-1.10
     .xp >10,1
     #label BloodElfBandit
@@ -11403,11 +11345,9 @@ step
     *Loot them for |T134196:0|t[|cRXP_LOOT_Root Trapper Vine|r].
     .complete 9463,1 --8/8 Root Trapper Vine
     .mob Root Trapper
-
 -- ******************** ROUTES INTERSECT HERE ********************--
-
 step
-    .isQuestComplete 9454
+    .isQuestComplete 9454 --The Great Moongraze Hunt
     #completewith next
     #label The Great Moongraze Hunt
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Acteon|r.
@@ -11416,13 +11356,13 @@ step
     .disablecheckbox
     .target Acteon
 step
-    .isQuestComplete 9454
+    .isQuestComplete 9454 --The Great Moongraze Hunt
     #completewith The Great Moongraze Hunt
     .goto 97,49.78,51.94,60 >>If you |cRXP_WARN_can’t|r mount, kill |cRXP_ENEMY_monsters|r while traveling (|cRXP_WARN_if able(class-dependent)|r.
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Acteon|r
     #xprate 1-1.10
-    .isQuestComplete 9454
+    .isQuestComplete 9454 --The Great Moongraze Hunt
     #requires The Great Moongraze Hunt
     .goto 97,49.78,51.94
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Acteon|r.
@@ -11431,7 +11371,7 @@ step
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Acteon|r
     #xprate 1-1.10
-    .isQuestComplete 9453
+    .isQuestComplete 9453 --Find Acteon!
     .goto 97,49.78,51.94
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Acteon|r.
     .turnin 9453 >>Turn in Find Acteon!
@@ -11446,7 +11386,7 @@ step
     .target Acteon
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Anchorite Fateema|r
-    .isQuestComplete 9463
+    .isQuestComplete 9463 --Medicinal Purpose
     .goto 97,48.39,51.77
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Anchorite Fateema|r.
     .turnin 9463 >>Turn in Medicinal Purpose
@@ -11462,21 +11402,19 @@ step
     .target Daedal
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Exarch Menelaous|r
-    .isQuestComplete 9616
+    .isQuestComplete 9616 --Bandits!
     .goto 97,47.24,50.63
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Exarch Menelaous|r
     .turnin 9616 >>Turn in Bandits!
     .target Exarch Menelaous
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Exarch Menelaous|r
-    .isQuestComplete 9455
+    .isQuestComplete 9455 --Strange Findings
     .goto 97,47.24,50.63
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Exarch Menelaous|r.
     .turnin 9455 >>Turn in Strange Findings
     .target Exarch Menelaous
-
 -- ******************** ROUTES DIVERGE HERE ********************--
-
 step
     #xprate >1.3
     #include RestedXP Speed Leveling\a) Azuremyst Isle >1.3 XP Rate
@@ -11489,13 +11427,10 @@ step
 step
     #xprate <1.25
     #include RestedXP Speed Leveling\a) Azuremyst Isle <1.25 XP Rate
-
 -- ******************** ROUTES INTERSECT HERE ********************--
-
 -- =========================
 -- ====  NO XPRATES END ====
 -- =========================
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Daedal|r
     .xp >10,1
@@ -11545,7 +11480,7 @@ step
     .target "Cookie" McWeaksauce
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Admiral Odesyus|r
-    .isQuestComplete 9505
+    .isQuestComplete 9505 --The Prophecy of Velen
     .goto 97,46.94,70.32
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Admiral Odesyus|r
     .turnin 9505 >>Turn in The Prophecy of Velen
@@ -11553,7 +11488,7 @@ step
 step
     .xp >10,1
     .xp <9.8,1
-    .isNotOnQuest 9506
+    .isNotOnQuest 9506 --A Small Start
     >>Kill |cRXP_ENEMY_Skittering Crawlers|r.
     *Loot them for |T134007:0|t[|cRXP_LOOT_Skittering Crawler Meat|r].
     .complete 9512,1 --6/6 Skittering Crawler Meat
@@ -11562,8 +11497,8 @@ step
     #arrowtext Talk to\n|cRXP_FRIENDLY_"Cookie" McWeaksauce|r
     .xp <9.8,1
     .goto 97,46.69,70.53
-    .isNotOnQuest 9506
-    .isQuestComplete 9512
+    .isNotOnQuest 9506 --A Small Start
+    .isQuestComplete 9512 --Cookie's Jumbo Gumbo
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_"Cookie" McWeaksauce|r.
     .turnin 9512 >>Turn in Cookie's Jumbo Gumbo
     .target "Cookie" McWeaksauce
@@ -11619,13 +11554,13 @@ step
     .mob Skittering Crawler
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Admiral Odesyus|r
-    .isQuestComplete 9506
+    .isQuestComplete 9506 --A Small Start
     .goto 97,47.03,70.21
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Admiral Odesyus|r.
     .turnin 9506 >>Turn in A Small Start
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_"Cookie" McWeaksauce|r
-    .isQuestComplete 9512
+    .isQuestComplete 9512 --Cookie's Jumbo Gumbo
     .goto 97,46.69,70.53
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_"Cookie" McWeaksauce|r.
     .turnin 9512 >>Turn in Cookie's Jumbo Gumbo
@@ -11663,7 +11598,7 @@ step
     .complete 9530,1 --1/1 Hollowed Out Tree
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Admiral Odesyus|r
-    .isQuestComplete 9530
+    .isQuestComplete 9530 --I've Got a Plant
     .goto 97,47.04,70.21
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Admiral Odesyus|r.
     .turnin 9530 >>Turn in I've Got a Plant
@@ -11736,7 +11671,7 @@ step
     .use 23759
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Priestess Kyleen Il'dinare|r and |cRXP_FRIENDLY_Archaeologist Adamant Ironheart|r
-    .isQuestComplete 9513
+    .isQuestComplete 9513 --Reclaiming the Ruins
     .xp <9.8,1
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Priestess Kyleen Il'dinare|r and |cRXP_FRIENDLY_Archaeologist Adamant Ironheart|r.
     .turnin 9513 >>Turn in Reclaiming the Ruins
@@ -11800,13 +11735,13 @@ step
     .mob Aberrant Owlbeast
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Cowlen|r
-    .isQuestComplete 9527
+    .isQuestComplete 9527 --All That Remains
     .goto 97,16.59,94.45
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Cowlen|r.
     .turnin 9527 >>Turn in All That Remains
     .target Cowlen
 step
-    .isQuestComplete 9527
+    .isQuestComplete 9527 --All That Remains
     #completewith next
     #label Turn in Tree's Company1
     #loop
@@ -11819,13 +11754,13 @@ step
     #hidewindow
     .target Admiral Odesyus
 step
-    .isQuestComplete 9527
+    .isQuestComplete 9527 --All That Remains
     #completewith Turn in Tree's Company1
     .goto 97,47.87,56.19,15 >>Die to the |cRXP_ENEMY_Owlbeasts|r.
     *|cRXP_WARN_Use the sit macro in combat to die faster|r.
     .macro Sit, >>/sit
 step
-    .isQuestComplete 9527
+    .isQuestComplete 9527 --All That Remains
     #requires Turn in Tree's Company1
     #completewith next
     #label Turn in Tree's Company2
@@ -11833,7 +11768,7 @@ step
     .turnin 9531 >>Turn in Tree's Company
     .target Admiral Odesyus
 step
-    .isQuestComplete 9527
+    .isQuestComplete 9527 --All That Remains
     #requires Turn in Tree's Company1
     #completewith Turn in Tree's Company2
     #title |cFFFCDC00Rez at Spirit Healer|r
@@ -11843,7 +11778,7 @@ step
     .target Spirit Healer
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Admiral Odesyus|r
-    .isQuestComplete 9527
+    .isQuestComplete 9527 --All That Remains
     #requires Turn in Tree's Company2
     .goto 97,47.04,70.21
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Admiral Odesyus|r.
@@ -11851,7 +11786,7 @@ step
     .target Admiral Odesyus
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Priestess Kyleen Il'dinare|r and |cRXP_FRIENDLY_Archaeologist Adamant Ironheart|r
-    .isQuestComplete 9513
+    .isQuestComplete 9513 --Reclaiming the Ruins
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Priestess Kyleen Il'dinare|r and |cRXP_FRIENDLY_Archaeologist Adamant Ironheart|r.
     .turnin 9513 >>Turn in Reclaiming the Ruins
     .turnin 9514 >>Turn in Rune Covered Tablet
@@ -11873,8 +11808,6 @@ step << Alliance
     .zoneskip 2352,1
 step << Alliance
     #include RestedXP Speed Leveling\a) GC Chromie Time Tower
-
-
 ]])
     --Azuremyst Isle >1.3 XP Rate
 RXPGuides.RegisterGuide([[
@@ -11883,13 +11816,10 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Speed Leveling
 #name a) Azuremyst Isle >1.3 XP Rate
 #internal
-
 << Alliance
-
 -- ====================================
 -- ===        XPRATE: >1.30        ====
 -- ====================================
-
 step
     #xprate >1.30
     #completewith next
@@ -11982,15 +11912,12 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Caregiver Chellan|r
     .turnin 9606 >>Turn in Return to Caregiver Chellan
     .target Caregiver Chellan
-
 -- ╔═════════════════════════════════╗
 -- ║       1.3 LEVEL 10 REACHED      ║
 -- ╚═════════════════════════════════╝
-
 -- ===========================================
 -- ====      XPRATE: >1.30 BACKUP         ====
 -- ===========================================
-
 step
     .xp >10,1
     #xprate >1.30
@@ -12117,7 +12044,7 @@ step
     #xprate >1.30
     #completewith next
     #label Above130Backup x5
-    .isQuestComplete 9456
+    .isQuestComplete 9456 --Nightstalker Clean Up, Isle 2
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Exarch Menelaous|r
     .turnin 9456 >>Turn in Nightstalker Clean Up, Isle 2...
     .target Exarch Menelaous
@@ -12133,7 +12060,7 @@ step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Exarch Menelaous|r
     #requires Above130Backup x5
     #xprate >1.30
-    .isQuestComplete 9456
+    .isQuestComplete 9456 --Nightstalker Clean Up, Isle 2
     .goto 97,47.17,50.46
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Exarch Menelaous|r
     .turnin 9456 >>Turn in Nightstalker Clean Up, Isle 2...
@@ -12141,7 +12068,7 @@ step
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Daedal|r
     #xprate >1.30
-    .isQuestComplete 9473
+    .isQuestComplete 9473 --An Alternative Alternative
     .goto 97,48.43,51.4
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Daedal|r
     .turnin 9473 >>Turn in An Alternative Alternative
@@ -12150,7 +12077,7 @@ step
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Acteon|r
     #xprate >1.30
-    .isQuestComplete 10324
+    .isQuestComplete 10324 --The Great Moongraze Hunt
     .goto 97,49.67,51.9
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Acteon|r
     .turnin 10324 >>Turn in The Great Moongraze Hunt
@@ -12163,14 +12090,10 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Speed Leveling
 #name a) Azuremyst Isle <1.3 XP Rate
 #internal
-
 << Alliance
-
-
 -- =====================================
 -- ===        XP RATE: <1.30         ===
 -- =====================================
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Exarch Menelaous|r
     #xprate <1.30
@@ -12274,27 +12197,23 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Speed Leveling
 #name a) Azuremyst Isle 1.25-1.3 XP XP Rate
 #internal
-
 << Alliance
-
-
 -- ===========================================
 -- ===     XPRATE: BETWEEN 1.25-1.30       ===
 -- ===========================================
-
 step
     #xprate 1.25-1.30
     #hidewindow
     #completewith next
     #label Between2530 x1
-    .isQuestComplete 9456
+    .isQuestComplete 9456 --Nightstalker Clean Up, Isle 2
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Exarch Menelaous|r
     .turnin 9456 >>Turn in Nightstalker Clean Up, Isle 2...
     .target Exarch Menelaous
 step
     #xprate 1.25-1.30
     #completewith Between2530 x1
-    .isQuestComplete 9456
+    .isQuestComplete 9456 --Nightstalker Clean Up, Isle 2
     .subzoneskip 97
     .hs >>Use |T134414:0|t[Hearthstone] to Azure Watch.
     .cooldown item,6948,>0,1
@@ -12304,14 +12223,14 @@ step
     #requires Between2530 x1
     #completewith next
     #label Between2530 x2
-    .isQuestComplete 9456
+    .isQuestComplete 9456 --Nightstalker Clean Up, Isle 2
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Exarch Menelaous|r
     .turnin 9456 >>Turn in Nightstalker Clean Up, Isle 2...
     .target Exarch Menelaous
 step
     #arrowtext Leave the House
     #xprate 1.25-1.30
-    .isQuestComplete 9456
+    .isQuestComplete 9456 --Nightstalker Clean Up, Isle 2
     #requires Between2530 x1
     #completewith Between2530 x2
     .goto 97,48.83,50,5,0
@@ -12322,7 +12241,7 @@ step
     #requires Between2530 x2
     #xprate 1.25-1.30
     .goto 97,47.14,50.61
-    .isQuestComplete 9456
+    .isQuestComplete 9456 --Nightstalker Clean Up, Isle 2
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Exarch Menelaous|r
     .turnin 9456 >>Turn in Nightstalker Clean Up, Isle 2...
     .target Exarch Menelaous
@@ -12330,7 +12249,7 @@ step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Daedal|r
     #xprate 1.25-1.30
     .goto 97,48.43,51.4
-    .isQuestComplete 9473
+    .isQuestComplete 9473 --An Alternative Alternative
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Daedal|r
     .turnin 9473 >>Turn in An Alternative Alternative
     .timer 36,RP
@@ -12338,19 +12257,17 @@ step
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Acteon|r
     #xprate 1.25-1.30
-    .isQuestComplete 10324
+    .isQuestComplete 10324 --The Great Moongraze Hunt
     .goto 97,49.80,51.93
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Acteon|r
     .turnin 10324 >>Turn in The Great Moongraze Hunt
     .target Acteon
-
 -- ╔═════════════════════════════════╗
 -- ║       LEVEL 10 REACHED!         ║
 -- ╚═════════════════════════════════╝
 -- =============================================
 -- ====   XPRATE: BETWEEN 1.25-1.30 BACKUP    ==
 -- =============================================
-
 step
     #xprate 1.25-1.30
     #completewith next
@@ -12455,14 +12372,10 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Speed Leveling
 #name a) Azuremyst Isle <1.25 XP Rate
 #internal
-
 << Alliance
-
-
 -- =====================================
 -- ====    XPRATE: UNDER 1.25       ====
 -- =====================================
-
 step
     #xprate <1.25
     #completewith next
@@ -12539,7 +12452,7 @@ step
     #xprate <1.25
     #completewith next
     #label Under125 x4
-    .isQuestComplete 9606
+    .isQuestComplete 9606 --Return to Caregiver Chellan
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Caregiver Chellan|r
     .turnin 9606 >>Turn in Return to Caregiver Chellan
     .target Caregiver Chellan
@@ -12548,7 +12461,7 @@ step
     #completewith Under125 x4
     .xp >10,1
     .subzoneskip 97
-    .isQuestComplete 9606
+    .isQuestComplete 9606 --Return to Caregiver Chellan
     .hs >>Use |T134414:0|t[Hearthstone] to Azure Watch.
     .cooldown item,6948,>0,1
     .use 6948
@@ -12556,7 +12469,7 @@ step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Caregiver Chellan|r
     #xprate <1.25
     #requires Under125 x4
-    .isQuestComplete 9606
+    .isQuestComplete 9606 --Return to Caregiver Chellan
     .goto 97,48.42,49.27
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Caregiver Chellan|r
     .turnin 9606 >>Turn in Return to Caregiver Chellan
@@ -12564,7 +12477,7 @@ step
 step
     #xprate <1.25
     .xp >10,1
-    .isQuestComplete 9456
+    .isQuestComplete 9456 --Nightstalker Clean Up, Isle 2
     #completewith next
     #label Under125 x5
     .goto 97,48.8,49.99,5,0
@@ -12576,14 +12489,14 @@ step
     #arrowtext Leave the House
     #xprate <1.25
     .xp >10,1
-    .isQuestComplete 9456
+    .isQuestComplete 9456 --Nightstalker Clean Up, Isle 2
     #completewith Under125 x5
     .goto 97,47.24,50.63,45 >>Leave the House
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Exarch Menelaous|r
     #xprate <1.25
     #requires Under125 x5
-    .isQuestComplete 9456
+    .isQuestComplete 9456 --Nightstalker Clean Up, Isle 2
     .goto 97,47.24,50.63
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Exarch Menelaous|r
     .turnin 9456 >>Turn in Nightstalker Clean Up, Isle 2...
@@ -12591,7 +12504,7 @@ step
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Daedal|r
     #xprate <1.25
-    .isQuestComplete 9473
+    .isQuestComplete 9473 --An Alternative Alternative
     .goto 97,48.45,51.33
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Daedal|r
     .turnin 9473 >>Turn in An Alternative Alternative
@@ -12599,7 +12512,7 @@ step
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Acteon|r
     #xprate <1.25
-    .isQuestComplete 10324
+    .isQuestComplete 10324 --The Great Moongraze Hunt
     .goto 97,49.66,51.9
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Acteon|r
     .turnin 10324 >>Turn in The Great Moongraze Hunt
@@ -12615,9 +12528,7 @@ RXPGuides.RegisterGuide([[
 #displayname Coldridge Valley |cRXP_ENEMY_(Alternative)|r
 #defaultfor Dwarf !DK
 #next ac) Dwarf & Gnome Dun Morogh
-
 << Alliance
-
 step
     .xp >10,1
     #completewith Pack Your Bags
@@ -12629,7 +12540,6 @@ step
     .xp >10,1
     #completewith Aid for the Wounded
     +If you want to level as fast as possible, choose Exile’s Reach as your starting zone. This requires recreating your character.
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Joren Ironstock|r
     .xp >10,1
@@ -13152,7 +13062,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Felix Whindlebolt|r.
     .turnin 3361 >>Turn in A Refugee's Quandary
     .target Felix Whindlebolt
-    .isQuestComplete 182
+    .isQuestComplete 182 --The Troll Menace
 step
     .xp >10,1
     #completewith A Refugee's Quandary
@@ -13164,7 +13074,7 @@ step
     .goto 427,41.83,63.2
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Felix Whindlebolt|r.
     .turnin 3361 >>Turn in A Refugee's Quandary
-    .isQuestComplete 182
+    .isQuestComplete 182 --The Troll Menace
     .target Felix Whindlebolt
 step
     #arrowtext Kill\n|cRXP_ENEMY_Frostmane Troll Whelps|r
@@ -13185,7 +13095,7 @@ step
     .goto 427,41.83,63.2
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Felix Whindlebolt|r.
     .turnin 3361 >>Turn in A Refugee's Quandary
-    .isQuestComplete 182
+    .isQuestComplete 182 --The Troll Menace
     .target +Felix Whindlebolt
 step
     .xp >10,1
@@ -13453,11 +13363,11 @@ step
 step
     #arrowtext Wait for the roleplay
     .xp >10,1
-    .isOnQuest 24493
+    .isOnQuest 24493 --Don't Forget About Us
     .goto 427,81.79,12.48,20 >>|cRXP_WARN_Wait for the Roleplay|r.
 step
     .xp >10,1
-    .isOnQuest 24493
+    .isOnQuest 24493 --Don't Forget About Us
     .subzone 131 >>Relog to teleport to Kharanos
 -- step
 --     #completewith next
@@ -13484,7 +13394,6 @@ step
 --     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tharek Blackstone|r.
 --     .turnin 24493 >>Turn in Don't Forget About Us
 --     .target Tharek Blackstone
-
 ]])
     --Coldridge Valley: Skip
 RXPGuides.RegisterGuide([[
@@ -13496,10 +13405,7 @@ RXPGuides.RegisterGuide([[
 #next b1) BfA Intro << Horde
 #chapter
 #internal
-
 << Alliance
-
-
 ]])
 --Gnome: New Tinkertown
 RXPGuides.RegisterGuide([[
@@ -13511,9 +13417,7 @@ RXPGuides.RegisterGuide([[
 #displayname  New Tinkertown |cRXP_ENEMY_(Alternative)|r
 #defaultfor Gnome !DK
 #next ac) Dwarf & Gnome Dun Morogh
-
 << Alliance
-
 step
     .xp >10,1
     #completewith Paint it Black
@@ -13524,7 +13428,6 @@ step
     .xp >10,1
     #completewith Withdraw to the Loading Room!
     +If you want to level as fast as possible, choose Exile’s Reach as your starting zone. This requires recreating your character.
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Nevin Twistwrench|r
     .xp >10,1
@@ -14426,10 +14329,7 @@ RXPGuides.RegisterGuide([[
 #next b1) BfA Intro << Horde
 #chapter
 #internal
-
 << Alliance
-
-
 ]])
 --Dwarf & Gnome: Dun Morogh
 RXPGuides.RegisterGuide([[
@@ -14441,9 +14341,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Dun Morogh
 #defaultfor Dwarf Gnome !DK
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A)
-
 << Alliance
-
 step
     .xp >10,1
     #hidewindow
@@ -15024,7 +14922,7 @@ step
 step
     .xp >10,1
     #label Mountaineer Valgrum2
-    .isOnQuest 313
+    .isOnQuest 313 --Forced to Watch from Afar
     .subzoneskip 136,1
     #title |cFFFCDC00RARE & |cFFFCDC00CHEST|r|r
     *Kill |cRXP_ENEMY_Edan the Howler|r and click the |cRXP_PICK_Chest|r if they’re up for bonus XP.
@@ -15348,7 +15246,7 @@ step
 	.mob Frostmane Warrior
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Snevik the Blade|r and |cRXP_FRIENDLY_Slamp Wobblecog|r
-    .isQuestComplete 25932
+    .isQuestComplete 25932 --It's Raid Night Every Night
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Snevik the Blade|r and |cRXP_FRIENDLY_Slamp Wobblecog|r
     .turnin 28868 >>Turn in The View from Down Here
     .goto 27,62.546,53.807
@@ -15414,7 +15312,7 @@ step
     .mob Frostmane Raider
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Sergeant Flinthammer|r
-    .isQuestComplete 25932
+    .isQuestComplete 25932 --It's Raid Night Every Night
     .goto 27,70.41,48.92
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Sergeant Flinthammer|r
     .turnin 25932 >>Turn in It's Raid Night Every Night
@@ -15462,7 +15360,7 @@ step
     .complete 314,1 --1/1 Fang of Vagash
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Rudra Amberstill|r
-    .isQuestComplete 314
+    .isQuestComplete 314 --Protecting the Herd
     .goto 27,70.28,48.16
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Rudra Amberstill|r
     .turnin 314 >>Turn in Protecting the Herd
@@ -15487,7 +15385,7 @@ step
     .use 10549 --Rancher's Trousers
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Veron Amberstill|r
-    .isQuestComplete 25905
+    .isQuestComplete 25905 --Rams on the Lam
     .goto 27,70.67,48.88
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Veron Amberstill|r
     .turnin 25905 >>Turn in Rams on the Lam
@@ -15607,14 +15505,14 @@ step
     .mob Rockjaw Skullthumper
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Foreman Stonebrow|r
-    .isQuestComplete 432
+    .isQuestComplete 432 --Those Blasted Troggs!
     .goto 27,76.31,54.68
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Foreman Stonebrow|r
     .turnin 432 >>Turn in Those Blasted Troggs!
     .target Foreman Stonebrow
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Prospector Drugan|r
-    .isQuestComplete 25937
+    .isQuestComplete 25937 --Priceless Treasures
     .goto 27,76.18,53.04
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Prospector Drugan|r
     .turnin 25937 >>Turn in Priceless Treasures
@@ -15668,7 +15566,7 @@ step
     .mob Icy Tomb
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Sergeant Bahrum|r and |cRXP_FRIENDLY_Khurgorn Singefeather|r
-    .isQuestComplete 25978
+    .isQuestComplete 25978 --Entombed in Ice
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Sergeant Bahrum|r and |cRXP_FRIENDLY_Khurgorn Singefeather|r.
     .turnin 25978 >>Turn in Entombed in Ice
     .goto 27,82.86,48.40
@@ -15749,21 +15647,17 @@ RXPGuides.RegisterGuide([[
 #displayname Northshire Valley |cRXP_ENEMY_(Alternative)|r
 #defaultfor Human !DK
 #next ac) Elwynn Forest 1
-
 << Alliance
-
 step
     .xp >10,1
     #completewith Ending the Invasion!2
     #hidewindow
     +test
     .usespell 1231411
-
 step
     .xp >10,1
     #completewith Beating Them Back!
     +If you want to level as fast as possible, choose Exile’s Reach as your starting zone. This requires recreating your character.
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Marshal McBride|r
     .xp >10,1
@@ -16273,10 +16167,7 @@ RXPGuides.RegisterGuide([[
 #next b1) BfA Intro << Horde
 #chapter
 #internal
-
 << Alliance
-
-
 ]])
 --Human: Elwynn Forest
 RXPGuides.RegisterGuide([[
@@ -16288,9 +16179,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Elwynn Forest
 #defaultfor Human !DK
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A)
-
 << Alliance
-
 step
     .xp >10,1
     #hidewindow
@@ -16307,12 +16196,12 @@ step
     .accept 26378 >>Accept Hero's Call: Westfall!
     .disablecheckbox
 	.target Marshal Dughan
-    .isOnQuest 54
+    .isOnQuest 54 --Report to Goldshire
 step
     .xp >10,1
     #completewith Marshal Dughan
     .goto 37,41.715,64.636,100 >>If you |cRXP_WARN_can’t|r mount, kill |cRXP_ENEMY_monsters|r while traveling (|cRXP_WARN_if able(class-dependent)|r.
-    .isOnQuest 54
+    .isOnQuest 54 --Report to Goldshire
     .mob Mangy Wolf
     .mob Cutpurse
     .mob Forest Spider
@@ -16326,12 +16215,12 @@ step
     .turnin 54 >>Turn in Report to Goldshire
     .accept 62 >>Accept The Fargodeep Mine
     .accept 26378 >>Accept Hero's Call: Westfall!
-    .isOnQuest 54
+    .isOnQuest 54 --Report to Goldshire
 	.target Marshal Dughan
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Marshal Dughan|r
     .xp >10,1
-    .isQuestAvailable 54
+    .isQuestAvailable 54 --Report to Goldshire
     .goto 37,42.12,65.93
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Marshal Dughan|r.
     .accept 62 >>Accept The Fargodeep Mine
@@ -16393,7 +16282,7 @@ step
     .goto 37,43.63,65.87
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Innkeeper Farley|r.
     .turnin 37112 >>Turn in Rest and Relaxation
-    .isOnQuest 37112
+    .isOnQuest 37112 --Rest and Relaxation
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Innkeeper Farley|r
     .xp >10,1
@@ -16402,7 +16291,7 @@ step
     .home >>Set your Hearthstone to Lion's Pride Inn
     .skipgossipid 28605
     .subzoneskip 5637,1
-    .isOnQuest 60
+    .isOnQuest 60 --Kobold Candles
 	.target Innkeeper Farley
 -- step
 --     .xp >10,1
@@ -16427,7 +16316,7 @@ step
     .buy 4496,3
     .target Brog Hamfist
     .subzoneskip 5637,1
-    .isOnQuest 60
+    .isOnQuest 60 --Kobold Candles
 -- step
 --     .xp >10,1
 --     .goto 37,43.96,65.92
@@ -16446,7 +16335,7 @@ step
     .target Brog Hamfist
     .subzoneskip 5637,1
     .nodmf
-    .isOnQuest 60
+    .isOnQuest 60 --Kobold Candles
 step
     .xp >10,1
     #completewith next
@@ -16546,8 +16435,8 @@ step
     .daily 31693 >>Accept Julia Stevens
     .train 125610,3
 	.target Julia Stevens
-    .isQuestTurnedIn 31889,31891,31902,31903
-    .isOnQuest 60,47
+    .isQuestTurnedIn 31889,31891,31902,31903 --Battle Pet Tamers: Kalimdor Alliance; Battle Pet Tamers: Kalimdor; Battle Pet Tamers: Eastern Kingdoms; Battle Pet Tamers: Eastern Kingdoms
+    .isOnQuest 60,47 --Kobold Candles; Gold Dust Exchange
 step
     .xp >10,1
     #completewith Julia Stevens
@@ -16563,8 +16452,8 @@ step
     .daily 31693 >>Accept Julia Stevens
     .train 125610,3
 	.target Julia Stevens
-    .isQuestTurnedIn 31889,31891,31902,31903
-    .isOnQuest 60,47
+    .isQuestTurnedIn 31889,31891,31902,31903 --Battle Pet Tamers: Kalimdor Alliance; Battle Pet Tamers: Kalimdor; Battle Pet Tamers: Eastern Kingdoms; Battle Pet Tamers: Eastern Kingdoms
+    .isOnQuest 60,47 --Kobold Candles; Gold Dust Exchange
 step
     .xp >10,1
     #completewith next
@@ -16572,7 +16461,7 @@ step
     >>Defeat her in a Pet Battle.
     .complete 31693,1 --Defeat Julia Stevens
 	.target Julia Stevens
-    .isOnQuest 31693
+    .isOnQuest 31693 --Julia Stevens
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Julia Stevens|r
     .xp >10,1
@@ -16587,7 +16476,7 @@ step
     >>Defeat her in a Pet Battle.
     .complete 31693,1 --Defeat Julia Stevens
 	.target Julia Stevens
-    .isOnQuest 31693
+    .isOnQuest 31693 --Julia Stevens
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Julia Stevens|r
     .xp >10,1
@@ -16595,7 +16484,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Julia Stevens|r.
     .turnin 31693 >>Turn in Julia Stevens
 	.target Julia Stevens
-    .isQuestComplete 31693
+    .isQuestComplete 31693 --Julia Stevens
 step
     .xp >10,1
     #completewith next
@@ -16846,8 +16735,8 @@ step
     .daily 31780 >>Accept Old MacDonald
     .train 125610,3
 	.target Old MacDonald
-    .isQuestTurnedIn 31889,31891,31902,31903
-    .isOnQuest 184
+    .isQuestTurnedIn 31889,31891,31902,31903 --Battle Pet Tamers: Kalimdor Alliance; Battle Pet Tamers: Kalimdor; Battle Pet Tamers: Eastern Kingdoms; Battle Pet Tamers: Eastern Kingdoms
+    .isOnQuest 184 --Furlbrow's Deed
     .use 2238 --Urchins Pants
     .use 57527 --Stone Cairne Boots
     .use 131192 --Riverpaw Gnoll Boots
@@ -16858,7 +16747,7 @@ step
     #label Defeat Old MacDonald
     >>Defeat Old MacDonald in a Pet battlle.
     .complete 31780,1 --Defeat Old MacDonald
-    .isOnQuest 31780
+    .isOnQuest 31780 --Old MacDonald
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Old MacDonald|r
     .xp >10,1
@@ -16875,7 +16764,7 @@ step
     .complete 31780,1 --Defeat Old MacDonald
 	.target Old MacDonald
     .skipgossipid 65648
-    .isOnQuest 31780
+    .isOnQuest 31780 --Old MacDonald
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Old MacDonald|r
     .xp >10,1
@@ -16883,7 +16772,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Old MacDonald|r.
     .turnin 31780 >>Turn in Old MacDonald
 	.target Old MacDonald
-    .isQuestComplete 31780
+    .isQuestComplete 31780 --Old MacDonald
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Lieutenant Horatio Laine|r
     .xp >10,1
@@ -17000,7 +16889,7 @@ step
     .turnin 60 >>Turn in Kobold Candles
     .target William Pestle
 step
-    .isQuestComplete 47,62,40
+    .isQuestComplete 47,62,40 --Gold Dust Exchange; The Fargodeep Mine; A Fishy Peril
     #completewith next
     #label Turn in The Fargodeep Mine
     .goto 37,43.18,66.03,5,0
@@ -17019,7 +16908,7 @@ step
     .goto 37,42.15,67.25,30 >>Leave the Inn
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Remy "Two Times"|r
-    .isQuestComplete 47,62,40
+    .isQuestComplete 47,62,40 --Gold Dust Exchange; The Fargodeep Mine; A Fishy Peril
     #requires Turn in The Fargodeep Mine
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Remy "Two Times"|r.
     .turnin 47 >>Turn in Gold Dust Exchange
@@ -17040,7 +16929,7 @@ step
     .use 57401 --Jasperlode Chestguard
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Marshal Dughan|r
-    .isQuestComplete 176
+    .isQuestComplete 176 --WANTED: "Hogger"
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Marshal Dughan|r.
     .turnin 176 >>Turn in WANTED: "Hogger"
     .goto 37,42.12,65.94
@@ -17200,7 +17089,7 @@ step
     .target Supervisor Raelen
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Marshal Patterson|r
-    .isQuestComplete 26152,123
+    .isQuestComplete 26152,123 --WANTED: James Clark; The Collector
     .goto 37,81.860,66.040
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Marshal Patterson|r.
     .turnin 26152 >>Turn in WANTED: James Clark
@@ -17310,7 +17199,7 @@ step
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Guard Thomas|r
     #requires Bounty on Murlocs
-    .isQuestComplete 46,52,71
+    .isQuestComplete 46,52,71 --Bounty on Murlocs; Protect the Frontier; Report to Thomas
     .goto 37,73.973,72.177
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Guard Thomas|r.
     .turnin 46 >>Turn in Bounty on Murlocs
@@ -17431,14 +17320,14 @@ step
     .deathskip >>Respawn at the Spirit Healer.
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Marshal Patterson|r
-    .isQuestComplete 147
+    .isQuestComplete 147 --Manhunt
     .goto 37,81.860,66.040
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Marshal Patterson|r.
     .turnin 147 >>Turn in Manhunt
     .target Marshal Patterson
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Supervisor Raelen|r
-    .isQuestComplete 5545
+    .isQuestComplete 5545 --A Bundle of Trouble
     #label Turn in A Bundle of Trouble
     .goto 37,81.39,66.12
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Supervisor Raelen|r
@@ -17450,7 +17339,7 @@ step
     .use 1360 --Stormwind Plate Gloves
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Sara Timberlain|r
-    .isQuestComplete 83,59
+    .isQuestComplete 83,59 --Fine Linen Goods; Cloth and Leather Armor
     .goto 37,79.462,68.715
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Sara Timberlain|r.
     .turnin 83 >>Turn in Fine Linen Goods
@@ -17477,7 +17366,7 @@ step
     .accept 40519 >>Accept Legion: The Legion Returns
     .choose 1851120
 step
-    #include RestedXP Speed Leveling\a) GC Chromie Time Normal@ChromieTime-ChromieTime
+    #include RestedXP Speed Leveling\a) GC Chromie Time Normal@ChromieTime1-ChromieTime2
 -- step
 --     .goto 84,56.257,17.311
 --     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Chromie|r |cRXP_WARN_[2]|r.
@@ -17488,7 +17377,7 @@ step
 --     .target Chromie
 step
     .subzoneskip 6292
-    .isOnQuest 65436
+    .isOnQuest 65436 --The Dragon Isles Await
     >>Use |T134309:0|t[Lost Dragonscale] to teleport to Stormwind.
     .complete 65436,1 --1/1 Lost Dragonscale used to teleport to near Wrathion's location (Optional)
     .nodmf
@@ -17504,9 +17393,7 @@ RXPGuides.RegisterGuide([[
 #displayname Shadowglen |cRXP_ENEMY_(Alternative)|r
 #defaultfor NightElf !DemonHunter !DK
 #next ac) Night Elf Teldrassil
-
 << Alliance
-
 step
     #completewith Dolanaar Delivery2
     #hidewindow
@@ -17986,10 +17873,7 @@ RXPGuides.RegisterGuide([[
 #next b1) BfA Intro << Horde
 #chapter
 #internal
-
 << Alliance
-
-
 ]])
 --Night Elf: Teldrassil
 RXPGuides.RegisterGuide([[
@@ -18001,9 +17885,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Teldrassil
 #defaultfor NightElf !DemonHunter !DK
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A)
-
 << Alliance
-
 step
     #hidewindow
     #completewith Ursal the Mauler
@@ -18708,7 +18590,7 @@ step
     .goto 57,55.76,50.44,40 >>Follow the Arrow
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Syral Bladeleaf|r
-    .isQuestComplete 13946
+    .isQuestComplete 13946 --Nature's Reprisal
     #requires Nature's Reprisal3
     .goto 57,55.76,50.44
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Syral Bladeleaf|r
@@ -18716,7 +18598,7 @@ step
     .target Syral Bladeleaf
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Tallonkai Swiftroot|r
-    .isQuestComplete 932
+    .isQuestComplete 932 --Twisted Hatred
     .goto 57,55.61,50.09
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tallonkai Swiftroot|r
     .turnin 932 >>Turn in Twisted Hatred
@@ -18837,7 +18719,7 @@ step
     .goto 57,55.55,49.99,30 >>Follow the Arrow
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Tallonkai Swiftroot|r
-    .isQuestComplete 2459
+    .isQuestComplete 2459 --Ferocitas the Dream Eater
     #requires Ferocitas the Dream Eater3
     .goto 57,55.55,49.99
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tallonkai Swiftroot|r.
@@ -18925,7 +18807,7 @@ step
     .mob Bloodfeather Matriarch
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Sentinel Arynia Cloudsbreak|r
-    .isQuestComplete 937
+    .isQuestComplete 937 --The Enchanted Glade
     .goto 57,39.50,29.89
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Sentinel Arynia Cloudsbreak|r
     .turnin 937 >>Turn in The Enchanted Glade
@@ -18933,7 +18815,7 @@ step
     .target Sentinel Arynia Cloudsbreak
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Priestess A'moora|r
-    .isQuestComplete 2518
+    .isQuestComplete 2518 --Tears of the Moon
     .goto 57,39.24,29.78
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Priestess A'moora|r
     .turnin 2518 >>Turn in Tears of the Moon
@@ -19128,7 +19010,7 @@ step
     .mob Rageclaw
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Oben Rageclaw|r
-    .isQuestComplete 2561
+    .isQuestComplete 2561 --Druid of the Claw
     #label Gnarlpines2
     .goto 60,41.40,83.52
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Oben Rageclaw|r
@@ -19158,7 +19040,7 @@ step
     .use 18957 --Brushwood Blade
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Athridas Bearmantle|r and |cRXP_FRIENDLY_Sentinel Kyra Starsong|r
-    .isQuestComplete 483
+    .isQuestComplete 483 --The Relics of Wakening
     .goto 57,55.70,52.01
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Athridas Bearmantle|r and |cRXP_FRIENDLY_Sentinel Kyra Starsong|r.
     .turnin 483 >>Turn in The Relics of Wakening
@@ -19166,7 +19048,7 @@ step
     .target Athridas Bearmantle
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Sentinel Kyra Starsong|r
-    .isQuestComplete 13945
+    .isQuestComplete 13945 --Resident Danger
     .goto 57,55.70,52.01
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Sentinel Kyra Starsong|r.
     .turnin 13945 >>Turn in Resident Danger
@@ -19206,14 +19088,14 @@ step
     .mob Gnarlpine Ambusher
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Moon Priestess Amara|r
-    .isQuestComplete 487
+    .isQuestComplete 487 --The Road to Darnassus
     .goto 57,49.37,44.53
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Moon Priestess Amara|r
     .turnin 487 >>Turn in The Road to Darnassus
     .target Moon Priestess Amara
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Athridas Bearmantle|r
-    .isQuestComplete 486
+    .isQuestComplete 486 --Ursal the Mauler
     .goto 57,55.69,52.01
     #label Ursal the Mauler
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Athridas Bearmantle|r
@@ -19244,9 +19126,7 @@ RXPGuides.RegisterGuide([[
 #name ab) Worgen Intro
 #displayname Gilneas |cRXP_ENEMY_(Alternative)|r
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A)
-
 << Alliance Worgen !DK
-
 step
     #completewith Rut'theran Village
     #hidewindow
@@ -19256,7 +19136,6 @@ step
 step
     #completewith Market Homes1
     +If you want to level as fast as possible, choose Exile’s Reach as your starting zone. This requires recreating your character.
-
     *This is especially faster for Worgen, since their starting zone keeps you until level 17 and does not allow skyriding.
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Prince Liam Greymane|r
@@ -20791,24 +20670,24 @@ step
     .unitscan Koroth the Hillbreaker
     .target Mountain Horse
 step
-    .isOnQuest 14416
+    .isOnQuest 14416 --The Hungry Ettin
     .vehicle >>|TInterface/cursor/crosshair/interact.blp:20|tClick on a |cRXP_PICK_Horse|r
     .target Mountain Horse
 step
-    .isOnQuest 14416
+    .isOnQuest 14416 --The Hungry Ettin
     *|cRXP_WARN_Horse [1]|r;
     .cast 68903 >>Use |T134326:0|t[Round Up Horse] (1) on |cRXP_FRIENDLY_Mountain Horses|r to make them follow you.
 step
-    .isOnQuest 14416
+    .isOnQuest 14416 --The Hungry Ettin
     *|cRXP_WARN_Horse [2]|r;
     .cast 68903 >>Use |T134326:0|t[Round Up Horse] (1) on |cRXP_FRIENDLY_Mountain Horses|r to make them follow you.
 step
-    .isOnQuest 14416
+    .isOnQuest 14416 --The Hungry Ettin
     *|cRXP_WARN_Horse [3]|r;
     .cast 68903 >>Use |T134326:0|t[Round Up Horse] (1) on |cRXP_FRIENDLY_Mountain Horses|r to make them follow you.
 step
     #label Koroth the Hillbreaker
-    .isOnQuest 14416
+    .isOnQuest 14416 --The Hungry Ettin
     *|cRXP_WARN_Horse [4]|r;
     .cast 68903 >>Use |T134326:0|t[Round Up Horse] (1) on |cRXP_FRIENDLY_Mountain Horses|r to make them follow you.
 step
@@ -21144,7 +21023,7 @@ step
     #completewith next
     #label Carriage boarded1
     #hidewindow
-    .isOnQuest 24438
+    .isOnQuest 24438 --Exodus
     .goto 182,45.01,15,5,0
     .goto 182,39.24,19.37,5,0
     .goto 182,40.89,26.87,5,0
@@ -21164,7 +21043,7 @@ step
     #completewith next
     #hidewindow
     #label Carriage boarded2
-    .isOnQuest 24438
+    .isOnQuest 24438 --Exodus
     .goto 182,59.82,69.41,5,0
     .goto 182,65.7,72.53,2,0
     .goto 182,67.39,77.11,5,0
@@ -21178,7 +21057,7 @@ step
     #requires Carriage boarded2
     #completewith next
     #label Carriage boarded3
-    .isOnQuest 24438
+    .isOnQuest 24438 --Exodus
     >>|cRXP_WARN_Wait for the Roleplay|r.
     .complete 24438,1 --Carriage boarded (1)
     .target Stagecoach Carriage
@@ -21191,7 +21070,7 @@ step
     .timer 80.5,RP
 step
     #requires Carriage boarded3
-    .isOnQuest 24438
+    .isOnQuest 24438 --Exodus
     >>|cRXP_WARN_Wait for the Roleplay|r.
     .complete 24438,1 --Carriage boarded (1)
     .target Stagecoach Carriage
@@ -21229,7 +21108,7 @@ step
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Prince Liam Greymane|r
     -- #requires Turn in Exodus3
-    .isOnQuest 24438
+    .isOnQuest 24438 --Exodus
     .goto 179,51.81,80.49
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Prince Liam Greymane|r.
     .turnin 24438 >>Turn in Exodus
@@ -22434,7 +22313,6 @@ step
     .zone 84 >>|TInterface/cursor/crosshair/interact.blp:20|tClick on the |cRXP_PICK_Portal to Stormwind|r.
 step << Alliance
     #include RestedXP Speed Leveling\a) GC Chromie Time Tower
-
 ]])
     --Gilneas: Skip
 RXPGuides.RegisterGuide([[
@@ -22446,10 +22324,7 @@ RXPGuides.RegisterGuide([[
 #next b1) BfA Intro << Horde
 #chapter
 #internal
-
 << Alliance Worgen !DK
-
-
 ]])
 --DarkIronDwarf: Shadowforge City
 RXPGuides.RegisterGuide([[
@@ -22460,9 +22335,7 @@ RXPGuides.RegisterGuide([[
 #name a) DarkIronDwarf Intro
 #displayname |cFF1EFF001|r - Shadowforge City
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A)
-
 << Alliance DarkIronDwarf !DK
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Moira Thaurissan|r
     .goto 1186,56.43,31.86
@@ -22490,7 +22363,7 @@ step
     .accept 53500 >>Accept Stranger in a Strange Land
     .target Ambassador Moorgard
 step
-    #include RestedXP Speed Leveling\a) GC Chromie Time Normal@ChromieTime-ChromieTime
+    #include RestedXP Speed Leveling\a) GC Chromie Time Normal@ChromieTime1-ChromieTime2
 -- step
 --     .goto 84,56.257,17.311
 --     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Chromie|r |cRXP_WARN_[2]|r.
@@ -22517,9 +22390,7 @@ RXPGuides.RegisterGuide([[
 #name a) KulTiran Intro
 #displayname |cFF1EFF001|r - Boralus
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A)
-
 << Alliance KulTiran !DK
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Katherine Proudmoore|r
     .goto 1161,67.71,21.77
@@ -22552,7 +22423,7 @@ step
     .accept 55146 >>Accept Stranger in a Strange Land
     .target Ambassador Moorgard
 step
-    #include RestedXP Speed Leveling\a) GC Chromie Time Normal@ChromieTime-ChromieTime
+    #include RestedXP Speed Leveling\a) GC Chromie Time Normal@ChromieTime1-ChromieTime2
 -- step
 --     .goto 84,56.257,17.311
 --     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Chromie|r |cRXP_WARN_[2]|r.
@@ -22579,9 +22450,7 @@ RXPGuides.RegisterGuide([[
 #name a) LightforgedDraenei Intro
 #displayname |cFF1EFF001|r - The Vindicaar
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A)
-
 << Alliance LightforgedDraenei !DK
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Captain Fareeya|r
     .goto 940,49.2,43.8
@@ -22611,7 +22480,7 @@ step
     .accept 50313 >>Accept Stranger in a Strange Land
     .target Ambassador Moorgard
 step
-    #include RestedXP Speed Leveling\a) GC Chromie Time Normal@ChromieTime-ChromieTime
+    #include RestedXP Speed Leveling\a) GC Chromie Time Normal@ChromieTime1-ChromieTime2
 -- step
 --     .goto 84,56.257,17.311
 --     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Chromie|r |cRXP_WARN_[2]|r.
@@ -22638,9 +22507,7 @@ RXPGuides.RegisterGuide([[
 #name a) Mechagnome Intro
 #displayname |cFF1EFF001|r - Mechagon City
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A)
-
 << Alliance Mechagnome !DK
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_High Tinker Mekkartonque|r
     .goto 1573,18.67,67.5
@@ -22660,7 +22527,7 @@ step
     .accept 58147 >>Accept Stranger in a Strange Land
     .target Ambassador Moorgard
 step
-    #include RestedXP Speed Leveling\a) GC Chromie Time Normal@ChromieTime-ChromieTime
+    #include RestedXP Speed Leveling\a) GC Chromie Time Normal@ChromieTime1-ChromieTime2
 -- step
 --     .goto 84,56.257,17.311
 --     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Chromie|r |cRXP_WARN_[2]|r.
@@ -22687,9 +22554,7 @@ RXPGuides.RegisterGuide([[
 #name a) VoidElf Intro
 #displayname |cFF1EFF001|r - Telogrus Rift
 #next RestedXP Speed Leveling\ba) DF Alliance Intro Midnight (A)
-
 << Alliance VoidElf !DK
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Alleria|r
     .goto 971,28.5,22.3
@@ -22718,7 +22583,7 @@ step
     .accept 50305 >>Accept Stranger in a Strange Land
     .target Ambassador Moorgard
 step
-    #include RestedXP Speed Leveling\a) GC Chromie Time Normal@ChromieTime-ChromieTime
+    #include RestedXP Speed Leveling\a) GC Chromie Time Normal@ChromieTime1-ChromieTime2
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Keira Onyxraven|r
     .goto 84,56.199,17.671
@@ -22848,17 +22713,15 @@ step << DemonHunter VoidElf
 --     #include RestedXP Speed Leveling\a) DMF
 step
     .subzoneskip 6292
-    .isOnQuest 65436
+    .isOnQuest 65436 --The Dragon Isles Await
     >>Use |T134309:0|t[Lost Dragonscale] to teleport to Stormwind.
     .complete 65436,1 --1/1 Lost Dragonscale used to teleport to near Wrathion's location (Optional)
     .nodmf
     .use 205456
 ]])
-
 -- ====================================
 -- =======    HORDE ZONES    ==========
 -- ====================================
-
 --Exile's Reach
 RXPGuides.RegisterGuide([[
 #retail
@@ -22868,10 +22731,7 @@ RXPGuides.RegisterGuide([[
 #name a) Exile's Reach Horde
 #displayname |cFF1EFF001|r - Exile's Reach
 #next b1) BfA Intro
-
-
 << Horde !Harronir !Dracthyr !DemonHunter !DK !Nightborne !HighmountainTauren !Vulpera !MagharOrc !ZandalariTroll
-
 step
     #optional
     .convertquest 56775,59926 << Horde
@@ -23911,7 +23771,7 @@ step
     .accept 87555 >>Accept Home Is Where the Hearth Is
 step
     #arrowtext Use [Tawny Wind Rider]
-    .itemcount 25474,1
+    .itemcount 25474,1 --Tawny Wind Rider
     .goto 2022,81.97,31.47
     .collectmount 133 >>Use the |T298596:0|t[Tawny Wind Rider]
     .use 25474
@@ -24566,7 +24426,7 @@ step
     .complete 65998,1 --1/1 Infused dragon eggs found
 	.noskyriding
 step
-    .itemcount 132516,1
+    .itemcount 132516,1 --Gunshoes
     #completewith next
     .cooldown item,132516,>0,1
     .cast 202844 >>Use |T1405809:0|t[Gunshoes] |cRXP_WARN_right before clicking on the egg|r.
@@ -24644,14 +24504,11 @@ RXPGuides.RegisterGuide([[
 #displayname Sunstrider Isle |cRXP_ENEMY_(Alternative)|r
 #next ac) Blood Elf Eversong Woods
 #defaultfor BloodElf !DK
-
 << Horde
-
 step
     .zoneskip 1727
     #completewith SunstriderIsleFirstQuestCheck
     +If you want to level as fast as possible, choose Exile’s Reach as your starting zone. This requires recreating your character.
-
 step
     #optional
     .zoneskip 1727,1
@@ -24852,13 +24709,13 @@ step
     .mob Tainted Arcane Wraith
 step
     #arrowtext Run down to die
-    .isQuestComplete 8335
+    .isQuestComplete 8335 --Felendren the Banished
     #completewith next
     .goto 467,39.87,59.96
     .deathskip >>Run down (DON'T JUMP) to die
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Arcanist Helion|r
-    .isQuestComplete 8335
+    .isQuestComplete 8335 --Felendren the Banished
     .goto 467,58.5,38.8
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Arcanist Helion|r.
     .turnin 8338 >>Turn in Tainted Arcane Sliver
@@ -24866,7 +24723,7 @@ step
     .target Arcanist Helion
 step
     #arrowtext Kill\n|cRXP_ENEMY_Arcane Wraiths|r and |cRXP_ENEMY_Tainted Arcane Wraith|r
-    .isOnQuest 8338
+    .isOnQuest 8338 --Tainted Arcane Sliver
     #loop
     .goto 467,36.49,62.42,10,0
     .goto 467,35.95,62.37,15,0
@@ -24889,14 +24746,14 @@ step
     .mob Arcane Wraith
     .mob Tainted Arcane Wraith
 step
-    .isOnQuest 8338
+    .isOnQuest 8338 --Tainted Arcane Sliver
     #requires EversongWoodsArcaneWraith
     #completewith next
     .goto 467,41.44,51.44
     .deathskip >>Pull mobs, die, ress at the spirit healer
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Arcanist Helion|r
-    .isOnQuest 8338
+    .isOnQuest 8338 --Tainted Arcane Sliver
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Arcanist Helion|r.
     .goto 467,58.5,38.8
     .turnin 8338 >>Turn in Tainted Arcane Sliver
@@ -24940,9 +24797,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Eversong Woods
 #next b1) BfA Intro
 #defaultfor BloodElf !DK
-
 << Horde
-
 step << Hunter
     #completewith next
     .goto 94,58.74,57.51
@@ -24950,7 +24805,7 @@ step << Hunter
     .train 1515,1
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Outrunner Alarion|r
-    .isOnQuest 8347
+    .isOnQuest 8347 --Aiding the Outrunners
     .goto 94,40.42,32.21
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Outrunner Alarion|r.
     .turnin 8347 >>Turn in Aiding the Outrunners
@@ -25079,7 +24934,7 @@ step
     .accept 9119 >>Accept Malfunction at the West Sanctum
     .target Ley-Keeper Caidanis
 step
-    .itemcount 132516,1
+    .itemcount 132516,1 --Gunshoes
     #completewith next
     .cast 202844 >>Use |T1405809:0|t[Gunshoes]
 step
@@ -25400,7 +25255,6 @@ step
     .zone 2351 >>Teleport to a Neighbourhood with the House finder, not |T7252953:0|t[Teleport to Plot], then take the |cRXP_PICK_Stormwind Portal|r.
     .link https://www.youtube.com/watch?v=uVkUB7z0njo >>CLICK HERE FOR VIDEO
     .macro House Teleport, 975747 >>/run C_Housing.StartTutorial()
-
 ]])
 --Orc: Valley of Trials
 RXPGuides.RegisterGuide([[
@@ -25415,14 +25269,11 @@ RXPGuides.RegisterGuide([[
 #next ac) Echo Isles2 << !Troll --Orc
 #next a) BfA Intro << Troll
 #defaultfor Orc !DK/Troll !DK
-
 << Horde
-
 step << Orc
     .zoneskip 1727
     #completewith DurotarFirstQuestCheck
     +If you want to level as fast as possible, choose Exile’s Reach as your starting zone. This requires recreating your character.
-
 step << Orc
     #optional
     .zoneskip 1727,1
@@ -25576,8 +25427,8 @@ step
     .goto 461,45.81,63.42
     .turnin 37446 >>Turn in Lazy Peons
     .goto 461,46.15,63.28
-	.isQuestComplete 25136
-	.isQuestComplete 37446
+	.isQuestComplete 25136 --Galgar's Cactus Apple Surprise
+	.isQuestComplete 37446 --Lazy Peons
     .target Galgar
     .target Gornek
     .target Zureetha Fargaze
@@ -25591,7 +25442,7 @@ step
     .goto 461,44.93,66.42
     .accept 25131 >>Accept Vile Familiars
     .goto 461,45.81,63.42
-	.isQuestComplete 25136
+	.isQuestComplete 25136 --Galgar's Cactus Apple Surprise
     .target Galgar
     .target Gornek
     .target Zureetha Fargaze
@@ -25604,7 +25455,7 @@ step
     .goto 461,45.81,63.42
     .turnin 37446 >>Turn in Lazy Peons
     .goto 461,46.15,63.28
-	.isQuestComplete 37446
+	.isQuestComplete 37446 --Lazy Peons
     .target Gornek
     .target Zureetha Fargaze
     .target Foreman Thazz'ril
@@ -25679,7 +25530,7 @@ step
     .goto 461,46.15,63.28
     .accept 25132 >>Accept Burning Blade Medallion
     .goto 461,45.81,63.42
-	.isOnQuest 37446
+	.isOnQuest 37446 --Lazy Peons
     .target Zureetha Fargaze
     .target Foreman Thazz'ril
 step
@@ -25703,7 +25554,7 @@ step << Hunter
 step << Hunter Orc
     .goto 461,47.61,47.66
     .cast 1515 >>Target a |cRXP_ENEMY_Mottled Boar|r,cast and then channel |T132164:0|t[Tame Beast] to tame it
-    .isOnQuest 25135
+    .isOnQuest 25135 --Thazz'rils Pick
     .mob Mottled Boar
 step
     #arrowtext Click\n|cRXP_PICK_Cactus Apples|r
@@ -25771,7 +25622,7 @@ step
     .goto 461,45.82,63.42
     .turnin 25135 >>Turn in Thazz'rils Pick
     .goto 461,46.19,63.29
-	.isOnQuest 25136
+	.isOnQuest 25136 --Galgar's Cactus Apple Surprise
     .target Galgar
     .target Gornek
     .target Zureetha Fargaze
@@ -25809,19 +25660,16 @@ RXPGuides.RegisterGuide([[
 #next ab) Valley of Trials2 << Troll
 #next b1) BfA Intro << !Troll
 #defaultfor Orc !DK/Troll !DK
-
 << Horde
-
 step << Orc
     #completewith next
     .cast 202844 >>Use your |T1405809:0|t[Gunshoes] to move faster
     .use 132516
-    .itemcount 132516,1
+    .itemcount 132516,1 --Gunshoes
 step << Troll
     .zoneskip 1727
     #completewith EchoIslesFirstQuestCheck
     +If you want to level as fast as possible, choose Exile’s Reach as your starting zone. This requires recreating your character.
-
 step << Troll
     #optional
     .zoneskip 1727,1
@@ -26359,7 +26207,7 @@ step
     .target Tora'jin
     .target Moraya
 step
-    .itemcount 132516,1
+    .itemcount 132516,1 --Gunshoes
     #completewith next
     .cast 202844 >>Use |T1405809:0|t[Gunshoes]
 step
@@ -26471,10 +26319,10 @@ step
     .goto 463,43.46,91.82,30,0
     .goto 463,43.81,88.49,30,0
     .goto 463,46.15,88.00,30,0
-    >>Use the |T134326:0|t[Bloodtalon Lasso] on |cRXP_FRIENDLY_Swiftclaw|r. He spawns next to you and then runs counter-clockwise around the island.
+    >>Click on the |cRXP_PICK_Bloodtalon Lasso|r macro in the "Active Items Frame" to use it on |cRXP_FRIENDLY_Swiftclaw|r. He runs counter-clockwise around the island.
     .complete 24626,1 --1/1 Capture Swiftclaw
 	.unitscan Swiftclaw
-    .use 50053
+    .macro Bloodtalon Lasso,134326 >>/targetexact Swiftclaw\n/use item:50053
 step
     #arrowtext Ride |cRXP_FRIENDLY_Swiftclaw|r back to the |cRXP_PICK_Raptor Pen|r
     .goto 463,50.42,66.82,40,0
@@ -26529,7 +26377,7 @@ step
     .turnin 25035 >>Turn in Breaking the Line
     .accept 24812 >>Accept No More Mercy
     .accept 24813 >>Accept Territorial Fetish
-	.isOnQuest 25035
+	.isOnQuest 25035 --Breaking the Line
     .xp 10,1
     .target Morakki
 step
@@ -26538,7 +26386,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Morakki|r.
     .accept 24812 >>Accept No More Mercy
     .accept 24813 >>Accept Territorial Fetish
-	.isQuestTurnedIn 25035
+	.isQuestTurnedIn 25035 --Breaking the Line
     .target Morakki
 step
     #arrowtext Kill\n|cRXP_ENEMY_Spitescale Nagas|r
@@ -26547,7 +26395,7 @@ step
     >>Kill |cRXP_ENEMY_Spitescale Nagas|r while placing the [|cRXP_LOOT_Territorial Fetishes|r].
     .goto 464,58.0,46.3,0,0
     .complete 24812,1 --12/12 Spitescale Naga
-	.isQuestTurnedIn 25035
+	.isQuestTurnedIn 25035 --Breaking the Line
 step
     #arrowtext Use [Territorial Fetish]\non |cRXP_PICK_Spitescale Flags|r
     >>Use the |T132482:0|t[Territorial Fetish] next to |cRXP_PICK_Spitescale Flags|r. The fetishes despawn after a while and you can place them again.
@@ -26570,7 +26418,7 @@ step
     .goto 464,69.36,30.91,15,0
     .use 52065
     .complete 24813,1 --8/8 Territorial Fetish placed
-	.isQuestTurnedIn 25035
+	.isQuestTurnedIn 25035 --Breaking the Line
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Morakki|r
     #requires EchoingIslesSpitescaleNagas
@@ -26578,7 +26426,7 @@ step
     .goto 463,58.90,23.08
     .turnin 24812 >>Turn in No More Mercy
     .turnin 24813 >>Turn in Territorial Fetish
-	.isQuestTurnedIn 25035
+	.isQuestTurnedIn 25035 --Breaking the Line
     .target Morakki
 step << Orc
     #arrowtext Talk to\n|cRXP_FRIENDLY_Handler Marnlek|r
@@ -26597,14 +26445,11 @@ RXPGuides.RegisterGuide([[
 #displayname Camp Narache |cRXP_ENEMY_(Alternative)|r
 #next ac) Tauren Camp Mulgore
 #defaultfor Tauren !DK
-
 << Horde
-
 step << Tauren
     .zoneskip 1727
     #completewith MulgoreFirstQuestCheck
     +If you want to level as fast as possible, choose Exile’s Reach as your starting zone. This requires recreating your character.
-
 step << Tauren
     #optional
     .zoneskip 1727,1
@@ -26837,9 +26682,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Mulgore
 #next b1) BfA Intro
 #defaultfor Tauren !DK
-
 << Horde
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Maur Raincaller|r
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Maur Raincaller|r.
@@ -26890,7 +26733,7 @@ step
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Ahmo Thunderhorn|r
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ahmo Thunderhorn|r.
-    .isQuestComplete 24215
+    .isQuestComplete 24215 --Rite of the Winds
     .goto 7,47.65,59.58
     .turnin 24215 >>Turn in Rite of the Winds
     .accept 14438 >>Accept Sharing the Land
@@ -27044,7 +26887,7 @@ step
     .target Mull Thunderhorn
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Harken Windtotem|r
-    .isQuestComplete 761
+    .isQuestComplete 761 --Swoop Hunting
     .goto 7,48.78,58.79
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Harken Windtotem|r.
     .turnin 761 >>Turn in Swoop Hunting
@@ -27064,14 +26907,14 @@ step
     .target Innkeeper Kauth
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Maur Raincaller|r
-    .isQuestComplete 26188
+    .isQuestComplete 26188 --Mazzranache
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Maur Raincaller|r.
     .goto 7,47.16,56.66
     .turnin 26188 >>Turn in Mazzranache
     .mob Maur Raincaller
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Tak|r
-    .isOnQuest 6362
+    .isOnQuest 6362 --Ride to Thunder Bluff
     .zoneskip 7,1
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tak|r.
     .goto 7,47.45,58.64
@@ -27315,10 +27158,10 @@ step
     #loop
     .goto 7,48.25,60.43,20,0
     .goto 7,48.13,57.28,20,0
-    >>Kyle (a wolf) runs in a circle around/through the city. |cRXP_WARN_If you see him running towards you then wait until he is near you, target him and use the [|cRXP_LOOT_Tender Stride Meat|r|r].
+    >>Click on the |cRXP_PICK_Tender Stride Meat|r macro in the "Active Items Frame" to use it on |cRXP_FRIENDLY_Kyle|r. Wait until Kyle is nearby.
     .complete 11129,1 --1/1 Kyle fed
     .target Kyle
-    .use 33009
+    .macro Tender Stride Meat,134400 >>/targetexact Kyle\n/use item:33009
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Ahab Wheathoof|r
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ahab Wheathoof|r.
@@ -27360,14 +27203,11 @@ RXPGuides.RegisterGuide([[
 #title Deathknell
 #next ac) Undead Tirisfal Glades
 #defaultfor Undead !DK
-
 << Horde
-
 step << Undead
     .zoneskip 1727
     #completewith TirisfalFistQuestCheck
     +If you want to level as fast as possible, choose Exile’s Reach as your starting zone. This requires recreating your character.
-
 step << Undead
     #optional
     .zoneskip 1727,1
@@ -27673,12 +27513,10 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Tirisfal Glades
 #next b1) BfA Intro
 #defaultfor Undead !DK
-
 << Horde
-
 step
     #optional
-    .itemcount 132516,1
+    .itemcount 132516,1 --Gunshoes
     #completewith next
     .cast 202844 >>Use |T1405809:0|t[Gunshoes]
 step
@@ -28263,14 +28101,11 @@ RXPGuides.RegisterGuide([[
 #name ab) Goblin Intro
 #displayname Kezan & The Lost Isles |cRXP_ENEMY_(Alternative)|r
 #next b1) BfA Intro
-
 << Horde Goblin !DK
-
 step << Goblin
     .zoneskip 1727
     #completewith KezanFirstQuestCheck
     +If you want to level as fast as possible, choose Exile’s Reach as your starting zone. This requires recreating your character.
-
 step << Goblin
     #optional
     .zoneskip 1727,1
@@ -28992,7 +28827,7 @@ step
     #completewith next
     .cast 202844 >>Use your |T1405809:0|t[Gunshoes] to move faster
     .use 132516
-    .itemcount 132516,1
+    .itemcount 132516,1 --Gunshoes
 step
     #arrowtext Follow the path up the mountain
     #completewith next
@@ -29172,7 +29007,7 @@ step
     #completewith next
     .cast 202844 >>Use your |T1405809:0|t[Gunshoes] to move faster
     .use 132516
-    .itemcount 132516,1
+    .itemcount 132516,1 --Gunshoes
 step
     #arrowtext Use [Wild Clucker Eggs]\non |cRXP_ENEMY_raptor|r
     >>Use the |T236997:0|t[Wild Clucker Eggs] to place an egg into a trap. Then wait until a |cRXP_ENEMY_raptor|r steps into the trap and loot the |cRXP_PICK_Spiny Raptor Egg|r.
@@ -29242,7 +29077,7 @@ step
     #completewith next
     .cast 202844 >>Use your |T1405809:0|t[Gunshoes] to move faster
     .use 132516
-    .itemcount 132516,1
+    .itemcount 132516,1 --Gunshoes
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Megs Dreadshredder|r
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Megs Dreadshredder|r.
@@ -29327,7 +29162,7 @@ step
     #completewith next
     .cast 202844 >>Use your |T1405809:0|t[Gunshoes] to move faster
     .use 132516
-    .itemcount 132516,1
+    .itemcount 132516,1 --Gunshoes
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Sassy Hardwrench|r
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Sassy Hardwrench|r.
@@ -29402,7 +29237,7 @@ step
     #completewith next
     .cast 202844 >>Use your |T1405809:0|t[Gunshoes] to move faster
     .use 132516
-    .itemcount 132516,1
+    .itemcount 132516,1 --Gunshoes
 step
     #completewith next
     +|cRXP_WARN_Avoid the |cRXP_ENEMY_Goblin Zombies|r while running up the mountain|r.
@@ -29652,37 +29487,37 @@ step
 step
     #sticky
     >>You need to collect a total of 9 Kaja'Colas Zero-One
-    >>Target a |cRXP_FRIENDLY_Kezan Citizen|r and use the cola
-    .use 52484
+    >>Click on the |cRXP_PICK_Kaja'Cola Zero-One|r macro in the "Active Items Frame" to use it on |cRXP_FRIENDLY_Kezan Citizen|r.
+    .macro Kaja'Cola Zero-One,134400 >>/targetexact Kezan Citizen\n/use item:52484
     .collect 52484,9,25122,0xF
     .complete 25122,4 --6/6 Other goblin's minds freed
     .target Kezan Citizen
 step
     #title Free Ace
-    >>Target |cRXP_FRIENDLY_Ace|r and use a Kaja'Cola Zero-One
+    >>Click on the |cRXP_PICK_Kaja'Cola Zero-One|r macro in the "Active Items Frame" to use it on |cRXP_FRIENDLY_Ace|r.
     .goto 174,57.1,36.9
-    .use 52484
+    .macro Kaja'Cola Zero-One,134400 >>/targetexact Ace\n/use item:52484
     .complete 25122,1 --1/1 Ace's mind freed
     .target Ace
 step
     #title Free Izzy
-    >>Target |cRXP_FRIENDLY_Izzy|r and use a Kaja'Cola Zero-One
+    >>Click on the |cRXP_PICK_Kaja'Cola Zero-One|r macro in the "Active Items Frame" to use it on |cRXP_FRIENDLY_Izzy|r.
     .goto 174,57.01,35.02
-    .use 52484
+    .macro Kaja'Cola Zero-One,134400 >>/targetexact Izzy\n/use item:52484
     .complete 25122,2 --1/1 Izzy's mind freed
     .target Izzy
 step
     #arrowtext Kill\n|cRXP_ENEMY_Blastshadow the Brutemaster|r
-    >>Kill |cRXP_ENEMY_Blastshadow the Brutemaster|r and pick up the flying purple |cRXP_PICK_Soulstone|r. Target the corpse of |cRXP_ENEMY_Blastshadow the Brutemaster|r and use |T134336:0|t[Blastshadow's Soulstone]
-    .use 52481
+    >>Kill |cRXP_ENEMY_Blastshadow the Brutemaster|r and click on the flying purple |cRXP_PICK_Soulstone|r. Click on the |cRXP_PICK_Blastshadow's Soulstone|r macro in the "Active Items Frame" to use it on his corpse.
+    .macro Blastshadow's Soulstone,134336 >>/targetexact Blastshadow the Brutemaster\n/use [@target,dead] item:52481
     .goto 174,56.18,32.29
     .complete 25123,1 --1/1 Blastshadow's Soulstone destroyed
     .mob Blastshadow the Brutemaster
 step
     #title Free Gobber
-    >>Target |cRXP_FRIENDLY_Gobber|r and use a Kaja'Cola Zero-One
+    >>Click on the |cRXP_PICK_Kaja'Cola Zero-One|r macro in the "Active Items Frame" to use it on |cRXP_FRIENDLY_Gobber|r.
     .goto 174,57.04,32.17
-    .use 52484
+    .macro Kaja'Cola Zero-One,134400 >>/targetexact Gobber\n/use item:52484
     .complete 25122,3 --1/1 Gobber's mind freed
     .target Gobber
 step
@@ -29932,10 +29767,7 @@ RXPGuides.RegisterGuide([[
 #next ba) DF Alliance Intro Midnight (A) << Alliance
 #next b1) BfA Intro << Horde
 #chapter
-
 << Horde Goblin !DK
-
-
 ]])
 --HighmountainTauren: Highmountain
 RXPGuides.RegisterGuide([[
@@ -29946,9 +29778,7 @@ RXPGuides.RegisterGuide([[
 #name a) HighmountainTauren
 #displayname |cFF1EFF001|r - Highmountain Tauren
 #next b1) BfA Intro
-
 << Horde HighmountainTauren !DK
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Mayla Highmountain|r
     .goto 652,54.85,63.18
@@ -29999,9 +29829,7 @@ RXPGuides.RegisterGuide([[
 #name a) Nightborne Intro
 #displayname |cFF1EFF001|r - The Nighthold
 #next b1) BfA Intro
-
 << Horde Nightborne !DK
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_First Arcanist Thalyssra|r
     .goto 680,59.34,85.53
@@ -30052,9 +29880,7 @@ RXPGuides.RegisterGuide([[
 #name a) ZandalariTroll Intro
 #displayname |cFF1EFF001|r - Dazar'alor
 #next b1) BfA Intro
-
 << Horde ZandalariTroll !DK
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Queen Talanji|r
     .goto 1165,49.93,46.64
@@ -30105,9 +29931,7 @@ RXPGuides.RegisterGuide([[
 #name a) MagharOrc Intro
 #displayname |cFF1EFF001|r - Orgrimmar
 #next b1) BfA Intro
-
 << Horde MagharOrc !DK
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Overlord Geya'rah|r
     .goto 85,70.6,44.6
@@ -30121,7 +29945,6 @@ step
     .turnin 51485 >>Turn in For the Horde
     .accept 53502 >>Accept Stranger in a Strange Land
     .target Ambassador Blackguard
-
 -- step
 --     .goto 85,48.23,62.19
 --     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Darkmoon Faire Mystic Mage|r
@@ -30147,10 +29970,7 @@ RXPGuides.RegisterGuide([[
 #name a) Vulpera Intro
 #displayname |cFF1EFF001|r - Orgrimmar
 #next b1) BfA Intro
-
 << Horde Vulpera !DK
-
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Nilsa|r
     .goto 85,64.647,46.514
@@ -30187,10 +30007,9 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Speed Leveling
 #name a) Horde Legion Intro
 #internal
-
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Holgar Stormaxe|r
-    .isOnQuest 43926
+    .isOnQuest 43926 --Legion: The Legion Returns
     .goto 1,46.01,13.81
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Holgar Stormaxe|r.
     .turnin 43926 >>Turn in Legion: The Legion Returns
@@ -30198,7 +30017,7 @@ step
     .target Recruiter Lee
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Holgar Stormaxe|r
-    .isQuestTurnedIn 43926
+    .isQuestTurnedIn 43926 --Legion: The Legion Returns
     .goto 1,46.01,13.81
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Holgar Stormaxe|r to skip the Scenario.
     *|cRXP_WARN_NOTE:|r If you can't skip it then skip this step.
@@ -30207,29 +30026,29 @@ step
     .skipgossip
 step
     #arrowtext Click\n|cRXP_PICK_Food|r
-    .isOnQuest 44281
-    .isNotOnQuest 44184
+    .isOnQuest 44281 --To Be Prepared
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .goto 1,47.66,13.57
     >>|TInterface/cursor/crosshair/interact.blp:20|tClick on the |cRXP_PICK_Food|r.
     .complete 44281,3 --1/1 Last meal eaten
 step
     #arrowtext Click\n|cRXP_PICK_Barrel|r
-    .isOnQuest 44281
-    .isNotOnQuest 44184
+    .isOnQuest 44281 --To Be Prepared
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .goto 1,49.63,14.17
     >>|TInterface/cursor/crosshair/interact.blp:20|tClick on the |cRXP_PICK_Barrel|r.
     .complete 44281,1 --1/1 Armor polished
 step
     #arrowtext Click\n|cRXP_PICK_Sphere|r
-    .isOnQuest 44281
-    .isNotOnQuest 44184
+    .isOnQuest 44281 --To Be Prepared
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .goto 1,51.38,12.29
     >>|TInterface/cursor/crosshair/interact.blp:20|tClick on the |cRXP_PICK_Sphere|r.
     .complete 44281,2 --1/1 Weapon empowered
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Arienne Black|r
-    .isOnQuest 44281
-    .isNotOnQuest 44184
+    .isOnQuest 44281 --To Be Prepared
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .goto 1,52.82,11.34
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Arienne Black|r and defeat her.
     .complete 44281,4 --1/1 Warmed up with a duel
@@ -30238,49 +30057,49 @@ step
     .target Arienne Black
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Stone Guard Mukar|r
-    .isOnQuest 44281
-    .isNotOnQuest 44184
+    .isOnQuest 44281 --To Be Prepared
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .goto 1,55.63,11.02
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Stone Guard Mukar|r.
     .turnin 44281 >>Turn in To Be Prepared
     .target Stone Guard Mukar
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Stone Guard Mukar|r
-    .isQuestTurnedIn 44281
-    .isNotOnQuest 44184
+    .isQuestTurnedIn 44281 --To Be Prepared
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .goto 1,55.63,11.02
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Stone Guard Mukar|r.
     .accept 40518 >>Accept The Battle for Broken Shore
     .target Stone Guard Mukar
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Captain Russo|r
-    .isNotOnQuest 44184
-    .isOnQuest 40518
+    .isNotOnQuest 44184 --In the Blink of an Eye
+    .isOnQuest 40518 --The Battle for Broken Shore
     .goto 1,57.77,10.49
     .gossipoption 46562 >>Talk to |cRXP_FRIENDLY_Captain Russo|r.
     .target Captain Russo
 step
-    .isNotOnQuest 44184
-    .isOnQuest 40518
+    .isNotOnQuest 44184 --In the Blink of an Eye
+    .isOnQuest 40518 --The Battle for Broken Shore
     .zone 619 >>Wait for a moment until the transfer to the Broken Shore.
     .timer 89,RP
 step
-    .isNotOnQuest 44184
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .isInScenario 1189
     .goto 619,54.43,72.28,10 >>Wait for our ship to dock.
 step
     #arrowtext Follow the arrow
-    .isNotOnQuest 44184
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .isInScenario 1189
     .goto 619,54.48,71.82,20 >>|cRXP_WARN_Follow the Arrow|r.
     .timer 1140,scenario auto-completes.
 step
-    .isNotOnQuest 44184
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .isInScenario 1189
     #completewith guldanscenarioend
     +You can let the NPCs complete |cRXP_WARN_the scenario|r, though it takes ~5 minutes longer.
 step
-    .isNotOnQuest 44184
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .isInScenario 1189
     #completewith Demons
     >>Kill |cRXP_ENEMY_Demons|r and |cRXP_ENEMY_Felguards|r |cRXP_WARN_in front of each pillar|r.
@@ -30293,7 +30112,7 @@ step
     .mob Felstalker Dreadhound
 step
     #arrowtext Destroy\n|cRXP_ENEMY_Anchoring Crystal|r
-    .isNotOnQuest 44184
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .goto 619,54.62,71.33,15,0
     .goto 619,54.34,71.22,15,0
     .goto 619,54.06,71.2,15,0
@@ -30302,7 +30121,7 @@ step
     .scenario 2896,3
     .mob Anchoring Crystal
 step
-    .isNotOnQuest 44184
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .isInScenario 1189
     #label Demons
     >>Kill |cRXP_ENEMY_Demons|r and |cRXP_ENEMY_Felguards|r |cRXP_WARN_in front of each pillar|r.
@@ -30315,7 +30134,7 @@ step
     .mob Felstalker Dreadhound
 step
     #arrowtext Kill\n|cRXP_ENEMY_Fel Commander Azgalor|r
-    .isNotOnQuest 44184
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .isInScenario 1189
     .goto 619,54.21,71.11
     >>Kill |cRXP_ENEMY_Fel Commander Azgalor|r.
@@ -30323,24 +30142,24 @@ step
     .mob Fel Commander Azgalor
 step
     #arrowtext |cFFFCDC00Follow the arrow|r
-    .isNotOnQuest 44184
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .isInScenario 1189
     .goto 619,54.54,69.52,20,0
     .goto 619,54.46,69.32,10 >>Follow the Arrow and wait at the location until the next cutscene.
 step
-    .isNotOnQuest 44184
+    .isNotOnQuest 44184 --In the Blink of an Eye
     #title |cFFFCDC00Wait for cutscene then follow arrow|r
     .isInScenario 1189
     .goto 619,53.97,68.7,20,0
     .goto 619,54.71,67.83,10 >>Wait for a cutscene to appear then follow the arrow.
 step
-    .isNotOnQuest 44184
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .isInScenario 1189
     >>Wait until it continues.
     .scenario 2898,1
 step
     #arrowtext Kill\n|cRXP_ENEMY_Eredar Chaos Guard|r and |cRXP_ENEMY_Shielded Anchors|r
-    .isNotOnQuest 44184
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .isInScenario 1189
     #loop
     .goto 619,54.54,67.84,12,0
@@ -30351,7 +30170,7 @@ step
     .mob Eredar Chaos Guard
 step
     #arrowtext Kill\n|cRXP_ENEMY_Demon Elites,|r and |cRXP_ENEMY_Demons|r
-    .isNotOnQuest 44184
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .isInScenario 1189
     #loop
     .goto 619,55.33,68.57,30,0
@@ -30366,41 +30185,41 @@ step
     .mob Felguard Invader
     .mob Dark Worshipper
 step
-    .isNotOnQuest 44184
+    .isNotOnQuest 44184 --In the Blink of an Eye
     #title |cFFFCDC00Wait|r
     .isInScenario 1189
     .goto 619,55.24,66.11,10  >>Wait for |cRXP_FRIENDLY_Thrall|r to conjure a bridge.
 step
     #arrowtext Cross the bridge and follow the arrow
-    .isNotOnQuest 44184
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .isInScenario 1189
     .goto 619,55.12,65.03,10 >>Cross the bridge and follow the arrow.
 step
-    .isNotOnQuest 44184
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .isInScenario 1189
     .scenario 2901,1 >>|cRXP_WARN_Wait for the Horde to arrive|r.
     .target Lady Sylvanas Windrunner
 step
     #arrowtext Kill\n|cRXP_ENEMY_Krosus|r
-    .isNotOnQuest 44184
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .isInScenario 1189
     .goto 619,55.13,65.01
     .scenario 2902,1 >>Kill |cRXP_ENEMY_Krosus|r.
     .mob Krosus
 step
-    .isNotOnQuest 44184
+    .isNotOnQuest 44184 --In the Blink of an Eye
     #title |cFFFCDC00Wait|r
     .isInScenario 1189
     .goto 619,55.28,65.01,10 >>Wait for |cRXP_FRIENDLY_Thrall|r to conjure a bridge.
 step
     #arrowtext Cross the bridge and follow the arrow
-    .isNotOnQuest 44184
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .isInScenario 1189
     .goto 619,55.62,64.73,20,0
     .goto 619,56.52,64.65,20,0
     .goto 619,56.58,64.33,20 >>Cross the bridge and follow the arrow.
 step
-    .isNotOnQuest 44184
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .isInScenario 1189
     .goto 619,56.58,64.33
     >>Wait for the |cRXP_ENEMY_Demons|r to arrive, then kill them.
@@ -30411,8 +30230,8 @@ step
     .mob Grinning Shadowstalker
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Eitrigg|r
-    .isOnQuest 40518
-    .isNotOnQuest 44184
+    .isOnQuest 40518 --The Battle for Broken Shore
+    .isNotOnQuest 44184 --In the Blink of an Eye
     #label guldanscenarioend
     .goto 1,57.16,10.51
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Eitrigg|r.
@@ -30420,47 +30239,47 @@ step
     .target Eitrigg
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Eitrigg|r
-    .isQuestTurnedIn 40518
-    .isNotOnQuest 44184
+    .isQuestTurnedIn 40518 --The Battle for Broken Shore
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .goto 1,57.16,10.51
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Eitrigg|r.
     .accept 40522 >>Accept Fate of the Horde
     .target Eitrigg
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Saurfang|r
-    .isOnQuest 40522
-    .isNotOnQuest 44184
+    .isOnQuest 40522 --Fate of the Horde
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .goto 85,50.04,75.96
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Saurfang|r.
     .complete 40522,1 --1/1 Report to Saurfang
     .skipgossipid 45114
 step
-    .isOnQuest 40522
-    .isNotOnQuest 44184
+    .isOnQuest 40522 --Fate of the Horde
+    .isNotOnQuest 44184 --In the Blink of an Eye
     #completewith next
     #label Fate of the Horde
     #hidewindow
-    .isOnQuest 40522
+    .isOnQuest 40522 --Fate of the Horde
     .complete 40522,3 --1/1 Learn the Fate of the Horde
 step
     #arrowtext Follow the arrow
-    .isOnQuest 40522
-    .isNotOnQuest 44184
+    .isOnQuest 40522 --Fate of the Horde
+    .isNotOnQuest 44184 --In the Blink of an Eye
     #completewith Fate of the Horde
     .goto 85,48.38,71.23,10 >>Follow the Arrow
     .timer 63,RP
 step
-    .isOnQuest 40522
-    .isNotOnQuest 44184
+    .isOnQuest 40522 --Fate of the Horde
+    .isNotOnQuest 44184 --In the Blink of an Eye
     #requires Fate of the Horde
-    .isOnQuest 40522
+    .isOnQuest 40522 --Fate of the Horde
     .goto 85,48.38,71.22
     >>Wait for the objective to complete.
     .complete 40522,3 --1/1 Learn the Fate of the Horde
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Lady Sylvanas Windrunner|r
-    .isOnQuest 40522
-    .isNotOnQuest 44184
+    .isOnQuest 40522 --Fate of the Horde
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .goto 1,45.71,15.88
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lady Sylvanas Windrunner|r.
     .complete 40522,4 --1/1 Pledge to Warchief Sylvanas
@@ -30468,24 +30287,24 @@ step
     .skipgossipid 44961
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Lady Sylvanas Windrunner|r
-    .isOnQuest 40522
-    .isNotOnQuest 44184
+    .isOnQuest 40522 --Fate of the Horde
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .goto 1,45.71,15.88
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lady Sylvanas Windrunner|r.
     .turnin 40522 >>Turn in Fate of the Horde
     .target Lady Sylvanas Windrunner
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Lady Sylvanas Windrunner|r
-    .isQuestTurnedIn 40522
-    .isNotOnQuest 44184
+    .isQuestTurnedIn 40522 --Fate of the Horde
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .goto 1,45.71,15.88
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lady Sylvanas Windrunner|r.
     .accept 40760 >>Accept Emissary
     .target Lady Sylvanas Windrunner
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Allari the Souleater|r
-    .isQuestTurnedIn 40522
-    .isNotOnQuest 44184
+    .isQuestTurnedIn 40522 --Fate of the Horde
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .goto 1,45.81,15.13
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Allari the Souleater|r.
     .turnin 40760 >>Turn in Emissary
@@ -30493,8 +30312,8 @@ step
     .target Allari the Souleater
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Allari the Souleater|r
-    .isOnQuest 40607
-    .isNotOnQuest 44184
+    .isOnQuest 40607 --Demons Among Us
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .goto 1,45.81,15.13
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Allari the Souleater|r.
     .complete 40607,1 --1/1 Learn what Allari the Souleater knows
@@ -30502,8 +30321,8 @@ step
     .skipgossipid 44895
 step
     #arrowtext Kill\n|cRXP_ENEMY_Felblade Assassins|r and |cRXP_ENEMY_Shards of Hate|r
-    .isOnQuest 40607
-    .isNotOnQuest 44184
+    .isOnQuest 40607 --Demons Among Us
+    .isNotOnQuest 44184 --In the Blink of an Eye
     #loop
     .goto 1,45.62,14.05,30,0
     .goto 1,46.71,14.08,30,0
@@ -30515,45 +30334,45 @@ step
     .mob Felblade Assassin
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Lady Sylvanas Windrunner|r
-    .isOnQuest 40607
-    .isNotOnQuest 44184
+    .isOnQuest 40607 --Demons Among Us
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .goto 1,45.68,15.93
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lady Sylvanas Windrunner|r.
     .turnin 40607 >>Turn in Demons Among Us
     .target Lady Sylvanas Windrunner
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Lady Sylvanas Windrunner|r
-    .isQuestTurnedIn 40605
-    .isNotOnQuest 44184
+    .isQuestTurnedIn 40605 --Keep Your Friends Close
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .goto 1,45.68,15.93
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lady Sylvanas Windrunner|r.
     .accept 40605 >>Accept Keep Your Friends Close
     .target Lady Sylvanas Windrunner
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Elthyn Da'rai|r
-    .isOnQuest 40605
-    .isNotOnQuest 44184
+    .isOnQuest 40605 --Keep Your Friends Close
+    .isNotOnQuest 44184 --In the Blink of an Eye
     .goto 85,52.34,57.18
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Elthyn Da'rai|r.
     .turnin 40605 >>Turn in Keep Your Friends Close
     .target Elthyn Da'rai
 step
-    .isOnQuest 44663
-    .isNotOnQuest 44184
+    .isOnQuest 44663 --In the Blink of an Eye
+    .isNotOnQuest 44184 --In the Blink of an Eye
     #completewith next
     #label Kirin Tor Emissary
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Elthyn Da'rai|r.
     .complete 44663,1 --1/1 Talk to the Kirin Tor Emissary to teleport you to Dalaran (Optional)
 step
     #arrowtext Enter the Portal Room
-    .isOnQuest 44663
-    .isNotOnQuest 44184
+    .isOnQuest 44663 --In the Blink of an Eye
+    .isNotOnQuest 44184 --In the Blink of an Eye
     #completewith Kirin Tor Emissary
     .goto 85,52.85,90.57,10 >>Enter the Portal Room
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Elthyn Da'rai|r
-    .isOnQuest 44663
-    .isNotOnQuest 44184
+    .isOnQuest 44663 --In the Blink of an Eye
+    .isNotOnQuest 44184 --In the Blink of an Eye
     #requires Kirin Tor Emissary
     .goto 85,54.82,89.78,8,0
     .goto 85,54.75,86.91,8,0
@@ -30563,8 +30382,8 @@ step
     .complete 44663,1 --1/1 Talk to the Kirin Tor Emissary to teleport you to Dalaran (Optional)
     .skipgossipid 51032
 step
-    .isOnQuest 44663
-    .isNotOnQuest 44184
+    .isOnQuest 44663 --In the Blink of an Eye
+    .isNotOnQuest 44184 --In the Blink of an Eye
     #completewith next
     #label Witnessed
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Archmage Khadgar|r.
@@ -30572,15 +30391,15 @@ step
     .target Archmage Khadgar
 step
     #arrowtext Enter the center of Dalaran
-    .isOnQuest 44663
-    .isNotOnQuest 44184
+    .isOnQuest 44663 --In the Blink of an Eye
+    .isNotOnQuest 44184 --In the Blink of an Eye
     #completewith Witnessed
     .goto 41,52.92,51.9,10,0
     .goto 41,49.58,47.83,30 >>Enter the center of Dalaran
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Archmage Khadgar|r
-    .isOnQuest 44663
-    .isNotOnQuest 44184
+    .isOnQuest 44663 --In the Blink of an Eye
+    .isNotOnQuest 44184 --In the Blink of an Eye
     #requires Witnessed
     .goto 41,49.81,48.30
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Archmage Khadgar|r at the center of dalaran.
@@ -30589,8 +30408,8 @@ step
     .skipgossipid 45530
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Emissary Auldbridge|r
-    .isOnQuest 44663
-    .isNotOnQuest 44184
+    .isOnQuest 44663 --In the Blink of an Eye
+    .isNotOnQuest 44184 --In the Blink of an Eye
     #label Launch Event 1
     .goto 627,57.59,45.77
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Emissary Auldbridge|r
@@ -30598,7 +30417,7 @@ step
     .target Emissary Auldbridge
 step
     #arrowtext Talk to\n|cRXP_FRIENDLY_Emissary Auldbridge|r
-    .isOnQuest 44184
+    .isOnQuest 44184 --In the Blink of an Eye
     .goto 627,57.60,45.78
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Emissary Auldbridge|r.
     .turnin 44184 >>Turn in In the Blink of an Eye
@@ -30609,12 +30428,10 @@ step
     .goto 627,55.24,24.01
     .zone 85 >>Take the portal to Orgrimmar
 ]])
-
 -- =================================
 -- =======    SEPERATORS    ========
 -- =================================
 --group RestedXP Midnight
-
 --LEVEL 1-10
 RXPGuides.RegisterGuide([[
 #retail
@@ -30623,18 +30440,13 @@ RXPGuides.RegisterGuide([[
 #name 1a 2
 #displayname |cFFFCDC00LEVEL 1-10|r
 #disabled
-
 << !Harronir !Nightborne !HighmountainTauren !MagharOrc !EarthenDwarf !ZandalariTroll !Vulpera !Dracthyr !VoidElf !KulTiran !LightforgedDraenei !Mechagnome !Pandaren DK
-
 step
 +1
-
 ]])
-
 -- =================================
 -- =======   NEUTRAL ZONES   =======
 -- =================================
-
 --Death Knight Plaguelands: The Scarlet Enclave
 RXPGuides.RegisterGuide([[
 #retail
@@ -30645,10 +30457,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - Plaguelands
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2 << Alliance
 #next b1) BfA Intro 2 << Horde
-
-
 << DK !Pandaren !KulTiran !DarkIronDwarf !LightforgedDraenei !Mechagnome !VoidElf !HighmountainTauren !ZandalariTroll !Nightborne !Vulpera !MagharOrc
-
 step
     #include RestedXP Speed Leveling\a) DK Intro
 ]])
@@ -30662,9 +30471,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - The Frozen Throne
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2 << Alliance
 #next b1) BfA Intro 2 << Horde
-
 << DK Pandaren/DarkIronDwarf DK/KulTiran DK/LightforgedDraenei DK/Mechagnome DK/VoidElf DK/HighmountainTauren DK/Nightborne DK/ZandalariTroll DK/MagharOrc DK/Vulpera DK
-
 step
     #include RestedXP Speed Leveling\a) New DK Intro
 ]])
@@ -30678,9 +30485,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - Mardum
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2 << Alliance
 #next b1) BfA Intro 2 << Horde
-
 << DemonHunter !VoidElf
-
 step
     #include RestedXP Speed Leveling\a) DH Intro
 ]])
@@ -30694,9 +30499,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - The Forbidden Reach
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2 << Alliance
 #next b1) BfA Intro 2 << Horde
-
 << Dracthyr
-
 step
     #include RestedXP Speed Leveling\a) Dracthyr Intro
 ]])
@@ -30710,9 +30513,7 @@ RXPGuides.RegisterGuide([[
 #displayname The Wandering Isle |cRXP_ENEMY_(Alternative)|r
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2 << Alliance
 #next b1) BfA Intro 2 << Horde
-
 << Pandaren !DK
-
 step
     #include RestedXP Speed Leveling\a) Pandaren Intro
 ]])
@@ -30726,9 +30527,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - Harandar
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2 << Alliance
 #next b1) BfA Intro 2 << Horde
-
 << Harronir
-
 step
     #include RestedXP Speed Leveling\a) Haranir Intro
 ]])
@@ -30742,9 +30541,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - Hall of Awakening
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2 << Alliance
 #next b1) BfA Intro << Horde
-
 << EarthenDwarf
-
 step
     #include RestedXP Speed Leveling\a) EarthenDwarf Intro
 ]])
@@ -30758,15 +30555,12 @@ RXPGuides.RegisterGuide([[
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2 << Alliance
 #next b1) BfA Intro << Horde
 #internal
-
 step
     #include RestedXP Speed Leveling\a) Arathi Highlands Returning Player
 ]])
-
 -- =================================
 -- ======   ALLIANCE ZONES   =======
 -- =================================
-
 --Exile's Reach
 RXPGuides.RegisterGuide([[
 #retail
@@ -30776,9 +30570,7 @@ RXPGuides.RegisterGuide([[
 #name a) Exile's Reach Alliance 2
 #displayname |cFF1EFF001|r - Exile's Reach
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2
-
 << Alliance !Harronir !Dracthyr !DemonHunter !DK !KulTiran !EarthenDwarf !DarkIronDwarf !LightforgedDraenei !Mechagnome !VoidElf !NightBorne !HighmountainTauren !Vulpera !MagharOrc !ZandalariTroll
-
 step
     #include RestedXP Speed Leveling\a) Exile's Reach
 ]])
@@ -30792,9 +30584,7 @@ RXPGuides.RegisterGuide([[
 #displayname Ammen Vale |cRXP_ENEMY_(Alternative)|r
 #defaultfor Draenei !DK
 #next ac) Draenei Azuremyst Isle 2
-
 << Alliance
-
 step
     #include RestedXP Speed Leveling\ab) Ammen Vale
 ]])
@@ -30808,9 +30598,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Azuremyst Isle
 #defaultfor Draenei !DK
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2
-
 << Alliance
-
 step
     #include RestedXP Speed Leveling\ac) Draenei Azuremyst Isle
 ]])
@@ -30824,9 +30612,7 @@ RXPGuides.RegisterGuide([[
 #displayname Coldridge Valley |cRXP_ENEMY_(Alternative)|r
 #defaultfor Dwarf !DK
 #next ac) Dwarf & Gnome Dun Morogh 2
-
 << Alliance
-
 step
     #include RestedXP Speed Leveling\ab) Dwarf Coldridge Valley
 ]])
@@ -30840,9 +30626,7 @@ RXPGuides.RegisterGuide([[
 #displayname  New Tinkertown |cRXP_ENEMY_(Alternative)|r
 #defaultfor Gnome !DK
 #next ac) Dwarf & Gnome Dun Morogh 2
-
 << Alliance
-
 step
     #include RestedXP Speed Leveling\ab) New Tinkertown
 ]])
@@ -30856,9 +30640,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Dun Morogh
 #defaultfor Dwarf Gnome !DK
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2
-
 << Alliance
-
 step
     #include RestedXP Speed Leveling\ac) Dwarf & Gnome Dun Morogh
 ]])
@@ -30872,9 +30654,7 @@ RXPGuides.RegisterGuide([[
 #displayname Northshire Valley |cRXP_ENEMY_(Alternative)|r
 #defaultfor Human !DK
 #next ac) Elwynn Forest 1 2
-
 << Alliance
-
 step
     #include RestedXP Speed Leveling\ab) Northshire Valley
 ]])
@@ -30888,9 +30668,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Elwynn Forest
 #defaultfor Human !DK
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2
-
 << Alliance
-
 step
     #include RestedXP Speed Leveling\ac) Elwynn Forest 1
 ]])
@@ -30904,9 +30682,7 @@ RXPGuides.RegisterGuide([[
 #displayname Shadowglen |cRXP_ENEMY_(Alternative)|r
 #defaultfor NightElf !DemonHunter !DK
 #next ac) Night Elf Teldrassil 2
-
 << Alliance
-
 step
     #include RestedXP Speed Leveling\ab) Shadowglen
 ]])
@@ -30920,9 +30696,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Teldrassil
 #defaultfor NightElf !DemonHunter !DK
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2
-
 << Alliance
-
 step
     #include RestedXP Speed Leveling\ac) Night Elf Teldrassil
 ]])
@@ -30935,9 +30709,7 @@ RXPGuides.RegisterGuide([[
 #name ab) Worgen Intro 2
 #displayname Gilneas |cRXP_ENEMY_(Alternative)|r
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2
-
 << Alliance Worgen !DK
-
 step
     #include RestedXP Speed Leveling\ab) Worgen Intro
 ]])
@@ -30950,9 +30722,7 @@ RXPGuides.RegisterGuide([[
 #name a) DarkIronDwarf Intro 2
 #displayname |cFF1EFF001|r - Shadowforge City
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2
-
 << Alliance DarkIronDwarf !DK
-
 step
     #include RestedXP Speed Leveling\a) DarkIronDwarf Intro
 ]])
@@ -30965,9 +30735,7 @@ RXPGuides.RegisterGuide([[
 #name a) KulTiran Intro 2
 #displayname |cFF1EFF001|r - Boralus
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2
-
 << Alliance KulTiran !DK
-
 step
     #include RestedXP Speed Leveling\a) KulTiran Intro
 ]])
@@ -30980,9 +30748,7 @@ RXPGuides.RegisterGuide([[
 #name a) LightforgedDraenei Intro 2
 #displayname |cFF1EFF001|r - The Vindicaar
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2
-
 << Alliance LightforgedDraenei !DK
-
 step
     #include RestedXP Speed Leveling\a) LightforgedDraenei Intro
 ]])
@@ -30995,9 +30761,7 @@ RXPGuides.RegisterGuide([[
 #name a) Mechagnome Intro 2
 #displayname |cFF1EFF001|r - Mechagon City
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2
-
 << Alliance Mechagnome !DK
-
 step
     #include RestedXP Speed Leveling\a) Mechagnome Intro
 ]])
@@ -31010,17 +30774,13 @@ RXPGuides.RegisterGuide([[
 #name a) VoidElf Intro 2
 #displayname |cFF1EFF001|r - Telogrus Rift
 #next RestedXP Midnight\ba) DF Alliance Intro Midnight (A) 2
-
 << Alliance VoidElf !DK
-
 step
     #include RestedXP Speed Leveling\a) VoidElf Intro
 ]])
-
 -- ====================================
 -- =======    HORDE ZONES    ==========
 -- ====================================
-
 --Exile's Reach
 RXPGuides.RegisterGuide([[
 #retail
@@ -31030,10 +30790,7 @@ RXPGuides.RegisterGuide([[
 #name a) Exile's Reach Horde 2
 #displayname |cFF1EFF001|r - Exile's Reach
 #next b1) BfA Intro 2
-
-
 << Horde !Harronir !Dracthyr !DemonHunter !DK !Nightborne !HighmountainTauren !Vulpera !MagharOrc !ZandalariTroll
-
 step
     #include RestedXP Speed Leveling\a) Exile's Reach Horde
 ]])
@@ -31047,9 +30804,7 @@ RXPGuides.RegisterGuide([[
 #displayname Sunstrider Isle |cRXP_ENEMY_(Alternative)|r
 #next ac) Blood Elf Eversong Woods 2
 #defaultfor BloodElf !DK
-
 << Horde
-
 step
     #include RestedXP Speed Leveling\ab) Sunstrider Isle
 ]])
@@ -31063,9 +30818,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Eversong Woods
 #next b1) BfA Intro 2
 #defaultfor BloodElf !DK
-
 << Horde
-
 step
     #include RestedXP Speed Leveling\ac) Blood Elf Eversong Woods
 ]])
@@ -31082,9 +30835,7 @@ RXPGuides.RegisterGuide([[
 #next ac) Echo Isles2 2 << !Troll --Orc
 #next a) BfA Intro 2 << Troll
 #defaultfor Orc !DK/Troll !DK
-
 << Horde
-
 step << !Troll
     #include RestedXP Speed Leveling\ab) Valley of Trials1
 step << Troll
@@ -31103,9 +30854,7 @@ RXPGuides.RegisterGuide([[
 #next ab) Valley of Trials2 2 << Troll
 #next b1) BfA Intro 2 << !Troll
 #defaultfor Orc !DK/Troll !DK
-
 << Horde
-
 step << !Troll
     #include RestedXP Speed Leveling\ac) Echo Isles1
 step << Troll
@@ -31121,9 +30870,7 @@ RXPGuides.RegisterGuide([[
 #displayname Camp Narache |cRXP_ENEMY_(Alternative)|r
 #next ac) Tauren Camp Mulgore 2
 #defaultfor Tauren !DK
-
 << Horde
-
 step
     #include RestedXP Speed Leveling\ab) Camp Narache
 ]])
@@ -31137,9 +30884,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Mulgore
 #next b1) BfA Intro 2
 #defaultfor Tauren !DK
-
 << Horde
-
 step
     #include RestedXP Speed Leveling\ac) Tauren Camp Mulgore
 ]])
@@ -31154,9 +30899,7 @@ RXPGuides.RegisterGuide([[
 #title Deathknell
 #next ac) Undead Tirisfal Glades 2
 #defaultfor Undead !DK
-
 << Horde
-
 step
     #include RestedXP Speed Leveling\ab) Deathknell
 ]])
@@ -31170,9 +30913,7 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Tirisfal Glades
 #next b1) BfA Intro 2
 #defaultfor Undead !DK
-
 << Horde
-
 step
     #include RestedXP Speed Leveling\ac) Undead Tirisfal Glades
 ]])
@@ -31185,9 +30926,7 @@ RXPGuides.RegisterGuide([[
 #name ab) Goblin Intro 2
 #displayname Kezan & The Lost Isles |cRXP_ENEMY_(Alternative)|r
 #next b1) BfA Intro 2
-
 << Horde Goblin !DK
-
 step
     #include RestedXP Speed Leveling\ab) Goblin Intro
 ]])
@@ -31200,9 +30939,7 @@ RXPGuides.RegisterGuide([[
 #name a) HighmountainTauren 2
 #displayname |cFF1EFF001|r - Highmountain Tauren
 #next b1) BfA Intro 2
-
 << Horde HighmountainTauren !DK
-
 step
     #include RestedXP Speed Leveling\a) HighmountainTauren
 ]])
@@ -31215,9 +30952,7 @@ RXPGuides.RegisterGuide([[
 #name a) Nightborne Intro 2
 #displayname |cFF1EFF001|r - The Nighthold
 #next b1) BfA Intro 2
-
 << Horde Nightborne !DK
-
 step
     #include RestedXP Speed Leveling\a) Nightborne Intro
 ]])
@@ -31230,9 +30965,7 @@ RXPGuides.RegisterGuide([[
 #name a) ZandalariTroll Intro 2
 #displayname |cFF1EFF001|r - Dazar'alor
 #next b1) BfA Intro 2
-
 << Horde ZandalariTroll !DK
-
 step
     #include RestedXP Speed Leveling\a) ZandalariTroll Intro
 ]])
@@ -31245,9 +30978,7 @@ RXPGuides.RegisterGuide([[
 #name a) MagharOrc Intro 2
 #displayname |cFF1EFF001|r - Orgrimmar
 #next b1) BfA Intro 2
-
 << Horde MagharOrc !DK
-
 step
     #include RestedXP Speed Leveling\a) MagharOrc Intro
 ]])
@@ -31260,9 +30991,7 @@ RXPGuides.RegisterGuide([[
 #name a) Vulpera Intro 2
 #displayname |cFF1EFF001|r - Orgrimmar
 #next b1) BfA Intro 2
-
 << Horde Vulpera !DK
-
 step
     #include RestedXP Speed Leveling\a) Vulpera Intro
 ]])
@@ -31273,7 +31002,6 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Midnight
 #name a) Horde Legion Intro 2
 #internal
-
 step
     #include RestedXP Speed Leveling\a) Horde Legion Intro
 ]])

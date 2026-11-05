@@ -2728,7 +2728,7 @@ step << NightElf/Draenei
 .dungeon DM
     #optional
     .goto Ironforge,55.491,47.751
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t 与 |cRXP_FRIENDLY_格莱斯·瑟登|r 对话
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_格莱斯·瑟登|r 对话
     .fp Ironforge >> 获取铁炉堡的飞行路径
     .target 格莱斯·瑟登
     .zoneskip Wetlands
@@ -2812,7 +2812,7 @@ step
     .goto StormwindClassic,63.301,62.103,30,0
     .goto StormwindClassic,63.047,65.744,15,0
     .goto StormwindClassic,66.276,62.135
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_杜加尔·朗德瑞克|r 对话
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t 与 |cRXP_FRIENDLY_杜加尔·朗德瑞克|r 对话
     .fp Stormwind >> 获取暴风城的飞行路径 << !Human
     .fly Westfall >> 飞往西部荒野 << Human/Dwarf Warrior/Gnome Warrior/Rogue/Warlock
     .target 杜加尔·朗德瑞克
@@ -3055,7 +3055,7 @@ step << Human Rogue
     .goto StormwindClassic,63.301,62.103,30,0
     .goto StormwindClassic,63.047,65.744,15,0
     .goto StormwindClassic,66.276,62.135
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_杜加尔·朗德瑞克|r 对话
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t 与 |cRXP_FRIENDLY_杜加尔·朗德瑞克|r 对话
     .fly Redridge Mountains >> 飞往赤脊山
     .target 杜加尔·朗德瑞克
 step << !Human Rogue
@@ -3303,7 +3303,7 @@ step
     .goto StormwindClassic,42.435,59.236,10,0
     .goto StormwindClassic,41.102,58.091
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_典狱官塞尔沃特|r 对话
-    .turnin 389 >> 交任务 巴基尔·斯瑞德
+    .turnin 389 >> 交任务巴基尔·斯瑞德
     .target 典狱官塞尔沃特
 step
 .dungeon DM
@@ -4357,7 +4357,7 @@ step
 .dungeon WC
     .goto The Barrens,48.184,32.781
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_菲拉·古风|r 对话
-    .turnin 6981 >> 交任务 发光的碎片
+    .turnin 6981 >> 交任务发光的碎片
     .target 菲拉·古风
     .isQuestComplete 6981
 step
@@ -4817,7 +4817,7 @@ step
 #xprate >1.49
     .goto Wetlands,7.95,56.38
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|t 与 |cRXP_FRIENDLY_德温·晨光|r对话
-    .vendor >> |cRXP_BUY_尽可能多地购买|r |T134831:0|t[治疗药水] |cRXP_BUY_（如果有售）|r
+    .vendor >> |cRXP_BUY_尽可能多购买|r |T134831:0|t[治疗药水] |cRXP_BUY_有库存的话|r
     >>|cRXP_WARN_这是限量供应物品。如果 |cRXP_FRIENDLY_德温·晨光|r 没有库存，请跳过此步骤|r
     .target 德温·晨光
     .zoneskip Wetlands,1
@@ -4833,7 +4833,7 @@ step
     .goto Wetlands,10.89,59.66
     .target 大副菲兹莫斯
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_大副菲兹莫斯|r 对话
-    .accept 288 >> 接受任务 第三舰队
+    .accept 288 >> 接受任务第三舰队
 step
 #xprate >1.49
     .goto Wetlands,10.69,60.95
@@ -4987,7 +4987,7 @@ step << NightElf/Draenei
 step << NightElf/Draenei
 #xprate >1.49
     .goto Ironforge,55.491,47.751
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t 与 |cRXP_FRIENDLY_格莱斯·瑟登|r 对话
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_格莱斯·瑟登|r 对话
     .fp Ironforge >> 获取铁炉堡的飞行路径
     .target 格莱斯·瑟登
 step << NightElf/Draenei
@@ -5892,7 +5892,7 @@ step
 #xprate >1.49
     .goto Wetlands,7.95,56.38
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|t 与 |cRXP_FRIENDLY_德温·晨光|r对话
-    .vendor >> |cRXP_BUY_尽可能多地购买|r |T134831:0|t[治疗药水] |cRXP_BUY_（如果有售）|r
+    .vendor >> |cRXP_BUY_尽可能多购买|r |T134831:0|t[治疗药水] |cRXP_BUY_有库存的话|r
     >>|cRXP_WARN_这是限量供应物品。如果 |cRXP_FRIENDLY_德温·晨光|r 没有库存，请跳过此步骤|r
     .target 德温·晨光
     .zoneskip Wetlands,1
@@ -5908,7 +5908,7 @@ step
     .goto Wetlands,10.89,59.66
     .target 大副菲兹莫斯
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与 |cRXP_FRIENDLY_大副菲兹莫斯|r 对话
-    .accept 288 >> 接受任务 第三舰队
+    .accept 288 >> 接受任务第三舰队
 step
 #xprate >1.49
     .goto Wetlands,10.69,60.95

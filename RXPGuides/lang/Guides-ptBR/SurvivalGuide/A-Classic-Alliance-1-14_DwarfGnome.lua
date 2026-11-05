@@ -185,7 +185,7 @@ step
     .target Grelin Whitebeard
     .goto Dun Morogh,25.076,75.713
     .turnin 234 >> Entregue Coldridge Valley Malha Entrega
-    .accept 182 >> Aceite The Trolls Cave
+    .accept 182 >> Aceite A Caverna dos Trolls
 step << Paladin/Mage/Warlock/Hunter
     .xp 4
 step << Paladin/Mage/Warlock/Hunter
@@ -1257,7 +1257,7 @@ step << Hunter
 step << Hunter
     .goto Dun Morogh,45.810,53.039
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Grif Selvacuore|r
-    .turnin 6064 >>Entregue Adestramento da Fera - Missão
+    .turnin 6064 >>Entregue Domando a fera
     .target Grif Wildheart
     .accept 6084 >>Aceite Adestramento da Fera - Missão
 step << Hunter
@@ -1268,7 +1268,7 @@ step << Hunter
 step << Hunter
     .goto Dun Morogh,45.810,53.039
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Grif Selvacuore|r
-    .turnin 6084 >>Entregue Adestramento da Fera - Missão
+    .turnin 6084 >>Entregue Domando a fera
     .target Grif Wildheart
     .accept 6085 >>Aceite Adestramento da Fera - Missão
 step << Hunter
@@ -1279,7 +1279,7 @@ step << Hunter
 step << Hunter
     .goto Dun Morogh,45.810,53.039
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Grif Selvacuore|r
-    .turnin 6085 >>Entregue Adestramento da Fera - Missão
+    .turnin 6085 >>Entregue Domando a fera
     .target Grif Wildheart
     .accept 6086 >>Aceite Treinamento da Fera - Missão
 step << Warrior
@@ -2011,7 +2011,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Capitão da Guarda Florestan|r
     .target Guard Parker
     .goto Redridge Mountains,17.4,69.6
-    .accept 244 >> Aceite Encroaching Gnolls
+    .accept 244 >> Aceite Gnolls Invasores
 step
     .goto Redridge Mountains,18.581,69.208,15,0
     .goto Redridge Mountains,23.325,71.373,25,0
@@ -2019,7 +2019,7 @@ step
     .goto Redridge Mountains,30.733,59.996
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com o |cRXP_FRIENDLY_Subdelegado David|r
     >>|cRXP_WARN_MANTENHA-SE NA ESTRADA PRINCIPAL E EVITE QUALQUER INIMIGO PRÓXIMO NO CAMINHO|r
-    .turnin 244 >> Entregue Encroaching Gnolls
+    .turnin 244 >> Entregue Gnolls Invasores
     .target Deputy Feldon
 step
     .goto Redridge Mountains,30.590,59.410
@@ -2129,7 +2129,7 @@ step << Rogue
     .trainer >> Treine suas magias de classe
 step << Priest
     .goto Elwynn Forest,43.283,65.719
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com a |cRXP_FRIENDLY_Sacerdotisa Joselita|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t Fale com |cRXP_FRIENDLY_Sacerdotisa Joselita|r
     .target Priestess Josetta
     .trainer >> Treine suas magias de classe
 step
@@ -2685,7 +2685,7 @@ step << !Dwarf/!Paladin
 step << Dwarf Paladin
     #completewith next
     .goto Dun Morogh,86.09,51.15
-    .zone Dun Morogh >> Vá para Dun Morogh
+    .zone Dun Morogh >> Viagem para Dun Morogh
 step << Dwarf Paladin
     #completewith next
     .goto Dun Morogh,78.321,58.088
@@ -2707,7 +2707,7 @@ step << Dwarf Paladin
     .mob Dark Iron Spy
 step << Dwarf Paladin
 	#completewith next
-    .hs >> Use sua Pedra de Retorno para ir a Ventobravo
+    .hs >> Use a Pedra de Regresso para Ventobravo
 step << Paladin
     #completewith next
     .goto StormwindClassic,42.51,33.51,20 >> Viaje até a Catedral de Ventobravo
@@ -2747,7 +2747,7 @@ step << Mage/Priest/Warlock
     .goto Ironforge,22.837,17.094,8,0
     .goto Ironforge,21.131,17.276,5,0
     .goto Ironforge,23.135,15.936
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Harick Batesseixo|r embaixo
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Harick Batesseixo|r lá embaixo
     >>|cRXP_WARN_Se você não conseguir adquirir uma|r |T135144:0|t[Varinha Mágica Maior] |cRXP_WARN_compre uma|r |T135468:0|t[Varinha Fumegante] |cRXP_WARN_e equipe-a quando você tiver nível 15|r
     .collect 5208,1 --Smoldering Wand (1)
     .target Harick Boulderdrum

@@ -8,7 +8,6 @@ RXPGuides.RegisterGuide([[
 #version 7
 #subgroup RXP TBC Survival Guide 1-30
 #next 24-25 Hillsbrad Foothills
-
 step
     #completewith MeetingTW
     .goto Orgrimmar,48.97,92.84,50,0
@@ -2854,10 +2853,7 @@ step
 step
     #optional
     .abandon 1491 >>Abandon Smart Drinks
-
-
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -2867,7 +2863,6 @@ RXPGuides.RegisterGuide([[
 #version 7
 #subgroup RXP TBC Survival Guide 1-30
 #next 25-27 South Barrens
-
 step
     #sticky
     #completewith EnterSFK
@@ -3857,11 +3852,7 @@ step
     #optional
     .abandon 1098 >>Abandon Deathstalkers in Shadowfang
     .dungeon SFK
-
     ]])
-
-
-
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -3871,7 +3862,6 @@ RXPGuides.RegisterGuide([[
 #version 7
 #subgroup RXP TBC Survival Guide 1-30
 #next 27-29 Ashenvale
-
 step << Shaman/Warrior
     .goto Thunder Bluff,54.06,57.25
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|cRXP_BUY_Talk to|r |cRXP_FRIENDLY_Delgo|r
@@ -4747,10 +4737,7 @@ step
     .accept 2842 >>Accept Chief Engineer Scooty
     .target Sovik
     .dungeon GNOMER
-
     ]])
-
-
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -4760,8 +4747,6 @@ RXPGuides.RegisterGuide([[
 #version 7
 #subgroup RXP TBC Survival Guide 1-30
 #next 29-31 Thousand Needles
-
-
 step
     #ah
     .goto Orgrimmar,55.59,62.92
@@ -5690,7 +5675,6 @@ step
     .zoneskip Ashenvale,1
     .dungeon !BFD
 ]])
-
 RXPGuides.RegisterGuide([[
 #tbc
 #version 7
@@ -5700,7 +5684,6 @@ RXPGuides.RegisterGuide([[
 #version 7
 #subgroup RXP TBC Survival Guide 1-30
 #next RXP TBC Survival Guide (H)\31-33 Hillsbrad/Arathi part 1
-
 step << Shaman/Warrior
     #ah
     .goto Thunder Bluff,54.06,57.25

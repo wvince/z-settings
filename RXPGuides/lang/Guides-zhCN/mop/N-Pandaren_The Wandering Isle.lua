@@ -7,7 +7,7 @@ RXPGuides.RegisterGuide([[
 #version 1
 #group RXP 起始区域（熊猫人）
 #name 1-12级 迷踪岛
-#next RXP 大灾变 1-80 (联盟)\10-20级 洛克莫丹;RXP 大灾变 1-80 (部落)\10-22级 艾萨拉;RXP 熊猫人之谜1-80级(联盟)\10-20级 洛克莫丹;RXP MoP 1-80 (H)\10-22级 艾萨拉;skip
+#next RXP 大灾变 1-80 (联盟)\10-20级 洛克莫丹;RXP 大灾变 1-80 (部落)\10-22级 艾萨拉;RXP 熊猫人之谜1-80级(联盟)\10-20级 洛克莫丹;RXP 熊猫人之谜 1-80级 (部落)\10-22级 艾萨拉;skip
 
 
 << Pandaren !DK
@@ -1046,7 +1046,7 @@ step
 	.timer 231,神真子的苦难 RP
 step
     .goto 378,30.8,92.9
-	>>|cRXP_WARN_等待剧情演出完成|r
+	>>|cRXP_WARN_等剧情结束|r
     .complete 29791,2 --1/1 Uncover the source of Shen-zin Su's pain
 step
     .goto 378,51.35,57.21,20,0
@@ -1326,7 +1326,7 @@ step
 	.target Ji Firepaw
 step
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|t 与 |cRXP_FRIENDLY_季·火掌|r 对话
-    >>|cRXP_WARN_等待剧情演出完成|r
+    >>|cRXP_WARN_等剧情结束|r
     .goto 378,38.77,86.32
     .accept 29800 >>接受任务 新的盟友
 	.target Ji Firepaw

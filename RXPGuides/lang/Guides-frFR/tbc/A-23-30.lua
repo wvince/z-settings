@@ -2596,7 +2596,7 @@ step
 .dungeon Stockades
     #ah
     >>Ramassez les |cRXP_LOOT_Clara's Fresh Apples|r sur la table
-    >>Si vous avez toujours besoin d' [Etoffe de soie] vous pouvez en acheter à l'Hôtel des Ventes
+    >>Si vous avez besoin d'[Etoffe de soie] achetez-en à l'Hôtel des Ventes
     .complete 2746,2 -- Clara's Fresh Apple (2)
     .goto Elwynn Forest,33.952,57.162
     .complete 2746,1 -- Silk Cloth (3)
@@ -4310,7 +4310,7 @@ step << Human Paladin
     .goto Elwynn Forest,74.2,46.8,60,0
     .goto Elwynn Forest,76.6,53.6,60,0
     .goto Elwynn Forest,73.0,54.2,60,0
-    >>Tuez |cRXP_ENEMY_Defias Voleur Wizards|r. Dépouillez-les pour obtenir le |cRXP_LOOT_Defias Script|r
+    >>Tuez les |cRXP_ENEMY_Sorciers-voleurs défias|r. Dépouillez-les pour le |cRXP_LOOT_Script défias|r
     .complete 1787,1 --Defias Script (1)
     .mob Defias Rogue Wizard
 step << !Shaman
@@ -5298,7 +5298,7 @@ step << !Mage
     .zone Stormwind City >> Prenez le Tram des profondeurs pour Stormwind
 step << Mage
     #optional
-    .cast 3561 >>|cRXP_WARN_Lancez|r |T135763:0|t[Téléportation : Hurlevent]
+    .cast 3561 >>Lancez [Téléportation : Stormwind]
     .usespell 3561
     .zoneskip Stormwind City
 step
@@ -5526,7 +5526,7 @@ step << Human Paladin
     .goto Elwynn Forest,74.2,46.8,60,0
     .goto Elwynn Forest,76.6,53.6,60,0
     .goto Elwynn Forest,73.0,54.2,60,0
-    >>Tuez |cRXP_ENEMY_Defias Voleur Wizards|r. Dépouillez-les pour obtenir le |cRXP_LOOT_Defias Script|r
+    >>Tuez les |cRXP_ENEMY_Sorciers-voleurs défias|r. Dépouillez-les pour le |cRXP_LOOT_Script défias|r
     .complete 1787,1 --Defias Script (1)
     .mob Defias Rogue Wizard
 step << !Shaman
@@ -5614,7 +5614,7 @@ step
     #optional
     .isOnQuest 231
     .goto Duskwood,17.72,29.07
-    >>Cliquez sur le |cRXP_PICK_A Weathered Grave|r
+    >>Cliquez sur la |cRXP_PICK_A Weathered Grave|r
     .turnin 231 >> Rendez la quête L'amour d'une fille
 step
     .isOnQuest 181,101,78,58,160
@@ -5788,7 +5788,7 @@ step << Human !Paladin !Warlock
     .itemcount 2411,<1 -- Black Stallion Bridle
 step << Mage
     #optional
-    .cast 3561 >>|cRXP_WARN_Lancez|r |T135763:0|t[Téléportation : Hurlevent]
+    .cast 3561 >>Lancez [Téléportation : Stormwind]
     .usespell 3561
     .zoneskip Stormwind City
 step << !Mage
@@ -5802,7 +5802,7 @@ step
     .zone Stormwind City >> Retour à Hurlevent
 step << Shaman
 	.goto Stormwind City,61.822,83.991
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à la |cRXP_FRIENDLY_Long-voyante Umbrua|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Farseer Umbrua|r
     .accept 10491 >> Acceptez la quête L'appel de l'air
 	.trainer >> Apprenez vos sorts de classe
     .target Farseer Umbrua
@@ -5964,7 +5964,7 @@ step << skip
 	.goto Ironforge,61.34,89.25
 	.train 197 >> Acheter la compétence pour porter des haches à deux mains << !Rogue
 	.train 266 >> Apprenez la compétence pour porter des Fusils << Hunter/Warrior/Rogue
-    .train 199 >> Achetez la compétence pour porter des masses à deux mains << Warrior/Shaman
+    .train 199 >> Acheter la compétence pour porter des masses à deux mains << Warrior/Shaman
     .train 198 >> Acheter la compétence pour porter des masses à une main << Rogue/Shaman
     .train 44 >> Acheter la compétence pour porter des haches à une main << Warrior wotlk/Shaman/Rogue wotlk
     .zoneskip Wetlands
@@ -6247,7 +6247,7 @@ step << NightElf !Druid
     .zone Darnassus >> Prenez le portail violet pour Darnassus
 step << NightElf !Druid
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Lelanai|r et |cRXP_FRIENDLY_Jartsam|r
-    .vendor >>|cRXP_BUY_Achetez un|r [|cFF0070FFFrostsaber|r] |cRXP_BUY_ou un|r [|cFF0070FFNightsaber|r]
+    .vendor >>|cRXP_BUY_Achetez un|r [|cFF0070FFFrostsaber|r] |cRXP_BUY_ou  un|r [|cFF0070FFNightsaber|r]
     .goto Darnassus,38.283,15.365
     .train 33388 >>Apprenez [Apprenti cavalier]
     .goto Darnassus,38.694,15.857
@@ -6645,7 +6645,7 @@ step
 step
     .goto Hillsbrad Foothills,50.71,58.76,15,0
     .goto Hillsbrad Foothills,52.09,58.70
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Brewmeister Bilger|r dans le sous-sol
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Brewmeister Bilger|r dans la cave
     >>Si vous ratez cette quête chronométrée, abandonnez-la et passez cette étape
     .turnin 647 >>Rendez la quête Le tord-boyaux de MacKreel
     .target Brewmeister Bilger

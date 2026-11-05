@@ -1,6 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Horde" then return end
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #classic
@@ -13,8 +12,6 @@ RXPGuides.RegisterGuide([[
 #groupid RXP-SRGCE-A1
 #defaultfor Human
 #next 6-11 Elwynn Forest
-
-
 step << !Human
     #completewith next
     +You have selected a guide meant for Humans. You should choose the same starter zone that you start in
@@ -341,14 +338,7 @@ step << Paladin/Warrior
     .money >0.0210
     .train 100,1 << Warrior --Charge
     .train 20271,1 << Paladin --Judgement
-
-
-
 ----Start of 2x level 4 training----
-
-
-
-
 step << Mage
     #xprate >1.59
     #optional
@@ -447,14 +437,7 @@ step << Warlock
     .turnin 3105 >> Turn in Tainted Letter
     .train 172 >>Train |T136118:0|t[Corruption]
     .target Drusilla La Salle
-
-
-
 ----End of 2x training section----
-
-
-
-
 step
     #season 0,1 << Priest/Warrior
     #loop
@@ -479,14 +462,7 @@ step
     >>Kill |cRXP_ENEMY_Kobold Workers|r
     .complete 15,1 --Kill Kobold Worker (x10)
     .mob Kobold Worker
-
-
-
 ----Start of 1x train section----
-
-
-
-
 step
     #xprate <1.59
     #requires Memory << Priest --Season 2
@@ -600,14 +576,7 @@ step << Warlock
     .turnin 3105 >> Turn in Tainted Letter
     .train 172 >>Train |T136118:0|t[Corruption]
     .target Drusilla La Salle
-
-
-
 ----End of 1x train section----
-
-
-
-
 step
     #season 0,1
     #loop
@@ -1167,8 +1136,6 @@ step << Rogue
     .use 203993
     .itemcount 203993,1
 ]])
-
-
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
@@ -1181,7 +1148,6 @@ RXPGuides.RegisterGuide([[
 #displayname 6-13 Elwynn Forest << SoD
 #next 11-13 Loch Modan
 #defaultfor Human
-
 step
     #season 0,1 << Rogue
     #hardcore
@@ -3695,15 +3661,7 @@ step << Human Paladin
     --.accept 1780 >> Accept The Tome of Divinity
     .target Stephanie Turner
 ----XX if ever in the future, add Level 12 xp grind for 1.5x Tome of Divinity
-
-
-
-
 ----Warlock Elwynn Voidwalker Section Start----
-
-
-
-
 step << Warlock
     #optional
     #completewith GakinStart
@@ -3947,10 +3905,7 @@ step << Warlock
     .target Gakin the Darkbinder
     .goto StormwindClassic,25.25,78.59
     .turnin 1689 >> Turn in The Binding
-
-
 ----Warlock Elwynn Voidwalker Section End----
-
 step << Rogue
     #xprate <1.59
     .goto 1453,74.645,52.818
@@ -4933,7 +4888,6 @@ step
     .goto Dun Morogh,84.4,31.1,25 >>Go through the tunnel to Loch Modan
     .zoneskip Loch Modan
 ]])
-
 RXPGuides.RegisterGuide([[
 #classic
 #tbc
@@ -4946,7 +4900,6 @@ RXPGuides.RegisterGuide([[
 #displayname 13-15 Loch Modan << SoD
 #next 13-15 Westfall; 14-16 Darkshore
 #defaultfor Human
-
 step
     #optional
     #completewith next
@@ -5872,15 +5825,8 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Dungar Longdrink|r
     .fly Westfall >> Fly to Westfall
     .target Dungar Longdrink
-
-
-
 --XX End of <1.5x section
 ----Darkshore transit (>1.49x)----
-
-
-
-
 step << Mage
     #xprate >1.49
     .goto Ironforge,27.18,8.60

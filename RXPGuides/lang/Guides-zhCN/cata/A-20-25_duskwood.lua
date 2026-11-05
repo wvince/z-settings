@@ -38,7 +38,7 @@ step
 step
     .goto 47,75.56,45.37,8,0
     .goto 47,75.83,45.26
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与房子里的人对话
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t在房子里与 |cRXP_FRIENDLY_伊瓦夫人|r 对话
     .turnin 26653 >>交任务 夜色镇的补给
     .accept 26652 >>接受任务 幽灵的发丝
 	.target 伊瓦夫人
@@ -209,7 +209,7 @@ step
 step
     .goto 47,75.56,45.37,8,0
     .goto 47,75.83,45.26
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与房子里的人对话
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t在房子里与 |cRXP_FRIENDLY_伊瓦夫人|r 对话
     .turnin 26654 >>交任务 归还梳子
     .accept 26655 >>接受任务 送交发丝
 	.target 伊瓦夫人
@@ -579,7 +579,7 @@ step
 	.target Oliver Harris
 	.target Sister Elsington
 step
-    >>|cRXP_WARN_等待剧情演出完成|r
+    >>|cRXP_WARN_等剧情结束|r
     >>|cRXP_WARN_若计时结束后未获得进度，放弃「异想天开」并重新接受任务|r
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t与|cRXP_FRIENDLY_奥利弗·哈里斯|r,|cRXP_FRIENDLY_斯温·约根|r, 和|cRXP_FRIENDLY_艾丽辛顿修女|r 对话
     .complete 26760,1 --1/1 Worgen cured
@@ -705,7 +705,7 @@ step
     .maxlevel 28
 step
     .goto 47,74.17,46.47
-    >>击杀|cRXP_ENEMY_缝合怪|r
+    >>杀死 |cRXP_ENEMY_缝合怪.|r
     .complete 26727,1 --1/1 Stitches slain
 	.mob Stitches
     .maxlevel 28

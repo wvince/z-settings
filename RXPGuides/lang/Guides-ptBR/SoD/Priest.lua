@@ -149,7 +149,7 @@ RXPGuides.RegisterGuide([[
 step << Priest
     #season 2
     .goto Tirisfal Glades,31.11,66.02
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Duesten|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Clérigo das Trevas Duesten|r
     .accept 77670 >>Aceite Meditação da Morte-Viva
     .target Dark Cleric Duesten
 step << Priest
@@ -161,7 +161,7 @@ step << Priest
 step << Priest
     #season 2
     .goto Tirisfal Glades,31.11,66.02
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Duesten|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tFale com |cRXP_FRIENDLY_Clérigo das Trevas Duesten|r
     .turnin 77670 >>Entregue Meditação da Morte-Viva
     .target Dark Cleric Duesten
 
@@ -1169,7 +1169,7 @@ step
 step
     #optional
     .train 402855,1
-    .zone Arathi Highlands >>Vá para Planalto Arathi
+    .zone Arathi Highlands >>Vá ao Planalto Arathi
 step
     .train 402855,1
     .goto Arathi Highlands,62.1,54.5
@@ -1185,7 +1185,7 @@ step
     .collect 215428,1
 step
     .train 402855,1
-    .zone Swamp of Sorrows >>Vá para |cFFfa9602Pântano das Mágoas|r
+    .zone Swamp of Sorrows >>Vá ao |cFFfa9602Pântano das Mágoas|r
 step
     .train 402855,1
     .goto Swamp of Sorrows,16.7,53.8

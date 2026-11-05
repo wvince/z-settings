@@ -4,7 +4,7 @@ RXPGuides.RegisterGuide([[
 #version 7
 #group RXP TBC 生存指南 (H)
 << Horde
-#name 1-6 莫高雷
+#name 1-6级 莫高雷
 #version 7
 #subgroup RXP TBC Survival Guide 1-30
 #defaultfor Tauren
@@ -485,7 +485,7 @@ step << Shaman/Druid
     .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<4.2
 step << Shaman/Druid
     .goto Mulgore,45.66,58.60
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|cRXP_BUY_与|r |cRXP_FRIENDLY_尤加尔|r|cRXP_BUY_对话并|r|cRXP_BUY_从他那里购买一根|r |T135145:0|t[学徒短杖]
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|cRXP_BUY_与|r |cRXP_FRIENDLY_玛诺特|r |cRXP_BUY_对话，并向他购买|r |T135145:0|t[学徒短杖]|cRXP_BUY_|r
     .collect 2495,1,761,1 --Collect Walking Stick (1)
     .target 玛诺特·深痕
     .money <0.0504
@@ -758,7 +758,7 @@ step << Shaman/Druid
     .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<4.2
 step << Shaman/Druid
     .goto Mulgore,45.66,58.60
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|cRXP_BUY_与|r |cRXP_FRIENDLY_尤加尔|r|cRXP_BUY_对话并|r|cRXP_BUY_从他那里购买一根|r |T135145:0|t[学徒短杖]
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|cRXP_BUY_与|r |cRXP_FRIENDLY_玛诺特|r |cRXP_BUY_对话，并向他购买|r |T135145:0|t[学徒短杖]|cRXP_BUY_|r
     .collect 2495,1,749,1 --Collect Walking Stick (1)
     .target 玛诺特·深痕
     .money <0.0504
@@ -944,7 +944,7 @@ step << Shaman/Druid
     .itemStat 16,ITEM_MOD_DAMAGE_PER_SECOND_SHORT,<4.2
 step << Shaman/Druid
     .goto Mulgore,45.66,58.60
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|cRXP_BUY_与|r |cRXP_FRIENDLY_尤加尔|r|cRXP_BUY_对话并|r|cRXP_BUY_从他那里购买一根|r |T135145:0|t[学徒短杖]
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|t|cRXP_BUY_与|r |cRXP_FRIENDLY_玛诺特|r |cRXP_BUY_对话，并向他购买|r |T135145:0|t[学徒短杖]|cRXP_BUY_|r
     .collect 2495,1,743,1 --Collect Walking Stick (1)
     .target 玛诺特·深痕
     .money <0.0504
@@ -2515,7 +2515,7 @@ step
     .goto Undercity,45.32,78.32,10,0
     .goto Undercity,46.26,83.91,10,0
     .goto Undercity,49.03,87.92,10,0
-    .goto Undercity,52.94,89.60,10 >>进入皇家区
+    .goto Undercity,52.94,89.60,10 >>进入皇室区
     .dungeon RFC
 step
     #label RFCPowerPickup

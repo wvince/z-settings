@@ -54,7 +54,7 @@ step << !Mage
     .cooldown item,6948,<0,1
 step << !Mage
     #completewith next
-    .hs >> 炉石返回达拉然
+    .hs >> 炉石返回到达拉然
     .zoneskip Orgrimmar
     .skill mining,125,1
 step << !Mage
@@ -89,7 +89,7 @@ step << !Mage
     .cooldown item,6948,<0,1
 step << !Mage
     #completewith next
-    .hs >> 炉石返回达拉然
+    .hs >> 炉石返回到达拉然
     .skill mining,175,1
     .zoneskip Orgrimmar
 step << !Mage
@@ -146,7 +146,7 @@ step << Mage
     .skill mining,245,1
 step << !Mage
     #completewith next
-    .hs >> 炉石返回达拉然
+    .hs >> 炉石返回到达拉然
     .skill mining,245,1
     .zoneskip Orgrimmar
 step << !Mage
@@ -200,7 +200,7 @@ step << Mage
     .zoneskip Hellfire Peninsula
 step << !Mage
     #completewith next
-    .hs >> 炉石返回达拉然
+    .hs >> 炉石返回到达拉然
     .skill mining,325,1
     .zoneskip Hellfire Peninsula
 step
@@ -210,7 +210,7 @@ step
 step
     #completewith Krugosh
     .goto Shattrath City,64.1,41.1
-    .fly Thrallmar >> 飞往萨尔玛，地狱火半岛
+    .fly Thrallmar >> 飞往萨尔玛
     .skill mining,325,1
     .skill riding,300,1
     .zoneskip Hellfire Peninsula
@@ -272,7 +272,7 @@ step << Mage
     .skill mining 400,1
 step << !Mage
     #completewith next
-    .hs >> 炉石返回达拉然
+    .hs >> 炉石返回到达拉然
     .zoneskip Borean Tundra
     .skill mining 400,1
 step
@@ -329,7 +329,7 @@ step << Mage
     .skill mining,65,1
 step << !Mage
     #completewith next
-    .hs >> 炉石返回达拉然
+    .hs >> 炉石返回到达拉然
     .skill mining,65,1
     .zoneskip Stormwind City
 step << !Mage
@@ -371,7 +371,7 @@ step << !Mage
     .cooldown item,6948,<0,1
 step << !Mage
     #completewith next
-    .hs >> 炉石返回达拉然
+    .hs >> 炉石返回到达拉然
     .skill mining,125,1
     .zoneskip Stormwind City
 step << !Mage
@@ -406,7 +406,7 @@ step << !Mage
     .cooldown item,6948,<0,1
 step << !Mage
     #completewith next
-    .hs >> 炉石返回达拉然
+    .hs >> 炉石返回到达拉然
     .skill mining,175,1
     .zoneskip Stormwind City
 step << !Mage
@@ -444,7 +444,7 @@ step << Mage
     .skill mining,245,1
 step << !Mage
     #completewith next
-    .hs >> 炉石返回达拉然
+    .hs >> 炉石返回到达拉然
     .skill mining,245,1
     .zoneskip Stormwind City
 step << !Mage
@@ -515,7 +515,7 @@ step << Mage
     .zoneskip Hellfire Peninsula
 step << !Mage
     #completewith next
-    .hs >> 炉石返回达拉然
+    .hs >> 炉石返回到达拉然
     .skill mining,325,1
     .zoneskip Hellfire Peninsula
 step
@@ -584,7 +584,7 @@ step << Mage
     .skill mining 400,1
 step << !Mage
     #completewith next
-    .hs >> 炉石返回达拉然
+    .hs >> 炉石返回到达拉然
     .zoneskip Borean Tundra
     .skill mining 400,1
 step

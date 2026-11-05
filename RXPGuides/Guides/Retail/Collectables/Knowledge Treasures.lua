@@ -9,7 +9,6 @@ RXPGuides.RegisterGuide([[
 #displayname Midnight
 #chapters a) Eversong Woods Knowledge;a) Zul'aman Knowledge;a) Harandar Knowledge;a) Voidstorm Knowledge
 ]])
-
 --Eversong Woods
 RXPGuides.RegisterGuide([[
 #retail
@@ -19,7 +18,6 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF001|r - Eversong Woods Knowledge
 #next a) Zul'aman Knowledge
 #chapter
-
 step
     #include RestedXP Midnight\a) GC: Knowledge@SindoreiMasterworkChisel-SindoreiMasterworkChisel
 step
@@ -90,7 +88,6 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF002|r - Zul'aman Knowledge
 #next a) Harandar Knowledge
 #chapter
-
 -- step
 --     #include RestedXP Midnight\a) GC: Knowledge@HalfBakedTechniques-HalfBakedTechniques
 step
@@ -135,8 +132,6 @@ RXPGuides.RegisterGuide([[
 #displayname |cFF1EFF003|r - Harandar Knowledge
 #next a) Voidstorm Knowledge
 #chapter
-
-
 step
     #include RestedXP Midnight\a) GC: Knowledge@HaranirLeatherworkingKnife-HaranirLeatherworkingKnife
 step
@@ -176,7 +171,6 @@ RXPGuides.RegisterGuide([[
 #name a) Voidstorm Knowledge
 #displayname |cFF1EFF004|r - Voidstorm Knowledge
 #chapter
-
 step
     #include RestedXP Midnight\a) GC: Knowledge@PureVoidCrystal-PureVoidCrystal
 step
@@ -210,7 +204,6 @@ step
 step
     #include RestedXP Midnight\a) GC: Knowledge@EtherealStormwrench-EtherealStormwrench
 ]])
-
 --GC: Knowledge
 RXPGuides.RegisterGuide([[
 #retail
@@ -218,7 +211,6 @@ RXPGuides.RegisterGuide([[
 #group RestedXP Midnight
 #name a) GC: Knowledge
 #internal
-
 step
     #label SindoreiMasterworkChisel
     #arrowtext Click on |cRXP_PICK_Sin'dorei Masterwork Chisel|r

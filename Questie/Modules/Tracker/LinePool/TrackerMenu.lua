@@ -30,6 +30,8 @@ local Popup = QuestieLoader:ImportModule("QuestiePopup")
 
 ---@type l10n
 local l10n = QuestieLoader:ImportModule("l10n")
+---@type AchievementTracking
+local AchievementTracking = QuestieLoader:ImportModule("AchievementTracking")
 
 local LibDropDown = LibStub:GetLibrary("LibUIDropDownMenuQuestie-4.0")
 
@@ -54,20 +56,6 @@ end
 -- the map checks above. Otherwise a quest that loses eligibility while focused or hidden, e.g. by completing
 -- with no finisher in the database, would stay that way.
 
----True when the saved focus is this quest or one of its objectives.
----Saved focus is a quest ID, or a "questId objectiveIndex" string for objective focus.
----@param questId QuestId
----@return boolean
-local function _IsFocusedOnQuest(questId)
-    local focus = Questie.db.char.TrackerFocus
-    if type(focus) == "number" then
-        return focus == questId
-    elseif type(focus) == "string" then
-        return tonumber(focus:match("^(%d+) ")) == questId
-    end
-    return false
-end
-
 ---@param menu table
 ---@param isStillFocused fun(): boolean Rechecked on click; an open menu can outlive the focus it showed.
 local function _AddUnfocusEntry(menu, isStillFocused)
@@ -79,32 +67,12 @@ local function _AddUnfocusEntry(menu, isStillFocused)
                 return
             end
             TrackerUtils:UnFocus()
-            QuestieQuest:ToggleNotes(true)
+            QuestieQuest.ToggleQuestNotes(true)
         end
     })
 end
 
 -- Create local Quest Menu functions
----@param menu table
----@param quest Quest
----@param objective QuestObjective
-TrackerMenu.addFocusOption = function(menu, quest, objective)
-    local focusKey = tostring(quest.Id) .. " " .. tostring(objective.Index)
-    if Questie.db.char.TrackerFocus == focusKey then
-        _AddUnfocusEntry(menu, function() return Questie.db.char.TrackerFocus == focusKey end)
-    else
-        tinsert(menu, {
-            text = l10n('Focus Objective'),
-            func = function()
-                LibDropDown:CloseDropDownMenus()
-                if TrackerUtils:FocusObjective(quest.Id, objective.Index, objective, quest) then
-                    QuestieQuest:ToggleNotes(false)
-                end
-            end
-        })
-    end
-end
-
 ---@param menu table
 ---@param quest Quest
 TrackerMenu.addTomTomOptionForQuest = function(menu, quest)
@@ -236,19 +204,21 @@ TrackerMenu.addShowObjectivesOnMapOption = function(menu, quest, objective)
                 return
             end
             local needHiddenUpdate = false
-            if (Questie.db.char.TrackerFocus and type(Questie.db.char.TrackerFocus) == "string" and Questie.db.char.TrackerFocus ~= tostring(quest.Id) .. " " .. tostring(objective.Index))
-                or (Questie.db.char.TrackerFocus and type(Questie.db.char.TrackerFocus) == "number" and Questie.db.char.TrackerFocus ~= quest.Id) then
+            if Questie.db.char.TrackerFocus and Questie.db.char.TrackerFocus ~= quest.Id then
                 TrackerUtils:UnFocus()
                 needHiddenUpdate = true
             end
 
+            -- Like "Show Icons": also forget the saved hidden state, so the icons stay visible after a reload.
             if objective.HideIcons then
                 objective.HideIcons = nil
+                Questie.db.char.TrackerHiddenObjectives[tostring(quest.Id) .. " " .. tostring(objective.Index)] = nil
                 needHiddenUpdate = true
             end
 
             if quest.HideIcons then
                 quest.HideIcons = nil
+                Questie.db.char.TrackerHiddenQuests[quest.Id] = nil
                 needHiddenUpdate = true
             end
 
@@ -400,7 +370,7 @@ TrackerMenu.addFocusUnfocusOption = function(menu, quest)
             func = function()
                 LibDropDown:CloseDropDownMenus()
                 if TrackerUtils:FocusQuest(quest.Id, quest) then
-                    QuestieQuest:ToggleNotes(false)
+                    QuestieQuest.ToggleQuestNotes(false)
                 end
             end
         })
@@ -534,9 +504,6 @@ function TrackerMenu:GetMenuForQuest(quest)
             local objectiveMenu = {}
 
             -- Map actions mutate the original objective, never the display snapshot.
-            if capabilities.focusObjectives[enrichedObjective.Index] == enrichedObjective then
-                TrackerMenu.addFocusOption(objectiveMenu, enrichedQuest, enrichedObjective)
-            end
             TrackerMenu.addTomTomOptionForObjective(objectiveMenu, enrichedQuest, enrichedObjective)
             if capabilities.focusObjectives[enrichedObjective.Index] == enrichedObjective then
                 TrackerMenu.addShowHideObjectivesOption(objectiveMenu, enrichedQuest, enrichedObjective)
@@ -553,9 +520,6 @@ function TrackerMenu:GetMenuForQuest(quest)
             if capabilities.objectives[objective] then
                 local objectiveMenu = {}
 
-                if capabilities.focusObjectives[objective.Index] == objective then
-                    TrackerMenu.addFocusOption(objectiveMenu, enrichedQuest, objective)
-                end
                 TrackerMenu.addTomTomOptionForObjective(objectiveMenu, enrichedQuest, objective)
                 if capabilities.focusObjectives[objective.Index] == objective then
                     TrackerMenu.addShowHideObjectivesOption(objectiveMenu, enrichedQuest, objective)
@@ -574,9 +538,9 @@ function TrackerMenu:GetMenuForQuest(quest)
     TrackerMenu.addObjectiveOption(menu, subMenu, quest)
     if capabilities.canFocusQuest then
         TrackerMenu.addFocusUnfocusOption(menu, enrichedQuest)
-    elseif _IsFocusedOnQuest(quest.Id) then
-        -- Lost eligibility while focused. A completed quest has no objective menus, so objective focus is cleared here too.
-        _AddUnfocusEntry(menu, function() return _IsFocusedOnQuest(quest.Id) end)
+    elseif Questie.db.char.TrackerFocus == quest.Id then
+        -- Lost eligibility while focused.
+        _AddUnfocusEntry(menu, function() return Questie.db.char.TrackerFocus == quest.Id end)
     end
     if capabilities.canNavigateQuest then
         TrackerMenu.addTomTomOptionForQuest(menu, quest)
@@ -657,8 +621,7 @@ TrackerMenu.addUntrackAchieveOption = function(menu, achieve)
         text = l10n('Untrack Achievement'),
         func = function()
             LibDropDown:CloseDropDownMenus()
-            QuestieTracker:UntrackAchieveId(achieve.Id)
-            QuestieTracker:UpdateAchieveTrackerCache(achieve.Id)
+            AchievementTracking.Untrack(achieve.Id)
 
             if (not AchievementFrame) then
                 AchievementFrame_LoadUI()
@@ -702,10 +665,8 @@ function TrackerMenu:GetMenuForAchievement(achieve)
     TrackerMenu.addAchieveLinkToChatOption(menu, achieve)
     TrackerMenu.addShowInAchievementsOption(menu, achieve)
 
-    for trackedId, _ in pairs(Questie.db.char.trackedAchievementIds) do
-        if trackedId == achieve.Id then
-            TrackerMenu.addUntrackAchieveOption(menu, achieve)
-        end
+    if AchievementTracking.IsTracked(achieve.Id) then
+        TrackerMenu.addUntrackAchieveOption(menu, achieve)
     end
 
     tinsert(menu, {

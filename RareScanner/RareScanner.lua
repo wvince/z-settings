@@ -479,7 +479,7 @@ scanner_button.LootBar.itemFramesPool.ShowIfReady = function(self)
 		end
 	end
 end
-scanner_button.LootBar.LootBarToolTip = CreateFrame("GameTooltip", "LootBarToolTip", scanner_button, "ShoppingTooltipTemplate")
+scanner_button.LootBar.LootBarToolTip = CreateFrame("GameTooltip", "LootBarToolTip", scanner_button, "GameTooltipTemplate")
 scanner_button.LootBar.LootBarToolTip:SetScale(0.9)
 scanner_button.LootBar.LootBarToolTipComp1 = CreateFrame("GameTooltip", "LootBarToolTipComp1", nil, "ShoppingTooltipTemplate")
 scanner_button.LootBar.LootBarToolTipComp1:SetScale(0.7)

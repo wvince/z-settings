@@ -1,6 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Alliance" then return end
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #hardcore
@@ -13,7 +12,6 @@ RXPGuides.RegisterGuide([[
 #subgroup RXP Survival Guide 1-20
 #defaultfor Troll/Orc
 #next 6-13 Orc/Troll
-
 step << !Orc !Troll
     #completewith next
     +|cRXP_WARN_You have selected a guide meant for Orcs and Trolls. You should choose the same starter zone that you start in|r
@@ -1063,7 +1061,6 @@ step
     .accept 2161 >>Accept A Peon's Burden
     .target Ukor
     ]])
-
 RXPGuides.RegisterGuide([[
 #hardcore
 #classic
@@ -1075,7 +1072,6 @@ RXPGuides.RegisterGuide([[
 #subgroup RXP Survival Guide 1-20
 #defaultfor Troll/Orc
 #next 13-15 Silverpine Forest
-
 step
     #loop
     .goto Durotar,54.20,73.36,0

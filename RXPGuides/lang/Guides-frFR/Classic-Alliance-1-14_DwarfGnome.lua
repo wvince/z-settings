@@ -1343,7 +1343,7 @@ step
     #completewith SenirEnd
     >>Tuez les |cRXP_ENEMY_Crag Boars|r. Dépouillez-les pour leur |cRXP_LOOT_[Chunks of Boar Meat]|r et leur |cRXP_LOOT_Crag Boar Ribs|r
     >>Gardez tous les |cRXP_LOOT_[Chunks of Boar Meat]|r que vous obtenez pour Ravitailler le Crache-vapeur et ensuite pour monter votre niveau en [Cuisine] plus tard
-    >>Vous aurez besoin d'un niveau de 10 en [Cuisine] pour une quête à Auberdine plus tard
+    >>Vous aurez besoin d'un niveau de [Cuisine] de 10 pour une quête à Auberdine plus tard
     >>Vous aurez besoin d'un niveau de 50 en [Cuisine] pour une quête au Bois de la Pénombre plus tard
     .collect 769,4,317,1 --Collect Chunk of Boar Meat (x4)
     .collect 2886,6,384,1 --Collect Crag Boar Rib (x6)
@@ -1935,8 +1935,8 @@ step
     .goto 1426,42.177,53.274,40,0
     .goto 1426,41.100,48.927,40,0
     >>Tuez les |cRXP_ENEMY_Wendigos|r et les |cRXP_ENEMY_Young Wendigos|r. Dépouillez-les pour leur |cRXP_LOOT_Wendigo Manes|r
-    >>N'oubliez pas de garder un oeil sur les [Filons de cuivre] qui possèdent des |cRXP_LOOT_[Rough Stones]|r vous permettant de fabriquer des [Pierre à aiguiser brute] << Warrior/Rogue
-    >>N'oubliez pas de garder un oeil sur les [Filons de cuivre] qui possèdent des |cRXP_LOOT_[Rough Stones]|r vous permettant de fabriquer des [Caillou brut] << Paladin
+    >>N'oubliez pas de garder un œil pour les [Filons de cuivre] qui contiennent des |cRXP_LOOT_[Rough Stones]|r pour fabriquer des [Pierre à aiguiser brute] << Warrior/Rogue
+    >>N'oubliez pas de garder un œil pour les [Filons de cuivre] qui contiennent des |cRXP_LOOT_[Rough Stones]|r pour fabriquer des [Caillou brute] << Paladin
     .complete 313,1 --Collect Wendigo Mane (x8)
     .mob Wendigo
     .mob Young Wendigo
@@ -2697,7 +2697,7 @@ step
     #optional
     .goto Dun Morogh,47.377,52.523
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Belm l'aubergiste|r dans l'auberge
-    >>|cRXP_BUY_Achetez-lui une|r |T132800:0|t[Bière au malt Rhapsody] |cRXP_BUY_et une|r |T132800:0|t[Thunder Ale] |cRXP_BUY_|r
+    >>|cRXP_BUY_Buy a|r |T132800:0|t[Rhapsody Malt] |cRXP_BUY_and a|r |T132800:0|t[Thunder Ale] |cRXP_BUY_from him|r
     .complete 384,2 --Collect Rhapsody Malt (x1)
     .collect 2686,1,311 --Collect Thunder Ale (x1)
     .target Innkeeper Belm
@@ -3411,7 +3411,7 @@ step
     .goto 1426,57.936,50.787,0
     >>Tuez les |cRXP_ENEMY_Elder Crag Boars|r. Dépouillez-les pour leur|cRXP_LOOT_[Chunks of Boar Meat]|r
     >>Ils seront utilisés pour monter votre niveau de [Cuisine] plus tard
-    >>Vous aurez besoin d'un niveau de 10 en [Cuisine] pour une quête à Auberdine plus tard
+    >>Vous aurez besoin d'un niveau de [Cuisine] de 10 pour une quête à Auberdine plus tard
     .collect 769,10,2178,1,0x20,cooking --Chunk of Boar Meat (1-10)
     .mob Elder Crag Boar
     .skill cooking,10,1 --XX Shows if cooking skill is <10
@@ -3945,7 +3945,7 @@ step
     .goto 1426,80.583,36.040,0
     >>Tuez  les|cRXP_ENEMY_Mountain Boars|r. Dépouillez-les pour leur|cRXP_LOOT_[Chunks of Boar Meat]|r
     >>Ils seront utilisés pour monter votre niveau de [Cuisine] plus tard
-    >>Vous aurez besoin d'un niveau de 10 en [Cuisine] pour une quête à Auberdine plus tard
+    >>Vous aurez besoin d'un niveau de [Cuisine] de 10 pour une quête à Auberdine plus tard
     .collect 769,10,2178,1,0x20,cooking --Chunk of Boar Meat (1-10)
     .mob Mountain Boar
     .skill cooking,10,1 --XX Shows if cooking skill is <10
@@ -4010,7 +4010,7 @@ step << Human
     #xprate <1.59
     #label Stormpike1
     .goto Loch Modan,24.77,18.40
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez au |cRXP_FRIENDLY_Mountaineer Stormpike|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Mountaineer Stormpike|r
     .turnin 1339 >> Rendez la quête La mission du Montagnard Foudrepique
     .accept 1338 >> Acceptez la quête La mission de Foudrepique
     .accept 307 >> Acceptez la quête Bas les pattes !
@@ -4020,7 +4020,7 @@ step << Human
     #xprate >1.59
     #label Stormpike1
     .goto Loch Modan,24.77,18.40
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez au |cRXP_FRIENDLY_Mountaineer Stormpike|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Mountaineer Stormpike|r
     .turnin 1339 >> Rendez la quête La mission du Montagnard Foudrepique
     .accept 1338 >> Acceptez la quête La mission de Foudrepique << Mage/Warlock/Rogue
     .accept 307 >> Acceptez la quête Bas les pattes !
@@ -4885,7 +4885,7 @@ step
     >>Tuez |cRXP_ENEMY_Hogger|r. Dépouillez-les pour leur |cRXP_LOOT_Claw|r
     >>|cRXP_ENEMY_Hogger|r peut apparaître à de nombreux endroits
     >>Lancez [Peur] |cRXP_WARN_sur |cRXP_ENEMY_Hogger|r en boucle et utilisez vos DoTs pour le tuer|r
-    >>|cRXP_WARN_Cette quête est difficile. Montez un groupe pour le tuer si nécessaire. Passez cette étape si vous n'arrivez pas à monter un groupe ou à le tuer seul|r
+    >>Cette quête est difficile. Montez un groupe pour le tuer si nécessaire. Passez cette étape si vous n'arrivez pas à monter un groupe ou à le tuer solo
     .complete 176,1 --Huge Gnoll Claw (1)
     .unitscan Hogger
 step
@@ -5122,7 +5122,7 @@ step << Warlock
     +Lancez |T136126:0|t[Connexion] à plusieurs reprises jusqu'à ce que vous ayez moins de 10% de points de vie en vous dirigeant vers |cRXP_FRIENDLY_Dungar Grangodet|r
 step
     .goto StormwindClassic,66.277,62.137
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Dungar Longdrink|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Dungar Grangodet|r.
     .fp Stormwind >> Apprenez le chemin de vol de Hurlevent
     .target Dungar Longdrink
 step << Warlock
@@ -5202,7 +5202,7 @@ step << Warlock
     >>Tuez |cRXP_ENEMY_Hogger|r. Dépouillez-les pour leur |cRXP_LOOT_Claw|r
     >>|cRXP_ENEMY_Hogger|r peut apparaître à de nombreux endroits
     >>Lancez [Peur] |cRXP_WARN_sur |cRXP_ENEMY_Hogger|r en boucle et utilisez vos DoTs pour le tuer|r
-    >>|cRXP_WARN_Cette quête est difficile. Montez un groupe pour le tuer si nécessaire. Passez cette étape si vous n'arrivez pas à monter un groupe ou à le tuer seul|r
+    >>Cette quête est difficile. Montez un groupe pour le tuer si nécessaire. Passez cette étape si vous n'arrivez pas à monter un groupe ou à le tuer solo
     .complete 176,1 --Huge Gnoll Claw (1)
     .unitscan Hogger
 step << Paladin
@@ -5231,7 +5231,7 @@ step << Paladin
     .goto Elwynn Forest,25.9,93.9
     >>Tuez |cRXP_ENEMY_Hogger|r. Dépouillez-les pour leur |cRXP_LOOT_Claw|r
     >>|cRXP_ENEMY_Hogger|r peut apparaître à de nombreux endroits
-    >>|cRXP_WARN_Cette quête est difficile. Montez un groupe pour le tuer si nécessaire. Passez cette étape si vous n'arrivez pas à monter un groupe ou à le tuer seul|r
+    >>Cette quête est difficile. Montez un groupe pour le tuer si nécessaire. Passez cette étape si vous n'arrivez pas à monter un groupe ou à le tuer solo
     .complete 176,1 --Huge Gnoll Claw (1)
     .unitscan Hogger
 step << Paladin
@@ -6013,7 +6013,7 @@ step << Dwarf Paladin
 step << Dwarf Paladin
     #xprate <1.5
     .goto 1455,27.622,12.177
-    >>|cRXP_WARN_Utilisez le [|T133739:0|t|cRXP_LOOT_The Tome of Divinity|r] pour commencer la quête|r
+    >>|cRXP_WARN_Utilisez le [|T133739:0|t|cRXP_LOOT_Tome de divinité|r] pour commencer la quête|r
     .accept 1646 >>Acceptez la quête Le Tome de divinité
     .use 6916
 step << Dwarf Paladin
@@ -6361,7 +6361,7 @@ step
 step
     #label PawsDelivery
     .goto Loch Modan,24.77,18.40
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez au |cRXP_FRIENDLY_Mountaineer Stormpike|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Mountaineer Stormpike|r
     .turnin 307 >> Rendez la quête Bas les pattes !
     .turnin 353 >> Rendez la quête Livraison pour Foudrepique
     .target Mountaineer Stormpike
@@ -8450,7 +8450,7 @@ step
     .mob +Forest Lurker
 step
     .goto Loch Modan,24.77,18.40
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez au |cRXP_FRIENDLY_Mountaineer Stormpike|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Mountaineer Stormpike|r
     .turnin 307 >> Rendez la quête Bas les pattes !
     .target Mountaineer Stormpike
 step
@@ -8743,7 +8743,7 @@ step
 step
     #softcore
     .goto Loch Modan,24.77,18.40
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez au |cRXP_FRIENDLY_Mountaineer Stormpike|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tParlez à |cRXP_FRIENDLY_Mountaineer Stormpike|r
     .turnin 353 >> Rendez la quête Livraison pour Foudrepique
     .target Mountaineer Stormpike
 step

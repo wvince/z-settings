@@ -40,6 +40,11 @@ end
 -- UnitFrame.PlayerLevelDiffFrame, Blizzard_NamePlates.xml and
 -- Camelot/Blizzard_NamePlateLevelFrame.xml on 1.60.1.70425). Missing ones
 -- fall back to the plate itself, so a changed plate only moves the icon.
+-- At the left (0.6.3) the spot hangs from the bar's container, the bar area
+-- as Blizzard lays it out: the bar fills it (Blizzard_NamePlateUnitFrame.lua
+-- UpdateAnchors on 1.60.1.70532; Classic style insets the bar 3.5 px inside
+-- its border), so the icon stays put while clearing whatever a plate addon
+-- draws inside it at the bar's left end (a class icon).
 local function Region(object)
     if type(object) == "table" and type(object.GetObjectType) == "function" then return object end
 end
@@ -60,7 +65,7 @@ local function Anchors(plate)
     local health = container and (Region(container.healthBar) or container)
     local level = unitFrame and Region(unitFrame.PlayerLevelDiffFrame)
     if level and health and not Placed(level) then level = nil end
-    return health or plate, level or health or plate
+    return health or plate, level or health or plate, container or health or plate
 end
 
 -- Puts a spot's frame above its plate's health bar, or at its left or
@@ -70,10 +75,10 @@ end
 local function Place(frame, plate)
     local gap, position, size = ns.Get("offset"), ns.Get("position"), ns.Get("size")
     local lift = ns.Get("lift") or 0
-    local health, right = Anchors(plate)
+    local health, right, left = Anchors(plate)
     frame:ClearAllPoints()
     if position == "left" then
-        frame:SetPoint("TOPRIGHT", health, "LEFT", -gap, size / 2 + lift)
+        frame:SetPoint("TOPRIGHT", left, "LEFT", -gap, size / 2 + lift)
     elseif position == "right" then
         frame:SetPoint("TOPLEFT", right, "RIGHT", gap, size / 2 + lift)
     else

@@ -1,0 +1,14 @@
+## Interface: 16001
+## AllowLoadGameType: camelot
+## Title: Glowing Bars
+## Notes: Lights up your action bars: missing buffs, weapon buffs, party buffs, old ranks, low reagents, ready cooldowns and procs.
+## Category: Action Bars
+## Author: Attila Varga (vattiss)
+## Version: 2.0.1
+## IconTexture: Interface\AddOns\GlowingBars\images\logo
+## SavedVariablesPerCharacter: GlowingBarsCharDB
+## DefaultState: enabled
+## X-Website: https://github.com/vattiss/wowkit
+## X-Curse-Project-ID: 1754997
+
+GlowingBars.lua

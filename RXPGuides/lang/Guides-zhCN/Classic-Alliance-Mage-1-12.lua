@@ -95,7 +95,7 @@ step
     .xp 3+1110 >>在回城的路上刷到1110+/1400经验值
 step
     .goto Elwynn Forest,47.7,41.4
-    .vendor >>把垃圾物品卖给商人
+    .vendor >>垃圾卖店
 step
     .goto Elwynn Forest,48.923,41.606
 >>与|cRXP_FRIENDLY_治安官玛克布莱德|r 对话
@@ -641,7 +641,7 @@ step
     .turnin 109 >> 交任务 向格里安·斯托曼报到
 step
     .goto Westfall,57.002,47.169
-    .vendor >>把垃圾物品卖给商人
+    .vendor >>垃圾卖店
 .target 军需官刘易斯
 >>与|cRXP_FRIENDLY_军需官刘易斯|r 对话
     .accept 6181 >> 接受任务 快捷的消息
@@ -939,7 +939,7 @@ step
     .turnin 3364 >> 交任务 热酒快递
 .target 德南·弗卡特
     .accept 3365 >> 接受任务 归还酒杯
-    .vendor >> 把垃圾物品卖给商人
+    .vendor >> 垃圾卖店
 step
     .goto Dun Morogh,28.709,66.366
 .target 玛瑞克·斯托纳尔
@@ -1035,7 +1035,7 @@ step
 step
     #completewith next
     .goto Dun Morogh,46.7,53.5
-    .vendor >>把垃圾物品卖给商人
+    .vendor >>垃圾卖店
 step
     .goto Dun Morogh,46.8,52.4
 .target 拉格纳·雷酒
@@ -1066,7 +1066,7 @@ step
     .goto Dun Morogh,49.426,48.410
     >>不要在途中杀熊
 .target 驾驶员贝隆·风箱
->>与 |cRXP_FRIENDLY_驾驶员贝隆·风箱|r 对话
+>>与|cRXP_FRIENDLY_驾驶员贝隆·风箱|r 对话
     .accept 317 >> 接受任务 贝尔丁的补给
 step
     .goto Dun Morogh,49.622,48.612
@@ -1118,7 +1118,7 @@ step
     .complete 317,2 --Collect Thick Bear Fur (x2)
 step
     .goto Dun Morogh,49.426,48.410
->>与 |cRXP_FRIENDLY_驾驶员贝隆·风箱|r 对话
+>>与|cRXP_FRIENDLY_驾驶员贝隆·风箱|r 对话
     .turnin 317 >> 交任务 贝尔丁的补给
 .target 驾驶员贝隆·风箱
     .accept 318 >> 接受任务 艾沃沙酒
@@ -1144,7 +1144,7 @@ step
     >> 进入洞穴，击杀宰杀雪怪，从它们身上拾取鬃毛
     .complete 313,1 --Collect Wendigo Mane (x8)
 step
-    >>拾取箱子中的物品
+    >>拾取箱子
     .goto Dun Morogh,44.1,56.9
     .complete 5541,1 --Collect Rumbleshot's Ammo (x1)
 step
@@ -1154,7 +1154,7 @@ step
 .target 海格纳·重枪
 >>与|cRXP_FRIENDLY_海格纳·重枪|r 对话
     .turnin 5541 >> 交任务 海格纳的弹药
-    .vendor >> 出售物品并修理装备
+    .vendor >> 垃圾卖店并修理装备
 step
     .xp 7 >> 刷怪至7级
 step
@@ -1252,7 +1252,7 @@ step
 step
     .goto Dun Morogh,49.622,48.612
 .target 驾驶员迪恩·石轮
->>与|cRXP_FRIENDLY_驾驶员迪恩·石轮|r 对话
+>>与 |cRXP_FRIENDLY_驾驶员迪恩·石轮|r 对话
     .turnin 313 >> 交任务 灰色洞穴
 step
     .goto Dun Morogh,49.426,48.410
@@ -1536,7 +1536,7 @@ step
     .accept 418 >> 接受任务 塞尔萨玛血肠
 step << Human
     #sticky
-    .abandon 1338 >> 放弃任务卡尔·雷矛的订单。这是为了解锁巡山人卡尔·雷矛的任务
+    .abandon 1338 >> 放弃任务 卡尔·雷矛的订单。这是为了解锁巡山人卡尔·雷矛的任务
 step
     .goto Loch Modan,34.8,48.6
     .vendor >>购买1-2个6格包来填满你的背包栏位
@@ -1569,7 +1569,7 @@ step
     .collect 3172,3,418,1 --Collect Boar Intestines (x3)
 step << Gnome
     .goto Loch Modan,24.1,18.2
-    .vendor >>出售物品并修理装备
+    .vendor >>垃圾卖店并修理装备
 step << Gnome
     .goto Loch Modan,24.764,18.397
 >>与|cRXP_FRIENDLY_巡山人雷矛|r 对话
@@ -1841,7 +1841,7 @@ step
     .goto Wetlands,15.1,64.0,40,0
     .goto Wetlands,12.1,60.3,40,0
     >>打开这个链接，并在另一个屏幕上跟随它。
-    >>走无伤翻山路线。从丹莫罗直接翻山前往湿地
+    >>走无伤翻山路线，从丹莫罗直接翻山前往湿地
     >>走水路的时候小心避开海里的鳄鱼
     .link https://www.youtube.com/watch?v=9afQTimaiZQ >> 点击此处查看参考视频
     .goto Wetlands,12.1,60.3,80 >> 前往米奈希尔港，湿地

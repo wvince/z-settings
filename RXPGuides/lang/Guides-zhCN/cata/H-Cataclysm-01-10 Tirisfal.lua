@@ -6,7 +6,7 @@ RXPGuides.RegisterGuide([[
 #cata
 #mop
 << Horde
-#name 1-6 提瑞斯法林地
+#name 1-6级 提瑞斯法林地
 #next 6-10 永歌森林
 #version 1
 --#group RXP Cataclysm (H) << cata

@@ -1,6 +1,5 @@
 local faction = UnitFactionGroup("player")
 if faction == "Horde" then return end
-
 local L = GetLocale() if L and RXP.enabledLocale[L] then return end
 RXPGuides.RegisterGuide([[
 #forever
@@ -9,10 +8,8 @@ RXPGuides.RegisterGuide([[
 #name 12-18 Darkshore Mage AoE
 #version 1
 #group RestedXP Alliance Mage
-
 #defaultfor none Alliance Mage
 #next 18-21 Redridge Mage AoE
-
 step
     #completewith next
     .goto 1439/1,533.23,6399.77
@@ -752,7 +749,7 @@ step
     .goto 1437/0,-819.67,-3691.42,15,0
     .goto 1437/0,-807.26,-3716.22,15,0
     .goto 1437/0,-827.94,-3724.49,15,0
-    .goto 1437,10.760,56.721
+    .goto 1437/0,-834.55,-3711.29--c:1437,10.760,56.721
     >> If you have 8s, Check for Bronze Tube from Neal Allen and buy it if it's there. Otherwise, skip this step
     .collect 4371,1,175,1
 step
@@ -797,7 +794,6 @@ step
     .goto 1429/0,-1637.62,-9642.89,125,0
     .zone Redridge Mountains >> Run all the way east to Redridge Mountains. Sort out your keybinds en route, making sure you have your spells comfortably on your bars
 ]])
-
 RXPGuides.RegisterGuide([[
 #forever
 #disabledungeons
@@ -805,10 +801,8 @@ RXPGuides.RegisterGuide([[
 #name 18-21 Redridge Mage AoE
 #version 1
 #group RestedXP Alliance Mage
-
 #defaultfor none Alliance Mage
 #next 21-22 Duskwood Mage AoE
-
 step
     #sticky
     #completewith Gnolls

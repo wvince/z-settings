@@ -310,7 +310,7 @@ local friend = newChar("Buddy", "Classic Beta PvP", accB, { "Fireball" })
 accA.general = { { "Focus", 1, "/focus [@mouseover,harm] mouseover; target" }, { "Mana", 2, "#showtooltip\n/use Major Mana Potion" },
   { "Random nuke", 6, "/userandom Shadow Bolt, Immolate" }, { "Spell nuke", 6, "/spell Shadow Bolt" },
   { "Healthstone", 3, "#showtooltip\n/cast Create Healthstone" }, { "Warlock nuke", 4, "/cast Shadow Bolt" },
-  { "RS_MACRO", 8, "/targetexact Soboz" } }
+  { "RS_MACRO", 8, "/targetexact Soboz" }, { "RXPFollow", 9, "//Party Leader" } }
 me.charMacros = { { "Tap safe", 5, "/cast [nochanneling] Life Tap" } }
 me.bars = { [1] = { kind = "spell", id = 1 } }
 accA.binds[1][2] = "UP"
@@ -392,6 +392,7 @@ check("1 /userandom macro left out", data.macros["Random nuke"] == nil)
 check("1 /spell macro left out", data.macros["Spell nuke"] == nil)
 check("1 character macros left out", data.macros["Tap safe"] == nil)
 check("1 an addon's own macro left out", data.macros.RS_MACRO == nil)
+check("1 a macro RXP makes left out, whatever RXP names it", data.macros.RXPFollow == nil)
 check("1 action bars left out", data.bars == nil)
 check("1 cooldown manager left out", data.cdm == nil)
 check("1 only target/menu clicks shared", #data.clicks == 1 and data.clicks[1].type == 3)

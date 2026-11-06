@@ -54,7 +54,8 @@ local function withoutState(var, value, theirs)
 end
 -- macros an addon owns and rewrites as you play (RareScanner's last rare, RXPGuides' guide target): addon
 -- state, not setup. Never shared, applied or compared, so the addon rewriting them can't bring the popup back.
-local ADDON_MACROS = { RS_MACRO = true, RXPTargeting = true }
+-- RXPGuides makes several (RXPTargeting, RXPFollow) and may add more, so its prefix decides.
+local function addonMacro(name) return name == "RS_MACRO" or name:find("^RXP") ~= nil end
 local MAX_ADDON_TABLE = 300000   -- bytes of one addon's settings before compression; larger ones are listed, not shared
 -- never shared or switched: this addon and SpyGodMode (the exporter's own, kept out of the repo)
 local KEEP_ADDONS = { ["Z-Settings"] = true, SpyGodMode = true }
@@ -337,7 +338,7 @@ local function readGeneralMacros(shareOnly)
   local out = {}
   for i = 1, (GetNumMacros()) do
     local name, icon, body = GetMacroInfo(i)
-    if name and (not shareOnly or (not ADDON_MACROS[name] and isShareableMacro(body))) then out[name] = { icon, body } end
+    if name and (not shareOnly or (not addonMacro(name) and isShareableMacro(body))) then out[name] = { icon, body } end
   end
   return out
 end
@@ -350,7 +351,7 @@ local function applyGeneralMacros(wanted)
   local owned, changed = ZSettingsDB.owned or {}, 0
   ZSettingsDB.owned = owned   -- stored first: a macro made before a later one throws is still known as brought
   for name in pairs(owned) do
-    if not wanted[name] and not ADDON_MACROS[name] then
+    if not wanted[name] and not addonMacro(name) then
       local i = findMacro(name, false)
       if i then DeleteMacro(i); changed = changed + 1 end
       owned[name] = nil
@@ -795,7 +796,7 @@ local function differsLive(key, data)
       if tostring(icon) ~= tostring(m[1]) or body ~= m[2] then return true end
     end
     for name in pairs(ZSettingsDB and ZSettingsDB.owned or {}) do
-      if not v[name] and not ADDON_MACROS[name] and findMacro(name, false) then return true end
+      if not v[name] and not addonMacro(name) and findMacro(name, false) then return true end
     end
   elseif key == "addons" then
     local have = readAddons()
@@ -1049,11 +1050,11 @@ local function decode(text, prefix)
   return data
 end
 
--- a published setup; one exported before ADDON_MACROS still carries them
+-- a published setup; one exported before an addon's macros stayed home still carries them
 local function decodeSetup(text)
   local data, err = decode(text)
   if data and type(data.macros) == "table" then
-    for name in pairs(ADDON_MACROS) do data.macros[name] = nil end
+    for name in pairs(data.macros) do if addonMacro(name) then data.macros[name] = nil end end
   end
   return data, err
 end

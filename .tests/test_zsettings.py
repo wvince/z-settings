@@ -76,6 +76,23 @@ def test_hook_bundles_newest_export(tmp_path):
     assert "Z-Settings/ZBundle.lua" in staged
 
 
+def test_hook_takes_the_latest_export_whichever_account_saved_last(tmp_path):
+    # account 1 exported; account 2, which never exports, logs out after it; account 3 holds an old export
+    addons = fake_install(tmp_path, {"1#1": "ZS1:warlock", "1#3": "ZS1:beta", "2#2": None})
+    accounts = tmp_path / "WTF" / "Account"
+    for account, made in (("1#1", "2026-11-05 22:25"), ("1#3", "2026-10-21 12:10")):
+        f = accounts / account / "SavedVariables" / "Z-Settings.lua"
+        f.write_text(f.read_text().replace('"x"', '"%s"' % made))
+    run_hook(addons)   # the first run writes the settings names and asks for a re-export
+    export_with_loaded_list(addons, "1#1")
+    # saved after account 1's export: the beta account, then the Druid's account last
+    for account, day in (("1#1", "01"), ("1#3", "02"), ("2#2", "03")):
+        subprocess.run(["touch", "-d", f"2026-02-{day}", str(accounts / account / "SavedVariables" / "Z-Settings.lua")], check=True)
+    r = run_hook(addons)
+    assert r.returncode == 0, r.stderr
+    assert 'Z_BUNDLE = "ZS1:warlock"\n' in (addons / "Z-Settings" / "ZBundle.lua").read_text()
+
+
 def test_hook_refuses_an_empty_publish(tmp_path):
     addons = fake_install(tmp_path, {"2#3": "ZS1:same"})
     run_hook(addons)   # the first run writes the settings names and asks for a re-export

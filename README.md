@@ -13,7 +13,8 @@ Requires [Git for Windows](https://git-scm.com/download/win) and collaborator ac
 
 1. Close WoW.
 2. In `World of Warcraft\_forever_\Interface`, rename `AddOns` to `AddOns-old`.
-3. From `Interface`, run `git clone https://github.com/wvince/z-settings.git AddOns`.
+3. From `Interface`, run `git clone --depth 1 https://github.com/wvince/z-settings.git AddOns`. `--depth 1` skips
+   the history, hundreds of MB of old addon versions you never need.
 4. Optional: copy personal addons from `AddOns-old` into `AddOns`.
 5. Start WoW, click Apply in the popup and press the key right of Tab (QWERTY or Belgian AZERTY).
    The key is asked once.

@@ -376,13 +376,15 @@ useChar(me, { DBM_AllSavedOptions = { warnings = true, bars = { size = 2 } }, Be
 ZSettingsDB = nil
 printed, reloads = {}, 0
 SlashCmdList.ZSETTINGS("export")
-check("1 export waits for the keyboard", reloads == 0 and ZSettingsDB == nil)
+check("1 a first export waits for the keyboard", reloads == 0 and (ZSettingsDB or {}).export == nil)
 pressKeys("Q")
 local text = ZSettingsDB and ZSettingsDB.export or ""
 check("1 export saved for the commit hook", text:sub(1, 4) == "ZS1:" and ZSettingsDB.exportMade ~= nil)
 check("1 export records the addon list it was made with", ZSettingsDB.exportVars == Z_VARS_ID)
 check("1 export reloads the UI", reloads == 1)
 check("1 my keyboard detected as QWERTY", said("QWERTY"))
+SlashCmdList.ZSETTINGS("export")
+check("1 a later export uses the stored keyboard, no key asked", reloads == 2)
 local data = C_EncodingUtil.DeserializeCBOR(C_EncodingUtil.DecompressString(C_EncodingUtil.DecodeBase64(text:sub(5))))
 check("1 keyboard stored in the export", data.layout == "qwerty")
 check("1 layout shared as Edit Mode's own string", type(data.editmode.layout) == "string" and data.editmode.layouts == nil)

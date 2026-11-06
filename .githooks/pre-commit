@@ -9,7 +9,13 @@
 # addon's settings, or when nothing at all changed.
 set -e
 root=$(git rev-parse --show-toplevel)
-sv=$(ls -t "$root"/../../WTF/Account/*/SavedVariables/Z-Settings.lua 2>/dev/null | head -n 1)
+# The latest export, whichever account made it: accounts that saved after it (another client logging
+# out) hold no export or an older one. Exports with the same time go to the file saved last.
+tab=$(printf '\t')
+sv=$(ls -t "$root"/../../WTF/Account/*/SavedVariables/Z-Settings.lua 2>/dev/null | while IFS= read -r f; do
+  grep -q '\["export"\] = "ZS1:' "$f" || continue
+  printf '%s\t%s\n' "$(grep -o '\["exportMade"\] = "[^"]*"' "$f" | head -n 1 | sed 's/.*= "//; s/"$//')" "$f"
+done | sort -s -r -t "$tab" -k1,1 | head -n 1 | cut -f2)
 text=$( [ -n "$sv" ] && grep -o '\["export"\] = "ZS1:[A-Za-z0-9+/=]*"' "$sv" | sed 's/.*= "//; s/"$//' || true)
 if [ -z "$text" ]; then
   echo "No Z-Settings export found. In game: /z export, then publish again." >&2
@@ -17,11 +23,13 @@ if [ -z "$text" ]; then
 fi
 exported=$(grep -o '\["exportVars"\] = "[^"]*"' "$sv" | head -n 1 | sed 's/.*= "//; s/"$//' || true)
 # table <global> <toc field>: every addon's names in that field, all flavors' tocs merged
+# asked of git once: one call per addon takes seconds on a Windows drive
+ignored=$(for dir in "$root"/*/; do echo "$(basename "$dir")/"; done | git -C "$root" check-ignore --stdin || true)
 table() {
   echo "$1 = {"
   for dir in "$root"/*/; do
     addon=$(basename "$dir")
-    git -C "$root" check-ignore -q "$addon/" && continue
+    printf '%s\n' "$ignored" | grep -qxF "$addon/" && continue
     # a line can end in load conditions, "[AllowLoadGameType classic]": they are no part of a name
     names=$(cat "$dir"*.toc 2>/dev/null | tr -d '\r' | sed -n "s/^## *$2 *: *//p" | sed 's/\[[^]]*\]//g' |
       tr ',' '\n' | sed 's/^[[:space:]]*//; s/[[:space:]]*$//' | grep -v '^$' | sort -u |

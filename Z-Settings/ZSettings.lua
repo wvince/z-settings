@@ -1406,17 +1406,14 @@ SlashCmdList.ZSETTINGS = function(msg)
   if cmd == "export" then
     local data, skipped, failed = capture(true)
     data.note = rest ~= "" and rest or nil
-    showPrompt("Z-Settings: export your setup")
-    askLayout(function(layout)
+    withLayout(false, "Z-Settings: export your setup", function(layout)
       data.layout = layout
-      ZSettingsDB = ZSettingsDB or {}
       -- copied into ZBundle.lua by the commit hook, which checks exportVars against the addon list it writes
       ZSettingsDB.export, ZSettingsDB.exportMade, ZSettingsDB.exportVars = encode(data), data.made, Z_VARS_ID
       note(("your keyboard: %s. Friends on another layout get their keybinds converted."):format(LAYOUT_NAMES[layout] or "unknown"))
       if #skipped > 0 then note("not included (too large or not shareable): " .. table.concat(skipped, ", ")) end
       if #failed > 0 then note("not included, it threw an error: " .. table.concat(failed, ", ")) end
       note("export saved: commit and push the AddOns folder")
-      window:Hide()
       ReloadUI()
     end)
   elseif cmd == "import" then

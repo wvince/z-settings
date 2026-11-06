@@ -8,6 +8,10 @@
 --
 -------------------------------------------------------------------------
 
+
+-- 16001-36
+--   - Added the possibility to discard/hide some attunements
+
 -- 16001-35
 --   - Added the Character Progression attunes.
 --   - Added the Attune: Next window
@@ -1213,6 +1217,7 @@ function Attune:OnEnable()
 		if t.class == nil then t.class = "UNKNOWN" end
 		if t.attuned == nil then t.attuned = {} end
 		if t.done == nil then t.done = {} end
+		if t.skip == nil then t.skip = {} end
 		for i, a in pairs(Attune_Data.noattunes) do
 			--mark as automatically attuned for those raids that do not require attunement
 			if t.attuned[a.ID] == nil then t.attuned[a.ID] = 100 end
@@ -2823,8 +2828,8 @@ end
 -------------------------------------------------------------------------
 
 function Attune_UpdateTreeGroup(aid)
-	-- Completed attunes move into Archived, so the list has to be rebuilt.
-	if Attune_DB.archiveCompleted then
+	-- Completed attunes move into Archived, and discarded ones sit under Will not do.
+	if Attune_DB.archiveCompleted or Attune_IsSkipped(aid) then
 		Attune_ReloadAttuneTree()
 		return
 	end
@@ -2932,6 +2937,73 @@ local function Attune_CharacterProgressionVisible(a)
 	return not (Attune_DB and Attune_DB.showCharacterProgression == false)
 end
 
+-- This character has set the attunement aside. It stays in the list, under Will not do.
+function Attune_WillNotDoLabel()
+	return AttuneLang["WillNotDo"] or "Will not do"
+end
+
+function Attune_IsSkipped(attuneId)
+	if attuneId == nil or Attune_DB == nil or attunelocal_charKey == nil then return false end
+	local t = Attune_DB.toons and Attune_DB.toons[attunelocal_charKey]
+	return t ~= nil and t.skip ~= nil and t.skip[attuneId] == true
+end
+
+function Attune_TreeHasGroup(expacNode, groupValue)
+	if expacNode == nil or groupValue == nil then return false end
+	for _, g in ipairs(expacNode.children or {}) do
+		if g.value == groupValue then return true end
+	end
+	return false
+end
+
+function Attune_ExpandAttuneGroup(expac, group)
+	if expac == nil or group == nil or group == "" then return end
+	local key = expac .. "\001" .. group
+	if TreeExpandStatus then
+		TreeExpandStatus[expac] = 1
+		TreeExpandStatus[key] = 1
+	end
+	local tree = attunelocal_treeframe
+	local status = tree and (tree.status or tree.localstatus)
+	if status then
+		if status.groups == nil then status.groups = {} end
+		status.groups[expac] = true
+		status.groups[key] = true
+	end
+end
+
+function Attune_SetAttuneSkipped(attuneId, skipped)
+	if attuneId == nil or Attune_DB == nil or attunelocal_charKey == nil then return end
+	local t = Attune_DB.toons and Attune_DB.toons[attunelocal_charKey]
+	if t == nil then return end
+	if t.skip == nil then t.skip = {} end
+	if skipped then
+		t.skip[attuneId] = true
+	else
+		t.skip[attuneId] = nil
+	end
+	local a = Attune_Data.attuneById and Attune_Data.attuneById[attuneId]
+	if a then
+		local done = t.attuned and (t.attuned[attuneId] or 0) >= 100
+		local group = Attune_WillNotDoLabel()
+		if not skipped then
+			if done and Attune_DB.archiveCompleted then
+				group = AttuneLang["Archived"]
+			else
+				group = a.GROUP
+			end
+		end
+		Attune_ExpandAttuneGroup(a.EXPAC, group)
+	end
+	Attune_ReloadAttuneTree()
+	local tree = attunelocal_treeframe
+	if tree and attunelocal_treeIsShown and not (Attune_DB and Attune_DB.iconView) then
+		tree:RefreshTree(true)
+	end
+	Attune_UpdateSkipCheck(attuneId)
+	Attune_NextFrameUpdate()
+end
+
 -- Selected attunement, stored on this character inside the account-wide saved data.
 function Attune_GetLastViewed()
 	local t = Attune_DB and attunelocal_charKey and Attune_DB.toons and Attune_DB.toons[attunelocal_charKey]
@@ -2967,6 +3039,7 @@ function Attune_EnsureDefaultView()
 			and (a.FACTION == attunelocal_faction or a.FACTION == "Both")
 			and Attune_ClassQuestVisible(a)
 			and Attune_CharacterProgressionVisible(a)
+			and not Attune_IsSkipped(a.ID)
 			and Attune_MayRecordAttuneProgress(toon, a.ID)
 			and withSteps[a.ID]
 		then
@@ -2998,6 +3071,7 @@ function Attune_LoadTree()
 	local groupNode = {}
 	local groupAllDone = true
 	local archivedNodes = {}
+	local skippedNodes = {}
 	local attunesWithSteps = {}
 	for _, s in pairs(Attune_Data.steps) do
 		if showPatchStep(s) then
@@ -3046,19 +3120,22 @@ function Attune_LoadTree()
 				local text = Attune_DisplayName(a)
 				local icon = a.ICON
 				local done = false
-				if not attunesWithSteps[a.ID] then
+				local skipped = Attune_IsSkipped(a.ID)
+				local hasSteps = attunesWithSteps[a.ID]
+				local mayRecord = Attune_MayRecordAttuneProgress(Attune_DB.toons[attunelocal_charKey], a.ID)
+				if not hasSteps then
 					text = "|cff808080"..text.."|r"
+				elseif mayRecord and Attune_DB.toons[attunelocal_charKey].attuned ~= nil
+					and Attune_DB.toons[attunelocal_charKey].attuned[a.ID] >= 100 then
+					text = "|cff00ff00"..text.."|r"
+					icon = "Interface\\AddOns\\Attune\\Images\\success"
+					done = true
+				elseif skipped then
+					text = "|cff808080"..text.."|r"
+				end
+				-- Discarded attunes leave the group, so they do not keep it open.
+				if not skipped and (not hasSteps or not mayRecord or not done) then
 					groupAllDone = false
-				elseif not Attune_MayRecordAttuneProgress(Attune_DB.toons[attunelocal_charKey], a.ID) then
-					groupAllDone = false
-				elseif Attune_DB.toons[attunelocal_charKey].attuned ~= nil then
-					if Attune_DB.toons[attunelocal_charKey].attuned[a.ID] >= 100 then
-						text = "|cff00ff00"..text.."|r"
-						icon = "Interface\\AddOns\\Attune\\Images\\success"
-						done = true
-					else 
-						groupAllDone = false
-					end
 				end
 
 
@@ -3069,11 +3146,14 @@ function Attune_LoadTree()
 					sourceIcon = a.ICON,
 					tip = Attune_DisplayName(a),
 					short = a.SHORT,
-					dim = not attunesWithSteps[a.ID],
+					dim = not hasSteps,
 					done = done,
+					skipped = skipped,
 				}
-				-- Completed attunes leave their category and collect at the bottom.
-				if Attune_DB.archiveCompleted and done then
+				-- Discarded attunes collect under Will not do, after Completed.
+				if skipped then
+					table.insert(skippedNodes, attuneNode)
+				elseif Attune_DB.archiveCompleted and done then
 					table.insert(archivedNodes, attuneNode)
 				else
 					table.insert(groupNode.children, attuneNode)
@@ -3088,6 +3168,14 @@ function Attune_LoadTree()
 			value = AttuneLang["Archived"],
 			text = "|cff00ff00"..AttuneLang["Archived"].."|r",
 			children = archivedNodes,
+		})
+	end
+	if #skippedNodes > 0 and expacNode.children then
+		local willNotDo = Attune_WillNotDoLabel()
+		table.insert(expacNode.children, {
+			value = willNotDo,
+			text = "|cff808080"..willNotDo.."|r",
+			children = skippedNodes,
 		})
 	end
 	table.insert(attunelocal_tree, expacNode)
@@ -3132,13 +3220,22 @@ function Attune_ReloadAttuneTree()
 	if status and lastViewed then
 		status.selected = lastViewed
 	end
-	if Attune_DB.archiveCompleted and status and status.groups then
+	if status and status.groups then
 		local archived = AttuneLang["Archived"]
+		local willNotDo = Attune_WillNotDoLabel()
 		for _, expacNode in ipairs(attunelocal_tree) do
 			if expacNode.value then
-				local key = expacNode.value .. "\001" .. archived
-				if TreeExpandStatus == nil or TreeExpandStatus[key] ~= 0 then
-					status.groups[key] = true
+				if Attune_DB.archiveCompleted and Attune_TreeHasGroup(expacNode, archived) then
+					local key = expacNode.value .. "\001" .. archived
+					if TreeExpandStatus == nil or TreeExpandStatus[key] ~= 0 then
+						status.groups[key] = true
+					end
+				end
+				if Attune_TreeHasGroup(expacNode, willNotDo) then
+					local key = expacNode.value .. "\001" .. willNotDo
+					if TreeExpandStatus == nil or TreeExpandStatus[key] ~= 0 then
+						status.groups[key] = true
+					end
 				end
 			end
 		end
@@ -3223,6 +3320,9 @@ function Attune_IconViewButton(view)
 		GameTooltip:SetText(self.tip or "")
 		if self.done then
 			GameTooltip:AddLine(AttuneLang["Attuned"], 0, 1, 0)
+		end
+		if self.skipped then
+			GameTooltip:AddLine(AttuneLang["WillNotDo"] or "Will not do", 0.6, 0.6, 0.6)
 		end
 		GameTooltip:Show()
 	end)
@@ -3362,6 +3462,7 @@ function Attune_LayoutIconView()
 						button.id = leaf.value
 						button.tip = leaf.tip or Attune_PlainText(leaf.text)
 						button.done = leaf.done
+						button.skipped = leaf.skipped
 						button.icon:SetTexture(leaf.sourceIcon or leaf.icon or "Interface\\Icons\\INV_Misc_QuestionMark")
 						local badge = 16
 						if size < 32 then badge = math.max(12, math.floor(size * 0.5)) end
@@ -3370,6 +3471,8 @@ function Attune_LayoutIconView()
 						local alpha = leaf.done and 0.15 or 1
 						if leaf.dim then
 							button.icon:SetVertexColor(0.45, 0.45, 0.45, alpha)
+						elseif leaf.skipped and not leaf.done then
+							button.icon:SetVertexColor(0.55, 0.55, 0.55, 1)
 						else
 							button.icon:SetVertexColor(1, 1, 1, alpha)
 						end
@@ -4289,6 +4392,7 @@ end
 
 function Attune_Select(attuneId, quiet)
 	if not quiet then PlaySound(856) end --igMainMenuOptionCheckBoxOn
+	Attune_UpdateSkipCheck(attuneId)
 	local keepPan = quiet and (attunelocal_graphPanX or 0) or 0
 	local keepScroll
 	if quiet and attunelocal_scroll and attunelocal_scroll.scrollframe then
@@ -4852,6 +4956,110 @@ function Attune_CreateZoomSlider()
 	f:Show()
 
 	attunelocal_zoomSlider = slider
+end
+
+-------------------------------------------------------------------------
+-- Fixed "Will not do" checkbox (bottom-right of the attune panel, does not scroll)
+-------------------------------------------------------------------------
+
+function Attune_ReleaseSkipCheck()
+	if AttuneSkipCheck then
+		AttuneSkipCheck:Hide()
+		AttuneSkipCheck:SetParent(UIParent)
+	end
+	if attunelocal_scroll then
+		attunelocal_scroll.attuneSkipCheck = nil
+	end
+end
+
+function Attune_CreateSkipCheck()
+	local parent = attunelocal_scroll and attunelocal_scroll.frame or (attunelocal_right and attunelocal_right.frame)
+	if not parent or not attunelocal_scroll then return end
+
+	local holder = AttuneSkipCheck
+	if holder == nil then
+		holder = CreateFrame("Button", nil, parent)
+		holder:SetHeight(24)
+		holder:RegisterForClicks("LeftButtonUp")
+
+		local box = holder:CreateTexture(nil, "ARTWORK")
+		box:SetTexture(130755) -- Interface\\Buttons\\UI-CheckBox-Up
+		box:SetSize(24, 24)
+		box:SetPoint("RIGHT", holder, "RIGHT", 0, 0)
+
+		local check = holder:CreateTexture(nil, "OVERLAY")
+		check:SetTexture(130751) -- Interface\\Buttons\\UI-CheckBox-Check
+		check:SetAllPoints(box)
+		check:Hide()
+
+		local highlight = holder:CreateTexture(nil, "HIGHLIGHT")
+		highlight:SetTexture(130753) -- Interface\\Buttons\\UI-CheckBox-Highlight
+		highlight:SetBlendMode("ADD")
+		highlight:SetAllPoints(box)
+
+		local text = holder:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+		text:SetJustifyH("RIGHT")
+		text:SetPoint("RIGHT", box, "LEFT", -2, 0)
+		holder.text = text
+		holder.check = check
+
+		holder:SetScript("OnClick", function(self)
+			if self.attuneId == nil then return end
+			local on = not self.checked
+			PlaySound(on and 856 or 857)
+			Attune_SetAttuneSkipped(self.attuneId, on)
+		end)
+		holder:SetScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+			GameTooltip:SetText(Attune_WillNotDoLabel())
+			local tip = AttuneLang["WillNotDo_TIP"]
+			if tip and tip ~= "" then
+				GameTooltip:AddLine(tip, 1, 1, 1, true)
+			end
+			GameTooltip:Show()
+		end)
+		holder:SetScript("OnLeave", function()
+			GameTooltip:Hide()
+		end)
+		holder:EnableMouseWheel(true)
+		holder:SetScript("OnMouseWheel", function(_, delta)
+			local sf = attunelocal_scroll and attunelocal_scroll.scrollframe
+			if not sf then return end
+			local wheel = sf:GetScript("OnMouseWheel")
+			if wheel then wheel(sf, delta) end
+		end)
+		AttuneSkipCheck = holder
+	end
+
+	local label = Attune_WillNotDoLabel()
+	holder.text:SetText(label)
+	local textW = holder.text:GetStringWidth() or 80
+	if textW < 20 then textW = math.max(80, 8 * (label:len() or 10)) end
+	holder:SetWidth(textW + 28)
+	holder:SetParent(parent)
+	holder:ClearAllPoints()
+	-- Same right inset as the zoom slider, so the box clears the scrollbar.
+	holder:SetPoint("BOTTOMRIGHT", parent, "BOTTOMRIGHT", -26, 4)
+	holder:SetFrameStrata(parent:GetFrameStrata())
+	local level = parent:GetFrameLevel() or 0
+	local sf = attunelocal_scroll.scrollframe
+	if sf and sf.GetFrameLevel then
+		level = math.max(level, sf:GetFrameLevel() or 0)
+	end
+	holder:SetFrameLevel(level + 50)
+	holder:Show()
+	attunelocal_scroll.attuneSkipCheck = holder
+	Attune_UpdateSkipCheck(holder.attuneId)
+end
+
+function Attune_UpdateSkipCheck(attuneId)
+	local holder = attunelocal_scroll and attunelocal_scroll.attuneSkipCheck
+	if holder == nil then return end
+	holder.attuneId = attuneId
+	local on = Attune_IsSkipped(attuneId) and true or false
+	holder.checked = on
+	if on then holder.check:Show() else holder.check:Hide() end
+	holder:Show()
 end
 
 -------------------------------------------------------------------------
@@ -6748,6 +6956,7 @@ function Attune_ToggleView(noToggle)
 	if noToggle == nil then noToggle = false end
 
 	Attune_ReleaseZoomSlider()
+	Attune_ReleaseSkipCheck()
 	Attune_HideDungeonArt()
 	Attune_ShowWorkInProgress(false)
 	Attune_CloseResultTable()
@@ -7254,10 +7463,20 @@ function Attune_ToggleView(noToggle)
 		if Attune_DB.archiveCompleted then
 			local archived = AttuneLang["Archived"]
 			for _, expacNode in ipairs(attunelocal_tree) do
-				if expacNode.value then
+				if expacNode.value and Attune_TreeHasGroup(expacNode, archived) then
 					local key = expacNode.value .. "\001" .. archived
 					if TreeExpandStatus[key] == nil then TreeExpandStatus[key] = 1 end
 					if TreeExpandStatus[key] == 1 then attunelocal_treeframe:SelectByPath(expacNode.value, archived) end
+				end
+			end
+		end
+		do
+			local willNotDo = Attune_WillNotDoLabel()
+			for _, expacNode in ipairs(attunelocal_tree) do
+				if expacNode.value and Attune_TreeHasGroup(expacNode, willNotDo) then
+					local key = expacNode.value .. "\001" .. willNotDo
+					if TreeExpandStatus[key] == nil then TreeExpandStatus[key] = 1 end
+					if TreeExpandStatus[key] == 1 then attunelocal_treeframe:SelectByPath(expacNode.value, willNotDo) end
 				end
 			end
 		end
@@ -7297,6 +7516,7 @@ function Attune_ToggleView(noToggle)
 		attunelocal_right:AddChild(attunelocal_scroll)
 
 		Attune_CreateZoomSlider()
+		Attune_CreateSkipCheck()
 
 		--select default attune (or last viewed) for this character
 		local lastViewed = Attune_GetLastViewed()
@@ -11168,6 +11388,7 @@ function Attune_NextFrameCollect()
 			and (a.FACTION == faction or a.FACTION == "Both")
 			and Attune_ClassQuestVisible(a)
 			and Attune_CharacterProgressionVisible(a)
+			and not Attune_IsSkipped(a.ID)
 			and Attune_MayRecordAttuneProgress(toon, a.ID)
 			and (toon.attuned == nil or (toon.attuned[a.ID] or 0) < 100)
 		then

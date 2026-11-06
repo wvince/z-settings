@@ -66,7 +66,7 @@ function ConfigManager:Initialize()
         -- [VALIDATION] Ensure integrity of existing keys
         if _G.slcDB.showBiS == nil then _G.slcDB.showBiS = 1 end
         if _G.slcDB.showOnlyMyClass == nil then _G.slcDB.showOnlyMyClass = 0 end
-        if _G.slcDB.bisPhase == nil then _G.slcDB.bisPhase = 1 end -- Default: Phase 1 (Changed from 0)
+        if _G.slcDB.bisPhase == nil or _G.slcDB.bisPhase == 0 then _G.slcDB.bisPhase = 1 end -- Default: Phase 1 (Changed from 0)
     end
     Logger:Log("Configuration module initialized.")
 end

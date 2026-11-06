@@ -1,4 +1,7 @@
-﻿1.60.27 - 4th November 2026
+﻿1.60.28 - 6th November 2026
+- The 'Show info card' option ('Interface') now shows an armory link for players (level 10 or higher).  Info cards can now be shown for dungeon map boss icons, dungeon zone icons (requires latest release of Leatrix Maps) and items in the appearances window (part of Account Collections).  If the info card is for an NPC, pet, mount, player or boss (including the boss icons shown with Leatrix Maps), a sounds button in the info card will let you listen to or mute the sounds that it makes (requires latest release of Leatrix Sounds).
+
+1.60.27 - 4th November 2026
 - For 'Class colored frames' ('Frames'), you can now set the frame border and player chain (if you use that option) to be in class color too.
 - For 'Show info cards' ('Interface'), fixed an issue which caused CTRL/C to not copy the link if your info card key included CTRL and you had not released CTRL first.
 - For 'Show flight times' ('System'), redesigned the flight progress bar.  The progress bar now shows the next stop in addition to the final destination.  There is a toggle for that and a text size slider in the configuration panel.

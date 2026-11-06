@@ -11,7 +11,7 @@ end
 function Window:Hide()
     if self.frame then self.frame:Hide() end
 end
-local function objectName(object) return (object.type=="fish" or object.objects) and object.name or GatherLite:translate("node." .. object.name) end
+local objectName = UI.ResourceName
 local resourceKinds={ore="mining",herb="herbalism",container="containers",fishing="window.resource.fishing_pools",fish="window.resource.fish_catches"}
 local function T(key, ...) return GatherLite:translate(key, ...) end
 local function resourceLabel(key) return T(resourceKinds[key] or key) end
@@ -89,12 +89,7 @@ end
 function Window:CollectLocations()
     self.locations=Routes:Collect(self.object)
     self.displayLocations=self.object.type=="fish" and addon.Fishing:ThinLocations(self.locations) or nil
-    self.zones={}
-    for id in pairs(self.locations) do self.zones[#self.zones+1]=id end
-    table.sort(self.zones,function(a,b)
-        local x,y=#self.locations[a],#self.locations[b]
-        return x>y or (x==y and a<b)
-    end)
+    self.zones=Routes:SortedZones(self.locations)
     self.zoneIndex=1
 end
 function Window:ToggleObject(object)
@@ -164,6 +159,7 @@ function Window:DrawMap()
     if not info or info.mapType~=3 then
         for _,pin in ipairs(self.pins) do pin:Hide() end
         Routes:FinishLines(overlay,0)
+        overlay.routeDrawState=nil
         self.lastDraw=nil
         return
     end
@@ -241,31 +237,11 @@ end
 function Window:RefreshList()
     local query=string.lower(self.search:GetText() or "")
     self.searchHint:SetShown(query=="")
-    local objects={}
     local info=self.mapID and C_Map.GetMapInfo(self.mapID)
     local filterZone=self.zoneOnly and info and info.mapType==3
-    local available=filterZone and Routes:ZoneResources(self.mapID)
+    local objects=UI.ResourceList(query,self.resourceCategory or "all",filterZone and self.mapID)
     local checked={}
     for _,object in ipairs(self.selectedObjects or {}) do checked[object]=true end
-    local catalog={}
-    for _,object in ipairs(addon.nodeDB) do catalog[#catalog+1]=object end
-    for _,object in ipairs(addon.fishDB or {}) do catalog[#catalog+1]=object end
-    for _,object in ipairs(catalog) do
-        local matches=query=="" or string.find(string.lower(objectName(object)),query,1,true)
-            or string.find(object.type,query,1,true)
-        for _,alias in ipairs(object.aliases or {}) do
-            if string.find(string.lower(GatherLite:translate("node." .. alias)),query,1,true) then matches=true end
-        end
-        local category=self.resourceCategory or "all"
-        local inCategory=category=="all" or object.type==category
-            or (category=="fishing" and object.type=="fish")
-        local inZone=not filterZone or (object.type=="fish" and object.maps[self.mapID]~=nil)
-        if filterZone and object.type~="fish" then
-            for _,id in ipairs(object.id or {}) do if available[id] then inZone=true; break end end
-        end
-        if matches and inCategory and inZone then objects[#objects+1]=object end
-    end
-    table.sort(objects,function(a,b) return objectName(a)<objectName(b) end)
     for i,object in ipairs(objects) do
         local row=self.rows[i]
         if not row then
@@ -341,57 +317,15 @@ function Window:CreateMap(page)
         self.search:SetText(""); self.search:ClearFocus()
     end)
     resetSearch:SetPoint("RIGHT",-7,0)
-    self.categoryButtons={}
     self.resourceCategory="all"
-    local categories={
-        {"all","window.resource.all","INV_Misc_Bag_10"},
-        {"ore","mining","Trade_Mining"},
-        {"herb","herbalism","Trade_Herbalism"},
-        {"container","containers"},
-        {"fishing","window.resource.fishing","Trade_Fishing"},
-    }
-    for i,category in ipairs(categories) do
-        local key,label=category[1],category[2]
-        local button=CreateFrame("Button",nil,sidebar)
-        button:SetSize(44,36)
-        button:SetScript("OnClick",function()
-            self.resourceCategory=key
-            if addon.GatheringTracking then addon.GatheringTracking:Prefer(key) end
-            self.list:SetVerticalScroll(0)
-            for _,item in ipairs(self.categoryButtons) do
-                item.selected:SetShown(item.category==key)
-            end
-            self:RefreshList()
-        end)
-        button:SetPoint("TOPLEFT",10+(i-1)*51,-40)
-        UI.Background(button,.09,.07,.04,1)
-        UI.Border(button)
-        button.icon=button:CreateTexture(nil,"ARTWORK")
-        button.icon:SetSize(28,28); button.icon:SetPoint("CENTER")
-        button.icon:SetTexture(key=="container" and "Interface\\AddOns\\GatherLite\\icons\\Open\\Chest"
-            or ("Interface\\Icons\\"..category[3]))
-        button:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square","ADD")
-        local function showTip()
-            GameTooltip:SetOwner(button,"ANCHOR_LEFT")
-            GameTooltip:SetText(T(label))
-            GameTooltip:Show()
-        end
-        local function hideTip()
-            if GameTooltip:IsOwned(button) then GameTooltip:Hide() end
-        end
-        button:SetScript("OnEnter",showTip)
-        button:SetScript("OnLeave",hideTip)
-        button:SetScript("OnHide",hideTip)
-        button.OnSmartNavSelect=showTip
-        button.OnSmartNavDeselect=hideTip
-        button.category=key
-        button.selected=button:CreateTexture(nil,"OVERLAY")
-        button.selected:SetColorTexture(1,.72,.15,1)
-        button.selected:SetHeight(3)
-        button.selected:SetPoint("BOTTOMLEFT",3,1); button.selected:SetPoint("BOTTOMRIGHT",-3,1)
-        button.selected:SetShown(key=="all")
-        self.categoryButtons[i]=button
-    end
+    local categoryBar, categoryButtons=UI.ResourceCategories(sidebar,248,36,7,function(key)
+        self.resourceCategory=key
+        if addon.GatheringTracking then addon.GatheringTracking:Prefer(key) end
+        self.list:SetVerticalScroll(0)
+        self:RefreshList()
+    end)
+    categoryBar:SetPoint("TOPLEFT",10,-40)
+    self.categoryButtons=categoryButtons
     self.zoneOnly=true
     self.zoneFilter=CreateFrame("CheckButton",nil,sidebar,"CheckboxWithLabelTemplate")
     self.zoneFilter:SetSize(24,24); self.zoneFilter:SetPoint("TOPLEFT",10,-79)
@@ -578,14 +512,15 @@ function Window:CreateSettings(page)
     rail:SetPoint("TOPLEFT"); rail:SetPoint("BOTTOMLEFT"); rail:SetWidth(184)
     UI.Background(rail,.19,.125,.065,1); UI.Border(rail)
     UI.Text(rail,T("window.settings.preferences"),"GameFontNormalSmall"):SetPoint("TOPLEFT",12,-16)
-    local groups={"general","worldmap","minimap","tracking","debugging"}
-    local labels={"settings.general","window.settings.world_map","settings.minimap","window.settings.resources","settings.debugging"}
+    local groups={"general","worldmap","minimap","hud","tracking","debugging"}
+    local labels={"settings.general","window.settings.world_map","settings.minimap","settings.hud","window.settings.resources","settings.debugging"}
     local icons={"Interface\\Icons\\inv_misc_spyglass_02","Interface\\Icons\\INV_Misc_Map_01",
-        "compass","Interface\\Icons\\INV_Ore_Copper_01","Interface\\Icons\\Trade_Engineering"}
+        "compass","compass","Interface\\Icons\\INV_Ore_Copper_01","Interface\\Icons\\Trade_Engineering"}
     local descriptions={
         "window.settings.general.description",
         "window.settings.world_map.description",
         "window.settings.minimap.description",
+        "settings.hud.description",
         "window.settings.resources.description",
         "window.settings.debugging.description",
     }
@@ -616,7 +551,7 @@ function Window:CreateSettings(page)
     local note=UI.Text(rail,T("window.settings.autosave"),"GameFontDisableSmall")
     note:SetPoint("BOTTOMLEFT",12,16); note:SetWidth(160)
 end
--- Bundled highlights for release 8.2.3. Update these alongside user-facing changes.
+-- Bundled highlights for release 8.3.0. Update these alongside user-facing changes.
 function Window:CreateChangelog(page)
     UI.Parchment(page)
     local title=UI.InkText(page,T("window.tab.changelog"),"GameFontNormalHuge")
@@ -629,10 +564,22 @@ function Window:CreateChangelog(page)
     scroll:SetPoint("TOPLEFT",28,-90); scroll:SetPoint("BOTTOMRIGHT",-42,20)
     self.changelogScroll=scroll
     local sections={
-        {"FOREVER DATABASE REFRESH",{
-            "Added 17 known gathering locations across 11 resources. The database now contains 30,561 locations.",
-            "All 30,544 locations from 8.2.2 were preserved.",
-            "Checked the mining and herbalism listings. No uncatalogued gathering objects were found.",
+        {"HUD GPS",{
+            "Added an on-by-default compass at the top center of the screen. It shows nearby gathering nodes, Questie and other compatible addon pins, and Blizzard vignettes with available coordinates.",
+            "Hover a pin to see its name and live distance. GatherLite nodes stay visible on the compass at close range, even when hidden on the minimap.",
+            "Move the compass or adjust its range, width, height, pin size, background, border, and visibility in HUD GPS settings.",
+        }},
+        {"WORLD MAP AND ROUTES",{
+            "Added a docked resource pane to the world map with search and full-width category buttons for All, Mining, Herbalism, Containers, and Fishing. Left-click the GatherLite map button to toggle it or right-click for map filters and settings.",
+            "Select multiple resources, browse recommended zones, and generate a ground route for the selected zone. The map shows calculation progress and the pane lets you cancel.",
+            "Leatrix Maps wraps its frame around the docked pane when reopening the map, including during combat when the frame permits changes.",
+        }},
+        {"OPENMAP",{
+            "Gathering pins load within the visible stitched map, including neighboring zones. Set the minimum zoom in World Map settings. It defaults to 7×.",
+            "Route lines stay aligned across stitched zones while you pan or zoom.",
+        }},
+        {"GATHERING TOOLTIPS",{
+            "Gathering tooltips show the minimum skill as a separate, localized line, with color indicating your skill relative to the node.",
         }},
     }
     local y=0
@@ -766,4 +713,11 @@ function Window:Show()
     if self.object then self:SelectObject(self.object) end
     if selectedRoute then self:ShowRoute(selectedRoute) end
     self:RefreshRoute()
+end
+
+function Window:ShowSettings()
+    self:Show()
+    if not self.ready then return end
+    self:SelectTab(2)
+    return true
 end

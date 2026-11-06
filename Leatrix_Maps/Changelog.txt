@@ -1,4 +1,12 @@
-﻿1.60.27 - 5th November 2026
+﻿1.60.28 - 5th November 2026
+- Added support for Leatrix Plus 'Show info cards' option ('Interface') for dungeon icons.
+- For 'Use simple map frame', fixed the Blizzard theme left border, zone menu background and coordinates background textures.
+- For 'Unlock map frame', the map can now be dragged completely off-screen while dragging.  It will bounce back a little when you let go of the mouse button.
+- Fixed the Zephras Isle portal in Alterac Mountains zone map and the Zephras Isle zeppelin in Mulgore.  Zeppelin icons are now clickable.
+- Fixed the quest panel toggle button not showing on dungeon maps.
+- Updated translations.
+
+1.60.27 - 5th November 2026
 - Added dungeon maps.  There is a new option called 'Show dungeon maps' (enabled by default).  To access dungeon maps, you can choose the Dungeons item in the continent menu (one of the zone menus), you can click the dungeon icon on the zone map or you can enter the dungeon itself.
 - Added 'Blizzard' to themes for those who want the default UI look with the enhanced features.
 - Points of interest icons can now be clicked to show the destination map.  Only dungeon icons can be clicked during combat.

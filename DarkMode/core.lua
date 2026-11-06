@@ -800,7 +800,14 @@ function DarkMode:SearchAddons(from)
 				return
 			end
 
-			DarkMode:FindRepeatingTextures(name, baseFrame, "addons")
+			if baseFrame.Background and baseFrame.Icon and baseFrame.Mask then
+				for _, key in ipairs({"Background", "SelectedTexture", "HighlightTexture", "TabGlow"}) do
+					if baseFrame[key] then DarkMode:UpdateColor(baseFrame[key], "addons") end
+				end
+			else
+				DarkMode:FindRepeatingTextures(name, baseFrame, "addons")
+			end
+
 			DarkMode:GetFrameAddonsTable()[name] = nil
 		end
 	end
@@ -1607,11 +1614,11 @@ function DarkMode:GetDragonTexture(texture)
 	return DarkMode:GetDragonTextures()[name] or ""
 end
 
-function DarkMode:AddDragonOverlay(tex, host, path, onUpdate, coordFn)
+function DarkMode:AddDragonOverlay(tex, host, path, onUpdate, coordFn, typ)
 	local dragon = host:CreateTexture(nil, "OVERLAY")
 	dragon:SetAllPoints(tex)
 	dragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon")
-	DarkMode:LockColorType(dragon, "ufdr")
+	DarkMode:LockColorType(dragon, typ or "ufdr")
 	local function DMUpdateDragon()
 		local layer, subLevel = tex:GetDrawLayer()
 		local dragonSubLevel = math.min((subLevel or 0) + 1, 7)
@@ -1660,9 +1667,9 @@ end
 function DarkMode:ApplyLeatrixChain(tex, container, path)
 	local atlas = tex:GetAtlas()
 	if type(atlas) == "string" and atlas:lower():find("portraiton%-boss") then
-		DarkMode:UpdateColor(tex, "ufdr")
+		DarkMode:UpdateColor(tex, "ufdrp")
 	elseif not tex.dmDragon and DarkMode:GetDragonTexture(path) ~= "" and DarkMode:UpdateColor(tex, "uf") then
-		tex.dmDragon = DarkMode:AddDragonOverlay(tex, container, path, nil, function(p, ...) return DarkMode:LeatrixChainCoords(p, ...) end)
+		tex.dmDragon = DarkMode:AddDragonOverlay(tex, container, path, nil, function(p, ...) return DarkMode:LeatrixChainCoords(p, ...) end, "ufdrp")
 	end
 end
 
@@ -1761,7 +1768,7 @@ function DarkMode:SetupClassicUIUnitArt()
 	if not DarkMode:IsAddOnLoaded("DragonflightUi") then
 		for _, path in ipairs(DarkMode:GetClassicUIDragonArt()) do
 			local tex = DarkMode:GetFrameByName(path)
-			if tex and tex.GetParent and not tex.dmDragon and DarkMode:UpdateColor(tex, "uf") then tex.dmDragon = DarkMode:AddDragonOverlay(tex, tex:GetParent()) end
+			if tex and tex.GetParent and not tex.dmDragon and DarkMode:UpdateColor(tex, "uf") then tex.dmDragon = DarkMode:AddDragonOverlay(tex, tex:GetParent(), nil, nil, nil, path:find("^PlayerFrame") and "ufdrp" or "ufdr") end
 			if not (tex and tex.dmDragon) then pending = true end
 		end
 	end
@@ -1901,11 +1908,11 @@ function DarkMode:Event(event, ...)
 					end
 				end
 
-				classicFrame.dmDragon = DarkMode:AddDragonOverlay(tex, classicFrame, tex:GetTexture(), DMLiftLevelText)
+				classicFrame.dmDragon = DarkMode:AddDragonOverlay(tex, classicFrame, tex:GetTexture(), DMLiftLevelText, nil, frame == PlayerFrame and "ufdrp" or "ufdr")
 				local container = frame.PlayerFrameContainer
 				if container then
 					local function DMLockPlayerElite()
-						if container.PlayerElite then DarkMode:LockColorType(container.PlayerElite, "ufdr") end
+						if container.PlayerElite then DarkMode:LockColorType(container.PlayerElite, "ufdrp") end
 					end
 
 					DMLockPlayerElite()
@@ -2004,7 +2011,7 @@ function DarkMode:Event(event, ...)
 
 						if not DarkMode:IsAddOnLoaded("DragonflightUi") then
 							PlayerFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon")
-							DarkMode:UpdateColor(PlayerFrameDragon, "ufdr")
+							DarkMode:UpdateColor(PlayerFrameDragon, "ufdrp")
 							PlayerFrameDragon:SetTexture("")
 						end
 					end

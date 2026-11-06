@@ -2,6 +2,44 @@ local _, addon = ...
 local UI = {}
 addon.UI = UI
 
+function UI.ResourceName(object)
+    if object.type == "fish" or object.objects then return object.name end
+    return GatherLite:translate("node." .. object.name)
+end
+
+function UI.ResourceList(query, category, mapID)
+    local available = mapID and addon.Routes:ZoneResources(mapID)
+    local objects, names = {}, {}
+    local function add(catalog)
+        for _, object in ipairs(catalog) do
+            if category == "all" or object.type == category or (category == "fishing" and object.type == "fish") then
+                local inZone = not mapID or (object.type == "fish" and object.maps[mapID] ~= nil)
+                if available and object.type ~= "fish" then
+                    for _, id in ipairs(object.id or {}) do
+                        if available[id] then inZone = true; break end
+                    end
+                end
+                if inZone then
+                    local name = UI.ResourceName(object)
+                    local matches = query == "" or name:lower():find(query, 1, true) or object.type:find(query, 1, true)
+                    for _, alias in ipairs(object.aliases or {}) do
+                        if matches then break end
+                        matches = GatherLite:translate("node." .. alias):lower():find(query, 1, true)
+                    end
+                    if matches then
+                        objects[#objects + 1] = object
+                        names[object] = name
+                    end
+                end
+            end
+        end
+    end
+    add(addon.nodeDB)
+    add(addon.fishDB or {})
+    table.sort(objects, function(a, b) return names[a] < names[b] end)
+    return objects
+end
+
 -- Keep the map requirement tied to the same catalog values as node tooltips.
 function UI.Requirement(object)
     if not object then return "" end
@@ -57,6 +95,69 @@ function UI.Border(parent)
         end
     end
 end
+
+local resourceCategories = {
+    { "all", "window.resource.all", "Interface\\Icons\\INV_Misc_Bag_10" },
+    { "ore", "mining", "Interface\\Icons\\Trade_Mining" },
+    { "herb", "herbalism", "Interface\\Icons\\Trade_Herbalism" },
+    { "container", "containers", "Interface\\AddOns\\GatherLite\\icons\\Open\\Chest" },
+    { "fishing", "window.resource.fishing", "Interface\\Icons\\Trade_Fishing" },
+}
+
+function UI.ResourceCategories(parent, width, height, gap, onSelect)
+    local bar = CreateFrame("Frame", nil, parent)
+    bar:SetHeight(height)
+    local buttons = {}
+    for i, category in ipairs(resourceCategories) do
+        local key, label, texture = unpack(category)
+        local button = CreateFrame("Button", nil, bar)
+        button:SetHeight(height)
+        UI.Background(button, .09, .07, .04, 1)
+        UI.Border(button)
+        button.icon = button:CreateTexture(nil, "ARTWORK")
+        button.icon:SetPoint("CENTER")
+        button.icon:SetTexture(texture)
+        button:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
+
+        local function showTip()
+            GameTooltip:SetOwner(button, "ANCHOR_LEFT")
+            GameTooltip:SetText(GatherLite:translate(label))
+            GameTooltip:Show()
+        end
+        local function hideTip()
+            if GameTooltip:IsOwned(button) then GameTooltip:Hide() end
+        end
+        button:SetScript("OnEnter", showTip)
+        button:SetScript("OnLeave", hideTip)
+        button:SetScript("OnHide", hideTip)
+        button.OnSmartNavSelect, button.OnSmartNavDeselect = showTip, hideTip
+        button.category = key
+        button.selected = button:CreateTexture(nil, "OVERLAY")
+        button.selected:SetColorTexture(1, .72, .15, 1)
+        button.selected:SetHeight(3)
+        button.selected:SetPoint("BOTTOMLEFT", 3, 1)
+        button.selected:SetPoint("BOTTOMRIGHT", -3, 1)
+        button.selected:SetShown(key == "all")
+        button:SetScript("OnClick", function()
+            for _, item in ipairs(buttons) do item.selected:SetShown(item.category == key) end
+            onSelect(key)
+        end)
+        buttons[i] = button
+    end
+    function bar:ResizeButtons(width)
+        self:SetWidth(width)
+        local buttonWidth = (width - (#buttons - 1) * gap) / #buttons
+        local iconSize = math.min(28, buttonWidth - 8)
+        for i, button in ipairs(buttons) do
+            button:SetWidth(buttonWidth)
+            button:SetPoint("TOPLEFT", (i - 1) * (buttonWidth + gap), 0)
+            button.icon:SetSize(iconSize, iconSize)
+        end
+    end
+    bar:ResizeButtons(width)
+    return bar, buttons
+end
+
 function UI.Parchment(parent)
     UI.Background(parent,.79,.71,.55,1)
     -- QuestBG contains transparent padding and a painted edge. Use a seamless
@@ -204,7 +305,9 @@ function UI.SettingsGroup(parent, group, name)
     end
     local function render(args)
         local keys = {}
-        for key in pairs(args) do keys[#keys+1]=key end
+        for key, option in pairs(args) do
+            if not value(option.hidden) then keys[#keys+1]=key end
+        end
         table.sort(keys, function(a,b)
             local x,y=args[a].order or 0,args[b].order or 0
             if x~=y then return x<y end

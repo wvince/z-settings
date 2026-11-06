@@ -35,7 +35,7 @@
 		----------------------------------------------------------------------
 
 		--[[Alterac Mountains]] [1416] = {
-			{"TravelA", 12.8, 51.2, L["Boat to"] .. " " .. L["Zephras Isle"], nil, fATex, nil, nil, nil, nil, nil, 0, 2665},
+			{"TravelA", 12.8, 51.2, L["Boat to"] .. " " .. L["Zephras Isle"], nil, fATex, nil, nil, nil, nil, nil, 0, 2521},
 			{"Arrow", 80.7, 34.2, L["Western Plaguelands"], nil, arTex, nil, nil, nil, nil, nil, 0, 1422},
 			{"Arrow", 51.8, 68.8, L["Hillsbrad Foothills"], nil, arTex, nil, nil, nil, nil, nil, 3, 1424},
 			{"Arrow", 81.7, 77.5, L["Hillsbrad Foothills"], L["Ravenholdt Manor"], arTex, nil, nil, nil, nil, nil, 2.2, 1424},
@@ -283,7 +283,7 @@
 			{"Arrow", 39.5, 29.4, L["Thunder Bluff"], L["North"], arTex, nil, nil, nil, nil, nil, 3.7, 1456},
 			{"Arrow", 42.3, 29.8, L["Thunder Bluff"], L["North"], arTex, nil, nil, nil, nil, nil, 2.8, 1456},
 			{"Arrow", 35.5, 36.0, L["Thunder Bluff"], L["South"], arTex, nil, nil, nil, nil, nil, 4.3, 1456},
-			{"TravelH", 34.3, 26.1, L["Zeppelin to"] .. " " .. L["Zephras Isle"], nil, fHTex, nil, nil, nil, nil, nil, 0, 2665},
+			{"TravelH", 34.3, 26.1, L["Zeppelin to"] .. " " .. L["Zephras Isle"], nil, fHTex, nil, nil, nil, nil, nil, 0, 2521},
 		},
 		--[[The Barrens]] [1413] = {
 			{"Dungeon", 46.0, 36.4, L["Wailing Caverns"], L["Dungeon"], dnTex, 17, 24}, {"Dungeon", 42.9, 90.2, L["Razorfen Kraul"], L["Dungeon"], dnTex, 29, 38}, {"Dungeon", 49.0, 93.9, L["Razorfen Downs"], L["Dungeon"], dnTex, 37, 46},

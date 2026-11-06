@@ -2,7 +2,7 @@
 ## Title: GearQuest Forever: Mage
 ## Notes: Hunt lists for this class. GearQuest Forever loads this when you play or simulate it.
 ## Author: Henrik8210
-## Version: 1.0.7
+## Version: 1.0.8
 ## IconTexture: Interface\Icons\ClassIcon_Mage
 ## LoadOnDemand: 1
 ## Dependencies: GearQuestForever

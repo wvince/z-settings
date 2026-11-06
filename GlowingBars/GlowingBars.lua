@@ -648,12 +648,6 @@ local function __TS__ArraySort(self, compareFn)
     return self
 end
 
-local function __TS__ArrayForEach(self, callbackFn, thisArg)
-    for i = 1, #self do
-        callbackFn(thisArg, self[i], i - 1, self)
-    end
-end
-
 local function __TS__ArraySlice(self, first, last)
     local len = #self
     first = first or 0
@@ -699,6 +693,35 @@ local function __TS__ArrayEvery(self, callbackfn, thisArg)
     return true
 end
 
+local function __TS__ArrayForEach(self, callbackFn, thisArg)
+    for i = 1, #self do
+        callbackFn(thisArg, self[i], i - 1, self)
+    end
+end
+
+local function __TS__ArrayConcat(self, ...)
+    local items = {...}
+    local result = {}
+    local len = 0
+    for i = 1, #self do
+        len = len + 1
+        result[len] = self[i]
+    end
+    for i = 1, #items do
+        local item = items[i]
+        if __TS__ArrayIsArray(item) then
+            for j = 1, #item do
+                len = len + 1
+                result[len] = item[j]
+            end
+        else
+            len = len + 1
+            result[len] = item
+        end
+    end
+    return result
+end
+
 return {
   __TS__Class = __TS__Class,
   __TS__ArrayIndexOf = __TS__ArrayIndexOf,
@@ -728,9 +751,10 @@ return {
   __TS__ObjectValues = __TS__ObjectValues,
   __TS__Delete = __TS__Delete,
   __TS__ArraySort = __TS__ArraySort,
-  __TS__ArrayForEach = __TS__ArrayForEach,
   __TS__ArraySlice = __TS__ArraySlice,
-  __TS__ArrayEvery = __TS__ArrayEvery
+  __TS__ArrayEvery = __TS__ArrayEvery,
+  __TS__ArrayForEach = __TS__ArrayForEach,
+  __TS__ArrayConcat = __TS__ArrayConcat
 }
  end,
 ["packages.@wowkit.core.src.event-bus"] = function(...) 
@@ -2178,9 +2202,6 @@ function SpellsService.prototype.resolveFromName(self, name)
     return self:findPlayerSpellByName(name) or self:lookUpSpellId(name)
 end
 function SpellsService.prototype.getHintName(self, spellId)
-    return self:getHintNames(spellId)[1]
-end
-function SpellsService.prototype.getHintNames(self, spellId)
     local ____temp_1
     if spellId ~= nil then
         ____temp_1 = SPELL_NAME_HINT[spellId]
@@ -2188,6 +2209,16 @@ function SpellsService.prototype.getHintNames(self, spellId)
         ____temp_1 = nil
     end
     local hint = ____temp_1
+    return type(hint) == "string" and hint or hint and hint[1]
+end
+function SpellsService.prototype.getHintNames(self, spellId)
+    local ____temp_4
+    if spellId ~= nil then
+        ____temp_4 = SPELL_NAME_HINT[spellId]
+    else
+        ____temp_4 = nil
+    end
+    local hint = ____temp_4
     if hint == nil then
         return {}
     end
@@ -2213,13 +2244,13 @@ function SpellsService.prototype.resolve(self, spellId)
     end
     local cached = self.resolveCache[spellId]
     if cached ~= nil then
-        local ____temp_2
+        local ____temp_5
         if cached == false then
-            ____temp_2 = nil
+            ____temp_5 = nil
         else
-            ____temp_2 = cached
+            ____temp_5 = cached
         end
-        return ____temp_2
+        return ____temp_5
     end
     local id = self:findKnownId(self.findAlias(spellId))
     self.resolveCache[spellId] = id or false
@@ -2284,13 +2315,13 @@ function SpellsService.prototype.getSpellRank(self, spellId)
         return nil
     end
     local digits = string.match(text, "(%d+)")
-    local ____temp_3
+    local ____temp_6
     if digits ~= nil then
-        ____temp_3 = tonumber(digits)
+        ____temp_6 = tonumber(digits)
     else
-        ____temp_3 = nil
+        ____temp_6 = nil
     end
-    return ____temp_3
+    return ____temp_6
 end
 function SpellsService.prototype.noteLearnedSpell(self, spellId)
     local id = getReadable(spellId)
@@ -2350,15 +2381,15 @@ function SpellsService.prototype.findOverride(self, spellId)
 end
 function SpellsService.prototype.listSpellNames(self, spellId, overrideId)
     local names = {}
-    local ____array_4 = __TS__SparseArrayNew(
+    local ____array_7 = __TS__SparseArrayNew(
         self:getSpellName(overrideId) or self:getSpellName(spellId),
         unpack(self:getHintNames(spellId))
     )
     __TS__SparseArrayPush(
-        ____array_4,
+        ____array_7,
         unpack(self:getHintNames(overrideId))
     )
-    for ____, name in ipairs({__TS__SparseArraySpread(____array_4)}) do
+    for ____, name in ipairs({__TS__SparseArraySpread(____array_7)}) do
         if name ~= nil and name ~= "" and not __TS__ArrayIncludes(names, name) then
             names[#names + 1] = name
         end
@@ -2630,9 +2661,17 @@ local ____exports = {}
 local GAMEPAD_BAR = "GamepadMainActionBarFrame"
 --- How deep the buttons of the gamepad bars sit under their frame, at most.
 local GAMEPAD_DEPTH = 6
+--- Is the frame of the gamepad bars on the screen: is the player in gamepad mode?
+function ____exports.isGamepadBarShown()
+    local root = _G[GAMEPAD_BAR]
+    return root ~= nil and root:IsVisible() == true
+end
 --- Every child of the gamepad bars' frame, at any depth, that shows an action slot; none outside gamepad mode.
 function ____exports.listGamepadButtons()
     local found = {}
+    if not ____exports.isGamepadBarShown() then
+        return found
+    end
     local addButtonsUnder
     addButtonsUnder = function(frame, depth)
         if depth > GAMEPAD_DEPTH then
@@ -2646,10 +2685,7 @@ function ____exports.listGamepadButtons()
             end
         end
     end
-    local root = _G[GAMEPAD_BAR]
-    if root ~= nil then
-        addButtonsUnder(root, 0)
-    end
+    addButtonsUnder(_G[GAMEPAD_BAR], 0)
     return found
 end
 return ____exports
@@ -3403,7 +3439,7 @@ function ____exports.showLoopPicture(alert, atlas, ____then)
     if picture == nil then
         return
     end
-    picture:SetAtlas(atlas)
+    picture:SetAtlas(atlas, false, nil, true)
     picture:SetAlpha(0)
     local sheetLeft, ____, ____, ____, sheetRight = picture:GetTexCoord()
     picture:Show()
@@ -3618,7 +3654,11 @@ function GlowService.prototype.listGlowing(self)
     return buttons
 end
 function GlowService.prototype.isGlowing(self, button)
-    for ____, entry in pairs(self.overlays[button] or ({})) do
+    local entries = self.overlays[button]
+    if entries == nil then
+        return false
+    end
+    for ____, entry in pairs(entries) do
         if entry.isWanted == true then
             return true
         end
@@ -4404,8 +4444,11 @@ return ____exports
 ["packages.@wowkit.wow.src.player_service"] = function(...) 
 local ____lualib = require("lualib_bundle")
 local __TS__Class = ____lualib.__TS__Class
+local __TS__DecorateLegacy = ____lualib.__TS__DecorateLegacy
 local __TS__ArrayIndexOf = ____lualib.__TS__ArrayIndexOf
 local ____exports = {}
+local ____core = require("packages.@wowkit.core.src.index")
+local OnGameEvent = ____core.OnGameEvent
 local ____wow_2Ddata = require("packages.@wowkit.wow-data.src.index")
 local Consumable = ____wow_2Ddata.Consumable
 local ____protected_2Dcall_2Eutils = require("packages.@wowkit.wow.src.utils.protected-call_utils")
@@ -4418,10 +4461,13 @@ local isReadable = ____secret_2Dvalue_2Eutils.isReadable
 local ____wow_2Econstants = require("packages.@wowkit.wow.src.wow_constants")
 local OFF_HAND_SLOT = ____wow_2Econstants.OFF_HAND_SLOT
 local RANGED_SLOT = ____wow_2Econstants.RANGED_SLOT
+--- The main talent tree is read again after this many seconds at most: it reads every talent, and changes only with them.
+local MAIN_TREE_REUSE = 30
 ____exports.PlayerService = __TS__Class()
 local PlayerService = ____exports.PlayerService
 PlayerService.name = "PlayerService"
 function PlayerService.prototype.____constructor(self)
+    self.mainTreeAt = 0
 end
 function PlayerService.prototype.isInCombat(self)
     local didSucceed, isFighting = tryCall(UnitAffectingCombat, "player")
@@ -4454,7 +4500,25 @@ end
 function PlayerService.prototype.isMounted(self)
     return attempt(IsMounted) == true
 end
+function PlayerService.prototype.forgetMainTalentTree(self)
+    self.mainTreeAt = 0
+end
+__TS__DecorateLegacy(
+    {OnGameEvent("PLAYER_TALENT_UPDATE", "TRAIT_CONFIG_UPDATED", "CHARACTER_POINTS_CHANGED", "ACTIVE_TALENT_GROUP_CHANGED")},
+    PlayerService.prototype,
+    "forgetMainTalentTree",
+    true
+)
 function PlayerService.prototype.findMainTalentTree(self)
+    local now = GetTime()
+    if self.mainTreeAt > 0 and now - self.mainTreeAt < MAIN_TREE_REUSE then
+        return self.mainTree
+    end
+    self.mainTreeAt = now
+    self.mainTree = self:readMainTalentTree()
+    return self.mainTree
+end
+function PlayerService.prototype.readMainTalentTree(self)
     local nodes = self:listTalentNodes()
     if #nodes == 0 then
         return nil
@@ -5386,6 +5450,8 @@ local OnEvent = ____core.OnEvent
 local OnGameEvent = ____core.OnGameEvent
 local ____bar_2Dnames = require("packages.@wowkit.wow.src.bar-names")
 local listAddonButtonNames = ____bar_2Dnames.listAddonButtonNames
+local ____gamepad_2Dbuttons = require("packages.@wowkit.wow.src.gamepad-buttons")
+local isGamepadBarShown = ____gamepad_2Dbuttons.isGamepadBarShown
 local ____protected_2Dcall_2Eutils = require("packages.@wowkit.wow.src.utils.protected-call_utils")
 local attempt = ____protected_2Dcall_2Eutils.attempt
 --- The bars are mapped again this long after the last change (changes come in bursts).
@@ -5462,7 +5528,7 @@ function BarRefreshService.prototype.countAddonButtons(self)
             count = count + 1
         end
     end
-    return count + self.registry:countButtons()
+    return count + self.registry:countButtons() + (isGamepadBarShown() and 1 or 0)
 end
 return ____exports
  end,
@@ -6813,7 +6879,17 @@ function BuffMemoryService.prototype.isEmpty(self)
     return next(self.heldNames) == nil and next(self.heldCategories) == nil
 end
 function BuffMemoryService.prototype.remember(self, spellId, auraName, remain, isFromCast)
-    local name = auraName or self.spells:getSpellName(spellId)
+    local ____auraName_1 = auraName
+    if ____auraName_1 == nil then
+        local ____temp_0
+        if spellId ~= nil then
+            ____temp_0 = self.spells:getSpellLabel(spellId)
+        else
+            ____temp_0 = nil
+        end
+        ____auraName_1 = ____temp_0
+    end
+    local name = ____auraName_1
     if name == nil or name == "" then
         return
     end
@@ -6845,7 +6921,7 @@ function BuffMemoryService.prototype.isRemembered(self, spellId, lead)
     if lead == nil then
         lead = 0
     end
-    local name = self.spells:getSpellName(spellId)
+    local name = self.spells:getSpellLabel(spellId)
     if name == nil or name == "" then
         return false
     end
@@ -6857,7 +6933,7 @@ function BuffMemoryService.prototype.isRemembered(self, spellId, lead)
     return category ~= nil and now < (self.heldCategories[category.key] or 0)
 end
 function BuffMemoryService.prototype.release(self, spellId, categoriesSeen)
-    local name = self.spells:getSpellName(spellId)
+    local name = self.spells:getSpellLabel(spellId)
     if name == nil or name == "" then
         return
     end
@@ -6944,6 +7020,9 @@ function BuffStateService.prototype.findAuras(self, spellId)
     ) then
         return nil
     end
+    if #scan.auras == 0 and self:isEmptyListSuspicious() then
+        return nil
+    end
     local wantKey = buildNameKey(self:getBuffName(spellId) or "")
     return __TS__ArrayFilter(
         scan.auras,
@@ -6983,10 +7062,10 @@ end
 function BuffStateService.prototype.findOwnUnitBuff(self, unit, buffs)
     for ____, aura in ipairs(self.auras:scanAuras(unit).auras) do
         do
-            local __continue24
+            local __continue25
             repeat
                 if aura.isHidden or aura.name == nil or aura.caster ~= "player" then
-                    __continue24 = true
+                    __continue25 = true
                     break
                 end
                 local auraKey = buildNameKey(aura.name)
@@ -7000,9 +7079,9 @@ function BuffStateService.prototype.findOwnUnitBuff(self, unit, buffs)
                         return key
                     end
                 end
-                __continue24 = true
+                __continue25 = true
             until true
-            if not __continue24 then
+            if not __continue25 then
                 break
             end
         end
@@ -7077,17 +7156,17 @@ function BuffStateService.prototype.indexAuras(self, auras)
     local categories = {}
     for ____, aura in ipairs(auras) do
         do
-            local __continue40
+            local __continue41
             repeat
                 if aura.isHidden then
-                    __continue40 = true
+                    __continue41 = true
                     break
                 end
                 if aura.spellId ~= nil then
                     ids[aura.spellId] = aura
                 end
                 if aura.name == nil then
-                    __continue40 = true
+                    __continue41 = true
                     break
                 end
                 names[buildNameKey(aura.name)] = aura
@@ -7095,9 +7174,9 @@ function BuffStateService.prototype.indexAuras(self, auras)
                 if category then
                     categories[category.key] = aura
                 end
-                __continue40 = true
+                __continue41 = true
             until true
-            if not __continue40 then
+            if not __continue41 then
                 break
             end
         end
@@ -7330,6 +7409,8 @@ local WEAPON_PRIORITY = ____weapon_2Dbuffs_2Econstants.WEAPON_PRIORITY
 local function getLastWeaponKey(isOffhand)
     return isOffhand and "weapon:off" or "weapon:main"
 end
+--- A class with no weapon buff: one empty list (nobody changes it).
+local NO_WEAPON_BUFFS = {}
 ____exports.WeaponChoiceService = __TS__Class()
 local WeaponChoiceService = ____exports.WeaponChoiceService
 WeaponChoiceService.name = "WeaponChoiceService"
@@ -7361,7 +7442,7 @@ function WeaponChoiceService.prototype.getWeaponChoices(self)
     else
         ____temp_0 = nil
     end
-    return ____temp_0 or ({})
+    return ____temp_0 or NO_WEAPON_BUFFS
 end
 function WeaponChoiceService.prototype.isWeaponBuffLearned(self, entry)
     return self:findUsableId(entry) ~= nil
@@ -7452,6 +7533,9 @@ end
 function WeaponChoiceService.prototype.findSelectedWeaponBuff(self, isOffhand)
     if isOffhand == nil then
         isOffhand = false
+    end
+    if #self:getWeaponChoices() == 0 then
+        return nil
     end
     local ____isOffhand_5
     if isOffhand then
@@ -8773,6 +8857,7 @@ ____exports.TEXTS = {
     TABLE_TITLE = "Glowing Bars",
     HDR_TABLE_DEFAULTS = "Defaults",
     HDR_TABLE_SPELLS = "Spells (override the defaults)",
+    TIP_TABLE_SPELLS = "Faded names are spells you haven't learned yet.",
     COL_SPELL_ITEM = "Spell / Item",
     COL_TYPE = "Type",
     COL_SPELL_ITEM_ID = "Spell / Item ID",
@@ -8861,9 +8946,12 @@ return ____exports
 ["addons.glowing-bars.src.reminders.outdated-ranks_service"] = function(...) 
 local ____lualib = require("lualib_bundle")
 local __TS__Class = ____lualib.__TS__Class
-local __TS__ArraySort = ____lualib.__TS__ArraySort
+local __TS__DecorateLegacy = ____lualib.__TS__DecorateLegacy
 local __TS__ArrayFilter = ____lualib.__TS__ArrayFilter
+local __TS__ArraySort = ____lualib.__TS__ArraySort
 local ____exports = {}
+local ____core = require("packages.@wowkit.core.src.index")
+local OnEvent = ____core.OnEvent
 ____exports.OutdatedRanksService = __TS__Class()
 local OutdatedRanksService = ____exports.OutdatedRanksService
 OutdatedRanksService.name = "OutdatedRanksService"
@@ -8872,7 +8960,29 @@ function OutdatedRanksService.prototype.____constructor(self, actionBars, spells
     self.spells = spells
     self.settings = settings
 end
+function OutdatedRanksService.prototype.forgetFound(self)
+    self.found = nil
+end
+__TS__DecorateLegacy(
+    {OnEvent("bars.mapped", "spells.refreshed", "spells.invalidated", "spellbook.indexed")},
+    OutdatedRanksService.prototype,
+    "forgetFound",
+    true
+)
 function OutdatedRanksService.prototype.findOutdatedRanks(self)
+    if self.found == nil then
+        self.found = self:readOutdatedRanks()
+    end
+    local enabledRanks = self.settings:get("enabledRanks")
+    if (next(enabledRanks)) == nil then
+        return self.found
+    end
+    return __TS__ArrayFilter(
+        self.found,
+        function(____, rank) return enabledRanks[rank.name] ~= false end
+    )
+end
+function OutdatedRanksService.prototype.readOutdatedRanks(self)
     local outdated = {}
     for name, entry in pairs(self:findBestOnBars()) do
         local best = self.spells:getHighestRank(entry.id)
@@ -8884,17 +8994,13 @@ function OutdatedRanksService.prototype.findOutdatedRanks(self)
         outdated,
         function(____, a, b) return a.name < b.name and -1 or (a.name > b.name and 1 or 0) end
     )
-    local enabledRanks = self.settings:get("enabledRanks")
-    return __TS__ArrayFilter(
-        outdated,
-        function(____, rank) return enabledRanks[rank.name] ~= false end
-    )
+    return outdated
 end
 function OutdatedRanksService.prototype.findBestOnBars(self)
     local byName = {}
     for ____, id in ipairs(self.actionBars:listSpellIdsOnBars()) do
         do
-            local __continue9
+            local __continue12
             repeat
                 local name = self.spells:getSpellName(id)
                 local ____temp_0
@@ -8905,16 +9011,16 @@ function OutdatedRanksService.prototype.findBestOnBars(self)
                 end
                 local rank = ____temp_0
                 if name == nil or rank == nil or self.actionBars:isInMacro(name) then
-                    __continue9 = true
+                    __continue12 = true
                     break
                 end
                 local ____opt_1 = byName[name]
                 if rank > (____opt_1 and ____opt_1.rank or -1) then
                     byName[name] = {id = id, rank = rank}
                 end
-                __continue9 = true
+                __continue12 = true
             until true
-            if not __continue9 then
+            if not __continue12 then
                 break
             end
         end
@@ -8934,9 +9040,6 @@ local __TS__ArrayFilter = ____lualib.__TS__ArrayFilter
 local __TS__ArrayIncludes = ____lualib.__TS__ArrayIncludes
 local __TS__ArrayMap = ____lualib.__TS__ArrayMap
 local __TS__ArraySome = ____lualib.__TS__ArraySome
-local __TS__SparseArrayNew = ____lualib.__TS__SparseArrayNew
-local __TS__SparseArrayPush = ____lualib.__TS__SparseArrayPush
-local __TS__SparseArraySpread = ____lualib.__TS__SparseArraySpread
 local __TS__ArrayJoin = ____lualib.__TS__ArrayJoin
 local __TS__ArrayFind = ____lualib.__TS__ArrayFind
 local ____exports = {}
@@ -8958,6 +9061,10 @@ function NoticesService.prototype.____constructor(self, actionBars, clock, notic
     self.styles = styles
     self.lastText = ""
     self.shownAt = {}
+    self.parts = {}
+    self.lines = {}
+    self.weaponIds = {}
+    self.rankIds = {}
 end
 function NoticesService.prototype.showNoticeIfNew(self, reminders)
     if self.actionBars:getSecondsSinceBarsChanged() <= NOTICE_AFTER_BAR_CHANGE then
@@ -8966,6 +9073,14 @@ function NoticesService.prototype.showNoticeIfNew(self, reminders)
     local now = self.clock:getCurrentTime()
     local lines = self:listLines(reminders)
     self:forgetOver(lines)
+    if #lines == 0 then
+        if self.lastText == "" then
+            return
+        end
+        self.lastText = ""
+        self.notice:clearNotice()
+        return
+    end
     local due = __TS__ArrayFilter(
         lines,
         function(____, line) return self:isDue(line, now) end
@@ -9011,31 +9126,66 @@ function NoticesService.prototype.isStillUp(self, line, now)
     )
 end
 function NoticesService.prototype.forgetOver(self, lines)
-    local shownAt = {}
+    local parts = self.parts
+    for part in pairs(parts) do
+        parts[part] = nil
+    end
     for ____, line in ipairs(lines) do
         for ____, part in ipairs(line.parts) do
-            local at = self.shownAt[part]
-            if at ~= nil then
-                shownAt[part] = at
-            end
+            parts[part] = true
         end
     end
-    self.shownAt = shownAt
+    for part in pairs(self.shownAt) do
+        if not (parts[part] ~= nil) then
+            self.shownAt[part] = nil
+        end
+    end
+end
+function NoticesService.prototype.listWeaponIds(self, reminders)
+    local ids = self.weaponIds
+    do
+        local index = #ids
+        while index > 0 do
+            table.remove(ids)
+            index = index - 1
+        end
+    end
+    if reminders.weaponSpell ~= nil then
+        ids[#ids + 1] = reminders.weaponSpell
+    end
+    for ____, id in ipairs(reminders.addedWeaponSpells) do
+        ids[#ids + 1] = id
+    end
+    return ids
+end
+function NoticesService.prototype.listRankIds(self, reminders)
+    local ids = self.rankIds
+    do
+        local index = #ids
+        while index > 0 do
+            table.remove(ids)
+            index = index - 1
+        end
+    end
+    for ____, rank in ipairs(reminders.outdatedRanks) do
+        ids[#ids + 1] = rank.id
+    end
+    return ids
 end
 function NoticesService.prototype.listLines(self, reminders)
-    local lines = {}
+    local lines = self.lines
+    do
+        local index = #lines
+        while index > 0 do
+            table.remove(lines)
+            index = index - 1
+        end
+    end
     self:addTypeLines(lines, "missingBuff", reminders.buffsToCast, "TEXT_BUFF")
-    local ____self_addTypeLines_1 = self.addTypeLines
-    local ____array_0 = __TS__SparseArrayNew(unpack(reminders.weaponSpell ~= nil and ({reminders.weaponSpell}) or ({})))
-    __TS__SparseArrayPush(
-        ____array_0,
-        unpack(reminders.addedWeaponSpells)
-    )
-    ____self_addTypeLines_1(
-        self,
+    self:addTypeLines(
         lines,
         "weaponBuff",
-        {__TS__SparseArraySpread(____array_0)},
+        self:listWeaponIds(reminders),
         "TEXT_WEAPON"
     )
     self:addTypeLines(lines, "missingSeal", reminders.seals, "TEXT_SEAL")
@@ -9045,10 +9195,7 @@ function NoticesService.prototype.listLines(self, reminders)
     self:addTypeLines(
         lines,
         "oldRank",
-        __TS__ArrayMap(
-            reminders.outdatedRanks,
-            function(____, rank) return rank.id end
-        ),
+        self:listRankIds(reminders),
         "TEXT_RANK"
     )
     for ____, stock in ipairs(reminders.lowStock) do
@@ -9107,6 +9254,9 @@ function NoticesService.prototype.isTold(self, style, reminders)
     return style.isMessageOn and (style.when ~= "townAlert" or reminders.isInTown == true)
 end
 function NoticesService.prototype.addReagentLine(self, lines, reminders)
+    if #reminders.lowReagents == 0 then
+        return
+    end
     local told = __TS__ArrayFilter(
         __TS__ArrayMap(
             reminders.lowReagents,
@@ -9163,14 +9313,17 @@ function NoticesService.prototype.addReagentLine(self, lines, reminders)
     }
 end
 function NoticesService.prototype.addTypeLines(self, lines, reminderType, spellIds, text)
+    if #spellIds == 0 then
+        return
+    end
     local groups = {}
     for ____, id in ipairs(spellIds) do
         do
-            local __continue46
+            local __continue65
             repeat
                 local style = self.styles:getStyle(reminderType, id)
                 if not style.isMessageOn then
-                    __continue46 = true
+                    __continue65 = true
                     break
                 end
                 local group = __TS__ArrayFind(
@@ -9180,15 +9333,15 @@ function NoticesService.prototype.addTypeLines(self, lines, reminderType, spellI
                 if group == nil then
                     groups[#groups + 1] = {color = style.color, ids = {id}, ["repeat"] = style["repeat"]}
                 else
-                    local ____group_ids_2 = group.ids
-                    ____group_ids_2[#____group_ids_2 + 1] = id
+                    local ____group_ids_0 = group.ids
+                    ____group_ids_0[#____group_ids_0 + 1] = id
                     if style["repeat"] > 0 and (group["repeat"] == 0 or style["repeat"] < group["repeat"]) then
                         group["repeat"] = style["repeat"]
                     end
                 end
-                __continue46 = true
+                __continue65 = true
             until true
-            if not __continue46 then
+            if not __continue65 then
                 break
             end
         end
@@ -9334,7 +9487,6 @@ local __TS__DecorateLegacy = ____lualib.__TS__DecorateLegacy
 local __TS__ArrayIncludes = ____lualib.__TS__ArrayIncludes
 local __TS__ArrayFind = ____lualib.__TS__ArrayFind
 local __TS__ArrayFilter = ____lualib.__TS__ArrayFilter
-local __TS__ArrayForEach = ____lualib.__TS__ArrayForEach
 local __TS__ArraySome = ____lualib.__TS__ArraySome
 local __TS__ArraySlice = ____lualib.__TS__ArraySlice
 local ____exports = {}
@@ -9399,31 +9551,54 @@ function ReagentsService.prototype.findLowReagents(self, isWanted)
         isWanted = function() return true end
     end
     local low = {}
-    __TS__ArrayForEach(
-        REAGENTS,
-        function(____, reagent, index)
-            if not isWanted(reagent) then
-                return
+    do
+        local index = 0
+        while index < #REAGENTS do
+            do
+                local __continue18
+                repeat
+                    local reagent = REAGENTS[index + 1]
+                    local ____isWanted_result_0
+                    if isWanted(reagent) then
+                        ____isWanted_result_0 = self:findSpellUsing(reagent, index)
+                    else
+                        ____isWanted_result_0 = nil
+                    end
+                    local usedBy = ____isWanted_result_0
+                    if usedBy == nil then
+                        __continue18 = true
+                        break
+                    end
+                    local count = self:getReagentCount(reagent)
+                    if self:isLow(
+                        count,
+                        string.format("%d", reagent.itemId)
+                    ) then
+                        low[#low + 1] = {
+                            reagent = reagent,
+                            spellId = usedBy,
+                            name = self:getReagentName(reagent),
+                            count = count
+                        }
+                    end
+                    __continue18 = true
+                until true
+                if not __continue18 then
+                    break
+                end
             end
-            local usedBy = __TS__ArrayFind(
-                reagent.spells,
-                function(____, spellId) return self.spells:isLearned(spellId) and self:findReagentFor(spellId) ~= nil and not self:isOutranked(spellId, index) end
-            )
-            local count = self:getReagentCount(reagent)
-            if usedBy ~= nil and self:isLow(
-                count,
-                string.format("%d", reagent.itemId)
-            ) then
-                low[#low + 1] = {
-                    reagent = reagent,
-                    spellId = usedBy,
-                    name = self:getReagentName(reagent),
-                    count = count
-                }
-            end
+            index = index + 1
         end
-    )
+    end
     return low
+end
+function ReagentsService.prototype.findSpellUsing(self, reagent, index)
+    for ____, spellId in ipairs(reagent.spells) do
+        if self.spells:isLearned(spellId) and self:findReagentFor(spellId) ~= nil and not self:isOutranked(spellId, index) then
+            return spellId
+        end
+    end
+    return nil
 end
 function ReagentsService.prototype.isOutranked(self, spellId, index)
     local name = self.spells:getSpellName(spellId)
@@ -9493,13 +9668,16 @@ return ____exports
 local ____lualib = require("lualib_bundle")
 local __TS__Class = ____lualib.__TS__Class
 local __TS__ObjectAssign = ____lualib.__TS__ObjectAssign
-local __TS__ArrayFilter = ____lualib.__TS__ArrayFilter
-local __TS__ArrayMap = ____lualib.__TS__ArrayMap
+local __TS__DecorateLegacy = ____lualib.__TS__DecorateLegacy
 local __TS__ArraySome = ____lualib.__TS__ArraySome
 local __TS__SparseArrayNew = ____lualib.__TS__SparseArrayNew
 local __TS__SparseArrayPush = ____lualib.__TS__SparseArrayPush
 local __TS__SparseArraySpread = ____lualib.__TS__SparseArraySpread
+local __TS__ArrayMap = ____lualib.__TS__ArrayMap
+local __TS__ArrayFilter = ____lualib.__TS__ArrayFilter
 local ____exports = {}
+local ____core = require("packages.@wowkit.core.src.index")
+local OnEvent = ____core.OnEvent
 local ____wow = require("packages.@wowkit.wow.src.index")
 local isKnownItem = ____wow.isKnownItem
 ____exports.AddedSpellsService = __TS__Class()
@@ -9510,6 +9688,7 @@ function AddedSpellsService.prototype.____constructor(self, spells, settings, co
     self.settings = settings
     self.cooldowns = cooldowns
     self.reagents = reagents
+    self.addedByType = {}
 end
 function AddedSpellsService.prototype.findTypeProblem(self, spellId, reminderType)
     if reminderType == "readyCooldown" and self.cooldowns:getBaseCooldown(spellId) <= 0 then
@@ -9547,14 +9726,33 @@ function AddedSpellsService.prototype.changeOverride(self, listId, spellId)
     return true
 end
 function AddedSpellsService.prototype.listAdded(self, reminderType)
-    return __TS__ArrayMap(
-        __TS__ArrayFilter(
-            self.settings:get("addedSpells"),
-            function(____, spell) return spell.reminderType == reminderType end
-        ),
-        function(____, spell) return spell.id end
-    )
+    local kept = self.addedByType[reminderType]
+    if kept ~= nil then
+        return kept
+    end
+    local ids = {}
+    for ____, spell in ipairs(self.settings:get("addedSpells")) do
+        if spell.reminderType == reminderType then
+            ids[#ids + 1] = spell.id
+        end
+    end
+    self.addedByType[reminderType] = ids
+    return ids
 end
+function AddedSpellsService.prototype.forgetAdded(self, key)
+    if key ~= "addedSpells" then
+        return
+    end
+    for reminderType in pairs(self.addedByType) do
+        self.addedByType[reminderType] = nil
+    end
+end
+__TS__DecorateLegacy(
+    {OnEvent("setting.changed")},
+    AddedSpellsService.prototype,
+    "forgetAdded",
+    true
+)
 function AddedSpellsService.prototype.addSpell(self, spellId, reminderType)
     if not self:isKnownSpell(spellId) then
         return false
@@ -9687,12 +9885,16 @@ __TS__DecorateLegacy(
     true
 )
 function FedBuffsService.prototype.checkWellFed(self)
+    if #self.used == 0 and #self.addedSpells:listAdded("missingBuff") == 0 then
+        return
+    end
     local auras = self.buffState:findAuras(Consumable.WellFed)
     if auras == nil then
         return
     end
+    self.buffState:hasAura(Consumable.WellFed)
     local now = self.clock:getCurrentTime()
-    local isEating = self.player:isEating()
+    local isEating = #self.used > 0 and self.player:isEating()
     self.used = __TS__ArrayFilter(
         self.used,
         function(____, food) return isEating or now - food.usedAt < EATING_GRACE_SECONDS end
@@ -9712,7 +9914,7 @@ function FedBuffsService.prototype.checkWellFed(self)
     end
 end
 __TS__DecorateLegacy(
-    {Interval(200)},
+    {Interval(500)},
     FedBuffsService.prototype,
     "checkWellFed",
     true
@@ -9760,6 +9962,9 @@ function FedBuffsService.prototype.findItemLook(self, spellId)
     return itemId ~= nil and readItemLook(itemId) or nil
 end
 function FedBuffsService.prototype.findMissing(self, spellIds)
+    if #spellIds == 0 then
+        return spellIds
+    end
     local auras = self.buffState:findAuras(Consumable.WellFed)
     if auras == nil then
         return self.buffState:hasAura(Consumable.WellFed) and ({}) or spellIds
@@ -9862,11 +10067,8 @@ return ____exports
  end,
 ["addons.glowing-bars.src.tick.show-reminders_service"] = function(...) 
 local ____lualib = require("lualib_bundle")
-local __TS__SparseArrayNew = ____lualib.__TS__SparseArrayNew
-local __TS__SparseArrayPush = ____lualib.__TS__SparseArrayPush
-local __TS__SparseArraySpread = ____lualib.__TS__SparseArraySpread
-local __TS__ArrayMap = ____lualib.__TS__ArrayMap
 local __TS__Class = ____lualib.__TS__Class
+local __TS__ArrayMap = ____lualib.__TS__ArrayMap
 local __TS__ArraySome = ____lualib.__TS__ArraySome
 local __TS__ArrayIncludes = ____lualib.__TS__ArrayIncludes
 local __TS__ArrayForEach = ____lualib.__TS__ArrayForEach
@@ -9875,64 +10077,69 @@ local __TS__ArrayFind = ____lualib.__TS__ArrayFind
 local ____exports = {}
 local ____wow = require("packages.@wowkit.wow.src.index")
 local isOutOfItem = ____wow.isOutOfItem
+local function pushAll(spells, ids)
+    for ____, id in ipairs(ids) do
+        spells[#spells + 1] = id
+    end
+end
 local TYPES = {
     {
         category = "missingBuff",
         isOnSetting = "isMissingBuffEnabled",
-        findSpells = function(reminders) return reminders.buffsToCast end
+        collectSpells = function(reminders, spells) return pushAll(spells, reminders.buffsToCast) end
     },
     {
         category = "weaponBuff",
         isOnSetting = "isWeaponBuffEnabled",
-        findSpells = function(reminders)
-            local ____array_0 = __TS__SparseArrayNew(unpack(reminders.weaponSpell ~= nil and ({reminders.weaponSpell}) or ({})))
-            __TS__SparseArrayPush(
-                ____array_0,
-                unpack(reminders.addedWeaponSpells)
-            )
-            return {__TS__SparseArraySpread(____array_0)}
+        collectSpells = function(reminders, spells)
+            if reminders.weaponSpell ~= nil then
+                spells[#spells + 1] = reminders.weaponSpell
+            end
+            pushAll(spells, reminders.addedWeaponSpells)
         end
     },
     {
         category = "missingSeal",
         isOnSetting = "isMissingSealEnabled",
-        findSpells = function(reminders) return reminders.seals end
+        collectSpells = function(reminders, spells) return pushAll(spells, reminders.seals) end
     },
     {
         category = "missingTracking",
         isOnSetting = "isMissingTrackingEnabled",
-        findSpells = function(reminders) return reminders.trackings end
+        collectSpells = function(reminders, spells) return pushAll(spells, reminders.trackings) end
     },
     {
         category = "readyCooldown",
         isOnSetting = "isReadyCooldownEnabled",
-        findSpells = function(reminders) return reminders.readyCooldowns end
+        collectSpells = function(reminders, spells) return pushAll(spells, reminders.readyCooldowns) end
     },
     {
         category = "proc",
         isOnSetting = "isProcEnabled",
-        findSpells = function(reminders) return reminders.procs end
+        collectSpells = function(reminders, spells) return pushAll(spells, reminders.procs) end
     },
     {
         category = "oldRank",
         isOnSetting = "isOldRankEnabled",
-        findSpells = function(reminders) return __TS__ArrayMap(
-            reminders.outdatedRanks,
-            function(____, rank) return rank.id end
-        ) end
+        collectSpells = function(reminders, spells)
+            for ____, rank in ipairs(reminders.outdatedRanks) do
+                spells[#spells + 1] = rank.id
+            end
+        end
     },
     {
         category = "lowReagent",
         isOnSetting = "isLowReagentEnabled",
-        findSpells = function(reminders) return reminders.reagentSpells end
+        collectSpells = function(reminders, spells) return pushAll(spells, reminders.reagentSpells) end
     },
     {
         category = "lowStock",
         isOnSetting = "isLowStockEnabled",
-        findSpells = function(reminders) return __TS__ArrayMap(
-            reminders.lowStock,
-            function(____, stock) return stock.key end
-        ) end
+        collectSpells = function(reminders, spells)
+            for ____, stock in ipairs(reminders.lowStock) do
+                spells[#spells + 1] = stock.key
+            end
+        end
     }
 }
 ____exports.ShowRemindersService = __TS__Class()
@@ -9953,19 +10160,67 @@ function ShowRemindersService.prototype.____constructor(self, glow, messages, se
         TYPES,
         function() return {} end
     )
+    self.current = __TS__ArrayMap(
+        TYPES,
+        function() return {} end
+    )
+    self.soundSeen = {}
+    self.sounds = {}
+    self.opacityByBar = {}
     self.soundPlayedAt = {}
     self.wasInTown = false
     self.usedUpShown = {}
     self.groupSpells = {}
 end
 function ShowRemindersService.prototype.showReminders(self, reminders)
+    local isSame = self:collectSpells(reminders)
     self:playSoundsForNewReminders(reminders)
     self.notices:showNoticeIfNew(reminders)
-    self:updateGlows(reminders)
+    self:updateGlows(isSame)
+    local previous = self.previous
+    self.previous = self.current
+    self.current = previous
     self:applyBarFades()
 end
+function ShowRemindersService.prototype.collectSpells(self, reminders)
+    local isSame = true
+    do
+        local index = 0
+        while index < #TYPES do
+            local reminderType = TYPES[index + 1]
+            local spells = self.current[index + 1]
+            do
+                local i = #spells
+                while i > 0 do
+                    table.remove(spells)
+                    i = i - 1
+                end
+            end
+            reminderType.collectSpells(reminders, spells)
+            local previous = self.previous[index + 1]
+            if #spells ~= #previous then
+                isSame = false
+            else
+                do
+                    local i = 0
+                    while i < #spells and isSame do
+                        if spells[i + 1] ~= previous[i + 1] then
+                            isSame = false
+                        end
+                        i = i + 1
+                    end
+                end
+            end
+            index = index + 1
+        end
+    end
+    return isSame
+end
 function ShowRemindersService.prototype.applyBarFades(self)
-    local opacityByBar = {}
+    local opacityByBar = self.opacityByBar
+    for bar in pairs(opacityByBar) do
+        opacityByBar[bar] = nil
+    end
     local glowPercent = self.settings:get("fadedOpacity") / 100
     for bar, isFaded in pairs(self.settings:get("fadedBars")) do
         local number = tonumber(bar)
@@ -9994,29 +10249,49 @@ function ShowRemindersService.prototype.playSoundsForNewReminders(self, reminder
     local now = self.clock:getCurrentTime()
     local hasArrivedInTown = reminders.isInTown == true and not self.wasInTown
     self.wasInTown = reminders.isInTown == true
-    local playedAt = {}
-    local sounds = {}
-    __TS__ArrayForEach(
-        TYPES,
-        function(____, reminderType, index)
-            local spells = reminderType.findSpells(reminders)
-            for ____, id in ipairs(spells) do
-                local key = (reminderType.category .. ":") .. tostring(id)
-                local style = self.styles:getStyle(reminderType.category, id)
-                local lastAt = self.soundPlayedAt[key]
-                local isNew = not __TS__ArrayIncludes(self.previous[index + 1], id) or lastAt == nil or self:isStartingOver(style, hasArrivedInTown)
-                local isDue = not isNew and style["repeat"] > 0 and now - lastAt >= style["repeat"]
-                playedAt[key] = (isNew or isDue) and now or lastAt
-                if self:isHeardHere(style, reminders) and (isNew or isDue) and not __TS__ArrayIncludes(sounds, style.sound) then
-                    sounds[#sounds + 1] = style.sound
-                end
-            end
-            self.previous[index + 1] = spells
+    local playedAt = self.soundPlayedAt
+    local seen = self.soundSeen
+    local sounds = self.sounds
+    for key in pairs(seen) do
+        seen[key] = nil
+    end
+    do
+        local i = #sounds
+        while i > 0 do
+            table.remove(sounds)
+            i = i - 1
         end
-    )
-    self.soundPlayedAt = playedAt
+    end
+    do
+        local index = 0
+        while index < #TYPES do
+            self:noteSoundsOfType(index, reminders, now, hasArrivedInTown)
+            index = index + 1
+        end
+    end
+    for key in pairs(playedAt) do
+        if not (seen[key] ~= nil) then
+            playedAt[key] = nil
+        end
+    end
     for ____, sound in ipairs(sounds) do
         self.messages:playAlertSound(sound)
+    end
+end
+function ShowRemindersService.prototype.noteSoundsOfType(self, index, reminders, now, hasArrivedInTown)
+    local reminderType = TYPES[index + 1]
+    for ____, id in ipairs(self.current[index + 1]) do
+        local key = (reminderType.category .. ":") .. tostring(id)
+        local style = self.styles:getStyle(reminderType.category, id)
+        local lastAt = self.soundPlayedAt[key]
+        self.soundSeen[key] = true
+        local isNew = not __TS__ArrayIncludes(self.previous[index + 1], id) or lastAt == nil or self:isStartingOver(style, hasArrivedInTown)
+        local isDue = not isNew and style["repeat"] > 0 and now - lastAt >= style["repeat"]
+        self.soundPlayedAt[key] = (isNew or isDue) and now or lastAt
+        if self:isHeardHere(style, reminders) and (isNew or isDue) and not __TS__ArrayIncludes(self.sounds, style.sound) then
+            local ____self_sounds_0 = self.sounds
+            ____self_sounds_0[#____self_sounds_0 + 1] = style.sound
+        end
     end
 end
 function ShowRemindersService.prototype.isStartingOver(self, style, hasArrivedInTown)
@@ -10025,26 +10300,24 @@ end
 function ShowRemindersService.prototype.isHeardHere(self, style, reminders)
     return style.when ~= "townAlert" or reminders.isInTown == true
 end
-function ShowRemindersService.prototype.updateGlows(self, reminders)
-    local groups = self:listGroups(reminders)
+function ShowRemindersService.prototype.updateGlows(self, isSame)
+    if isSame and self.shownGlowKey ~= nil then
+        return
+    end
+    local groups = self:listGroups()
     self.groupSpells = {}
     for ____, group in ipairs(groups) do
         self.groupSpells[group.key] = group.spells
     end
-    local weaponSpells = reminders.weaponSpell ~= nil and ({reminders.weaponSpell}) or ({})
-    local ____array_1 = __TS__SparseArrayNew(unpack(weaponSpells))
-    __TS__SparseArrayPush(
-        ____array_1,
-        unpack(reminders.addedWeaponSpells)
+    self.usedUpShown = {}
+    __TS__ArrayForEach(
+        TYPES,
+        function(____, reminderType, index)
+            if reminderType.category == "weaponBuff" or reminderType.category == "lowStock" then
+                pushAll(self.usedUpShown, self.current[index + 1])
+            end
+        end
     )
-    __TS__SparseArrayPush(
-        ____array_1,
-        unpack(__TS__ArrayMap(
-            reminders.lowStock,
-            function(____, stock) return stock.key end
-        ))
-    )
-    self.usedUpShown = {__TS__SparseArraySpread(____array_1)}
     local glowKey = table.concat(
         __TS__ArrayMap(
             groups,
@@ -10105,31 +10378,36 @@ function ShowRemindersService.prototype.isBarShown(self, button, groupKey)
     local bar = self.actionBars:getBarNumber(button)
     return bar == nil or self.settings:get("barsThatGlow")[string.format("%d", bar)] ~= false
 end
-function ShowRemindersService.prototype.listGroups(self, reminders)
+function ShowRemindersService.prototype.listGroups(self)
     local groups = {}
-    for ____, reminderType in ipairs(TYPES) do
-        for ____, id in ipairs(reminderType.findSpells(reminders)) do
-            local style = self.styles:getStyle(reminderType.category, id)
-            local key = (((__TS__ArrayJoin(style.color, ",") .. "|") .. tostring(style.glowPercent)) .. "|") .. style.animation
-            local group = __TS__ArrayFind(
-                groups,
-                function(____, candidate) return candidate.key == key end
-            )
-            local color = style.color
-            local glowPercent = style.glowPercent
-            local animation = style.animation
-            if group == nil then
-                groups[#groups + 1] = {
-                    key = key,
-                    color = color,
-                    glowPercent = glowPercent,
-                    animation = animation,
-                    spells = {id}
-                }
-            elseif not __TS__ArrayIncludes(group.spells, id) then
-                local ____group_spells_2 = group.spells
-                ____group_spells_2[#____group_spells_2 + 1] = id
+    do
+        local index = 0
+        while index < #TYPES do
+            local reminderType = TYPES[index + 1]
+            for ____, id in ipairs(self.current[index + 1]) do
+                local style = self.styles:getStyle(reminderType.category, id)
+                local key = (((__TS__ArrayJoin(style.color, ",") .. "|") .. tostring(style.glowPercent)) .. "|") .. style.animation
+                local group = __TS__ArrayFind(
+                    groups,
+                    function(____, candidate) return candidate.key == key end
+                )
+                local color = style.color
+                local glowPercent = style.glowPercent
+                local animation = style.animation
+                if group == nil then
+                    groups[#groups + 1] = {
+                        key = key,
+                        color = color,
+                        glowPercent = glowPercent,
+                        animation = animation,
+                        spells = {id}
+                    }
+                elseif not __TS__ArrayIncludes(group.spells, id) then
+                    local ____group_spells_1 = group.spells
+                    ____group_spells_1[#____group_spells_1 + 1] = id
+                end
             end
+            index = index + 1
         end
     end
     return groups
@@ -10143,10 +10421,21 @@ local __TS__ArrayFind = ____lualib.__TS__ArrayFind
 local __TS__ArraySome = ____lualib.__TS__ArraySome
 local __TS__DecorateLegacy = ____lualib.__TS__DecorateLegacy
 local __TS__ObjectAssign = ____lualib.__TS__ObjectAssign
-local __TS__ArrayMap = ____lualib.__TS__ArrayMap
 local ____exports = {}
 local ____core = require("packages.@wowkit.core.src.index")
 local OnEvent = ____core.OnEvent
+--- The two answers of a buff's check, made once (nobody changes them).
+local NOT_WANTED = {isWanted = false}
+local WANTED = {isWanted = true}
+local function clearList(list)
+    do
+        local index = #list
+        while index > 0 do
+            table.remove(list)
+            index = index - 1
+        end
+    end
+end
 ____exports.BuffReminderService = __TS__Class()
 local BuffReminderService = ____exports.BuffReminderService
 BuffReminderService.name = "BuffReminderService"
@@ -10157,24 +10446,33 @@ function BuffReminderService.prototype.____constructor(self, auras, spells, play
     self.actionBars = actionBars
     self.classBuffs = classBuffs
     self.settings = settings
+    self.missing = {glow = {}, notOnBars = {}}
+    self.scratch = {
+        groups = {},
+        groupOf = {},
+        candidateIds = {},
+        candidateCategories = {},
+        categoryOnBars = {},
+        named = {}
+    }
 end
 function BuffReminderService.prototype.checkBuff(self, classBuff)
     local id = self.spells:resolve(classBuff.id)
     if id == nil or not self.spells:isLearned(id) then
-        return {isWanted = false}
+        return NOT_WANTED
     end
     if classBuff.isSwimmingOnly and not self.player:isSwimming() then
-        return {isWanted = false}
+        return NOT_WANTED
     end
     for ____, other in ipairs(classBuff.categoryMembers or ({})) do
         if self.auras:hasAura(other) then
-            return {isWanted = false}
+            return NOT_WANTED
         end
     end
     if self.auras:hasAura(id, classBuff.lead) then
-        return {isWanted = false}
+        return NOT_WANTED
     end
-    return {isWanted = true}
+    return WANTED
 end
 function BuffReminderService.prototype.rememberSelfBuffs(self)
     if self.player:isInCombat() then
@@ -10264,60 +10562,87 @@ function BuffReminderService.prototype.noteGroupBuff(self, classBuff)
     end
 end
 function BuffReminderService.prototype.findMissingBuffs(self)
-    local groups = {}
-    local groupOf = {}
-    local candidates = {}
-    local categoryOnBars = {}
+    local scratch = self.scratch
+    self:clearScratch()
     for ____, classBuff in ipairs(self.classBuffs:getClassBuffs()) do
         do
-            local __continue27
+            local __continue30
             repeat
                 if not self.classBuffs:isBuffEnabled(classBuff) or not self:checkBuff(classBuff).isWanted then
-                    __continue27 = true
+                    __continue30 = true
                     break
                 end
                 local id = self.spells:resolve(classBuff.id) or classBuff.id
                 local category = classBuff.categoryMembers or classBuff
                 if not self.actionBars:isOnBars(id) then
-                    candidates[#candidates + 1] = {id = id, category = category}
-                    __continue27 = true
+                    local ____scratch_candidateIds_10 = scratch.candidateIds
+                    ____scratch_candidateIds_10[#____scratch_candidateIds_10 + 1] = id
+                    local ____scratch_candidateCategories_11 = scratch.candidateCategories
+                    ____scratch_candidateCategories_11[#____scratch_candidateCategories_11 + 1] = category
+                    __continue30 = true
                     break
                 end
-                categoryOnBars[category] = true
+                scratch.categoryOnBars[category] = true
                 if self.spells:isCastable(id) == false then
-                    __continue27 = true
+                    __continue30 = true
                     break
                 end
-                local members = groupOf[category]
+                local members = scratch.groupOf[category]
                 if members == nil then
                     members = {}
-                    groupOf[category] = members
-                    groups[#groups + 1] = members
+                    scratch.groupOf[category] = members
+                    local ____scratch_groups_12 = scratch.groups
+                    ____scratch_groups_12[#____scratch_groups_12 + 1] = members
                 end
                 members[#members + 1] = classBuff
-                __continue27 = true
+                __continue30 = true
             until true
-            if not __continue27 then
+            if not __continue30 then
                 break
             end
         end
     end
-    local glow = __TS__ArrayMap(
-        groups,
-        function(____, members)
-            local picked = self.classBuffs:pickGroupBuff(members)
-            return self.spells:resolve(picked.id) or picked.id
-        end
-    )
-    local notOnBars = {}
-    local named = {}
-    for ____, candidate in ipairs(candidates) do
-        if not (categoryOnBars[candidate.category] ~= nil) and not (named[candidate.category] ~= nil) then
-            named[candidate.category] = true
-            notOnBars[#notOnBars + 1] = candidate.id
+    local found = self.missing
+    for ____, members in ipairs(scratch.groups) do
+        local picked = self.classBuffs:pickGroupBuff(members)
+        local ____found_glow_13 = found.glow
+        ____found_glow_13[#____found_glow_13 + 1] = self.spells:resolve(picked.id) or picked.id
+    end
+    self:addNotOnBars(found)
+    return found
+end
+function BuffReminderService.prototype.addNotOnBars(self, found)
+    local scratch = self.scratch
+    do
+        local index = 0
+        while index < #scratch.candidateIds do
+            local id = scratch.candidateIds[index + 1]
+            local category = scratch.candidateCategories[index + 1]
+            if not (scratch.categoryOnBars[category] ~= nil) and not (scratch.named[category] ~= nil) then
+                scratch.named[category] = true
+                local ____found_notOnBars_14 = found.notOnBars
+                ____found_notOnBars_14[#____found_notOnBars_14 + 1] = id
+            end
+            index = index + 1
         end
     end
-    return {glow = glow, notOnBars = notOnBars}
+end
+function BuffReminderService.prototype.clearScratch(self)
+    local scratch = self.scratch
+    clearList(scratch.groups)
+    clearList(scratch.candidateIds)
+    clearList(scratch.candidateCategories)
+    clearList(self.missing.glow)
+    clearList(self.missing.notOnBars)
+    for category in pairs(scratch.groupOf) do
+        scratch.groupOf[category] = nil
+    end
+    for category in pairs(scratch.categoryOnBars) do
+        scratch.categoryOnBars[category] = nil
+    end
+    for category in pairs(scratch.named) do
+        scratch.named[category] = nil
+    end
 end
 return ____exports
  end,
@@ -10534,17 +10859,103 @@ function CooldownTrackerService.prototype.isStartedBy(self, waitingId, castId)
 end
 return ____exports
  end,
+["addons.glowing-bars.src.glows.stance-procs_service"] = function(...) 
+local ____lualib = require("lualib_bundle")
+local __TS__Class = ____lualib.__TS__Class
+local __TS__ArrayIncludes = ____lualib.__TS__ArrayIncludes
+local __TS__DecorateLegacy = ____lualib.__TS__DecorateLegacy
+local ____exports = {}
+local ____core = require("packages.@wowkit.core.src.index")
+local OnEvent = ____core.OnEvent
+local OnGameEvent = ____core.OnGameEvent
+local ____wow = require("packages.@wowkit.wow.src.index")
+local isReadable = ____wow.isReadable
+local ____wow_2Ddata = require("packages.@wowkit.wow-data.src.index")
+local Warrior = ____wow_2Ddata.Warrior
+--- How long Revenge can be used after a block, a dodge or a parry.
+local REVENGE_SECONDS = 5
+--- What UNIT_COMBAT says of an attack the player blocked, dodged or parried.
+local AVOIDED_ACTIONS = {"BLOCK", "DODGE", "PARRY"}
+____exports.StanceProcsService = __TS__Class()
+local StanceProcsService = ____exports.StanceProcsService
+StanceProcsService.name = "StanceProcsService"
+function StanceProcsService.prototype.____constructor(self, player, spells, clock, bus)
+    self.player = player
+    self.spells = spells
+    self.clock = clock
+    self.bus = bus
+    self.revengeUntil = 0
+end
+function StanceProcsService.prototype.noteCombat(self, unit, action, flagText)
+    if unit ~= "player" or not self:isWarrior() then
+        return
+    end
+    local isAvoided = isReadable(action) and __TS__ArrayIncludes(AVOIDED_ACTIONS, action) or isReadable(flagText) and flagText == "BLOCK"
+    if not isAvoided then
+        return
+    end
+    self.revengeUntil = self.clock:getCurrentTime() + REVENGE_SECONDS
+    self.bus:emit("procs.changed")
+end
+__TS__DecorateLegacy(
+    {OnGameEvent("UNIT_COMBAT")},
+    StanceProcsService.prototype,
+    "noteCombat",
+    true
+)
+function StanceProcsService.prototype.noteComboPoints(self, unit, powerType)
+    if unit == "player" and powerType == "COMBO_POINTS" and self:isWarrior() then
+        self.bus:emit("procs.changed")
+    end
+end
+__TS__DecorateLegacy(
+    {OnGameEvent("UNIT_POWER_UPDATE")},
+    StanceProcsService.prototype,
+    "noteComboPoints",
+    true
+)
+function StanceProcsService.prototype.noteCast(self, cast)
+    if cast.spellId ~= nil and self:isNamed(cast.spellId, Warrior.Revenge) then
+        self.revengeUntil = 0
+    end
+end
+__TS__DecorateLegacy(
+    {OnEvent("player.spell-cast")},
+    StanceProcsService.prototype,
+    "noteCast",
+    true
+)
+function StanceProcsService.prototype.isOpen(self, spellId)
+    if not self:isWarrior() then
+        return false
+    end
+    if self:isNamed(spellId, Warrior.Overpower) then
+        return (self.player:readComboPoints() or 0) > 0
+    end
+    if self:isNamed(spellId, Warrior.Revenge) then
+        return self.clock:getCurrentTime() < self.revengeUntil
+    end
+    return false
+end
+function StanceProcsService.prototype.isNamed(self, spellId, listId)
+    local name = self.spells:getSpellLabel(spellId)
+    return name ~= nil and name == self.spells:getSpellLabel(listId)
+end
+function StanceProcsService.prototype.isWarrior(self)
+    return self.player:getClassToken() == "WARRIOR"
+end
+return ____exports
+ end,
 ["addons.glowing-bars.src.glows.glow-cues_service"] = function(...) 
 local ____lualib = require("lualib_bundle")
 local __TS__Class = ____lualib.__TS__Class
 local __TS__DecorateLegacy = ____lualib.__TS__DecorateLegacy
 local __TS__ArrayFilter = ____lualib.__TS__ArrayFilter
-local __TS__SparseArrayNew = ____lualib.__TS__SparseArrayNew
-local __TS__SparseArrayPush = ____lualib.__TS__SparseArrayPush
-local __TS__SparseArraySpread = ____lualib.__TS__SparseArraySpread
+local __TS__ArrayConcat = ____lualib.__TS__ArrayConcat
 local __TS__ArrayIncludes = ____lualib.__TS__ArrayIncludes
 local ____exports = {}
 local ____core = require("packages.@wowkit.core.src.index")
+local OnEvent = ____core.OnEvent
 local OnGameEvent = ____core.OnGameEvent
 local ____glow_2Dcues_2Econstants = require("addons.glowing-bars.src.glows.glow-cues_constants")
 local COOLDOWN_CUES = ____glow_2Dcues_2Econstants.COOLDOWN_CUES
@@ -10555,7 +10966,7 @@ local READY_MARGIN = ____cooldown_2Dtracker_2Eservice.READY_MARGIN
 ____exports.GlowCuesService = __TS__Class()
 local GlowCuesService = ____exports.GlowCuesService
 GlowCuesService.name = "GlowCuesService"
-function GlowCuesService.prototype.____constructor(self, player, spells, spellDetails, actionBars, tracker, settings, addedSpells)
+function GlowCuesService.prototype.____constructor(self, player, spells, spellDetails, actionBars, tracker, settings, addedSpells, stanceProcs)
     self.player = player
     self.spells = spells
     self.spellDetails = spellDetails
@@ -10563,7 +10974,9 @@ function GlowCuesService.prototype.____constructor(self, player, spells, spellDe
     self.tracker = tracker
     self.settings = settings
     self.addedSpells = addedSpells
+    self.stanceProcs = stanceProcs
     self.usedInCombat = {}
+    self.cueIds = {}
 end
 function GlowCuesService.prototype.startFight(self)
     self.usedInCombat = {}
@@ -10615,7 +11028,7 @@ function GlowCuesService.prototype.findProcs(self)
     end
     return __TS__ArrayFilter(
         self:listCues(self:listCueIds("proc")),
-        function(____, id) return self.spellDetails:readUsability(id).isUsable == true and self.tracker:getRemaining(id) <= READY_MARGIN end
+        function(____, id) return (self.spellDetails:readUsability(id).isUsable == true or self.stanceProcs:isOpen(id)) and self.tracker:getRemaining(id) <= READY_MARGIN end
     )
 end
 function GlowCuesService.prototype.listBuiltInIds(self, reminderType)
@@ -10627,43 +11040,56 @@ function GlowCuesService.prototype.listBuiltInIds(self, reminderType)
         RACIAL_COOLDOWNS,
         function(____, id) return self.spells:isLearned(self.addedSpells:getEffectiveId(id)) end
     )
-    local ____array_0 = __TS__SparseArrayNew(unpack(COOLDOWN_CUES[classToken] or ({})))
-    __TS__SparseArrayPush(
-        ____array_0,
-        unpack(racials)
-    )
-    return {__TS__SparseArraySpread(____array_0)}
+    return __TS__ArrayConcat(COOLDOWN_CUES[classToken] or ({}), racials)
 end
 function GlowCuesService.prototype.listCueIds(self, reminderType)
+    local kept = self.cueIds[reminderType]
+    if kept ~= nil then
+        return kept
+    end
     local ids = {}
-    local ____array_1 = __TS__SparseArrayNew(unpack(self:listBuiltInIds(reminderType)))
-    __TS__SparseArrayPush(
-        ____array_1,
-        unpack(self.addedSpells:listAdded(reminderType))
-    )
-    for ____, id in ipairs({__TS__SparseArraySpread(____array_1)}) do
+    for ____, id in ipairs(self:listBuiltInIds(reminderType)) do
         if not __TS__ArrayIncludes(ids, id) then
             ids[#ids + 1] = id
         end
     end
+    for ____, id in ipairs(self.addedSpells:listAdded(reminderType)) do
+        if not __TS__ArrayIncludes(ids, id) then
+            ids[#ids + 1] = id
+        end
+    end
+    if self.player:getClassToken() ~= nil then
+        self.cueIds[reminderType] = ids
+    end
     return ids
 end
+function GlowCuesService.prototype.forgetCueIds(self)
+    for reminderType in pairs(self.cueIds) do
+        self.cueIds[reminderType] = nil
+    end
+end
+__TS__DecorateLegacy(
+    {OnEvent("setting.changed", "spells.refreshed", "spells.invalidated", "spellbook.indexed")},
+    GlowCuesService.prototype,
+    "forgetCueIds",
+    true
+)
 function GlowCuesService.prototype.listCues(self, ids)
     local enabledSpells = self.settings:get("enabledSpells")
     local found = {}
     for ____, id in ipairs(ids) do
         do
-            local __continue25
+            local __continue32
             repeat
                 local learned = self.spells:resolve(self.addedSpells:getEffectiveId(id))
                 if learned == nil or enabledSpells[tostring(id)] == false or not self.actionBars:isOnBars(learned) then
-                    __continue25 = true
+                    __continue32 = true
                     break
                 end
                 found[#found + 1] = learned
-                __continue25 = true
+                __continue32 = true
             until true
-            if not __continue25 then
+            if not __continue32 then
                 break
             end
         end
@@ -10697,6 +11123,9 @@ function AddedRemindersService.prototype.____constructor(self, addedSpells, spel
 end
 function AddedRemindersService.prototype.findMissingBuffs(self)
     local ids = self:listOnBars("missingBuff")
+    if #ids == 0 then
+        return ids
+    end
     local missingFed = self.fedBuffs:findMissing(__TS__ArrayFilter(
         ids,
         function(____, id) return self.fedBuffs:isFedSpell(id) end
@@ -10738,12 +11167,12 @@ function AddedRemindersService.prototype.findLowReagents(self)
     local enabledSpells = self.settings:get("enabledSpells")
     for ____, id in ipairs(self.addedSpells:listAdded("lowReagent")) do
         do
-            local __continue11
+            local __continue12
             repeat
                 local spellId = self.spells:resolve(id)
                 local name = self.reagents:findTooltipReagent(id)
                 if spellId == nil or name == nil or enabledSpells[string.format("%d", id)] == false then
-                    __continue11 = true
+                    __continue12 = true
                     break
                 end
                 local count = self.bags:getItemCountByName(name)
@@ -10757,9 +11186,9 @@ function AddedRemindersService.prototype.findLowReagents(self)
                 ) then
                     low[#low + 1] = {spellId = spellId, name = name, count = count}
                 end
-                __continue11 = true
+                __continue12 = true
             until true
-            if not __continue11 then
+            if not __continue12 then
                 break
             end
         end
@@ -10767,14 +11196,18 @@ function AddedRemindersService.prototype.findLowReagents(self)
     return low
 end
 function AddedRemindersService.prototype.listOnBars(self, reminderType)
+    local added = self.addedSpells:listAdded(reminderType)
+    if #added == 0 then
+        return added
+    end
     local found = {}
     local enabledSpells = self.settings:get("enabledSpells")
-    for ____, id in ipairs(self.addedSpells:listAdded(reminderType)) do
+    for ____, id in ipairs(added) do
         do
-            local __continue17
+            local __continue19
             repeat
                 if enabledSpells[string.format("%d", id)] == false then
-                    __continue17 = true
+                    __continue19 = true
                     break
                 end
                 local learned = self.spells:resolve(id) or id
@@ -10791,9 +11224,9 @@ function AddedRemindersService.prototype.listOnBars(self, reminderType)
                 if isOnBars then
                     found[#found + 1] = learned
                 end
-                __continue17 = true
+                __continue19 = true
             until true
-            if not __continue17 then
+            if not __continue19 then
                 break
             end
         end
@@ -10862,9 +11295,9 @@ local __TS__ArrayFilter = ____lualib.__TS__ArrayFilter
 local __TS__SparseArrayNew = ____lualib.__TS__SparseArrayNew
 local __TS__SparseArrayPush = ____lualib.__TS__SparseArrayPush
 local __TS__SparseArraySpread = ____lualib.__TS__SparseArraySpread
+local __TS__DecorateLegacy = ____lualib.__TS__DecorateLegacy
 local __TS__ArrayFind = ____lualib.__TS__ArrayFind
 local __TS__ObjectAssign = ____lualib.__TS__ObjectAssign
-local __TS__DecorateLegacy = ____lualib.__TS__DecorateLegacy
 local __TS__ArrayIncludes = ____lualib.__TS__ArrayIncludes
 local ____exports = {}
 local ____core = require("packages.@wowkit.core.src.index")
@@ -10887,6 +11320,8 @@ local SEAL_LEAD = 1.5
 local TALENT_SEALS = {[1] = {Paladin.SealOfWisdom, Paladin.SealOfLight}, [2] = {Paladin.SealOfRighteousness}, [3] = {Paladin.SealOfCommand, Paladin.SealOfRighteousness}}
 --- The key of the seal cast last in the saved settings.
 local LAST_SEAL_KEY = "missingSeal"
+--- No seal to remind of: one empty list for every tick (nobody changes it).
+local NO_SEALS = {}
 ____exports.SealReminderService = __TS__Class()
 local SealReminderService = ____exports.SealReminderService
 SealReminderService.name = "SealReminderService"
@@ -10905,13 +11340,26 @@ function SealReminderService.prototype.listSeals(self)
     )
 end
 function SealReminderService.prototype.listAllSeals(self)
-    local ____array_0 = __TS__SparseArrayNew(unpack(self:listSeals()))
-    __TS__SparseArrayPush(
-        ____array_0,
-        unpack(self.addedSpells:listAdded("missingSeal"))
-    )
-    return {__TS__SparseArraySpread(____array_0)}
+    local ____self_1, ____allSeals_2 = self, "allSeals"
+    if ____self_1[____allSeals_2] == nil then
+        local ____array_0 = __TS__SparseArrayNew(unpack(self:listSeals()))
+        __TS__SparseArrayPush(
+            ____array_0,
+            unpack(self.addedSpells:listAdded("missingSeal"))
+        )
+        ____self_1[____allSeals_2] = {__TS__SparseArraySpread(____array_0)}
+    end
+    return self.allSeals
 end
+function SealReminderService.prototype.forgetSeals(self)
+    self.allSeals = nil
+end
+__TS__DecorateLegacy(
+    {OnEvent("setting.changed", "spells.refreshed", "spells.invalidated", "spellbook.indexed")},
+    SealReminderService.prototype,
+    "forgetSeals",
+    true
+)
 function SealReminderService.prototype.noteCast(self, cast)
     if cast.spellId == nil then
         return
@@ -10937,22 +11385,22 @@ __TS__DecorateLegacy(
     true
 )
 function SealReminderService.prototype.findMissingSeal(self)
-    if not self.settings:get("isMissingSealEnabled") then
-        return {}
+    if not self.settings:get("isMissingSealEnabled") or #self:listAllSeals() == 0 then
+        return NO_SEALS
     end
     local enabledSpells = self.settings:get("enabledSpells")
     local onBars = {}
     for ____, listId in ipairs(self:listAllSeals()) do
         local id = self.spells:resolve(listId) or listId
         if self.buffState:hasAura(id, SEAL_LEAD) then
-            return {}
+            return NO_SEALS
         end
         if enabledSpells[string.format("%d", listId)] ~= false and self.actionBars:isOnBars(id) then
             onBars[#onBars + 1] = listId
         end
     end
     local picked = self:pickSeal(onBars)
-    return picked ~= nil and ({self.spells:resolve(picked) or picked}) or ({})
+    return picked ~= nil and ({self.spells:resolve(picked) or picked}) or NO_SEALS
 end
 function SealReminderService.prototype.pickSeal(self, onBars)
     local last = self.settings:get("lastBuffs")[LAST_SEAL_KEY]
@@ -10976,11 +11424,16 @@ local __TS__ArrayFilter = ____lualib.__TS__ArrayFilter
 local __TS__SparseArrayNew = ____lualib.__TS__SparseArrayNew
 local __TS__SparseArrayPush = ____lualib.__TS__SparseArrayPush
 local __TS__SparseArraySpread = ____lualib.__TS__SparseArraySpread
+local __TS__DecorateLegacy = ____lualib.__TS__DecorateLegacy
 local ____exports = {}
+local ____core = require("packages.@wowkit.core.src.index")
+local OnEvent = ____core.OnEvent
 local ____wow_2Ddata = require("packages.@wowkit.wow-data.src.index")
 local Tracking = ____wow_2Ddata.Tracking
 --- The trackings of the gathering professions, in the order the table lists them (their wow-data IDs).
 ____exports.GATHERING_TRACKINGS = {Tracking.FindMinerals, Tracking.FindHerbs}
+--- No tracking to remind of: one empty list for every tick (nobody changes it).
+local NO_TRACKINGS = {}
 ____exports.TrackingReminderService = __TS__Class()
 local TrackingReminderService = ____exports.TrackingReminderService
 TrackingReminderService.name = "TrackingReminderService"
@@ -10999,19 +11452,26 @@ function TrackingReminderService.prototype.listTrackings(self)
 end
 function TrackingReminderService.prototype.findMissingTrackings(self)
     if not self.settings:get("isMissingTrackingEnabled") then
-        return {}
+        return NO_TRACKINGS
+    end
+    local ____self_1, ____allTrackings_2 = self, "allTrackings"
+    if ____self_1[____allTrackings_2] == nil then
+        local ____array_0 = __TS__SparseArrayNew(unpack(self:listTrackings()))
+        __TS__SparseArrayPush(
+            ____array_0,
+            unpack(self.addedSpells:listAdded("missingTracking"))
+        )
+        ____self_1[____allTrackings_2] = {__TS__SparseArraySpread(____array_0)}
+    end
+    if #self.allTrackings == 0 then
+        return NO_TRACKINGS
     end
     local enabledSpells = self.settings:get("enabledSpells")
     local onBars = {}
-    local ____array_0 = __TS__SparseArrayNew(unpack(self:listTrackings()))
-    __TS__SparseArrayPush(
-        ____array_0,
-        unpack(self.addedSpells:listAdded("missingTracking"))
-    )
-    for ____, listId in ipairs({__TS__SparseArraySpread(____array_0)}) do
+    for ____, listId in ipairs(self.allTrackings) do
         local id = self.spells:resolve(listId) or listId
         if self.buffState:hasAura(id) then
-            return {}
+            return NO_TRACKINGS
         end
         if enabledSpells[string.format("%d", listId)] ~= false and self.actionBars:isOnBars(id) then
             onBars[#onBars + 1] = id
@@ -11019,6 +11479,15 @@ function TrackingReminderService.prototype.findMissingTrackings(self)
     end
     return onBars
 end
+function TrackingReminderService.prototype.forgetTrackings(self)
+    self.allTrackings = nil
+end
+__TS__DecorateLegacy(
+    {OnEvent("setting.changed", "spells.refreshed", "spells.invalidated", "spellbook.indexed")},
+    TrackingReminderService.prototype,
+    "forgetTrackings",
+    true
+)
 return ____exports
  end,
 ["addons.glowing-bars.src.reminders.party-buffs_service"] = function(...) 
@@ -11041,6 +11510,8 @@ local PARTY_BLESSINGS = ____class_2Dbuffs_2Econstants.PARTY_BLESSINGS
 local WEAPON_MANA_CLASSES = ____class_2Dbuffs_2Econstants.WEAPON_MANA_CLASSES
 --- Party auras are read at most this often.
 local REFRESH_SECONDS = 1
+--- No member to tell of: one empty list for every tick (nobody changes it).
+local NO_SUGGESTIONS = {}
 ____exports.PartyBuffsService = __TS__Class()
 local PartyBuffsService = ____exports.PartyBuffsService
 PartyBuffsService.name = "PartyBuffsService"
@@ -11055,7 +11526,7 @@ function PartyBuffsService.prototype.____constructor(self, auras, spells, clock,
     self.settings = settings
     self.buffReminder = buffReminder
     self.cachedAt = -10
-    self.cached = {}
+    self.cached = NO_SUGGESTIONS
 end
 function PartyBuffsService.prototype.findPartyBuffSuggestions(self)
     local isInRaid = self.party:isInRaid()
@@ -11072,9 +11543,14 @@ function PartyBuffsService.prototype.findPartyBuffSuggestions(self)
         return self.cached
     end
     self.cachedAt = now
+    local units = isInRaid and self.party:getRaidUnits() or self.party:getPartyUnits()
+    if #units == 0 then
+        self.cached = NO_SUGGESTIONS
+        return self.cached
+    end
     local others = __TS__ArrayMap(
         __TS__ArrayFilter(
-            isInRaid and self.party:getRaidUnits() or self.party:getPartyUnits(),
+            units,
             function(____, unit) return self.party:isReachable(unit) end
         ),
         function(____, unit) return __TS__ObjectAssign(
@@ -11106,10 +11582,10 @@ function PartyBuffsService.prototype.listPartyGroups(self)
     local groupOf = {}
     for ____, classBuff in ipairs(self.classBuffs:getClassBuffs()) do
         do
-            local __continue12
+            local __continue13
             repeat
                 if not classBuff.party or not self.classBuffs:isBuffEnabled(classBuff) or not self.spells:isLearned(classBuff.id) then
-                    __continue12 = true
+                    __continue13 = true
                     break
                 end
                 local category = classBuff.categoryMembers or classBuff
@@ -11120,9 +11596,9 @@ function PartyBuffsService.prototype.listPartyGroups(self)
                     groups[#groups + 1] = members
                 end
                 members[#members + 1] = classBuff
-                __continue12 = true
+                __continue13 = true
             until true
-            if not __continue12 then
+            if not __continue13 then
                 break
             end
         end
@@ -11148,11 +11624,11 @@ function PartyBuffsService.prototype.buildGroupSuggestions(self, group, members,
     local membersOf = {}
     for ____, member in ipairs(members) do
         do
-            local __continue19
+            local __continue20
             repeat
                 local buff = self:pickMemberBlessing(group, member, isInRaid)
                 if buff == nil then
-                    __continue19 = true
+                    __continue20 = true
                     break
                 end
                 local list = membersOf[buff] or ({})
@@ -11161,9 +11637,9 @@ function PartyBuffsService.prototype.buildGroupSuggestions(self, group, members,
                 end
                 list[#list + 1] = member
                 membersOf[buff] = list
-                __continue19 = true
+                __continue20 = true
             until true
-            if not __continue19 then
+            if not __continue20 then
                 break
             end
         end
@@ -11370,21 +11846,173 @@ function IdleService.prototype.shouldStayIdle(self, shouldStayQuietWhenResting)
 end
 return ____exports
  end,
+["addons.glowing-bars.src.tick.reminder-filter"] = function(...) 
+local ____exports = {}
+--- Reminders with every list empty: what the filter fills, tick after tick.
+function ____exports.createEmptyReminders()
+    return {
+        buffsToCast = {},
+        weaponSpell = nil,
+        addedWeaponSpells = {},
+        seals = {},
+        trackings = {},
+        buffsNotOnBars = {},
+        partySuggestions = {},
+        outdatedRanks = {},
+        readyCooldowns = {},
+        reagentSpells = {},
+        lowReagents = {},
+        lowStock = {},
+        procs = {}
+    }
+end
+--- `target` becomes the items of `source` that are shown, found by the ID `getId` gives.
+local function copyShown(target, source, reminderType, getId, isShown)
+    local count = 0
+    for ____, item in ipairs(source) do
+        if isShown(
+            reminderType,
+            getId(item)
+        ) then
+            count = count + 1
+            target[count] = item
+        end
+    end
+    do
+        local index = #target
+        while index > count do
+            table.remove(target)
+            index = index - 1
+        end
+    end
+end
+local function getOwnId(id)
+    return id
+end
+local function getSuggestionId(suggestion)
+    return suggestion.spellId
+end
+local function getRankId(rank)
+    return rank.id
+end
+local function getStockKey(stock)
+    return stock.key
+end
+--- `target` becomes the reminders of `reminders` that `isShown` keeps.
+function ____exports.filterReminders(target, reminders, isShown)
+    target.isInTown = reminders.isInTown
+    copyShown(
+        target.buffsToCast,
+        reminders.buffsToCast,
+        "missingBuff",
+        getOwnId,
+        isShown
+    )
+    copyShown(
+        target.buffsNotOnBars,
+        reminders.buffsNotOnBars,
+        "missingBuff",
+        getOwnId,
+        isShown
+    )
+    copyShown(
+        target.partySuggestions,
+        reminders.partySuggestions,
+        "missingBuff",
+        getSuggestionId,
+        isShown
+    )
+    local weapon = reminders.weaponSpell
+    target.weaponSpell = weapon ~= nil and isShown("weaponBuff", weapon) and weapon or nil
+    copyShown(
+        target.addedWeaponSpells,
+        reminders.addedWeaponSpells,
+        "weaponBuff",
+        getOwnId,
+        isShown
+    )
+    copyShown(
+        target.seals,
+        reminders.seals,
+        "missingSeal",
+        getOwnId,
+        isShown
+    )
+    copyShown(
+        target.trackings,
+        reminders.trackings,
+        "missingTracking",
+        getOwnId,
+        isShown
+    )
+    copyShown(
+        target.outdatedRanks,
+        reminders.outdatedRanks,
+        "oldRank",
+        getRankId,
+        isShown
+    )
+    copyShown(
+        target.lowStock,
+        reminders.lowStock,
+        "lowStock",
+        getStockKey,
+        isShown
+    )
+    copyShown(
+        target.reagentSpells,
+        reminders.reagentSpells,
+        "lowReagent",
+        getOwnId,
+        isShown
+    )
+    copyShown(
+        target.lowReagents,
+        reminders.lowReagents,
+        "lowReagent",
+        getSuggestionId,
+        isShown
+    )
+    copyShown(
+        target.readyCooldowns,
+        reminders.readyCooldowns,
+        "readyCooldown",
+        getOwnId,
+        isShown
+    )
+    copyShown(
+        target.procs,
+        reminders.procs,
+        "proc",
+        getOwnId,
+        isShown
+    )
+    return target
+end
+return ____exports
+ end,
 ["addons.glowing-bars.src.tick.find-reminders_service"] = function(...) 
 local ____lualib = require("lualib_bundle")
 local __TS__Class = ____lualib.__TS__Class
-local __TS__ObjectAssign = ____lualib.__TS__ObjectAssign
+local __TS__DecorateLegacy = ____lualib.__TS__DecorateLegacy
+local __TS__ArrayFilter = ____lualib.__TS__ArrayFilter
 local __TS__SparseArrayNew = ____lualib.__TS__SparseArrayNew
 local __TS__SparseArrayPush = ____lualib.__TS__SparseArrayPush
 local __TS__SparseArraySpread = ____lualib.__TS__SparseArraySpread
-local __TS__ArrayFilter = ____lualib.__TS__ArrayFilter
 local __TS__ArraySome = ____lualib.__TS__ArraySome
 local __TS__ArrayIncludes = ____lualib.__TS__ArrayIncludes
 local ____exports = {}
+local ____core = require("packages.@wowkit.core.src.index")
+local OnEvent = ____core.OnEvent
+local OnGameEvent = ____core.OnGameEvent
+local ____reminder_2Dfilter = require("addons.glowing-bars.src.tick.reminder-filter")
+local createEmptyReminders = ____reminder_2Dfilter.createEmptyReminders
+--- The reagents and the stock are read again after this long at most, for what the client tells late (an item's name).
+local STOCK_REUSE = 5
 ____exports.FindRemindersService = __TS__Class()
 local FindRemindersService = ____exports.FindRemindersService
 FindRemindersService.name = "FindRemindersService"
-function FindRemindersService.prototype.____constructor(self, lowStock, actionBars, idle, player, spells, buffReminder, partyBuffs, weaponReminder, outdatedRanks, glowCues, reagents, addedReminders, sealReminder, trackingReminder, settings)
+function FindRemindersService.prototype.____constructor(self, lowStock, actionBars, idle, player, spells, buffReminder, partyBuffs, weaponReminder, outdatedRanks, glowCues, reagents, addedReminders, sealReminder, trackingReminder, settings, clock)
     self.lowStock = lowStock
     self.actionBars = actionBars
     self.idle = idle
@@ -11400,59 +12028,84 @@ function FindRemindersService.prototype.____constructor(self, lowStock, actionBa
     self.sealReminder = sealReminder
     self.trackingReminder = trackingReminder
     self.settings = settings
+    self.clock = clock
+    self.idleReminders = createEmptyReminders()
+    self.noReminders = createEmptyReminders()
+    self.found = createEmptyReminders()
+    self.noMissingBuffs = {glow = {}, notOnBars = {}}
 end
+function FindRemindersService.prototype.forgetStock(self)
+    self.stock = nil
+end
+__TS__DecorateLegacy(
+    {
+        OnEvent(
+            "setting.changed",
+            "bars.mapped",
+            "spells.refreshed",
+            "spells.invalidated",
+            "spellbook.indexed"
+        ),
+        OnGameEvent("BAG_UPDATE", "BAG_UPDATE_DELAYED", "GET_ITEM_INFO_RECEIVED")
+    },
+    FindRemindersService.prototype,
+    "forgetStock",
+    true
+)
 function FindRemindersService.prototype.findReminders(self)
     self.buffReminder:rememberSelfBuffs()
     if self.idle:shouldStayIdle(false) or self.settings:get("isDisabled") then
-        return self:createEmptyReminders()
+        return self:findIdleReminders(nil)
     end
-    local reagentSpells = self:findReagentSpells()
-    local lowReagents = self:findLowReagents()
-    local lowStock = self.lowStock:findLowStock()
+    local ____temp_0 = self:readStock()
+    local reagentSpells = ____temp_0.reagentSpells
+    local lowReagents = ____temp_0.lowReagents
+    local lowStock = ____temp_0.lowStock
     if self.idle:shouldStayIdle(self.settings:get("shouldStayQuietInTowns")) then
-        return __TS__ObjectAssign(
-            {},
-            self:createEmptyReminders(),
-            {reagentSpells = reagentSpells, lowReagents = lowReagents, lowStock = lowStock}
-        )
+        return self:findIdleReminders(self.stock)
     end
-    local isMissingBuffEnabled = self.settings:get("isMissingBuffEnabled")
-    local missingBuffs = isMissingBuffEnabled and self.buffReminder:findMissingBuffs() or ({glow = {}, notOnBars = {}})
-    local partySuggestions = isMissingBuffEnabled and self.partyBuffs:findPartyBuffSuggestions() or ({})
-    local ____table_settings_get_result_0
-    if self.settings:get("isWeaponBuffEnabled") then
-        ____table_settings_get_result_0 = self.weaponReminder:check()
+    local none = self.noReminders
+    local found = self:findBuffReminders()
+    local isWeaponBuffEnabled = self.settings:get("isWeaponBuffEnabled")
+    local ____isWeaponBuffEnabled_1
+    if isWeaponBuffEnabled then
+        ____isWeaponBuffEnabled_1 = self.weaponReminder:check()
     else
-        ____table_settings_get_result_0 = nil
+        ____isWeaponBuffEnabled_1 = nil
     end
-    local weaponCheck = ____table_settings_get_result_0
-    local ____array_1 = __TS__SparseArrayNew(unpack(self:findBuffsToCast(missingBuffs.glow, partySuggestions)))
-    __TS__SparseArrayPush(
-        ____array_1,
-        unpack(isMissingBuffEnabled and self.addedReminders:findMissingBuffs() or ({}))
-    )
-    local ____temp_5 = {__TS__SparseArraySpread(____array_1)}
+    local weaponCheck = ____isWeaponBuffEnabled_1
     local ____weaponCheck_isNeeded_4
     if weaponCheck and weaponCheck.isNeeded then
         ____weaponCheck_isNeeded_4 = weaponCheck.spellId
     else
         ____weaponCheck_isNeeded_4 = nil
     end
-    return {
-        buffsToCast = ____temp_5,
-        weaponSpell = ____weaponCheck_isNeeded_4,
-        addedWeaponSpells = self.settings:get("isWeaponBuffEnabled") and self.addedReminders:findWeaponSpells() or ({}),
-        seals = self.sealReminder:findMissingSeal(),
-        trackings = self.trackingReminder:findMissingTrackings(),
-        buffsNotOnBars = missingBuffs.notOnBars,
-        partySuggestions = partySuggestions,
-        outdatedRanks = self.settings:get("isOldRankEnabled") and self.outdatedRanks:findOutdatedRanks() or ({}),
-        readyCooldowns = self.glowCues:findReadyCooldowns(),
-        procs = self.glowCues:findProcs(),
-        reagentSpells = reagentSpells,
-        lowReagents = lowReagents,
-        lowStock = lowStock
-    }
+    found.weaponSpell = ____weaponCheck_isNeeded_4
+    found.addedWeaponSpells = isWeaponBuffEnabled and self.addedReminders:findWeaponSpells() or none.addedWeaponSpells
+    found.seals = self.sealReminder:findMissingSeal()
+    found.trackings = self.trackingReminder:findMissingTrackings()
+    found.outdatedRanks = self.settings:get("isOldRankEnabled") and self.outdatedRanks:findOutdatedRanks() or none.outdatedRanks
+    found.readyCooldowns = self.glowCues:findReadyCooldowns()
+    found.procs = self.glowCues:findProcs()
+    found.reagentSpells = reagentSpells
+    found.lowReagents = lowReagents
+    found.lowStock = lowStock
+    return found
+end
+function FindRemindersService.prototype.findBuffReminders(self)
+    local found = self.found
+    local isMissingBuffEnabled = self.settings:get("isMissingBuffEnabled")
+    local missingBuffs = isMissingBuffEnabled and self.buffReminder:findMissingBuffs() or self.noMissingBuffs
+    found.partySuggestions = isMissingBuffEnabled and self.partyBuffs:findPartyBuffSuggestions() or self.noReminders.partySuggestions
+    found.buffsToCast = self:findBuffsToCast(missingBuffs.glow, found.partySuggestions)
+    if isMissingBuffEnabled then
+        for ____, id in ipairs(self.addedReminders:findMissingBuffs()) do
+            local ____found_buffsToCast_5 = found.buffsToCast
+            ____found_buffsToCast_5[#____found_buffsToCast_5 + 1] = id
+        end
+    end
+    found.buffsNotOnBars = missingBuffs.notOnBars
+    return found
 end
 function FindRemindersService.prototype.findReagentSpells(self)
     if not self.settings:get("isLowReagentEnabled") then
@@ -11492,12 +12145,15 @@ function FindRemindersService.prototype.findLowReagents(self)
 end
 function FindRemindersService.prototype.findBuffsToCast(self, ownBuffs, partySuggestions)
     local buffs = {unpack(ownBuffs)}
+    if #partySuggestions == 0 then
+        return buffs
+    end
     for ____, suggestion in ipairs(partySuggestions) do
         do
-            local __continue16
+            local __continue22
             repeat
                 if not self.actionBars:isOnBars(suggestion.spellId) or self.spells:isCastable(suggestion.spellId) == false then
-                    __continue16 = true
+                    __continue22 = true
                     break
                 end
                 if suggestion.isForPlayer then
@@ -11509,94 +12165,54 @@ function FindRemindersService.prototype.findBuffsToCast(self, ownBuffs, partySug
                 if not __TS__ArrayIncludes(buffs, suggestion.spellId) then
                     buffs[#buffs + 1] = suggestion.spellId
                 end
-                __continue16 = true
+                __continue22 = true
             until true
-            if not __continue16 then
+            if not __continue22 then
                 break
             end
         end
     end
     return buffs
 end
-function FindRemindersService.prototype.createEmptyReminders(self)
-    return {
-        buffsToCast = {},
-        weaponSpell = nil,
-        addedWeaponSpells = {},
-        seals = {},
-        trackings = {},
-        buffsNotOnBars = {},
-        partySuggestions = {},
-        outdatedRanks = {},
-        readyCooldowns = {},
-        reagentSpells = {},
-        lowReagents = {},
-        lowStock = {},
-        procs = {}
-    }
+function FindRemindersService.prototype.readStock(self)
+    local now = self.clock:getCurrentTime()
+    if self.stock == nil or now - self.stock.at >= STOCK_REUSE then
+        self.stock = {
+            reagentSpells = self:findReagentSpells(),
+            lowReagents = self:findLowReagents(),
+            lowStock = self.lowStock:findLowStock(),
+            at = now
+        }
+    end
+    return self.stock
+end
+function FindRemindersService.prototype.findIdleReminders(self, stock)
+    local idle = self.idleReminders
+    idle.reagentSpells = stock and stock.reagentSpells or self.noReminders.reagentSpells
+    idle.lowReagents = stock and stock.lowReagents or self.noReminders.lowReagents
+    idle.lowStock = stock and stock.lowStock or self.noReminders.lowStock
+    return idle
 end
 return ____exports
  end,
 ["addons.glowing-bars.src.tick.when-state"] = function(...) 
 local ____exports = {}
---- For each When, does it hold now?
-function ____exports.readWhenState(player)
-    local isInCombat = player:isInCombat()
+function ____exports.createWhenState()
     return {
         always = true,
-        inCombat = isInCombat,
-        outOfCombat = not isInCombat,
-        enemyTargeted = player:hasEnemyTarget(),
+        inCombat = false,
+        outOfCombat = true,
+        enemyTargeted = false,
         townAlert = true
     }
 end
-return ____exports
- end,
-["addons.glowing-bars.src.tick.reminder-filter"] = function(...) 
-local ____lualib = require("lualib_bundle")
-local __TS__ArrayFilter = ____lualib.__TS__ArrayFilter
-local __TS__ObjectAssign = ____lualib.__TS__ObjectAssign
-local ____exports = {}
---- The reminders `isShown` keeps.
-function ____exports.filterReminders(reminders, isShown)
-    local function pickShown(reminderType, ids)
-        return __TS__ArrayFilter(
-            ids,
-            function(____, id) return isShown(reminderType, id) end
-        )
-    end
-    local weapon = reminders.weaponSpell
-    return __TS__ObjectAssign(
-        {},
-        reminders,
-        {
-            buffsToCast = pickShown("missingBuff", reminders.buffsToCast),
-            buffsNotOnBars = pickShown("missingBuff", reminders.buffsNotOnBars),
-            partySuggestions = __TS__ArrayFilter(
-                reminders.partySuggestions,
-                function(____, suggestion) return isShown("missingBuff", suggestion.spellId) end
-            ),
-            weaponSpell = weapon ~= nil and isShown("weaponBuff", weapon) and weapon or nil,
-            addedWeaponSpells = pickShown("weaponBuff", reminders.addedWeaponSpells),
-            seals = pickShown("missingSeal", reminders.seals),
-            trackings = pickShown("missingTracking", reminders.trackings),
-            outdatedRanks = __TS__ArrayFilter(
-                reminders.outdatedRanks,
-                function(____, rank) return isShown("oldRank", rank.id) end
-            ),
-            lowStock = __TS__ArrayFilter(
-                reminders.lowStock,
-                function(____, stock) return isShown("lowStock", stock.key) end
-            ),
-            reagentSpells = pickShown("lowReagent", reminders.reagentSpells),
-            lowReagents = __TS__ArrayFilter(
-                reminders.lowReagents,
-                function(____, stock) return isShown("lowReagent", stock.spellId) end
-            ),
-            readyCooldowns = pickShown("readyCooldown", reminders.readyCooldowns),
-            procs = pickShown("proc", reminders.procs)
-        }
-    )
+--- For each When, does it hold now? Read into `state`, the same table at every tick.
+function ____exports.readWhenState(player, state)
+    local isInCombat = player:isInCombat()
+    state.inCombat = isInCombat
+    state.outOfCombat = not isInCombat
+    state.enemyTargeted = player:hasEnemyTarget()
+    return state
 end
 return ____exports
  end,
@@ -11617,7 +12233,9 @@ function GlowSchedule.prototype.startTick(self)
             self.dueSince[key] = nil
         end
     end
-    self.seen = {}
+    for key in pairs(self.seen) do
+        self.seen[key] = nil
+    end
 end
 function GlowSchedule.prototype.isShowing(self, key, style, now, isInTown, isStartingOver)
     self.seen[key] = true
@@ -11644,16 +12262,19 @@ local ____lualib = require("lualib_bundle")
 local __TS__Class = ____lualib.__TS__Class
 local __TS__New = ____lualib.__TS__New
 local __TS__DecorateLegacy = ____lualib.__TS__DecorateLegacy
-local __TS__ObjectAssign = ____lualib.__TS__ObjectAssign
 local ____exports = {}
 local ____core = require("packages.@wowkit.core.src.index")
 local Interval = ____core.Interval
 local ____when_2Dstate = require("addons.glowing-bars.src.tick.when-state")
+local createWhenState = ____when_2Dstate.createWhenState
 local readWhenState = ____when_2Dstate.readWhenState
 local ____reminder_2Dfilter = require("addons.glowing-bars.src.tick.reminder-filter")
+local createEmptyReminders = ____reminder_2Dfilter.createEmptyReminders
 local filterReminders = ____reminder_2Dfilter.filterReminders
 local ____glow_2Dschedule = require("addons.glowing-bars.src.tick.glow-schedule")
 local GlowSchedule = ____glow_2Dschedule.GlowSchedule
+--- Out of combat, a tick on the clock waits until this long after the last one (the clock comes every 0.5 seconds).
+local QUIET_TICK_SECONDS = 0.9
 ____exports.TickService = __TS__Class()
 local TickService = ____exports.TickService
 TickService.name = "TickService"
@@ -11667,6 +12288,26 @@ function TickService.prototype.____constructor(self, finder, shower, player, sty
     self.schedule = __TS__New(GlowSchedule)
     self.wasInTown = false
     self.wasInCombat = false
+    self.lastTickAt = 0
+    self.whenState = createWhenState()
+    self.time = 0
+    self.isInTown = false
+    self.hasArrivedInTown = false
+    self.hasFightStarted = false
+    self.byWhen = createEmptyReminders()
+    self.showing = createEmptyReminders()
+    self.isAllowedNow = function(reminderType, id) return self.whenState[self.styles:getStyle(reminderType, id).when] end
+    self.isDueNow = function(reminderType, id)
+        local style = self.styles:getStyle(reminderType, id)
+        local isStartingOver = style.when == "townAlert" and self.hasArrivedInTown or reminderType == "readyCooldown" and self.hasFightStarted
+        return self.schedule:isShowing(
+            (reminderType .. ":") .. tostring(id),
+            style,
+            self.time,
+            self.isInTown,
+            isStartingOver
+        )
+    end
 end
 function TickService.prototype.onFirstLogin(self)
     self.isRunning = true
@@ -11677,49 +12318,38 @@ end
 function TickService.prototype.onReady(self)
     self:tick()
 end
+function TickService.prototype.tickOnClock(self)
+    if not self.player:isInCombat() and self.clock:getCurrentTime() - self.lastTickAt < QUIET_TICK_SECONDS then
+        return
+    end
+    self:tick()
+end
+__TS__DecorateLegacy(
+    {Interval(500)},
+    TickService.prototype,
+    "tickOnClock",
+    true
+)
 function TickService.prototype.tick(self)
     if not self.isRunning then
         return
     end
+    self.lastTickAt = self.clock:getCurrentTime()
     self.shower:showReminders(self:filterShowing(self.finder:findReminders()))
 end
-__TS__DecorateLegacy(
-    {Interval(200)},
-    TickService.prototype,
-    "tick",
-    true
-)
 function TickService.prototype.filterShowing(self, reminders)
-    local now = readWhenState(self.player)
-    local byWhen = filterReminders(
-        reminders,
-        function(reminderType, id) return now[self.styles:getStyle(reminderType, id).when] end
-    )
-    local time = self.clock:getCurrentTime()
-    local isInTown = self.player:isResting()
-    local hasArrivedInTown = isInTown and not self.wasInTown
-    self.wasInTown = isInTown
-    local hasFightStarted = now.inCombat and not self.wasInCombat
+    local now = readWhenState(self.player, self.whenState)
+    filterReminders(self.byWhen, reminders, self.isAllowedNow)
+    self.time = self.clock:getCurrentTime()
+    self.isInTown = self.player:isResting()
+    self.hasArrivedInTown = self.isInTown and not self.wasInTown
+    self.wasInTown = self.isInTown
+    self.hasFightStarted = now.inCombat and not self.wasInCombat
     self.wasInCombat = now.inCombat
     self.schedule:startTick()
-    return __TS__ObjectAssign(
-        {},
-        filterReminders(
-            byWhen,
-            function(reminderType, id)
-                local style = self.styles:getStyle(reminderType, id)
-                local isStartingOver = style.when == "townAlert" and hasArrivedInTown or reminderType == "readyCooldown" and hasFightStarted
-                return self.schedule:isShowing(
-                    (reminderType .. ":") .. tostring(id),
-                    style,
-                    time,
-                    isInTown,
-                    isStartingOver
-                )
-            end
-        ),
-        {isInTown = isInTown}
-    )
+    filterReminders(self.showing, self.byWhen, self.isDueNow)
+    self.showing.isInTown = self.isInTown
+    return self.showing
 end
 return ____exports
  end,
@@ -11757,7 +12387,7 @@ function RefreshService.prototype.requestTick(self)
     )
 end
 __TS__DecorateLegacy(
-    {OnEvent("bars.mapped", "spells.refreshed")},
+    {OnEvent("bars.mapped", "spells.refreshed", "procs.changed")},
     RefreshService.prototype,
     "requestTick",
     true
@@ -12521,7 +13151,23 @@ function StyleRowsService.prototype.listSpellRows(self)
             return
         end
         keys[key] = true
-        rows[#rows + 1] = __TS__ObjectAssign({reminderType = reminderType, spellId = spellId, label = suffix ~= nil and ((look.label .. " (") .. suffix) .. ")" or look.label, iconId = look.iconId}, extra)
+        local ____reminderType_12 = reminderType
+        local ____spellId_13 = spellId
+        local ____temp_14 = suffix ~= nil and ((look.label .. " (") .. suffix) .. ")" or look.label
+        local ____look_iconId_15 = look.iconId
+        local ____temp_11
+        if extra.itemId ~= nil then
+            ____temp_11 = nil
+        else
+            ____temp_11 = self.spells:isLearned(spellId)
+        end
+        rows[#rows + 1] = __TS__ObjectAssign({
+            reminderType = ____reminderType_12,
+            spellId = ____spellId_13,
+            label = ____temp_14,
+            iconId = ____look_iconId_15,
+            isLearned = ____temp_11
+        }, extra)
     end
     local function addListed(reminderType, listId, suffix)
         if listId ~= nil then
@@ -12927,6 +13573,8 @@ local ____style_2Drows_2Eservice = require("addons.glowing-bars.src.options.styl
 local TYPE_TEXTS = ____style_2Drows_2Eservice.TYPE_TEXTS
 --- How faded the spell rows of a type that is switched off are.
 local TYPE_OFF_ALPHA = 0.4
+--- How faded the name and icon of a spell the character has not learned (yet) are: listed all the same, to set its look before.
+local NOT_LEARNED_ALPHA = 0.5
 --- What was typed is wrong: nothing was done, or something else than was asked.
 local ERROR_COLOR = {1, 0.25, 0.2}
 ____exports.StyleEditsService = __TS__Class()
@@ -12985,11 +13633,14 @@ function StyleEditsService.prototype.connectRemove(self, button, getRow)
         end
     )
 end
-function StyleEditsService.prototype.fillEnabled(self, box, frame, row)
+function StyleEditsService.prototype.fillEnabled(self, box, frame, row, nameParts)
     box:Show()
     box:SetChecked(self.switches:isEnabled(row))
     local isTypeOff = row.spellId ~= nil and not self.switches:isTypeEnabled(row.reminderType)
     frame:SetAlpha(isTypeOff and TYPE_OFF_ALPHA or 1)
+    for ____, part in ipairs(nameParts) do
+        part:SetAlpha(row.isLearned == false and NOT_LEARNED_ALPHA or 1)
+    end
 end
 function StyleEditsService.prototype.createIdBox(self, frame, getRow)
     local box = self:createNumberBox(
@@ -13291,6 +13942,52 @@ function StyleEditsService.prototype.createNumberBox(self, frame, x, width, maxL
     box:SetNumeric(true)
     box:SetMaxLetters(maxLetters)
     return box
+end
+return ____exports
+ end,
+["addons.glowing-bars.src.options.header-tip"] = function(...) 
+local ____exports = {}
+local ____style_2Dtable_2Econstants = require("addons.glowing-bars.src.options.style-table_constants")
+local HEADER_HEIGHT = ____style_2Dtable_2Econstants.HEADER_HEIGHT
+--- The hover area made for each table content (one header there has a tooltip of this kind).
+local areas = {}
+--- Shows the tooltip `getText` says over the header at `top` of `content`, on hover.
+function ____exports.showHeaderTip(content, top, getText)
+    local area = areas[content]
+    if area == nil then
+        local made = CreateFrame("Frame", nil, content)
+        made:SetSize(300, HEADER_HEIGHT)
+        made:EnableMouse(true)
+        made:SetScript(
+            "OnEnter",
+            function()
+                GameTooltip:SetOwner(made, "ANCHOR_RIGHT")
+                GameTooltip:SetText(
+                    getText(),
+                    1,
+                    1,
+                    1,
+                    1,
+                    true
+                )
+                GameTooltip:Show()
+            end
+        )
+        made:SetScript(
+            "OnLeave",
+            function() return GameTooltip:Hide() end
+        )
+        areas[content] = made
+        area = made
+    end
+    area:ClearAllPoints()
+    area:SetPoint(
+        "TOPLEFT",
+        content,
+        "TOPLEFT",
+        0,
+        -top
+    )
 end
 return ____exports
  end,
@@ -14020,6 +14717,8 @@ local STRIPE_COLOR = ____style_2Dtable_2Econstants.STRIPE_COLOR
 local TABLE_WIDTH = ____style_2Dtable_2Econstants.TABLE_WIDTH
 local TYPE_HEADING_HEIGHT = ____style_2Dtable_2Econstants.TYPE_HEADING_HEIGHT
 local findWindowWidth = ____style_2Dtable_2Econstants.findWindowWidth
+local ____header_2Dtip = require("addons.glowing-bars.src.options.header-tip")
+local showHeaderTip = ____header_2Dtip.showHeaderTip
 local ____style_2Drow_2Dlayout = require("addons.glowing-bars.src.options.style-row-layout")
 local applyRowView = ____style_2Drow_2Dlayout.applyRowView
 local createIcon = ____style_2Drow_2Dlayout.createIcon
@@ -14132,6 +14831,13 @@ function StyleTableService.prototype.drawSection(self, content, headerText, rows
     )
     header:SetText(self.locale:getText(headerText))
     header:Show()
+    if headerText == "HDR_TABLE_SPELLS" then
+        showHeaderTip(
+            content,
+            top,
+            function() return self.locale:getText("TIP_TABLE_SPELLS") end
+        )
+    end
     local y = top + HEADER_HEIGHT
     local previousType
     for ____, row in ipairs(rows) do
@@ -14248,7 +14954,7 @@ function StyleTableService.prototype.fill(self, widgets, row)
     self.choices:fillChoices(widgets.choices, row)
     widgets.reset:SetShown(isOverridden)
     widgets.remove:SetShown(row.isAdded == true)
-    self.edits:fillEnabled(widgets.enabled, widgets.frame, row)
+    self.edits:fillEnabled(widgets.enabled, widgets.frame, row, {widgets.icon, widgets.name})
     self.edits:fillIdBox(widgets.spellIdBox, row)
     self.edits:fillBelowBox(widgets.belowBox, row)
     applyRowView(
@@ -14700,6 +15406,8 @@ local ____added_2Dspells_2Eservice = require("addons.glowing-bars.src.glows.adde
 local AddedSpellsService = ____added_2Dspells_2Eservice.AddedSpellsService
 local ____glow_2Dcues_2Eservice = require("addons.glowing-bars.src.glows.glow-cues_service")
 local GlowCuesService = ____glow_2Dcues_2Eservice.GlowCuesService
+local ____stance_2Dprocs_2Eservice = require("addons.glowing-bars.src.glows.stance-procs_service")
+local StanceProcsService = ____stance_2Dprocs_2Eservice.StanceProcsService
 local ____buff_2Dknowledge_2Eservice = require("addons.glowing-bars.src.knowledge.buff-knowledge_service")
 local BuffKnowledgeService = ____buff_2Dknowledge_2Eservice.BuffKnowledgeService
 local ____texts_2Econstants = require("addons.glowing-bars.src.locale.texts_constants")
@@ -14918,6 +15626,13 @@ function makeReminders(addon, addonName, game, texts, buffs)
     ))
     game.spells:useIdAlias(function(spellId) return addedSpells:getEffectiveId(spellId) end)
     local tracker = addon:register(__TS__New(CooldownTrackerService, game.spells, game.cooldowns, game.clock))
+    local stanceProcs = addon:register(__TS__New(
+        StanceProcsService,
+        game.player,
+        game.spells,
+        game.clock,
+        addon.events
+    ))
     local glowCues = addon:register(__TS__New(
         GlowCuesService,
         game.player,
@@ -14926,7 +15641,8 @@ function makeReminders(addon, addonName, game, texts, buffs)
         game.actionBars,
         tracker,
         settings,
-        addedSpells
+        addedSpells,
+        stanceProcs
     ))
     local fedBuffs = addon:register(__TS__New(
         FedBuffsService,
@@ -15017,7 +15733,8 @@ function makeTick(addon, addonName, game, texts, buffs, reminders)
         reminders.added,
         reminders.seal,
         reminders.tracking,
-        settings
+        settings,
+        game.clock
     ))
     local notices = addon:register(__TS__New(
         NoticesService,

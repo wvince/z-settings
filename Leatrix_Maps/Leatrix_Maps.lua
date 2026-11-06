@@ -1,6 +1,6 @@
 ﻿
 	----------------------------------------------------------------------
-	-- 	Leatrix Maps 1.60.27 (5th November 2026)
+	-- 	Leatrix Maps 1.60.28 (5th November 2026)
 	----------------------------------------------------------------------
 
 	-- 10:Func, 20:Comm, 30:Evnt, 40:Panl
@@ -12,7 +12,7 @@
 	local LeaMapsLC, LeaMapsCB, LeaConfigList, LeaLockList = {}, {}, {}, {}
 
 	-- Version
-	LeaMapsLC["AddonVer"] = "1.60.27"
+	LeaMapsLC["AddonVer"] = "1.60.28"
 
 	-- Get locale table
 	local void, Leatrix_Maps = ...
@@ -250,23 +250,9 @@
 
 		-- Set the list colors (background, border and row highlight, used by the map theme)
 		-- (rowFunc is optional, it is called with the row number and row count and returns a highlight color for that row)
-		-- Use the game's tooltip background and border instead of the flat background and pixel border (Blizzard map theme)
-		local tooltipStyle
-		function popup:SetTooltipStyle(on)
-			on = on and true or false
-			if on == tooltipStyle then return end
-			tooltipStyle = on
-			if on then
-				list:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = {left = 5, right = 5, top = 5, bottom = 5}})
-			else
-				list:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8"})
-			end
-			for i = 1, #borderLines do borderLines[i]:SetShown(not on) end
-		end
-
+		-- (the Blizzard map theme adds a brown fill to the list frame on top of the background color)
 		function popup:SetColors(bgR, bgG, bgB, borderR, borderG, borderB, hlR, hlG, hlB, rowFunc)
 			list:SetBackdropColor(bgR, bgG, bgB, 0.97)
-			if tooltipStyle then list:SetBackdropBorderColor(borderR, borderG, borderB, 1) end
 			for i = 1, #borderLines do borderLines[i]:SetVertexColor(borderR, borderG, borderB, 1) end
 			highlightColor = {hlR, hlG, hlB}
 			rowColorFunc = rowFunc
@@ -418,6 +404,7 @@
 			borderFrame:SetFrameLevel(WorldMapFrame:GetFrameLevel())
 			borderFrame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8"})
 			borderFrame:SetBackdropColor(0, 0, 0, 0.9)
+			mapTheme.borderFrame = borderFrame -- Used by Unlock map frame (the map can be dragged just outside the border)
 
 			-- Create black edge with a soft drop shadow around the border (sized in whole screen pixels in SetPixelEdges)
 			-- (the shadow layers stack so the shadow fades out naturally from the edge)
@@ -505,10 +492,10 @@
 				end)
 			end
 
-			-- Set button icons (the close cross is in Leatrix_Maps.blp)
-			SetButtonIcon(WorldMapFrame.BorderFrame.CloseButton, "Leatrix_Maps.blp", 0, 0.25, 0.5, 0.75)
-			SetButtonIcon(WorldMapFrame.BorderFrame.MaximizeMinimizeFrame.MaximizeButton, "Leatrix_Maps_Maximise")
-			SetButtonIcon(WorldMapFrame.BorderFrame.MaximizeMinimizeFrame.MinimizeButton, "Leatrix_Maps_Restore")
+			-- Set button icons (the close cross, maximise and restore icons are in Leatrix_Maps.blp)
+			SetButtonIcon(WorldMapFrame.BorderFrame.CloseButton, "Leatrix_Maps.blp", 0, 0.125, 0.25, 0.375)
+			SetButtonIcon(WorldMapFrame.BorderFrame.MaximizeMinimizeFrame.MaximizeButton, "Leatrix_Maps.blp", 0.125, 0.25, 0.25, 0.375)
+			SetButtonIcon(WorldMapFrame.BorderFrame.MaximizeMinimizeFrame.MinimizeButton, "Leatrix_Maps.blp", 0.25, 0.375, 0.25, 0.375)
 
 			-- Restyle quest search box to match the title bar (flat dark box filling the gap between the gold lines)
 			local searchBox = QuestScrollFrame.SearchBox
@@ -612,6 +599,8 @@
 					tex:SetPoint("TOPLEFT", borderFrame, "TOPLEFT", -out, out)
 					tex:SetPoint("BOTTOMRIGHT", borderFrame, "BOTTOMRIGHT", out, -out)
 				end
+				-- Set the map frame clickable area to match the border (Unlock map frame adds space outside it for dragging)
+				if LeaMapsLC.SetMapHitRect then LeaMapsLC.SetMapHitRect() end
 			end
 
 			-- Make an edge function available to code that changes the map scale. It sets the edge now and once more on
@@ -635,6 +624,44 @@
 			edgeEvents:RegisterEvent("UI_SCALE_CHANGED")
 			edgeEvents:RegisterEvent("DISPLAY_SIZE_CHANGED")
 			edgeEvents:SetScript("OnEvent", function() LeaMapsLC.RefreshMapLines() end)
+
+			-- Function to get map frame clickable area insets that match the visible border (title bar, map, quest log and
+			-- coordinates footer) plus grab outside it. The map frame goes above the title bar and the footer goes below the
+			-- map frame so the border is not the same size as the map frame. Returns nothing if the positions are not
+			-- available yet or are secret.
+			local function GetBorderInsets(grab)
+				local mL, mR, mT, mB = WorldMapFrame:GetLeft(), WorldMapFrame:GetRight(), WorldMapFrame:GetTop(), WorldMapFrame:GetBottom()
+				local bL, bR, bT, bB = borderFrame:GetLeft(), borderFrame:GetRight(), borderFrame:GetTop(), borderFrame:GetBottom()
+				if not (mL and mR and mT and mB and bL and bR and bT and bB) then return end
+				if issecretvalue then
+					for void, v in ipairs({mL, mR, mT, mB, bL, bR, bT, bB}) do
+						if issecretvalue(v) then return end -- Can be secret in combat
+					end
+				end
+				return bL - mL - grab, mR - bR - grab, mT - bT - grab, bB - mB - grab
+			end
+			mapTheme.GetBorderInsets = GetBorderInsets -- Used by Unlock map frame
+
+			-- Set the map frame clickable area to match the visible border, so there is no clickable space outside it
+			-- (Unlock map frame replaces this when it's on). It's set now and once more on the next frame, after the game
+			-- has finished laying out the map (only one next-frame pass is queued at a time).
+			local function SetBorderHitRect()
+				if not LeaMapsLC:CanChangeMap() then return end
+				local left, right, top, bottom = GetBorderInsets(0)
+				if left then WorldMapFrame:SetHitRectInsets(left, right, top, bottom) end
+			end
+			local borderHitQueued
+			local function BorderHitQueued()
+				borderHitQueued = nil
+				SetBorderHitRect()
+			end
+			LeaMapsLC.SetMapHitRect = function()
+				SetBorderHitRect()
+				if not borderHitQueued then
+					borderHitQueued = true
+					C_Timer.After(0, BorderHitQueued)
+				end
+			end
 
 			-- Function to set map frame layout
 			local function SetFrameLayout()
@@ -805,7 +832,8 @@
 				-- default map (the top of the art already sits above the title bar)
 				-- (the bottom is moved up by the drop shadow that is cut off the bottom of the art below, so the gold line stays put)
 				local shadowCrop = 4
-				blizzBorder:SetPoint("TOPLEFT", borderFrame, "TOPLEFT", -5, 0)
+				-- (the map draws over the inner part of the left edge art, so the left side sits further out to show the whole metal edge)
+				blizzBorder:SetPoint("TOPLEFT", borderFrame, "TOPLEFT", -10, 0)
 				blizzBorder:SetPoint("BOTTOMRIGHT", borderFrame, "BOTTOMRIGHT", 5, -5 + shadowCrop)
 				blizzBorder:EnableMouse(false)
 				-- The layout asks for each piece by name, the pieces are textures on the border frame
@@ -876,6 +904,64 @@
 					entry.icon:SetShown(not show)
 					entry.box:Hide()
 				end
+			end
+
+			-- Function to get the part of the Blizzard theme top border art that is behind the title bar (the brown fill with
+			-- a bronze line at the bottom). Returns the texture file, the top and bottom texture rows, and the width of one
+			-- tile and the height of the part on screen (nothing if the art can't be placed yet, such as before the map is shown).
+			local function GetTitleArt()
+				local piece = blizzPieces and blizzPieces.TopEdge
+				local atlas = piece and piece.GetAtlas and piece:GetAtlas()
+				local info = atlas and C_Texture and C_Texture.GetAtlasInfo and C_Texture.GetAtlasInfo(atlas)
+				if not info or not info.file or not info.width or info.width <= 0 then return end
+				-- The art tiles across, so it has to use the whole width of its texture file
+				if info.leftTexCoord ~= 0 or info.rightTexCoord ~= 1 then return end
+				local pTop, pBottom, tTop, tBottom = piece:GetTop(), piece:GetBottom(), titleFrame:GetTop(), titleFrame:GetBottom()
+				if not (pTop and pBottom and tTop and tBottom) then return end
+				if issecretvalue and (issecretvalue(pTop) or issecretvalue(pBottom) or issecretvalue(tTop) or issecretvalue(tBottom)) then return end
+				-- Positions on screen (the art and the title bar can have different scales)
+				local pScale, tScale = piece:GetEffectiveScale(), titleFrame:GetEffectiveScale()
+				pTop, pBottom, tTop, tBottom = pTop * pScale, pBottom * pScale, tTop * tScale, tBottom * tScale
+				local pHeight = pTop - pBottom
+				if pHeight <= 0 then return end
+				-- Rows of the art that are behind the title bar
+				local f1 = math.max(0, math.min(1, (pTop - tTop) / pHeight))
+				local f2 = math.max(0, math.min(1, (pTop - tBottom) / pHeight))
+				if f2 <= f1 then return end
+				local texTop = info.topTexCoord + (info.bottomTexCoord - info.topTexCoord) * f1
+				local texBottom = info.topTexCoord + (info.bottomTexCoord - info.topTexCoord) * f2
+				return info.file, texTop, texBottom, info.width * pScale, (f2 - f1) * pHeight
+			end
+
+			-- Function to show the title bar art on the coordinates background, so both bars match (runs when the theme is
+			-- applied and when the coordinates bar is shown or resized)
+			local function SetFooterArt()
+				local footerRock = mapTheme.footerRock
+				if not footerRock or not footerRock:IsShown() then return end
+				local file, texTop, texBottom, tileWidth = GetTitleArt()
+				local width = mapTheme.footer:GetWidth()
+				if not file or not width or (issecretvalue and issecretvalue(width)) then return end
+				footerRock:SetHorizTile(false)
+				footerRock:SetVertTile(false)
+				footerRock:SetTexture(file, "REPEAT", "CLAMP")
+				footerRock:SetTexCoord(0, width * mapTheme.footer:GetEffectiveScale() / tileWidth, texTop, texBottom)
+			end
+
+			-- Function to fill a zone list with the brown of the title bar (Blizzard theme). The title bar art can't be repeated
+			-- down a list without its edge lines showing, so the list uses the game's frame background (which repeats without
+			-- a seam) tinted to the same brown. Runs when the theme is applied.
+			local function SetListArt(list)
+				local frame = list.frame
+				if mapTheme.blizzard and not frame.leaArtFill then
+					local fill = frame:CreateTexture(nil, "BACKGROUND", nil, 1)
+					fill:SetAllPoints()
+					fill:SetTexture("Interface\\FrameGeneral\\UI-Background-Rock", "REPEAT", "REPEAT")
+					fill:SetHorizTile(true)
+					fill:SetVertTile(true)
+					fill:SetVertexColor(0.63, 0.40, 0.23)
+					frame.leaArtFill = fill
+				end
+				if frame.leaArtFill then frame.leaArtFill:SetShown(mapTheme.blizzard == true) end
 			end
 
 			-- Rainbow colors (left to right) and how dark they are drawn so the text stays readable
@@ -973,6 +1059,21 @@
 				if mapTheme.footer then
 					mapTheme.footerTexture:SetGradient("VERTICAL", bgBottom, bgTop)
 					SetRainbow(mapTheme.footer, theme.rainbow)
+					-- Blizzard theme: coordinates background matches the title bar (the part of the border art behind the title bar,
+					-- created the first time it's used, the game's frame background is shown until the art can be placed)
+					if theme.blizzard and not mapTheme.footerRock then
+						local footerRock = mapTheme.footer:CreateTexture(nil, "BACKGROUND", nil, 2)
+						footerRock:SetAllPoints()
+						footerRock:SetTexture("Interface\\FrameGeneral\\UI-Background-Rock", "REPEAT", "REPEAT")
+						footerRock:SetHorizTile(true)
+						footerRock:SetVertTile(true)
+						mapTheme.footerRock = footerRock
+						mapTheme.footer:HookScript("OnShow", SetFooterArt)
+						mapTheme.footer:HookScript("OnSizeChanged", SetFooterArt)
+					end
+					if mapTheme.footerRock then mapTheme.footerRock:SetShown(theme.blizzard == true) end
+					mapTheme.footerTexture:SetShown(not theme.blizzard)
+					SetFooterArt()
 				end
 				-- Title bar buttons (icon in a bright accent color, hover box in the accent color with a white icon)
 				local brightest = math.max(ar, ag, ab)
@@ -996,14 +1097,16 @@
 				-- (Rainbow gives the list the same rainbow as the title bar and each row its own rainbow highlight color)
 				for void, list in ipairs({mapTheme.popup or false, mapTheme.dungeonPopup or false}) do
 					if list then
-						list:SetTooltipStyle(theme.blizzard)
 						if theme.blizzard then
-							-- Tooltip colors and the game's plain white menu highlight
-							list:SetColors(0.09, 0.09, 0.19, 1, 1, 1, 1, 1, 1)
+							-- Title bar brown (the brown fill is added on top), bronze border and the game's
+							-- plain white menu highlight
+							list:SetColors(0.13, 0.08, 0.045, 0.55, 0.42, 0.22, 1, 1, 1)
 						else
 							list:SetColors(topR, topG, topB, ar, ag, ab, hr + (1 - hr) * 0.3, hg + (1 - hg) * 0.3, hb + (1 - hb) * 0.3, theme.rainbow and RainbowRowColor or nil)
 						end
 						SetRainbow(list.frame, theme.rainbow)
+						-- Title bar brown fill for the Blizzard theme
+						SetListArt(list)
 					end
 				end
 				-- Dungeon map level menu (title bar color, accent border and the zone menu hover color, tooltip colors for Blizzard)
@@ -1423,7 +1526,8 @@
 		if LeaMapsLC["ShowDungeonMaps"] == "On" then
 
 			-- Map art: [instance map ID] = {{map ID, level name, game map texture}, ...}
-			-- Scholomance is not in the game in its classic layout so it uses {map ID, level name, nil, x, y} in Leatrix_Maps_Dungeon_Scholomance (2048x2048, maps are 1024x683)
+			-- Maps that are not in the game use {map ID, level name, nil, x, y, nil, height} in Leatrix_Maps_Dungeon_Art (2048x4096, maps are 1024 wide and 683 high unless a height is given)
+			-- Scholomance is not in the game in its classic layout so its maps are in Leatrix_Maps_Dungeon_Art too
 			local dungeonArt = {
 				[389] = {{213, nil, "Ragefire\\Ragefire1_"}}, -- Ragefire Chasm
 				[36] = {{291, nil, "TheDeadmines\\TheDeadmines1_"}, {292, L["Ironclad Cove"], "TheDeadmines\\TheDeadmines2_"}}, -- The Deadmines
@@ -1451,12 +1555,12 @@
 				[509] = {{247, nil, "RuinsofAhnQiraj\\RuinsofAhnQiraj"}}, -- Ruins of Ahn'Qiraj
 				[531] = {{319, L["The Hive Undergrounds"], "AhnQiraj\\AhnQiraj1_"}, {320, L["The Temple Gates"], "AhnQiraj\\AhnQiraj2_"}, {321, L["Vault of C'Thun"], "AhnQiraj\\AhnQiraj3_"}}, -- Temple of Ahn'Qiraj
 				[533] = {{162, L["The Construct Quarter"], "Naxxramas\\Naxxramas1_"}, {163, L["The Arachnid Quarter"], "Naxxramas\\Naxxramas2_"}, {164, L["The Military Quarter"], "Naxxramas\\Naxxramas3_"}, {165, L["The Plague Quarter"], "Naxxramas\\Naxxramas4_"}, {166, L["The Lower Necropolis"], "Naxxramas\\Naxxramas5_"}, {167, L["The Upper Necropolis"], "Naxxramas\\Naxxramas6_"}}, -- Naxxramas
-				-- Dungeons that are new in Forever use {map key, level name, nil, nil, nil, art file, art height} with one map
-				-- per file (1024 wide, the height given, in 1024x1024 files). Maps and pins are from MapUtils by D4KiR, used with permission.
-				[2959] = {{"2959", L["City of Dalaran"] .. " (1)", nil, nil, nil, "Leatrix_Maps_Dungeon_2959", 684}, {"2959_2", L["City of Dalaran"] .. " (2)", nil, nil, nil, "Leatrix_Maps_Dungeon_2959_2", 689}}, -- City of Dalaran
-				[2998] = {{"2998", nil, nil, nil, nil, "Leatrix_Maps_Dungeon_2998", 683}}, -- Excavation Site: Wetlands
-				[2999] = {{"2999", nil, nil, nil, nil, "Leatrix_Maps_Dungeon_2999", 683}}, -- The Ruins of Lordaeron
-				[3065] = {{"3065", nil, nil, nil, nil, "Leatrix_Maps_Dungeon_3065", 683}}, -- The Hall of Thanes
+				-- Dungeons that are new in Forever use {map key, level name, nil, x, y, nil, height} in Leatrix_Maps_Dungeon_Art.
+				-- Maps and pins are from MapUtils by D4KiR, used with permission.
+				[2959] = {{"2959", L["City of Dalaran"] .. " (1)", nil, 0, 1368, nil, 684}, {"2959_2", L["City of Dalaran"] .. " (2)", nil, 1024, 1368, nil, 689}}, -- City of Dalaran
+				[2998] = {{"2998", nil, nil, 0, 2060, nil, 683}}, -- Excavation Site: Wetlands
+				[2999] = {{"2999", nil, nil, 1024, 2060, nil, 683}}, -- The Ruins of Lordaeron
+				[3065] = {{"3065", nil, nil, 0, 2752, nil, 683}}, -- The Hall of Thanes
 			}
 
 			-- Game maps in the addon folder for game locales that do not have them (such as esMX and ruRU)
@@ -2048,21 +2152,28 @@
 			}
 
 			-- Settings
-			local artPath = "Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps_Dungeon_Scholomance"
-			local pinPath = "Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps_Dungeon_Pins"
+			local artPath = "Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps_Dungeon_Art"
+			local pinPath = "Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps.blp"
 			local bundlePath = "Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps_Dungeon_"
 			local maxZoom, wheelStep = 4, 1.25
 			local bossSize, rareSize, pinSize = 34, 24, 26
 			local ringScale = 1.55
 			local skullLevels = 10 -- Show skull if boss is this many levels above the player
 
-			-- Boss pin styles (ring color and dragon row in the pins texture)
+			-- Boss pin styles (ring color and dragon number in pinDragons)
 			local pinStyles = {
 				[0] = {0.55, 0.5, 0.4},
 				[1] = {0.95, 0.75, 0.25, 0},
 				[2] = {0.85, 0.87, 0.95, 1},
 				[3] = {0.95, 0.75, 0.25, 0},
 				[4] = {0.85, 0.87, 0.95, 2},
+			}
+
+			-- Dragon texture coordinates in Leatrix_Maps.blp (gold, silver, grey)
+			local pinDragons = {
+				[0] = {0.5, 1, 0, 0.5},
+				[1] = {0, 0.5, 0.5, 1},
+				[2] = {0.5, 1, 0.5, 1},
 			}
 
 			-- Function to check for secret values (frame sizes and scales can be secret in combat)
@@ -2226,7 +2337,7 @@
 				local info = levels[levelIndex]
 				local ow, oh = overlay:GetWidth(), overlay:GetHeight()
 				if IsSecret(ow, oh) or not ow or not oh or ow <= 0 or oh <= 0 then return end
-				local ratio = info[3] and 668 / 1002 or info[6] and info[7] / 1024 or 683 / 1024
+				local ratio = info[3] and 668 / 1002 or (info[7] or 683) / 1024
 				local w, h = ow, ow * ratio
 				if h > oh then h = oh; w = oh / ratio end
 				view.baseW, view.baseH = w, h
@@ -2365,8 +2476,8 @@
 				local s = (bossSize - 4) / 64
 				pin.dragon = pin:CreateTexture(nil, "OVERLAY", nil, 2)
 				pin.dragon:SetTexture(pinPath)
-				pin.dragon:SetSize(256 * s, 128 * s)
-				pin.dragon:SetPoint("CENTER", pin, "CENTER", -54 * s, -20 * s)
+				pin.dragon:SetSize(128 * s, 128 * s)
+				pin.dragon:SetPoint("CENTER", pin, "CENTER", 10 * s, -20 * s)
 
 				-- Level badge
 				local badgeSize = 16 * s * 64 / 34
@@ -2432,7 +2543,7 @@
 						pin.ring:SetVertexColor(1, 1, 1)
 					end
 					if style[4] and not isRare then
-						pin.dragon:SetTexCoord(0, 1, style[4] * 0.25, (style[4] + 1) * 0.25)
+						pin.dragon:SetTexCoord(unpack(pinDragons[style[4]]))
 						pin.dragon:Show()
 					end
 					local level = row[6]
@@ -2541,7 +2652,7 @@
 						end
 						usingTiles = true
 					end
-					if not usingTiles and not info[4] and not info[6] then
+					if not usingTiles and not info[4] then
 						-- Game map is missing from the client so show the normal map instead
 						levelIndex, shownMapID = nil, nil
 						overlay:Hide()
@@ -2549,14 +2660,11 @@
 					end
 					for i = 1, 12 do tiles[i]:SetShown(usingTiles) end
 					canvas.art:SetShown(not usingTiles)
-					if not usingTiles and info[6] then
-						-- One map per file (dungeons that are new in Forever)
-						canvas.art:SetTexture("Interface\\AddOns\\Leatrix_Maps\\" .. info[6])
-						canvas.art:SetTexCoord(0, 1, 0, info[7] / 1024)
-					elseif not usingTiles then
-						local x, y = info[4], info[5]
+					if not usingTiles then
+						-- Maps in the addon folder (Scholomance and dungeons that are new in Forever)
+						local x, y, h = info[4], info[5], info[7] or 683
 						canvas.art:SetTexture(artPath)
-						canvas.art:SetTexCoord((x + 0.5) / 2048, (x + 1024 - 0.5) / 2048, (y + 0.5) / 2048, (y + 683 - 0.5) / 2048)
+						canvas.art:SetTexCoord((x + 0.5) / 2048, (x + 1024 - 0.5) / 2048, (y + 0.5) / 4096, (y + h - 0.5) / 4096)
 					end
 					view.zoom, view.x, view.y = 1, 0, 0
 					UpdatePins(info[1])
@@ -2610,7 +2718,16 @@
 				if overlay:IsShown() and view.baseW <= 0 then overlay:Hide() end
 			end
 
-			-- Keep the coordinates footer above the overlay (it is inside the map when the map is maximised)
+			-- Function to find the quest panel toggle button (so it can be clicked while a dungeon map is showing)
+			local function GetSidePanelToggle()
+				if WorldMapFrame.SidePanelToggle then return WorldMapFrame.SidePanelToggle end
+				for void, frame in ipairs(WorldMapFrame.overlayFrames or {}) do
+					if frame.OpenButton and frame.CloseButton then return frame end
+				end
+			end
+
+			-- Keep the coordinates footer (it is inside the map when the map is maximised) and the quest panel toggle
+			-- button above the overlay. Only frame levels are changed and they are put back when the overlay is hidden.
 			local raised = {}
 			overlay:SetScript("OnShow", function()
 				local top = 2000
@@ -2624,12 +2741,17 @@
 				end
 				levelMenu:SetFrameLevel(overlay:GetFrameLevel() + 200)
 				local offset = 300
-				for void, frame in ipairs({mapTheme.footerFrame}) do
-					if frame then
-						raised[frame] = raised[frame] or frame:GetFrameLevel()
-						frame:SetFrameLevel(overlay:GetFrameLevel() + offset)
-						offset = offset + 5
-					end
+				local raise = {}
+				if mapTheme.footerFrame then raise[#raise + 1] = mapTheme.footerFrame end
+				local toggle = GetSidePanelToggle()
+				if toggle and not (InCombatLockdown() and toggle:IsProtected()) then
+					raise[#raise + 1] = toggle
+					for void, child in ipairs({toggle:GetChildren()}) do raise[#raise + 1] = child end
+				end
+				for void, frame in ipairs(raise) do
+					raised[frame] = raised[frame] or frame:GetFrameLevel()
+					frame:SetFrameLevel(overlay:GetFrameLevel() + offset)
+					offset = offset + 5
 				end
 				if shownMapID then UpdatePins(shownMapID) end -- Level colours depend on player level
 				Layout()
@@ -2639,7 +2761,7 @@
 			overlay:SetScript("OnHide", function()
 				overlay:SetScript("OnUpdate", nil)
 				for frame, level in pairs(raised) do
-					frame:SetFrameLevel(level)
+					if not (InCombatLockdown() and frame:IsProtected()) then frame:SetFrameLevel(level) end
 				end
 				wipe(raised)
 				popup:Close()
@@ -3370,7 +3492,7 @@
 					frame:SetFrameLevel(cFrame:GetFrameLevel() + 2)
 				end
 				mapTheme.PlaceCoords = function(inside)
-					local y = inside and 16 or -4
+					local y = inside and 18 or -2
 					MoveCoords(coords.PlayerCoords, "TOPLEFT", "BOTTOMLEFT", 40, y)
 					MoveCoords(coords.CursorCoords, "TOPRIGHT", "BOTTOMRIGHT", -80, y)
 					MoveCoords(coords.CrosshairCoords, "TOP", "BOTTOM", -32, y)
@@ -3455,8 +3577,10 @@
 			-- Allow map frame movement
 			----------------------------------------------------------------------
 
-			local SetMapPositionFunc -- Defined below
+			local SetMapPositionFunc, ClampMapPosition -- Defined below
 			local mapMoving
+			local mapGrab = 20 -- How far outside the visible map border the map can be dragged (same on every side)
+			local topGrips = {} -- Drag areas above the title bar (simple map frame only, turned off with frame movement)
 
 			-- Function to check if the map frame has a position on screen (it can be missing or secret)
 			local function MapHasRect()
@@ -3469,6 +3593,23 @@
 			local function IsValidMapPoint(a, r, x, y)
 				if issecretvalue and (issecretvalue(a) or issecretvalue(r) or issecretvalue(x) or issecretvalue(y)) then return false end
 				return type(a) == "string" and type(r) == "string" and type(x) == "number" and type(y) == "number"
+			end
+
+			-- Function to anchor the windowed map frame by its top left corner (like the default UI). The game saves a dragged
+			-- frame from its nearest point (such as the bottom or center) and the map frame gets wider when the quest panel
+			-- is shown, so any other anchor makes the map move when the quest panel is toggled.
+			local function AnchorMapTopLeft()
+				if not LeaMapsLC:CanChangeMap() or WorldMapFrame:IsMaximized() then return end
+				local left, top, scale = WorldMapFrame:GetLeft(), WorldMapFrame:GetTop(), WorldMapFrame:GetEffectiveScale()
+				local screenTop, uiScale = UIParent:GetTop(), UIParent:GetEffectiveScale()
+				for void, v in ipairs({left, top, scale, screenTop, uiScale}) do
+					if issecretvalue and issecretvalue(v) then return end -- Can be secret in combat
+				end
+				if not left or not top or not screenTop or not scale or scale <= 0 then return end
+				local x, y = left, top - screenTop * uiScale / scale -- Map frame units
+				WorldMapFrame:ClearAllPoints()
+				WorldMapFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", x, y)
+				LeaMapsLC["MapPosA"], LeaMapsLC["MapPosR"], LeaMapsLC["MapPosX"], LeaMapsLC["MapPosY"] = "TOPLEFT", "TOPLEFT", x, y
 			end
 
 			-- Function to start moving the map frame (not while the map frame cannot be changed)
@@ -3492,6 +3633,8 @@
 				mapMoving = nil
 				WorldMapFrame:StopMovingOrSizing()
 				WorldMapFrame:SetUserPlaced(false)
+				ClampMapPosition()
+				AnchorMapTopLeft()
 				-- Save map frame position (if it's not valid, put the map frame back at its saved position)
 				local a, void, r, x, y = WorldMapFrame:GetPoint()
 				if not IsValidMapPoint(a, r, x, y) then
@@ -3523,21 +3666,76 @@
 				LeaMapsCB["MapTitleFrame"]:RegisterForDrag("LeftButton")
 				LeaMapsCB["MapTitleFrame"]:SetScript("OnDragStart", WorldMapFrame:GetScript("OnDragStart"))
 				LeaMapsCB["MapTitleFrame"]:SetScript("OnDragStop", WorldMapFrame:GetScript("OnDragStop"))
+				-- Allow map to be moved by the space above the title bar (the quest log covers the map frame there so it
+				-- would not get the click). It goes up to the same height as the clickable area of the map frame (mapGrab
+				-- above the border, see SetMapHitRect) so the top is as easy to grab as the other sides. The main part
+				-- stops short of the title bar buttons and the part above the buttons starts a little above the title bar so
+				-- the buttons can still be clicked.
+				local titleFrame = LeaMapsCB["MapTitleFrame"]
+				local gripTop = mapTheme.borderFrame or WorldMapFrame
+				local function MakeTopGrip(left, leftX, right, rightX, bottomY)
+					local grip = CreateFrame("Frame", nil, titleFrame)
+					topGrips[#topGrips + 1] = grip
+					grip:SetPoint("BOTTOMLEFT", titleFrame, left, leftX, bottomY)
+					grip:SetPoint("BOTTOMRIGHT", titleFrame, right, rightX, bottomY)
+					grip:SetPoint("TOP", gripTop, "TOP", 0, mapGrab)
+					grip:EnableMouse(true)
+					grip:RegisterForDrag("LeftButton")
+					grip:SetScript("OnDragStart", StartMapMove)
+					grip:SetScript("OnDragStop", StopMapMove)
+				end
+				MakeTopGrip("TOPLEFT", 0, "TOPRIGHT", -70, 0) -- Above the title bar
+				MakeTopGrip("TOPRIGHT", -70, "TOPRIGHT", mapGrab, 4) -- Above the title bar buttons and the top right corner
 			end
 
-			WorldMapFrame:SetClampedToScreen(true)
+			-- The game's clamp to screen is not used. Its single clamp area cannot let the map go far off the top and far
+			-- off the bottom at the same time (when it is set up to, the map jumps when it is clicked and gets stuck), so the
+			-- map can be dragged freely and is moved back on the screen when it is dropped (see ClampMapPosition).
+			WorldMapFrame:SetClampedToScreen(false)
+
+			-- Function to move the map frame back if too much of it is off the screen. The map can go off any side of the
+			-- screen until about 100 screen pixels of it are left on the screen (if the map is moved off the top,
+			-- the title bar can be off the screen, Reset in the configuration panel brings it back).
+			local mapKeepPixels = 100
+			ClampMapPosition = function()
+				if not LeaMapsLC:CanChangeMap() then return end
+				local left, right, top, bottom = WorldMapFrame:GetLeft(), WorldMapFrame:GetRight(), WorldMapFrame:GetTop(), WorldMapFrame:GetBottom()
+				local scale, uiScale = WorldMapFrame:GetEffectiveScale(), UIParent:GetEffectiveScale()
+				local screenW, screenH = UIParent:GetSize()
+				for void, v in ipairs({left, right, top, bottom, scale, uiScale, screenW, screenH}) do
+					if issecretvalue and issecretvalue(v) then return end -- Can be secret in combat
+				end
+				if not left or not top or not scale or scale <= 0 then return end
+				-- Screen size in map frame units
+				screenW, screenH = screenW * uiScale / scale, screenH * uiScale / scale
+				-- Amount to keep on the screen in map frame units (768 units at scale 1 is the screen height)
+				local physHeight = GetPhysicalScreenSize and select(2, GetPhysicalScreenSize())
+				local keep = 300
+				if physHeight and physHeight > 0 then keep = mapKeepPixels * 768 / physHeight / scale end
+				local width, height = right - left, top - bottom
+				local offX, offY = math.max(0, width - keep), math.max(0, height - keep) -- How far it can go off each side
+				local dx, dy = 0, 0
+				if left < -offX then dx = -offX - left elseif right > screenW + offX then dx = screenW + offX - right end
+				if top > screenH + offY then dy = screenH + offY - top elseif bottom < -offY then dy = -offY - bottom end
+				if dx == 0 and dy == 0 then return end
+				if WorldMapFrame:GetNumPoints() ~= 1 then return end
+				local a, rel, r, x, y = WorldMapFrame:GetPoint()
+				if not IsValidMapPoint(a, r, x, y) then return end
+				WorldMapFrame:SetPoint(a, rel, r, x + dx, y + dy)
+			end
 
 			-- Function to set map position (not while the map frame cannot be changed)
 			SetMapPositionFunc = function()
 				if not LeaMapsLC:CanChangeMap() then return end
 				WorldMapFrame:ClearAllPoints()
 				if not WorldMapFrame:IsMaximized() then
-					WorldMapFrame:SetClampRectInsets(600, -600, -64, 470)
 					WorldMapFrame:SetPoint(LeaMapsLC["MapPosA"], UIParent, LeaMapsLC["MapPosR"], LeaMapsLC["MapPosX"], LeaMapsLC["MapPosY"])
 				else
-					WorldMapFrame:SetClampRectInsets(900, -900, -64, 700)
 					WorldMapFrame:SetPoint(LeaMapsLC["MaxMapPosA"], UIParent, LeaMapsLC["MaxMapPosR"], LeaMapsLC["MaxMapPosX"], LeaMapsLC["MaxMapPosY"])
 				end
+				ClampMapPosition()
+				-- Positions saved before the map was anchored by its top left corner are changed over
+				if LeaMapsLC["MapPosA"] ~= "TOPLEFT" or LeaMapsLC["MapPosR"] ~= "TOPLEFT" then AnchorMapTopLeft() end
 			end
 
 			-- Set map position when map size is toggled, map size is changed and on startup
@@ -3548,20 +3746,39 @@
 			-- Function to set map movement clickable area (not while the map frame cannot be changed)
 			local function SetMapHitRect()
 				if not LeaMapsLC:CanChangeMap() then return end
-				if LeaMapsLC["EnableMovement"] == "On" then
-					WorldMapFrame:SetHitRectInsets(-10, -10, -10, -10)
-				else
-					if LeaMapsLC["SimpleMapFrame"] == "On" then
-						WorldMapFrame:SetHitRectInsets(0, 0, 44, 0)
-					else
-						WorldMapFrame:SetHitRectInsets(0, 0, 0, 0)
-					end
+				-- With frame movement on, the clickable area goes mapGrab past the visible border on every side. With it
+				-- off, there is no clickable space outside the visible border and the drag areas above the title bar are
+				-- turned off. With the default map frame the border is the map frame.
+				local moving = LeaMapsLC["EnableMovement"] == "On"
+				local grab = moving and mapGrab or 0
+				local left, right, top, bottom
+				if mapTheme.GetBorderInsets then left, right, top, bottom = mapTheme.GetBorderInsets(grab) end
+				if not left then left, right, top, bottom = -grab, -grab, -grab, -grab end
+				WorldMapFrame:SetHitRectInsets(left, right, top, bottom)
+				for i = 1, #topGrips do
+					topGrips[i]:EnableMouse(moving)
 				end
 			end
 
-			-- Set map movement clickable area on startup and when setting is changed
-			SetMapHitRect()
-			LeaMapsCB["EnableMovement"]:HookScript("OnClick", SetMapHitRect)
+			-- Function to set the clickable area now and once more on the next frame, after the game has finished laying
+			-- out the map frame and its border (only one next-frame pass is queued at a time)
+			local hitRectQueued
+			local function HitRectQueued()
+				hitRectQueued = nil
+				SetMapHitRect()
+			end
+			local function RefreshMapHitRect()
+				SetMapHitRect()
+				if not hitRectQueued then
+					hitRectQueued = true
+					C_Timer.After(0, HitRectQueued)
+				end
+			end
+
+			-- Set map movement clickable area on startup, when setting is changed and when the map layout changes
+			RefreshMapHitRect()
+			LeaMapsLC.SetMapHitRect = RefreshMapHitRect -- Used by the simple map frame when the border or footer moves
+			LeaMapsCB["EnableMovement"]:HookScript("OnClick", RefreshMapHitRect)
 
 			-- Lock map movement controls while the map frame cannot be changed
 			LeaMapsLC:AddMapLock(function(lock)
@@ -3842,13 +4059,13 @@
 				FlightH = {atlas = "TaxiNode_Horde", size = 30},
 				FlightN = {atlas = "TaxiNode_Neutral", size = 30},
 				Spirit = {atlas = "Vehicle-TempleofKotmogu-GreenBall", size = 28},
-				TravelA = {texture = "Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps.blp", size = 46, left = 0, right = 0.25, top = 0.75, bottom = 1},
-				TravelH = {texture = "Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps.blp", size = 46, left = 0.25, right = 0.5, top = 0.75, bottom = 1},
-				TravelN = {texture = "Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps.blp", size = 46, left = 0.5, right = 0.75, top = 0.75, bottom = 1},
+				TravelA = {texture = "Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps.blp", size = 46, left = 0, right = 0.125, top = 0.375, bottom = 0.5},
+				TravelH = {texture = "Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps.blp", size = 46, left = 0.125, right = 0.25, top = 0.375, bottom = 0.5},
+				TravelN = {texture = "Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps.blp", size = 46, left = 0.25, right = 0.375, top = 0.375, bottom = 0.5},
 				PortalA = {atlas = "MagePortalAlliance", size = 32},
 				PortalH = {atlas = "MagePortalHorde", size = 32},
 				PortalN = {atlas = "MagePortalAlliance", size = 32},
-				Dunraid = {texture = "Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps.blp", size = 46, left = 0.75, right = 1, top = 0.75, bottom = 1},
+				Dunraid = {texture = "Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps.blp", size = 46, left = 0.375, right = 0.5, top = 0.375, bottom = 0.5},
 				Arrow = {atlas = "Garr_LevelUpgradeArrow", width = 48, height = 54},
 			}
 
@@ -3912,15 +4129,16 @@
 			-- Tooltip
 			----------------------------------------------------------------------
 
-			-- Function to check if a pin can be clicked to show its destination map (zone crossing arrows, portals, trams and boats)
-			local tramPrefix, boatPrefix = L["Tram to"], L["Boat to"]
+			-- Function to check if a pin can be clicked to show its destination map (zone crossing arrows, portals, trams, boats and zeppelins)
+			local tramPrefix, boatPrefix, zeppPrefix = L["Tram to"], L["Boat to"], L["Zeppelin to"]
 			local function IsMapLink(pinInfo)
 				local kind = pinInfo[1]
 				if not pinInfo[13] then return false end
 				if kind == "Arrow" or kind == "PortalA" or kind == "PortalH" or kind == "PortalN" then return true end
-				-- Trams and boats share the travel icon with zeppelins so they are found by their name
+				-- Trams, boats and zeppelins share the travel icon so they are found by their name
 				if (kind == "TravelA" or kind == "TravelH" or kind == "TravelN") and pinInfo[4] then
-					if strsub(pinInfo[4], 1, #tramPrefix) == tramPrefix or strsub(pinInfo[4], 1, #boatPrefix) == boatPrefix then return true end
+					local name = pinInfo[4]
+					if strsub(name, 1, #tramPrefix) == tramPrefix or strsub(name, 1, #boatPrefix) == boatPrefix or strsub(name, 1, #zeppPrefix) == zeppPrefix then return true end
 				end
 				return false
 			end
@@ -4088,7 +4306,7 @@
 			hoverDriver:SetScript("OnHide", function() SetHoveredPin(nil) end)
 
 			----------------------------------------------------------------------
-			-- Click a zone crossing arrow, portal, tram or boat to show its destination map (or a dungeon icon to show its dungeon map)
+			-- Click a zone crossing arrow, portal, tram, boat or zeppelin to show its destination map (or a dungeon icon to show its dungeon map)
 			----------------------------------------------------------------------
 
 			-- The map is changed with C_Map.OpenWorldMap, which fires WORLD_MAP_OPEN.
@@ -4139,7 +4357,7 @@
 						return
 					end
 
-					-- Zone crossing arrows, portals, trams and boats show their destination map (OpenWorldMap cannot be used in combat)
+					-- Zone crossing arrows, portals, trams, boats and zeppelins show their destination map (OpenWorldMap cannot be used in combat)
 					if not IsMapLink(pinInfo) or not C_Map.OpenWorldMap then return end
 					if InCombatLockdown() then return end
 					C_Map.OpenWorldMap(pinInfo[13])
@@ -4156,6 +4374,8 @@
 
 				local pin = table.remove(LeaMapsPOIPool) or CreatePOIFrame()
 				pin.data = pinInfo
+				-- Instance map IDs for dungeon icons (also read by Leatrix Plus info cards)
+				pin.DungeonMaps = IsDungeonPin(pinInfo) and LeaMapsLC.DungeonMapsByName and LeaMapsLC.DungeonMapsByName[pinInfo[4]] or nil
 				pin.Highlight:Hide()
 				pin:SetScale(poiScale / WorldMapFrame:GetCanvasScale())
 				SetupIcon(pin, icon, pinInfo[12])
@@ -4194,6 +4414,7 @@
 					pin:Hide()
 					pin:ClearAllPoints()
 					pin.data = nil
+					pin.DungeonMaps = nil
 					LeaMapsPOIPool[#LeaMapsPOIPool + 1] = pin
 					self[i] = nil
 				end
@@ -4804,7 +5025,8 @@
 
 	-- Function to add textures to panels
 	function LeaMapsLC:CreateBar(name, parent, width, height, anchor, r, g, b, alp, tex)
-		local ft = parent:CreateTexture(nil, "BORDER")
+		-- The footer is drawn above the main texture (they overlap at the bottom of the panel)
+		local ft = parent:CreateTexture(nil, "BORDER", nil, name == "FootTexture" and 1 or 0)
 		ft:SetTexture(tex)
 		ft:SetSize(width, height)
 		ft:SetPoint(anchor)
@@ -5153,10 +5375,10 @@
 		-- Set skinned button textures
 		if not naked then
 			mbtn:SetNormalTexture("Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps.blp")
-			mbtn:GetNormalTexture():SetTexCoord(0, 1, 0.25, 0.5)
+			mbtn:GetNormalTexture():SetTexCoord(0, 0.5, 0.125, 0.25)
 		end
 		mbtn:SetHighlightTexture("Interface\\AddOns\\Leatrix_Maps\\Leatrix_Maps.blp")
-		mbtn:GetHighlightTexture():SetTexCoord(0, 1, 0, 0.25)
+		mbtn:GetHighlightTexture():SetTexCoord(0, 0.5, 0, 0.125)
 
 		-- Hide the default textures
 		mbtn:HookScript("OnShow", function() mbtn.Left:Hide(); mbtn.Middle:Hide(); mbtn.Right:Hide() end)
@@ -5846,7 +6068,7 @@
 	MainTexture:SetVertexColor(0.7, 0.7, 0.7, 0.7)
 	MainTexture:SetTexCoord(0.09, 1, 0, 1)
 
-	local FootTexture = PageF:CreateTexture(nil, "BORDER")
+	local FootTexture = PageF:CreateTexture(nil, "BORDER", nil, 1) -- Drawn above the main texture
 	FootTexture:SetTexture("Interface\\ACHIEVEMENTFRAME\\UI-GuildAchievement-Parchment-Horizontal-Desaturated.png")
 	FootTexture:SetSize(470, 48)
 	FootTexture:SetPoint("BOTTOM")

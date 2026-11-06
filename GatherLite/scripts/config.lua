@@ -94,12 +94,38 @@ _GatherLite.configsDefaults = {
         },
         worldmap = {
             enabled = true,
+            openMapPinZoom = 7,
             zoneTooltip = true,
             size = 12,
             opacity = 1,
             loot = true,
             neighbors = false,
             continent = false,
+            tracking = {
+                mining = true,
+                herbalism = true,
+                containers = true,
+                fishing = true
+            }
+        },
+        hud = {
+            enabled = true,
+            range = 250,
+            width = 700,
+            fullWidth = false,
+            height = 20,
+            pinSize = 14,
+            opacity = 0.9,
+            backgroundColor = { r = .035, g = .03, b = .025 },
+            backgroundOpacity = 0,
+            showBorder = false,
+            hideInInstances = true,
+            hideInCombat = false,
+            hideOnWorldMap = true,
+            externalPins = false,
+            mirrorMinimap = true,
+            x = 0,
+            y = 0,
             tracking = {
                 mining = true,
                 herbalism = true,

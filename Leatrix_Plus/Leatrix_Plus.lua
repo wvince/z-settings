@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------
--- 	Leatrix Plus 1.60.27 (4th November 2026)
+-- 	Leatrix Plus 1.60.28 (6th November 2026)
 ----------------------------------------------------------------------
 
 --	01:Functions 02:Locks,  03:Restart 40:Player
@@ -8,12 +8,6 @@
 ----------------------------------------------------------------------
 -- 	Leatrix Plus
 ----------------------------------------------------------------------
-
-	-- LeaPlusLC.NewPatch - TEMPORARY
-	-- Disable taint logging for now because having it enabled causes fake errors to show up
-	-- that will lead users to report and investigate problems that don't exist and are only
-	-- caused by having taint logging enabled.  This will be removed as soon as it's safe.
-	-- SetCVar("taintLog", "0")
 
 	-- Create global table
 	_G.LeaPlusDB = _G.LeaPlusDB or {}
@@ -24,7 +18,7 @@
 	local void
 
 	-- Version
-	LeaPlusLC["AddonVer"] = "1.60.27"
+	LeaPlusLC["AddonVer"] = "1.60.28"
 
 	-- Get locale table
 	local void, Leatrix_Plus = ...
@@ -1968,7 +1962,7 @@
 					viewer:LayoutButtons()
 					viewer:RevealModel() -- Start from a shown model (it is hidden again below for players whose inspect is on the way)
 					-- A player who cannot be found right now: wait until the mouse is over them again
-					if view.mode == "unit" and not unit and not view.npcID then
+					if view.mode == "unit" and not unit and not view.npcID and not view.displayID then
 						viewer.waitGUID = view.guid or false
 						viewer.waitName = info.name
 						for void, m in ipairs({viewer.dressModel, viewer.nakedModel, viewer.creatureModel}) do m:Hide() m.loaded = false end
@@ -2016,6 +2010,7 @@
 							model:SetPosition(0, 0, 0)
 							if model == viewer.nakedModel and model.Undress then model:Undress() end
 							if view.mode == "item" and view.link then model:TryOn(view.link) end
+							if view.mode == "item" and view.links then for void, link in ipairs(view.links) do model:TryOn(link) end end -- Appearance sets (every piece of the set)
 							-- Both dressing room models are loaded while showing (safest), then the one not in use is hidden
 							if model == viewer.dressModel then
 								viewer:ReadSlots(model, (view.mode == "unit" and unit) or "player")
@@ -2028,6 +2023,8 @@
 						model:Show()
 						if view.mode == "unit" and unit then
 							model:SetUnit(unit)
+						elseif view.mode == "unit" and view.displayID then
+							model:SetDisplayInfo(view.displayID) -- Display ID (such as Leatrix Maps boss icons, works for creatures not seen yet)
 						elseif view.mode == "unit" then
 							model:SetCreature(tonumber(view.npcID))
 						else
@@ -2229,6 +2226,26 @@
 						card.hint2 = card:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
 						card.hint2:SetPoint("BOTTOMRIGHT", card, "BOTTOMRIGHT", -18, 10)
 						card.hint2:SetText(L["Right-click to close"])
+						-- Sounds button (shows the sounds for what is on the card in Leatrix Sounds, or says Leatrix Sounds is needed if it is not loaded)
+						card.sounds = FlatButton(card, 60, 16, L["Sounds"])
+						card.sounds:SetWidth(PixelRound(math.max(60, card.sounds.label:GetStringWidth() + 20)))
+						card.sounds:SetPoint("RIGHT", card.hint2, "LEFT", -14, 0)
+						card.sounds:Hide()
+						card.sounds:SetScript("OnClick", function()
+							local open = card.soundsOpen
+							if not open then
+								-- Leatrix Sounds is not installed or not enabled, so say so for a few seconds where the right-click hint is
+								card.soundsMsgID = (card.soundsMsgID or 0) + 1
+								local id = card.soundsMsgID
+								card.hint2:SetText("|cffffd800" .. L["Requires Leatrix Sounds"] .. "|r")
+								C_Timer.After(3, function()
+									if card.soundsMsgID == id then card.hint2:SetText(L["Right-click to close"]) end
+								end)
+								return
+							end
+							card:Hide() -- The Leatrix Sounds panel opens instead (the card would be in front of it)
+							open()
+						end)
 						-- Keep the link unchanged and selected (CTRL/C copies it and closes the card)
 						local function Reselect() card.edit:SetText(card.url or "") card.edit:HighlightText() end
 						card.edit:SetScript("OnChar", Reselect)
@@ -2374,7 +2391,17 @@
 					else
 						card.hint:SetPoint("BOTTOMLEFT", card, "BOTTOMLEFT", 22, 10)
 					end
+					-- (a new card puts back the right-click hint, in case the Leatrix Sounds message is showing)
+					card.soundsMsgID = (card.soundsMsgID or 0) + 1
+					card.hint2:SetText(L["Right-click to close"])
 					card.hint2:Show()
+					-- Sounds button: Leatrix Sounds reads what it needs now (while the mouse is still over it) and gives back what to run when the button is clicked
+					-- (nothing if it has no sounds for this or the game is hiding the details, and the button is hidden then)
+					-- If Leatrix Sounds is not loaded, the button is still shown for anything that can have sounds, and clicking it says Leatrix Sounds is needed
+					local soundsLoaded = C_AddOns.IsAddOnLoaded("Leatrix_Sounds")
+					card.soundsOpen = info.sounds and soundsLoaded and LeaSoundsGlobalGetSounds and LeaSoundsGlobalGetSounds(info.sounds) or nil
+					card.sounds:SetAccent(r, g, b)
+					card.sounds:SetShown(card.soundsOpen ~= nil or (info.sounds ~= nil and not soundsLoaded))
 					card:Relayout()
 					card:Show()
 					if not card.snapped then card.snapped = true SnapToPixels(card) end -- Line up with screen pixels when first shown
@@ -2385,6 +2412,9 @@
 					if info.unit and UnitExists(info.unit) and Safe(UnitIsVisible(info.unit)) and not (info.iconCoords) then
 						portrait:Show()
 						portrait:SetUnit(info.unit)
+					elseif info.view and info.view.displayID and not info.view.isPlayer then
+						portrait:Show()
+						portrait:SetDisplayInfo(info.view.displayID)
 					elseif info.view and info.view.npcID and not info.view.isPlayer then
 						portrait:Show()
 						portrait:SetCreature(tonumber(info.view.npcID))
@@ -3058,11 +3088,23 @@
 						else 														 LeaPlusLC.BlizzardLock = "https://worldofwarcraft.com/en-us/character/us/" -- US (default)
 						end
 					end
+					if isForever and LeaPlusLC.ForeverLock == nil then
+						-- Set Forever armory link prefix (Forever characters have a first name and surname but no realm in the link)
+						local foreverRegion = ({[1] = "us", [2] = "kr", [3] = "eu", [4] = "tw"})[GetCurrentRegion()]
+						local foreverLang = ({deDE = "de-de", frFR = "fr-fr", itIT = "it-it", ruRU = "ru-ru", koKR = "ko-kr", zhTW = "zh-tw", esES = "es-es", esMX = "es-mx", ptBR = "pt-br"})[GameLocale] or "en-us"
+						LeaPlusLC.ForeverLock = foreverRegion and ("https://worldofwarcraft.blizzard.com/" .. foreverLang .. "/forever/" .. foreverRegion .. "/armory/character/") or false -- No Forever armory for China
+					end
+					-- Forever armory link from first name and surname (Star Dog becomes star-dog)
+					local function ForeverArmoryLink(firstName, surname)
+						if not LeaPlusLC.ForeverLock or type(firstName) ~= "string" or firstName == "" then return nil end
+						local fullName = (type(surname) == "string" and surname ~= "") and (firstName .. " " .. surname) or firstName
+						return LeaPlusLC.ForeverLock .. strlower(fullName):gsub("'", ""):gsub("%s+", "-")
+					end
 					-- Player card (for the player under the mouse, or the player given to ShowInfoCard such as from the dressing room)
 					local function ShowPlayerCard(unitFocus)
 						-- Show armory link
 						local name, realm = Safe(UnitName(unitFocus))
-						local surname = isForever and realm or nil -- On Forever, the second name is the surname (and there is no armory link yet)
+						local surname = isForever and realm or nil -- On Forever, the second name is the surname
 						local class = Safe(UnitClassBase(unitFocus))
 						local color = class and RAID_CLASS_COLORS[class]
 						if not color then return end
@@ -3112,22 +3154,126 @@
 							realm = realm:gsub("[)]", "") -- Remove closing parentheses
 						end
 						-- print(realm) -- Debug
-						local armoryLink = LeaPlusLC.BlizzardLock .. strlower(realm) .. "/" .. strlower(name)
+						local armoryLink
+						if isForever then armoryLink = ForeverArmoryLink(name, surname) else armoryLink = LeaPlusLC.BlizzardLock .. strlower(realm) .. "/" .. strlower(name) end
 						realm = realm:gsub("-", " ") -- Replace hyphen with space
 						local playerColor = {color.r, color.g, color.b}
 						local playerLevel = Safe(UnitLevel(unitFocus))
+						if isForever and type(playerLevel) == "number" and playerLevel > 0 and playerLevel < 10 then armoryLink = nil end -- Forever armory does not list characters under level 10
 						local playerName, realmText = name, realm
 						if surname and surname ~= "" then playerName, realmText = name .. " " .. surname, Safe(GetRealmName()) or "" end
 						local playerNote = realmText
 						if type(playerLevel) == "number" and playerLevel > 0 then playerNote = L["Level"] .. " " .. playerLevel .. " " .. (Safe(UnitClass(unitFocus)) or "") .. "    " .. realmText end
 						local unitGUID = Safe(UnitGUID(unitFocus))
-						ShowIDCard({kind = L["Player"], name = playerName, sub = playerNote, url = not isForever and armoryLink or nil, unit = unitFocus, color = playerColor, nameColor = playerColor, view = {mode = "unit", isPlayer = true, unit = unitFocus, guid = unitGUID, text = PlayerText(unitFocus)}, talents = true, details = PlayerDetails(unitFocus, unitGUID)})
+						ShowIDCard({sounds = {unit = unitFocus}, kind = L["Player"], name = playerName, sub = playerNote, url = armoryLink, unit = unitFocus, color = playerColor, nameColor = playerColor, view = {mode = "unit", isPlayer = true, unit = unitFocus, guid = unitGUID, text = PlayerText(unitFocus)}, talents = true, details = PlayerDetails(unitFocus, unitGUID)})
 						ShowPlayerTalents(unitFocus)
 					end
 					-- A player was given, so show their card and nothing else
 					if forceUnit then
 						if Safe(UnitExists(forceUnit)) and Safe(UnitIsPlayer(forceUnit)) then ShowPlayerCard(forceUnit) end
 						return
+					end
+					-- Leatrix Maps dungeon map boss icons (the icon holds its boss row: {"boss", x, y, npc ID, name, level, display ID, style})
+					-- Only icons that own the Leatrix Maps dungeon tooltip are used, so nothing else with a row field is mistaken for one
+					do
+						local pin = GetMouseFoci and GetMouseFoci()[1]
+						local mapTip = LeaMapsDungeonTooltip
+						if pin and mapTip and not (pin.IsForbidden and pin:IsForbidden()) and mapTip:IsShown() and mapTip:IsOwned(pin) then
+							local row = pin.row
+							if type(row) == "table" and row[1] == "boss" and type(row[4]) == "number" and type(row[5]) == "string" then
+								local npcID, displayID, level, style = row[4], tonumber(row[7]), tonumber(row[6]), row[8]
+								-- Split the title from the name (Oggleflint <Ragefire Chieftain>)
+								local bossName, bossTitle = row[5]:match("^(.-)%s*(<.+>)$")
+								if not bossName or bossName == "" then bossName, bossTitle = row[5], nil end
+								local isRare = style == 2 or style == 4
+								local bossNote
+								if style == 3 or not level then bossNote = L["Level"] .. " ??" else bossNote = L["Level"] .. " " .. level end
+								bossNote = bossNote .. " " .. (isRare and L["Rare"] or L["Boss"])
+								local hostile = FACTION_BAR_COLORS and FACTION_BAR_COLORS[2]
+								local bossColor = hostile and {hostile.r, hostile.g, hostile.b} or {1, 0.82, 0}
+								ShowIDCard({sounds = {npcID = npcID, displayID = displayID, name = bossName}, kind = L["NPC"], name = bossName, id = npcID, url = "https://" .. LeaPlusLC.WowheadLock .. "/npc=" .. npcID, color = bossColor, nameColor = bossColor, note = bossNote, view = {mode = "unit", npcID = npcID, displayID = displayID, text = bossTitle}})
+								return
+							end
+						end
+					end
+					-- Leatrix Maps dungeon and raid icons on the zone map (the card shows the name, level range and a Wowhead search link)
+					do
+						local dungeonName, dungeonDesc, minLevel, maxLevel, dungeonKind, dungeonMaps
+						-- Icons drawn by Leatrix Maps itself have no mouse input, so use the icon that owns the Leatrix Maps map tooltip
+						local poiTip = LeaMapsPOITooltip
+						local owner = poiTip and poiTip:IsShown() and poiTip:GetOwner()
+						if owner and not (owner.IsForbidden and owner:IsForbidden()) and owner.isLeaMapsPin and type(owner.data) == "table" then
+							local data = owner.data
+							if (data[1] == "Dungeon" or data[1] == "Raid" or data[1] == "Dunraid") and type(data[4]) == "string" then
+								dungeonName, dungeonDesc, minLevel, maxLevel, dungeonKind = data[4], data[5], tonumber(data[7]), tonumber(data[8]), data[1]
+								dungeonMaps = owner.DungeonMaps
+							end
+						end
+						-- Icons added to the game map by Leatrix Maps (the icon under the mouse)
+						if not dungeonName then
+							local pin = GetMouseFoci and GetMouseFoci()[1]
+							if pin and not (pin.IsForbidden and pin:IsForbidden()) and pin.pinTemplate == "LeaMapsGlobalPinTemplate" then
+								local atlas = pin.Texture and pin.Texture.GetAtlas and pin.Texture:GetAtlas()
+								local pinName = type(pin.name) == "string" and pin.name or (type(pin.DungeonTitle) == "string" and pin.DungeonTitle)
+								if pinName and (atlas == "Dungeon" or atlas == "Raid" or pin.DungeonMaps) then
+									-- The name can include the level range in colour, such as The Deadmines (18-23)
+									local plain = pinName:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+									local base, low, high = plain:match("^(.-)%s*%((%d+)%-(%d+)%)$")
+									if not base then base, low = plain:match("^(.-)%s*%((%d+)%)$") high = low end
+									dungeonName = type(pin.DungeonTitle) == "string" and pin.DungeonTitle or ((base and base ~= "") and base or plain)
+									minLevel, maxLevel = tonumber(low), tonumber(high)
+									dungeonDesc = pin.description
+									dungeonKind = atlas == "Raid" and "Raid" or atlas == "Dungeon" and "Dungeon" or "Dunraid"
+									dungeonMaps = pin.DungeonMaps
+								end
+							end
+						end
+						if type(dungeonName) == "string" and dungeonName ~= "" then
+							-- Level range, coloured the same way as the map tooltip
+							local levelText
+							if minLevel and maxLevel then
+								local playerLevel = UnitLevel("player") or 0
+								local color
+								if playerLevel < minLevel then color = GetQuestDifficultyColor(minLevel) elseif playerLevel > maxLevel then color = GetQuestDifficultyColor(maxLevel - 2) else color = QuestDifficultyColors and QuestDifficultyColors["difficult"] end
+								levelText = L["Level"] .. " " .. ((minLevel ~= maxLevel) and (minLevel .. "-" .. maxLevel) or maxLevel)
+								if color then levelText = string.format("|cff%02x%02x%02x%s|r", color.r * 255, color.g * 255, color.b * 255, levelText) end
+							end
+							-- Icons with several dungeons and raids (such as Blackrock Mountain) list them in the description
+							local desc
+							if dungeonKind == "Dunraid" and type(dungeonDesc) == "string" then
+								desc = strtrim((dungeonDesc:gsub("|n", " "):gsub("%s+", " ")))
+								if desc == "" then desc = nil end
+							end
+							local kindText = dungeonKind == "Raid" and L["Raid"] or dungeonKind == "Dunraid" and (L["Dungeon"] .. " / " .. L["Raid"]) or L["Dungeon"]
+							local icon = dungeonKind == "Raid" and "Interface\\Icons\\INV_Misc_Head_Dragon_01" or "Interface\\Icons\\INV_Misc_Bone_Skull_02"
+							-- Wowhead zone for the dungeon (Leatrix Maps gives the instance map IDs, Wowhead uses zone IDs)
+							-- Icons with several instances link to the zone they are all in (such as Blackrock Mountain)
+							local zoneID
+							if type(dungeonMaps) == "table" and #dungeonMaps > 0 then
+								if not LeaPlusLC.IDDungeonZones then
+									LeaPlusLC.IDDungeonZones = {[33] = 209, [34] = 717, [36] = 1581, [43] = 718, [47] = 491, [48] = 719, [70] = 1337, [90] = 721, [109] = 1477, [129] = 722, [189] = 796, [209] = 1176, [229] = 1583, [230] = 1584, [249] = 2159, [269] = 2366, [289] = 2057, [309] = 1977, [329] = 2017, [349] = 2100, [389] = 2437, [409] = 2717, [429] = 2557, [469] = 2677, [509] = 3429, [531] = 3428, [532] = 3457, [533] = 3456, [534] = 3606, [540] = 3714, [542] = 3713, [543] = 3562, [544] = 3836, [545] = 3715, [546] = 3716, [547] = 3717, [548] = 3607, [550] = 3845, [552] = 3848, [553] = 3847, [554] = 3849, [555] = 3789, [556] = 3791, [557] = 3792, [558] = 3790, [560] = 2367, [564] = 3959, [565] = 3923, [568] = 3805, [574] = 206, [575] = 1196, [576] = 4265, [578] = 4228, [580] = 4075, [585] = 4131, [595] = 4100, [599] = 4264, [600] = 4196, [601] = 4277, [602] = 4272, [603] = 4273, [604] = 4416, [608] = 4415, [615] = 4493, [616] = 4500, [619] = 4494, [624] = 4603, [631] = 4812, [632] = 4809, [649] = 4722, [650] = 4723, [658] = 4813, [668] = 4820, [724] = 4987, [2959] = 16560, [2998] = 16732, [2999] = 16611, [3065] = 16919}
+									LeaPlusLC.IDDungeonParents = {[229] = 25, [230] = 25, [409] = 25, [469] = 25}
+								end
+								if #dungeonMaps == 1 then
+									zoneID = LeaPlusLC.IDDungeonZones[dungeonMaps[1]]
+								else
+									zoneID = LeaPlusLC.IDDungeonParents[dungeonMaps[1]]
+									for i = 2, #dungeonMaps do
+										if LeaPlusLC.IDDungeonParents[dungeonMaps[i]] ~= zoneID then zoneID = nil break end
+									end
+								end
+							end
+							local dungeonURL
+							if zoneID then
+								dungeonURL = "https://" .. LeaPlusLC.WowheadLock .. "/zone=" .. zoneID
+							else
+								-- Zone not known, so link to a search for its name
+								local query = dungeonName:gsub("([^%w%-_%.~ ])", function(c) return string.format("%%%02X", string.byte(c)) end):gsub(" ", "+")
+								dungeonURL = "https://" .. LeaPlusLC.WowheadLock .. "/search?q=" .. query
+							end
+							ShowIDCard({kind = kindText, name = dungeonName, id = zoneID, note = zoneID and levelText or nil, sub = not zoneID and (levelText or "") or nil, url = dungeonURL, icon = icon, color = {1, 0.82, 0}, details = {desc}})
+							return
+						end
 					end
 					-- Quest tracker (the list of quests under the minimap)
 					local questID, questTitle
@@ -3176,6 +3322,222 @@
 						ShowIDCard({kind = L["Quest"], name = questTitle, id = questID, url = "https://" .. LeaPlusLC.WowheadLock .. "/quest=" .. questID, icon = "Interface\\Icons\\INV_Scroll_03", color = colorQuest, view = {mode = "icon", icon = "Interface\\Icons\\INV_Scroll_03", text = QuestText(questID)}, details = QuestDetails(questID)})
 						return
 					end
+					-- Mount journal, pet journal, toy box and appearances (the journal's own buttons hold the mount, pet, toy or appearance, and their tooltips are not found as items, spells or units below)
+					-- The buttons, models and pet card are only read, never changed
+					do
+						local focus = GetMouseFoci and GetMouseFoci()[1]
+						if focus and CollectionsJournal and CollectionsJournal:IsShown() and not (focus.IsForbidden and focus:IsForbidden()) then
+							local mountJournal = MountJournal and MountJournal:IsShown() and MountJournal
+							local petJournal = PetJournal and PetJournal:IsShown() and PetJournal
+							local toyBox = ToyBox and ToyBox:IsShown() and ToyBox
+							local wardrobe = WardrobeCollectionFrame and WardrobeCollectionFrame:IsVisible() and WardrobeCollectionFrame
+							local mountID, petID, speciesID, toyID, visualID, visualCollected, sourceID, setID
+							-- Look at the frame under the mouse and the frames it is in (such as a pet's icon, which is in the pet's button)
+							local frame = focus
+							for i = 1, 5 do
+								if not frame or frame == CollectionsJournal or (frame.IsForbidden and frame:IsForbidden()) then break end
+								if mountJournal then
+									local m = Safe(frame.mountID)
+									if frame == mountJournal.MountDisplay then m = Safe(mountJournal.selectedMountID) end -- The large mount preview shows the chosen mount
+									if type(m) == "number" and m > 0 then mountID = m break end
+								end
+								if petJournal then
+									local p, s = Safe(frame.petID), Safe(frame.speciesID)
+									if type(p) == "string" and p ~= "" then petID = p end
+									if type(s) == "number" and s > 0 then speciesID = s end
+									if petID or speciesID then break end
+								end
+								if toyBox then
+									local t = Safe(frame.itemID) -- (empty slots on the last page have -1)
+									if type(t) == "number" and t > 0 then toyID = t break end
+								end
+								if wardrobe then
+									-- Appearances: a model holds its appearance, a piece in a set's details holds its source, a set in the list holds its set
+									local visualInfo = SafeTable(frame.visualInfo)
+									local v = visualInfo and Safe(visualInfo.visualID)
+									if type(v) == "number" and v > 0 then
+										if not Safe(visualInfo.isHideVisual) then visualID, visualCollected = v, Safe(visualInfo.isCollected) end -- (not the hidden appearance, which is not an item)
+										break
+									end
+									local s = Safe(frame.sourceID)
+									if type(s) == "number" and s > 0 then sourceID = s break end
+									local t = Safe(frame.setID)
+									if type(t) == "number" and t > 0 then setID = t break end
+									-- The large set preview and its details show the chosen set
+									local sets = wardrobe.SetsCollectionFrame
+									if sets and (frame == sets.Model or frame == sets.DetailsFrame) then
+										local chosen = Safe(sets.selectedSetID)
+										if type(chosen) == "number" and chosen > 0 then setID = chosen break end
+									end
+								end
+								frame = frame.GetParent and frame:GetParent()
+							end
+							-- Item link and icon for an appearance source (the game gives a table, older games give separate values)
+							local function SourceLinkIcon(id)
+								if not (C_TransmogCollection and C_TransmogCollection.GetAppearanceSourceInfo) then return end
+								local r1, void, void, r4, void, r6 = C_TransmogCollection.GetAppearanceSourceInfo(id)
+								local t = SafeTable(r1)
+								if t then return Safe(t.itemLink), Safe(t.icon) end
+								r4, r6 = Safe(r4, r6)
+								return type(r6) == "string" and r6 or nil, r4
+							end
+							-- Appearance model: an appearance can come from several items, so use the item its tooltip is showing (Tab changes it),
+							-- otherwise one you have collected, otherwise the first
+							if visualID and C_TransmogCollection and C_TransmogCollection.GetAllAppearanceSources and C_TransmogCollection.GetSourceInfo then
+								local sources = SafeTable(C_TransmogCollection.GetAllAppearanceSources(visualID))
+								if sources then
+									local tipName
+									if GameTooltip:IsShown() then
+										local text = Safe(GameTooltipTextLeft1:GetText())
+										if type(text) == "string" then tipName = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "") end
+									end
+									local first, collected, shown
+									for void, id in ipairs(sources) do
+										id = Safe(id)
+										local info = type(id) == "number" and SafeTable(C_TransmogCollection.GetSourceInfo(id))
+										if info then
+											first = first or id
+											if not collected and Safe(info.isCollected) then collected = id end
+											if tipName and Safe(info.name) == tipName then shown = id break end
+										end
+									end
+									sourceID = shown or collected or first
+								end
+							end
+							-- Appearance card (the same as an item card, using the appearance's source for the item as it may not be in your bags)
+							if sourceID and C_TransmogCollection and C_TransmogCollection.GetSourceInfo then
+								local source = SafeTable(C_TransmogCollection.GetSourceInfo(sourceID))
+								local itemID = source and Safe(source.itemID)
+								if type(itemID) == "number" and itemID > 0 then
+									local itemLink, sourceIcon = SourceLinkIcon(sourceID)
+									local GetInfo = C_Item and C_Item.GetItemInfo or GetItemInfo
+									local itemName, infoLink, itemQuality, void, void, void, void, void, void, itemIcon = Safe(GetInfo(itemLink or itemID))
+									itemLink = itemLink or infoLink
+									itemName = itemName or Safe(source.name)
+									itemQuality = itemQuality or Safe(source.quality)
+									itemIcon = itemIcon or sourceIcon or (C_Item and C_Item.GetItemIconByID and Safe(C_Item.GetItemIconByID(itemID))) or (GetItemIcon and Safe(GetItemIcon(itemID)))
+									if type(itemName) == "string" and itemName ~= "" then
+										local qualityColor = type(itemQuality) == "number" and ITEM_QUALITY_COLORS and ITEM_QUALITY_COLORS[itemQuality]
+										local nameColor = qualityColor and {qualityColor.r, qualityColor.g, qualityColor.b} or {1, 1, 1}
+										local appearanceID = visualID or Safe(source.visualID)
+										if type(appearanceID) ~= "number" or appearanceID <= 0 then appearanceID = nil end
+										local appearanceDetails = itemLink and ItemDetails(itemLink) or {}
+										local isCollected = visualCollected
+										if isCollected == nil then isCollected = Safe(source.isCollected) end
+										if isCollected ~= nil then tinsert(appearanceDetails, 1, isCollected and L["Collected"] or L["Not collected"]) end
+										local tryLink = itemLink or ("item:" .. itemID)
+										local appearanceView = {mode = IsEquippable(tryLink) and "item" or "icon", link = tryLink, icon = itemIcon}
+										ShowIDCard({sounds = {itemID = itemID}, kind = L["Appearance"], name = itemName, id = itemID, note = appearanceID and (L["Appearance ID"] .. " |cffffffff" .. appearanceID .. "|r") or nil, url = "https://" .. LeaPlusLC.WowheadLock .. "/item=" .. itemID, icon = itemIcon, color = nameColor, nameColor = nameColor, view = appearanceView, details = appearanceDetails})
+										return
+									end
+								end
+							end
+							-- Appearance set card (the model viewer shows every piece of the set on your character)
+							if setID and C_TransmogSets and C_TransmogSets.GetSetInfo then
+								local setInfo = SafeTable(C_TransmogSets.GetSetInfo(setID))
+								local setName = setInfo and Safe(setInfo.name)
+								if type(setName) == "string" and setName ~= "" then
+									local links, total, owned, setIcon = {}, 0, 0, nil
+									local pieces = C_TransmogSets.GetSetPrimaryAppearances and SafeTable(C_TransmogSets.GetSetPrimaryAppearances(setID))
+									if pieces then
+										for void, piece in ipairs(pieces) do
+											piece = SafeTable(piece)
+											local id = piece and Safe(piece.appearanceID)
+											if type(id) == "number" and id > 0 then
+												total = total + 1
+												if Safe(piece.collected) then owned = owned + 1 end
+												local link, icon = SourceLinkIcon(id)
+												tinsert(links, link or id) -- (the model can try on a source by its ID too)
+												setIcon = setIcon or icon
+											end
+										end
+									end
+									local setDetails = {}
+									if total > 0 then tinsert(setDetails, L["Collected"] .. " |cffffffff" .. owned .. "/" .. total .. "|r") end
+									local label, description = Safe(setInfo.label), Safe(setInfo.description)
+									if type(label) == "string" and label ~= "" then tinsert(setDetails, label) end
+									if type(description) == "string" and description ~= "" then tinsert(setDetails, description) end
+									setIcon = setIcon or "Interface\\Icons\\INV_Chest_Cloth_17"
+									ShowIDCard({kind = L["Appearance set"], name = setName, id = setID, url = "https://" .. LeaPlusLC.WowheadLock .. "/transmog-set=" .. setID, icon = setIcon, color = {1, 0.5, 0.8}, view = #links > 0 and {mode = "item", links = links, icon = setIcon} or nil, details = setDetails})
+									return
+								end
+							end
+							-- Toy card (the same as an item card, using the toy box for the name, icon and link as the toy may not be in your bags)
+							if toyID and C_ToyBox and C_ToyBox.GetToyInfo then
+								local void, toyName, toyIcon, void, void, toyQuality = Safe(C_ToyBox.GetToyInfo(toyID))
+								local toyLink = C_ToyBox.GetToyLink and Safe(C_ToyBox.GetToyLink(toyID))
+								local GetInfo = C_Item and C_Item.GetItemInfo or GetItemInfo
+								local itemName, itemLink, itemQuality, void, void, void, void, void, void, itemIcon = Safe(GetInfo(toyID))
+								toyLink = (type(toyLink) == "string" and toyLink ~= "") and toyLink or itemLink
+								toyName = (type(toyName) == "string" and toyName ~= "") and toyName or itemName
+								toyIcon = toyIcon or itemIcon
+								toyQuality = toyQuality or itemQuality
+								if toyName then
+									local qualityColor = toyQuality and ITEM_QUALITY_COLORS and ITEM_QUALITY_COLORS[toyQuality]
+									local nameColor = qualityColor and {qualityColor.r, qualityColor.g, qualityColor.b} or {1, 1, 1}
+									-- The toy's own tooltip (only if it is the one the toy box is showing for this toy)
+									local toyTip = GameTooltip:IsShown() and GameTooltip:GetOwner() == focus and GameTooltip or nil
+									local toyDetails = toyLink and ItemDetails(toyLink, toyTip) or {}
+									if PlayerHasToy then
+										local hasToy = Safe(PlayerHasToy(toyID))
+										if hasToy ~= nil then tinsert(toyDetails, 1, hasToy and L["Collected"] or L["Not collected"]) end
+									end
+									local toyView = {mode = toyLink and IsEquippable(toyLink) and "item" or "icon", link = toyLink, icon = toyIcon, text = ItemFlavour(toyTip)}
+									ShowIDCard({sounds = {itemID = toyID}, kind = L["Toy"], name = toyName, id = toyID, url = "https://" .. LeaPlusLC.WowheadLock .. "/item=" .. toyID, icon = toyIcon, color = nameColor, nameColor = nameColor, view = toyView, details = toyDetails})
+									return
+								end
+							end
+							-- Mount card (linked to the mount's spell on Wowhead, which is also what Leatrix Sounds uses for its sounds)
+							if mountID and C_MountJournal and C_MountJournal.GetMountInfoByID then
+								local mountName, spellID, mountIcon, void, void, void, void, void, void, void, isCollected = Safe(C_MountJournal.GetMountInfoByID(mountID))
+								if mountName then
+									local displayID, description
+									if C_MountJournal.GetMountInfoExtraByID then displayID, description = Safe(C_MountJournal.GetMountInfoExtraByID(mountID)) end
+									if (type(displayID) ~= "number" or displayID <= 0) and C_MountJournal.GetMountAllCreatureDisplayInfoByID then
+										local all = SafeTable(C_MountJournal.GetMountAllCreatureDisplayInfoByID(mountID))
+										displayID = all and all[1] and Safe(all[1].creatureDisplayID)
+									end
+									if type(displayID) ~= "number" or displayID <= 0 then displayID = nil end
+									if type(description) ~= "string" or description == "" then description = nil end
+									if type(spellID) ~= "number" or spellID <= 0 then spellID = nil end
+									local mountColor = {0.8, 0.6, 1}
+									local mountDetails = {}
+									if isCollected ~= nil then tinsert(mountDetails, isCollected and L["Collected"] or L["Not collected"]) end
+									ShowIDCard({sounds = spellID and {spellID = spellID}, kind = L["Mount"], name = mountName, id = spellID or mountID, note = spellID and (L["Mount ID"] .. " |cffffffff" .. mountID .. "|r") or nil, url = spellID and ("https://" .. LeaPlusLC.WowheadLock .. "/spell=" .. spellID) or nil, icon = mountIcon, color = mountColor, view = displayID and {mode = "unit", displayID = displayID, text = description} or nil, details = mountDetails})
+									return
+								end
+							end
+							-- Pet card (a collected pet uses its own name and look, a pet which is not collected uses its species)
+							if (petID or speciesID) and C_PetJournal then
+								local petName, petIcon, creatureID, displayID, description, customName, collected
+								if petID and C_PetJournal.GetPetInfoByPetID then
+									local s, cName, void, void, void, disp, void, pName, pIcon, void, cID, void, desc = Safe(C_PetJournal.GetPetInfoByPetID(petID))
+									if s then speciesID, customName, displayID, petName, petIcon, creatureID, description, collected = s, cName, disp, pName, pIcon, cID, desc, true end
+								end
+								if speciesID and C_PetJournal.GetPetInfoBySpeciesID then
+									local sName, sIcon, void, cID, void, sDesc, void, void, void, void, void, sDisp = Safe(C_PetJournal.GetPetInfoBySpeciesID(speciesID))
+									petName, petIcon, creatureID, description, displayID = petName or sName, petIcon or sIcon, creatureID or cID, description or sDesc, displayID or sDisp
+									if collected == nil and C_PetJournal.GetNumCollectedInfo then
+										local count = Safe(C_PetJournal.GetNumCollectedInfo(speciesID))
+										if type(count) == "number" then collected = count > 0 end
+									end
+								end
+								if type(petName) == "string" and petName ~= "" then
+									if type(creatureID) ~= "number" or creatureID <= 0 then creatureID = nil end
+									if type(displayID) ~= "number" or displayID <= 0 then displayID = nil end
+									if type(description) ~= "string" or description == "" then description = nil end
+									-- A pet with its own name shows that, with the species name next to the ID
+									local title, petNote = petName, nil
+									if type(customName) == "string" and customName ~= "" then title, petNote = customName, petName end
+									local petColor = {0.4, 0.85, 0.85}
+									local petDetails = {}
+									if collected ~= nil then tinsert(petDetails, collected and L["Collected"] or L["Not collected"]) end
+									ShowIDCard({sounds = (creatureID or displayID) and {npcID = creatureID, displayID = displayID, name = title} or nil, kind = L["Pet"], name = title, id = creatureID or speciesID, note = petNote, url = creatureID and ("https://" .. LeaPlusLC.WowheadLock .. "/npc=" .. creatureID) or nil, icon = petIcon, color = petColor, view = (creatureID or displayID) and {mode = "unit", npcID = creatureID, displayID = displayID, text = description} or nil, details = petDetails})
+									return
+								end
+							end
+						end
+					end
 					-- ItemRefTooltip or GameTooltip
 					local tooltip
 					if ItemRefTooltip:IsMouseMotionFocus() then tooltip = ItemRefTooltip else tooltip = GameTooltip end
@@ -3205,7 +3567,7 @@
 								end
 							end
 							pickerUnit = nil -- Aura found so the aura picker is not needed
-							ShowIDCard({kind = L[auraType], name = auraName, id = auraID, url = "https://" .. LeaPlusLC.WowheadLock .. "/spell=" .. auraID, icon = SpellIcon(auraID), color = auraType == "Debuff" and colorDebuff or colorBuff, view = {mode = "icon", icon = SpellIcon(auraID), text = SpellText(auraID)}, details = AuraDetails(nil, auraID)})
+							ShowIDCard({sounds = {spellID = auraID}, kind = L[auraType], name = auraName, id = auraID, url = "https://" .. LeaPlusLC.WowheadLock .. "/spell=" .. auraID, icon = SpellIcon(auraID), color = auraType == "Debuff" and colorDebuff or colorBuff, view = {mode = "icon", icon = SpellIcon(auraID), text = SpellText(auraID)}, details = AuraDetails(nil, auraID)})
 							return
 						end
 					end
@@ -3219,14 +3581,14 @@
 							local qualityColor = itemQuality and ITEM_QUALITY_COLORS and ITEM_QUALITY_COLORS[itemQuality]
 							local nameColor = qualityColor and {qualityColor.r, qualityColor.g, qualityColor.b} or {1, 1, 1}
 							itemIcon = itemIcon or (C_Item and C_Item.GetItemIconByID and Safe(C_Item.GetItemIconByID(itemID))) or (GetItemIcon and Safe(GetItemIcon(itemID)))
-							ShowIDCard({kind = L["Item"], name = itemName or itemLink, id = itemID, url = "https://" .. LeaPlusLC.WowheadLock .. "/item=" .. itemID, icon = itemIcon, color = nameColor, nameColor = nameColor, view = {mode = IsEquippable(itemLink) and "item" or "icon", link = itemLink, icon = itemIcon, text = ItemFlavour(tooltip)}, details = ItemDetails(itemLink, tooltip)})
+							ShowIDCard({sounds = {itemID = itemID}, kind = L["Item"], name = itemName or itemLink, id = itemID, url = "https://" .. LeaPlusLC.WowheadLock .. "/item=" .. itemID, icon = itemIcon, color = nameColor, nameColor = nameColor, view = {mode = IsEquippable(itemLink) and "item" or "icon", link = itemLink, icon = itemIcon, text = ItemFlavour(tooltip)}, details = ItemDetails(itemLink, tooltip)})
 							return
 						end
 					end
 					-- Spell
 					local name, spellID = Safe(tooltip:GetSpell())
 					if name and spellID then
-						ShowIDCard({kind = L["Spell"], name = name, id = spellID, url = "https://" .. LeaPlusLC.WowheadLock .. "/spell=" .. spellID, icon = SpellIcon(spellID), color = colorSpell, view = {mode = "icon", icon = SpellIcon(spellID), text = SpellText(spellID)}, details = SpellDetails(spellID)})
+						ShowIDCard({sounds = {spellID = spellID}, kind = L["Spell"], name = name, id = spellID, url = "https://" .. LeaPlusLC.WowheadLock .. "/spell=" .. spellID, icon = SpellIcon(spellID), color = colorSpell, view = {mode = "icon", icon = SpellIcon(spellID), text = SpellText(spellID)}, details = SpellDetails(spellID)})
 						return
 					end
 					-- Buff or debuff (match the tooltip title against auras on likely units)
@@ -3248,7 +3610,7 @@
 											if auraName and auraID and auraName == auraTitle then
 												local auraIcon = Safe(aura.icon) or SpellIcon(auraID)
 												pickerUnit = nil -- Aura found so the aura picker is not needed
-												ShowIDCard({kind = L[auraType], name = auraName, id = auraID, url = "https://" .. LeaPlusLC.WowheadLock .. "/spell=" .. auraID, icon = auraIcon, color = auraType == "Debuff" and colorDebuff or colorBuff, view = {mode = "icon", icon = auraIcon, text = SpellText(auraID)}, details = AuraDetails(aura.sourceUnit, auraID)})
+												ShowIDCard({sounds = {spellID = auraID}, kind = L[auraType], name = auraName, id = auraID, url = "https://" .. LeaPlusLC.WowheadLock .. "/spell=" .. auraID, icon = auraIcon, color = auraType == "Debuff" and colorDebuff or colorBuff, view = {mode = "icon", icon = auraIcon, text = SpellText(auraID)}, details = AuraDetails(aura.sourceUnit, auraID)})
 												return
 											end
 										end
@@ -3285,7 +3647,7 @@
 							end
 							local classification = Safe(UnitClassification("mouseover"))
 							if npcNote and (classification == "elite" or classification == "worldboss") then npcNote = npcNote .. " " .. L["Elite"] elseif npcNote and classification == "rareelite" then npcNote = npcNote .. " " .. L["Rare Elite"] elseif npcNote and classification == "rare" then npcNote = npcNote .. " " .. L["Rare"] end
-							ShowIDCard({kind = L["NPC"], name = npcName or L["Name not available right now"], id = npcID, url = "https://" .. LeaPlusLC.WowheadLock .. "/npc=" .. npcID, unit = "mouseover", color = npcColor, nameColor = npcColor, note = npcNote, view = {mode = "unit", unit = "mouseover", guid = npcGuid, npcID = npcID, text = NPCText(tooltip)}})
+							ShowIDCard({sounds = {unit = "mouseover", npcID = npcID, name = npcName}, kind = L["NPC"], name = npcName or L["Name not available right now"], id = npcID, url = "https://" .. LeaPlusLC.WowheadLock .. "/npc=" .. npcID, unit = "mouseover", color = npcColor, nameColor = npcColor, note = npcNote, view = {mode = "unit", unit = "mouseover", guid = npcGuid, npcID = npcID, text = NPCText(tooltip)}})
 							return
 						end
 					end
@@ -3333,7 +3695,11 @@
 						end
 						if displayName == "" then displayName = L["Name not available right now"] end
 						local armoryLink
-						if not isForever and GameLocale ~= "zhCN" and playerName and playerName ~= "" then
+						if isForever then
+							armoryLink = ForeverArmoryLink(playerName, playerRealm)
+							local mouseLevel = Safe(UnitGUID("mouseover")) == dataGUID and Safe(UnitLevel("mouseover"))
+							if type(mouseLevel) == "number" and mouseLevel > 0 and mouseLevel < 10 then armoryLink = nil end -- Forever armory does not list characters under level 10
+						elseif GameLocale ~= "zhCN" and playerName and playerName ~= "" then
 							local realmSlug = ((playerRealm and playerRealm ~= "") and playerRealm or Safe(GetNormalizedRealmName()) or ""):gsub("(%l)(%u)", "%1-%2"):gsub("'", ""):gsub(" ", "-")
 							armoryLink = LeaPlusLC.BlizzardLock .. strlower(realmSlug) .. "/" .. strlower(playerName)
 						end
@@ -3373,7 +3739,7 @@
 					-- Show the card for an aura and mark it in the list
 					local picker
 					local function ShowAuraLink(info)
-						ShowIDCard({kind = L[info.auraType], name = info.name, id = info.spellID, url = "https://" .. LeaPlusLC.WowheadLock .. "/spell=" .. info.spellID, icon = info.icon, color = info.auraType == "Debuff" and colorDebuff or colorBuff, view = {mode = "icon", icon = info.icon, text = SpellText(info.spellID)}, details = AuraDetails(info.source, info.spellID)})
+						ShowIDCard({sounds = {spellID = info.spellID}, kind = L[info.auraType], name = info.name, id = info.spellID, url = "https://" .. LeaPlusLC.WowheadLock .. "/spell=" .. info.spellID, icon = info.icon, color = info.auraType == "Debuff" and colorDebuff or colorBuff, view = {mode = "icon", icon = info.icon, text = SpellText(info.spellID)}, details = AuraDetails(info.source, info.spellID)})
 						if LeaPlusLC.AuraPicker then
 							for void, row in ipairs(LeaPlusLC.AuraPicker.rows) do row.selected:SetShown(row.info == info) end
 						end

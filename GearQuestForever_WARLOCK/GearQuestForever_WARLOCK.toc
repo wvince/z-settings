@@ -2,7 +2,7 @@
 ## Title: GearQuest Forever: Warlock
 ## Notes: Hunt lists for this class. GearQuest Forever loads this when you play or simulate it.
 ## Author: Henrik8210
-## Version: 1.0.7
+## Version: 1.0.8
 ## IconTexture: Interface\Icons\ClassIcon_Warlock
 ## LoadOnDemand: 1
 ## Dependencies: GearQuestForever

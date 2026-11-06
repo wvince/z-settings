@@ -2,7 +2,7 @@
 ## Title: RestedXP Guides
 ## Notes: In-game leveling guides
 ## Author: RestedXP
-## Version: v4.11.32-10-g5d840d7
+## Version: v4.11.33-5-g4a2a7a0
 ## Category: Quests
 ## Category-deDE: Quests
 ## Category-esES: Misiones

@@ -94,7 +94,7 @@ local function CreateBiSToggleFrame()
     UIDropDownMenu_Initialize(phaseDropdown, InitPhaseDropdown)
     if _G.slcDB then
         -- Default to Phase 1 for new users/updates
-        if not _G.slcDB.bisPhase then _G.slcDB.bisPhase = 1 end 
+        if not _G.slcDB.bisPhase or _G.slcDB.bisPhase == 0 then _G.slcDB.bisPhase = 1 end 
         UIDropDownMenu_SetSelectedValue(phaseDropdown, _G.slcDB.bisPhase)
         --local initColorStr = _G.slcDB.bisPhase == 3 and "|cFF00FF00Phase 3|r" or _G.slcDB.bisPhase == 2 and "|cFFFF8000Phase 2|r" or "|cFFFF0000Phase 1|r"
 		local initColorStr = _G.slcDB.bisPhase == 1 and "|cFF00FF00Phase 1|r" or _G.slcDB.bisPhase == 2 and "|cFFFF8000Phase 2|r" or "|cFFFF0000Phase 3|r"

@@ -816,6 +816,7 @@ L["Retribution: Dungeon Leveling"] = "Retribution: Dungeon Leveling"
 L["Protection: Solo Leveling"] = "Protection: Solo Leveling"
 L["Protection: Dungeon Leveling"] = "Protection: Dungeon Leveling"
 L["Holy: Solo Leveling"] = "Holy: Solo Leveling"
+L["Shockadin: Solo Leveling"] = "Shockadin: Solo Leveling"
 L["Holy: Dungeon Leveling"] = "Holy: Dungeon Leveling"
 -- Warrior (Forever profile names, matching the Talents plugin's builds; level bands are added after)
 L["Arms: Raid"] = "Arms: Raid"

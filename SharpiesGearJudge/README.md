@@ -12,6 +12,14 @@ Unlike addons that give items static points (e.g. "Hit = 10 pts"), SGJ understan
 
 > **WoW Forever players:** leveling PvP builds and weights are being worked on.
 
+### 3.2.11
+
+- **Profession arrows in DaylightUI:** recipes that craft an upgrade get the green arrow in DaylightUI's profession window.
+- **Enhancement Shaman weights:** rebuilt for leveling. At levels 15-24 Spirit counts for a bit less, Intellect and Stamina for more. Levels 1-9 no longer jump about 6x at level 10.
+- **Paladin weights:** solo leveling rebuilt with Hammer of Wrath from level 44. Retribution levels 1-9 no longer jump about 4x at level 10, and Mp5 no longer drops to 0 around level 44.
+- **Shockadin:** the Paladin profile Holy: Solo Leveling is now named Shockadin: Solo Leveling.
+- **Holy Paladin dungeons:** Talents order adjusted slightly at levels 15-17.
+
 ### 3.2.10
 
 - **Loot upgrade alerts:** an item you loot or receive that's an upgrade pops up a small alert with the gain. Click it to equip.
@@ -85,7 +93,7 @@ Turn the bag and loot arrows and the loot alerts on or off in **Protocol → Int
 - **Loot roll arrows** (**off** by default): highlights the best upgrade on group loot popups.
 - **Loot upgrade alerts** (**on** by default): when an item you loot or receive is an upgrade, a small alert shows it with the gain. Click it to equip (out of combat), right-click to close.
 - **Quest reward overlays:** marks the best choice among quest rewards, in the game's quest window and in **DaylightUI**'s NPC window (WoW Forever).
-- **Profession arrows** (always on): recipes that craft an upgrade for you get a green arrow, in Forever's professions window and in the Classic profession and Enchanting windows (Era, TBC).
+- **Profession arrows** (always on): recipes that craft an upgrade for you get a green arrow, in Forever's professions window (**DaylightUI**'s too) and in the Classic profession and Enchanting windows (Era, TBC).
 
 ### 🧾 The Gear Receipt
 
@@ -286,7 +294,7 @@ Set bonuses, meta requirements, weapon specialization, and raid-buff-adjusted ca
 ## Credits
 
 - **Author:** SuperSharpie
-- **Version:** 3.2.10 (Classic Era, TBC Anniversary & WoW Forever)
+- **Version:** 3.2.11 (Classic Era, TBC Anniversary & WoW Forever)
 - **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
 - **Discord:** [Join the Theorycrafting Hub](https://discord.gg/aYmhmtGxYs)
 - **Feedback:** Found a weight that feels off? Drop by the Discord or open an issue on GitHub!

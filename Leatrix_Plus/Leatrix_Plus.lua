@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------
--- 	Leatrix Plus 1.60.28 (6th November 2026)
+-- 	Leatrix Plus 1.60.29 (6th November 2026)
 ----------------------------------------------------------------------
 
 --	01:Functions 02:Locks,  03:Restart 40:Player
@@ -18,7 +18,7 @@
 	local void
 
 	-- Version
-	LeaPlusLC["AddonVer"] = "1.60.28"
+	LeaPlusLC["AddonVer"] = "1.60.29"
 
 	-- Get locale table
 	local void, Leatrix_Plus = ...
@@ -865,7 +865,10 @@
 						viewer.title:SetJustifyH("LEFT")
 						viewer.title:SetWordWrap(false)
 						-- Gear button (takes equipped items off and puts them back on)
-						viewer.gear = FlatButton(viewer, 86, 22, L["Hide gear"])
+						viewer.gear = FlatButton(viewer, 86, 22, L["Show gear"])
+						local showGearWidth = viewer.gear.label:GetStringWidth()
+						viewer.gear:SetLabel(L["Hide gear"])
+						viewer.gear:SetWidth(PixelRound(math.max(86, showGearWidth + 20, viewer.gear.label:GetStringWidth() + 20))) -- Wide enough for both labels in every language
 						viewer.gear:SetPoint("TOPRIGHT", viewer, "TOPRIGHT", -10, -10)
 						-- Fullscreen button (shows the viewer over the whole screen, Escape or the button again puts it back)
 						viewer.full = FlatButton(viewer, 86, 22, L["Exit fullscreen"])
@@ -1867,6 +1870,7 @@
 							card:ClearAllPoints()
 							card:SetPoint("TOPLEFT", viewer.title, "BOTTOMLEFT", 8, -20)
 							card:SetClampedToScreen(true)
+							SnapToPixels(card) -- Line up with screen pixels (the name is not on whole pixels, so thin borders such as the bottom of the sounds button could be lost)
 							card:Raise()
 							viewer.cardShowing, viewer.cardAway = true, 0
 						end)
@@ -2140,6 +2144,21 @@
 							self:Relayout()
 						end
 						-- Place the lines, the link box and set the card height to fit the text
+						-- Make the card wider when the bottom row (3D model checkbox, copy hint, sounds button and right-click hint) does not fit, such as in some languages
+						-- (measured with the longest text each hint can show, so the card does not change width when a hint message shows)
+						function card:FitWidth()
+							if not self.measure then self.measure = self:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall") self.measure:Hide() end
+							local function TextWidth(...)
+								local w = 0
+								for i = 1, select("#", ...) do self.measure:SetText(select(i, ...)) w = math.max(w, self.measure:GetStringWidth() or 0) end
+								return w
+							end
+							local left = 22 -- (based on what the card has, not what is showing, as some of it is hidden on the card shown from the name in fullscreen)
+							if self.info and self.info.view then left = left + 11 + 6 + (self.modelCheck.label:GetStringWidth() or 0) + 18 end
+							if self.url then left = left + TextWidth(L["Press CTRL/C to copy"], L["Copied to clipboard."]) end
+							local right = 18 + (self.sounds:IsShown() and (TextWidth(L["Right-click to close"], L["Requires Leatrix Sounds"]) + 14 + self.sounds:GetWidth()) or TextWidth(L["Right-click to close"]))
+							self:SetWidth(PixelRound(math.max(480, left + 20 + right)))
+						end
 						function card:Relayout()
 							local hasDetail = #self.detailParts > 0
 							self.detail:SetShown(hasDetail)
@@ -2238,8 +2257,12 @@
 								card.soundsMsgID = (card.soundsMsgID or 0) + 1
 								local id = card.soundsMsgID
 								card.hint2:SetText("|cffffd800" .. L["Requires Leatrix Sounds"] .. "|r")
+								card.hint2:Show() -- The hint is hidden on the card shown from the name in fullscreen, so show it for the message
 								C_Timer.After(3, function()
-									if card.soundsMsgID == id then card.hint2:SetText(L["Right-click to close"]) end
+									if card.soundsMsgID == id then
+										card.hint2:SetText(L["Right-click to close"])
+										if card.plainHidden then card.hint2:Hide() end -- Hidden again if the card is still the fullscreen one
+									end
 								end)
 								return
 							end
@@ -2403,6 +2426,7 @@
 					card.sounds:SetAccent(r, g, b)
 					card.sounds:SetShown(card.soundsOpen ~= nil or (info.sounds ~= nil and not soundsLoaded))
 					card:Relayout()
+					card:FitWidth()
 					card:Show()
 					if not card.snapped then card.snapped = true SnapToPixels(card) end -- Line up with screen pixels when first shown
 					-- 3D portrait (loaded now the card is showing, for players and NPCs)
@@ -3161,9 +3185,10 @@
 						local playerLevel = Safe(UnitLevel(unitFocus))
 						if isForever and type(playerLevel) == "number" and playerLevel > 0 and playerLevel < 10 then armoryLink = nil end -- Forever armory does not list characters under level 10
 						local playerName, realmText = name, realm
-						if surname and surname ~= "" then playerName, realmText = name .. " " .. surname, Safe(GetRealmName()) or "" end
+						if surname and surname ~= "" then playerName = name .. " " .. surname end
+						if isForever then realmText = "" end -- Forever realms are hidden from players
 						local playerNote = realmText
-						if type(playerLevel) == "number" and playerLevel > 0 then playerNote = L["Level"] .. " " .. playerLevel .. " " .. (Safe(UnitClass(unitFocus)) or "") .. "    " .. realmText end
+						if type(playerLevel) == "number" and playerLevel > 0 then playerNote = L["Level"] .. " " .. playerLevel .. " " .. (Safe(UnitClass(unitFocus)) or "") .. (realmText ~= "" and ("    " .. realmText) or "") end
 						local unitGUID = Safe(UnitGUID(unitFocus))
 						ShowIDCard({sounds = {unit = unitFocus}, kind = L["Player"], name = playerName, sub = playerNote, url = armoryLink, unit = unitFocus, color = playerColor, nameColor = playerColor, view = {mode = "unit", isPlayer = true, unit = unitFocus, guid = unitGUID, text = PlayerText(unitFocus)}, talents = true, details = PlayerDetails(unitFocus, unitGUID)})
 						ShowPlayerTalents(unitFocus)
@@ -3687,7 +3712,7 @@
 						local playerColor = classColor and {classColor.r, classColor.g, classColor.b} or {0.6, 0.6, 0.65}
 						-- Name (the tooltip title already includes the surname on Forever)
 						local titleName = (Safe(GameTooltipTextLeft1:GetText()) or ""):gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
-						local displayName, realmText = titleName, Safe(GetRealmName()) or ""
+						local displayName, realmText = titleName, isForever and "" or (Safe(GetRealmName()) or "") -- Forever realms are hidden from players
 						if playerName and playerName ~= "" then
 							displayName = playerName
 							if isForever and playerRealm and playerRealm ~= "" then displayName = playerName .. " " .. playerRealm
@@ -3704,7 +3729,7 @@
 							armoryLink = LeaPlusLC.BlizzardLock .. strlower(realmSlug) .. "/" .. strlower(playerName)
 						end
 						local coords = classFile and CLASS_ICON_TCOORDS and CLASS_ICON_TCOORDS[classFile]
-						local subText = localizedClass and (localizedClass .. "    " .. realmText) or realmText
+						local subText = localizedClass and (localizedClass .. (realmText ~= "" and ("    " .. realmText) or "")) or realmText
 						ShowIDCard({kind = L["Player"], name = displayName, sub = subText, url = armoryLink, icon = coords and "Interface\\TargetingFrame\\UI-Classes-Circles" or 134400, iconCoords = coords, color = playerColor, nameColor = playerColor, view = {mode = "unit", isPlayer = true, guid = dataGUID}, details = PlayerDetails(nil, dataGUID)})
 						-- Refresh the card shortly (twice at most) while the mouse is still over the same player, to get the full card
 						if (LeaPlusLC.IDUpgrades or 0) < 2 then
@@ -14589,10 +14614,8 @@
 				if isPlayer then
 
 					-- Show guild line
-					local guildName, guildRank, void, guildRealm = GetGuildInfo(unit)
+					local guildName, guildRank = GetGuildInfo(unit)
 					if guildName then
-						guildRealm = Safe(guildRealm)
-						if guildRealm and guildRealm ~= "" then guildName = guildName .. "-" .. guildRealm end -- Show guild realm if different
 						local showRank
 						if UnitIsInMyGuild(unit) then
 							showRank = LeaPlusLC["TipShowRank"] == "On"

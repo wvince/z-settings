@@ -263,3 +263,15 @@ FDJ.QUEST_START_MAPS = {
     [92751] = { mapID = 1453, x = 0.803, y = 0.701, label = "Jasper Fel — Stormwind", targetName = "Jasper Fel", detail = "Jasper Fel: SI:7, Old Town, Stormwind" },
     [92752] = { mapID = 1453, x = 0.619, y = 0.306, label = "Sprite Jumpsprocket — Stormwind", targetName = "Sprite Jumpsprocket", detail = "Sprite Jumpsprocket: Dwarven District, Stormwind" },
 }
+
+-- BEGIN turninspots
+-- Turn-in NPCs who give no quest of their own here, for the quest tracker's
+-- ? button. In-game coordinates from Warcraft Tavern's WoW Forever guide to
+-- the Ruins of Lordaeron quests.
+FDJ.TURNIN_SPOTS = {
+    { mapID = 1453, x = 0.690, y = 0.828, label = "General Marcus Jonathan — Valley of Heroes, Stormwind", targetName = "General Marcus Jonathan" },
+    { mapID = 1453, x = 0.692, y = 0.277, label = "Lady Dena Kennedy — Stormwind Keep, Stormwind", targetName = "Lady Dena Kennedy" },
+    { mapID = 1453, x = 0.562, y = 0.540, label = "Orphan Matron Nightingale — Cathedral Square, Stormwind", targetName = "Orphan Matron Nightingale" },
+    { mapID = 1458, x = 0.733, y = 0.326, label = "Oran Snakewrithe — Magic Quarter, Undercity", targetName = "Oran Snakewrithe" },
+}
+-- END turninspots

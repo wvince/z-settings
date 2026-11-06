@@ -710,6 +710,7 @@ DB["The Deadmines"] = {
     }, {
     }, {
         classOnly = "PALADIN",
+        warning = "This is a chain quest with a step in The Deadmines",
         objective = "Wait for Jordan Stilwell to finish forging a weapon for you.",
         rewardSummary = "",
         id = 1806,
@@ -723,6 +724,22 @@ DB["The Deadmines"] = {
         requires = 20,
         turnin = "Jordan Stilwell, Gates of Ironforge, Dun Morogh",
         startMap = { mapID = 1426, x = 0.526, y = 0.368, label = "Jordan Stilwell — Gates of Ironforge", targetName = "Jordan Stilwell" },
+    }, {
+        classOnly = "PALADIN",
+        warning = "This is a chain quest with a step in The Deadmines",
+        objective = "Use the Moonsilver Blade to destroy Old-Fire Eye in Silverpine Forest.",
+        rewardSummary = "Undercity +150  •  Earthen Ring +150  •  Orgrimmar +75",
+        id = 95140,
+        note = "Paladin class quest for undead and tauren. In this dungeon: Whitestone Oak Lumber drops from Goblin Woodcarvers. The other parts are the Enchanted Silver Ingot (Shadowfang Keep) and the Purified Kor Gem (Blackfathom Deeps).",
+        liveXPFallback = 2650,
+        rewardItems = {{267369, "Wolfsbane", 3}},
+        name = "Old Fire-Eye",
+        faction = "Horde",
+        pickup = "Lumina Windsinger, The Sepulcher, Silverpine Forest",
+        level = 26,
+        requires = 20,
+        turnin = "Lumina Windsinger, The Sepulcher, Silverpine Forest",
+        startMap = { mapID = 1421, x = 0.433, y = 0.410, label = "Lumina Windsinger — The Sepulcher", targetName = "Lumina Windsinger" },
     }},
     bosses = {{
             name = "Rhahk'Zor",
@@ -805,7 +822,7 @@ DB["Blackfathom Deeps"] = {
         faction = "Alliance",
         pickup = "Gerrig Bonegrip, Forlorn Cavern, Ironforge (50.8, 5.6)",
         level = 23,
-        requires = 10,
+        requires = 18, -- WoW Forever raised it from 10 (Wowhead Forever, Nov 2026)
         turnin = "Gerrig Bonegrip, Forlorn Cavern, Ironforge",
     }, {
         note = "Introductory step leading to Researching the Corruption.",
@@ -989,6 +1006,7 @@ DB["Blackfathom Deeps"] = {
         turnin = "Je'neu Sancrea, Zoram'gar Outpost, Ashenvale",
     }, {
         classOnly = "PALADIN",
+        warning = "This is a chain quest with a step in Blackfathom Deeps",
         objective = "Wait for Jordan Stilwell to finish forging a weapon for you.",
         rewardSummary = "",
         id = 1806,
@@ -1002,6 +1020,22 @@ DB["Blackfathom Deeps"] = {
         requires = 20,
         turnin = "Jordan Stilwell, Gates of Ironforge, Dun Morogh",
         startMap = { mapID = 1426, x = 0.526, y = 0.368, label = "Jordan Stilwell — Gates of Ironforge", targetName = "Jordan Stilwell" },
+    }, {
+        classOnly = "PALADIN",
+        warning = "This is a chain quest with a step in Blackfathom Deeps",
+        objective = "Use the Moonsilver Blade to destroy Old-Fire Eye in Silverpine Forest.",
+        rewardSummary = "Undercity +150  •  Earthen Ring +150  •  Orgrimmar +75",
+        id = 95140,
+        note = "Paladin class quest for undead and tauren. In this dungeon: the Corrupted Kor Gem drops from Blackfathom Sea Witches inside, and from Blackfathom Tide Priestesses and Oracles at the entrance in Ashenvale, once you have Seeking the Kor Gem from Ulric Frostveil at Zoram'gar Outpost. He purifies it. The other parts are Whitestone Oak Lumber (The Deadmines) and the Enchanted Silver Ingot (Shadowfang Keep).",
+        liveXPFallback = 2650,
+        rewardItems = {{267369, "Wolfsbane", 3}},
+        name = "Old Fire-Eye",
+        faction = "Horde",
+        pickup = "Lumina Windsinger, The Sepulcher, Silverpine Forest",
+        level = 26,
+        requires = 20,
+        turnin = "Lumina Windsinger, The Sepulcher, Silverpine Forest",
+        startMap = { mapID = 1421, x = 0.433, y = 0.410, label = "Lumina Windsinger — The Sepulcher", targetName = "Lumina Windsinger" },
     }, {
         classOnly = "WARLOCK",
         objective = "Find 3 Soran'ruk Fragments and 1 Large Soran'ruk Fragment and return them to Doan Karhan.",
@@ -1280,6 +1314,7 @@ DB["Shadowfang Keep"] = {
         turnin = "Dalar Dawnweaver, The Sepulcher, Silverpine Forest",
     }, {
         classOnly = "PALADIN",
+        warning = "This is a chain quest with a step in Shadowfang Keep",
         objective = "Wait for Jordan Stilwell to finish forging a weapon for you.",
         rewardSummary = "",
         id = 1806,
@@ -1293,6 +1328,22 @@ DB["Shadowfang Keep"] = {
         requires = 20,
         turnin = "Jordan Stilwell, Gates of Ironforge, Dun Morogh",
         startMap = { mapID = 1426, x = 0.526, y = 0.368, label = "Jordan Stilwell — Gates of Ironforge", targetName = "Jordan Stilwell" },
+    }, {
+        classOnly = "PALADIN",
+        warning = "This is a chain quest with a step in Shadowfang Keep",
+        objective = "Use the Moonsilver Blade to destroy Old-Fire Eye in Silverpine Forest.",
+        rewardSummary = "Undercity +150  •  Earthen Ring +150  •  Orgrimmar +75",
+        id = 95140,
+        note = "Paladin class quest for undead and tauren. In this dungeon: the Enchanted Silver Ingot lies on a table in Archmage Arugal's room, after you kill him. The other parts are Whitestone Oak Lumber (The Deadmines) and the Purified Kor Gem (Blackfathom Deeps).",
+        liveXPFallback = 2650,
+        rewardItems = {{267369, "Wolfsbane", 3}},
+        name = "Old Fire-Eye",
+        faction = "Horde",
+        pickup = "Lumina Windsinger, The Sepulcher, Silverpine Forest",
+        level = 26,
+        requires = 20,
+        turnin = "Lumina Windsinger, The Sepulcher, Silverpine Forest",
+        startMap = { mapID = 1421, x = 0.433, y = 0.410, label = "Lumina Windsinger — The Sepulcher", targetName = "Lumina Windsinger" },
     }, {
         classOnly = "ROGUE",
         warning = "Solo job: you must do it alone, outside any group.",
@@ -3814,14 +3865,137 @@ FDJ.DB["Zul'Farrak"] = {
 }
 
 FDJ.DB["The Drowned City"] = {
-    -- Announced by Blizzard; not playable yet, so no boss, loot or quest data.
-    previewOnly = true,
+    -- Not out yet (level 35-40, Forever is capped at 30). Bosses, quests and
+    -- the entrance are known; loot is not. Boss order follows the client's
+    -- six "Staging Area" creatures.
     level = "35-40",
     location = "Stranglethorn Vale",
-    description = "Sunken troll ruins have risen from the sea off the coast of Stranglethorn Vale, west of Grom'gol. Trolls and naga roam the streets of this open-air dungeon, a pirate ship lies wrecked nearby, and the weather builds into a full storm before the final fight. Dive underwater to find the entrance. Known quests so far: The Drowned City (rubbings of the four Tablets of I'lalai) and Magics of the Drowned City (5 I'lalai Fetishes).",
+    description = "I'lalai, a lost Gurubashi troll city, has risen from the sea off the coast of Stranglethorn Vale, west of Grom'gol. Trolls and naga roam the streets of this open-air dungeon, a pirate ship lies wrecked nearby, and the weather builds into a full storm before the final fight. Dive underwater to find the entrance.",
     icon = "Interface\\Icons\\Spell_Frost_SummonWaterElemental",
-    quests = {},
-    bosses = {},
+    quests = {{
+        id = 95775,
+        name = "The Drowned City",
+        level = 40,
+        requires = 30,
+        faction = "Horde",
+        pickup = "Kin'weelay, Grom'gol Base Camp, Stranglethorn Vale",
+        objective = "Use the hide and charcoal to make rubbings of the four Tablets of I'lalai in the Drowned City.",
+        turnin = "Kin'weelay, Grom'gol Base Camp, Stranglethorn Vale",
+        liveXPFallback = 8450,
+        rewardSummary = "",
+        requiredItems = {
+            {270308, "The First Tablet of I'lalai", 1, "Rubbing of the first tablet, inside the Drowned City"},
+            {270309, "The Second Tablet of I'lalai", 1, "Rubbing of the second tablet, inside the Drowned City"},
+            {270310, "The Third Tablet of I'lalai", 1, "Rubbing of the third tablet, inside the Drowned City"},
+            {270311, "The Fourth Tablet of I'lalai", 1, "Rubbing of the fourth tablet, inside the Drowned City"},
+        },
+    }, {
+        id = 95776,
+        name = "The Only Good Brinescale...",
+        level = 38,
+        requires = 30,
+        faction = "Horde",
+        pickup = "Grom'gol Base Camp, Stranglethorn Vale (quest giver not known yet)",
+        objective = "Kill Var'Taka in the Drowned City.",
+        turnin = "Grom'gol Base Camp, Stranglethorn Vale (not known yet)",
+        liveXPFallback = 9500,
+        rewardSummary = "",
+        rewardChoice = true,
+        rewardItems = {{279888, "Tidesoaked Leggings", 2}, {279889, "Naga Priestess's Mantle", 2}},
+    }, {
+        id = 96774,
+        name = "Ancient Gurubashi Idol",
+        level = 40,
+        requires = 30,
+        faction = "Horde",
+        pickup = "Mazu'kon, Mulgore",
+        objective = "Recover an Ancient Gurubashi Idol from the Drowned City.",
+        turnin = "Mazu'kon, Mulgore",
+        liveXPFallback = 8800,
+        rewardSummary = "Earthen Ring +300  •  Darkspear Trolls +150",
+        requiredItem = {276894, "Ancient Gurubashi Idol", 1, 1, "From the most powerful priest in the Drowned City"},
+    }, {
+        id = 95787,
+        name = "Take Two With Water",
+        level = 40,
+        requires = 30,
+        faction = "Alliance",
+        pickup = "Loremaster Dibbs, Southshore, Hillsbrad Foothills",
+        objective = "Make rubbings of the four Tablets of I'lalai in the Drowned City.",
+        turnin = "Loremaster Dibbs, Southshore, Hillsbrad Foothills",
+        rewardSummary = "",
+        note = "Quest giver not confirmed yet. Lead-in: An Acquaintance in Southshore, taking the Savage Coast Report Bundle to Loremaster Dibbs.",
+    }, {
+        id = 95788,
+        name = "Magics of the Drowned City",
+        level = 40,
+        requires = 30,
+        faction = "Alliance",
+        pickup = "Not known yet",
+        objective = "Collect 5 I'lalai Fetishes from the trolls in the Drowned City.",
+        turnin = "Not known yet",
+        rewardSummary = "",
+        requiredItem = {270343, "I'lalai Fetish", 1, 5, "Dropped by the trolls in the Drowned City"},
+    }, {
+        -- The Alliance side of Ancient Gurubashi Idol (Wowhead Forever quest
+        -- 97130). Wowhead has no giver yet; the quest text names Archmage
+        -- Lan'dalock of the Kirin Tor, who stands in Dalaran.
+        id = 97130,
+        name = "Ancient Gurubashi Secrets",
+        level = 40,
+        requires = 34,
+        faction = "Alliance",
+        pickup = "Not known yet (a Kirin Tor mage who works with Archmage Lan'dalock in Dalaran)",
+        objective = "Recover an Ancient Gurubashi Idol from the Drowned City.",
+        turnin = "Not known yet",
+        liveXPFallback = 10450,
+        rewardSummary = "50s  •  Kirin Tor +300  •  Stormwind +150",
+        requiredItem = {276894, "Ancient Gurubashi Idol", 1, 1, "From the most powerful priest in the Drowned City"},
+    }},
+    bosses = {
+        {
+            name = "Zul'Alai",
+            portraitNpcID = 270882, -- the client's "Staging Area" copy, for the picture only
+            aliases = {"Zul'Alai"},
+            description = "First boss, an undead troll. Enrages near death and hits the whole group hard.",
+            loot = {},
+        },
+        {
+            name = "Var'Taka",
+            npcID = 258924,
+            aliases = {"Var'Taka", "Zin'aka"},
+            description = "Leader of the naga; the Horde quest The Only Good Brinescale... asks for his death. BlizzCon previews called the second boss Zin'aka.",
+            loot = {},
+        },
+        {
+            name = "Captain Dreadrise",
+            portraitNpcID = 270884, -- the client's "Staging Area" copy, for the picture only
+            aliases = {"Captain Dreadrise"},
+            loot = {},
+        },
+        {
+            name = "Deathless Marrow",
+            portraitNpcID = 270885, -- the client's "Staging Area" copy, for the picture only
+            aliases = {"Deathless Marrow"},
+            description = "Fought together with a Primeval Elemental.",
+            loot = {},
+        },
+        {
+            name = "Gill",
+            portraitNpcID = 270888, -- the client's "Staging Area" copy, for the picture only
+            aliases = {"Gill"},
+            loot = {},
+        },
+        {
+            -- 260274: the creature the Legacy challenge counts as this
+            -- dungeon's final kill (ForeverChanges); unconfirmed.
+            name = "Min'loth the Serpent",
+            npcID = 260274,
+            aliases = {"Min'loth the Serpent", "Min'loth"},
+            description = "Final boss: the Gurubashi witch doctor Min'loth, whose seat of power was I'lalai.",
+            loot = {},
+        },
+    },
 }
 
 FDJ.DB["Krol'dok Stronghold"] = {

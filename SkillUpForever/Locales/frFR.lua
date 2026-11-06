@@ -94,7 +94,8 @@ L["Craft %d× %s"] = "Fabriquer %d× %s" -- mt
 L["Craft %s"] = "Fabriquer %s" -- mt
 L["Craft next"] = "Fabriquer la suivante" -- mt
 L["Crafted gear"] = "Équipement fabriqué" -- mt
-L["The tracker column steps aside for EQ Objective Tracker."] = "La colonne du suivi s'ecarte d'EQ Objective Tracker." -- mt
+L["The skill bar's difficulty bands are drawn at the bar art's native height instead of squashed."] =
+	"The skill bar's difficulty bands are drawn at the bar art's native height instead of squashed."
 L["Crafts"] = "Fabrications" -- mt
 L["Don't count it"] = "Ne pas compter" -- mt
 L["Don't suggest this again"] = "Ne plus me le suggérer" -- mt

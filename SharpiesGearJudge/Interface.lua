@@ -2116,6 +2116,86 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
             if type(def) == "table" and type(def.Fill) == "function" then hooksecurefunc(def, "Fill", MarkPage) end
         end
     end
+
+    -- [[ 8. DAYLIGHTUI PROFESSION WINDOW ]]
+    -- DaylightUI's own profession window (core addon, module "Professions")
+    -- replaces TradeSkillFrame, so MSC.UpdateTradeSkillOverlays has no rows to
+    -- mark. Every refill (search, chip, fold, skill-up) goes through
+    -- ns.List.Render; its rows are in List.lines by recipe ID, and pooled in
+    -- pane.stack.pools.line. Upgrades only, as the game's window (MSC.IsCraftUpgrade),
+    -- on the icon's top-right corner (the count sits at the row's right). Verdicts
+    -- are remembered per link until gear, level or talents change, so typing in
+    -- the search box doesn't judge every recipe again. (2026-11-05)
+    local craftMod = DaylightUI and type(DaylightUI.GetModule) == "function" and DaylightUI:GetModule("Professions")
+    local craftList = craftMod and craftMod.ns and craftMod.ns.List
+    if craftList and type(craftList.Render) == "function" then
+        local verdicts, queued = {}, false
+
+        local function SetRowArrow(b, show)
+            if not show then
+                if b.SGJ_CraftArrow then b.SGJ_CraftArrow:Hide() end
+                return
+            end
+            if not b.SGJ_CraftArrow then
+                local holder = CreateFrame("Frame", nil, b)
+                holder:SetAllPoints(b.icon or b)
+                local tex = holder:CreateTexture(nil, "OVERLAY", nil, 7)
+                tex:SetSize(14, 14)
+                tex:SetPoint("TOPRIGHT", holder, "TOPRIGHT", 4, 4)
+                tex:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Upgrade.png")
+                b.SGJ_CraftArrow = holder
+            end
+            b.SGJ_CraftArrow:SetFrameLevel(b:GetFrameLevel() + 10)
+            b.SGJ_CraftArrow:Show()
+        end
+
+        local function RecipeLink(r)
+            local link = r.link
+            if (not link or not link:find("|Hitem:")) and C_TradeSkillUI and C_TradeSkillUI.GetRecipeItemLink then
+                local ok, l = pcall(C_TradeSkillUI.GetRecipeItemLink, r.id)
+                if ok and type(l) == "string" then link = l end
+            end
+            return link
+        end
+
+        local function MarkRows()
+            queued = false
+            local pane = craftList.pane
+            local pool = pane and pane.stack and pane.stack.pools and pane.stack.pools.line
+            if pool then for i = 1, #pool do if pool[i] then SetRowArrow(pool[i], false) end end end
+            local weights, specName = MSC.GetCurrentWeights()
+            if not weights then return end
+            for _, b in pairs(craftList.lines or {}) do
+                local r = b.lineSpec and b.lineSpec.recipe
+                local link = r and RecipeLink(r)
+                if link then
+                    local v = verdicts[link]
+                    if v == nil then
+                        v = MSC.IsCraftUpgrade(link, weights, specName) or false
+                        -- not loaded yet: judged again when the item's data arrives
+                        if GetItemInfo(link) then verdicts[link] = v end
+                    end
+                    SetRowArrow(b, v)
+                end
+            end
+        end
+
+        local function QueueRows()
+            if queued then return end
+            queued = true
+            C_Timer.After(0, MarkRows)
+        end
+        hooksecurefunc(craftList, "Render", QueueRows)
+
+        local craftEvents = CreateFrame("Frame")
+        for _, e in ipairs({ "PLAYER_EQUIPMENT_CHANGED", "PLAYER_LEVEL_UP", "PLAYER_TALENT_UPDATE", "CHARACTER_POINTS_CHANGED", "ACTIVE_TALENT_GROUP_CHANGED", "GET_ITEM_INFO_RECEIVED" }) do
+            craftEvents:RegisterEvent(e)
+        end
+        craftEvents:SetScript("OnEvent", function(_, event)
+            if event ~= "GET_ITEM_INFO_RECEIVED" then wipe(verdicts) end
+            if craftList.pane and craftList.pane:IsVisible() then QueueRows() end
+        end)
+    end
 end)
 
 local function GetStatReason(stat, class, profileName)

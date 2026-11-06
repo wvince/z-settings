@@ -9,9 +9,17 @@
 -------------------------------------------------------------------------
 
 
+-- 16001-38
+--   - Fixed an issue where an error would occur if an achievement completed while in combat
+--   - Changed the Character Progression attunes to 'Times Camped' instead of 'Gold looted' (as that stat currently doesn't work)
+--
+-- 16001-37
+--   - Added the new prerequisite chain to "The Wrath of Rath'mael" (RoL)
+--   - Added the new prerequisite chain to "The New Plague" (RoL)
+--
 -- 16001-36
 --   - Added the possibility to discard/hide some attunements
-
+--
 -- 16001-35
 --   - Added the Character Progression attunes.
 --   - Added the Attune: Next window
@@ -1092,11 +1100,12 @@ function Attune:OnEnable()
 	self:RegisterEvent("QUEST_ACCEPTED")
 	self:RegisterEvent("QUEST_REMOVED")
 	self:RegisterEvent("QUEST_TURNED_IN")
+	self:RegisterEvent("PLAYER_REGEN_ENABLED")
 	self:RegisterEvent("UPDATE_FACTION")
 	self:RegisterEvent("BAG_UPDATE")
 	self:RegisterEvent("GOSSIP_SHOW")
 	self:RegisterEvent("QUEST_DETAIL")
-	-- Statistics (kills, gold looted, profession skill). Missing on clients without achievements.
+	-- Statistics (kills, times camped, profession skill). Missing on clients without achievements.
 	pcall(self.RegisterEvent, self, "CRITERIA_UPDATE")
 	pcall(self.RegisterEvent, self, "SKILL_LINES_CHANGED")
 	pcall(self.RegisterEvent, self, "CHAT_MSG_MONEY")
@@ -1756,6 +1765,34 @@ local function Attune_StepIsNext(s)
 	return true
 end
 
+-- Guild chat is protected in combat. Hold the line until PLAYER_REGEN_ENABLED.
+local Attune_GuildAnnounceQueue = {}
+
+local function Attune_AnnounceGuild(msg)
+	if InCombatLockdown() then
+		for _, pending in ipairs(Attune_GuildAnnounceQueue) do
+			if pending == msg then return end
+		end
+		Attune_GuildAnnounceQueue[#Attune_GuildAnnounceQueue + 1] = msg
+		return
+	end
+	SendChatMessage(msg, "GUILD")
+end
+
+function Attune:PLAYER_REGEN_ENABLED()
+	if InCombatLockdown() or #Attune_GuildAnnounceQueue == 0 then return end
+	local pending = Attune_GuildAnnounceQueue
+	Attune_GuildAnnounceQueue = {}
+	for _, msg in ipairs(pending) do
+		SendChatMessage(msg, "GUILD")
+	end
+end
+
+local function Attune_AnnounceAttuneComplete(name)
+	if not (Attune_DB and Attune_DB.announceAttuneCompleted and attunelocal_myguild ~= "") then return end
+	Attune_AnnounceGuild("[Attune] "..AttuneLang["AttuneCompleteGuild"]:gsub("##NAME##", name))
+end
+
 -- Mark one matching step, announce it, and optionally close out the attunement.
 -- Returns true when this call newly completed the step.
 local function Attune_MarkStepDone(s, typeLabel, stepLabel, checkComplete)
@@ -1784,7 +1821,7 @@ local function Attune_MarkStepDone(s, typeLabel, stepLabel, checkComplete)
 		if toon.attuned[a.ID] >= 100 then
 			PlaySound(5275) -- AuctionWindowClose
 			if Attune_DB.showStepReached then print("|cffff00ff[Attune]|r "..AttuneLang["AttuneComplete"]:gsub("##NAME##", a.NAME)) end
-			if Attune_DB.announceAttuneCompleted and attunelocal_myguild ~= "" then SendChatMessage("[Attune] "..AttuneLang["AttuneCompleteGuild"]:gsub("##NAME##", a.NAME), "GUILD") end
+			Attune_AnnounceAttuneComplete(a.NAME)
 		end
 	end
 	Attune_SendPushInfo("OVER")
@@ -2194,7 +2231,7 @@ function Attune_UpdateLogs()
 end
 
 -------------------------------------------------------------------------
--- Character trials: statistics (kills, gold looted, profession skill)
+-- Character trials: statistics (kills, times camped, profession skill)
 -------------------------------------------------------------------------
 
 -- GetStatistic returns a display string ("1,234" or "--").
@@ -2214,24 +2251,6 @@ function Attune_ReadStatistic(statId)
 	local digits = raw:gsub("%D", "")
 	if digits == "" then return 0 end
 	return tonumber(digits) or 0
-end
-
--- Gold looted is a money string: "1530|T...UI-GoldIcon...|t 68|T...SilverIcon...".
--- The gold amount is the number before the first pipe. Icon coordinates must not be counted.
-function Attune_ReadGoldLooted(statId)
-	local raw = Attune_ReadStatisticRaw(statId)
-	if raw == nil then return 0 end
-	if raw:find("|", 1, true) then
-		if not raw:find("GoldIcon", 1, true) then return 0 end
-		local head = raw:match("^([^|]*)") or ""
-		local digits = head:gsub("%D", "")
-		if digits == "" then return 0 end
-		return tonumber(digits) or 0
-	end
-	local digits = raw:gsub("%D", "")
-	if digits == "" then return 0 end
-	local per = COPPER_PER_GOLD or 10000
-	return math.floor((tonumber(digits) or 0) / per)
 end
 
 function Attune_StatGoal(step)
@@ -2254,9 +2273,6 @@ function Attune_StatValue(step)
 			end
 		end
 		return have
-	end
-	if step.GOLD then
-		return Attune_ReadGoldLooted(step.ID_WOWHEAD)
 	end
 	return Attune_ReadStatistic(step.ID_WOWHEAD)
 end
@@ -2362,7 +2378,7 @@ function Attune_SyncCharacterEnds(toon)
 					if not attunelocal_initial and attunelocal_frame and attunelocal_frame:IsShown() then
 						PlaySound(5275) -- AuctionWindowClose
 						if Attune_DB.showStepReached then print("|cffff00ff[Attune]|r "..AttuneLang["AttuneComplete"]:gsub("##NAME##", a.NAME)) end
-						if Attune_DB.announceAttuneCompleted and attunelocal_myguild ~= "" then SendChatMessage("[Attune] "..AttuneLang["AttuneCompleteGuild"]:gsub("##NAME##", a.NAME), "GUILD") end
+						Attune_AnnounceAttuneComplete(a.NAME)
 					end
 				end
 			else
@@ -2387,9 +2403,6 @@ function Attune_ShowStatTooltip(step, fnode)
 	GameTooltip:SetPoint("TOPLEFT", fnode, "TOPRIGHT", 10, 0)
 	GameTooltip:SetText(step.STEP or "")
 	GameTooltip:AddLine((AttuneLang["Current progress"] or "Current progress") .. ": " .. value .. "/" .. goal, 0.5, 0.5, 0.5, 1)
-	if step.GOLD and AttuneLang["GoldLooted_Note"] then
-		GameTooltip:AddLine(AttuneLang["GoldLooted_Note"], 1, 1, 1, 1, true)
-	end
 	if step.TYPE == "Prof" then
 		local skillGoal = tonumber(step.COUNT) or 0
 		local any = false
@@ -9733,8 +9746,10 @@ end]=]
 local attunelocal_rewardFrame
 local ATTUNE_REWARD_WIDTH = 300
 
+-- Reward and quest-detail helpers share one local. The main chunk is at Lua's 200-local limit.
+local rewardUi = {}
 
-local function Attune_RewardQuestIDs(idWowhead)
+function rewardUi.Attune_RewardQuestIDs(idWowhead)
 	local ids = {}
 	local raw = tostring(idWowhead or "")
 	if string.find(raw, "|", 1, true) then
@@ -9749,7 +9764,7 @@ local function Attune_RewardQuestIDs(idWowhead)
 	return ids
 end
 
-local function Attune_AddReward(list, seen, itemID, name, texture, count, quality, choice)
+function rewardUi.Attune_AddReward(list, seen, itemID, name, texture, count, quality, choice)
 	itemID = tonumber(itemID)
 	if not itemID or itemID <= 0 then return end
 	if seen[itemID] then return end
@@ -9765,7 +9780,7 @@ local function Attune_AddReward(list, seen, itemID, name, texture, count, qualit
 	})
 end
 
-local function Attune_ReadIndexedRewards(countFn, infoFn, questID, list, seen, choice)
+function rewardUi.Attune_ReadIndexedRewards(countFn, infoFn, questID, list, seen, choice)
 	if type(countFn) ~= "function" or type(infoFn) ~= "function" then return end
 	local ok, num = pcall(countFn, questID)
 	if not ok or type(num) ~= "number" or num <= 0 then return end
@@ -9775,15 +9790,15 @@ local function Attune_ReadIndexedRewards(countFn, infoFn, questID, list, seen, c
 		if okInfo then
 			if type(name) == "table" then
 				local info = name
-				Attune_AddReward(list, seen, info.itemID or info.itemId, info.name or info.itemName, info.texture or info.icon, info.quantity or info.amount or info.numItems, info.quality, choice)
+				rewardUi.Attune_AddReward(list, seen, info.itemID or info.itemId, info.name or info.itemName, info.texture or info.icon, info.quantity or info.amount or info.numItems, info.quality, choice)
 			else
-				Attune_AddReward(list, seen, itemID, name, texture, count, quality, choice)
+				rewardUi.Attune_AddReward(list, seen, itemID, name, texture, count, quality, choice)
 			end
 		end
 	end
 end
 
-local function Attune_StoredItem(itemID)
+function rewardUi.Attune_StoredItem(itemID)
 	local info = Attune_Data.rewardItems and itemID and Attune_Data.rewardItems[itemID]
 	if type(info) ~= "table" then return end
 	local name = info[1]
@@ -9869,7 +9884,7 @@ end
 -- Full item link when the client has it. Otherwise the stored name, so the
 -- tooltip does not sit on "Retrieving item information" for an item the
 -- server never answers.
-local function Attune_ShowItemTooltip(owner, itemID, request)
+function rewardUi.Attune_ShowItemTooltip(owner, itemID, request)
 	if not owner or not itemID or not owner:IsShown() then return end
 	if owner.IsMouseOver and not owner:IsMouseOver() then return end
 	GameTooltip:SetOwner(owner, "ANCHOR_RIGHT")
@@ -9880,7 +9895,7 @@ local function Attune_ShowItemTooltip(owner, itemID, request)
 		return
 	end
 
-	local storedName, _, storedQuality = Attune_StoredItem(itemID)
+	local storedName, _, storedQuality = rewardUi.Attune_StoredItem(itemID)
 	local name = (type(itemName) == "string" and itemName ~= "") and itemName or storedName
 	local quality = itemQuality or storedQuality
 	if name then
@@ -9928,30 +9943,30 @@ function spellReward.ShowTooltip(owner, spellID, request)
 	end
 end
 
-local function Attune_RefreshRewardTooltip(rows)
+function rewardUi.Attune_RefreshRewardTooltip(rows)
 	for _, row in ipairs(rows or {}) do
 		if row:IsShown() and row.IsMouseOver and row:IsMouseOver() then
 			if row.spellID then
 				spellReward.ShowTooltip(row, row.spellID, false)
 				return
 			elseif row.itemID then
-				Attune_ShowItemTooltip(row, row.itemID, false)
+				rewardUi.Attune_ShowItemTooltip(row, row.itemID, false)
 				return
 			end
 		end
 	end
 end
 
-local function Attune_AppendStoredRewards(questID, fixed, choices, seenFixed, seenChoice)
+function rewardUi.Attune_AppendStoredRewards(questID, fixed, choices, seenFixed, seenChoice)
 	local row = Attune_Data.questRewards and Attune_Data.questRewards[questID]
 	if not row then return end
 	for _, item in ipairs(row.fixed or {}) do
-		local storedName, storedIcon, storedQuality = Attune_StoredItem(item[1])
-		Attune_AddReward(fixed, seenFixed, item[1], storedName, storedIcon, item[2], storedQuality, false)
+		local storedName, storedIcon, storedQuality = rewardUi.Attune_StoredItem(item[1])
+		rewardUi.Attune_AddReward(fixed, seenFixed, item[1], storedName, storedIcon, item[2], storedQuality, false)
 	end
 	for _, item in ipairs(row.choice or {}) do
-		local storedName, storedIcon, storedQuality = Attune_StoredItem(item[1])
-		Attune_AddReward(choices, seenChoice, item[1], storedName, storedIcon, item[2], storedQuality, true)
+		local storedName, storedIcon, storedQuality = rewardUi.Attune_StoredItem(item[1])
+		rewardUi.Attune_AddReward(choices, seenChoice, item[1], storedName, storedIcon, item[2], storedQuality, true)
 	end
 end
 
@@ -10018,13 +10033,13 @@ function spellReward.AppendLive(questID, spells, seen)
 	end
 end
 
-local function Attune_CollectQuestRewards(questIDs)
+function rewardUi.Attune_CollectQuestRewards(questIDs)
 	local fixed, choices, spells = {}, {}, {}
 	local seenFixed, seenChoice, seenSpells = {}, {}, {}
 	for _, questID in ipairs(questIDs or {}) do
 		if C_QuestLog then
-			Attune_ReadIndexedRewards(C_QuestLog.GetNumQuestRewards, C_QuestLog.GetQuestRewardInfo, questID, fixed, seenFixed, false)
-			Attune_ReadIndexedRewards(C_QuestLog.GetNumQuestChoices or C_QuestLog.GetNumQuestLogChoices, C_QuestLog.GetQuestChoiceInfo or C_QuestLog.GetQuestLogChoiceInfo, questID, choices, seenChoice, true)
+			rewardUi.Attune_ReadIndexedRewards(C_QuestLog.GetNumQuestRewards, C_QuestLog.GetQuestRewardInfo, questID, fixed, seenFixed, false)
+			rewardUi.Attune_ReadIndexedRewards(C_QuestLog.GetNumQuestChoices or C_QuestLog.GetNumQuestLogChoices, C_QuestLog.GetQuestChoiceInfo or C_QuestLog.GetQuestLogChoiceInfo, questID, choices, seenChoice, true)
 		end
 		local useQuestLog = not (C_QuestLog and C_QuestLog.GetNumQuestRewards)
 		if not useQuestLog and GetQuestLogIndexByID and GetQuestLogSelection then
@@ -10032,20 +10047,20 @@ local function Attune_CollectQuestRewards(questIDs)
 			useQuestLog = index and index > 0 and index == GetQuestLogSelection()
 		end
 		if useQuestLog then
-			Attune_ReadIndexedRewards(GetNumQuestLogRewards, GetQuestLogRewardInfo, questID, fixed, seenFixed, false)
-			Attune_ReadIndexedRewards(GetNumQuestLogChoices, GetQuestLogChoiceInfo, questID, choices, seenChoice, true)
+			rewardUi.Attune_ReadIndexedRewards(GetNumQuestLogRewards, GetQuestLogRewardInfo, questID, fixed, seenFixed, false)
+			rewardUi.Attune_ReadIndexedRewards(GetNumQuestLogChoices, GetQuestLogChoiceInfo, questID, choices, seenChoice, true)
 		end
 		-- Always merge static rows; seen* skips duplicates. Live Forever data often
 		-- returns only choice rewards and omits fixed ones (e.g. Changing Tastes).
 		spellReward.AppendLive(questID, spells, seenSpells)
-		Attune_AppendStoredRewards(questID, fixed, choices, seenFixed, seenChoice)
+		rewardUi.Attune_AppendStoredRewards(questID, fixed, choices, seenFixed, seenChoice)
 		spellReward.AppendStored(questID, spells, seenSpells)
 	end
 	return fixed, choices, spells
 end
 
 -- XP from the quest log only (no static table). Returns nil when unavailable.
-local function Attune_QuestLogIndexForID(questID)
+function rewardUi.Attune_QuestLogIndexForID(questID)
 	if C_QuestLog and C_QuestLog.GetLogIndexForQuestID then
 		return C_QuestLog.GetLogIndexForQuestID(questID)
 	end
@@ -10055,23 +10070,23 @@ local function Attune_QuestLogIndexForID(questID)
 	return nil
 end
 
-local function Attune_IsQuestInLog(questID)
+function rewardUi.Attune_IsQuestInLog(questID)
 	if C_QuestLog and C_QuestLog.IsOnQuest then
 		return C_QuestLog.IsOnQuest(questID)
 	end
-	local index = Attune_QuestLogIndexForID(questID)
+	local index = rewardUi.Attune_QuestLogIndexForID(questID)
 	return index and index > 0
 end
 
-local function Attune_QuestLogRewardXPForID(questID)
+function rewardUi.Attune_QuestLogRewardXPForID(questID)
 	questID = tonumber(questID)
 	if not questID or type(GetQuestLogRewardXP) ~= "function" then return nil end
-	if not Attune_IsQuestInLog(questID) then return nil end
+	if not rewardUi.Attune_IsQuestInLog(questID) then return nil end
 
 	local ok, xp = pcall(GetQuestLogRewardXP, questID)
 	if ok and type(xp) == "number" and xp > 0 then return xp end
 
-	local index = Attune_QuestLogIndexForID(questID)
+	local index = rewardUi.Attune_QuestLogIndexForID(questID)
 	if not index or index <= 0 or not SelectQuestLogEntry then return nil end
 
 	local prev = GetQuestLogSelection and GetQuestLogSelection()
@@ -10084,10 +10099,10 @@ local function Attune_QuestLogRewardXPForID(questID)
 	return nil
 end
 
-local function Attune_GetQuestLogRewardXP(questIDs)
+function rewardUi.Attune_GetQuestLogRewardXP(questIDs)
 	local total, found = 0, false
 	for _, questID in ipairs(questIDs or {}) do
-		local xp = Attune_QuestLogRewardXPForID(questID)
+		local xp = rewardUi.Attune_QuestLogRewardXPForID(questID)
 		if xp then
 			total = total + xp
 			found = true
@@ -10097,7 +10112,7 @@ local function Attune_GetQuestLogRewardXP(questIDs)
 	return nil
 end
 
-local function Attune_FormatXPAmount(xp)
+function rewardUi.Attune_FormatXPAmount(xp)
 	if BreakUpLargeNumbers then return BreakUpLargeNumbers(xp) end
 	return tostring(xp)
 end
@@ -10105,7 +10120,7 @@ end
 local ATTUNE_SPELL_FRAME = "Interface\\AddOns\\Attune\\Images\\spellframe"
 
 -- Gold ring with a black center. Additive draw keeps the spell icon visible.
-local function Attune_SetSpellFrame(row, show)
+function rewardUi.Attune_SetSpellFrame(row, show)
 	if not show then
 		if row.spellFrame then row.spellFrame:Hide() end
 		return
@@ -10120,7 +10135,7 @@ local function Attune_SetSpellFrame(row, show)
 	row.spellFrame:Show()
 end
 
-local function Attune_CreateRewardRow(parent)
+function rewardUi.Attune_CreateRewardRow(parent)
 	local row = CreateFrame("Button", nil, parent)
 	row:SetHeight(36)
 	row.icon = row:CreateTexture(nil, "ARTWORK")
@@ -10140,7 +10155,7 @@ local function Attune_CreateRewardRow(parent)
 		if self.spellID then
 			spellReward.ShowTooltip(self, self.spellID, true)
 		else
-			Attune_ShowItemTooltip(self, self.itemID, true)
+			rewardUi.Attune_ShowItemTooltip(self, self.itemID, true)
 		end
 	end)
 	row:SetScript("OnLeave", function()
@@ -10149,7 +10164,7 @@ local function Attune_CreateRewardRow(parent)
 	return row
 end
 
-local function Attune_HideRewardRows(frame)
+function rewardUi.Attune_HideRewardRows(frame)
 	for _, row in ipairs(frame.rows) do
 		row.itemID = nil
 		row.spellID = nil
@@ -10158,7 +10173,7 @@ local function Attune_HideRewardRows(frame)
 	for _, header in ipairs(frame.headers) do header:Hide() end
 end
 
-local function Attune_RewardHeader(frame, index, text, y)
+function rewardUi.Attune_RewardHeader(frame, index, text, y)
 	local header = frame.headers[index]
 	if not header then
 		header = frame.content:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
@@ -10172,12 +10187,12 @@ local function Attune_RewardHeader(frame, index, text, y)
 	header:Show()
 end
 
-local function Attune_PaintRewardItem(frame, entry, y)
+function rewardUi.Attune_PaintRewardItem(frame, entry, y)
 	local index = frame.rowUsed + 1
 	frame.rowUsed = index
 	local row = frame.rows[index]
 	if not row then
-		row = Attune_CreateRewardRow(frame.content)
+		row = rewardUi.Attune_CreateRewardRow(frame.content)
 		frame.rows[index] = row
 	end
 	row:ClearAllPoints()
@@ -10186,7 +10201,7 @@ local function Attune_PaintRewardItem(frame, entry, y)
 
 	row.itemID = entry.itemID
 	row.spellID = nil
-	Attune_SetSpellFrame(row, false)
+	rewardUi.Attune_SetSpellFrame(row, false)
 	local name = entry.name
 	local quality = entry.quality
 	local texture = entry.texture
@@ -10223,7 +10238,7 @@ function spellReward.Paint(frame, entry, y)
 	frame.rowUsed = index
 	local row = frame.rows[index]
 	if not row then
-		row = Attune_CreateRewardRow(frame.content)
+		row = rewardUi.Attune_CreateRewardRow(frame.content)
 		frame.rows[index] = row
 	end
 	row:ClearAllPoints()
@@ -10232,7 +10247,7 @@ function spellReward.Paint(frame, entry, y)
 
 	row.itemID = nil
 	row.spellID = entry.spellID
-	Attune_SetSpellFrame(row, true)
+	rewardUi.Attune_SetSpellFrame(row, true)
 	local name, texture = spellReward.Resolve(entry.spellID)
 	if not name or name == "" then name = entry.name end
 	if not texture then texture = entry.texture end
@@ -10248,14 +10263,14 @@ function spellReward.Paint(frame, entry, y)
 	row:Show()
 end
 
-local function Attune_FillQuestRewards(frame, final, resetScroll)
+function rewardUi.Attune_FillQuestRewards(frame, final, resetScroll)
 	if not frame or not frame:IsShown() then return end
 	local width = frame.scroll:GetWidth()
 	if not width or width < 40 then width = ATTUNE_REWARD_WIDTH - 52 end
 	frame.content:SetWidth(width)
 
-	local fixed, choices, spells = Attune_CollectQuestRewards(frame.questIDs)
-	Attune_HideRewardRows(frame)
+	local fixed, choices, spells = rewardUi.Attune_CollectQuestRewards(frame.questIDs)
+	rewardUi.Attune_HideRewardRows(frame)
 	frame.rowUsed = 0
 
 	if #fixed == 0 and #choices == 0 and #spells == 0 then
@@ -10272,23 +10287,23 @@ local function Attune_FillQuestRewards(frame, final, resetScroll)
 	local y = 2
 	local headerIndex = 0
 	for _, entry in ipairs(fixed) do
-		Attune_PaintRewardItem(frame, entry, y)
+		rewardUi.Attune_PaintRewardItem(frame, entry, y)
 		y = y + 40
 	end
 	if #choices > 0 then
 		if #fixed > 0 then y = y + 6 end
 		headerIndex = headerIndex + 1
-		Attune_RewardHeader(frame, headerIndex, AttuneLang["Choose one reward"], y)
+		rewardUi.Attune_RewardHeader(frame, headerIndex, AttuneLang["Choose one reward"], y)
 		y = y + 18
 		for _, entry in ipairs(choices) do
-			Attune_PaintRewardItem(frame, entry, y)
+			rewardUi.Attune_PaintRewardItem(frame, entry, y)
 			y = y + 40
 		end
 	end
 	if #spells > 0 then
 		if #fixed > 0 or #choices > 0 then y = y + 6 end
 		headerIndex = headerIndex + 1
-		Attune_RewardHeader(frame, headerIndex, spellReward.Header(), y)
+		rewardUi.Attune_RewardHeader(frame, headerIndex, spellReward.Header(), y)
 		y = y + 18
 		for _, entry in ipairs(spells) do
 			spellReward.Paint(frame, entry, y)
@@ -10300,7 +10315,7 @@ local function Attune_FillQuestRewards(frame, final, resetScroll)
 	if resetScroll then frame.scroll:SetVerticalScroll(0) end
 end
 
-local function Attune_FitRewardFrame(side)
+function rewardUi.Attune_FitRewardFrame(side)
 	local parent = side:GetParent()
 	if not parent or not parent:IsShown() then return end
 	local right = parent:GetRight()
@@ -10317,7 +10332,7 @@ local function Attune_FitRewardFrame(side)
 	end
 end
 
-local function Attune_EnsureRewardFrame()
+function rewardUi.Attune_EnsureRewardFrame()
 	if attunelocal_rewardFrame then return attunelocal_rewardFrame end
 	local parent = attunelocal_frame and attunelocal_frame.frame
 	if not parent then return nil end
@@ -10411,8 +10426,8 @@ local function Attune_EnsureRewardFrame()
 			end
 			if not wanted then return end
 		end
-		Attune_FillQuestRewards(f, true)
-		Attune_RefreshRewardTooltip(f.rows)
+		rewardUi.Attune_FillQuestRewards(f, true)
+		rewardUi.Attune_RefreshRewardTooltip(f.rows)
 	end)
 	f.listener = listener
 	f:SetScript("OnShow", function(self)
@@ -10443,10 +10458,10 @@ end
 
 function Attune_ShowQuestRewards(step)
 	if not step or not attunelocal_frame or not attunelocal_frame.frame then return end
-	local f = Attune_EnsureRewardFrame()
+	local f = rewardUi.Attune_EnsureRewardFrame()
 	if not f then return end
 
-	f.questIDs = Attune_RewardQuestIDs(step.ID_WOWHEAD)
+	f.questIDs = rewardUi.Attune_RewardQuestIDs(step.ID_WOWHEAD)
 	f.qstring = "quest=" .. step.ID_WOWHEAD
 	f.token = (f.token or 0) + 1
 	local title = AttuneLang["Q1_" .. step.ID_WOWHEAD]
@@ -10460,7 +10475,7 @@ function Attune_ShowQuestRewards(step)
 	end
 	f.urlBtn:SetText(AttuneLang["Show link"])
 	f:Show()
-	Attune_FitRewardFrame(f)
+	rewardUi.Attune_FitRewardFrame(f)
 
 	if C_QuestLog and C_QuestLog.RequestLoadQuestByID then
 		for _, questID in ipairs(f.questIDs) do
@@ -10468,12 +10483,12 @@ function Attune_ShowQuestRewards(step)
 		end
 	end
 
-	Attune_FillQuestRewards(f, false, true)
+	rewardUi.Attune_FillQuestRewards(f, false, true)
 	local token = f.token
 	if C_Timer and C_Timer.After then
 		C_Timer.After(0.4, function()
 			if f:IsShown() and f.token == token then
-				Attune_FillQuestRewards(f, true, false)
+				rewardUi.Attune_FillQuestRewards(f, true, false)
 			end
 		end)
 	end
@@ -10520,11 +10535,11 @@ SLASH_Attune1 = "/attune"
 
 local attunelocal_questDetail
 
-local function Attune_QuestDetailKey(step)
+function rewardUi.Attune_QuestDetailKey(step)
 	return tostring(step.ID_ATTUNE) .. "-" .. tostring(step.ID) .. "-" .. tostring(step.ID_WOWHEAD)
 end
 
-local function Attune_DetailGiver(step)
+function rewardUi.Attune_DetailGiver(step)
 	local questId = Attune_QuestIdFromStep(step)
 	local loc = questId and Attune_Data.questGivers and Attune_Data.questGivers[questId]
 	if not loc then return nil, nil, nil, nil end
@@ -10536,7 +10551,7 @@ local function Attune_DetailGiver(step)
 end
 
 -- Shift-click shares this pin the same way the world map pin does: chat link plus clipboard.
-local function Attune_ShareDetailPin(uiMapID, x, y)
+function rewardUi.Attune_ShareDetailPin(uiMapID, x, y)
 	if not uiMapID or not x or not y or not (C_Map and C_Map.SetUserWaypoint and C_Map.GetUserWaypointHyperlink and UiMapPoint) then return end
 	if C_Map.CanSetUserWaypointOnMap and not C_Map.CanSetUserWaypointOnMap(uiMapID) then return end
 
@@ -10576,7 +10591,7 @@ end
 
 -- Explored ground is a second set of tiles on top of the base map. The world map
 -- draws these from C_MapExplorationInfo; without them the embed stays the blank base.
-local function Attune_FillExploredOverlays(clip, uiMapID, tileW, tileH, left, top, scale)
+function rewardUi.Attune_FillExploredOverlays(clip, uiMapID, tileW, tileH, left, top, scale)
 	clip.explored = clip.explored or {}
 	local n = 0
 	local exploredMapTextures = C_MapExplorationInfo and C_MapExplorationInfo.GetExploredMapTextures and C_MapExplorationInfo.GetExploredMapTextures(uiMapID)
@@ -10628,7 +10643,7 @@ local function Attune_FillExploredOverlays(clip, uiMapID, tileW, tileH, left, to
 	for i = n + 1, #clip.explored do clip.explored[i]:Hide() end
 end
 
-local function Attune_FillDetailMap(clip, uiMapID, x, y)
+function rewardUi.Attune_FillDetailMap(clip, uiMapID, x, y)
 	clip.tiles = clip.tiles or {}
 	for _, tex in ipairs(clip.tiles) do tex:Hide() end
 	if clip.explored then
@@ -10686,14 +10701,14 @@ local function Attune_FillDetailMap(clip, uiMapID, x, y)
 		end
 	end
 	for k = n + 1, #clip.tiles do clip.tiles[k]:Hide() end
-	Attune_FillExploredOverlays(clip, uiMapID, tileW, tileH, left, top, scale)
+	rewardUi.Attune_FillExploredOverlays(clip, uiMapID, tileW, tileH, left, top, scale)
 	clip.pin.uiMapID, clip.pin.pinX, clip.pin.pinY = uiMapID, x, y
 	clip.pin:Show()
 	clip.pin:ClearAllPoints()
 	clip.pin:SetPoint("CENTER", clip, "CENTER", 0, 0)
 end
 
-local function Attune_DetailRewardRow(parent)
+function rewardUi.Attune_DetailRewardRow(parent)
 	local row = CreateFrame("Button", nil, parent)
 	row:SetHeight(36)
 	row.icon = row:CreateTexture(nil, "ARTWORK")
@@ -10716,7 +10731,7 @@ local function Attune_DetailRewardRow(parent)
 		if self.spellID then
 			spellReward.ShowTooltip(self, self.spellID, true)
 		else
-			Attune_ShowItemTooltip(self, self.itemID, true)
+			rewardUi.Attune_ShowItemTooltip(self, self.itemID, true)
 		end
 	end)
 	row:SetScript("OnLeave", function() GameTooltip:Hide() end)
@@ -10746,7 +10761,7 @@ function spellReward.ShowDetail(panel, entry, y, shown)
 	shown = shown + 1
 	local row = panel.rows[shown]
 	if not row then
-		row = Attune_DetailRewardRow(panel.rewardChild)
+		row = rewardUi.Attune_DetailRewardRow(panel.rewardChild)
 		panel.rows[shown] = row
 	end
 	row:ClearAllPoints()
@@ -10754,7 +10769,7 @@ function spellReward.ShowDetail(panel, entry, y, shown)
 	row:SetPoint("RIGHT", panel.rewardChild, "RIGHT", -6, 0)
 	row.itemID = nil
 	row.spellID = entry.spellID
-	Attune_SetSpellFrame(row, true)
+	rewardUi.Attune_SetSpellFrame(row, true)
 	local name, texture = spellReward.Resolve(entry.spellID)
 	if not name or name == "" then name = entry.name end
 	if not texture then texture = entry.texture end
@@ -10779,8 +10794,8 @@ function spellReward.ShowDetail(panel, entry, y, shown)
 	return y + 42, shown
 end
 
-local function Attune_QuestRewardsKnown(panel)
-	local ids = panel and panel.step and Attune_RewardQuestIDs(panel.step.ID_WOWHEAD) or {}
+function rewardUi.Attune_QuestRewardsKnown(panel)
+	local ids = panel and panel.step and rewardUi.Attune_RewardQuestIDs(panel.step.ID_WOWHEAD) or {}
 	for _, questID in ipairs(ids) do
 		if panel.questLoaded and panel.questLoaded[questID] then return true end
 		if Attune_Data.questRewards and Attune_Data.questRewards[questID] ~= nil then return true end
@@ -10789,7 +10804,7 @@ local function Attune_QuestRewardsKnown(panel)
 	return false
 end
 
-local function Attune_LayoutQuestDetail(panel)
+function rewardUi.Attune_LayoutQuestDetail(panel)
 	if not panel or not panel:IsShown() or not panel.step then return end
 	local width = panel:GetWidth()
 	local height = panel:GetHeight()
@@ -10834,22 +10849,22 @@ local function Attune_LayoutQuestDetail(panel)
 	if not questName or questName == "" then questName = AttuneLang["Quest rewards"] end
 	panel.title:SetText(questName)
 
-	local questIDs = Attune_RewardQuestIDs(panel.step.ID_WOWHEAD)
-	local fixed, choices, spells = Attune_CollectQuestRewards(questIDs)
+	local questIDs = rewardUi.Attune_RewardQuestIDs(panel.step.ID_WOWHEAD)
+	local fixed, choices, spells = rewardUi.Attune_CollectQuestRewards(questIDs)
 	spells = spells or {}
 	local items = {}
 	for _, entry in ipairs(fixed) do items[#items + 1] = entry end
 	for _, entry in ipairs(choices) do items[#items + 1] = entry end
 
 	local y = 6
-	local xp = Attune_GetQuestLogRewardXP(questIDs)
+	local xp = rewardUi.Attune_GetQuestLogRewardXP(questIDs)
 	if panel.xpText then
 		if xp then
 			local fmt = AttuneLang["Experience reward"]
 			if type(fmt) ~= "string" or fmt == "" or not string.find(fmt, "%%s", 1, true) then
 				fmt = "+%s XP"
 			end
-			panel.xpText:SetText(fmt:format(Attune_FormatXPAmount(xp)))
+			panel.xpText:SetText(fmt:format(rewardUi.Attune_FormatXPAmount(xp)))
 			panel.xpText:ClearAllPoints()
 			panel.xpText:SetPoint("TOPLEFT", 6, -y)
 			panel.xpText:SetPoint("RIGHT", panel.rewardChild, "RIGHT", -6, 0)
@@ -10868,7 +10883,7 @@ local function Attune_LayoutQuestDetail(panel)
 	spellReward.HideDetailHeaders(panel)
 	if #items == 0 and #spells == 0 then
 		panel.empty:Show()
-		local known = Attune_QuestRewardsKnown(panel)
+		local known = rewardUi.Attune_QuestRewardsKnown(panel)
 		local msg
 		if not panel.rewardsFinal and not known then
 			msg = AttuneLang["Loading rewards"]
@@ -10891,7 +10906,7 @@ local function Attune_LayoutQuestDetail(panel)
 			if itemName and itemName ~= "" then
 				name, quality, texture = itemName, itemQuality, itemTexture or texture
 			else
-				local storedName, storedIcon, storedQuality = Attune_StoredItem(entry.itemID)
+				local storedName, storedIcon, storedQuality = rewardUi.Attune_StoredItem(entry.itemID)
 				if storedName then name = storedName end
 				if storedIcon and not texture then texture = storedIcon end
 				if storedQuality and not quality then quality = storedQuality end
@@ -10914,7 +10929,7 @@ local function Attune_LayoutQuestDetail(panel)
 			shown = shown + 1
 			local row = panel.rows[shown]
 			if not row then
-				row = Attune_DetailRewardRow(panel.rewardChild)
+				row = rewardUi.Attune_DetailRewardRow(panel.rewardChild)
 				panel.rows[shown] = row
 			end
 			row:ClearAllPoints()
@@ -10922,7 +10937,7 @@ local function Attune_LayoutQuestDetail(panel)
 	row:SetPoint("RIGHT", panel.rewardChild, "RIGHT", -6, 0)
 	row.itemID = entry.itemID
 	row.spellID = nil
-	Attune_SetSpellFrame(row, false)
+	rewardUi.Attune_SetSpellFrame(row, false)
 	row.icon:SetTexture(texture or "Interface\\Icons\\INV_Misc_QuestionMark")
 			local text = name
 			if entry.count and entry.count > 1 then text = text .. " x" .. entry.count end
@@ -10994,7 +11009,7 @@ local function Attune_LayoutQuestDetail(panel)
 	end
 
 	if not (Attune_DB and Attune_DB.useFullMap) then
-		local uiMapID, x, y, giver = Attune_DetailGiver(panel.step)
+		local uiMapID, x, y, giver = rewardUi.Attune_DetailGiver(panel.step)
 		if giver and giver ~= "" then
 			panel.giver:SetText(AttuneLang["Starts at"] .. " " .. giver)
 			panel.giver:Show()
@@ -11002,11 +11017,11 @@ local function Attune_LayoutQuestDetail(panel)
 			panel.giver:Hide()
 		end
 		panel.map.art.zoom = panel.map.zoom or 1
-		Attune_FillDetailMap(panel.map.art, uiMapID, x, y)
+		rewardUi.Attune_FillDetailMap(panel.map.art, uiMapID, x, y)
 	end
 end
 
-local function Attune_EnsureQuestDetail()
+function rewardUi.Attune_EnsureQuestDetail()
 	if attunelocal_questDetail then return attunelocal_questDetail end
 	local panel = CreateFrame("Frame", "AttuneQuestDetail", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil)
 	panel:EnableMouse(true)
@@ -11108,7 +11123,7 @@ local function Attune_EnsureQuestDetail()
 	end
 	map.pin:SetScript("OnClick", function(self)
 		if IsModifiedClick("CHATLINK") then
-			Attune_ShareDetailPin(self.uiMapID, self.pinX, self.pinY)
+			rewardUi.Attune_ShareDetailPin(self.uiMapID, self.pinX, self.pinY)
 		end
 	end)
 	map.pin:SetScript("OnEnter", function(self)
@@ -11145,7 +11160,7 @@ local function Attune_EnsureQuestDetail()
 		if zoom > 8 then zoom = 8 end
 		map.zoom = zoom
 		if map.art then map.art.zoom = zoom end
-		if panel:IsShown() then Attune_LayoutQuestDetail(panel) end
+		if panel:IsShown() then rewardUi.Attune_LayoutQuestDetail(panel) end
 	end
 	local zoomOut = CreateFrame("Button", nil, map, "UIPanelButtonTemplate")
 	zoomOut:SetSize(22, 20)
@@ -11176,8 +11191,8 @@ local function Attune_EnsureQuestDetail()
 				end
 			end
 			if not wanted then return end
-			Attune_LayoutQuestDetail(panel)
-			Attune_RefreshRewardTooltip(panel.rows)
+			rewardUi.Attune_LayoutQuestDetail(panel)
+			rewardUi.Attune_RefreshRewardTooltip(panel.rows)
 			return
 		end
 		if event == "UNIT_QUEST_LOG_CHANGED" and arg1 ~= "player" then
@@ -11187,7 +11202,7 @@ local function Attune_EnsureQuestDetail()
 			panel.questLoaded = panel.questLoaded or {}
 			panel.questLoaded[arg1] = true
 		end
-		if panel:IsShown() then Attune_LayoutQuestDetail(panel) end
+		if panel:IsShown() then rewardUi.Attune_LayoutQuestDetail(panel) end
 	end)
 	panel:SetScript("OnShow", function(self)
 		listener:RegisterEvent("QUEST_DATA_LOAD_RESULT")
@@ -11212,7 +11227,7 @@ local function Attune_EnsureQuestDetail()
 	panel:SetScript("OnSizeChanged", function(self)
 		if self:IsShown() and not self.layingOut then
 			self.layingOut = true
-			Attune_LayoutQuestDetail(self)
+			rewardUi.Attune_LayoutQuestDetail(self)
 			self.layingOut = false
 		end
 	end)
@@ -11243,8 +11258,8 @@ end
 function Attune_ShowQuestDetail(step)
 	if not step or not attunelocal_treeframe or not attunelocal_treeframe.treeframe then return end
 	local tree = attunelocal_treeframe.treeframe
-	local panel = Attune_EnsureQuestDetail()
-	local key = Attune_QuestDetailKey(step)
+	local panel = rewardUi.Attune_EnsureQuestDetail()
+	local key = rewardUi.Attune_QuestDetailKey(step)
 	if panel:IsShown() and panel.key == key then
 		Attune_HideQuestDetail()
 		return
@@ -11266,13 +11281,13 @@ function Attune_ShowQuestDetail(step)
 	end
 	if attunelocal_treeframe.scrollbar then attunelocal_treeframe.scrollbar:Hide() end
 	panel:Show()
-	Attune_LayoutQuestDetail(panel)
+	rewardUi.Attune_LayoutQuestDetail(panel)
 	if Attune_DB and Attune_DB.useFullMap then
 		Attune_ShowQuestGiverMap(step)
 	end
 
 	if C_QuestLog and C_QuestLog.RequestLoadQuestByID then
-		for _, questID in ipairs(Attune_RewardQuestIDs(step.ID_WOWHEAD)) do
+		for _, questID in ipairs(rewardUi.Attune_RewardQuestIDs(step.ID_WOWHEAD)) do
 			pcall(C_QuestLog.RequestLoadQuestByID, questID)
 		end
 	end
@@ -11281,7 +11296,7 @@ function Attune_ShowQuestDetail(step)
 		C_Timer.After(0.4, function()
 			if panel:IsShown() and panel.key == token then
 				panel.rewardsFinal = true
-				Attune_LayoutQuestDetail(panel)
+				rewardUi.Attune_LayoutQuestDetail(panel)
 			end
 		end)
 	end
@@ -11290,7 +11305,7 @@ end
 function Attune_RefreshQuestMapMode()
 	local panel = attunelocal_questDetail
 	if not panel or not panel:IsShown() or not panel.step then return end
-	Attune_LayoutQuestDetail(panel)
+	rewardUi.Attune_LayoutQuestDetail(panel)
 	if Attune_DB and Attune_DB.useFullMap then
 		Attune_ShowQuestGiverMap(panel.step)
 	else

@@ -6380,3 +6380,111 @@ for lang, data in pairs(REARGUARD) do
     end
 end
 -- END rearguard
+
+-- BEGIN palawarn
+-- Paladin class quests (The Test of Righteousness, Old Fire-Eye): "a step in
+-- this dungeon" disclaimer on each dungeon's page.
+local PALA_WARNINGS = {
+    ["This is a chain quest with a step in The Deadmines"] = {
+        deDE = "Dies ist eine Questreihe mit einem Schritt in den Todesminen",
+        frFR = "C’est une suite de quêtes avec une étape aux Mortemines",
+        esES = "Es una cadena de misiones con un paso en las Minas de la Muerte",
+        itIT = "È una catena di missioni con una tappa nelle Miniere della Morte",
+        ptBR = "É uma cadeia de missões com uma etapa nas Minas Mortas",
+        ruRU = "Это цепочка заданий с этапом в Мертвых копях",
+        koKR = "죽음의 폐광에서 진행하는 단계가 있는 연계 퀘스트입니다",
+        zhCN = "这是一个系列任务，其中一步在死亡矿井",
+        zhTW = "這是一個系列任務，其中一步在死亡礦坑",
+    },
+    ["This is a chain quest with a step in Blackfathom Deeps"] = {
+        deDE = "Dies ist eine Questreihe mit einem Schritt in der Tiefschwarzen Grotte",
+        frFR = "C’est une suite de quêtes avec une étape dans les Profondeurs de Brassenoire",
+        esES = "Es una cadena de misiones con un paso en las Cavernas de Brazanegra",
+        itIT = "È una catena di missioni con una tappa negli Abissi di Fondocupo",
+        ptBR = "É uma cadeia de missões com uma etapa nas Profundezas Negras",
+        ruRU = "Это цепочка заданий с этапом в Непроглядной Пучине",
+        koKR = "검은심연 나락에서 진행하는 단계가 있는 연계 퀘스트입니다",
+        zhCN = "这是一个系列任务，其中一步在黑暗深渊",
+        zhTW = "這是一個系列任務，其中一步在黑暗深淵",
+    },
+    ["This is a chain quest with a step in Shadowfang Keep"] = {
+        deDE = "Dies ist eine Questreihe mit einem Schritt in Burg Schattenfang",
+        frFR = "C’est une suite de quêtes avec une étape au Donjon d’Ombrecroc",
+        esES = "Es una cadena de misiones con un paso en el Castillo de Colmillo Oscuro",
+        itIT = "È una catena di missioni con una tappa nel Forte di Zannascura",
+        ptBR = "É uma cadeia de missões com uma etapa na Bastilha da Presa Negra",
+        ruRU = "Это цепочка заданий с этапом в Крепости Темного Клыка",
+        koKR = "그림자송곳니 성채에서 진행하는 단계가 있는 연계 퀘스트입니다",
+        zhCN = "这是一个系列任务，其中一步在影牙城堡",
+        zhTW = "這是一個系列任務，其中一步在影牙城堡",
+    },
+}
+for english, byLang in pairs(PALA_WARNINGS) do
+    for lang, text in pairs(byLang) do
+        local content = FDJ.ContentLocales[lang]
+        if content then
+            content.places = content.places or {}
+            content.places[english] = text
+        end
+    end
+end
+-- END palawarn
+
+-- BEGIN turninplaces
+-- Places in the quest tracker's turn-in pins (Data/QuestMaps.lua, TURNIN_SPOTS).
+local TURNIN_PLACES = {
+    ["Valley of Heroes"] = {
+        deDE = "Tal der Helden",
+        frFR = "Vallée des Héros",
+        esES = "Valle de los Héroes",
+        itIT = "Valle degli Eroi",
+        ptBR = "Vale dos Heróis",
+        ruRU = "Аллея Героев",
+        koKR = "영웅의 계곡",
+        zhCN = "英雄谷",
+        zhTW = "英雄谷",
+    },
+    ["Stormwind Keep"] = {
+        deDE = "Burg Sturmwind",
+        frFR = "Donjon de Hurlevent",
+        esES = "Castillo de Ventormenta",
+        itIT = "Fortezza di Roccavento",
+        ptBR = "Bastilha de Ventobravo",
+        ruRU = "Крепость Штормграда",
+        koKR = "스톰윈드 왕궁",
+        zhCN = "暴风城要塞",
+        zhTW = "暴風城要塞",
+    },
+    ["Cathedral Square"] = {
+        deDE = "Kathedralenplatz",
+        frFR = "Place de la Cathédrale",
+        esES = "Plaza de la Catedral",
+        itIT = "Piazza della Cattedrale",
+        ptBR = "Praça da Catedral",
+        ruRU = "Соборная площадь",
+        koKR = "대성당 광장",
+        zhCN = "教堂广场",
+        zhTW = "教堂廣場",
+    },
+    ["Magic Quarter"] = {
+        deDE = "Magieviertel",
+        frFR = "Quartier de la Magie",
+        esES = "Barrio de la Magia",
+        itIT = "Quartiere della Magia",
+        ptBR = "Bairro da Magia",
+        ruRU = "Квартал Магов",
+        koKR = "마법 지구",
+        zhCN = "魔法区",
+        zhTW = "魔法區",
+    },
+}
+for english, byLang in pairs(TURNIN_PLACES) do
+    for lang, text in pairs(byLang) do
+        local content = FDJ.ContentLocales[lang]
+        if content then
+            content.places = content.places or {}
+            if content.places[english] == nil then content.places[english] = text end
+        end
+    end
+end
+-- END turninplaces

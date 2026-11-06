@@ -1,35 +1,80 @@
 # Z-Settings
 
-A shared WoW Forever `Interface\AddOns` folder. Cloning it installs the addons, and the Z-Settings addon
-does two things:
+Zeroshin's WoW Forever UI: every addon, plus the Z-Settings addon, which does two things:
 
-- **Setup sharing:** at login, a popup offers the parts of the published setup that differ from your UI,
-  with keybinds converted to your keyboard.
+- **Setup sharing:** after you log in, a popup offers the parts of Zeroshin's setup that differ from your
+  UI, with keybinds converted to your keyboard.
 - **Character copy:** copies one of your characters' complete setup onto another, on any account.
 
 ## Install
 
-Requires [Git for Windows](https://git-scm.com/download/win) and collaborator access.
+There are two ways. Both give the same UI; they differ in how you update later.
+
+| | Download (no Git) | Git |
+|---|---|---|
+| Install | download a ZIP file, unzip it | install Git, paste one command |
+| Update | download the ZIP again | double-click `update.cmd` |
+
+Not sure? Take the download.
+
+### 1. Find your addons folder
 
 1. Close WoW.
-2. In `World of Warcraft\_forever_\Interface`, rename `AddOns` to `AddOns-old`.
-3. From `Interface`, run `git clone --depth 1 https://github.com/wvince/z-settings.git AddOns`. `--depth 1` skips
-   the history, hundreds of MB of old addon versions you never need.
-4. Optional: copy personal addons from `AddOns-old` into `AddOns`.
-5. Start WoW, click Apply in the popup and press the key right of Tab (QWERTY or Belgian AZERTY).
-   The key is asked once.
-6. Put your own spells on your bars. Setup sharing never places anything on them.
+2. In the Battle.net app, select World of Warcraft, click the gear next to Play and choose Show in
+   Explorer. Usually that's `C:\Program Files (x86)\World of Warcraft`.
+3. Open `_forever_`, then `Interface`. No `Interface` folder? Create it.
+4. Is there an `AddOns` folder? Rename it to `AddOns-old`.
+
+### 2a. Install by download
+
+1. Go to [github.com/wvince/z-settings](https://github.com/wvince/z-settings), click the green Code
+   button, then Download ZIP. It's a big download (about 800 MB unpacked).
+2. Right-click the downloaded `z-settings-main.zip` and choose Extract All.
+3. Click Browse, pick the `Interface` folder from part 1 and click Extract.
+4. In `Interface`, rename `z-settings-main` to `AddOns`.
+5. Check that this file exists: `Interface\AddOns\Z-Settings\Z-Settings.toc`. Is there an
+   `AddOns\z-settings-main` folder in between? Move its contents up one level, or the game finds no
+   addons.
+
+### 2b. Install with Git
+
+1. Install [Git for Windows](https://git-scm.com/download/win). Keep every default the installer
+   offers.
+2. In the `Interface` folder from part 1, click Explorer's address bar, type `cmd` and press Enter.
+3. In the black window, paste this and press Enter:
+   `git clone --depth 1 https://github.com/wvince/z-settings.git AddOns`
+4. Wait until it's done and close the window.
+
+### 3. First start
+
+1. Had your own addons? Move them from `AddOns-old` into `AddOns`.
+2. Start WoW and log in to a character. Click Apply in the popup.
+3. Press the key right of Tab when asked (QWERTY or Belgian AZERTY). It's asked once.
+4. Put your own spells on your bars. Setup sharing never places anything on them.
 
 ## Update
 
-1. Close WoW.
-2. In `AddOns`, double-click `update.cmd`. What CurseForge or another updater changed in a shared addon
-   is replaced by the published version; addons that aren't in the repo stay.
-3. Start WoW and click Apply. The popup lists only the parts that differ from your UI, all ticked; untick
-   one to keep yours. With nothing different there is no popup. Each character gets its own popup.
+Your settings and characters are stored outside `AddOns`, so an update keeps them.
 
-A new addon needs a full client restart. `git pull` works too, but stops with "your local changes" once
-an updater has changed a shared addon.
+**Downloaded:**
+
+1. Close WoW.
+2. In `Interface`, delete `AddOns-old` if it's still there, then rename `AddOns` to `AddOns-old`.
+3. Do part 2a again, then move your own addons over from `AddOns-old`.
+4. Start WoW and click Apply.
+
+`update.cmd` doesn't work for a download. It says so when you try.
+
+**With Git:**
+
+1. Close WoW.
+2. In `AddOns`, double-click `update.cmd`. Shared addons that CurseForge or another updater changed go
+   back to Zeroshin's version; your own addons stay.
+3. Start WoW and click Apply.
+
+The popup lists only the parts that differ from your UI, all ticked. Untick one to keep yours. With
+nothing different there is no popup, and each character gets its own. A new addon needs a full game
+restart, not just `/reload`.
 
 ## Commands
 

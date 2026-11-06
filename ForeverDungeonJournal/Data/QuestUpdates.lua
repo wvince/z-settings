@@ -63,6 +63,72 @@ FDJ.QUEST_PREREQ_DETAILS[1806] = { level = 22, requires = 20, objective = "Wait 
 FDJ.PREREQ_REWARD_ITEMS_FALLBACK[1806] = { items = { {6953, "Verigan's Fist", 3} }, choice = false }
 FDJ.FOREVER_QUEST_XP_FALLBACK[1806] = 5500
 
+
+-- BEGIN hordepaladin
+-- Paladin (undead / tauren, WoW Forever): The Debt -> A Moon-Kissed Blade ->
+-- An Underrated Talent -> Ott's Masterwork -> The Moonsilver Blade, then Old
+-- Fire-Eye (the journal entry), which awards Wolfsbane. A Moon-Kissed Blade
+-- needs Whitestone Oak Lumber (The Deadmines), the Enchanted Silver Ingot
+-- (Shadowfang Keep) and the Purified Kor Gem (Blackfathom Deeps naga).
+FDJ.QUEST_PREREQ_CHAINS[95140] = {
+    { id = 95034, name = "The Debt" },
+    { id = 95036, name = "A Moon-Kissed Blade" },
+    { id = 95111, name = "An Underrated Talent" },
+    { id = 95125, name = "Ott's Masterwork" },
+    { id = 95126, name = "The Moonsilver Blade" },
+}
+FDJ.QUEST_PREREQ_DETAILS[95034] = {
+    level = 24, requires = 18,
+    objective = "Speak with Lumina Windsinger in the Sepulcher.",
+    pickup = "Lumina Windsinger, The Sepulcher, Silverpine Forest",
+    turnin = "Lumina Windsinger, The Sepulcher, Silverpine Forest",
+    description = "The questline starts at level 18 with Diplomatic Incident from Danitha Morr at Bandarion Keep, Tirisfal Glades. It takes you to Fenris Isle, where you free Lumina Windsinger from Fenris Keep.",
+    map = { mapID = 1421, x = 0.433, y = 0.410, label = "Lumina Windsinger — The Sepulcher", targetName = "Lumina Windsinger" },
+}
+FDJ.QUEST_PREREQ_DETAILS[95036] = {
+    level = 25, requires = 20,
+    objective = "Speak with Trevan Rol in the Sepulcher and bring him the materials he requires.",
+    -- {itemID, name, quality, source line shown at the bottom of the item tooltip}
+    requiredItems = {
+        {6994, "Whitestone Oak Lumber", 1, "Dropped by: Goblin Woodcarver, The Deadmines"},
+        {267361, "Enchanted Silver Ingot", 1, "Found on a table in Archmage Arugal's room at the end of Shadowfang Keep, after you kill him"},
+        {272448, "Purified Kor Gem", 1, "Reward from the quest Seeking the Kor Gem: Ulric Frostveil, Zoram'gar Outpost, Ashenvale. The Corrupted Kor Gem he asks for drops from Blackfathom Tide Priestesses and Oracles at the Blackfathom Deeps entrance and from Blackfathom Sea Witches inside, once you have his quest."},
+    },
+    providedItem = {267454, "Trevan's Weapon Notes", 1, "Given by Trevan Rol in the Sepulcher"},
+    pickup = "Lumina Windsinger, The Sepulcher, Silverpine Forest",
+    turnin = "Trevan Rol, The Sepulcher, Silverpine Forest",
+    map = { mapID = 1421, x = 0.433, y = 0.410, label = "Lumina Windsinger — The Sepulcher", targetName = "Lumina Windsinger" },
+    turninMap = { mapID = 1421, x = 0.434, y = 0.410, label = "Trevan Rol — The Sepulcher", targetName = "Trevan Rol" },
+}
+FDJ.QUEST_PREREQ_DETAILS[95111] = {
+    level = 25, requires = 20,
+    objective = "Speak with Ott and ask him to forge your blade.",
+    pickup = "Trevan Rol, The Sepulcher, Silverpine Forest",
+    turnin = "Ott, Tarren Mill, Hillsbrad Foothills",
+    map = { mapID = 1421, x = 0.434, y = 0.410, label = "Trevan Rol — The Sepulcher", targetName = "Trevan Rol" },
+    turninMap = { mapID = 1424, x = 0.604, y = 0.262, label = "Ott — Tarren Mill", targetName = "Ott" },
+}
+FDJ.QUEST_PREREQ_DETAILS[95125] = {
+    level = 25, requires = 20,
+    objective = "Watch as Ott forges your blade.",
+    pickup = "Ott, Tarren Mill, Hillsbrad Foothills",
+    turnin = "Ott, Tarren Mill, Hillsbrad Foothills",
+    map = { mapID = 1424, x = 0.604, y = 0.262, label = "Ott — Tarren Mill", targetName = "Ott" },
+}
+FDJ.QUEST_PREREQ_DETAILS[95126] = {
+    level = 25, requires = 20,
+    objective = "Bring Ott's Masterwork to Trevan Rol in Silverpine Forest.",
+    pickup = "Ott, Tarren Mill, Hillsbrad Foothills",
+    turnin = "Trevan Rol, The Sepulcher, Silverpine Forest",
+    map = { mapID = 1424, x = 0.604, y = 0.262, label = "Ott — Tarren Mill", targetName = "Ott" },
+    turninMap = { mapID = 1421, x = 0.434, y = 0.410, label = "Trevan Rol — The Sepulcher", targetName = "Trevan Rol" },
+}
+FDJ.PREREQ_REWARD_ITEMS_FALLBACK[95126] = { items = { {268484, "Moonsilver Blade", 2} }, choice = false }
+FDJ.QUEST_PREREQ_DETAILS[95140] = { level = 26, requires = 20, objective = "Use the Moonsilver Blade to destroy Old-Fire Eye in Silverpine Forest.", pickup = "Lumina Windsinger, The Sepulcher, Silverpine Forest", turnin = "Lumina Windsinger, The Sepulcher, Silverpine Forest", description = "Final step. Old Fire-Eye is at the Greymane Wall in southern Silverpine Forest. Rewards Wolfsbane." }
+FDJ.PREREQ_REWARD_ITEMS_FALLBACK[95140] = { items = { {267369, "Wolfsbane", 3} }, choice = false }
+FDJ.FOREVER_QUEST_XP_FALLBACK[95140] = 2650
+-- END hordepaladin
+
 -- An Unholy Alliance (Horde): the journal entry is the final step (6521); part 1 starts from the Small Scroll in Razorfen
 -- Kraul; the final step is completed in the area outside Razorfen Downs and gives the item reward.
 FDJ.QUEST_PREREQ_CHAINS[6521] = {
@@ -407,6 +473,77 @@ FDJ.FOREVER_QUEST_XP_FALLBACK[99156] = 900
 FDJ.QUEST_SHAREABILITY_AUDIT[356] = true
 FDJ.QUEST_SHAREABILITY_AUDIT[99156] = true
 -- END rearguard
+
+-- BEGIN drownedcity
+-- The Drowned City (Horde): Kin'weelay's chain to the dungeon quest, and
+-- Enemies in the Water before The Only Good Brinescale... Givers, objectives,
+-- items, spawns, levels and XP: Forever client tables via Polestar forever-db;
+-- names and chain order from ForeverChanges and Hearthside.
+do
+    local KINWEELAY = { mapID = 1434, x = 0.323, y = 0.277, label = "Kin'weelay — Grom'gol Base Camp", targetName = "Kin'weelay", detail = "Kin'weelay at Grom'gol Base Camp, Stranglethorn Vale" }
+    local GROMGOL = "Kin'weelay, Grom'gol Base Camp, Stranglethorn Vale"
+    FDJ.QUEST_START_MAPS[95775] = KINWEELAY
+    FDJ.QUEST_START_MAPS[96774] = { mapID = 1412, x = 0.325, y = 0.206, label = "Mazu'kon — Mulgore", targetName = "Mazu'kon", detail = "Mazu'kon of the Earthen Ring, north-west Mulgore" }
+    FDJ.QUEST_START_MAPS[95787] = { mapID = 1424, x = 0.506, y = 0.571, label = "Loremaster Dibbs — Southshore", targetName = "Loremaster Dibbs", detail = "Loremaster Dibbs in Southshore, Hillsbrad Foothills" }
+
+    FDJ.QUEST_PREREQ_CHAINS[95775] = {
+        { id = 629, name = "The Vile Reef" },
+        { id = 95748, name = "The Gurubashi Legends of Old" },
+        { id = 95770, name = "Locating the Lost City" },
+    }
+    FDJ.QUEST_PREREQ_DETAILS[629] = {
+        level = 37, requires = 30,
+        warning = "Group quest: the Saltscale murlocs at the Vile Reef are elite.",
+        objective = "Bring a Tablet Shard to Kin'weelay at Grom'gol Base Camp.",
+        pickup = GROMGOL, turnin = GROMGOL,
+        map = KINWEELAY,
+        requiredItems = {
+            {4094, "Tablet Shard", 1, "From the tablet Gri'lek the Wanderer, at the bottom of the Vile Reef (around 25, 23)", map = { mapID = 1434, x = 0.248, y = 0.230, label = "Gri'lek the Wanderer — the Vile Reef", detail = "The tablet at the bottom of the Vile Reef (around 25, 23)" }},
+        },
+    }
+    FDJ.QUEST_PREREQ_DETAILS[95748] = {
+        level = 40, requires = 30,
+        objective = "Use the hide and charcoal to make a rubbing of the Third Troll Legend tablet.",
+        pickup = GROMGOL, turnin = GROMGOL,
+        map = KINWEELAY,
+        requiredItems = {
+            {2007, "The Third Troll Legend", 1, "Rubbing of the tablet Fall of Gurubashi, in the troll ruins on the coast north of the Vile Reef (around 23, 12)", map = { mapID = 1434, x = 0.230, y = 0.120, label = "Fall of Gurubashi — troll ruins north of the Vile Reef", detail = "The tablet in the troll ruins on the coast (around 23, 12)" }},
+        },
+    }
+    FDJ.QUEST_PREREQ_DETAILS[95770] = {
+        level = 40, requires = 30,
+        objective = "Explore just west of the Vile Reef and find the cavern entrance, then report back to Kin'weelay.",
+        description = "The cave is in Sunken Hollow, underwater around 21, 28: the entrance to the Drowned City.",
+        pickup = GROMGOL, turnin = GROMGOL,
+        map = KINWEELAY,
+    }
+
+    FDJ.QUEST_PREREQ_CHAINS[95776] = {
+        { id = 95773, name = "Enemies in the Water" },
+    }
+    FDJ.QUEST_PREREQ_DETAILS[95773] = {
+        level = 37, requires = 30,
+        objective = "Gather 10 Brinescale Tridents from Brinescale Skirmishers.",
+        pickup = "Grom'gol Base Camp, Stranglethorn Vale (quest giver not known yet)",
+        turnin = "Grom'gol Base Camp, Stranglethorn Vale (not known yet)",
+        requiredItems = {
+            {270305, "Brinescale Trident", 1, "Dropped by Brinescale Skirmishers around the Vile Reef, west of Grom'gol (around 22, 26)", map = { mapID = 1434, x = 0.225, y = 0.256, label = "Brinescale Skirmishers — around the Vile Reef", detail = "Brinescale Skirmishers on the sea floor west of Grom'gol (around 22, 26)" }},
+        },
+    }
+
+    FDJ.FOREVER_QUEST_XP_FALLBACK[629] = 2850
+    FDJ.FOREVER_QUEST_XP_FALLBACK[95748] = 3150
+    FDJ.FOREVER_QUEST_XP_FALLBACK[95770] = 3150
+    FDJ.FOREVER_QUEST_XP_FALLBACK[95773] = 2850
+    FDJ.FOREVER_QUEST_XP_FALLBACK[95775] = 8450
+    FDJ.FOREVER_QUEST_XP_FALLBACK[95776] = 9500
+    FDJ.FOREVER_QUEST_XP_FALLBACK[96774] = 8800
+    FDJ.FOREVER_QUEST_XP_FALLBACK[97130] = 10450
+    for _, id in ipairs({ 629, 95748, 95770, 95773, 95775, 96774, 97130 }) do
+        FDJ.QUEST_SHAREABILITY_AUDIT[id] = true
+    end
+end
+-- END drownedcity
 
 -- BEGIN lesstext
 -- Step pages show the objective, the quest givers and where to go. Notes that only

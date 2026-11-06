@@ -42,5 +42,17 @@ function FDJ.FindMapArtID(dungeonName, floorData)
         end
         cache[dungeonName] = found
     end
+    -- The page's own art file picks the floor: map IDs differ between
+    -- clients, and pages may skip floors (SFK shows floors 1, 7 and 6), so the
+    -- n-th map with the dungeon's name is not always the n-th page.
+    local want = floorData and floorData.tiles and type(GetFileIDFromPath) == "function"
+        and GetFileIDFromPath(floorData.tiles .. "1")
+    if want then
+        for _, id in ipairs(found) do
+            local ok, tex = pcall(C_Map.GetMapArtLayerTextures, id, 1)
+            if ok and type(tex) == "table" and tex[1] == want then return id end
+        end
+        return nil -- no map uses this art: draw the tiles from their paths
+    end
     return found[floorIndex] or found[1]
 end

@@ -79,9 +79,17 @@ end
 -- Only armor pieces of another type are filtered out; weapons, shields,
 -- rings, necks, trinkets and cloaks have no armor type and always stay.
 local ARMOR_TYPES = { "Cloth", "Leather", "Mail", "Plate" }
+-- Cloaks are stored as "Back, Cloth" but every armor type wears them.
+local function IsCloak(item)
+    local slot = type(item) == "table" and item[3]
+    if type(slot) ~= "string" then return false end
+    local first = slot:match("^%s*([^,]+)")
+    return first ~= nil and first:gsub("%s+$", "") == "Back"
+end
 local function ArmorType(item)
     local slot = type(item) == "table" and item[3]
     if type(slot) ~= "string" then return nil end
+    if IsCloak(item) then return nil end
     for token in slot:gmatch("([^,]+)") do
         token = token:gsub("^%s+", ""):gsub("%s+$", "")
         for _, armor in ipairs(ARMOR_TYPES) do
@@ -487,7 +495,7 @@ function FDJ.FilterBossLoot(boss)
                 local itemWeapon = WeaponType(item)
                 if itemWeapon then
                     if not weapons[itemWeapon] then keep = false end
-                elseif not (armor and ArmorType(item)) then
+                elseif not (armor and (ArmorType(item) or IsCloak(item))) then
                     keep = false
                 end
             end
@@ -1752,7 +1760,11 @@ function FDJ.SetRowMobs(row, sourceText)
         button:ClearAllPoints()
         button:SetPoint("RIGHT", row, "RIGHT", -10 - (#names - i) * 38, 0)
         local mobDisplayID = FDJ.TRASH_MOB_DISPLAY_IDS[name]
-        if not (FDJ.SetBakedPortrait and FDJ.SetBakedPortrait(button.portrait, mobDisplayID)) then
+        -- Bundled picture, else the off-screen portrait pool like the bosses
+        -- (no black square while it loads; warmed after login).
+        local okPortrait, shown = false, false
+        if FDJ.AcquirePortrait then okPortrait, shown = pcall(FDJ.AcquirePortrait, button.portrait, mobDisplayID) end
+        if not (okPortrait and shown) then
             pcall(SetPortraitTextureFromCreatureDisplayID, button.portrait, mobDisplayID)
         end
         button:Show()

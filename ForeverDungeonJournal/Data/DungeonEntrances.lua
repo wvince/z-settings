@@ -11,6 +11,12 @@ local entrances = {
         detail = "Enter through the city's sewers: drop through a grate in the streets and follow the Underbelly pipe to the portal",
         markerType = "dungeon",
     },
+    ["The Drowned City"] = {
+        mapID = 1434, x = 0.214, y = 0.279,
+        label = "The Drowned City Entrance",
+        detail = "Underwater west of the Vile Reef: swim to Sunken Hollow by the island with the water elementals; the cave has a large tablet beside it",
+        markerType = "dungeon",
+    },
     ["Gnomeregan"] = {
         mapID = 1426, x = 0.243, y = 0.398,
         label = "Gnomeregan Entrance",

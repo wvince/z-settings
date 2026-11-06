@@ -17,11 +17,16 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.2.10
-    { text = "New: an alert pops up when an item you loot or receive is an upgrade. Click it to equip the item." },
-    { text = "Bag upgrade arrows are now on by default. Untick Show Bag Upgrade Arrows in the options to hide them." },
-    { text = "Bag arrows now show on small upgrades too, the same items the tooltip calls an upgrade." },
-    { forever = true, text = "Quest rewards in DaylightUI's NPC window now get upgrade arrows too." },
+    -- v3.2.11
+    { forever = true, text = "Recipes in DaylightUI's profession window now get the green upgrade arrow too." },
+    { forever = true, text = "Enhancement Shaman leveling weights rebuilt: at levels 15-24 Spirit counts for a bit less, Intellect and Stamina for more." },
+    { forever = true, text = "Enhancement Shaman levels 1-9: Intellect, Spirit and Stamina no longer jump about 6x at level 10." },
+    { forever = true, text = "Talents plugin: the build glow, step numbers and panel now work in DaylightUI's talent window." },
+    { forever = true, text = "Paladin solo leveling weights rebuilt with Hammer of Wrath from level 44. Retribution levels 1-9 no longer jump about 4x in Stamina and Spirit at level 10." },
+    { forever = true, text = "Retribution levels 40-47: Mp5 no longer drops to 0, and Spirit counts for about twice as much." },
+    { forever = true, text = "Paladin profile Holy: Solo Leveling is now named Shockadin: Solo Leveling. It's a melee and Holy Shock build, not a healing one." },
+    { forever = true, text = "Talents plugin: Retribution and Retribution to Protection solo orders updated, and the Paladin % slower tags corrected." },
+    { forever = true, text = "Talents plugin: Holy Paladin dungeon order adjusted slightly at levels 15-17." },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.
@@ -119,9 +124,12 @@ function MSC.ShowWhatsNew()
             lines[#lines + 1] = "|cffffd100-|r " .. L[entry.text]
         end
     end
-    -- A release can be all Forever-only lines; don't show an empty list elsewhere.
+    -- A release can be all Forever-only lines; don't show an empty list elsewhere. An empty
+    -- WHATS_NEW (a version still being worked on, opened with /sgj whatsnew) says nothing about Forever.
     if #lines == 0 then
-        lines[1] = "|cffffd100-|r " .. L["Fixes and improvements for WoW Forever; nothing changed for your game version."]
+        local text = (#WHATS_NEW == 0) and L["Small fixes and improvements."]
+            or L["Fixes and improvements for WoW Forever; nothing changed for your game version."]
+        lines[1] = "|cffffd100-|r " .. text
     end
     frame.Title:SetText(string.format(L["Sharpie's Gear Judge v%s"], CurrentVersion()))
     frame.Notes:SetText(table.concat(lines, "\n"))
@@ -139,6 +147,9 @@ watcher:SetScript("OnEvent", function(self, event)
         if type(SGJ_Settings) ~= "table" then return end
         local current = CurrentVersion()
         if current == "" or SGJ_Settings.LastSeenVersion == current then return end
+        -- Nothing written yet for this version: don't pop up, and don't mark it seen, so it
+        -- still opens once its list is filled in.
+        if #WHATS_NEW == 0 then return end
         local function show()
             if InCombatLockdown and InCombatLockdown() then
                 self:RegisterEvent("PLAYER_REGEN_ENABLED")

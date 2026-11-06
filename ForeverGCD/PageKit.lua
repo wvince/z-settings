@@ -335,6 +335,14 @@ local _, ns = ...
 --   A search reads a heading's tag (page.BlizzardHeading) with its title, as
 --     it is drawn after it: "blizzard" finds the rows under a Blizzard
 --     heading, whose rows carry no tag of their own
+-- Kit 21 (Forever Enemy Buffs' presets, 6 November 2026, every page):
+--   A page never moves under the mouse when a preview grows: while the page
+--     is shown a preview (page.Preview or page.Pin) keeps its tallest
+--     height, and when it grows the page scrolls by as much so the rows
+--     under it stay where they are on screen (page.HoldRows); page.Shown
+--     fits it afresh. Trying a preset made the preview taller, the button
+--     slid off the mouse, the trial ended, and the page snapped back and
+--     forth for as long as the mouse stayed there
 -- Kit 18's history: what Forever Skin needs to join without losing anything
 -- (its sub-headings, titled ticks, locked CVars and per-control state lines,
 -- its fixed title strip), and the user's two answers for every page
@@ -1427,6 +1435,28 @@ function Kit.New(options)
         -- rows can point at their parts. plain (kit 5): a colour { r, g, b }
         -- for an opaque fill in place of the strip of world, for a sample
         -- of a window that is opaque in game (the preview kit's plain).
+        -- Kit 21 (the user, 6 November 2026, Forever Enemy Buffs' presets:
+        -- "if i put my mouse under general in the settings it snaps up and
+        -- down constantly, in general i don't want pages moving around for
+        -- the user like that"): a preview that grows while the page is shown
+        -- never moves the rows the mouse is on. Hovering General made the
+        -- preview taller, the button slid out from under the mouse, the
+        -- preview went back, the button came back under it, and round again.
+        -- So while the page is shown a preview keeps the tallest height it
+        -- has had (page.Shown fits it afresh), and when it grows the page
+        -- scrolls by as much, so what is under it stays put on screen.
+        -- top: the preview's top below the body's top (nil: a pinned one,
+        -- above the scroll frame); was: its height before; grew: by how much.
+        local function HoldRows(top, was, grew)
+            if host or not scroll or page.fitting or grew <= 0 then return end
+            if not panel:IsVisible() or type(scroll.GetVerticalScroll) ~= "function" then return end
+            local at, view, whole = scroll:GetVerticalScroll(), scroll:GetHeight(), body:GetHeight()
+            if type(at) ~= "number" or type(view) ~= "number" or type(whole) ~= "number" then return end
+            -- Nothing under the preview in sight: nothing to hold.
+            if top and top + was >= at + view then return end
+            scroll:SetVerticalScroll(math.max(0, math.min(at + grew, whole - view)))
+        end
+        page.HoldRows = HoldRows
         function page.Preview(onScreen, screenTip, plain)
             if not ns.PreviewKit then return nil end
             Start()
@@ -1436,10 +1466,14 @@ function Kit.New(options)
             preview = ns.PreviewKit.New(frame, { x = NAME_X, width = FULL, onScreen = onScreen, screenTip = screenTip,
                 plain = plain,
                 resize = function(height)
+                    if not page.fitting and block.held and height < block.held then height = block.held end
+                    block.held = height
                     if height == block.height then return end
+                    local was = block.height
                     block.height = height
                     frame:SetHeight(height)
                     page.Layout()
+                    if block.y then HoldRows(-block.y, was, height - was) end
                 end,
                 find = function(parts) page.Find(parts, preview) end,
                 names = function(parts) return page.PartNames(parts, preview) end })
@@ -1543,13 +1577,19 @@ function Kit.New(options)
             local pinned
             pinned = ns.PreviewKit.New(holder, { x = NAME_X, width = FULL, onScreen = onScreen,
                 screenTip = screenTip, plain = plain,
+                -- Kit 21: held at its tallest while the page is shown, and
+                -- the rows under it kept still (HoldRows).
                 resize = function(height)
+                    if not page.fitting and pinned and pinned.held and height < pinned.held then height = pinned.held end
+                    local was = (pinned and pinned.held) or height
+                    if pinned then pinned.held = height end
                     if box then
                         box:SetHeight(height)
                         header:SetHeight(top + height)
                     else
                         header:SetHeight(height)
                     end
+                    HoldRows(nil, was, height - was)
                 end,
                 find = function(parts) page.Find(parts, pinned) end,
                 names = function(parts) return page.PartNames(parts, pinned) end })
@@ -3639,8 +3679,14 @@ function Kit.New(options)
             -- window, another parent): every edge is checked.
             Kit.RefreshEdges()
             page.tab = NextTab()
+            -- Kit 21: each preview fits its samples afresh as the page shows
+            -- (HoldRows), then keeps its tallest height while it is shown.
+            page.fitting = true
+            for _, block in ipairs(page.blocks) do block.held = nil end
+            if page.pinned then page.pinned.held = nil end
             page.Layout()
             page.Refresh()
+            page.fitting = nil
         end
         if not host then panel:SetScript("OnShow", page.Shown) end
         if host and host.shownBy then host.shownBy:HookScript("OnShow", page.Shown) end

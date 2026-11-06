@@ -12,6 +12,12 @@ optional `### For addon authors` subsection after a version's player bullets.
 
 ## [Unreleased]
 
+## [1.0.21] - 2026-11-06
+- **The skill bar's difficulty bands are drawn at the bar art's native height instead of squashed.** The tooltip and details bar pulled a 240 by 15 fill down to about 10.25 high, which flattened the art; the bands now use the client's 124 by 10 cooldown manager fill, keeping its height and varying only its width with each band.
+
+## [1.0.20] - 2026-11-06
+- **The skill bar and the selected gear slot use the game's current art.** The tooltip and details bar filled its difficulty bands with a texture the client has carried since before Legion, and a selected gear slot washed the icon with the old check highlight. The bands now use the fill the game's own progress bars use, keeping their colours, and a selected slot shows the professions window's gold glow, so the icon underneath stays readable.
+
 ## [1.0.19] - 2026-11-06
 - **The tracker column steps aside for EQ Objective Tracker.** EQ Objective Tracker hides the game's quest tracker and draws its own list in that same slot, so its quests and this addon's tracker section drew over each other and neither could be read. The section now asks EQOT where its list is through EQOT's public API and re-places itself below, above or beside it after every redraw, and reads EQOT's own frame the same way when that API is not there. Turn EQOT off and the column goes back where it was.
 
@@ -74,7 +80,7 @@ optional `### For addon authors` subsection after a version's player bullets.
 
 ## [1.0.4] - 2026-11-03
 
-- **Auctionator lists stay with their character.** Route and crafting lists include the character and realm, so switching characters does not replace another character's supplies. Existing lists with the old shared names are left untouched and can be removed in Auctionator. Thanks to cjber for the report (#284).
+- **Auctionator lists stay with their character.** Route and crafting lists include the character and realm, so switching characters does not replace another character's supplies. Existing lists with the old shared names are left untouched and can be removed in Auctionator.
 
 ## [1.0.3] - 2026-11-03
 

@@ -3454,6 +3454,162 @@ function ____exports.showLoopPicture(alert, atlas, ____then)
 end
 return ____exports
  end,
+["packages.@wowkit.wow.src.utils.glow-line_utils"] = function(...) 
+local ____exports = {}
+--- The flipbook of the line: 30 pictures in 6 rows of 5, one turn a second (as Blizzard's template has it).
+local LINE_ATLAS = "rotationhelper_ants_flipbook"
+local LINE_ROWS = 6
+local LINE_COLUMNS = 5
+local LINE_FRAMES = 30
+local LINE_SECONDS = 1
+--- A hidden frame around `button`, made in `parent`, with the line's art, gray.
+local function createLineFrame(parent, button, level)
+    local frame = CreateFrame("Frame", nil, parent)
+    frame:SetFrameStrata("MEDIUM")
+    frame:SetFrameLevel(level)
+    frame:SetPoint(
+        "CENTER",
+        button,
+        "CENTER",
+        0,
+        0
+    )
+    local texture = frame:CreateTexture(nil, "OVERLAY")
+    texture:SetAllPoints(frame)
+    texture:SetAtlas(LINE_ATLAS, false, nil, true)
+    texture:SetDesaturated(true)
+    frame:Hide()
+    return {frame = frame, texture = texture}
+end
+--- The line around `button`, made in `parent`, hidden; it runs while it shows.
+function ____exports.createLineGlow(parent, button, level)
+    local ____createLineFrame_result_0 = createLineFrame(parent, button, level)
+    local frame = ____createLineFrame_result_0.frame
+    local texture = ____createLineFrame_result_0.texture
+    local group = frame:CreateAnimationGroup()
+    local flipbook = group and group:CreateAnimation("FlipBook")
+    if group ~= nil and flipbook ~= nil then
+        flipbook:SetTarget(texture)
+        flipbook:SetFlipBookRows(LINE_ROWS)
+        flipbook:SetFlipBookColumns(LINE_COLUMNS)
+        flipbook:SetFlipBookFrames(LINE_FRAMES)
+        flipbook:SetFlipBookFrameWidth(0)
+        flipbook:SetFlipBookFrameHeight(0)
+        flipbook:SetDuration(LINE_SECONDS)
+        group:SetLooping("REPEAT")
+        frame:SetScript(
+            "OnShow",
+            function() return group:Play() end
+        )
+        frame:SetScript(
+            "OnHide",
+            function() return group:Stop() end
+        )
+    end
+    return {frame = frame, texture = texture}
+end
+return ____exports
+ end,
+["packages.@wowkit.wow.src.utils.glow-border_utils"] = function(...) 
+local ____exports = {}
+--- Blizzard's art: a soft glowing square frame.
+local BORDER_TEXTURE = "Interface\\TargetingFrame\\UI-TargetingFrame-Stealable"
+--- Blizzard draws it 24 pixels on a 21 pixel buff icon: this much bigger than the button.
+____exports.BORDER_SCALE = 24 / 21
+--- The art is not quite centered in its file: it is moved this many pixels left and up.
+local BORDER_OFFSET_X = -1
+local BORDER_OFFSET_Y = 1
+--- The edge of the file is cut off, a pixel of its 32: drawn added, its faint edge would show as a square around the glow.
+local BORDER_TRIM = 1 / 32
+--- The frame around `button`, made in `parent`, hidden; its texture is in `inner` (the frame that breathes or fades).
+function ____exports.createSoftFrame(parent, button, level)
+    local frame = CreateFrame("Frame", nil, parent)
+    frame:SetFrameStrata("MEDIUM")
+    frame:SetFrameLevel(level)
+    local icon = button.icon
+    frame:SetPoint(
+        "CENTER",
+        icon or button,
+        "CENTER",
+        BORDER_OFFSET_X,
+        BORDER_OFFSET_Y
+    )
+    local inner = CreateFrame("Frame", nil, frame)
+    inner:SetAllPoints(frame)
+    local texture = inner:CreateTexture(nil, "OVERLAY")
+    texture:SetAllPoints(inner)
+    texture:SetTexture(BORDER_TEXTURE)
+    texture:SetTexCoord(BORDER_TRIM, 1 - BORDER_TRIM, BORDER_TRIM, 1 - BORDER_TRIM)
+    texture:SetBlendMode("ADD")
+    texture:SetDesaturated(true)
+    texture:SetSnapToPixelGrid(false)
+    texture:SetTexelSnappingBias(0)
+    frame:Hide()
+    return {frame = frame, inner = inner, parts = {texture}}
+end
+return ____exports
+ end,
+["packages.@wowkit.wow.src.utils.glow-fade_utils"] = function(...) 
+local ____exports = {}
+--- A still glow fades in and out this fast.
+____exports.STILL_FADE_SECONDS = 0.25
+--- A breathing glow fades between full and this opacity, half a second each way.
+____exports.PULSE_ALPHA = 0.45
+____exports.PULSE_SECONDS = 0.5
+--- A fade of `picture`, in an animation group of `owner`. Undefined where the client (or the fake game) has no animations:
+-- the glow then comes and goes at once.
+function ____exports.createPictureFade(owner, picture, fromAlpha, toAlpha, seconds)
+    local group = owner:CreateAnimationGroup()
+    local fade = group and group:CreateAnimation("Alpha")
+    if group == nil or fade == nil or picture == nil then
+        return nil
+    end
+    fade:SetTarget(picture)
+    fade:SetFromAlpha(fromAlpha)
+    fade:SetToAlpha(toAlpha)
+    fade:SetDuration(seconds)
+    return group
+end
+--- The three fades of a still glow's picture; faded out, `owner` hides.
+function ____exports.createStillFades(owner, picture)
+    local fades = {
+        fadeIn = ____exports.createPictureFade(
+            owner,
+            picture,
+            0,
+            1,
+            ____exports.STILL_FADE_SECONDS
+        ),
+        fadeOut = ____exports.createPictureFade(
+            owner,
+            picture,
+            1,
+            0,
+            ____exports.STILL_FADE_SECONDS
+        ),
+        breathe = ____exports.createPictureFade(
+            owner,
+            picture,
+            1,
+            ____exports.PULSE_ALPHA,
+            ____exports.PULSE_SECONDS
+        )
+    }
+    local ____opt_2 = fades.breathe
+    if ____opt_2 ~= nil then
+        ____opt_2:SetLooping("BOUNCE")
+    end
+    local ____opt_4 = fades.fadeOut
+    if ____opt_4 ~= nil then
+        ____opt_4:SetScript(
+            "OnFinished",
+            function() return owner:Hide() end
+        )
+    end
+    return fades
+end
+return ____exports
+ end,
 ["packages.@wowkit.wow.src.value-curves_service"] = function(...) 
 local ____lualib = require("lualib_bundle")
 local __TS__Class = ____lualib.__TS__Class
@@ -3531,10 +3687,25 @@ local __TS__ObjectAssign = ____lualib.__TS__ObjectAssign
 local ____exports = {}
 local ____glow_2Dpicture_2Eutils = require("packages.@wowkit.wow.src.utils.glow-picture_utils")
 local showLoopPicture = ____glow_2Dpicture_2Eutils.showLoopPicture
+local ____glow_2Dline_2Eutils = require("packages.@wowkit.wow.src.utils.glow-line_utils")
+local createLineGlow = ____glow_2Dline_2Eutils.createLineGlow
+local ____glow_2Dborder_2Eutils = require("packages.@wowkit.wow.src.utils.glow-border_utils")
+local BORDER_SCALE = ____glow_2Dborder_2Eutils.BORDER_SCALE
+local createSoftFrame = ____glow_2Dborder_2Eutils.createSoftFrame
+local ____glow_2Dfade_2Eutils = require("packages.@wowkit.wow.src.utils.glow-fade_utils")
+local createStillFades = ____glow_2Dfade_2Eutils.createStillFades
 local ____protected_2Dcall_2Eutils = require("packages.@wowkit.wow.src.utils.protected-call_utils")
 local tryCall = ____protected_2Dcall_2Eutils.tryCall
 local ____secret_2Dvalue_2Eutils = require("packages.@wowkit.wow.src.utils.secret-value_utils")
 local getReadable = ____secret_2Dvalue_2Eutils.getReadable
+--- Does the glow breathe (in either look)?
+function ____exports.isBreathing(animation)
+    return animation == "breathing" or animation == "breathingClean"
+end
+--- Does the glow stand still, only fading in and out (in either look)?
+function ____exports.isStill(animation)
+    return animation == "none" or animation == "noneClean"
+end
 --- Fallback art if the spell-alert glow template is missing; built-in client art only.
 local GLOW_FALLBACK = "Interface\\Cooldown\\star4"
 local GLOW_SCALE = 1.45
@@ -3553,8 +3724,6 @@ local RING_PULSE_SECONDS = 0.5
 -- frame, so the client cuts the picture out, and is stopped, its picture kept: while it runs, even paused, it holds the
 -- picture's opacity, so a fade could not change it.
 local LOOP_ATLAS = "UI-HUD-ActionBar-Proc-Loop-Flipbook"
---- A still glow fades in and out this fast.
-local STILL_FADE_SECONDS = 0.25
 ____exports.GlowService = __TS__Class()
 local GlowService = ____exports.GlowService
 GlowService.name = "GlowService"
@@ -3638,7 +3807,7 @@ function GlowService.prototype.showOverlay(self, entry, button)
 end
 function GlowService.prototype.hideOverlay(self, entry)
     entry.isWanted = false
-    if entry.animation == "none" and entry.fadeOut ~= nil and entry.frame:IsShown() then
+    if ____exports.isStill(entry.animation) and entry.fadeOut ~= nil and entry.frame:IsShown() then
         entry.fadeOut:Play()
     else
         entry.frame:Hide()
@@ -3709,7 +3878,9 @@ function GlowService.prototype.getOverlay(self, button, key, ____bindingPattern0
         end
         entry.frame:SetAlpha(GLOW_ALPHA)
     else
-        entry.texture:SetVertexColor(r, g, b, GLOW_ALPHA)
+        for ____, part in ipairs(entry.parts or ({entry.texture})) do
+            part:SetVertexColor(r, g, b, GLOW_ALPHA)
+        end
         local ____opt_12 = entry.halo
         if ____opt_12 ~= nil then
             ____opt_12:SetVertexColor(r, g, b, GLOW_ALPHA)
@@ -3723,7 +3894,7 @@ function GlowService.prototype.applySize(self, entry, button)
         1,
         3
     )
-    local scale = (entry.isRing == true and RING_SCALE or GLOW_SCALE) * (entry.isBeside == true and buttonScale or 1)
+    local scale = (entry.isRing == true and RING_SCALE or (entry.scale or GLOW_SCALE)) * (entry.isBeside == true and buttonScale or 1)
     entry.frame:SetSize(width * scale, height * scale)
     local ____opt_14 = entry.halo
     if ____opt_14 ~= nil then
@@ -3789,30 +3960,46 @@ function GlowService.prototype.startAlert(self, alert, fades)
     showLoopPicture(
         alert,
         LOOP_ATLAS,
+        function() return self:startStill(fades) end
+    )
+end
+function GlowService.prototype.startStill(self, fades)
+    if ____exports.isStill(fades.animation) then
+        local ____opt_22 = fades.fadeIn
+        if ____opt_22 ~= nil then
+            ____opt_22:Play()
+        end
+    elseif fades.breathe ~= nil then
+        self.pulses[fades.breathe] = true
+        self:syncPulses()
+    end
+end
+function GlowService.prototype.setUpBorder(self, frame, inner, parts, animation)
+    local fades = createStillFades(frame, inner)
+    frame:SetScript(
+        "OnShow",
+        function() return self:startStill(__TS__ObjectAssign({}, fades, {animation = animation})) end
+    )
+    frame:SetScript(
+        "OnHide",
         function()
-            if fades.animation == "none" then
-                local ____opt_22 = fades.fadeIn
-                if ____opt_22 ~= nil then
-                    ____opt_22:Play()
+            for ____, fade in ipairs({fades.fadeIn, fades.fadeOut, fades.breathe}) do
+                if fade ~= nil then
+                    fade:Stop()
                 end
-            elseif fades.breathe ~= nil then
-                self.pulses[fades.breathe] = true
-                self:syncPulses()
+            end
+            if fades.breathe ~= nil then
+                self.pulses[fades.breathe] = nil
             end
         end
     )
-end
-function GlowService.prototype.createFade(self, alert, fromAlpha, toAlpha, seconds)
-    local group = alert:CreateAnimationGroup()
-    local fade = group and group:CreateAnimation("Alpha")
-    if group == nil or fade == nil or alert.ProcLoopFlipbook == nil then
-        return nil
-    end
-    fade:SetTarget(alert.ProcLoopFlipbook)
-    fade:SetFromAlpha(fromAlpha)
-    fade:SetToAlpha(toAlpha)
-    fade:SetDuration(seconds)
-    return group
+    return __TS__ObjectAssign({
+        frame = frame,
+        texture = parts[1],
+        parts = parts,
+        animation = animation,
+        scale = BORDER_SCALE
+    }, fades)
 end
 function GlowService.prototype.createOverlay(self, button, animation)
     if not self:isGamepadButton(button) then
@@ -3829,6 +4016,17 @@ function GlowService.prototype.createOverlayIn(self, parent, button, animation)
     if self:isRoundButton(button) then
         return self:createRing(parent, button, level, animation)
     end
+    if animation == "clean" then
+        return __TS__ObjectAssign(
+            {},
+            createLineGlow(parent, button, level),
+            {animation = animation}
+        )
+    end
+    if animation == "breathingClean" or animation == "noneClean" then
+        local border = createSoftFrame(parent, button, level)
+        return self:setUpBorder(border.frame, border.inner, border.parts, animation)
+    end
     local didSucceed, created = tryCall(function() return CreateFrame("Frame", nil, parent, "ActionButtonSpellAlertTemplate") end)
     local alert = didSucceed and created or nil
     if alert and alert.ProcStartAnim and alert.ProcLoop then
@@ -3841,23 +4039,10 @@ function GlowService.prototype.createOverlayIn(self, parent, button, animation)
             0,
             0
         )
-        local fades = {
-            animation = animation,
-            fadeIn = self:createFade(alert, 0, 1, STILL_FADE_SECONDS),
-            fadeOut = self:createFade(alert, 1, 0, STILL_FADE_SECONDS),
-            breathe = self:createFade(alert, 1, RING_PULSE_ALPHA, RING_PULSE_SECONDS)
-        }
-        local ____opt_28 = fades.breathe
-        if ____opt_28 ~= nil then
-            ____opt_28:SetLooping("BOUNCE")
-        end
-        local ____opt_30 = fades.fadeOut
-        if ____opt_30 ~= nil then
-            ____opt_30:SetScript(
-                "OnFinished",
-                function() return alert:Hide() end
-            )
-        end
+        local fades = __TS__ObjectAssign(
+            {animation = animation},
+            createStillFades(alert, alert.ProcLoopFlipbook)
+        )
         alert:SetScript(
             "OnShow",
             function() return self:startAlert(alert, fades) end
@@ -3877,9 +4062,9 @@ function GlowService.prototype.createOverlayIn(self, parent, button, animation)
                 end
             end
         )
-        local ____opt_34 = alert.ProcAltGlow
-        if ____opt_34 ~= nil then
-            ____opt_34:Hide()
+        local ____opt_30 = alert.ProcAltGlow
+        if ____opt_30 ~= nil then
+            ____opt_30:Hide()
         end
         alert:Hide()
         return __TS__ObjectAssign({frame = alert, alert = alert}, fades)
@@ -3937,7 +4122,8 @@ function GlowService.prototype.createRing(self, parent, button, level, animation
         frame:SetScript(
             "OnShow",
             function()
-                if (animation == "circling" and self.roundAnimation or animation) ~= "breathing" then
+                local isCircling = animation == "circling" or animation == "clean"
+                if not ____exports.isBreathing(isCircling and self.roundAnimation or animation) then
                     return
                 end
                 self.pulses[pulse] = true
@@ -6228,11 +6414,15 @@ local ____exports = {}
 ____exports.GreetingService = __TS__Class()
 local GreetingService = ____exports.GreetingService
 GreetingService.name = "GreetingService"
-function GreetingService.prototype.____constructor(self, messages, greeting)
+function GreetingService.prototype.____constructor(self, messages, greeting, isShown)
     self.messages = messages
     self.greeting = greeting
+    self.isShown = isShown
 end
 function GreetingService.prototype.onLogin(self)
+    if self.isShown ~= nil and self.isShown.settings:get(self.isShown.key) == false then
+        return
+    end
     self.messages:say(self.greeting)
 end
 return ____exports
@@ -8295,9 +8485,12 @@ local ____settings_2Dmigration = require("addons.glowing-bars.src.settings.setti
 local convertOldSettings = ____settings_2Dmigration.convertOldSettings
 --- The global the TOC saves per character (## SavedVariablesPerCharacter).
 ____exports.SAVED_VARIABLES_NAME = "GlowingBarsCharDB"
+--- The account's saved data (## SavedVariables): what it has seen of the releases.
+____exports.ACCOUNT_VARIABLES_NAME = "GlowingBarsDB"
 function ____exports.createDefaultSettings()
     return {
         isDisabled = false,
+        shouldShowGreeting = true,
         shouldStayQuietInTowns = true,
         roundAnimation = "breathing",
         isMissingBuffEnabled = true,
@@ -8468,7 +8661,14 @@ ____exports.FADED_OPACITY_CHOICES = {
     90
 }
 --- The choices of how a glow moves.
-____exports.ANIMATION_CHOICES = {"circling", "breathing", "none"}
+____exports.ANIMATION_CHOICES = {
+    "circling",
+    "clean",
+    "breathing",
+    "breathingClean",
+    "none",
+    "noneClean"
+}
 --- The choices of how long a reminder shows once it is due (seconds; 0 = until it is done).
 ____exports.GLOW_TIME_CHOICES = {
     0,
@@ -8805,10 +9005,19 @@ ____exports.TEXTS = {
     INFO_GITHUB = "GitHub",
     INFO_ISSUES = "Report an issue",
     INFO_COPY = "Copy",
+    OPT_WHATS_NEW = "What's new",
+    TIP_WHATS_NEW = "The changes of each version of Glowing Bars. Also /gb changelog.",
+    TITLE_WHATS_NEW = "What's new in Glowing Bars",
+    OPT_WHATS_NEW_OFF = "Don't show this again when new features come out",
+    OPT_SHOW_WHATS_NEW = "Show what's new after an update",
+    TIP_SHOW_WHATS_NEW = "After an update with new features, the What's new window opens once, on the first character you log in with. This choice is for your whole account.",
+    TEXT_WHATS_NEW_TIP = "Tip: open it any time with /gb changelog, or from the Settings page.",
     INFO_COPIED = "The link is in your chat box. Press Ctrl+C to copy it.",
     HDR_CHARACTER = "This character",
     OPT_DISABLE = "Disable on this character",
     TIP_DISABLE = "Turns off all glows, sounds and messages on this character. Your other characters aren't affected.",
+    OPT_SHOW_GREETING = "Show the login message",
+    TIP_SHOW_GREETING = "At each login, a line in the chat says that Glowing Bars is loaded, and how to open its table (/gb).",
     OPT_STAY_QUIET_IN_TOWNS = "Stay quiet in towns and inns",
     TIP_STAY_QUIET_IN_TOWNS = "No glows or messages while resting in a town or inn (out of combat). Turn this off to get reminders there too.",
     HDR_BARS = "Action bars that glow",
@@ -8849,10 +9058,15 @@ ____exports.TEXTS = {
     TIP_TABLE = "Set the color, glow, message and sound of each reminder type and each spell, and turn them on or off. Also /gb.",
     BTN_OPEN = "Open",
     OPT_ROUND_ANIMATION = "Circling on round buttons (alpha)",
-    TIP_ROUND_ANIMATION = "A round button (the gamepad bars, or another addon's round buttons) cannot have a glow running around it. Where the table's Animation column says Circling, a round button breathes instead, or stands still.",
-    ANIMATION_CIRCLING = "Circling",
-    ANIMATION_BREATHING = "Breathing",
-    ANIMATION_NONE = "None",
+    TIP_ROUND_ANIMATION = "A round button (the gamepad bars, or another addon's round buttons) cannot have a glow running around it. Where the table's Animation column says Circling (ants or clean), a round button breathes instead, or stands still.",
+    ANIMATION_CIRCLING = "Circling (ants)",
+    ANIMATION_CLEAN = "Circling (clean)",
+    ANIMATION_BREATHING = "Breathing (ants)",
+    ANIMATION_BREATHING_CLEAN = "Breathing (clean)",
+    ANIMATION_NONE = "None (ants)",
+    ANIMATION_NONE_CLEAN = "None (clean)",
+    ANIMATION_ROUND_BREATHING = "Breathing",
+    ANIMATION_ROUND_NONE = "None",
     BTN_RESET = "Reset",
     TABLE_TITLE = "Glowing Bars",
     HDR_TABLE_DEFAULTS = "Defaults",
@@ -8895,7 +9109,7 @@ ____exports.TEXTS = {
     REPEAT_SECONDS = "%d s",
     TIP_REPEAT = "Every so many seconds, the glow, the message and the sound come again, for the glow time (with Until done the glow stays, and the sound and the message come again). Off shows them once, as the reminder starts.",
     COL_ANIMATION = "Animation",
-    TIP_ANIMATION = "How the glow moves. Circling: it runs around the button. Breathing: it stands still and slowly fades out and in. None: it stands still, fading in and out only as it comes and goes. Round buttons cannot circle: there Circling does what the Settings page says (Breathing by default).",
+    TIP_ANIMATION = "How the glow moves. Circling: it runs around the button. Breathing: it stands still and slowly fades out and in. None: it stands still, fading in and out only as it comes and goes. Ants is Blizzard's glow; clean is a clean line when circling, and a soft frame when standing still. Round buttons cannot circle: there both Circling choices do what the Settings page says (Breathing by default).",
     COL_GLOW_TIME = "Glow time",
     GLOW_UNTIL_DONE = "Until done",
     TIP_GLOW_TIME = "How long the glow and the message show once the reminder is due, and again with each repeat. Until done: the whole time, until you cast the buff, press the cooldown...",
@@ -11431,7 +11645,7 @@ local OnEvent = ____core.OnEvent
 local ____wow_2Ddata = require("packages.@wowkit.wow-data.src.index")
 local Tracking = ____wow_2Ddata.Tracking
 --- The trackings of the gathering professions, in the order the table lists them (their wow-data IDs).
-____exports.GATHERING_TRACKINGS = {Tracking.FindMinerals, Tracking.FindHerbs}
+____exports.GATHERING_TRACKINGS = {Tracking.FindMinerals, Tracking.FindHerbs, Tracking.FindTreasure}
 --- No tracking to remind of: one empty list for every tick (nobody changes it).
 local NO_TRACKINGS = {}
 ____exports.TrackingReminderService = __TS__Class()
@@ -12813,7 +13027,16 @@ local __TS__ArrayIncludes = ____lualib.__TS__ArrayIncludes
 local __TS__ArrayMap = ____lualib.__TS__ArrayMap
 local ____exports = {}
 --- The words of each style (the table's Animation column says them too).
-____exports.ANIMATION_TEXTS = {circling = "ANIMATION_CIRCLING", breathing = "ANIMATION_BREATHING", none = "ANIMATION_NONE"}
+____exports.ANIMATION_TEXTS = {
+    circling = "ANIMATION_CIRCLING",
+    clean = "ANIMATION_CLEAN",
+    breathing = "ANIMATION_BREATHING",
+    breathingClean = "ANIMATION_BREATHING_CLEAN",
+    none = "ANIMATION_NONE",
+    noneClean = "ANIMATION_NONE_CLEAN"
+}
+--- The words of the round buttons' choices: their ring is neither ants nor clean.
+local ROUND_TEXTS = {breathing = "ANIMATION_ROUND_BREATHING", none = "ANIMATION_ROUND_NONE"}
 ____exports.AnimationSection = __TS__Class()
 local AnimationSection = ____exports.AnimationSection
 AnimationSection.name = "AnimationSection"
@@ -12840,7 +13063,7 @@ function AnimationSection.prototype.addAnimationSection(self, category)
             styles,
             function(____, style) return {
                 style,
-                self.locale:getText(____exports.ANIMATION_TEXTS[style])
+                self.locale:getText(ROUND_TEXTS[style] or ____exports.ANIMATION_TEXTS[style])
             } end
         ) end,
         false
@@ -12970,10 +13193,10 @@ ____exports.COLUMN = {
     ["repeat"] = {x = 672, width = 62},
     when = {x = 734, width = 108},
     glowTime = {x = 842, width = 76},
-    animation = {x = 918, width = 86},
-    belowLimits = {x = 1004, width = 56},
-    enabled = {x = 1060, width = 66},
-    actions = {x = 1126, width = 72}
+    animation = {x = 918, width = 110},
+    belowLimits = {x = 1028, width = 56},
+    enabled = {x = 1084, width = 66},
+    actions = {x = 1150, width = 72}
 }
 --- The columns of the Basic view: the ones everybody needs. The others keep working, unseen.
 ____exports.BASIC_COLUMN = {
@@ -13331,7 +13554,7 @@ function StyleChoicesService.prototype.createChoiceButtons(self, frame, getRow)
         animation = self:createChoiceButton(
             frame,
             COLUMN.animation,
-            82,
+            106,
             getRow,
             "animation",
             function() return __TS__ArrayMap(
@@ -14360,6 +14583,83 @@ function CustomSoundsSection.prototype.changeLine(self, line, change)
 end
 return ____exports
  end,
+["addons.glowing-bars.src.options.window-frame"] = function(...) 
+local ____exports = {}
+local applyTextureTint
+local ____style_2Dtable_2Econstants = require("addons.glowing-bars.src.options.style-table_constants")
+local BORDER_COLOR = ____style_2Dtable_2Econstants.BORDER_COLOR
+function applyTextureTint(frame, depth)
+    for ____, region in ipairs({frame:GetRegions()}) do
+        if region:GetObjectType() == "Texture" then
+            region:SetVertexColor(BORDER_COLOR[1], BORDER_COLOR[2], BORDER_COLOR[3])
+        end
+    end
+    if depth < 2 then
+        for ____, child in ipairs({frame:GetChildren()}) do
+            applyTextureTint(child, depth + 1)
+        end
+    end
+end
+--- A solid dark brown window named `name`, with the bronze border of the classic dialogs where the client has the art for it.
+function ____exports.createFrameWithBorder(name)
+    local didSucceed, created = pcall(function() return CreateFrame("Frame", name, UIParent, "BackdropTemplate") end)
+    local frame = didSucceed and created or CreateFrame("Frame", name, UIParent)
+    local background = frame:CreateTexture(nil, "BACKGROUND")
+    background:SetPoint(
+        "TOPLEFT",
+        frame,
+        "TOPLEFT",
+        6,
+        -6
+    )
+    background:SetPoint(
+        "BOTTOMRIGHT",
+        frame,
+        "BOTTOMRIGHT",
+        -6,
+        6
+    )
+    background:SetColorTexture(0.1, 0.07, 0.04, 1)
+    if didSucceed then
+        local backdrop = created
+        backdrop:SetBackdrop({edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", edgeSize = 32, insets = {left = 11, right = 12, top = 12, bottom = 11}})
+        backdrop:SetBackdropBorderColor(BORDER_COLOR[1], BORDER_COLOR[2], BORDER_COLOR[3])
+    end
+    return frame
+end
+--- Escape closes the window: it takes the key itself while it is open, and lets every other key on to the game. Not
+-- through the game's list of windows Escape closes (UISpecialFrames): its own Escape handling reads that list, and a
+-- name an addon put there taints it, so the game then blocks what it does next (ClearTarget, the game menu...). In
+-- combat the game does not let the keys' passing on change: there every key goes on, and the close button closes.
+function ____exports.connectEscape(window)
+    if InCombatLockdown() then
+        return
+    end
+    window:EnableKeyboard(true)
+    window:SetPropagateKeyboardInput(true)
+    window:SetScript(
+        "OnKeyDown",
+        function(_frame, key)
+            if InCombatLockdown() then
+                return
+            end
+            local isEscape = key == "ESCAPE"
+            window:SetPropagateKeyboardInput(not isEscape)
+            if isEscape then
+                window:Hide()
+            end
+        end
+    )
+end
+--- The scroll bar of the template is silver art too: tinted like the border. A client without it keeps it silver.
+function ____exports.applyScrollBarTint(scroll)
+    local bar = scroll.ScrollBar
+    if bar ~= nil then
+        pcall(function() return applyTextureTint(bar, 0) end)
+    end
+end
+return ____exports
+ end,
 ["addons.glowing-bars.src.options.style-window_service"] = function(...) 
 local ____lualib = require("lualib_bundle")
 local __TS__Class = ____lualib.__TS__Class
@@ -14367,8 +14667,11 @@ local __TS__New = ____lualib.__TS__New
 local ____exports = {}
 local ____custom_2Dsounds_2Dsection = require("addons.glowing-bars.src.options.custom-sounds-section")
 local CustomSoundsSection = ____custom_2Dsounds_2Dsection.CustomSoundsSection
+local ____window_2Dframe = require("addons.glowing-bars.src.options.window-frame")
+local applyScrollBarTint = ____window_2Dframe.applyScrollBarTint
+local connectEscape = ____window_2Dframe.connectEscape
+local createFrameWithBorder = ____window_2Dframe.createFrameWithBorder
 local ____style_2Dtable_2Econstants = require("addons.glowing-bars.src.options.style-table_constants")
-local BORDER_COLOR = ____style_2Dtable_2Econstants.BORDER_COLOR
 local COLUMN = ____style_2Dtable_2Econstants.COLUMN
 local findColumns = ____style_2Dtable_2Econstants.findColumns
 local TABLE_LEFT = ____style_2Dtable_2Econstants.TABLE_LEFT
@@ -14470,7 +14773,7 @@ function StyleWindowService.prototype.setWidthToFit(self, window, width)
     self:showView(window)
 end
 function StyleWindowService.prototype.createWindow(self)
-    local window = self:createFrameWithBorder()
+    local window = createFrameWithBorder(WINDOW_NAME)
     window:SetSize(
         findWindowWidth(TABLE_WIDTH),
         WINDOW_HEIGHT
@@ -14494,7 +14797,7 @@ function StyleWindowService.prototype.createWindow(self)
         "OnDragStop",
         function() return window:StopMovingOrSizing() end
     )
-    self:connectEscape(window)
+    connectEscape(window)
     local title = window:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint(
         "TOP",
@@ -14529,76 +14832,12 @@ function StyleWindowService.prototype.createWindow(self)
         -34,
         16
     )
-    self:applyScrollBarTint(scroll)
+    applyScrollBarTint(scroll)
     local content = CreateFrame("Frame", nil, scroll)
     content:SetSize(TABLE_WIDTH, 10)
     scroll:SetScrollChild(content)
     window:Hide()
     return {window = window, content = content}
-end
-function StyleWindowService.prototype.connectEscape(self, window)
-    if InCombatLockdown() then
-        return
-    end
-    window:EnableKeyboard(true)
-    window:SetPropagateKeyboardInput(true)
-    window:SetScript(
-        "OnKeyDown",
-        function(_frame, key)
-            if InCombatLockdown() then
-                return
-            end
-            local isEscape = key == "ESCAPE"
-            window:SetPropagateKeyboardInput(not isEscape)
-            if isEscape then
-                window:Hide()
-            end
-        end
-    )
-end
-function StyleWindowService.prototype.createFrameWithBorder(self)
-    local didSucceed, created = pcall(function() return CreateFrame("Frame", WINDOW_NAME, UIParent, "BackdropTemplate") end)
-    local frame = didSucceed and created or CreateFrame("Frame", WINDOW_NAME, UIParent)
-    local background = frame:CreateTexture(nil, "BACKGROUND")
-    background:SetPoint(
-        "TOPLEFT",
-        frame,
-        "TOPLEFT",
-        6,
-        -6
-    )
-    background:SetPoint(
-        "BOTTOMRIGHT",
-        frame,
-        "BOTTOMRIGHT",
-        -6,
-        6
-    )
-    background:SetColorTexture(0.1, 0.07, 0.04, 1)
-    if didSucceed then
-        local backdrop = created
-        backdrop:SetBackdrop({edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", edgeSize = 32, insets = {left = 11, right = 12, top = 12, bottom = 11}})
-        backdrop:SetBackdropBorderColor(BORDER_COLOR[1], BORDER_COLOR[2], BORDER_COLOR[3])
-    end
-    return frame
-end
-function StyleWindowService.prototype.applyScrollBarTint(self, scroll)
-    local bar = scroll.ScrollBar
-    if bar ~= nil then
-        pcall(function() return self:applyTextureTint(bar, 0) end)
-    end
-end
-function StyleWindowService.prototype.applyTextureTint(self, frame, depth)
-    for ____, region in ipairs({frame:GetRegions()}) do
-        if region:GetObjectType() == "Texture" then
-            region:SetVertexColor(BORDER_COLOR[1], BORDER_COLOR[2], BORDER_COLOR[3])
-        end
-    end
-    if depth < 2 then
-        for ____, child in ipairs({frame:GetChildren()}) do
-            self:applyTextureTint(child, depth + 1)
-        end
-    end
 end
 function StyleWindowService.prototype.createViewButton(self, window)
     local button = CreateFrame("Button", nil, window, "UIPanelButtonTemplate")
@@ -15132,6 +15371,429 @@ function StyleTableService.prototype.change(self, widgets, change)
 end
 return ____exports
  end,
+["addons.glowing-bars.src.changelog.release-notes_generated"] = function(...) 
+local ____exports = {}
+--- The version of the addon this build is.
+____exports.ADDON_VERSION = "2.6.0"
+--- Every release, the newest first.
+____exports.RELEASE_NOTES = {
+    {version = "2.6.0", date = "2026-11-06", hasNew = true, text = "|cffffd100New|r\n\n• Find Treasure: on a dwarf with no tracking on, it glows like Find Herbs and Find Minerals do."},
+    {version = "2.5.0", date = "2026-11-06", hasNew = true, text = "|cffffd100New|r\n\n• New looks for the glow: in the table (/gb), the Animation column now offers each movement in two looks. Ants is Blizzard's glow, as before; clean is a clean line running around the button, or a soft frame when the glow stands still. Your current choice stays as it was.\n• A What's new window lists the changes of every version. Open it with /gb changelog or from the top of the Settings page. After an update with new features, it opens once by itself; you can turn that off.\n• The login message in the chat can be turned off: untick Show the login message on the Settings page."},
+    {version = "2.4.1", date = "2026-11-06", hasNew = false, text = "|cffffd100Fixed|r\n\n• A glow switched to Breathing, then to Circling and back to Breathing, no longer keeps circling."},
+    {version = "2.4.0", date = "2026-11-06", hasNew = false, text = "|cffffd100Changed|r\n\n• The addon uses far less memory: it stays at a few MB instead of climbing to 20-25 MB before the game clears it.\n• Out of combat it checks once a second; in combat still twice a second, so procs and cooldowns are as quick as before.\n• In the table (/gb), spells you haven't learned yet have a faded name and icon. You can still set their look."},
+    {version = "2.3.0", date = "2026-11-05", hasNew = true, text = "|cffffd100New|r\n\n• Overpower and Revenge glow in any stance, so you know when to switch. Overpower glows after your target dodges, Revenge after you block, dodge or parry.\n\n|cffffd100Changed|r\n\n• The addon uses much less memory and CPU. It checks your bars twice a second instead of five times, and does less work each time.\n\n|cffffd100Fixed|r\n\n• A food or drink you added as a buff no longer glows in every fight while you are Well Fed.\n• Old spell ranks no longer show for spells on the gamepad bars when you don't play in gamepad mode. This could happen to druids in bear form.\n• A buff that was only on the hidden gamepad bars now gets its reminder."},
+    {version = "2.2.0", date = "2026-11-05", hasNew = true, text = "|cffffd100New|r\n\n• Use your own sounds. Make a folder named GlowingBars_Sounds in Interface\\AddOns, next to the addon's folder, and put your files in it, named custom1, custom2 and so on, as .ogg or .mp3. Open the table with /gb, scroll to the bottom, and under Custom sounds enter how many there are. They then appear in the Sound list. With Add folder you can use more folders; type /reload after adding one.\n\n|cffffd100Fixed|r\n\n• A spell in a macro no longer shows as an old spell rank."},
+    {version = "2.1.0", date = "2026-11-05", hasNew = false, text = "|cffffd100Changed|r\n\n• Nothing makes a sound by default any more. Old ranks and weapon buffs used to play an alarm; if you want a sound, pick one in the table.\n• The buttons in the table now open a list of choices, so you pick what you want in one click: Sound, Repeat, When, Glow time, Animation, and the type when you add a spell or item. Only the sound you pick plays."},
+    {version = "2.0.2", date = "2026-11-05", hasNew = false, text = "|cffffd100Changed|r\n\n• The table shows the Below column only when a row has a limit to set, so it takes less room."},
+    {version = "2.0.1", date = "2026-11-04", hasNew = false, text = "|cffffd100Fixed|r\n\n• Low reagents on game clients that are not in English: a spell you add as a low reagent is no longer refused, and a built-in reagent no longer stays quiet until your next login."},
+    {version = "2.0.0", date = "2026-11-03", hasNew = true, text = "|cffffd100New|r\n\n• Basic and Advanced views: the /gb table opens with the columns most people need. The Advanced button at the top shows them all. What you set in a hidden column keeps working.\n• When column: for each type or spell, show it always, in combat, out of combat, or only with an enemy targeted. Low reagents and low stock can also be Alert in town: the glow shows anywhere, and the message and sound only in a town or an inn.\n• Glow time column: how long the glow and the message show, from 1 to 10 seconds, or until done.\n• Animation column: circling, breathing or none, for each type or spell.\n• More cooldowns glow when they are ready: Bloodrage, Sweeping Strikes, Berserker Rage, Retaliation, Preparation, Evocation, Ice Barrier, Nature's Swiftness and Death Coil.\n• Small headings for each type in the list of spells, and tooltips on the column headers.\n• The table shrinks to fit if your screen is too narrow for it.\n\n|cffffd100Changed|r\n\n• Your settings from earlier versions carry over.\n• Repeat now brings back the glow as well as the sound and the message.\n• Low reagents and low stock now work the same way. The limit column is called Below: at 10 it stays quiet, at 9 it warns. Low reagents warn below 10 by default, and low stock below 20. A limit you set yourself still warns at the same count.\n• The low reagent message follows Glow time and Repeat like any other message.\n• The cooldown settings moved from the Settings page to the table: *Also out of combat* is now the When column, and the glow time is now the Glow time column.\n• The *Glow animation* setting moved to the Animation column. On the Settings page, only *Circling on round buttons* stays.\n\n|cffffd100Fixed|r\n\n• A Breathing or None glow could show a large grid of images after you logged in.\n• A cooldown set to show always now also glows at the start of a fight when you ask for that."},
+    {version = "1.9.1", date = "2026-11-02", hasNew = false, text = "|cffffd100Changed|r\n\n• The option is now called _Show spell and item IDs in tooltips_, as it shows Item IDs too, and its tooltip is easier to read."},
+    {version = "1.9.0", date = "2026-11-02", hasNew = true, text = "|cffffd100New|r\n\n• Low stock: add any item by its Item ID in the /gb table (arrows, water, candles). When only a few are left, a\n  message says how many, even if the item is not on your bars. If it is on your bars, its button glows too.\n• Low at column: set in the table how few is low, for each item and reagent or for the whole type.\n• Repeat on every type: every type of reminder can now repeat its sound and message.\n• Tooltips show the Item ID when _Show spell IDs in tooltips_ is on.\n\n|cffffd100Changed|r\n\n• The reagent limit moved from the Settings page to the Low at column. The limit you set is kept.\n• A message only comes back if its Repeat is on. Before, it came back every 30 seconds.\n• If the type you pick is wrong for a spell, you get an error. Before, the spell could be added as another type.\n• Food and drink can only be added as a missing buff.\n\n|cffffd100Fixed|r\n\n• You can add more than one food or drink when their spells have the same name, and each has its own look. A look you\n  set on a food or drink before goes back to the default, so set it again.\n• The low reagent message now repeats together with its sound in towns, and also names the reagents of spells you added."},
+    {version = "1.8.0", date = "2026-11-01", hasNew = true, text = "|cffffd100New|r\n\n• Food and drink as buffs: turn on _Show spell IDs in tooltips_, put the item on your bars, and add the _Use spell ID_\n  from its tooltip in the /gb table as a missing buff. Only that item glows, under its own name in the table, and not\n  when you have none left. A food or drink stops glowing once you have its Well Fed buff.\n\n|cffffd100Changed|r\n\n• The addon no longer keeps quiet while you eat or drink."},
+    {version = "1.7.0", date = "2026-11-01", hasNew = true, text = "|cffffd100New|r\n\n• Party and raid buffs each have their own switch on the Settings page. Off, only your own buffs are watched.\n• You choose when the group version glows: from 1 to 5 members missing, set apart for a party (2 by default) and a\n  raid (1 by default). You count too, but the group version never comes for you alone. For a paladin's Greater Blessing\n  it counts the members of one class. This replaces the switch for a Greater Blessing on a single member; if you had it\n  on, your party setting starts at 1.\n• A cooldown can glow for 1 second once it is back, next to 2, 3, 5, 10 seconds or until pressed.\n• The API for UI addons can make a button round: a registered button can ask for the round glow."},
+    {version = "1.6.0", date = "2026-10-30", hasNew = true, text = "|cffffd100New|r\n\n• DaylightUI support: the glows show on DaylightUI's action bars. Its bar N counts as Action Bar N, so the bar\n  switches and the faded bars work on them too.\n• The main bar can be faded until it glows, like the other bars, on the Settings page.\n• An API for UI addons: an addon with action bars of its own can register its buttons, and they glow like\n  Blizzard's. See [the guide](https://vattiss.github.io/wowkit/glowing-bars-api).\n\n|cffffd100Fixed|r\n\n• On a bar its UI addon fades (DaylightUI while the mouse is away), the glowing button now shows in full, with its glow;\n  the other buttons stay faded."},
+    {version = "1.5.0", date = "2026-10-29", hasNew = true, text = "|cffffd100New|r\n\n• ElvUI support: the glows show on ElvUI's action bars and its stance bar. Its bars count as the Blizzard bars on\n  the same slots (its bar 6 is Action Bar 2), so the bar switches and the faded bars work on them too.\n• Repeat the sound while a glow is on (missing buffs, weapon buffs, tracking, old ranks): every 5, 10, 30 or 60\n  seconds, set in the /gb table. The message comes again with it. Off by default.\n• The buff you use glows: of a group (a paladin's aura, a mage's armor, a shaman's shield, a hunter's aspect, a\n  seal, a weapon buff) the one you put on last glows. Before your first one, the one your main talent tree wants (a\n  Protection paladin: Devotion Aura, Kings, Seal of Righteousness; a Frost mage: Ice Armor).\n• Seals and Battle Shout glow before they run out, in time to cast them again.\n• Party blessings by class: a party member is asked for the blessing you last gave its class; before that, Wisdom\n  for a class with mana, Kings (or Might) for the others.\n• Raids: the group buffs (Prayer of Fortitude, Gift of the Wild, Arcane Brilliance) cover the raid around you in\n  Forever, so the whole raid counts, with the number of members missing past five. A paladin's blessings only on the\n  classes you gave one in that raid, with the Greater Blessing for one member too.\n• Greater Blessing for one party member: a switch on the Settings page (off by default).\n• Low reagent limit: 5, 10, 20 or 40 or fewer, on the Settings page.\n• Weapon buffs can be switched off in the /gb table, one by one; the next one takes its place.\n\n|cffffd100Changed|r\n\n• The low reagents are named on the screen when you arrive in a town, no longer in the chat; that message is on by\n  default and can be switched off in the table.\n• The reminder settings come before the action bars on the Settings page.\n\n|cffffd100Fixed|r\n\n• Rogue poisons and warlock stones: the highest one on your bars that you have glows, or the spell that makes the\n  stone; no more two ranks glowing at once, and nothing for a stone you cannot make (no Soul Shard).\n• A member with your Greater Blessing of Light or Salvation is no longer asked for another blessing.\n• Knowing both ranks of Prayer of Fortitude or Gift of the Wild, only the reagent of the higher rank counts."},
+    {version = "1.4.0", date = "2026-10-27", hasNew = true, text = "|cffffd100New|r\n\n• EllesmereUI support: the glows show on EllesmereUI's action bars. Its bars 1 to 8 count as Action Bars 1 to 8, so\n  the bar switches and the faded bars work on them too; its bars 9 and 10 glow, but have no switch of their own.\n• Spell IDs in tooltips (Settings page, off by default): every spell tooltip shows its ID, and the tooltip of an item\n  with a use (an elixir, a potion, food) shows the ID of the spell it casts. Handy to add a spell by its ID in the /gb\n  table."},
+    {version = "1.3.0", date = "2026-10-22", hasNew = true, text = "|cffffd100New|r\n\n• Bartender4 support: the glows show on Bartender4's bars, its stance bar (a paladin's auras) included.\n• Dominos support: the glows show on Dominos's bars, its stance bar included.\n• With either one, its bar N counts as Action Bar N: the switches of the bars that glow, and the bars faded until they\n  glow, work on its bars too."},
+    {version = "1.2.0", date = "2026-10-21", hasNew = true, text = "|cffffd100New|r\n\n• Gathering: a new reminder type, *Missing tracking*, with a turquoise glow. A miner or a herbalist with no tracking\n  on sees Find Minerals or Find Herbs glow. Any tracking counts, so a hunter tracking beasts is left alone.\n• Glow animation (Settings page): *Circling* (as before), *Breathing* (the glow stands still and slowly fades out and\n  in), or *None* (it stands still, fading in and out only as it comes and goes).\n• Faded bars (Settings page): Action Bars 2 to 8 can be faded until their buttons glow, so a bar in the middle of the\n  screen shows only what's due. A glowing button shows in full. The faded opacity can be set (50% by default).\n• Gamepad support (alpha): the glows also show on Forever's own gamepad bars, including the class button (a\n  paladin's aura). Round buttons get a round glow, with their own animation setting. It's new, so please report what\n  you see.\n\n|cffffd100Fixed|r\n\n• The glows could stop for good after a fight: in combat the game keeps the buttons' size secret, and the addon stumbled\n  on it. They now keep working.\n• Closing the /gb table with Escape could make the game block its next action (clearing your target, opening the game\n  menu) with a \"blocked an action\" message. The table now closes on Escape without touching the game's own handling.\n• An aura you cancel out of combat now glows even while you have a target. Before, it could be taken as still on for\n  half an hour.\n• A spell you added by hand keeps its own row in the table even when a list has it as another type, so it can still be\n  styled or taken out."},
+    {version = "1.1.0", date = "2026-10-21", hasNew = true, text = "|cffffd100New|r\n\n• Paladin seals: a new reminder type, *Missing seal*, with a gold glow. In a fight with no seal up, the seal you used\n  last glows. The game hides your auras in combat, so a seal counts for 30 seconds from your cast. Nothing glows before\n  you have used a seal. Seals the addon doesn't know (new seals of Forever) can be added by their ID.\n• Swift Judgement is on the paladin's cooldown list. Its cooldown starts with your next Judgement, however long\n  you wait.\n• Action bar switches: each of the eight action bars can be turned off on the Settings page, e.g. to keep the glow\n  on a bar of cooldowns next to your character only.\n• Glow at the start of a fight (optional, off by default): every ready cooldown glows as a fight starts, as a\n  reminder to use it (Berserking, Recklessness...).\n• Spell IDs in the table (/gb):\n  - Every spell shows its ID. You can change the ID of a listed spell if the game uses another one, e.g. after a patch\n    the addon hasn't caught up with.\n  - Add your own spells by ID at the end of the table, as any type except old rank. If the game says the type is wrong\n    (a \"cooldown\" with no cooldown, a \"low reagent\" with no reagent), the spell is refused, or added as the right type.\n  - Mistakes show as a red message on the screen.\n  - Tooltips on the ID boxes say what they're for.\n• Enabled column in the table: turn a whole reminder type, or a single spell, on or off. The Settings page now only\n  has the general settings: the action bars, party buffs, the weapon buff to keep up and when cooldowns glow. Your\n  existing on/off choices are kept.\n\n|cffffd100Changed|r\n\n• Plainer wording in the whole addon.\n• The table's columns are centered under their headers. The window has a margin on the left, and the Reset and X\n  column only takes up room while a row shows one of those buttons.\n\n|cffffd100Fixed|r\n\n• A spell on more than one action bar now glows on all of them right after login. It could miss the bars the game\n  loaded last.\n• A group buff whose ranks use different reagents now has a row for each reagent in the table (Prayer of Fortitude\n  with Holy Candle and with Sacred Candle), so each can be styled and switched on its own.\n• A buff you cancel in a fight now glows again when the game shows your auras. Before, the addon kept trusting its\n  memory of the buff until its time ran out."}
+}
+return ____exports
+ end,
+["addons.glowing-bars.src.options.whats-new-window"] = function(...) 
+local ____lualib = require("lualib_bundle")
+local __TS__Class = ____lualib.__TS__Class
+local __TS__ArrayFind = ____lualib.__TS__ArrayFind
+local __TS__ArrayForEach = ____lualib.__TS__ArrayForEach
+local ____exports = {}
+local ____release_2Dnotes_2Egenerated = require("addons.glowing-bars.src.changelog.release-notes_generated")
+local RELEASE_NOTES = ____release_2Dnotes_2Egenerated.RELEASE_NOTES
+local ____style_2Dtable_2Econstants = require("addons.glowing-bars.src.options.style-table_constants")
+local BORDER_COLOR = ____style_2Dtable_2Econstants.BORDER_COLOR
+local ____window_2Dframe = require("addons.glowing-bars.src.options.window-frame")
+local applyScrollBarTint = ____window_2Dframe.applyScrollBarTint
+local connectEscape = ____window_2Dframe.connectEscape
+local createFrameWithBorder = ____window_2Dframe.createFrameWithBorder
+local WINDOW_NAME = "GlowingBarsWhatsNew"
+local WINDOW_WIDTH = 620
+local WINDOW_HEIGHT = 440
+local LIST_WIDTH = 110
+local VERSION_HEIGHT = 22
+local TEXT_WIDTH = 420
+--- Under the lists: the box on one line, the tip on the next.
+local BOTTOM_ROOM = 64
+--- The version picked, in the game's gold; the others white.
+local PICKED_COLOR = {1, 0.82, 0}
+--- The list of versions stands on a lighter brown than the window's, with a bronze line beside it.
+local LIST_BACKGROUND = {0.17, 0.12, 0.07}
+____exports.WhatsNewWindow = __TS__Class()
+local WhatsNewWindow = ____exports.WhatsNewWindow
+WhatsNewWindow.name = "WhatsNewWindow"
+function WhatsNewWindow.prototype.____constructor(self, locale, choice)
+    self.locale = locale
+    self.choice = choice
+    self.versionButtons = {}
+end
+function WhatsNewWindow.prototype.open(self, version)
+    local window = self.window or self:createWindow()
+    local ____opt_0 = self.offBox
+    if ____opt_0 ~= nil then
+        ____opt_0:SetChecked(self.choice.isOff())
+    end
+    local ____self_showVersion_5 = self.showVersion
+    local ____version_4 = version
+    if ____version_4 == nil then
+        local ____opt_2 = RELEASE_NOTES[1]
+        ____version_4 = ____opt_2 and ____opt_2.version
+    end
+    ____self_showVersion_5(self, ____version_4)
+    window:Show()
+end
+function WhatsNewWindow.prototype.showVersion(self, version)
+    local note = __TS__ArrayFind(
+        RELEASE_NOTES,
+        function(____, candidate) return candidate.version == version end
+    ) or RELEASE_NOTES[1]
+    if note == nil or self.text == nil then
+        return
+    end
+    self.text:SetText((((((("|cffffd100" .. self.locale:getText("TITLE")) .. " ") .. note.version) .. "|r  |cff999999") .. note.date) .. "|r\n\n") .. note.text)
+    local ____opt_6 = self.textContent
+    if ____opt_6 ~= nil then
+        ____opt_6:SetHeight((self.text:GetStringHeight() or 0) + 20)
+    end
+    __TS__ArrayForEach(
+        RELEASE_NOTES,
+        function(____, candidate, index)
+            local ____opt_8 = self.versionButtons[index + 1]
+            local label = ____opt_8 and ____opt_8:GetFontString()
+            local r, g, b = unpack(candidate == note and PICKED_COLOR or ({1, 1, 1}), 1, 3)
+            if label ~= nil then
+                label:SetTextColor(r, g, b)
+            end
+        end
+    )
+end
+function WhatsNewWindow.prototype.createWindow(self)
+    local window = createFrameWithBorder(WINDOW_NAME)
+    window:SetSize(WINDOW_WIDTH, WINDOW_HEIGHT)
+    window:SetPoint(
+        "CENTER",
+        UIParent,
+        "CENTER",
+        0,
+        0
+    )
+    window:SetFrameStrata("DIALOG")
+    window:SetMovable(true)
+    window:EnableMouse(true)
+    window:RegisterForDrag("LeftButton")
+    window:SetScript(
+        "OnDragStart",
+        function() return window:StartMoving() end
+    )
+    window:SetScript(
+        "OnDragStop",
+        function() return window:StopMovingOrSizing() end
+    )
+    connectEscape(window)
+    local title = window:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    title:SetPoint(
+        "TOP",
+        window,
+        "TOP",
+        0,
+        -16
+    )
+    title:SetText(self.locale:getText("TITLE_WHATS_NEW"))
+    local close = CreateFrame("Button", nil, window, "UIPanelCloseButton")
+    close:SetPoint(
+        "TOPRIGHT",
+        window,
+        "TOPRIGHT",
+        -6,
+        -6
+    )
+    self:createVersionList(window)
+    self:createTextArea(window)
+    self:createOffBox(window)
+    window:Hide()
+    self.window = window
+    return window
+end
+function WhatsNewWindow.prototype.createVersionList(self, window)
+    local background = window:CreateTexture(nil, "BORDER")
+    background:SetPoint(
+        "TOPLEFT",
+        window,
+        "TOPLEFT",
+        12,
+        -44
+    )
+    background:SetPoint(
+        "BOTTOMLEFT",
+        window,
+        "BOTTOMLEFT",
+        12,
+        BOTTOM_ROOM - 4
+    )
+    background:SetWidth(LIST_WIDTH + 34)
+    background:SetColorTexture(LIST_BACKGROUND[1], LIST_BACKGROUND[2], LIST_BACKGROUND[3], 1)
+    local line = window:CreateTexture(nil, "BORDER")
+    line:SetPoint(
+        "TOPLEFT",
+        background,
+        "TOPRIGHT",
+        0,
+        0
+    )
+    line:SetPoint(
+        "BOTTOMLEFT",
+        background,
+        "BOTTOMRIGHT",
+        0,
+        0
+    )
+    line:SetWidth(1)
+    line:SetColorTexture(BORDER_COLOR[1], BORDER_COLOR[2], BORDER_COLOR[3], 1)
+    local scroll = CreateFrame("ScrollFrame", nil, window, "UIPanelScrollFrameTemplate")
+    scroll:SetPoint(
+        "TOPLEFT",
+        window,
+        "TOPLEFT",
+        18,
+        -48
+    )
+    scroll:SetPoint(
+        "BOTTOMLEFT",
+        window,
+        "BOTTOMLEFT",
+        18,
+        BOTTOM_ROOM
+    )
+    scroll:SetWidth(LIST_WIDTH)
+    applyScrollBarTint(scroll)
+    local list = CreateFrame("Frame", nil, scroll)
+    list:SetSize(LIST_WIDTH, #RELEASE_NOTES * VERSION_HEIGHT)
+    scroll:SetScrollChild(list)
+    __TS__ArrayForEach(
+        RELEASE_NOTES,
+        function(____, note, index)
+            local button = CreateFrame("Button", nil, list)
+            button:SetSize(LIST_WIDTH, VERSION_HEIGHT)
+            button:SetPoint(
+                "TOPLEFT",
+                list,
+                "TOPLEFT",
+                0,
+                -index * VERSION_HEIGHT
+            )
+            button:SetNormalFontObject(_G.GameFontHighlight)
+            button:SetText(note.version)
+            local ____opt_12 = button:GetFontString()
+            if ____opt_12 ~= nil then
+                ____opt_12:SetJustifyH("LEFT")
+            end
+            local ____opt_14 = button:GetFontString()
+            if ____opt_14 ~= nil then
+                ____opt_14:SetPoint(
+                    "LEFT",
+                    button,
+                    "LEFT",
+                    6,
+                    0
+                )
+            end
+            button:SetScript(
+                "OnClick",
+                function() return self:showVersion(note.version) end
+            )
+            local ____self_versionButtons_16 = self.versionButtons
+            ____self_versionButtons_16[#____self_versionButtons_16 + 1] = button
+        end
+    )
+end
+function WhatsNewWindow.prototype.createTextArea(self, window)
+    local scroll = CreateFrame("ScrollFrame", nil, window, "UIPanelScrollFrameTemplate")
+    scroll:SetPoint(
+        "TOPLEFT",
+        window,
+        "TOPLEFT",
+        LIST_WIDTH + 52,
+        -48
+    )
+    scroll:SetPoint(
+        "BOTTOMRIGHT",
+        window,
+        "BOTTOMRIGHT",
+        -36,
+        BOTTOM_ROOM
+    )
+    applyScrollBarTint(scroll)
+    local content = CreateFrame("Frame", nil, scroll)
+    content:SetSize(TEXT_WIDTH, 10)
+    scroll:SetScrollChild(content)
+    local text = content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    text:SetPoint(
+        "TOPLEFT",
+        content,
+        "TOPLEFT",
+        0,
+        0
+    )
+    text:SetWidth(TEXT_WIDTH)
+    text:SetJustifyH("LEFT")
+    text:SetJustifyV("TOP")
+    text:SetWordWrap(true)
+    self.text = text
+    self.textContent = content
+end
+function WhatsNewWindow.prototype.createOffBox(self, window)
+    local box = CreateFrame("CheckButton", nil, window, "UICheckButtonTemplate")
+    box:SetSize(24, 24)
+    box:SetPoint(
+        "BOTTOMLEFT",
+        window,
+        "BOTTOMLEFT",
+        18,
+        32
+    )
+    box:SetScript(
+        "OnClick",
+        function() return self.choice.setOff(box:GetChecked()) end
+    )
+    local label = window:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    label:SetPoint(
+        "LEFT",
+        box,
+        "RIGHT",
+        4,
+        0
+    )
+    label:SetText(self.locale:getText("OPT_WHATS_NEW_OFF"))
+    local tip = window:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+    tip:SetPoint(
+        "BOTTOMLEFT",
+        window,
+        "BOTTOMLEFT",
+        24,
+        16
+    )
+    tip:SetJustifyH("LEFT")
+    tip:SetText(self.locale:getText("TEXT_WHATS_NEW_TIP"))
+    self.offBox = box
+end
+return ____exports
+ end,
+["addons.glowing-bars.src.options.whats-new_service"] = function(...) 
+local ____lualib = require("lualib_bundle")
+local __TS__Class = ____lualib.__TS__Class
+local __TS__New = ____lualib.__TS__New
+local __TS__ArraySome = ____lualib.__TS__ArraySome
+local __TS__DecorateLegacy = ____lualib.__TS__DecorateLegacy
+local ____exports = {}
+local ____core = require("packages.@wowkit.core.src.index")
+local OnGameEvent = ____core.OnGameEvent
+local ____release_2Dnotes_2Egenerated = require("addons.glowing-bars.src.changelog.release-notes_generated")
+local ADDON_VERSION = ____release_2Dnotes_2Egenerated.ADDON_VERSION
+local RELEASE_NOTES = ____release_2Dnotes_2Egenerated.RELEASE_NOTES
+local ____whats_2Dnew_2Dwindow = require("addons.glowing-bars.src.options.whats-new-window")
+local WhatsNewWindow = ____whats_2Dnew_2Dwindow.WhatsNewWindow
+--- The window waits this long after login, for the screen to settle.
+local OPEN_DELAY = 3
+--- Is version `a` newer than `b`? Their numbers compared one by one.
+function ____exports.isNewerVersion(a, b)
+    local partsA, partsB = (string.gsub(a, "[^%d.]", "")), (string.gsub(b, "[^%d.]", ""))
+    local numbersA = {}
+    local numbersB = {}
+    for part in string.gmatch(partsA, "(%d+)") do
+        numbersA[#numbersA + 1] = tonumber(part) or 0
+    end
+    for part in string.gmatch(partsB, "(%d+)") do
+        numbersB[#numbersB + 1] = tonumber(part) or 0
+    end
+    do
+        local index = 0
+        while index < math.max(#numbersA, #numbersB) do
+            local difference = (numbersA[index + 1] or 0) - (numbersB[index + 1] or 0)
+            if difference ~= 0 then
+                return difference > 0
+            end
+            index = index + 1
+        end
+    end
+    return false
+end
+____exports.WhatsNewService = __TS__Class()
+local WhatsNewService = ____exports.WhatsNewService
+WhatsNewService.name = "WhatsNewService"
+function WhatsNewService.prototype.____constructor(self, saved, locale, clock, player)
+    self.saved = saved
+    self.clock = clock
+    self.player = player
+    self.data = {}
+    self.isWaitingForPeace = false
+    self.window = __TS__New(
+        WhatsNewWindow,
+        locale,
+        {
+            isOff = function() return self:isOff() end,
+            setOff = function(isOff) return self:setOff(isOff) end
+        }
+    )
+end
+function WhatsNewService.prototype.open(self, version)
+    self.window:open(version)
+end
+function WhatsNewService.prototype.onAddonLoaded(self)
+    self.data = self.saved:loadTable() or ({})
+    self.saved:bindTable(self.data)
+end
+function WhatsNewService.prototype.onLogin(self)
+    local last = self.data.lastVersion
+    self.data.lastVersion = ADDON_VERSION
+    if last == nil or self.data.isWhatsNewOff == true then
+        return
+    end
+    local hasNew = __TS__ArraySome(
+        RELEASE_NOTES,
+        function(____, note) return note.hasNew and ____exports.isNewerVersion(note.version, last) and not ____exports.isNewerVersion(note.version, ADDON_VERSION) end
+    )
+    if hasNew then
+        self.clock:runAfter(
+            OPEN_DELAY,
+            function() return self:openWhenAtPeace() end
+        )
+    end
+end
+function WhatsNewService.prototype.isOff(self)
+    return self.data.isWhatsNewOff == true
+end
+function WhatsNewService.prototype.setOff(self, isOff)
+    self.data.isWhatsNewOff = isOff
+end
+function WhatsNewService.prototype.openAfterFight(self)
+    if not self.isWaitingForPeace then
+        return
+    end
+    self.isWaitingForPeace = false
+    self.window:open()
+end
+__TS__DecorateLegacy(
+    {OnGameEvent("PLAYER_REGEN_ENABLED")},
+    WhatsNewService.prototype,
+    "openAfterFight",
+    true
+)
+function WhatsNewService.prototype.openWhenAtPeace(self)
+    if self.player:isInCombat() then
+        self.isWaitingForPeace = true
+    else
+        self.window:open()
+    end
+end
+return ____exports
+ end,
 ["addons.glowing-bars.src.options.table-command"] = function(...) 
 local ____lualib = require("lualib_bundle")
 local __TS__Class = ____lualib.__TS__Class
@@ -15140,14 +15802,21 @@ local COMMAND = "GLOWINGBARS"
 ____exports.TableCommand = __TS__Class()
 local TableCommand = ____exports.TableCommand
 TableCommand.name = "TableCommand"
-function TableCommand.prototype.____constructor(self, ____table)
+function TableCommand.prototype.____constructor(self, ____table, whatsNew)
     self.table = ____table
+    self.whatsNew = whatsNew
 end
 function TableCommand.prototype.onFirstLogin(self)
     local globals = _G
     globals[("SLASH_" .. COMMAND) .. "1"] = "/gb"
     globals[("SLASH_" .. COMMAND) .. "2"] = "/glowingbars"
-    SlashCmdList[COMMAND] = function() return self.table:toggle() end
+    SlashCmdList[COMMAND] = function(message)
+        if string.lower(strtrim(message or "")) == "changelog" then
+            self.whatsNew:open()
+        else
+            self.table:toggle()
+        end
+    end
 end
 return ____exports
  end,
@@ -15215,12 +15884,15 @@ return ____exports
 ["addons.glowing-bars.src.options.reminders_page"] = function(...) 
 local ____lualib = require("lualib_bundle")
 local __TS__Class = ____lualib.__TS__Class
+local __TS__New = ____lualib.__TS__New
 local __TS__ArraySome = ____lualib.__TS__ArraySome
 local ____exports = {}
+local ____ui = require("packages.@wowkit.ui.src.index")
+local AboutSection = ____ui.AboutSection
 ____exports.RemindersPage = __TS__Class()
 local RemindersPage = ____exports.RemindersPage
 RemindersPage.name = "RemindersPage"
-function RemindersPage.prototype.____constructor(self, locale, classBuffs, settings, controls, reminderControls, weaponSection, glowsSection, about, widgets, ____table, barsSection, animationSection)
+function RemindersPage.prototype.____constructor(self, locale, classBuffs, settings, controls, reminderControls, weaponSection, glowsSection, widgets, ____table, barsSection, animationSection, whatsNew)
     self.locale = locale
     self.classBuffs = classBuffs
     self.settings = settings
@@ -15228,13 +15900,24 @@ function RemindersPage.prototype.____constructor(self, locale, classBuffs, setti
     self.reminderControls = reminderControls
     self.weaponSection = weaponSection
     self.glowsSection = glowsSection
-    self.about = about
     self.widgets = widgets
     self.table = ____table
     self.barsSection = barsSection
     self.animationSection = animationSection
+    self.whatsNew = whatsNew
+    self.about = __TS__New(
+        AboutSection,
+        widgets,
+        {
+            header = locale:getText("HDR_ABOUT"),
+            githubLabel = locale:getText("INFO_GITHUB"),
+            issuesLabel = locale:getText("INFO_ISSUES")
+        },
+        "https://github.com/vattiss/wowkit"
+    )
 end
 function RemindersPage.prototype.buildPage(self, category, layout)
+    self:addWhatsNew(category, layout)
     self.reminderControls:addHeader(layout, "HDR_REMINDERS")
     self.widgets:addButton(
         layout,
@@ -15261,6 +15944,7 @@ function RemindersPage.prototype.buildPage(self, category, layout)
         function(isChecked) return self.settings:change("isDisabled", isChecked) end
     )
     self.reminderControls:addSwitch(category, "shouldStayQuietInTowns", "OPT_STAY_QUIET_IN_TOWNS", "TIP_STAY_QUIET_IN_TOWNS")
+    self.reminderControls:addSwitch(category, "shouldShowGreeting", "OPT_SHOW_GREETING", "TIP_SHOW_GREETING")
     if __TS__ArraySome(
         self.classBuffs:getClassBuffs(),
         function(____, classBuff) return classBuff.party ~= nil end
@@ -15299,6 +15983,24 @@ function RemindersPage.prototype.buildPage(self, category, layout)
     self.barsSection:addBarsSection(category, layout)
     self.barsSection:addFadedSection(category, layout)
     self.about:addAboutSection(layout)
+end
+function RemindersPage.prototype.addWhatsNew(self, category, layout)
+    self.widgets:addButton(
+        layout,
+        self.locale:getText("OPT_WHATS_NEW"),
+        self.locale:getText("BTN_OPEN"),
+        function() return self.whatsNew:open() end,
+        self.locale:getText("TIP_WHATS_NEW")
+    )
+    self.controls:addCheckbox(
+        category,
+        "showWhatsNew",
+        self.locale:getText("OPT_SHOW_WHATS_NEW"),
+        self.locale:getText("TIP_SHOW_WHATS_NEW"),
+        true,
+        function() return not self.whatsNew:isOff() end,
+        function(isChecked) return self.whatsNew:setOff(not isChecked) end
+    )
 end
 return ____exports
  end,
@@ -15355,7 +16057,6 @@ local makeGame, makeTexts, makeBuffs, makeReminders, makeTick, makeTable, makeOp
 local ____core = require("packages.@wowkit.core.src.index")
 local Addon = ____core.Addon
 local ____ui = require("packages.@wowkit.ui.src.index")
-local AboutSection = ____ui.AboutSection
 local ControlsService = ____ui.ControlsService
 local GreetingService = ____ui.GreetingService
 local LocaleService = ____ui.LocaleService
@@ -15434,6 +16135,8 @@ local ____style_2Dwindow_2Eservice = require("addons.glowing-bars.src.options.st
 local StyleWindowService = ____style_2Dwindow_2Eservice.StyleWindowService
 local ____table_2Dcommand = require("addons.glowing-bars.src.options.table-command")
 local TableCommand = ____table_2Dcommand.TableCommand
+local ____whats_2Dnew_2Eservice = require("addons.glowing-bars.src.options.whats-new_service")
+local WhatsNewService = ____whats_2Dnew_2Eservice.WhatsNewService
 local ____reminders_2Epage = require("addons.glowing-bars.src.options.reminders_page")
 local RemindersPage = ____reminders_2Epage.RemindersPage
 local ____weapon_2Esection = require("addons.glowing-bars.src.options.weapon_section")
@@ -15469,6 +16172,7 @@ local WeaponReadingService = ____weapon_2Dreading_2Eservice.WeaponReadingService
 local ____weapon_2Dreminder_2Eservice = require("addons.glowing-bars.src.reminders.weapon.weapon-reminder_service")
 local WeaponReminderService = ____weapon_2Dreminder_2Eservice.WeaponReminderService
 local ____settings_2Econstants = require("addons.glowing-bars.src.settings.settings_constants")
+local ACCOUNT_VARIABLES_NAME = ____settings_2Econstants.ACCOUNT_VARIABLES_NAME
 local SAVED_VARIABLES_NAME = ____settings_2Econstants.SAVED_VARIABLES_NAME
 local createDefaultSettings = ____settings_2Econstants.createDefaultSettings
 local repairSettings = ____settings_2Econstants.repairSettings
@@ -15552,7 +16256,8 @@ function makeTexts(addon, game)
     addon:register(__TS__New(
         GreetingService,
         messages,
-        locale:getText("INIT")
+        locale:getText("INIT"),
+        {settings = settings, key = "shouldShowGreeting"}
     ))
     local styles = addon:register(__TS__New(StyleService, game.spells, settings))
     return {settings = settings, locale = locale, messages = messages, styles = styles}
@@ -15850,7 +16555,6 @@ function makeTable(addon, addonName, game, texts, buffs, reminders)
         windows,
         edits
     ))
-    addon:register(__TS__New(TableCommand, ____table))
     return ____table
 end
 function makeOptions(addon, addonName, game, texts, buffs, reminders)
@@ -15895,16 +16599,14 @@ function makeOptions(addon, addonName, game, texts, buffs, reminders)
         reminderControls
     ))
     local animationSection = addon:register(__TS__New(AnimationSection, locale, settings, controls))
-    local about = addon:register(__TS__New(
-        AboutSection,
-        widgets,
-        {
-            header = locale:getText("HDR_ABOUT"),
-            githubLabel = locale:getText("INFO_GITHUB"),
-            issuesLabel = locale:getText("INFO_ISSUES")
-        },
-        "https://github.com/vattiss/wowkit"
+    local whatsNew = addon:register(__TS__New(
+        WhatsNewService,
+        __TS__New(SavedVariablesService, ACCOUNT_VARIABLES_NAME),
+        locale,
+        game.clock,
+        game.player
     ))
+    addon:register(__TS__New(TableCommand, ____table, whatsNew))
     local page = addon:register(__TS__New(
         RemindersPage,
         locale,
@@ -15914,11 +16616,11 @@ function makeOptions(addon, addonName, game, texts, buffs, reminders)
         reminderControls,
         weaponSection,
         glowsSection,
-        about,
         widgets,
         ____table,
         barsSection,
-        animationSection
+        animationSection,
+        whatsNew
     ))
     addon:register(__TS__New(
         OptionsService,

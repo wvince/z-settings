@@ -1,4 +1,8 @@
-﻿1.60.28 - 6th November 2026
+﻿1.60.29 - 6th November 2026
+- Fixed a minor issue with the Blizzard internal realm name showing next to guild names in tooltips (for 'Enhance tooltip') and in info cards (for 'Show info cards').  Thank you for the reports.
+- Updated translations.
+
+1.60.28 - 6th November 2026
 - The 'Show info card' option ('Interface') now shows an armory link for players (level 10 or higher).  Info cards can now be shown for dungeon map boss icons, dungeon zone icons (requires latest release of Leatrix Maps) and items in the appearances window (part of Account Collections).  If the info card is for an NPC, pet, mount, player or boss (including the boss icons shown with Leatrix Maps), a sounds button in the info card will let you listen to or mute the sounds that it makes (requires latest release of Leatrix Sounds).
 
 1.60.27 - 4th November 2026

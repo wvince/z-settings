@@ -262,8 +262,19 @@ FDJ.Locales.enUS = {
     MAP_RIGHT_REMOVE = "Right Click to remove marker",
     MAP_MARKED = "marked %s on the map.",
     MAP_OPEN_FAILED = "could not open the recorded map location.",
+    MAP_COMBAT = "the map can't open during combat. Press %s to see the marked spot.",
     QUEST_GIVER = "Quest giver",
     QUEST_STARTS_HERE = "Quest starts here",
+    TRACK = "Track",
+    TRACKING = "Tracking",
+    TRACK_TIP = "Shows this dungeon's quests on your screen with your progress. Drag it anywhere.",
+    TRACK_STOP = "Stop tracking",
+    TRACK_READY = "Ready to turn in",
+    TRACK_DONE = "Completed",
+    TRACK_IN_LOG = "In your quest log",
+    TRACK_CLICK = "Click to open it in the journal",
+    TURN_IN_HERE = "Turn in here",
+    TRACK_ACCEPT = "Click to accept the quest",
 }
 
 FDJ.Locales.deDE = {
@@ -520,8 +531,19 @@ FDJ.Locales.deDE = {
     MAP_RIGHT_REMOVE = "Rechtsklick zum Entfernen der Markierung",
     MAP_MARKED = "%s auf der Karte markiert.",
     MAP_OPEN_FAILED = "Der gespeicherte Kartenort konnte nicht geöffnet werden.",
+    MAP_COMBAT = "Die Karte lässt sich im Kampf nicht öffnen. Drücke %s, um die markierte Stelle zu sehen.",
     QUEST_GIVER = "Questgeber",
     QUEST_STARTS_HERE = "Quest startet hier",
+    TRACK = "Verfolgen",
+    TRACKING = "Verfolgt",
+    TRACK_TIP = "Zeigt die Quests dieses Dungeons mit deinem Fortschritt auf dem Bildschirm. Lässt sich überallhin ziehen.",
+    TRACK_STOP = "Nicht mehr verfolgen",
+    TRACK_READY = "Bereit zur Abgabe",
+    TRACK_DONE = "Abgeschlossen",
+    TRACK_IN_LOG = "In deinem Questlog",
+    TRACK_CLICK = "Klicken, um sie im Journal zu öffnen",
+    TURN_IN_HERE = "Hier abgeben",
+    TRACK_ACCEPT = "Klicken, um die Quest anzunehmen",
 }
 
 local function NormalizeLanguage(value)

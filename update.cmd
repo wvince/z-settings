@@ -9,6 +9,18 @@ rem full paths: Git for Windows can put its own find first on the PATH
   pause
   exit /b 1
 )
+"%SystemRoot%\System32\where.exe" git >nul 2>&1 || (
+  echo Git isn't installed, so this can't update. Install Git for Windows, or update without Git:
+  echo see "Update" in README.md.
+  pause
+  exit /b 1
+)
+if not exist ".git" (
+  echo This folder came from a ZIP download, so it can't update itself. Download the ZIP again:
+  echo see "Update" in README.md.
+  pause
+  exit /b 1
+)
 git fetch --quiet origin || (
   echo Couldn't reach GitHub. Check your internet connection and try again.
   pause

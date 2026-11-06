@@ -2,7 +2,7 @@
 ## Title: |cff00ccffSharpie's Gear Judge|r (Forever Edition)
 ## Notes: The Final Verdict on your gear.
 ## Author: SuperSharpie
-## Version: 3.2.10-Forever
+## Version: 3.2.11-Forever
 ## SavedVariables: SGJ_Settings, SharpiesGearJudgeDB
 
 Libs\LibStub\LibStub.lua

@@ -77,7 +77,7 @@ Paladin.PvPCounterpart = { RET_STANDARD = "RET_PVP" }
 --   Leveling_RetDungeon     Retribution: Dungeon Leveling
 --   Leveling_Tank           Protection: Solo Leveling
 --   Leveling_TankDungeon    Protection: Dungeon Leveling
---   Leveling_Healer         Holy: Solo Leveling
+--   Leveling_Healer         Shockadin: Solo Leveling
 --   Leveling_HealerDungeon  Holy: Dungeon Leveling
 Paladin.LevelingWeights = {}
 
@@ -108,7 +108,7 @@ local ROLE_NAMES = {
     { "Leveling_RetDungeon",    "Retribution: Dungeon Leveling" },
     { "Leveling_Tank",          "Protection: Solo Leveling" },
     { "Leveling_TankDungeon",   "Protection: Dungeon Leveling" },
-    { "Leveling_Healer",        "Holy: Solo Leveling" },
+    { "Leveling_Healer",        "Shockadin: Solo Leveling" },
     { "Leveling_HealerDungeon", "Holy: Dungeon Leveling" },
 }
 for _, r in ipairs(ROLE_NAMES) do

@@ -11,7 +11,7 @@
 ## Notes-zhCN: 在专业窗口中为每个配方显示所需技能、颜色分界点和技能提升几率。
 ## Notes-zhTW: 在專業技能視窗中為每個配方顯示所需技能、顏色分界點和技能提升機率。
 ## Author: cjber
-## Version: v1.0.19
+## Version: v1.0.21
 ## Category: Professions
 ## X-License: GPL-3.0-or-later
 ## X-Website: https://github.com/cjber/skillup-forever
